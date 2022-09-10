@@ -1,0 +1,40 @@
+.container {
+	display: flex;
+	height: 50vh;
+	padding: 0 10rem;
+	margin: 0 auto;
+	justify-content: space-around;
+	background-color: #fff;
+}
+
+.titleContainer {
+	width: 50%;
+}
+
+.title {
+	font-size: 3rem;
+	font-weight: 600;
+	line-height: 3.5rem;
+	padding-top: 2rem;
+}
+
+.subtitle {
+	font-size: 1.25rem;
+	line-height: 2rem;
+	font-weight: 500;
+}
+
+.img {
+	transform: scaleX(-1);
+	align-self: flex-end;
+}
+
+.btn {
+	padding: 1rem 1.75rem;
+	background-color: var(--firstBtnColor);
+	color: #fff;
+	margin: 0 auto;
+	margin-top: 3rem;
+	font-weight: 500;
+	border-radius: 3px;
+}

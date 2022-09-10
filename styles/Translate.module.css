@@ -1,0 +1,27 @@
+.container {
+	width: 60%;
+	margin: 4rem auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.translateContainer {
+	text-align: center;
+	width: 50%;
+}
+
+.title {
+	font-size: 2rem;
+}
+
+.btn {
+	display: block;
+	padding: 1rem 1.75rem;
+	background-color: var(--firstBtnColor);
+	color: #fff;
+	margin: 0 auto;
+	margin-top: 3rem;
+	font-weight: 500;
+	border-radius: 3px;
+}

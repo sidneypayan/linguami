@@ -1,0 +1,37 @@
+.container {
+	background-color: var(--firstColor);
+	display: flex;
+	position: sticky;
+	top: 0;
+	justify-content: space-between;
+	align-items: center;
+	height: 64px;
+	color: #fff;
+	padding: 0 5rem;
+	z-index: 1;
+}
+
+.menuContainer {
+	display: flex;
+	gap: 1.5rem;
+	font-weight: 500;
+	font-size: 1.1rem;
+}
+
+.btnContainer {
+	display: flex;
+	gap: 1rem;
+}
+
+.btn {
+	padding: 0.65rem 1.5rem;
+	background-color: var(--firstBtnColor);
+	color: #fff;
+	font-weight: 500;
+	border-radius: 3px;
+	border: none;
+}
+
+.login {
+	border: 1px solid #333;
+}

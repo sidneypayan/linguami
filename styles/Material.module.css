@@ -1,0 +1,23 @@
+.materialContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10rem;
+	width: 70%;
+	margin: 4rem auto;
+	text-align: center;
+}
+
+.materialItem {
+	flex: 1;
+}
+
+.title {
+	text-align: center;
+	font-size: 2.5rem;
+	padding: 2rem 0;
+	font-weight: 500;
+}
+
+.materialContainer div p {
+	font-weight: 500;
+}
