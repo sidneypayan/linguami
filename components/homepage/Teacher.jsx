@@ -6,7 +6,7 @@ const Teacher = () => {
 		<>
 			<div className={styles.container}>
 				<div className={styles.teacherContainer}>
-					<h3 className={styles.title}>Apprendre avec un locuteur natif</h3>
+					<h3 className='headline'>Apprendre avec un locuteur natif</h3>
 					<p>
 						Prenez des cours à distance avec un professeur diplômé et
 						bénéfissiez d'un apprentissage personnalisé.

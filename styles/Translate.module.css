@@ -11,14 +11,14 @@
 	width: 50%;
 }
 
-.title {
-	font-size: 2rem;
+.translateContainer p {
+	font-weight: 500;
 }
 
 .btn {
 	display: block;
 	padding: 1rem 1.75rem;
-	background-color: var(--firstBtnColor);
+	background-color: var(--secondColor);
 	color: #fff;
 	margin: 0 auto;
 	margin-top: 3rem;

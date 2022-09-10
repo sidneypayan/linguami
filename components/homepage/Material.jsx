@@ -4,7 +4,7 @@ import styles from '../../styles/Material.module.css'
 const Material = () => {
 	return (
 		<div className={styles.container}>
-			<h3 className={styles.title}>Apprentissage multisupport</h3>
+			<h3 className={`${styles.title} headline`}>Apprentissage multisupport</h3>
 			<div className={styles.materialContainer}>
 				<div className={styles.materialItem}>
 					<Image src='/img/video.png' alt='video' width={100} height={100} />

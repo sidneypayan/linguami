@@ -4,7 +4,7 @@
 	padding: 0 10rem;
 	margin: 0 auto;
 	justify-content: space-around;
-	background-color: #fff;
+	background-color: var(--white);
 }
 
 .titleContainer {
@@ -12,6 +12,7 @@
 }
 
 .title {
+	color: var(--thirdColor);
 	font-size: 3rem;
 	font-weight: 600;
 	line-height: 3.5rem;
@@ -31,7 +32,7 @@
 
 .btn {
 	padding: 1rem 1.75rem;
-	background-color: var(--firstBtnColor);
+	background-color: var(--secondColor);
 	color: #fff;
 	margin: 0 auto;
 	margin-top: 3rem;

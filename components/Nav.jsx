@@ -10,7 +10,7 @@ const Nav = () => {
 						<Link href='/'>Accueil</Link>
 					</li>
 					<li>
-						<Link href='/ressources'>Ressouces</Link>
+						<Link href='/material'>Materiel</Link>
 					</li>
 					<li>
 						<Link href='/cours'>Cours</Link>
@@ -21,8 +21,12 @@ const Nav = () => {
 				</ul>
 			</nav>
 			<div className={styles.btnContainer}>
-				<button className={`btn ${styles.btn}`}>S'enregistrer</button>
-				<button className={`btn login ${styles.btn}`}>Se connecter</button>
+				<button className={`btn ${styles.btn} ${styles.loginBtn}`}>
+					Se connecter
+				</button>
+				<button className={`btn login ${styles.btn} ${styles.registerBtn}`}>
+					S'inscrire
+				</button>
 			</div>
 		</div>
 	)

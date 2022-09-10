@@ -23,15 +23,18 @@
 	gap: 1rem;
 }
 
+.loginBtn {
+	border: solid 2px var(--secondColor);
+	background-color: var(--firstBtnColor);
+}
+
+.registerBtn {
+	background-color: var(--secondColor);
+}
+
 .btn {
 	padding: 0.65rem 1.5rem;
-	background-color: var(--firstBtnColor);
 	color: #fff;
 	font-weight: 500;
 	border-radius: 3px;
-	border: none;
-}
-
-.login {
-	border: 1px solid #333;
 }

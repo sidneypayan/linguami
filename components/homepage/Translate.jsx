@@ -10,8 +10,8 @@ const Translate = () => {
 				width={200}
 				height={200}
 			/>
-			<div className={styles.teacherContainer}>
-				<h3 className={styles.title}>Outlil de traduction intégré</h3>
+			<div className={styles.translateContainer}>
+				<h3 className='headline'>Outlil de traduction intégré</h3>
 				<p>
 					Inscrivez-vous et traduisez n'importe quel mot de n'importe quel texte
 				</p>

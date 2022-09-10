@@ -1,23 +1,35 @@
+.container {
+	width: 80%;
+	margin: 0 auto;
+	margin-top: 5rem;
+}
+
 .materialContainer {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10rem;
-	width: 70%;
-	margin: 4rem auto;
-	text-align: center;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 4rem;
+	margin: 3rem 0;
+	color: var(--thirdTextColor);
 }
 
-.materialItem {
-	flex: 1;
+.material img {
+	border-radius: 3px;
 }
 
-.title {
-	text-align: center;
-	font-size: 2.5rem;
-	padding: 2rem 0;
+.materialTitle {
+	font-size: 1.35rem;
+	margin: 1rem 0;
 	font-weight: 500;
+	color: var(--secondColor);
 }
 
-.materialContainer div p {
-	font-weight: 500;
+.materialTitle:first-letter {
+	text-transform: capitalize;
+}
+
+.container h3 {
+	text-transform: capitalize;
+	color: var(--thirdColor);
+	font-size: 1.75rem;
+	font-weight: 600;
 }
