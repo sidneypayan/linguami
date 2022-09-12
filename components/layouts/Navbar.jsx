@@ -40,6 +40,7 @@ const Navbar = () => {
 						onClick={() => setIsNavExpanded(!isNavExpanded)}
 						className={styles.mobileIconClose}
 						icon={faXmark}
+						size='xl'
 					/>
 				)}
 			</div>
@@ -48,6 +49,7 @@ const Navbar = () => {
 					onClick={() => setIsNavExpanded(!isNavExpanded)}
 					className={styles.mobileIconOpen}
 					icon={faBars}
+					size='xl'
 				/>
 			)}
 		</nav>

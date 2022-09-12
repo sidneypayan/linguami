@@ -168,6 +168,11 @@ img {
 	background-color: var(--darkWhite);
 }
 
+.wrapper-large {
+	width: 80%;
+	margin: 5rem auto;
+}
+
 .mainBtn {
 	border: none;
 	background-color: var(--secondColor);

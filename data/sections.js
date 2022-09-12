@@ -1,0 +1,17 @@
+export const sections = [
+	'dialogues',
+	'culture',
+	'tranches-de-vie',
+	'folklore',
+	'lieux',
+	'bandes-annonces',
+	'extraits',
+	'eralash',
+	'musique',
+	'galileo',
+	'divers',
+	'dessins-animés',
+	'pocast',
+	'livres-audio',
+	'histoires-courtes',
+]

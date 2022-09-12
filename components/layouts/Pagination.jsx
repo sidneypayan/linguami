@@ -5,13 +5,13 @@ import styles from '../../styles/Pagination.module.css'
 const Pagination = () => {
 	return (
 		<div className={styles.container}>
-			<button className='btn'>
+			<button className={styles.arrowBtn}>
 				<FontAwesomeIcon icon={faArrowLeft} />
 			</button>
-			<button className='btn'>1</button>
-			<button className='btn'>2</button>
-			<button className='btn'>3</button>
-			<button className='btn'>
+			<button>1</button>
+			<button>2</button>
+			<button>3</button>
+			<button className={styles.arrowBtn}>
 				<FontAwesomeIcon icon={faArrowRight} />
 			</button>
 		</div>

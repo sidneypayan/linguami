@@ -1,0 +1,12 @@
+.form {
+	width: 30%;
+	margin: 0 auto;
+	display: grid;
+	gap: 1rem;
+}
+
+.form input {
+	padding-left: 0.5rem;
+	height: 45px;
+	width: 100%;
+}

@@ -54,11 +54,11 @@
 	position: absolute;
 	top: 1.25rem;
 	right: 3rem;
-	width: 25px;
+	/* width: 50px; */
 }
 .mobileIconClose {
 	/* display: none; */
-	width: 25px;
+	/* width: 50px; */
 	cursor: pointer;
 	position: absolute;
 	top: 3rem;

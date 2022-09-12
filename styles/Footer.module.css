@@ -1,15 +1,11 @@
 .container {
 	display: flex;
-	flex-wrap: wrap;
-	height: 10rem;
-	justify-content: center;
+	width: 80%;
+	margin: 0 auto;
+	padding: 3rem 0;
+	justify-content: space-between;
 	align-items: center;
-	background-color: var(--white);
-	padding: 0 5rem;
-}
-
-.socialsContainer {
-	flex: 1;
+	gap: 1rem;
 }
 
 .iconsContainer {
@@ -17,12 +13,31 @@
 	gap: 1rem;
 }
 
-.copyrightContainer {
-	flex: 1;
-}
-
 .linksContainer {
 	display: flex;
 	gap: 1rem;
-	flex: 1;
+}
+
+.linksContainer ul {
+	list-style-type: disc;
+}
+
+.linksContainer li {
+	text-decoration: underline;
+}
+
+.linksContainer li:hover {
+	color: var(--thirdColor);
+}
+
+@media (max-width: 1023px) {
+	.container {
+		flex-direction: column;
+	}
+
+	.linksContainer ul {
+		display: flex;
+		gap: 2rem;
+		list-style-type: none;
+	}
 }

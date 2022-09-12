@@ -1,0 +1,16 @@
+.container {
+	margin: 5rem auto;
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(5, 1fr);
+}
+
+.adminCard {
+	background-color: #fff;
+	padding: 1rem;
+	border-radius: 3px;
+}
+
+.btn {
+	margin-bottom: 2rem;
+}

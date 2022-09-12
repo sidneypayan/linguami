@@ -2,4 +2,12 @@
 	margin: 3rem 0;
 	display: flex;
 	justify-content: center;
+	gap: 1rem;
+}
+
+.container button {
+	border: none;
+	color: var(--thirdColor);
+	cursor: pointer;
+	font-weight: 600;
 }
