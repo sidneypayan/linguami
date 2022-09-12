@@ -1,9 +1,5 @@
-import Image from 'next/image'
 import Head from 'next/head'
-import Hero from '../components/homepage/Hero'
-import Material from '../components/homepage/Material'
-import Teacher from '../components/homepage/Teacher'
-import Translate from '../components/homepage/Translate'
+import Homepage from '../components/homepage'
 
 export default function Home() {
 	return (
@@ -16,10 +12,7 @@ export default function Home() {
 				/>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<Hero />
-			<Material />
-			<Teacher />
-			<Translate />
+			<Homepage />
 		</div>
 	)
 }

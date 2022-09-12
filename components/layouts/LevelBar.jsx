@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import styles from '../styles/LevelBar.module.css'
+import styles from '../../styles/LevelBar.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
 

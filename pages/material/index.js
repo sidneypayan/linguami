@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ressources } from '../../data/ressources'
+import { materials } from '../../data/materials'
 import styles from '../../styles/Material.module.css'
 
 const Material = () => {
-	const items = ressources.map(ressource => {
-		for (const [key, value] of Object.entries(ressource)) {
+	const items = materials.map(material => {
+		for (const [key, value] of Object.entries(material)) {
 			return (
 				<>
 					<h3>{key}</h3>
@@ -13,13 +13,18 @@ const Material = () => {
 						{value.map((item, index) => {
 							return (
 								<div className={styles.material} key={index}>
-									<Image
-										src={`https://linguami.s3.eu-west-3.amazonaws.com/images${item.img}`}
-										alt={item.title}
-										width={155}
-										height={155}
-									/>
-									<h4 className={styles.materialTitle}>{item.title}</h4>
+									<Link href={`/material/${item.param}`}>
+										<Image
+											src={`https://linguami.s3.eu-west-3.amazonaws.com/images${item.img}`}
+											alt={item.title}
+											width={155}
+											height={155}
+										/>
+									</Link>
+									<Link href={`/material/${item.param}`}>
+										<h4 className={styles.materialTitle}>{item.title}</h4>
+									</Link>
+
 									<p>{item.text}</p>
 								</div>
 							)

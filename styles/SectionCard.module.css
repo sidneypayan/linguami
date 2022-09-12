@@ -1,4 +1,5 @@
 .container {
+	max-height: 125px;
 	background-color: #fff;
 	border-radius: 3px;
 	display: flex;
@@ -10,12 +11,6 @@
 	padding: 2rem;
 	flex: 2;
 }
-
-/* .infoContainer {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-} */
 
 .infoContainer span,
 .infoContainer svg {
@@ -36,12 +31,40 @@
 .img {
 	background-size: cover;
 	background-position: center;
-	width: 125px;
-	height: 125px;
+	min-width: 125px;
+	min-height: 125px;
 	border-top-left-radius: 5px;
 	border-bottom-left-radius: 5px;
 }
 
 .icon {
-	padding-right: 4rem;
+	padding-right: 2rem;
+}
+
+@media (max-width: 1023px) {
+	.container {
+		width: 70%;
+		margin: 0 auto;
+		margin-bottom: 2rem;
+	}
+}
+
+@media (max-width: 767px) {
+	.container {
+		width: 90%;
+	}
+}
+
+@media (max-width: 479px) {
+	.container {
+		width: 95%;
+	}
+
+	.textContainer {
+		padding: 1rem;
+	}
+
+	.icon {
+		padding-right: 1rem;
+	}
 }

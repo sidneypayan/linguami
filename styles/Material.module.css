@@ -14,6 +14,7 @@
 
 .material img {
 	border-radius: 3px;
+	min-width: 155px;
 }
 
 .materialTitle {
@@ -32,4 +33,27 @@
 	color: var(--thirdColor);
 	font-size: 1.75rem;
 	font-weight: 600;
+}
+
+@media (max-width: 767px) {
+	.materialContainer {
+		display: block;
+		text-align: center;
+	}
+
+	.material {
+		margin-bottom: 5rem;
+	}
+}
+
+@media (max-width: 1023px) {
+	.materialContainer {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 1199px) {
+	.container {
+		width: 90%;
+	}
 }

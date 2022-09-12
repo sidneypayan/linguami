@@ -1,14 +1,14 @@
 .container {
+	width: 70%;
 	display: flex;
-	height: 50vh;
-	padding: 0 10rem;
 	margin: 0 auto;
-	justify-content: space-around;
-	background-color: var(--white);
+	align-items: center;
+	justify-content: space-between;
+	padding: 6rem 0;
 }
 
-.titleContainer {
-	width: 50%;
+.textContainer {
+	width: 75%;
 }
 
 .title {
@@ -16,7 +16,7 @@
 	font-size: 3rem;
 	font-weight: 600;
 	line-height: 3.5rem;
-	padding-top: 2rem;
+	margin-bottom: 1.75rem;
 }
 
 .subtitle {
@@ -25,17 +25,31 @@
 	font-weight: 500;
 }
 
+.imgContainer {
+	align-self: end;
+}
+
 .img {
 	transform: scaleX(-1);
-	align-self: flex-end;
 }
 
 .btn {
+	display: block;
 	padding: 1rem 1.75rem;
-	background-color: var(--secondColor);
-	color: #fff;
 	margin: 0 auto;
 	margin-top: 3rem;
-	font-weight: 500;
-	border-radius: 3px;
+}
+
+@media (max-width: 1023px) {
+	.container {
+		width: 90%;
+		text-align: center;
+	}
+	.textContainer {
+		width: 100%;
+	}
+
+	.imgContainer {
+		display: none;
+	}
 }
