@@ -4,20 +4,20 @@ import styles from '../../styles/SectionCard.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 
-const SectionCard = ({ img }) => {
+const SectionCard = ({ material }) => {
 	return (
 		<div className={styles.container}>
 			<div
 				className={styles.img}
 				style={{
-					backgroundImage: `url(${img})`,
+					backgroundImage: `url(${process.env.IMG_URL}${material.img})`,
 				}}></div>
 			<div className={styles.textContainer}>
-				<h4 className={styles.title}>Ведьмы</h4>
+				<h4 className={styles.title}>{material.title}</h4>
 				<div className={styles.infoContainer}>
 					<div>
-						<span>bandes-annonces</span>
-						<span> intermédiaire</span>
+						<span>{material.section}</span>
+						<span> {material.level}</span>
 					</div>
 				</div>
 			</div>

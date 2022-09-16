@@ -15,9 +15,11 @@
 .material img {
 	border-radius: 3px;
 	min-width: 155px;
+	cursor: pointer;
 }
 
 .materialTitle {
+	cursor: pointer;
 	font-size: 1.35rem;
 	margin: 1rem 0;
 	font-weight: 500;

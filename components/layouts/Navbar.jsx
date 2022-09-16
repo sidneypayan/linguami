@@ -15,7 +15,7 @@ const Navbar = () => {
 						<Link href='/'>Accueil</Link>
 					</li>
 					<li onClick={() => setIsNavExpanded(false)}>
-						<Link href='/material'>Materiel</Link>
+						<Link href='/materials'>Materiel</Link>
 					</li>
 					<li onClick={() => setIsNavExpanded(false)}>
 						<Link href='/cours'>Cours</Link>

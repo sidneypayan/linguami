@@ -13,7 +13,7 @@ const Material = () => {
 						{value.map((item, index) => {
 							return (
 								<div className={styles.material} key={index}>
-									<Link href={`/material/${item.param}`}>
+									<Link href={`/materials/${item.param}`}>
 										<Image
 											src={`https://linguami.s3.eu-west-3.amazonaws.com/images${item.img}`}
 											alt={item.title}
