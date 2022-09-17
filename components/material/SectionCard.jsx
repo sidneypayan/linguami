@@ -7,11 +7,15 @@ import { faFilm } from '@fortawesome/free-solid-svg-icons'
 const SectionCard = ({ material }) => {
 	return (
 		<div className={styles.container}>
-			<div
-				className={styles.img}
-				style={{
-					backgroundImage: `url(${process.env.IMG_URL}${material.img})`,
-				}}></div>
+			<Link href={`/materials/${material.section}/${material.id}`}>
+				<a href=''>
+					<div
+						className={styles.img}
+						style={{
+							backgroundImage: `url(${process.env.IMG_URL}${material.img})`,
+						}}></div>
+				</a>
+			</Link>
 			<div className={styles.textContainer}>
 				<h4 className={styles.title}>{material.title}</h4>
 				<div className={styles.infoContainer}>
