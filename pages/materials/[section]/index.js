@@ -1,7 +1,3 @@
-// import styles from '../../styles/SectionPage.module.css'
-// import SectionCard from '../../../components/material/SectionCard'
-// import LevelBar from '../../../components/layouts/LevelBar'
-// import Pagination from '../../../components/layouts/Pagination'
 import styles from '../../../styles/SectionPage.module.css'
 import SectionCard from '../../../components/material/SectionCard'
 import LevelBar from '../../../components/layouts/LevelBar'
@@ -9,12 +5,12 @@ import Pagination from '../../../components/layouts/Pagination'
 
 import supabase from '../../../utils/supabase'
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async ({ params }) => {
 	let { data: materials, error } = await supabase
 		.from('materials')
 		.select('*')
 		.eq('lang', 'ru')
-		.eq('section', context.params.section)
+		.eq('section', params.section)
 
 	if (error) {
 		throw new Error(error)

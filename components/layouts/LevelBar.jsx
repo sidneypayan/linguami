@@ -27,7 +27,7 @@ const LevelBar = () => {
 			<div className={styles.tooltip}>
 				<Link href="{{route('materials.section', $section)}}">
 					<p className={styles.icon}>
-						<FontAwesomeIcon icon={faArrowRotateLeft} size='l' />
+						<FontAwesomeIcon icon={faArrowRotateLeft} size='lg' />
 					</p>
 				</Link>
 				<span className={styles.tooltiptext}>Montrer tout</span>
