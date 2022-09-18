@@ -12,8 +12,6 @@ const Material = ({ material, audio, img }) => {
 	const router = useRouter()
 	const [showAccents, setShowAccents] = useState(false)
 
-	console.log(material.video)
-
 	return (
 		<div className={styles.container}>
 			<div className={styles.leftContainer}>
@@ -26,7 +24,7 @@ const Material = ({ material, audio, img }) => {
 
 				<h1 className={`${styles.title} headline`}>{material.title}</h1>
 
-				<div className='singleMaterialContainer text-trans'>
+				<div>
 					{/* <Image src="" alt=""></Image> */}
 					{/* DISPLAY IMAGE IF SECTION == LIEUX */}
 					{material.section === 'place' && (
