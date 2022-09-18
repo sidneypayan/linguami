@@ -136,8 +136,8 @@ body {
 	font-family: 'Montserrat', sans-serif;
 	/* background-color: #f4f4f4; */
 	background-color: var(--darkWhite);
-	color: var(--firstTextColor);
-	line-height: 1.35rem;
+	color: var(--secondColor);
+	line-height: 1.5rem;
 }
 
 a {
@@ -175,7 +175,7 @@ img {
 
 .mainBtn {
 	border: none;
-	background-color: var(--secondColor);
+	background-color: var(--firstColor);
 	padding: 1rem 1.75rem;
 	color: #fff;
 	font-weight: 500;

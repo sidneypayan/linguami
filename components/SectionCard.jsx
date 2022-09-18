@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import styles from '../../styles/SectionCard.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
+import styles from '../styles/sections/SectionCard.module.css'
 
-const SectionCard = ({ material }) => {
+const SectionCard = ({ material, img }) => {
 	return (
 		<div className={styles.container}>
 			<Link href={`/materials/${material.section}/${material.id}`}>
@@ -12,12 +12,16 @@ const SectionCard = ({ material }) => {
 					<div
 						className={styles.img}
 						style={{
-							backgroundImage: `url(${process.env.IMG_URL}${material.img})`,
+							backgroundImage: `url(${img}${material.img})`,
 						}}></div>
 				</a>
 			</Link>
 			<div className={styles.textContainer}>
-				<h4 className={styles.title}>{material.title}</h4>
+				<Link href={`/materials/${material.section}/${material.id}`}>
+					<a href=''>
+						<h4 className={styles.title}>{material.title}</h4>
+					</a>
+				</Link>
 				<div className={styles.infoContainer}>
 					<div>
 						<span>{material.section}</span>

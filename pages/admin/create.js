@@ -151,20 +151,6 @@ const Create = () => {
 						placeholder='Content accents'
 						setOptions={SunEditorOptions}
 					/>
-					{/* <textarea
-						onChange={e => handleChange(e)}
-						value={formData.text}
-						placeholder='Texte sans accents'
-						id='text'
-						name='text'
-					/>
-					<textarea
-						onChange={e => handleChange(e)}
-						value={formData.textwithaccents}
-						placeholder='Texte avec accents'
-						id='textwithaccents'
-						name='textwithaccents'
-					/> */}
 				</div>
 				<input type='submit' className='mainBtn' value='Envoyer' />
 			</form>

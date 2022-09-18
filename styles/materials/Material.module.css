@@ -1,0 +1,127 @@
+.container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.title {
+	font-weight: 500;
+	font-size: 2.5rem;
+	text-align: center;
+	margin-bottom: 5rem;
+}
+
+.arrowIcon {
+	cursor: pointer;
+}
+
+.leftContainer {
+	position: relative;
+	/* max-width: 1024px; */
+	width: 70%;
+	font-size: 1.02rem;
+	padding: 0 8rem;
+	position: relative;
+	/* min-height: calc(100vh - 335px); */
+	margin: 4rem auto;
+	line-height: 2;
+}
+
+.videoContainer {
+	position: sticky;
+	top: 0;
+}
+
+.videoContainer iframe {
+	max-width: 100%;
+	width: 560px;
+	height: 250px;
+}
+
+.rightContainer {
+	background-color: var(--white);
+	width: 30%;
+	padding: 2rem 2rem 0 2rem;
+}
+
+.rightContainer h3 {
+	text-align: center;
+	font-weight: 400;
+	margin: 0;
+}
+
+.wordsContainer {
+	color: #777;
+	font-weight: bold;
+	font-size: 15px;
+	margin: 1.5rem auto;
+}
+
+.wordsContainer h4 {
+	font-size: 1.25rem;
+	margin: 0;
+	padding: 0;
+}
+
+.wordsContainer li {
+	margin-top: 0.8rem;
+}
+
+.wordsContainer svg {
+	color: #337ab7;
+}
+
+.hr {
+	border: 0;
+	height: 0;
+	width: 50%;
+	border-top: 1px solid #3ca6a9;
+	margin: 0 auto;
+	margin-bottom: 2rem;
+}
+
+.showAccentsBtn {
+	padding: 0.5rem 0.75rem;
+	margin: 2rem 0;
+	font-size: 1rem;
+}
+
+.text {
+}
+
+.text-accents {
+}
+
+.checkLesson {
+	display: block;
+	margin: 4rem auto;
+	padding: 0.75rem 3rem;
+}
+
+.registerBtn {
+	margin: 2rem auto;
+	padding: 0.85rem 3.5rem;
+	border-radius: 0;
+	display: block;
+}
+
+.audioPlayer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	width: 100%;
+	left: 0;
+	bottom: -64px;
+	background-color: var(--firstColor);
+}
+
+.audioPlayer audio::-webkit-media-controls-play-button,
+.audioPlayer audio::-webkit-media-controls-panel {
+	background-color: var(--firstColor);
+	color: #fff;
+}
+
+.audioPlayer audio:focus {
+	border: none;
+}

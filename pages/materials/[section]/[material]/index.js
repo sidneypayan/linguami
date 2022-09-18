@@ -1,56 +1,69 @@
+import DOMPurify from 'isomorphic-dompurify'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import Image from 'next/image'
+import styles from '../../../../styles/materials/Material.module.css'
 import supabase from '../../../../utils/supabase'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-const Material = ({ material }) => {
+const Material = ({ material, audio, img }) => {
+	const router = useRouter()
+	const [showAccents, setShowAccents] = useState(false)
+
+	console.log(material.video)
+
 	return (
-		<div className='lesson'>
-			<div className='lesson__left-container'>
-				{/* PREVIOUS PAGE ARROW */}
+		<div className={styles.container}>
+			<div className={styles.leftContainer}>
+				<FontAwesomeIcon
+					onClick={() => router.back()}
+					className={styles.arrowIcon}
+					icon={faArrowLeft}
+					size='2xl'
+				/>
 
-				<a>
-					<i className='fas fa-long-arrow-alt-left pl-2'></i>
-				</a>
+				<h1 className={`${styles.title} headline`}>{material.title}</h1>
 
-				{/* MAIN TITLE */}
-				<h1 className='headline headline--centered headline--blue mt-1'>
-					{material.title}
-				</h1>
-
-				<div className='lesson__text-container text-trans'>
+				<div className='singleMaterialContainer text-trans'>
 					{/* <Image src="" alt=""></Image> */}
 					{/* DISPLAY IMAGE IF SECTION == LIEUX */}
-					{/* {material.section === 'place' && <Image src="" alt=""></Image><br><br></br>} */}
+					{material.section === 'place' && (
+						<Image
+							src={img + material.img}
+							alt={material.title}
+							width={1595}
+							height={638}
+						/>
+					)}
 
 					{/* DISPLAY VIDEO REGARDING THE SECTION */}
-					<div className='lesson__video-container'>
-						{material.section === 'trailer' ||
-							material.section === 'extract' ||
-							material.section === 'music' ||
-							material.section === 'galileo' ||
-							material.section === 'eralas' ||
-							material.section === 'cartoon' ||
-							material.section === 'diverse'}
-						<iframe
-							src={material.video}
-							frameborder='0'
-							allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
-							allowfullscreen></iframe>
-						{material.section === 'extract' && (
+
+					{(material.section === 'trailer' ||
+						material.section === 'eralash' ||
+						material.section === 'music' ||
+						material.section === 'galileo' ||
+						material.section === 'extract' ||
+						material.section === 'cartoon') && (
+						<div className={styles.videoContainer}>
 							<iframe
 								src={material.video}
-								frameborder='0'
+								frameBorder='0'
+								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
+								allowFullscreen></iframe>
+						</div>
+					)}
+
+					{/* {material.section === 'extract' && (
+						<div className={styles.videoContainer}>
+							<iframe
+								src={material.video}
+								frameBorder='0'
 								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
 								allowfullscreen></iframe>
-						)}
-					</div>
-
-					{/* BUTTON ACCENTS */}
-					<button
-						type='button'
-						id='show-accents'
-						className='btn btn--primary btn--small'>
-						Montrer les accents
-					</button>
+						</div>
+					)} */}
 
 					{/* TRANSLATION MODULE */}
 					{/* <div id='transPopup' className='trans-popup'>
@@ -113,18 +126,36 @@ const Material = ({ material }) => {
 					</div> */}
 					{/* END TRANSLATION MODULE */}
 
+					{/* BUTTON ACCENTS */}
+					<button
+						onClick={() => setShowAccents(!showAccents)}
+						type='button'
+						id='show-accents'
+						className={`${styles.showAccentsBtn} mainBtn`}>
+						Montrer les accents
+					</button>
+
 					{/* POST CONTENT */}
-					<p className='lesson__text' id='accents-off'>
-						{material.content}
-					</p>
-					<p className='lesson__text' id='accents-on'>
-						{material.content_accents}
-					</p>
+
+					{showAccents ? (
+						<p
+							className='text-accents'
+							dangerouslySetInnerHTML={{
+								__html: DOMPurify.sanitize(material.content_accents),
+							}}></p>
+					) : (
+						<p
+							className='text'
+							dangerouslySetInnerHTML={{
+								__html: DOMPurify.sanitize(material.content),
+							}}></p>
+					)}
+
 					{/* END POST CONTENT */}
 					<button
 						type='button'
 						id='checkMaterial'
-						className='btn--lesson btn--primary t-center my-3'>
+						className={`${styles.checkLesson} mainBtn`}>
 						J'ai terminé cette leçon <i className='fas fa-check'></i>
 					</button>
 				</div>
@@ -132,48 +163,54 @@ const Material = ({ material }) => {
 				{/* DISPLAY AUDIO REGARDING THE SECTION */}
 
 				{/* AUDIO PLAYER */}
-				<div className='audio-player'>
-					<audio controls='controls' src=''></audio>
-					<div className='audio-player__speed-icons'>
-						<a className='audio-player__turtle-icon'>
-							{/* <Image src="" alt=""></Image> */}
-						</a>
-						<a className='audio-player__hare-icon'>
-							{/* <Image src="" alt=""></Image> */}
-						</a>
+				{(material.section === 'dialogue' ||
+					material.section === 'book-chapter' ||
+					material.section === 'podcast' ||
+					material.section === 'short-story' ||
+					material.section === 'slice-of-life' ||
+					material.section === 'culture' ||
+					material.section === 'place') && (
+					<div className={styles.audioPlayer}>
+						<audio controls='controls' src={audio + material.audio}></audio>
+						<div className='audio-player__speed-icons'>
+							<a className='audio-player__turtle-icon'>
+								{/* <Image src="" alt=""></Image> */}
+							</a>
+							<a className='audio-player__hare-icon'>
+								{/* <Image src="" alt=""></Image> */}
+							</a>
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 
-			<div className='lesson__right-container'>
-				<p className='headline headline--small headline--blue headline--centered'>
-					Mots
-				</p>
-				<hr className='lesson__hr' />
+			<div className={styles.rightContainer}>
+				<h3 className='headline'>Mots</h3>
+				<hr className={styles.hr} />
 
-				<div className='lesson__words-container'>
+				<div className={styles.wordsContainer}>
 					{/* DISPLAY IF USER NOT REGISTERED */}
-					<p className='headline--very-small headline--blue'>
-						Créez un compte pour pouvoir :
-					</p>
+					<h4 className='headline'>Créez un compte pour pouvoir :</h4>
 					<ul className='lesson__words-list'>
 						<li>
-							<i className='far fa-thumbs-up'></i> Traduire n'importe quel mot
+							<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe quel mot
 							du texte en un clique
 						</li>
 						<li>
-							<i className='far fa-thumbs-up '></i> Conserver les mots traduits
+							<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots traduits
 							sur cette même page
 						</li>
 						<li>
-							<i className='far fa-thumbs-up '></i> Sauvegarder toutes vos
+							<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
 							traductions dans un dictionnaire personnel lié à votre compte
 						</li>
 						<li>
-							<i className='far fa-thumbs-up '></i> Soutenir notre travail
+							<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
 						</li>
 					</ul>
-					<a className='btn--words btn--secondary btn--shadow'>S'enregistrer</a>
+					<button type='button' className={`${styles.registerBtn} mainBtn`}>
+						S'enregistrer
+					</button>
 
 					{/* DISPLAY WORDS IF USER IS REGISTERED */}
 
@@ -205,6 +242,8 @@ export const getServerSideProps = async ({ params }) => {
 	return {
 		props: {
 			material,
+			audio: process.env.AUDIO_URL,
+			img: process.env.IMG_URL,
 		},
 	}
 }

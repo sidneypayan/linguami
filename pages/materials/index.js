@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { materials } from '../../data/materials'
-import styles from '../../styles/Material.module.css'
+import styles from '../../styles/materials/Materials.module.css'
 
 const Material = () => {
 	const items = materials.map(material => {
@@ -9,10 +9,10 @@ const Material = () => {
 			return (
 				<>
 					<h3>{key}</h3>
-					<div className={styles.materialContainer}>
+					<div className={styles.materialsContainer}>
 						{value.map((item, index) => {
 							return (
-								<div className={styles.material} key={index}>
+								<div className={styles.materials} key={index}>
 									<Link href={`/materials/${item.param}`}>
 										<Image
 											src={`https://linguami.s3.eu-west-3.amazonaws.com/images${item.img}`}
@@ -21,8 +21,8 @@ const Material = () => {
 											height={155}
 										/>
 									</Link>
-									<Link href={`/material/${item.param}`}>
-										<h4 className={styles.materialTitle}>{item.title}</h4>
+									<Link href={`/materials/${item.param}`}>
+										<h4 className={styles.materialsTitle}>{item.title}</h4>
 									</Link>
 
 									<p>{item.text}</p>

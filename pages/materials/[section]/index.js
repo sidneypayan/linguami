@@ -1,7 +1,7 @@
-import styles from '../../../styles/SectionPage.module.css'
-import SectionCard from '../../../components/material/SectionCard'
+import SectionCard from '../../../components/SectionCard'
 import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
+import styles from '../../../styles/sections/Sections.module.css'
 
 import supabase from '../../../utils/supabase'
 
@@ -18,17 +18,18 @@ export const getServerSideProps = async ({ params }) => {
 	return {
 		props: {
 			materials,
+			img: process.env.IMG_URL,
 		},
 	}
 }
 
-const Section = ({ materials }) => {
+const Section = ({ materials, img }) => {
 	return (
 		<>
 			<LevelBar />
 			<div className={styles.container}>
 				{materials.map(material => (
-					<SectionCard key={material.id} material={material} />
+					<SectionCard key={material.id} material={material} img={img} />
 				))}
 			</div>
 			<Pagination />
