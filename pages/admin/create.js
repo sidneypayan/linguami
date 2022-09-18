@@ -2,6 +2,27 @@ import axios from 'axios'
 import { useState } from 'react'
 import { sections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
+import dynamic from 'next/dynamic'
+import 'suneditor/dist/css/suneditor.min.css' // Import Sun Editor's CSS File
+
+const SunEditor = dynamic(() => import('suneditor-react'), {
+	ssr: false,
+})
+
+const SunEditorOptions = {
+	buttonList: [
+		['undo'],
+		['redo'],
+		['bold', 'underline', 'italic'],
+		['outdent', 'indent'],
+		['formatBlock', 'align'],
+		['fullScreen'],
+		['blockquote'],
+		['list'],
+		['image', 'link', 'video', 'audio'],
+		['preview'],
+	],
+}
 
 const Create = () => {
 	const [formData, setFormData] = useState({
@@ -120,7 +141,17 @@ const Create = () => {
 					/>
 				</div>
 				<div className={styles.text}>
-					<textarea
+					<SunEditor
+						height='350px'
+						placeholder='Content'
+						setOptions={SunEditorOptions}
+					/>
+					<SunEditor
+						height='350px'
+						placeholder='Content accents'
+						setOptions={SunEditorOptions}
+					/>
+					{/* <textarea
 						onChange={e => handleChange(e)}
 						value={formData.text}
 						placeholder='Texte sans accents'
@@ -133,7 +164,7 @@ const Create = () => {
 						placeholder='Texte avec accents'
 						id='textwithaccents'
 						name='textwithaccents'
-					/>
+					/> */}
 				</div>
 				<input type='submit' className='mainBtn' value='Envoyer' />
 			</form>

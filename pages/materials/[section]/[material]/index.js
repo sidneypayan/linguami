@@ -23,11 +23,25 @@ const Material = ({ material }) => {
 
 					{/* DISPLAY VIDEO REGARDING THE SECTION */}
 					<div className='lesson__video-container'>
-						{/* {material.section === 'trailer' || material.section === 'extract' || material.section === 'music' || material.section === 'galileo' || material.section === 'eralas' || material.section === 'cartoon' || material.section === 'diverse'}
-          <iframe src="{{ $materials->video }}" frameborder="0"
-            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          {material.section === 'extract' &&           <iframe src="{{ $materials->video }}" frameborder="0"
-          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>} */}
+						{material.section === 'trailer' ||
+							material.section === 'extract' ||
+							material.section === 'music' ||
+							material.section === 'galileo' ||
+							material.section === 'eralas' ||
+							material.section === 'cartoon' ||
+							material.section === 'diverse'}
+						<iframe
+							src={material.video}
+							frameborder='0'
+							allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
+							allowfullscreen></iframe>
+						{material.section === 'extract' && (
+							<iframe
+								src={material.video}
+								frameborder='0'
+								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
+								allowfullscreen></iframe>
+						)}
 					</div>
 
 					{/* BUTTON ACCENTS */}
@@ -39,7 +53,7 @@ const Material = ({ material }) => {
 					</button>
 
 					{/* TRANSLATION MODULE */}
-					<div id='transPopup' className='trans-popup'>
+					{/* <div id='transPopup' className='trans-popup'>
 						<button
 							type='button'
 							id='transPopupTextForm'
@@ -64,8 +78,7 @@ const Material = ({ material }) => {
 							<button
 								type='button'
 								id='transPopupBtnTextForm'
-								className='trans-popup__btn-text-form'
-								className=''>
+								className='trans-popup__btn-text-form'>
 								Ajouter
 							</button>
 						</div>
@@ -93,12 +106,11 @@ const Material = ({ material }) => {
 							/>
 							<button
 								id='transPopupBtnBaseForm'
-								className='trans-popup__btn-base-form'
-								className=''>
+								className='trans-popup__btn-base-form'>
 								Ajouter
 							</button>
 						</div>
-					</div>
+					</div> */}
 					{/* END TRANSLATION MODULE */}
 
 					{/* POST CONTENT */}
@@ -106,10 +118,11 @@ const Material = ({ material }) => {
 						{material.content}
 					</p>
 					<p className='lesson__text' id='accents-on'>
-						{material.content_accent}
+						{material.content_accents}
 					</p>
 					{/* END POST CONTENT */}
 					<button
+						type='button'
 						id='checkMaterial'
 						className='btn--lesson btn--primary t-center my-3'>
 						J'ai terminé cette leçon <i className='fas fa-check'></i>
