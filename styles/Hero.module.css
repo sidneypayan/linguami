@@ -12,17 +12,18 @@
 }
 
 .title {
-	color: var(--thirdColor);
 	font-size: 3rem;
 	font-weight: 600;
 	line-height: 3.5rem;
 	margin-bottom: 1.75rem;
+	color: var(--primaryBtnColor);
 }
 
 .subtitle {
 	font-size: 1.25rem;
 	line-height: 2rem;
 	font-weight: 500;
+	color: var(--navColor);
 }
 
 .imgContainer {
@@ -38,6 +39,11 @@
 	padding: 1rem 1.75rem;
 	margin: 0 auto;
 	margin-top: 3rem;
+}
+
+.btn:hover {
+	box-shadow: 0px 2px 4px #145e70, 0px 2px 4px #145e70;
+	transition: 0.3s;
 }
 
 @media (max-width: 1023px) {

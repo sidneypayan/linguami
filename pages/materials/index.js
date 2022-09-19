@@ -30,7 +30,8 @@ const Material = () => {
 							)
 						})}
 					</div>
-					<hr className='hr' />
+
+					{/* <hr className='hr' /> */}
 				</>
 			)
 		}

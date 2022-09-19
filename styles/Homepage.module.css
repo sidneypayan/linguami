@@ -7,7 +7,6 @@
 .ressourceContainer {
 	display: flex;
 	margin: 4rem 0;
-	color: var(--secondColor);
 	justify-content: space-between;
 }
 
@@ -19,16 +18,25 @@
 	margin-top: 1.5rem;
 }
 
+.ressourceItem p,
+.ctaContainer p {
+	color: var(--navColor);
+}
+
 .ctaContainer {
 	width: 100%;
 	display: flex;
 	margin: 4rem auto;
 	justify-content: space-around;
-	color: var(--secondColor);
 }
 
 .ctaContainerText {
 	width: 50%;
+}
+
+.ctaContainer button:hover {
+	box-shadow: 0px 2px 4px #145e70, 0px 2px 4px #145e70;
+	transition: 0.3s;
 }
 
 @media (max-width: 767px) {
