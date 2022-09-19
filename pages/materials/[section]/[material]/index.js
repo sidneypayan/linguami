@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import Image from 'next/image'
+import Link from 'next/link'
 import styles from '../../../../styles/materials/Material.module.css'
 import supabase from '../../../../utils/supabase'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
@@ -217,9 +218,13 @@ const Material = ({ material, audio, img }) => {
 									<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
 								</li>
 							</ul>
-							<button type='button' className={`${styles.registerBtn} mainBtn`}>
-								S'enregistrer
-							</button>
+							<Link href='/register'>
+								<button
+									type='button'
+									className={`${styles.registerBtn} mainBtn`}>
+									S'enregistrer
+								</button>
+							</Link>
 						</>
 					)}
 				</div>

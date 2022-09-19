@@ -48,7 +48,7 @@ const Login = () => {
 
 	useEffect(() => {
 		if (userData) {
-			router.push('/')
+			router.back()
 		}
 	}, [userData])
 

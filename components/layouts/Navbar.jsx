@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +10,17 @@ const Navbar = () => {
 	const dispatch = useDispatch()
 	const { userData } = useSelector(store => store.user)
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
+	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+
+	// Vérifier si l'utilisateur est connecté
+	// useEffect prevent hydration issue
+	useEffect(() => {
+		if (userData) {
+			setIsUserLoggedIn(true)
+		} else {
+			setIsUserLoggedIn(false)
+		}
+	}, [userData])
 
 	return (
 		<nav className={styles.nav}>
@@ -29,9 +40,9 @@ const Navbar = () => {
 					</li>
 				</ul>
 
-				{userData ? (
+				{isUserLoggedIn ? (
 					<div className={styles.userContainer}>
-						<button>{userData.email}</button>
+						<button>{userData?.email}</button>
 						<button
 							onClick={() => dispatch(logoutUser('Déconnexion en cours...'))}>
 							Log out

@@ -4,14 +4,13 @@ import supabase from '../../utils/supabase'
 
 const initialState = {
 	userData: supabase.auth.user() || null,
+	isUserRegistered: false,
 }
-
-console.log(initialState.userData)
 
 export const registerUser = createAsyncThunk(
 	'user/registerUser',
 	async (data, thunkAPI) => {
-		const { email, password } = data
+		const { name, email, password } = data
 		let { user, error } = await supabase.auth.signUp({ email, password })
 
 		if (error) {
@@ -57,11 +56,11 @@ const userSlice = createSlice({
 		[registerUser.pending]: state => {},
 		[registerUser.fulfilled]: (state, { payload }) => {
 			const { identities } = payload
-			state.userData = payload
 			if (identities.length) {
 				toast.success(
 					'Vous êtes bien enregistré, veuillez vérifier votre email'
 				)
+				state.isUserRegistered = true
 			} else {
 				toast.error('Un utilisateur est déjà enregistré avec cet email')
 			}

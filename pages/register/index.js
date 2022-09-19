@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,6 +14,7 @@ const initialState = {
 }
 
 const Register = () => {
+	const { isUserRegistered } = useSelector(store => store.user)
 	const dispatch = useDispatch()
 	const router = useRouter()
 
@@ -45,12 +46,6 @@ const Register = () => {
 		}
 
 		dispatch(registerUser(values))
-
-		console.log(values)
-
-		// setTimeout(() => {
-		// 	router.push('/')
-		// }, 5000)
 	}
 
 	const handleChange = e => {
@@ -64,6 +59,12 @@ const Register = () => {
 			}
 		})
 	}
+
+	useEffect(() => {
+		if (isUserRegistered) {
+			router.back()
+		}
+	}, [isUserRegistered])
 
 	return (
 		<div className={styles.wrapper}>
