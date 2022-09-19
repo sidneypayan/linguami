@@ -9,6 +9,7 @@ import supabase from '../../../../utils/supabase'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 const Material = ({ material, audio, img }) => {
+	const user = supabase.auth.user()
 	const router = useRouter()
 	const [showAccents, setShowAccents] = useState(false)
 
@@ -183,42 +184,44 @@ const Material = ({ material, audio, img }) => {
 			</div>
 
 			<div className={styles.rightContainer}>
-				<h3 className='headline'>Mots</h3>
-				<hr className={styles.hr} />
-
 				<div className={styles.wordsContainer}>
-					{/* DISPLAY IF USER NOT REGISTERED */}
-					<h4 className='headline'>Créez un compte pour pouvoir :</h4>
-					<ul className='lesson__words-list'>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe quel mot
-							du texte en un clique
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots traduits
-							sur cette même page
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
-							traductions dans un dictionnaire personnel lié à votre compte
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
-						</li>
-					</ul>
-					<button type='button' className={`${styles.registerBtn} mainBtn`}>
-						S'enregistrer
-					</button>
-
-					{/* DISPLAY WORDS IF USER IS REGISTERED */}
-
-					<ul className='lesson__words-list'>
-						<li data-id='{{ $userWord->id }}'>
-							<span className='lesson__original-word'>russian word</span> -{' '}
-							<span className='lesson__translated-word'>french word</span>
-							<i className='far fa-trash-alt lesson__trash'></i>
-						</li>
-					</ul>
+					{user ? (
+						<>
+							{' '}
+							<h3 className='headline'>Mots</h3> <hr className={styles.hr} />
+							<ul className='lesson__words-list'>
+								<li data-id='{{ $userWord->id }}'>
+									<span className='lesson__original-word'>russian word</span> -{' '}
+									<span className='lesson__translated-word'>french word</span>
+									<i className='far fa-trash-alt lesson__trash'></i>
+								</li>
+							</ul>
+						</>
+					) : (
+						<>
+							<h4 className='headline'>Créez un compte pour pouvoir :</h4>
+							<ul className='lesson__words-list'>
+								<li>
+									<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe quel
+									mot du texte en un clique
+								</li>
+								<li>
+									<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots
+									traduits sur cette même page
+								</li>
+								<li>
+									<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
+									traductions dans un dictionnaire personnel lié à votre compte
+								</li>
+								<li>
+									<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
+								</li>
+							</ul>
+							<button type='button' className={`${styles.registerBtn} mainBtn`}>
+								S'enregistrer
+							</button>
+						</>
+					)}
 				</div>
 			</div>
 		</div>

@@ -7,7 +7,7 @@ import styles from '../styles/sections/SectionCard.module.css'
 const SectionCard = ({ material, img }) => {
 	return (
 		<div className={styles.container}>
-			<Link href={`/materials/${material.section}/${material.id}`}>
+			<Link href={`/materials/${material.section}/${material.id}`} passHref>
 				<a href=''>
 					<div
 						className={styles.img}
@@ -17,7 +17,7 @@ const SectionCard = ({ material, img }) => {
 				</a>
 			</Link>
 			<div className={styles.textContainer}>
-				<Link href={`/materials/${material.section}/${material.id}`}>
+				<Link href={`/materials/${material.section}/${material.id}`} passHref>
 					<a href=''>
 						<h4 className={styles.title}>{material.title}</h4>
 					</a>

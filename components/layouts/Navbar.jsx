@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { logoutUser } from '../../features/user/userSlice'
 import Link from 'next/link'
 import styles from '../../styles/Navbar.module.css'
 
 const Navbar = () => {
+	const dispatch = useDispatch()
+	const { userData } = useSelector(store => store.user)
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
 
 	return (
@@ -25,15 +29,30 @@ const Navbar = () => {
 					</li>
 				</ul>
 
-				<div className={styles.btnContainer}>
-					<button className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
-						Se connecter
-					</button>
-					<button
-						className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
-						S'inscrire
-					</button>
-				</div>
+				{userData ? (
+					<div className={styles.userContainer}>
+						<button>{userData.email}</button>
+						<button
+							onClick={() => dispatch(logoutUser('Déconnexion en cours...'))}>
+							Log out
+						</button>
+					</div>
+				) : (
+					<div className={styles.btnContainer}>
+						<Link href='/login'>
+							<button className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
+								Se connecter
+							</button>
+						</Link>
+
+						<Link href='/register'>
+							<button
+								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
+								S'inscrire
+							</button>
+						</Link>
+					</div>
+				)}
 
 				{isNavExpanded && (
 					<FontAwesomeIcon
