@@ -25,7 +25,7 @@ const UserProvider = ({ children }) => {
 			return toast.error(error)
 		}
 
-		console.log(user)
+		console.log(name)
 
 		setUser(user)
 		toast.success(
@@ -65,21 +65,31 @@ const UserProvider = ({ children }) => {
 		toast.success('Déconnexion en cours...')
 	}
 
-	const getUserProfile = async () => {
-		if (user) {
-			const { data: profile } = await supabase
-				.from('profiles')
-				.select('*')
-				.eq('id', user?.id)
-				.single()
-
-			setUserProfile(profile)
-		}
-	}
-
 	useEffect(() => {
+		const getUserProfile = async () => {
+			const sessionUser = supabase.auth.user()
+
+			if (sessionUser) {
+				const { data: profile } = await supabase
+					.from('profiles')
+					.select('*')
+					.eq('id', user?.id)
+					.single()
+
+				setUserProfile({ ...sessionUser, ...profile })
+
+				setIsLoading(false)
+			}
+		}
+
 		getUserProfile()
+
+		supabase.auth.onAuthStateChange(() => {
+			getUserProfile()
+		})
 	}, [])
+
+	console.log(userProfile)
 
 	useEffect(() => {
 		axios.post('/api/auth', {
