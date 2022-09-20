@@ -1,26 +1,13 @@
-import { useState, useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { logoutUser } from '../../features/user/userSlice'
 import Link from 'next/link'
 import styles from '../../styles/Navbar.module.css'
+import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useUserContext } from '../../context/user.js'
 
 const Navbar = () => {
-	const dispatch = useDispatch()
-	const { userData } = useSelector(store => store.user)
+	const { user, isUserLoggedIn, logout } = useUserContext()
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
-	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
-
-	// Vérifier si l'utilisateur est connecté
-	// useEffect prevent hydration issue
-	useEffect(() => {
-		if (userData) {
-			setIsUserLoggedIn(true)
-		} else {
-			setIsUserLoggedIn(false)
-		}
-	}, [userData])
 
 	return (
 		<nav className={styles.nav}>
@@ -42,22 +29,22 @@ const Navbar = () => {
 
 				{isUserLoggedIn ? (
 					<div className={styles.userContainer}>
-						<button>{userData?.email}</button>
-						<button
-							onClick={() => dispatch(logoutUser('Déconnexion en cours...'))}>
-							Log out
-						</button>
+						<button>{user?.email}</button>
+						<button onClick={() => logout()}>Log out</button>
 					</div>
 				) : (
 					<div className={styles.btnContainer}>
 						<Link href='/login'>
-							<button className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
+							<button
+								onClick={() => setIsNavExpanded(false)}
+								className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
 								Se connecter
 							</button>
 						</Link>
 
 						<Link href='/register'>
 							<button
+								onClick={() => setIsNavExpanded(false)}
 								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
 								S'inscrire
 							</button>

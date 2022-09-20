@@ -23,7 +23,7 @@
 .formContainer input {
 	width: 100%;
 	border: none;
-	background-color: var(--darkWhite);
+	background-color: var(--backgroundColor);
 	height: 40px;
 	margin-bottom: 0.5rem;
 	padding: 1rem;

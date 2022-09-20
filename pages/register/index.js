@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from '../../styles/Login.module.css'
-import { registerUser } from '../../features/user/userSlice'
+import { useUserContext } from '../../context/user'
 
 const initialState = {
 	name: '',
@@ -14,16 +12,11 @@ const initialState = {
 }
 
 const Register = () => {
-	const { isUserRegistered } = useSelector(store => store.user)
-	const dispatch = useDispatch()
-	const router = useRouter()
-
 	const [values, setValues] = useState(initialState)
-	const [error, setError] = useState('')
+	const { register } = useUserContext()
 
 	const handleSubmit = e => {
 		e.preventDefault()
-		setError('')
 
 		if (!values.name) {
 			toast.error('Veuillez saisir votre nom')
@@ -45,7 +38,7 @@ const Register = () => {
 			return
 		}
 
-		dispatch(registerUser(values))
+		register(values)
 	}
 
 	const handleChange = e => {
@@ -60,12 +53,6 @@ const Register = () => {
 		})
 	}
 
-	useEffect(() => {
-		if (isUserRegistered) {
-			router.back()
-		}
-	}, [isUserRegistered])
-
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.container}>
@@ -79,7 +66,6 @@ const Register = () => {
 
 				<form onSubmit={handleSubmit} className={styles.formContainer}>
 					<h2>Register</h2>
-					<p className={styles.error}>{error}</p>
 					<div>
 						<input
 							onChange={handleChange}

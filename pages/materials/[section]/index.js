@@ -1,9 +1,8 @@
+import { supabase } from '../../../lib/supabase'
 import SectionCard from '../../../components/SectionCard'
 import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
 import styles from '../../../styles/sections/Sections.module.css'
-
-import supabase from '../../../utils/supabase'
 
 export const getServerSideProps = async ({ params }) => {
 	let { data: materials, error } = await supabase

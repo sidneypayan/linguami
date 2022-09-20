@@ -3,17 +3,16 @@ import '../styles/globals.css'
 import Layout from '../components/Layout'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { store } from '../features/store'
-import { Provider } from 'react-redux'
+import UserProvider from '../context/user.js'
 
 function MyApp({ Component, pageProps }) {
 	return (
-		<Provider store={store}>
+		<UserProvider>
 			<Layout>
 				<Component {...pageProps} />
 			</Layout>
 			<ToastContainer position='top-center' />
-		</Provider>
+		</UserProvider>
 	)
 }
 

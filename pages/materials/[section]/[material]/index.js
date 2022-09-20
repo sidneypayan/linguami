@@ -1,16 +1,20 @@
+import { supabase } from '../../../../lib/supabase'
+import styles from '../../../../styles/materials/Material.module.css'
+import Image from 'next/image'
+import Link from 'next/link'
 import DOMPurify from 'isomorphic-dompurify'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
-import Image from 'next/image'
-import Link from 'next/link'
-import styles from '../../../../styles/materials/Material.module.css'
-import supabase from '../../../../utils/supabase'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { useUserContext } from '../../../../context/user'
 
 const Material = ({ material, audio, img }) => {
-	const user = supabase.auth.user()
+	const { user, isUserLoggedIn } = useUserContext()
 	const router = useRouter()
 	const [showAccents, setShowAccents] = useState(false)
 
@@ -186,9 +190,8 @@ const Material = ({ material, audio, img }) => {
 
 			<div className={styles.rightContainer}>
 				<div className={styles.wordsContainer}>
-					{user ? (
+					{isUserLoggedIn ? (
 						<>
-							{' '}
 							<h3 className='headline'>Mots</h3> <hr className={styles.hr} />
 							<ul className='lesson__words-list'>
 								<li data-id='{{ $userWord->id }}'>

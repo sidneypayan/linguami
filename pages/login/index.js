@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from '../../styles/Login.module.css'
-import { loginUser } from '../../features/user/userSlice'
-import { useRouter } from 'next/router'
+import { useUserContext } from '../../context/user'
 
 const initialState = {
 	email: '',
@@ -13,11 +11,7 @@ const initialState = {
 }
 
 const Login = () => {
-	const router = useRouter()
-	const dispatch = useDispatch()
-	const { userData } = useSelector(store => store.user)
-
-	console.log(userData)
+	const { login } = useUserContext()
 
 	const [values, setValues] = useState(initialState)
 	const [error, setError] = useState('')
@@ -31,7 +25,7 @@ const Login = () => {
 			return
 		}
 
-		dispatch(loginUser(values))
+		login(values)
 	}
 
 	const handleChange = e => {
@@ -45,12 +39,6 @@ const Login = () => {
 			}
 		})
 	}
-
-	useEffect(() => {
-		if (userData) {
-			router.back()
-		}
-	}, [userData])
 
 	return (
 		<div className={styles.wrapper}>
