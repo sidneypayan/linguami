@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
 
-const SectionCard = ({ material, img }) => {
+const SectionCard = ({ material }) => {
 	return (
 		<div className={styles.container}>
 			<Link href={`/materials/${material.section}/${material.id}`} passHref>
@@ -12,7 +12,7 @@ const SectionCard = ({ material, img }) => {
 					<div
 						className={styles.img}
 						style={{
-							backgroundImage: `url(${img}${material.img})`,
+							backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${material.img})`,
 						}}></div>
 				</a>
 			</Link>

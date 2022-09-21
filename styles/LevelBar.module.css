@@ -14,15 +14,14 @@
 }
 
 .icon {
-	background-color: var(--firstColor);
+	background-color: var(--navColor);
 	font-size: 1rem;
 	margin-left: 0.5rem;
-	color: var(--secondColor);
+	color: var(--white);
 	cursor: pointer;
 	padding: 0.5rem;
 	border-radius: 5px;
 	font-size: 0.875rem;
-	color: #eee;
 }
 
 .tooltip {
