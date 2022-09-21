@@ -36,7 +36,8 @@
 }
 
 .ctaContainer button:hover {
-	box-shadow: 0px 2px 4px #145e70, 0px 2px 4px #145e70;
+	box-shadow: 0px 2px 4px var(--primaryBtnColor),
+		0px 2px 4px var(--primaryBtnColor);
 	transition: 0.3s;
 }
 

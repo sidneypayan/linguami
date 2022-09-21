@@ -9,7 +9,6 @@
 	grid-template-columns: repeat(4, 1fr);
 	gap: 4rem;
 	margin: 3rem 0;
-	color: var(--thirdTextColor);
 }
 
 .materials img {
@@ -19,7 +18,7 @@
 }
 
 .materials p {
-	color: #7f8c8d;
+	color: var(--navColor);
 }
 
 .materialsTitle {
@@ -27,7 +26,7 @@
 	font-size: 1.35rem;
 	margin: 1rem 0;
 	font-weight: 500;
-	color: var(--navColor);
+	color: var(--primaryBtnColor);
 }
 
 .materialsTitle:first-letter {

@@ -1,6 +1,6 @@
 .container {
 	max-height: 125px;
-	background-color: #fff;
+	background-color: var(--white);
 	border-radius: 3px;
 	display: flex;
 	align-items: center;
@@ -14,9 +14,8 @@
 
 .infoContainer span,
 .infoContainer svg {
-	color: var(--secondColor);
+	color: var(--navColor);
 	font-size: 0.9rem;
-	font-family: 'Open Sans', sans-serif;
 }
 
 .title {
@@ -25,8 +24,7 @@
 	margin-bottom: 0.25rem;
 	font-size: 1.25rem;
 	font-weight: 400;
-	color: var(--thirdColor);
-	font-family: 'Open Sans', sans-serif;
+	color: var(--primaryBtnColor);
 }
 
 .img {
@@ -40,6 +38,7 @@
 
 .icon {
 	padding-right: 2rem;
+	color: var(--primaryBtnColor);
 }
 
 @media (max-width: 1023px) {

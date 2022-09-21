@@ -8,24 +8,6 @@ import { getMaterials } from '../../../features/materials/materialsSlice'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-// export const getServerSideProps = async ({ params }) => {
-// 	let { data: materials, error } = await supabase
-// 		.from('materials')
-// 		.select('*')
-// 		.eq('lang', 'ru')
-// 		.eq('section', params.section)
-
-// 	if (error) {
-// 		throw new Error(error)
-// 	}
-// 	return {
-// 		props: {
-// 			materials,
-// 			img: process.env.IMG_URL,
-// 		},
-// 	}
-// }
-
 const Section = () => {
 	const router = useRouter()
 	const { section } = router.query

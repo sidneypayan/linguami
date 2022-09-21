@@ -4,17 +4,13 @@
 
 :root {
 	--white: #fff;
-	--navColor: #37879a;
-	--navColor: #36205d;
+	--navColor: #a98467;
 	--backgroundColor: #f2f2f2;
 	--primaryColor: #2a9d8f;
 	--secondaryColor: #21756b;
-	/* --thirdColor: #337ab7; */
 	--primaryTextColor: #365c66;
 	--secondaryTextColor: #7f8c8d;
-	/* --primaryBtnColor: #37879a; */
-	--primaryBtnColor: #591099;
-	/* --primaryBtnColor: #6f42c1; */
+	--primaryBtnColor: #3c614f;
 }
 
 *,
@@ -114,9 +110,10 @@ body {
 h1,
 h2,
 h3,
-h4 {
-	margin-bottom: 1.38rem;
-	line-height: 2.5rem;
+h4,
+h5,
+h6 {
+	margin-bottom: 1.5rem;
 	color: var(--primaryBtnColor);
 }
 
@@ -202,9 +199,6 @@ img {
 }
 
 .headline {
-	color: var(--primaryBtnColor);
-	font-weight: 700;
-	font-size: 2rem;
 	padding: 2rem 0 1rem 0;
 }
 

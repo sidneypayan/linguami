@@ -40,7 +40,8 @@
 }
 
 .registerBtn:hover {
-	box-shadow: 0px 2px 4px #145e70, 0px 2px 4px #145e70;
+	box-shadow: 0px 2px 3px var(--primaryBtnColor),
+		0px 2px 3px var(--primaryBtnColor);
 	transition: 0.3s;
 }
 
