@@ -26,7 +26,8 @@
 .ctaContainer {
 	width: 100%;
 	display: flex;
-	margin: 4rem auto;
+	margin-top: 4rem;
+	margin-bottom: 8rem;
 	justify-content: space-around;
 }
 

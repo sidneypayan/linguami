@@ -188,10 +188,11 @@ img {
 }
 
 .hr {
-	width: 80%;
-	border: 0;
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+	width: 25%;
+	height: 5px;
+	background-color: var(--navColor);
+	border-radius: 50px;
+	margin: 0 auto;
 }
 
 .title {

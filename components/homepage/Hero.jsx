@@ -22,8 +22,8 @@ const Hero = () => {
 						className={styles.img}
 						src='/img/bear.png'
 						alt='bear'
-						width={200}
-						height={200}
+						width={300}
+						height={300}
 						objectFit='contain'
 					/>
 				</div>

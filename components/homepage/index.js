@@ -36,10 +36,10 @@ const Homepage = () => {
 					</div>
 				</div>
 				<br />
-				<hr className='hr' />
 
 				<div className={styles.ctaContainer}>
 					<div className={styles.ctaContainerText}>
+						<div className='hr'></div>
 						<h3 className='headline'>Apprendre avec un locuteur natif</h3>
 						<p>
 							Prenez des cours à distance avec un professeur diplômé et
@@ -51,24 +51,24 @@ const Homepage = () => {
 						<Image
 							src='/img/teacher.png'
 							alt='teacher'
-							width={200}
-							height={200}
+							width={175}
+							height={175}
 						/>
 					</div>
 				</div>
 
-				<hr className='hr' />
 				<div className={styles.ctaContainer}>
 					<div className={styles.imgContainer}>
 						<Image
-							src='/img/translate.png'
+							src='/img/translator.png'
 							alt='translate'
-							width={200}
-							height={200}
+							width={175}
+							height={175}
 						/>
 					</div>
 
 					<div className={styles.ctaContainerText}>
+						<div className='hr'></div>
 						<h3 className='headline'>Outlil de traduction intégré</h3>
 						<p>
 							Inscrivez-vous et traduisez n&apos;importe quel mot de

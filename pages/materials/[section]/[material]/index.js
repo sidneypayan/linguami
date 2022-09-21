@@ -200,9 +200,9 @@ const Material = ({ material, audio, img }) => {
 					<div className={styles.wordsContainer}>
 						{isUserLoggedIn ? (
 							<>
-								<h3 className='headline'>Mots</h3> <hr className={styles.hr} />
-								<ul className='lesson__words-list'>
-									<li data-id='{{ $userWord->id }}'>
+								<h3 className='headline'>Mots</h3>
+								<ul>
+									<li>
 										<span className='lesson__original-word'>russian word</span>{' '}
 										-{' '}
 										<span className='lesson__translated-word'>french word</span>
