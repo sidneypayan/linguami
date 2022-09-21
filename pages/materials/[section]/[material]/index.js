@@ -19,35 +19,50 @@ const Material = ({ material, audio, img }) => {
 	const [showAccents, setShowAccents] = useState(false)
 
 	return (
-		<div className={styles.container}>
-			<div className={styles.leftContainer}>
-				<FontAwesomeIcon
-					onClick={() => router.back()}
-					className={styles.arrowIcon}
-					icon={faArrowLeft}
-					size='2xl'
-				/>
-
-				<h1 className={`${styles.title} headline`}>{material.title}</h1>
-
-				<div>
-					{/* <Image src="" alt=""></Image> */}
-					{/* DISPLAY IMAGE IF SECTION == LIEUX */}
-					{material.section === 'place' && (
-						<Image
-							src={img + material.img}
-							alt={material.title}
-							width={1595}
-							height={638}
-						/>
+		<>
+			<FontAwesomeIcon
+				onClick={() => router.back()}
+				className={styles.arrowIcon}
+				icon={faArrowLeft}
+				size='2xl'
+			/>
+			<div className={styles.container}>
+				<div className={styles.titleContainer}>
+					<h1 className={`${styles.title} headline`}>{material.title}</h1>
+				</div>
+				<div className={styles.mediaContainer}>
+					{/* AUDIO PLAYER */}
+					{(material.section === 'dialogue' ||
+						material.section === 'book-chapter' ||
+						material.section === 'podcast' ||
+						material.section === 'short-story' ||
+						material.section === 'slice-of-life' ||
+						material.section === 'culture' ||
+						material.section === 'place') && (
+						<div className={styles.audioContainer}>
+							<Image
+								width={250}
+								height={250}
+								src={img + material.img}
+								alt={material.title}></Image>
+							<audio controls='controls' src={audio + material.audio}></audio>
+							<div className='audio-player__speed-icons'>
+								<a className='audio-player__turtle-icon'>
+									{/* <Image src="" alt=""></Image> */}
+								</a>
+								<a className='audio-player__hare-icon'>
+									{/* <Image src="" alt=""></Image> */}
+								</a>
+							</div>
+						</div>
 					)}
-
 					{/* DISPLAY VIDEO REGARDING THE SECTION */}
 
 					{(material.section === 'trailer' ||
 						material.section === 'eralash' ||
 						material.section === 'music' ||
 						material.section === 'galileo' ||
+						material.section === 'diverse' ||
 						material.section === 'extract' ||
 						material.section === 'cartoon') && (
 						<div className={styles.videoContainer}>
@@ -58,8 +73,22 @@ const Material = ({ material, audio, img }) => {
 								allowFullscreen></iframe>
 						</div>
 					)}
+				</div>
 
-					{/* {material.section === 'extract' && (
+				<div className={styles.textContainer}>
+					<div>
+						{/* <Image src="" alt=""></Image> */}
+						{/* DISPLAY IMAGE IF SECTION == LIEUX */}
+						{material.section === 'place' && (
+							<Image
+								src={img + material.img}
+								alt={material.title}
+								width={1595}
+								height={638}
+							/>
+						)}
+
+						{/* {material.section === 'extract' && (
 						<div className={styles.videoContainer}>
 							<iframe
 								src={material.video}
@@ -69,8 +98,8 @@ const Material = ({ material, audio, img }) => {
 						</div>
 					)} */}
 
-					{/* TRANSLATION MODULE */}
-					{/* <div id='transPopup' className='trans-popup'>
+						{/* TRANSLATION MODULE */}
+						{/* <div id='transPopup' className='trans-popup'>
 						<button
 							type='button'
 							id='transPopupTextForm'
@@ -128,111 +157,93 @@ const Material = ({ material, audio, img }) => {
 							</button>
 						</div>
 					</div> */}
-					{/* END TRANSLATION MODULE */}
+						{/* END TRANSLATION MODULE */}
 
-					{/* BUTTON ACCENTS */}
-					<button
-						onClick={() => setShowAccents(!showAccents)}
-						type='button'
-						id='show-accents'
-						className={`${styles.showAccentsBtn} mainBtn`}>
-						Montrer les accents
-					</button>
+						{/* BUTTON ACCENTS */}
+						<button
+							onClick={() => setShowAccents(!showAccents)}
+							type='button'
+							id='show-accents'
+							className={`${styles.showAccentsBtn} mainBtn`}>
+							Montrer les accents
+						</button>
 
-					{/* POST CONTENT */}
+						{/* POST CONTENT */}
 
-					{showAccents ? (
-						<p
-							className='text-accents'
-							dangerouslySetInnerHTML={{
-								__html: DOMPurify.sanitize(material.content_accents),
-							}}></p>
-					) : (
-						<p
-							className='text'
-							dangerouslySetInnerHTML={{
-								__html: DOMPurify.sanitize(material.content),
-							}}></p>
-					)}
+						{showAccents ? (
+							<p
+								className='text-accents'
+								dangerouslySetInnerHTML={{
+									__html: DOMPurify.sanitize(material.content_accents),
+								}}></p>
+						) : (
+							<p
+								className='text'
+								dangerouslySetInnerHTML={{
+									__html: DOMPurify.sanitize(material.content),
+								}}></p>
+						)}
 
-					{/* END POST CONTENT */}
-					<button
-						type='button'
-						id='checkMaterial'
-						className={`${styles.checkLesson} mainBtn`}>
-						J'ai terminé cette leçon <i className='fas fa-check'></i>
-					</button>
-				</div>
-
-				{/* DISPLAY AUDIO REGARDING THE SECTION */}
-
-				{/* AUDIO PLAYER */}
-				{(material.section === 'dialogue' ||
-					material.section === 'book-chapter' ||
-					material.section === 'podcast' ||
-					material.section === 'short-story' ||
-					material.section === 'slice-of-life' ||
-					material.section === 'culture' ||
-					material.section === 'place') && (
-					<div className={styles.audioPlayer}>
-						<audio controls='controls' src={audio + material.audio}></audio>
-						<div className='audio-player__speed-icons'>
-							<a className='audio-player__turtle-icon'>
-								{/* <Image src="" alt=""></Image> */}
-							</a>
-							<a className='audio-player__hare-icon'>
-								{/* <Image src="" alt=""></Image> */}
-							</a>
-						</div>
+						{/* END POST CONTENT */}
+						<button
+							type='button'
+							id='checkMaterial'
+							className={`${styles.checkLesson} mainBtn`}>
+							J'ai terminé cette leçon <i className='fas fa-check'></i>
+						</button>
 					</div>
-				)}
-			</div>
 
-			<div className={styles.rightContainer}>
-				<div className={styles.wordsContainer}>
-					{isUserLoggedIn ? (
-						<>
-							<h3 className='headline'>Mots</h3> <hr className={styles.hr} />
-							<ul className='lesson__words-list'>
-								<li data-id='{{ $userWord->id }}'>
-									<span className='lesson__original-word'>russian word</span> -{' '}
-									<span className='lesson__translated-word'>french word</span>
-									<i className='far fa-trash-alt lesson__trash'></i>
-								</li>
-							</ul>
-						</>
-					) : (
-						<>
-							<h4 className='headline'>Créez un compte pour pouvoir :</h4>
-							<ul className='lesson__words-list'>
-								<li>
-									<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe quel
-									mot du texte en un clique
-								</li>
-								<li>
-									<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots
-									traduits sur cette même page
-								</li>
-								<li>
-									<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
-									traductions dans un dictionnaire personnel lié à votre compte
-								</li>
-								<li>
-									<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
-								</li>
-							</ul>
-							<Link href='/register'>
-								<button
-									type='button'
-									className={`${styles.registerBtn} mainBtn`}>
-									S'enregistrer
-								</button>
-							</Link>
-						</>
-					)}
+					{/* DISPLAY AUDIO REGARDING THE SECTION */}
+				</div>
+
+				<div className={styles.rightContainer}>
+					<div className={styles.wordsContainer}>
+						{isUserLoggedIn ? (
+							<>
+								<h3 className='headline'>Mots</h3> <hr className={styles.hr} />
+								<ul className='lesson__words-list'>
+									<li data-id='{{ $userWord->id }}'>
+										<span className='lesson__original-word'>russian word</span>{' '}
+										-{' '}
+										<span className='lesson__translated-word'>french word</span>
+										<i className='far fa-trash-alt lesson__trash'></i>
+									</li>
+								</ul>
+							</>
+						) : (
+							<>
+								<h4 className='headline'>Créez un compte pour pouvoir :</h4>
+								<ul className='lesson__words-list'>
+									<li>
+										<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe
+										quel mot du texte en un clique
+									</li>
+									<li>
+										<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots
+										traduits sur cette même page
+									</li>
+									<li>
+										<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
+										traductions dans un dictionnaire personnel lié à votre
+										compte
+									</li>
+									<li>
+										<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
+									</li>
+								</ul>
+								<Link href='/register'>
+									<button
+										type='button'
+										className={`${styles.registerBtn} mainBtn`}>
+										S'enregistrer
+									</button>
+								</Link>
+							</>
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 

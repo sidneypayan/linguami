@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import styles from '../../styles/Navbar.module.css'
 import { useState } from 'react'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useUserContext } from '../../context/user.js'

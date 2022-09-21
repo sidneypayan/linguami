@@ -33,7 +33,7 @@ export const materials = [
 				img: '/trailers.jpg',
 				title: 'bandes annonces',
 				param: 'trailer',
-				text: "Avec les bandes annonces de films, vous disposez d'un moyen ludique pour vous entraîner à la compréhension orale du russe",
+				text: "Avec les bandes annonces de films, vous disposez d'un moyen ludique pour vous entraîner à la compréhension orale du russe.",
 			},
 			{
 				img: '/extraits.jpg',

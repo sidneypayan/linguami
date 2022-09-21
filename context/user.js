@@ -56,7 +56,7 @@ const UserProvider = ({ children }) => {
 
 		setUser(user)
 		toast.success('Vous êtes bien connecté')
-		router.back()
+		router.push('/')
 	}
 
 	const logout = async () => {
