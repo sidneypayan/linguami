@@ -43,7 +43,7 @@ const Homepage = () => {
 						<h3 className='headline'>Apprendre avec un locuteur natif</h3>
 						<p>
 							Prenez des cours à distance avec un professeur diplômé et
-							bénéfissiez d'un apprentissage personnalisé.
+							bénéfissiez d&apos;un apprentissage personnalisé.
 						</p>
 						<button className={`${styles.btn} mainBtn`}>Commencez !</button>
 					</div>
@@ -71,10 +71,10 @@ const Homepage = () => {
 					<div className={styles.ctaContainerText}>
 						<h3 className='headline'>Outlil de traduction intégré</h3>
 						<p>
-							Inscrivez-vous et traduisez n'importe quel mot de n'importe quel
-							texte
+							Inscrivez-vous et traduisez n&apos;importe quel mot de
+							n&apos;importe quel texte
 						</p>
-						<button className={`${styles.btn} mainBtn`}>S'inscrire</button>
+						<button className={`${styles.btn} mainBtn`}>S&apos;inscrire</button>
 					</div>
 				</div>
 			</div>

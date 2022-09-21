@@ -189,7 +189,7 @@ const Material = ({ material, audio, img }) => {
 							type='button'
 							id='checkMaterial'
 							className={`${styles.checkLesson} mainBtn`}>
-							J'ai terminé cette leçon <i className='fas fa-check'></i>
+							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
 						</button>
 					</div>
 
@@ -215,8 +215,8 @@ const Material = ({ material, audio, img }) => {
 								<h4 className='headline'>Créez un compte pour pouvoir :</h4>
 								<ul className='lesson__words-list'>
 									<li>
-										<FontAwesomeIcon icon={faThumbsUp} /> Traduire n'importe
-										quel mot du texte en un clique
+										<FontAwesomeIcon icon={faThumbsUp} /> Traduire
+										n&apos;importe quel mot du texte en un clique
 									</li>
 									<li>
 										<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots
@@ -235,7 +235,7 @@ const Material = ({ material, audio, img }) => {
 									<button
 										type='button'
 										className={`${styles.registerBtn} mainBtn`}>
-										S'enregistrer
+										S&apos;enregistrer
 									</button>
 								</Link>
 							</>

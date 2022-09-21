@@ -49,7 +49,7 @@ const Navbar = () => {
 							<button
 								onClick={() => setIsNavExpanded(false)}
 								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
-								S'inscrire
+								S&apos;inscrire
 							</button>
 						</Link>
 					</div>

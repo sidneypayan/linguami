@@ -8,12 +8,12 @@ const Hero = () => {
 				<div className={styles.textContainer}>
 					<h2 className={styles.title}>
 						Linguami, <br />
-						bien plus qu'un site de langue !
+						bien plus qu&apos;un site de langue !
 					</h2>
 					<p className={styles.subtitle}>
 						Apprenez une langue moderne et parlée par les locuteurs natifs.
 						Découvrez une culture et rejoignez une communauté basée sur
-						l'entraide et l'amitié entre les peuples.
+						l&apos;entraide et l&apos;amitié entre les peuples.
 					</p>
 					<button className={`${styles.btn} mainBtn`}>Commencez !</button>
 				</div>

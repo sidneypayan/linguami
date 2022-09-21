@@ -94,7 +94,9 @@ const Register = () => {
 						/>
 					</div>
 
-					<button className={`${styles.btn} mainBtn`}>S'enregistrer</button>
+					<button className={`${styles.btn} mainBtn`}>
+						S&apos;enregistrer
+					</button>
 					<p>
 						Vous avez déjà un compte ?<br />
 						<Link href='/login'>

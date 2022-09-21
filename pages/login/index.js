@@ -75,7 +75,7 @@ const Login = () => {
 
 					<button className={`${styles.btn} mainBtn`}>Log In</button>
 					<p>
-						Vous n'avez pas encore de compte ?
+						Vous n&apos;avez pas encore de compte ?
 						<Link href='/register'>
 							<a>Inscrivez-vous gratuitement !</a>
 						</Link>
