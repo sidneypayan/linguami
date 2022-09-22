@@ -2,7 +2,10 @@ import Link from 'next/link'
 import styles from '../../styles/LevelBar.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
-import { filterMaterials } from '../../features/materials/materialsSlice'
+import {
+	filterMaterials,
+	showAllMaterials,
+} from '../../features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 
@@ -44,7 +47,7 @@ const LevelBar = () => {
 				<span className={styles.tooltiptext}>Avancé</span>
 			</div>
 			<div className={styles.tooltip}>
-				<p className={styles.icon}>
+				<p onClick={() => dispatch(showAllMaterials())} className={styles.icon}>
 					<FontAwesomeIcon icon={faArrowRotateLeft} size='lg' />
 				</p>
 				<span className={styles.tooltiptext}>Montrer tout</span>

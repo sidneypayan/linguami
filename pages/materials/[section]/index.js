@@ -4,7 +4,10 @@ import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
 import styles from '../../../styles/sections/Sections.module.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { getMaterials } from '../../../features/materials/materialsSlice'
+import {
+	getMaterials,
+	filterMaterials,
+} from '../../../features/materials/materialsSlice'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -12,13 +15,23 @@ const Section = () => {
 	const router = useRouter()
 	const { section } = router.query
 	const dispatch = useDispatch()
-	const { materials, materials_loading } = useSelector(store => store.materials)
+	const {
+		materials_loading,
+		filtered_materials: materials,
+		level,
+	} = useSelector(store => store.materials)
 
 	useEffect(() => {
 		if (section) {
 			dispatch(getMaterials(section))
 		}
-	}, [section])
+	}, [section, dispatch])
+
+	useEffect(() => {
+		if (level) {
+			dispatch(filterMaterials({ section, level }))
+		}
+	}, [level, dispatch])
 
 	if (materials_loading) {
 		return (

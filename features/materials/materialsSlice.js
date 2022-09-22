@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
 	materials: [],
+	filtered_materials: [],
+	level: 'all',
 	materials_loading: true,
 	materials_error: false,
 	single_material: {},
@@ -16,7 +18,7 @@ export const getMaterials = createAsyncThunk(
 		try {
 			let { data: materials, error } = await supabase
 				.from('materials')
-				.select('id, img, title, section, level')
+				.select('*')
 				.eq('lang', 'ru')
 				.eq('section', param)
 			return materials
@@ -42,27 +44,23 @@ export const getMaterial = createAsyncThunk(
 	}
 )
 
-export const filterMaterials = createAsyncThunk(
-	'materials/filterMaterials',
-	async (filters, thunkAPI) => {
-		const { section, level } = filters
-		try {
-			let { data: materials, error } = await supabase
-				.from('materials')
-				.select('id, img, title, section, level')
-				.eq('lang', 'ru')
-				.eq('section', section)
-				.eq('level', level)
-			return materials
-		} catch (error) {
-			return thunkAPI.rejectWithValue(error)
-		}
-	}
-)
-
 const materialsSlice = createSlice({
 	name: 'materials',
 	initialState,
+	reducers: {
+		filterMaterials: (state, { payload }) => {
+			const { section, level } = payload
+
+			state.filtered_materials = state.materials.filter(
+				item => item.section === section && item.level === level
+			)
+
+			state.level = level
+		},
+		showAllMaterials: state => {
+			state.filtered_materials = state.materials
+		},
+	},
 	extraReducers: {
 		[getMaterials.pending]: state => {
 			state.materials_loading = true
@@ -70,6 +68,7 @@ const materialsSlice = createSlice({
 		[getMaterials.fulfilled]: (state, { payload }) => {
 			state.materials_loading = false
 			state.materials = payload
+			state.filtered_materials = payload
 		},
 		[getMaterials.rejected]: (state, { payload }) => {
 			state.materials_loading = false
@@ -86,18 +85,9 @@ const materialsSlice = createSlice({
 			state.single_material_loading = false
 			single_material_error = payload
 		},
-		[filterMaterials.pending]: state => {
-			state.materials_loading = true
-		},
-		[filterMaterials.fulfilled]: (state, { payload }) => {
-			state.materials_loading = false
-			state.materials = payload
-		},
-		[filterMaterials.rejected]: (state, { payload }) => {
-			state.materials_loading = false
-			state.materials_error = payload
-		},
 	},
 })
 
 export default materialsSlice.reducer
+
+export const { filterMaterials, showAllMaterials } = materialsSlice.actions
