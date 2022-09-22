@@ -62,8 +62,8 @@ const materialsSlice = createSlice({
 			state.filtered_materials = state.materials
 		},
 		searchMaterial: (state, { payload }) => {
-			state.filtered_materials = state.filtered_materials.filter(item =>
-				item.title.toLowerCase().includes(payload)
+			state.filtered_materials = state.materials.filter(item =>
+				item.title.toLowerCase().includes(payload.toLowerCase())
 			)
 		},
 	},
