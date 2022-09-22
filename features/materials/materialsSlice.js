@@ -80,6 +80,9 @@ const materialsSlice = createSlice({
 			)
 		},
 		searchMaterial: (state, { payload }) => {
+			state.page = 1
+			state.sliceStart = 0
+			state.sliceEnd = 10
 			state.filtered_materials = state.materials.filter(item =>
 				item.title.toLowerCase().includes(payload.toLowerCase())
 			)
