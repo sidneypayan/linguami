@@ -11,6 +11,12 @@ const initialState = {
 	single_material: {},
 	single_material_loading: false,
 	single_material_error: false,
+	totalMaterials: 0,
+	numOfPages: 1,
+	page: 1,
+	materialsPerPage: 10,
+	sliceStart: 0,
+	sliceEnd: 10,
 }
 
 export const getMaterials = createAsyncThunk(
@@ -57,14 +63,31 @@ const materialsSlice = createSlice({
 			)
 
 			state.level = level
+			state.page = 1
+			state.totalMaterials = state.filtered_materials.length + 1
+			state.numOfPages = Math.ceil(
+				state.totalMaterials / state.materialsPerPage
+			)
+
+			state.sliceStart = 0
+			state.sliceEnd = 10
 		},
 		showAllMaterials: state => {
 			state.filtered_materials = state.materials
+			state.totalMaterials = state.filtered_materials.length + 1
+			state.numOfPages = Math.ceil(
+				state.totalMaterials / state.materialsPerPage
+			)
 		},
 		searchMaterial: (state, { payload }) => {
 			state.filtered_materials = state.materials.filter(item =>
 				item.title.toLowerCase().includes(payload.toLowerCase())
 			)
+		},
+		changePage: (state, { payload }) => {
+			state.page = payload
+			state.sliceEnd = state.page * 10
+			state.sliceStart = state.sliceEnd - 10
 		},
 	},
 	extraReducers: {
@@ -75,6 +98,10 @@ const materialsSlice = createSlice({
 			state.materials_loading = false
 			state.materials = payload
 			state.filtered_materials = payload
+			state.totalMaterials = state.filtered_materials.length + 1
+			state.numOfPages = Math.ceil(
+				state.totalMaterials / state.materialsPerPage
+			)
 		},
 		[getMaterials.rejected]: (state, { payload }) => {
 			state.materials_loading = false
@@ -96,5 +123,5 @@ const materialsSlice = createSlice({
 
 export default materialsSlice.reducer
 
-export const { filterMaterials, showAllMaterials, searchMaterial } =
+export const { filterMaterials, showAllMaterials, searchMaterial, changePage } =
 	materialsSlice.actions

@@ -24,7 +24,12 @@ const Section = () => {
 		materials_loading,
 		filtered_materials: materials,
 		level,
+		page,
+		sliceStart,
+		sliceEnd,
 	} = useSelector(store => store.materials)
+
+	console.log(sliceStart, sliceEnd)
 
 	useEffect(() => {
 		if (section) {
@@ -60,7 +65,7 @@ const Section = () => {
 			/>
 			<LevelBar />
 			<div className={styles.container}>
-				{materials.map(material => (
+				{materials.slice(sliceStart, sliceEnd).map(material => (
 					<SectionCard key={material.id} material={material} />
 				))}
 			</div>
