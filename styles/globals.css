@@ -5,12 +5,11 @@
 :root {
 	--white: #fff;
 	--navColor: #a98467;
+	--navColor: #1e6091;
 	--backgroundColor: #f2f2f2;
-	--primaryColor: #2a9d8f;
-	--secondaryColor: #21756b;
-	--primaryTextColor: #365c66;
-	--secondaryTextColor: #7f8c8d;
-	--primaryBtnColor: #3c614f;
+	--primaryTextColor: #444;
+	--secondaryTextColor: #777;
+	--primaryBtnColor: #184e77;
 }
 
 *,
@@ -104,6 +103,7 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	background-color: var(--backgroundColor);
 	color: var(--primaryTextColor);
+	color: #555;
 	line-height: 1.5rem;
 }
 
@@ -120,6 +120,7 @@ h6 {
 h1 {
 	margin-top: 0;
 	font-size: 3.052rem;
+	line-height: 3rem;
 }
 
 h2 {
@@ -159,6 +160,13 @@ img {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.loader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
 }
 
 .white-wrapper {

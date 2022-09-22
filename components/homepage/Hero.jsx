@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import styles from '../../styles/Hero.module.css'
 
 const Hero = () => {
@@ -15,7 +16,9 @@ const Hero = () => {
 						Découvrez une culture et rejoignez une communauté basée sur
 						l&apos;entraide et l&apos;amitié entre les peuples.
 					</p>
-					<button className={`${styles.btn} mainBtn`}>Commencez !</button>
+					<Link href='/materials'>
+						<button className={`${styles.btn} mainBtn`}>Commencez !</button>
+					</Link>
 				</div>
 				<div className={styles.imgContainer}>
 					<Image

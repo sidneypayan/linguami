@@ -1,22 +1,50 @@
 import { supabase } from '../../../../lib/supabase'
-import styles from '../../../../styles/materials/Material.module.css'
-import Image from 'next/image'
-import Link from 'next/link'
-import DOMPurify from 'isomorphic-dompurify'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import styles from '../../../../styles/materials/Material.module.css'
+import Image from 'next/image'
+import Link from 'next/link'
+import DOMPurify from 'isomorphic-dompurify'
+import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
+import { getMaterial } from '../../../../features/materials/materialsSlice'
+import { useSelector, useDispatch } from 'react-redux'
+
 import { useUserContext } from '../../../../context/user'
 
-const Material = ({ material, audio, img }) => {
+const Material = () => {
 	const { user, isUserLoggedIn } = useUserContext()
+	const dispatch = useDispatch()
+	const { single_material, single_material_loading } = useSelector(
+		store => store.materials
+	)
 	const router = useRouter()
+	const { material } = router.query
 	const [showAccents, setShowAccents] = useState(false)
+
+	// console.log(single_material)
+
+	useEffect(() => {
+		if (material) {
+			dispatch(getMaterial(material))
+		}
+	}, [material])
+
+	if (single_material_loading) {
+		return (
+			<div className='loader'>
+				<Image
+					src='/img/loader.gif'
+					width={200}
+					height={200}
+					alt='loader'></Image>
+			</div>
+		)
+	}
 
 	return (
 		<>
@@ -28,24 +56,28 @@ const Material = ({ material, audio, img }) => {
 			/>
 			<div className={styles.container}>
 				<div className={styles.titleContainer}>
-					<h1 className={`${styles.title} headline`}>{material.title}</h1>
+					<h1 className={`${styles.title} headline`}>
+						{single_material.title}
+					</h1>
 				</div>
 				<div className={styles.mediaContainer}>
 					{/* AUDIO PLAYER */}
-					{(material.section === 'dialogue' ||
-						material.section === 'book-chapter' ||
-						material.section === 'podcast' ||
-						material.section === 'short-story' ||
-						material.section === 'slice-of-life' ||
-						material.section === 'culture' ||
-						material.section === 'place') && (
+					{(single_material.section === 'dialogue' ||
+						single_material.section === 'book-chapter' ||
+						single_material.section === 'podcast' ||
+						single_material.section === 'short-story' ||
+						single_material.section === 'slice-of-life' ||
+						single_material.section === 'culture' ||
+						single_material.section === 'place') && (
 						<div className={styles.audioContainer}>
 							<Image
 								width={250}
 								height={250}
-								src={img + material.img}
-								alt={material.title}></Image>
-							<audio controls='controls' src={audio + material.audio}></audio>
+								src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
+								alt={single_material.title}></Image>
+							<audio
+								controls='controls'
+								src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
 							<div className='audio-player__speed-icons'>
 								<a className='audio-player__turtle-icon'>
 									{/* <Image src="" alt=""></Image> */}
@@ -58,16 +90,16 @@ const Material = ({ material, audio, img }) => {
 					)}
 					{/* DISPLAY VIDEO REGARDING THE SECTION */}
 
-					{(material.section === 'trailer' ||
-						material.section === 'eralash' ||
-						material.section === 'music' ||
-						material.section === 'galileo' ||
-						material.section === 'diverse' ||
-						material.section === 'extract' ||
-						material.section === 'cartoon') && (
+					{(single_material.section === 'trailer' ||
+						single_material.section === 'eralash' ||
+						single_material.section === 'music' ||
+						single_material.section === 'galileo' ||
+						single_material.section === 'diverse' ||
+						single_material.section === 'extract' ||
+						single_material.section === 'cartoon') && (
 						<div className={styles.videoContainer}>
 							<iframe
-								src={material.video}
+								src={single_material.video}
 								frameBorder='0'
 								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
 								allowFullscreen></iframe>
@@ -79,19 +111,19 @@ const Material = ({ material, audio, img }) => {
 					<div>
 						{/* <Image src="" alt=""></Image> */}
 						{/* DISPLAY IMAGE IF SECTION == LIEUX */}
-						{material.section === 'place' && (
+						{single_material.section === 'place' && (
 							<Image
-								src={img + material.img}
-								alt={material.title}
+								src={img + single_material.img}
+								alt={single_material.title}
 								width={1595}
 								height={638}
 							/>
 						)}
 
-						{/* {material.section === 'extract' && (
+						{/* {single_material.section === 'extract' && (
 						<div className={styles.videoContainer}>
 							<iframe
-								src={material.video}
+								src={single_material.video}
 								frameBorder='0'
 								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
 								allowfullscreen></iframe>
@@ -174,13 +206,13 @@ const Material = ({ material, audio, img }) => {
 							<p
 								className='text-accents'
 								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(material.content_accents),
+									__html: DOMPurify.sanitize(single_material.content_accents),
 								}}></p>
 						) : (
 							<p
 								className='text'
 								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(material.content),
+									__html: DOMPurify.sanitize(single_material.content),
 								}}></p>
 						)}
 
@@ -248,22 +280,3 @@ const Material = ({ material, audio, img }) => {
 }
 
 export default Material
-
-export const getServerSideProps = async ({ params }) => {
-	let { data: material, error } = await supabase
-		.from('materials')
-		.select('*')
-		.eq('id', params.material)
-		.single()
-
-	if (error) {
-		throw new Error(error.message)
-	}
-	return {
-		props: {
-			material,
-			audio: process.env.AUDIO_URL,
-			img: process.env.IMG_URL,
-		},
-	}
-}

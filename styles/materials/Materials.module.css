@@ -19,6 +19,7 @@
 
 .materials p {
 	color: var(--navColor);
+	color: var(--secondaryTextColor);
 }
 
 .materialsTitle {

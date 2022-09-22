@@ -8,13 +8,6 @@
 	justify-content: space-between;
 }
 
-.loader {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-}
-
 @media (max-width: 1023px) {
 	.container {
 		display: block;

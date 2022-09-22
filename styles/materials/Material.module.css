@@ -77,7 +77,7 @@
 }
 
 .wordsContainer {
-	color: #777;
+	color: var(--secondaryTextColor);
 	font-weight: bold;
 	font-size: 15px;
 }

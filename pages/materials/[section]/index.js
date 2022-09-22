@@ -22,7 +22,7 @@ const Section = () => {
 
 	if (materials_loading) {
 		return (
-			<div className={styles.loader}>
+			<div className='loader'>
 				<Image
 					src='/img/loader.gif'
 					width={200}
