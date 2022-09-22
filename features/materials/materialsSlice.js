@@ -86,6 +86,10 @@ const materialsSlice = createSlice({
 			state.filtered_materials = state.materials.filter(item =>
 				item.title.toLowerCase().includes(payload.toLowerCase())
 			)
+			state.totalMaterials = state.filtered_materials.length + 1
+			state.numOfPages = Math.ceil(
+				state.totalMaterials / state.materialsPerPage
+			)
 		},
 		changePage: (state, { payload }) => {
 			state.page = payload
