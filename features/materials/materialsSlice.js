@@ -42,6 +42,24 @@ export const getMaterial = createAsyncThunk(
 	}
 )
 
+export const filterMaterials = createAsyncThunk(
+	'materials/filterMaterials',
+	async (filters, thunkAPI) => {
+		const { section, level } = filters
+		try {
+			let { data: materials, error } = await supabase
+				.from('materials')
+				.select('id, img, title, section, level')
+				.eq('lang', 'ru')
+				.eq('section', section)
+				.eq('level', level)
+			return materials
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
 const materialsSlice = createSlice({
 	name: 'materials',
 	initialState,
@@ -67,6 +85,17 @@ const materialsSlice = createSlice({
 		[getMaterial.rejected]: (state, { payload }) => {
 			state.single_material_loading = false
 			single_material_error = payload
+		},
+		[filterMaterials.pending]: state => {
+			state.materials_loading = true
+		},
+		[filterMaterials.fulfilled]: (state, { payload }) => {
+			state.materials_loading = false
+			state.materials = payload
+		},
+		[filterMaterials.rejected]: (state, { payload }) => {
+			state.materials_loading = false
+			state.materials_error = payload
 		},
 	},
 })

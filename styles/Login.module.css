@@ -17,7 +17,7 @@
 
 .formContainer {
 	text-align: center;
-	width: 40%;
+	width: 280px;
 }
 
 .formContainer input {
@@ -56,4 +56,14 @@
 .error {
 	font-size: 0.85rem;
 	color: red;
+}
+
+@media (width < 768px) {
+	.container {
+		width: 1000%;
+	}
+
+	.img {
+		display: none;
+	}
 }

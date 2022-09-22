@@ -25,8 +25,6 @@ const UserProvider = ({ children }) => {
 			return toast.error(error)
 		}
 
-		console.log(name)
-
 		setUser(user)
 		toast.success(
 			'Vous êtes bien enregistré. Veuillez vérifier le mail que nous avous avons envoyé :)'
@@ -88,8 +86,6 @@ const UserProvider = ({ children }) => {
 			getUserProfile()
 		})
 	}, [])
-
-	console.log(userProfile)
 
 	useEffect(() => {
 		axios.post('/api/auth', {

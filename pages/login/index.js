@@ -43,7 +43,7 @@ const Login = () => {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.container}>
-				<div>
+				<div className={styles.img}>
 					<Image
 						src='/img/bear.png'
 						alt='bear'
@@ -75,7 +75,7 @@ const Login = () => {
 
 					<button className={`${styles.btn} mainBtn`}>Log In</button>
 					<p>
-						Vous n&apos;avez pas encore de compte ?
+						Vous n&apos;avez pas encore de compte ? <br />
 						<Link href='/register'>
 							<a>Inscrivez-vous gratuitement !</a>
 						</Link>

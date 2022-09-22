@@ -56,7 +56,7 @@ const Register = () => {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.container}>
-				<div>
+				<div className={styles.img}>
 					<Image
 						src='/img/bear.png'
 						alt='bear'
