@@ -50,7 +50,7 @@ const Material = () => {
 		<>
 			<FontAwesomeIcon
 				onClick={() => router.back()}
-				className={styles.arrowIcon}
+				className='back-arrow '
 				icon={faArrowLeft}
 				size='2xl'
 			/>

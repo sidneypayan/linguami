@@ -5,6 +5,7 @@ const initialState = {
 	materials: [],
 	filtered_materials: [],
 	level: 'all',
+	search: '',
 	materials_loading: true,
 	materials_error: false,
 	single_material: {},
@@ -60,6 +61,11 @@ const materialsSlice = createSlice({
 		showAllMaterials: state => {
 			state.filtered_materials = state.materials
 		},
+		searchMaterial: (state, { payload }) => {
+			state.filtered_materials = state.filtered_materials.filter(item =>
+				item.title.toLowerCase().includes(payload)
+			)
+		},
 	},
 	extraReducers: {
 		[getMaterials.pending]: state => {
@@ -90,4 +96,5 @@ const materialsSlice = createSlice({
 
 export default materialsSlice.reducer
 
-export const { filterMaterials, showAllMaterials } = materialsSlice.actions
+export const { filterMaterials, showAllMaterials, searchMaterial } =
+	materialsSlice.actions

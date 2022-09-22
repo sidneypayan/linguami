@@ -1,4 +1,9 @@
 import Image from 'next/image'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import SectionCard from '../../../components/SectionCard'
 import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
@@ -47,6 +52,12 @@ const Section = () => {
 
 	return (
 		<>
+			<FontAwesomeIcon
+				onClick={() => router.back()}
+				className='back-arrow '
+				icon={faArrowLeft}
+				size='2xl'
+			/>
 			<LevelBar />
 			<div className={styles.container}>
 				{materials.map(material => (

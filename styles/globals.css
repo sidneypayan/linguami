@@ -169,6 +169,14 @@ img {
 	height: 100vh;
 }
 
+.back-arrow {
+	position: absolute;
+	margin: 2rem;
+	cursor: pointer;
+	z-index: 1;
+	color: var(--navColor);
+}
+
 .white-wrapper {
 	width: 100%;
 	background-color: var(--white);
