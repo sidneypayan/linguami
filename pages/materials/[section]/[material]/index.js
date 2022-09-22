@@ -70,11 +70,21 @@ const Material = () => {
 						single_material.section === 'culture' ||
 						single_material.section === 'place') && (
 						<div className={styles.audioContainer}>
-							<Image
-								width={250}
-								height={250}
-								src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
-								alt={single_material.title}></Image>
+							{single_material.section !== 'place' ? (
+								<div className={styles.nonPlaceImg}>
+									<Image
+										width={250}
+										height={250}
+										src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
+										alt={single_material.title}></Image>
+								</div>
+							) : (
+								<Image
+									width={600}
+									height={240}
+									src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
+									alt={single_material.title}></Image>
+							)}
 							<audio
 								controls='controls'
 								src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
@@ -109,27 +119,6 @@ const Material = () => {
 
 				<div className={styles.textContainer}>
 					<div>
-						{/* <Image src="" alt=""></Image> */}
-						{/* DISPLAY IMAGE IF SECTION == LIEUX */}
-						{single_material.section === 'place' && (
-							<Image
-								src={img + single_material.img}
-								alt={single_material.title}
-								width={1595}
-								height={638}
-							/>
-						)}
-
-						{/* {single_material.section === 'extract' && (
-						<div className={styles.videoContainer}>
-							<iframe
-								src={single_material.video}
-								frameBorder='0'
-								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
-								allowfullscreen></iframe>
-						</div>
-					)} */}
-
 						{/* TRANSLATION MODULE */}
 						{/* <div id='transPopup' className='trans-popup'>
 						<button
