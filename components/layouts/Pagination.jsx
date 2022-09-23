@@ -3,16 +3,16 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../styles/Pagination.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../features/materials/materialsSlice'
-import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 const Pagination = () => {
 	const { numOfPages, page, totalMaterials, materialsPerPage } = useSelector(
 		store => store.materials
 	)
 	const dispatch = useDispatch()
-	const router = useRouter()
 
-	const { section } = router.query
+	const [sliceStart, setSliceStart] = useState(0)
+	const [sliceEnd, setSliceEnd] = useState(0)
 
 	const pages = Array.from({ length: numOfPages }, (_, index) => {
 		return index + 1
@@ -36,19 +36,61 @@ const Pagination = () => {
 		dispatch(changePage(newPage))
 	}
 
+	useEffect(() => {
+		if (page === 1) {
+			setSliceStart(page)
+			setSliceEnd(page + 2)
+		}
+		if (page === 2) {
+			setSliceStart(page - 1)
+			setSliceEnd(page + 1)
+		}
+		if (page > 2) {
+			setSliceStart(page - 2)
+			setSliceEnd(page + 1)
+		}
+
+		if (numOfPages - page == 2) {
+			setSliceEnd(page + 1)
+		}
+
+		if (numOfPages - page == 1) {
+			setSliceEnd(page)
+		}
+
+		if (numOfPages === page) {
+			setSliceStart(page - 3)
+			setSliceEnd(page - 1)
+		}
+	}, [page])
+
 	return (
 		<div className={styles.container}>
 			<button onClick={prevPage} className={styles.arrowBtn}>
 				<FontAwesomeIcon icon={faArrowLeft} />
 			</button>
-			{pages.map(pageNumber => (
+
+			<button
+				className={page === 1 && styles.pageBtnActive}
+				onClick={() => dispatch(changePage(1))}>
+				1
+			</button>
+
+			{pages.slice(sliceStart, sliceEnd).map(pageNumber => (
 				<button
 					key={pageNumber}
-					className={pageNumber === page && styles.pageBtnActive}
+					className={page === pageNumber && styles.pageBtnActive}
 					onClick={() => dispatch(changePage(pageNumber))}>
 					{pageNumber}
 				</button>
 			))}
+
+			<button
+				className={page === numOfPages && styles.pageBtnActive}
+				onClick={() => dispatch(changePage(numOfPages))}>
+				{numOfPages}
+			</button>
+
 			<button onClick={nextPage} className={styles.arrowBtn}>
 				<FontAwesomeIcon icon={faArrowRight} />
 			</button>

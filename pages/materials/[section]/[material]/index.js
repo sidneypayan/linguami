@@ -26,8 +26,6 @@ const Material = () => {
 	const { material } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 
-	// console.log(single_material)
-
 	useEffect(() => {
 		if (material) {
 			dispatch(getMaterial(material))

@@ -51,45 +51,38 @@ export const getMaterial = createAsyncThunk(
 	}
 )
 
+const resetPagination = state => {
+	state.totalMaterials = state.filtered_materials.length + 1
+	state.numOfPages = Math.ceil(state.totalMaterials / state.materialsPerPage)
+
+	state.sliceStart = 0
+	state.sliceEnd = 10
+	state.page = 1
+}
+
 const materialsSlice = createSlice({
 	name: 'materials',
 	initialState,
 	reducers: {
 		filterMaterials: (state, { payload }) => {
 			const { section, level } = payload
+			state.level = level
 
 			state.filtered_materials = state.materials.filter(
 				item => item.section === section && item.level === level
 			)
-
-			state.level = level
-			state.page = 1
-			state.totalMaterials = state.filtered_materials.length + 1
-			state.numOfPages = Math.ceil(
-				state.totalMaterials / state.materialsPerPage
-			)
-
-			state.sliceStart = 0
-			state.sliceEnd = 10
+			resetPagination(state)
 		},
 		showAllMaterials: state => {
 			state.filtered_materials = state.materials
-			state.totalMaterials = state.filtered_materials.length + 1
-			state.numOfPages = Math.ceil(
-				state.totalMaterials / state.materialsPerPage
-			)
+			resetPagination(state)
 		},
 		searchMaterial: (state, { payload }) => {
-			state.page = 1
-			state.sliceStart = 0
-			state.sliceEnd = 10
 			state.filtered_materials = state.materials.filter(item =>
 				item.title.toLowerCase().includes(payload.toLowerCase())
 			)
-			state.totalMaterials = state.filtered_materials.length + 1
-			state.numOfPages = Math.ceil(
-				state.totalMaterials / state.materialsPerPage
-			)
+
+			resetPagination(state)
 		},
 		changePage: (state, { payload }) => {
 			state.page = payload

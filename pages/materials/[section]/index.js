@@ -29,8 +29,6 @@ const Section = () => {
 		sliceEnd,
 	} = useSelector(store => store.materials)
 
-	console.log(sliceStart, sliceEnd)
-
 	useEffect(() => {
 		if (section) {
 			dispatch(getMaterials(section))
