@@ -8,34 +8,49 @@ import {
 	faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons'
 import { useUserContext } from '../../context/user.js'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from '../../styles/UserMenu.module.css'
 
 const UserMenu = () => {
-	const [isMenuDisplayed, setIsMenuDisplayed] = useState(false)
+	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const { user, userProfile, logout } = useUserContext()
 
+	const ref = useRef()
+
+	useEffect(() => {
+		const checkIfClickedOutside = e => {
+			if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
+				setIsMenuOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', checkIfClickedOutside)
+
+		return () => {
+			document.removeEventListener('mousedown', checkIfClickedOutside)
+		}
+	}, [isMenuOpen])
+
 	return (
-		<div className={styles.wrapper}>
+		<div ref={ref} className={styles.wrapper}>
 			<div
 				className={styles.userNameContainer}
-				onClick={() => setIsMenuDisplayed(!isMenuDisplayed)}>
+				onClick={() => setIsMenuOpen(!isMenuOpen)}>
 				<FontAwesomeIcon
 					className={styles.userNameIcon}
 					icon={faUser}
-					size='l'
+					size='lg'
 				/>
 				<span className={styles.userNameText}>{userProfile?.name}</span>
 			</div>
-			{isMenuDisplayed && (
+			{isMenuOpen && (
 				<div className={styles.userMenucontainer}>
 					<ul>
 						<li>
-							<FontAwesomeIcon icon={faGear} size='l' />
+							<FontAwesomeIcon icon={faGear} size='lg' />
 							<span>Réglages</span>
 						</li>
 						<li>
-							<FontAwesomeIcon icon={faRightFromBracket} size='l' />
+							<FontAwesomeIcon icon={faRightFromBracket} size='lg' />
 							<span onClick={() => logout()}>Se déconnecter</span>
 						</li>
 					</ul>

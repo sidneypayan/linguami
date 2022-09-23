@@ -1,35 +1,31 @@
-.wrapper {
-	position: relative;
-}
-
 .userNameContainer {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	cursor: pointer;
-	background-color: var(--primaryBtnColor);
-	padding: 0.75rem 1rem;
+	padding: 0.5rem 0.75rem;
 	border-radius: 3px;
+}
+
+.userNameContainer:hover {
+	background-color: var(--primaryBtnColor);
 }
 
 .userNameText {
 	margin-left: 0.5rem;
 }
 
-.userName:hover {
-}
-
 .userMenucontainer {
 	background-color: var(--white);
-	box-shadow: 0px 2px 3px #ccc, 0px 2px 3px #ccc;
+	background-color: var(--navColor);
 	position: absolute;
-	/* margin-top: 10rem; */
-	top: 75px;
-	right: -50px;
+	top: 56px;
+	right: 0px;
 	width: 200px;
 	padding: 1rem;
-	border-radius: 3px;
+	border-bottom-left-radius: 3px;
 	color: var(--primaryTextColor);
+	color: var(--white);
 }
 
 .userMenucontainer li {
@@ -40,7 +36,7 @@
 }
 
 .userMenucontainer li:hover {
-	background-color: var(--backgroundColor);
+	background-color: var(--primaryBtnColor);
 }
 
 .userMenucontainer span {

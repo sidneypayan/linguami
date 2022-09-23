@@ -17,18 +17,18 @@ const Navbar = () => {
 		<nav className={styles.nav}>
 			<div className={`${styles.container} ${isNavExpanded && styles.show}`}>
 				<ul className={styles.menuContainer}>
-					<li onClick={() => setIsNavExpanded(false)}>
-						<Link href='/'>Accueil</Link>
-					</li>
-					<li onClick={() => setIsNavExpanded(false)}>
-						<Link href='/materials'>Materiel</Link>
-					</li>
-					<li onClick={() => setIsNavExpanded(false)}>
-						<Link href='/cours'>Cours</Link>
-					</li>
-					<li onClick={() => setIsNavExpanded(false)}>
-						<Link href='/blog'>Blog</Link>
-					</li>
+					<Link href='/'>
+						<li onClick={() => setIsNavExpanded(false)}>Accueil</li>
+					</Link>
+					<Link href='/materials'>
+						<li onClick={() => setIsNavExpanded(false)}>Materiel</li>
+					</Link>
+					{/* <Link href='/cours'>
+						<li onClick={() => setIsNavExpanded(false)}>Cours</li>
+					</Link>
+					<Link href='/blog'>
+						<li onClick={() => setIsNavExpanded(false)}>Blog</li>
+					</Link> */}
 				</ul>
 
 				{isUserLoggedIn ? (
