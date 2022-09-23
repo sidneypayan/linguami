@@ -11,14 +11,14 @@ const initialState = {
 }
 
 const Login = () => {
-	const { login } = useUserContext()
+	const { login, askNewPassword } = useUserContext()
 
 	const [values, setValues] = useState(initialState)
-	const [error, setError] = useState('')
+	const [resetPassword, setResetPassword] = useState(false)
+	const [email, setEmail] = useState('')
 
 	const handleSubmit = e => {
 		e.preventDefault()
-		setError('')
 
 		if (!values.email || !values.password) {
 			toast.error('Veuillez remplir tous les champs')
@@ -40,6 +40,11 @@ const Login = () => {
 		})
 	}
 
+	const handleNewPassword = e => {
+		e.preventDefault()
+		askNewPassword(email)
+	}
+
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.container}>
@@ -51,36 +56,64 @@ const Login = () => {
 						height={150}></Image>
 				</div>
 
-				<form onSubmit={handleSubmit} className={styles.formContainer}>
-					<h2>Login</h2>
-					<p className={styles.error}>{error}</p>
-					<div>
-						<input
-							type='email'
-							placeholder='Email'
-							name='email'
-							value={values.email}
-							onChange={handleChange}
-						/>
-					</div>
-					<div>
-						<input
-							type='password'
-							placeholder='Password'
-							name='password'
-							value={values.password}
-							onChange={handleChange}
-						/>
-					</div>
+				{resetPassword ? (
+					<form onSubmit={handleNewPassword} className={styles.formContainer}>
+						<h2>Mot de passe oublié ?</h2>
+						<p className={styles.resetText}>
+							Veuillez entrer votre adresse email
+						</p>
+						<div>
+							<input
+								type='email'
+								placeholder='Email'
+								name='email'
+								value={email}
+								onChange={e => setEmail(e.target.value)}
+							/>
+						</div>
 
-					<button className={`${styles.btn} mainBtn`}>Log In</button>
-					<p>
-						Vous n&apos;avez pas encore de compte ? <br />
-						<Link href='/register'>
-							<a>Inscrivez-vous gratuitement !</a>
-						</Link>
-					</p>
-				</form>
+						<span
+							className={styles.resetBtn}
+							onClick={() => setResetPassword(!resetPassword)}>
+							Revenir vers l&apos;inscription
+						</span>
+						<button className={`${styles.btn} mainBtn`}>Envoyer</button>
+					</form>
+				) : (
+					<form onSubmit={handleSubmit} className={styles.formContainer}>
+						<h2>Login</h2>
+						<div>
+							<input
+								type='email'
+								placeholder='Email'
+								name='email'
+								value={values.email}
+								onChange={handleChange}
+							/>
+						</div>
+						<div>
+							<input
+								type='password'
+								placeholder='Password'
+								name='password'
+								value={values.password}
+								onChange={handleChange}
+							/>
+						</div>
+						<span
+							className={styles.resetBtn}
+							onClick={() => setResetPassword(!resetPassword)}>
+							Mot de passe oublié ?
+						</span>
+						<button className={`${styles.btn} mainBtn`}>Se connecter</button>
+						<p>
+							Vous n&apos;avez pas encore de compte ? <br />
+							<Link href='/register'>
+								<a>Inscrivez-vous gratuitement !</a>
+							</Link>
+						</p>
+					</form>
+				)}
 			</div>
 		</div>
 	)

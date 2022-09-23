@@ -67,7 +67,7 @@ const Pagination = () => {
 			setSliceStart(page - 2)
 			setSliceEnd(page - 1)
 		}
-	}, [page])
+	}, [numOfPages, page])
 
 	console.log(numOfPages)
 

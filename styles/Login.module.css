@@ -17,7 +17,7 @@
 
 .formContainer {
 	text-align: center;
-	width: 280px;
+	width: 300px;
 }
 
 .formContainer input {
@@ -33,6 +33,7 @@
 }
 
 .formContainer h2 {
+	margin-bottom: 2.5rem;
 	font-size: 1.75rem;
 }
 
@@ -53,6 +54,24 @@
 	width: 100%;
 }
 
+.resetText {
+	font-weight: 500;
+	text-align: left;
+	color: var(--navColor);
+}
+
+.resetBtn {
+	cursor: pointer;
+	margin-top: 0.5rem;
+	display: block;
+	border: none;
+	background-color: inherit;
+	font-size: 0.85rem;
+	color: var(--navColor);
+	text-decoration: underline;
+	text-align: left;
+}
+
 .error {
 	font-size: 0.85rem;
 	color: red;
@@ -60,7 +79,7 @@
 
 @media (width < 768px) {
 	.container {
-		width: 1000%;
+		width: 100%;
 	}
 
 	.img {

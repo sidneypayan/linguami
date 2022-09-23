@@ -63,6 +63,39 @@ const UserProvider = ({ children }) => {
 		toast.success('Déconnexion en cours...')
 	}
 
+	const askNewPassword = async email => {
+		let { error } = supabase.auth.api.resetPasswordForEmail(email)
+
+		if (error) {
+			return toast.error(error)
+		}
+
+		toast.success(
+			'Vous allez recevoir un email avec les instructions nécessaires'
+		)
+	}
+
+	const setNewPassword = async password => {
+		console.log(password)
+		const { data, error } = await supabase.auth.update({
+			password: password,
+		})
+
+		if (data) {
+			toast.success('Mot de passe mis à jour avec succès')
+			router.push('/login')
+		}
+		if (error) toast.error('Erreur avec le mot de passe')
+	}
+
+	useEffect(() => {
+		supabase.auth.onAuthStateChange(async (event, session) => {
+			if (event === 'PASSWORD_RECOVERY') {
+				router.push('set-new-password')
+			}
+		})
+	}, [])
+
 	useEffect(() => {
 		const getUserProfile = async () => {
 			const sessionUser = supabase.auth.user()
@@ -110,6 +143,8 @@ const UserProvider = ({ children }) => {
 		register,
 		login,
 		logout,
+		askNewPassword,
+		setNewPassword,
 	}
 
 	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>
