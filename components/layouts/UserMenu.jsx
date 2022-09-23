@@ -21,6 +21,7 @@ const UserMenu = () => {
 		const checkIfClickedOutside = e => {
 			if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
 				setIsMenuOpen(false)
+				console.log(e.target)
 			}
 		}
 		document.addEventListener('mousedown', checkIfClickedOutside)
@@ -34,6 +35,7 @@ const UserMenu = () => {
 		<div ref={ref} className={styles.wrapper}>
 			<div
 				className={styles.userNameContainer}
+				onMouseEnter={() => setIsMenuOpen(true)}
 				onClick={() => setIsMenuOpen(!isMenuOpen)}>
 				<FontAwesomeIcon
 					className={styles.userNameIcon}

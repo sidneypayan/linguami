@@ -1,4 +1,10 @@
+/* .wrapper {
+	display: flex;
+	flex-direction: column;
+} */
+
 .userNameContainer {
+	/* margin-top: 15rem; */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -16,7 +22,6 @@
 }
 
 .userMenucontainer {
-	background-color: var(--white);
 	background-color: var(--navColor);
 	position: absolute;
 	top: 56px;
@@ -24,7 +29,6 @@
 	width: 200px;
 	padding: 1rem;
 	border-bottom-left-radius: 3px;
-	color: var(--primaryTextColor);
 	color: var(--white);
 }
 
