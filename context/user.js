@@ -25,7 +25,6 @@ const UserProvider = ({ children }) => {
 			return toast.error(error)
 		}
 
-		setUser(user)
 		toast.success(
 			'Vous êtes bien enregistré. Veuillez vérifier le mail que nous avous avons envoyé :)'
 		)
@@ -89,14 +88,6 @@ const UserProvider = ({ children }) => {
 	}
 
 	useEffect(() => {
-		supabase.auth.onAuthStateChange(async (event, session) => {
-			if (event === 'PASSWORD_RECOVERY') {
-				router.push('set-new-password')
-			}
-		})
-	}, [])
-
-	useEffect(() => {
 		const getUserProfile = async () => {
 			const sessionUser = supabase.auth.user()
 
@@ -114,11 +105,9 @@ const UserProvider = ({ children }) => {
 		}
 
 		getUserProfile()
+	}, [user])
 
-		supabase.auth.onAuthStateChange(() => {
-			getUserProfile()
-		})
-	}, [])
+	console.log(user)
 
 	useEffect(() => {
 		axios.post('/api/auth', {
@@ -126,6 +115,12 @@ const UserProvider = ({ children }) => {
 			session: supabase.auth.session(),
 		})
 	}, [user])
+
+	useEffect(() => {
+		supabase.auth.onAuthStateChange((event, session) => {
+			if (event === 'USER_DELETE') setUser(null)
+		})
+	}, [])
 
 	useEffect(() => {
 		if (user) {
