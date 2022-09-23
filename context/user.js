@@ -15,7 +15,14 @@ const UserProvider = ({ children }) => {
 
 	const register = async data => {
 		const { name, email, password } = data
-		let { user, error } = await supabase.auth.signUp({ email, password })
+		let { user, error } = await supabase.auth.signUp(
+			{ email, password },
+			{
+				data: {
+					name: name,
+				},
+			}
+		)
 
 		if (user.identities.length === 0) {
 			return toast.error('Cet email est déjà utilisé')
@@ -75,7 +82,6 @@ const UserProvider = ({ children }) => {
 	}
 
 	const setNewPassword = async password => {
-		console.log(password)
 		const { data, error } = await supabase.auth.update({
 			password: password,
 		})
@@ -106,8 +112,6 @@ const UserProvider = ({ children }) => {
 
 		getUserProfile()
 	}, [user])
-
-	console.log(user)
 
 	useEffect(() => {
 		axios.post('/api/auth', {

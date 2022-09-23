@@ -7,9 +7,10 @@ config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useUserContext } from '../../context/user.js'
+import UserMenu from './UserMenu'
 
 const Navbar = () => {
-	const { user, isUserLoggedIn, logout } = useUserContext()
+	const { user, userProfile, isUserLoggedIn, logout } = useUserContext()
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
 
 	return (
@@ -31,10 +32,7 @@ const Navbar = () => {
 				</ul>
 
 				{isUserLoggedIn ? (
-					<div className={styles.userContainer}>
-						<button>{user?.email}</button>
-						<button onClick={() => logout()}>Log out</button>
-					</div>
+					<UserMenu />
 				) : (
 					<div className={styles.btnContainer}>
 						<Link href='/login'>
