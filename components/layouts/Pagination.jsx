@@ -39,7 +39,7 @@ const Pagination = () => {
 	useEffect(() => {
 		if (page === 1) {
 			setSliceStart(page)
-			setSliceEnd(page + 2)
+			setSliceEnd(page + 1)
 		}
 		if (page === 2) {
 			setSliceStart(page - 1)
@@ -48,6 +48,11 @@ const Pagination = () => {
 		if (page > 2) {
 			setSliceStart(page - 2)
 			setSliceEnd(page + 1)
+		}
+
+		if (numOfPages == 2) {
+			setSliceStart(numOfPages)
+			return
 		}
 
 		if (numOfPages - page == 2) {
@@ -59,10 +64,12 @@ const Pagination = () => {
 		}
 
 		if (numOfPages === page) {
-			setSliceStart(page - 3)
+			setSliceStart(page - 2)
 			setSliceEnd(page - 1)
 		}
 	}, [page])
+
+	console.log(numOfPages)
 
 	return (
 		<div className={styles.container}>

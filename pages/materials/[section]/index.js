@@ -27,6 +27,7 @@ const Section = () => {
 		page,
 		sliceStart,
 		sliceEnd,
+		numOfPages,
 	} = useSelector(store => store.materials)
 
 	useEffect(() => {
@@ -67,7 +68,7 @@ const Section = () => {
 					<SectionCard key={material.id} material={material} />
 				))}
 			</div>
-			<Pagination />
+			{numOfPages > 1 && <Pagination />}
 		</>
 	)
 }
