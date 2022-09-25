@@ -21,7 +21,6 @@ const UserMenu = () => {
 		const checkIfClickedOutside = e => {
 			if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
 				setIsMenuOpen(false)
-				console.log(e.target)
 			}
 		}
 		document.addEventListener('mousedown', checkIfClickedOutside)
@@ -42,7 +41,9 @@ const UserMenu = () => {
 					icon={faUser}
 					size='lg'
 				/>
-				<span className={styles.userNameText}>{userProfile?.name}</span>
+				<span className={styles.userNameText}>
+					{userProfile?.user_metadata.name}
+				</span>
 			</div>
 			{isMenuOpen && (
 				<div className={styles.userMenucontainer}>
