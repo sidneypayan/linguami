@@ -39,11 +39,11 @@ const Material = () => {
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
 			return (
-				<Image
-					width={600}
-					height={240}
-					src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
-					alt={single_material.title}></Image>
+				<div
+					className={styles.imgPlace}
+					style={{
+						backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img})`,
+					}}></div>
 			)
 		}
 
@@ -55,11 +55,6 @@ const Material = () => {
 			section === 'short-story'
 		) {
 			return (
-				// <Image
-				// 	width={250}
-				// 	height={250}
-				// 	src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
-				// 	alt={single_material.title}></Image>
 				<div
 					className={styles.img}
 					style={{
