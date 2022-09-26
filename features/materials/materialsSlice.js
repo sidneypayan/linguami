@@ -17,6 +17,9 @@ const initialState = {
 	materialsPerPage: 10,
 	sliceStart: 0,
 	sliceEnd: 10,
+	chapters: [],
+	chapters_loading: false,
+	chapters_error: false,
 }
 
 export const getMaterials = createAsyncThunk(
@@ -44,7 +47,26 @@ export const getMaterial = createAsyncThunk(
 				.select('*')
 				.eq('id', param)
 				.single()
+			if (error) console.log(error)
 			return material
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const getBookChapters = createAsyncThunk(
+	'materials/getBookChapters',
+	async (bookName, thunkAPI) => {
+		try {
+			let { data: chapters, error } = await supabase
+				.from('materials')
+				.select('*')
+				.eq('section', 'book-chapter')
+				.eq('book_name', bookName)
+				.order('id')
+			if (error) console.log(error)
+			return chapters
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
@@ -116,7 +138,18 @@ const materialsSlice = createSlice({
 		},
 		[getMaterial.rejected]: (state, { payload }) => {
 			state.single_material_loading = false
-			single_material_error = payload
+			state.single_material_error = payload
+		},
+		[getBookChapters.pending]: state => {
+			state.chapters_loading = true
+		},
+		[getBookChapters.fulfilled]: (state, { payload }) => {
+			state.chapters_loading = false
+			state.chapters = payload
+		},
+		[getBookChapters.rejected]: (state, { payload }) => {
+			state.chapters_loading = false
+			state.chapters_error = payload
 		},
 	},
 })

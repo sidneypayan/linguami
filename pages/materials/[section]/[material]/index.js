@@ -1,18 +1,22 @@
-import { supabase } from '../../../../lib/supabase'
+// import { supabase } from '../../../../lib/supabase'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faXmark, faBook } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../../../styles/materials/Material.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
 import DOMPurify from 'isomorphic-dompurify'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import { getMaterial } from '../../../../features/materials/materialsSlice'
+import {
+	getMaterial,
+	getBookChapters,
+} from '../../../../features/materials/materialsSlice'
 import { useSelector, useDispatch } from 'react-redux'
+import BookMenu from '../../../../components/layouts/BookMenu'
 
 import { useUserContext } from '../../../../context/user'
 
@@ -22,15 +26,60 @@ const Material = () => {
 	const { single_material, single_material_loading } = useSelector(
 		store => store.materials
 	)
+
+	const bookName = single_material.book_name || null
 	const router = useRouter()
-	const { material } = router.query
+	const { material, section } = router.query
+
 	const [showAccents, setShowAccents] = useState(false)
+	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
+
+	console.log(section)
+
+	const getImageRegardingSection = section => {
+		if (section === 'place') {
+			return (
+				<Image
+					width={600}
+					height={240}
+					src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
+					alt={single_material.title}></Image>
+			)
+		}
+
+		if (
+			section === 'dialogue' ||
+			section === 'culture' ||
+			section === 'slice-of-life' ||
+			section === 'book' ||
+			section === 'short-story'
+		) {
+			return (
+				// <Image
+				// 	width={250}
+				// 	height={250}
+				// 	src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
+				// 	alt={single_material.title}></Image>
+				<div
+					className={styles.img}
+					style={{
+						backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img})`,
+					}}></div>
+			)
+		}
+	}
 
 	useEffect(() => {
 		if (material) {
 			dispatch(getMaterial(material))
 		}
-	}, [material])
+	}, [dispatch, material])
+
+	useEffect(() => {
+		if (bookName) {
+			dispatch(getBookChapters(bookName))
+		}
+	}, [dispatch, bookName])
 
 	if (single_material_loading) {
 		return (
@@ -60,42 +109,54 @@ const Material = () => {
 				</div>
 				<div className={styles.mediaContainer}>
 					{/* AUDIO PLAYER */}
-					{(single_material.section === 'dialogue' ||
-						single_material.section === 'book-chapter' ||
-						single_material.section === 'podcast' ||
-						single_material.section === 'short-story' ||
-						single_material.section === 'slice-of-life' ||
-						single_material.section === 'culture' ||
-						single_material.section === 'place') && (
-						<div className={styles.audioContainer}>
-							{single_material.section !== 'place' ? (
-								<div className={styles.nonPlaceImg}>
-									<Image
-										width={250}
-										height={250}
-										src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
-										alt={single_material.title}></Image>
-								</div>
-							) : (
-								<Image
-									width={600}
-									height={240}
-									src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img}`}
-									alt={single_material.title}></Image>
-							)}
-							<audio
-								controls='controls'
-								src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
-							<div className='audio-player__speed-icons'>
+
+					<div className={styles.audioContainer}>
+						{getImageRegardingSection(section)}
+
+						<audio
+							controls='controls'
+							src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
+
+						{section === 'book' && isBookMenuOpen && (
+							<>
+								<button
+									onClick={() => setIsBookMenuOpen(false)}
+									className={styles.bookMenuBtn}>
+									Cacher le menu des chapitres
+									<FontAwesomeIcon
+										className={styles.bookMenuIcon}
+										icon={faXmark}
+									/>
+								</button>
+
+								<BookMenu />
+							</>
+						)}
+
+						{section === 'book' && !isBookMenuOpen && (
+							<>
+								<button
+									onClick={() => setIsBookMenuOpen(true)}
+									className={styles.bookMenuBtn}>
+									Afficher le menu des chapitres
+									<FontAwesomeIcon
+										className={styles.bookMenuIcon}
+										icon={faBook}
+									/>
+								</button>
+							</>
+						)}
+
+						{/* <div className='audio-player__speed-icons'>
 								<a className='audio-player__turtle-icon'>
-									{/* <Image src="" alt=""></Image> */}
+									<Image src="" alt=""></Image>
 								</a>
 								<a className='audio-player__hare-icon'>
-									{/* <Image src="" alt=""></Image> */}
+									<Image src="" alt=""></Image>
 								</a>
-							</div>
-						</div>
-					)}
+							</div> */}
+					</div>
+
 					{/* DISPLAY VIDEO REGARDING THE SECTION */}
 
 					{(single_material.section === 'trailer' ||

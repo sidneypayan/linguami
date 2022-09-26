@@ -1,3 +1,8 @@
+.sectionsWrapper {
+	position: relative;
+	height: 100%;
+}
+
 .container {
 	min-height: 50vh;
 	display: grid;

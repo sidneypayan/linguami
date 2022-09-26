@@ -19,6 +19,7 @@
 }
 
 .title {
+	cursor: pointer;
 	line-height: 1.5rem;
 	margin: 0;
 	margin-bottom: 0.25rem;
@@ -28,6 +29,7 @@
 }
 
 .img {
+	cursor: pointer;
 	background-size: cover;
 	background-position: center;
 	min-width: 125px;

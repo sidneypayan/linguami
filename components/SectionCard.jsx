@@ -3,8 +3,11 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
+import { useRouter } from 'next/router'
 
 const SectionCard = ({ material }) => {
+	const router = useRouter()
+	const { section } = router.query
 	return (
 		<div className={styles.container}>
 			<Link href={`/materials/${material.section}/${material.id}`} passHref>
@@ -17,11 +20,16 @@ const SectionCard = ({ material }) => {
 				</a>
 			</Link>
 			<div className={styles.textContainer}>
-				<Link href={`/materials/${material.section}/${material.id}`} passHref>
+				<Link
+					href={`/materials/${material.section}/${
+						section === 'book' ? material.id + 1 : material.id
+					}`}
+					passHref>
 					<a href=''>
 						<h4 className={styles.title}>{material.title}</h4>
 					</a>
 				</Link>
+
 				<div className={styles.infoContainer}>
 					<div>
 						<span>{material.section}</span>

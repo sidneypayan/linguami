@@ -13,8 +13,10 @@ import {
 	getMaterials,
 	filterMaterials,
 } from '../../../features/materials/materialsSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import BookMenu from '../../../components/layouts/BookMenu'
+// import { supabase } from '../../../lib/supabase'
 
 const Section = () => {
 	const router = useRouter()
@@ -29,6 +31,45 @@ const Section = () => {
 		sliceEnd,
 		numOfPages,
 	} = useSelector(store => store.materials)
+
+	// const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
+	// const [bookName, setBookName] = useState(null)
+	// const [chapters, setChapters] = useState(null)
+
+	// const toggleBookMenu = bookName => {
+	// 	setIsBookMenuOpen(!isBookMenuOpen)
+	// 	setBookName(bookName)
+	// }
+	// const closeBookMenu = () => {
+	// 	setIsBookMenuOpen(false)
+	// }
+
+	// const left = () => {
+	// 	if (isBookMenuOpen) return 0
+	// 	return '300px'
+	// }
+
+	// const getChapters = async bookName => {
+	// 	let { data: chapters, error } = await supabase
+	// 		.from('materials')
+	// 		.select('*')
+	// 		.eq('lang', 'ru')
+	// 		.eq('section', 'book-chapter')
+	// 		.eq('book_name', bookName)
+	// 		.order('id')
+
+	// 	if (error) {
+	// 		console.log(error)
+	// 	}
+
+	// 	setChapters(chapters)
+	// }
+
+	// useEffect(() => {
+	// 	if (bookName) {
+	// 		getChapters(bookName)
+	// 	}
+	// }, [bookName])
 
 	useEffect(() => {
 		if (section) {
@@ -62,13 +103,23 @@ const Section = () => {
 				icon={faArrowLeft}
 				size='2xl'
 			/>
-			<LevelBar />
-			<div className={styles.container}>
-				{materials.slice(sliceStart, sliceEnd).map(material => (
-					<SectionCard key={material.id} material={material} />
-				))}
+			<div className={styles.sectionsWrapper}>
+				<LevelBar />
+				<div className={styles.container}>
+					{/* <div style={{ left: left() }} className={styles.bookMenu}>
+						<BookMenu
+							isBookMenuOpen={isBookMenuOpen}
+							closeBookMenu={closeBookMenu}
+							chapters={chapters}
+						/>
+					</div> */}
+					{materials.slice(sliceStart, sliceEnd).map(material => {
+						const bookName = material.book_name || null
+						return <SectionCard key={material.id} material={material} />
+					})}
+				</div>
+				{numOfPages > 1 && <Pagination />}
 			</div>
-			{numOfPages > 1 && <Pagination />}
 		</>
 	)
 }
