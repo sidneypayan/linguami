@@ -32,45 +32,6 @@ const Section = () => {
 		numOfPages,
 	} = useSelector(store => store.materials)
 
-	// const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
-	// const [bookName, setBookName] = useState(null)
-	// const [chapters, setChapters] = useState(null)
-
-	// const toggleBookMenu = bookName => {
-	// 	setIsBookMenuOpen(!isBookMenuOpen)
-	// 	setBookName(bookName)
-	// }
-	// const closeBookMenu = () => {
-	// 	setIsBookMenuOpen(false)
-	// }
-
-	// const left = () => {
-	// 	if (isBookMenuOpen) return 0
-	// 	return '300px'
-	// }
-
-	// const getChapters = async bookName => {
-	// 	let { data: chapters, error } = await supabase
-	// 		.from('materials')
-	// 		.select('*')
-	// 		.eq('lang', 'ru')
-	// 		.eq('section', 'book-chapter')
-	// 		.eq('book_name', bookName)
-	// 		.order('id')
-
-	// 	if (error) {
-	// 		console.log(error)
-	// 	}
-
-	// 	setChapters(chapters)
-	// }
-
-	// useEffect(() => {
-	// 	if (bookName) {
-	// 		getChapters(bookName)
-	// 	}
-	// }, [bookName])
-
 	useEffect(() => {
 		if (section) {
 			dispatch(getMaterials(section))

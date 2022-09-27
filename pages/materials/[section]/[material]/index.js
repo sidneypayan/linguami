@@ -1,4 +1,4 @@
-// import { supabase } from '../../../../lib/supabase'
+import { supabase } from '../../../../lib/supabase'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -20,21 +20,20 @@ import BookMenu from '../../../../components/layouts/BookMenu'
 
 import { useUserContext } from '../../../../context/user'
 
-const Material = () => {
+const Material = ({ material: single_material }) => {
+	console.log(single_material)
 	const { user, isUserLoggedIn } = useUserContext()
 	const dispatch = useDispatch()
-	const { single_material, single_material_loading } = useSelector(
-		store => store.materials
-	)
+	// const { single_material, single_material_loading } = useSelector(
+	// 	store => store.materials
+	// )
 
-	const bookName = single_material.book_name || null
+	// const bookName = single_material?.book_name || null
 	const router = useRouter()
 	const { material, section } = router.query
 
 	const [showAccents, setShowAccents] = useState(false)
 	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
-
-	console.log(section)
 
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
@@ -64,29 +63,29 @@ const Material = () => {
 		}
 	}
 
-	useEffect(() => {
-		if (material) {
-			dispatch(getMaterial(material))
-		}
-	}, [dispatch, material])
+	// useEffect(() => {
+	// 	if (material) {
+	// 		dispatch(getMaterial(material))
+	// 	}
+	// }, [dispatch, material])
 
-	useEffect(() => {
-		if (bookName) {
-			dispatch(getBookChapters(bookName))
-		}
-	}, [dispatch, bookName])
+	// useEffect(() => {
+	// 	if (bookName) {
+	// 		dispatch(getBookChapters(bookName))
+	// 	}
+	// }, [dispatch, bookName])
 
-	if (single_material_loading) {
-		return (
-			<div className='loader'>
-				<Image
-					src='/img/loader.gif'
-					width={200}
-					height={200}
-					alt='loader'></Image>
-			</div>
-		)
-	}
+	// if (single_material_loading) {
+	// 	return (
+	// 		<div className='loader'>
+	// 			<Image
+	// 				src='/img/loader.gif'
+	// 				width={200}
+	// 				height={200}
+	// 				alt='loader'></Image>
+	// 		</div>
+	// 	)
+	// }
 
 	return (
 		<>
@@ -320,6 +319,38 @@ const Material = () => {
 			</div>
 		</>
 	)
+}
+
+export const getStaticProps = async ({ params }) => {
+	const { data: material, error } = await supabase
+		.from('materials')
+		.select('*')
+		.eq('lang', 'ru')
+		.eq('id', params.material)
+		.single()
+
+	return {
+		props: {
+			material,
+		},
+		revalidate: 60,
+	}
+}
+
+export const getStaticPaths = async () => {
+	const { data: materials, error } = await supabase
+		.from('materials')
+		.select('*')
+		.eq('lang', 'ru')
+
+	const paths = materials.map(material => ({
+		params: { section: material.section, material: material.id.toString() },
+	}))
+
+	return {
+		paths,
+		fallback: 'blocking',
+	}
 }
 
 export default Material
