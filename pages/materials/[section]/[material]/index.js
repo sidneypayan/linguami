@@ -28,7 +28,7 @@ const Material = ({ material: single_material }) => {
 	// 	store => store.materials
 	// )
 
-	// const bookName = single_material?.book_name || null
+	const bookName = single_material.book_name
 	const router = useRouter()
 	const { material, section } = router.query
 
@@ -69,11 +69,11 @@ const Material = ({ material: single_material }) => {
 	// 	}
 	// }, [dispatch, material])
 
-	// useEffect(() => {
-	// 	if (bookName) {
-	// 		dispatch(getBookChapters(bookName))
-	// 	}
-	// }, [dispatch, bookName])
+	useEffect(() => {
+		if (bookName) {
+			dispatch(getBookChapters(bookName))
+		}
+	}, [dispatch, bookName])
 
 	// if (single_material_loading) {
 	// 	return (

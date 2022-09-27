@@ -69,8 +69,6 @@ const Pagination = () => {
 		}
 	}, [numOfPages, page])
 
-	console.log(numOfPages)
-
 	return (
 		<div className={styles.container}>
 			<button onClick={prevPage} className={styles.arrowBtn}>
