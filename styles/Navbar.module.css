@@ -5,7 +5,7 @@
 	background-color: var(--navColor);
 	height: 64px;
 	color: #fff;
-	z-index: 2;
+	z-index: 1;
 }
 
 .container {

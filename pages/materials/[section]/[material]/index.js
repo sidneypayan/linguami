@@ -21,7 +21,6 @@ import BookMenu from '../../../../components/layouts/BookMenu'
 import { useUserContext } from '../../../../context/user'
 
 const Material = ({ material: single_material }) => {
-	console.log(single_material)
 	const { user, isUserLoggedIn } = useUserContext()
 	const dispatch = useDispatch()
 	// const { single_material, single_material_loading } = useSelector(
@@ -75,6 +74,10 @@ const Material = ({ material: single_material }) => {
 		}
 	}, [dispatch, bookName])
 
+	useEffect(() => {
+		setIsBookMenuOpen(false)
+	}, [material])
+
 	// if (single_material_loading) {
 	// 	return (
 	// 		<div className='loader'>
@@ -98,7 +101,7 @@ const Material = ({ material: single_material }) => {
 			<div className={styles.container}>
 				<div className={styles.titleContainer}>
 					<h1 className={`${styles.title} headline`}>
-						{single_material.title}
+						{single_material.title_ru}
 					</h1>
 				</div>
 				<div className={styles.mediaContainer}>

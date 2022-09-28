@@ -1,9 +1,10 @@
-import axios from 'axios'
 import { useState } from 'react'
 import { sections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
 import dynamic from 'next/dynamic'
 import 'suneditor/dist/css/suneditor.min.css' // Import Sun Editor's CSS File
+import { useDispatch } from 'react-redux'
+import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
 
 const SunEditor = dynamic(() => import('suneditor-react'), {
 	ssr: false,
@@ -25,26 +26,21 @@ const SunEditorOptions = {
 }
 
 const Create = () => {
+	const dispatch = useDispatch()
 	const [formData, setFormData] = useState({
 		lang: 'ru',
 		section: 'dialogues',
+		book_name: '',
+		chapter: '',
 		level: 'débutant',
-		title: '',
-		description: '',
+		title_ru: '',
+		title_fr: '',
 		img: '',
 		audio: '',
 		video: '',
-		text: '',
-		textwithaccents: '',
+		content: '',
+		content_accents: '',
 	})
-
-	const createMaterial = async material => {
-		try {
-			await axios.post('http://localhost:3000/api/materials', material)
-		} catch (error) {
-			console.log(error)
-		}
-	}
 
 	const handleChange = e => {
 		const { name, value } = e.target
@@ -52,9 +48,11 @@ const Create = () => {
 			return { ...prev, [name]: value }
 		})
 	}
+
 	const submitMaterial = e => {
 		e.preventDefault()
-		createMaterial(formData)
+		// console.log(formData)
+		dispatch(postMaterial(formData))
 	}
 
 	return (
@@ -94,21 +92,29 @@ const Create = () => {
 				<div className={styles.titleContainer}>
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.title}
-						placeholder='Title'
+						value={formData.title_ru}
+						placeholder='Title ru'
 						type='text'
-						id='title'
-						name='title'
+						id='title_ru'
+						name='title_ru'
+					/>
+					<input
+						onChange={e => handleChange(e)}
+						value={formData.title_fr}
+						placeholder='Title fr'
+						type='text'
+						id='title_fr'
+						name='title_fr'
 					/>
 
-					<input
+					{/* <input
 						onChange={e => handleChange(e)}
 						value={formData.description}
 						placeholder='Description'
 						type='text'
 						id='description'
 						name='description'
-					/>
+					/> */}
 				</div>
 				<div className={styles.media}>
 					<input
@@ -140,17 +146,55 @@ const Create = () => {
 						name='video'
 					/>
 				</div>
+				<div className={styles.media}>
+					<input
+						onChange={e => handleChange(e)}
+						value={formData.bookName}
+						placeholder='Book Name'
+						type='text'
+						id='book_name'
+						name='book_name'
+					/>
+					{/* </div>
+				<div className={styles.level}> */}
+					<input
+						onChange={e => handleChange(e)}
+						value={formData.chapter}
+						placeholder='Chapter'
+						type='text'
+						id='chapter'
+						name='chapter'
+					/>
+				</div>
 				<div className={styles.text}>
-					<SunEditor
+					<textarea
+						name='content'
+						value={formData.content}
+						onChange={e => handleChange(e)}
+						placeholder='Content'
+					/>
+					<textarea
+						name='content_accents'
+						value={formData.content_accents}
+						onChange={e => handleChange(e)}
+						placeholder='Content with accents'
+					/>
+					{/* <SunEditor
+						onChange={handleSunEditor}
+						name='text'
 						height='350px'
 						placeholder='Content'
 						setOptions={SunEditorOptions}
+						value={formData.text}
 					/>
 					<SunEditor
+						onChange={e => handleSunEditor(e)}
+						name='textwithaccents'
 						height='350px'
 						placeholder='Content accents'
 						setOptions={SunEditorOptions}
-					/>
+						value={formData.textwithaccents}
+					/> */}
 				</div>
 				<input type='submit' className='mainBtn' value='Envoyer' />
 			</form>

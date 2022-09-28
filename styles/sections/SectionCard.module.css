@@ -1,4 +1,5 @@
 .container {
+	position: relative;
 	max-height: 125px;
 	background-color: var(--white);
 	border-radius: 3px;
@@ -18,14 +19,21 @@
 	font-size: 0.9rem;
 }
 
-.title {
+.title,
+.titleTranslation {
 	cursor: pointer;
-	line-height: 1.5rem;
-	margin: 0;
 	margin-bottom: 0.25rem;
-	font-size: 1.25rem;
 	font-weight: 400;
+}
+
+.title {
+	font-size: 1.25rem;
 	color: var(--primaryBtnColor);
+}
+
+.titleTranslation {
+	font-size: 1rem;
+	color: var(--navColor);
 }
 
 .img {
@@ -41,6 +49,18 @@
 .icon {
 	padding-right: 2rem;
 	color: var(--primaryBtnColor);
+}
+
+.level {
+	position: absolute;
+	color: var(--white);
+	top: 0;
+	left: 0;
+	padding: 0 0.3rem;
+	font-size: 0.8rem;
+	font-weight: 700;
+	border-top-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
 
 @media (max-width: 1023px) {

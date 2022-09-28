@@ -162,6 +162,18 @@ img {
 	margin-right: auto;
 }
 
+.beginner {
+	background-color: rgb(139, 199, 29);
+}
+
+.intermediate {
+	background-color: rgb(201, 117, 6);
+}
+
+.advanced {
+	background-color: rgb(207, 9, 9);
+}
+
 .loader {
 	display: flex;
 	justify-content: center;
