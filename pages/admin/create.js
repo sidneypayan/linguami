@@ -1,3 +1,5 @@
+import { supabase } from '../../lib/supabase'
+import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
 import { sections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
@@ -200,6 +202,38 @@ const Create = () => {
 			</form>
 		</div>
 	)
+}
+
+export const getServerSideProps = async ({ req }) => {
+	if (req.cookies['sb-access-token']) {
+		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
+
+		const { data: user, error } = await supabase
+			.from('users')
+			.select('*')
+			.eq('id', decodedToken.sub)
+			.single()
+
+		if (user.role !== 'admin') {
+			return {
+				redirect: {
+					destination: '/',
+					permanent: false,
+				},
+			}
+		}
+	} else {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: { user: 'user' },
+	}
 }
 
 export default Create

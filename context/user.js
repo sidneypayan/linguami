@@ -134,8 +134,6 @@ const UserProvider = ({ children }) => {
 		}
 	}, [user])
 
-	console.log(user)
-
 	const exposed = {
 		user,
 		userProfile,
