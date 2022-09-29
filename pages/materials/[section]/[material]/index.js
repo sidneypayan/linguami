@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import { faArrowLeft, faXmark, faBook } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../../../styles/materials/Material.module.css'
-import Image from 'next/image'
 import Link from 'next/link'
 import DOMPurify from 'isomorphic-dompurify'
 import { useRouter } from 'next/router'
@@ -15,8 +14,10 @@ import {
 	getMaterial,
 	getBookChapters,
 } from '../../../../features/materials/materialsSlice'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import BookMenu from '../../../../components/layouts/BookMenu'
+import Translation from '../../../../components/layouts/Translation'
+import Words from '../../../../components/layouts/Words'
 
 import { useUserContext } from '../../../../context/user'
 
@@ -33,6 +34,7 @@ const Material = ({ material: single_material }) => {
 
 	const [showAccents, setShowAccents] = useState(false)
 	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
+	const [coordinates, setCoordinates] = useState({})
 
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
@@ -89,6 +91,13 @@ const Material = ({ material: single_material }) => {
 	// 		</div>
 	// 	)
 	// }
+
+	const getCoordinates = e => {
+		setCoordinates({
+			x: e.pageX + 50,
+			y: e.pageY - 200,
+		})
+	}
 
 	return (
 		<>
@@ -175,67 +184,7 @@ const Material = ({ material: single_material }) => {
 
 				<div className={styles.textContainer}>
 					<div>
-						{/* TRANSLATION MODULE */}
-						{/* <div id='transPopup' className='trans-popup'>
-						<button
-							type='button'
-							id='transPopupTextForm'
-							className='trans-popup__o-word keep-open'></button>
-
-						<div
-							id='ShowInputTextForm'
-							className='trans-popup__showInput keep-open'>
-							<i
-								id='iconTextForm'
-								className='fas fa-angle-down keep-open icon-text-form'></i>
-						</div>
-						<div
-							id='InputContainerTextForm'
-							className='trans-popup__input-container'>
-							<input
-								id='transInputTextForm'
-								className='trans-popup__input keep-open'
-								type='text'
-								placeholder='Votre traduction'
-							/>
-							<button
-								type='button'
-								id='transPopupBtnTextForm'
-								className='trans-popup__btn-text-form'>
-								Ajouter
-							</button>
-						</div>
-
-						<button
-							type='button'
-							id='transPopupBaseForm'
-							className='trans-popup__o-word keep-open'></button>
-
-						<div
-							id='ShowInputBaseForm'
-							className='trans-popup__showInput keep-open'>
-							<i
-								id='iconBaseForm'
-								className='fas fa-angle-down keep-open icon-base-form'></i>
-						</div>
-						<div
-							id='InputContainerBaseForm'
-							className='trans-popup__input-container'>
-							<input
-								id='transInputBaseForm'
-								className='trans-popup__input keep-open'
-								type='text'
-								placeholder='Votre traduction'
-							/>
-							<button
-								id='transPopupBtnBaseForm'
-								className='trans-popup__btn-base-form'>
-								Ajouter
-							</button>
-						</div>
-					</div> */}
-						{/* END TRANSLATION MODULE */}
-
+						<Translation coordinates={coordinates} />
 						{/* BUTTON ACCENTS */}
 						<button
 							onClick={() => setShowAccents(!showAccents)}
@@ -249,16 +198,14 @@ const Material = ({ material: single_material }) => {
 
 						{showAccents ? (
 							<p
-								className='text-accents'
 								dangerouslySetInnerHTML={{
 									__html: DOMPurify.sanitize(single_material.content_accents),
-								}}></p>
+								}}
+								className='text-accents'></p>
 						) : (
-							<p
-								className='text'
-								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(single_material.content),
-								}}></p>
+							<p onClick={e => getCoordinates(e)} className={styles.text}>
+								<Words content={single_material.content} />
+							</p>
 						)}
 
 						{/* END POST CONTENT */}

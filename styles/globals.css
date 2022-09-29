@@ -162,6 +162,20 @@ img {
 	margin-right: auto;
 }
 
+/* .translate {
+	padding: 2px 0;
+	cursor: pointer;
+} */
+
+/* .translate:hover,
+.translate:focus,
+.translate:active {
+	background-color: #8c7ae6;
+	color: #fff;
+	padding: 2px 0;
+	border-radius: 4px;
+} */
+
 .beginner {
 	background-color: rgb(139, 199, 29);
 }
@@ -179,6 +193,13 @@ img {
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
+}
+
+.translationLoader {
+	padding: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .back-arrow {

@@ -141,7 +141,27 @@
 	font-size: 0.9rem;
 }
 
+.break::after {
+	content: '\a';
+	white-space: pre;
+}
+
+.translate {
+	padding: 2px 0;
+	cursor: pointer;
+}
+
+.translate:hover,
+.translate:focus,
+.translate:active {
+	background-color: #8c7ae6;
+	color: #fff;
+	padding: 2px 0;
+	border-radius: 4px;
+}
+
 .text {
+	white-space: pre-line;
 }
 
 .text-accents {

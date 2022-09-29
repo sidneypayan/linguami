@@ -1,0 +1,74 @@
+.container {
+	/* z-index: 1; */
+	/* min-width: 200px; */
+	/* max-width: 300px; */
+	/* height: 300px; */
+	/* visibility: hidden; */
+	position: absolute;
+	background-color: #fff;
+	font-size: 15px;
+	/* text-align: center; */
+	box-shadow: 1px 1px 2px #999;
+	border-radius: 3px;
+}
+
+.inf {
+	color: #fff;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	font-weight: 500;
+	padding: 0.5rem;
+	text-align: center;
+
+	background-color: var(--navColor);
+}
+
+/* .wrapper {
+	padding: 1rem;
+} */
+
+/* .originalWord {
+	cursor: default;
+	padding: 0.25rem 0.75rem;
+	display: block;
+	color: #555;
+	font-weight: bold;
+} */
+
+.traductionsContainer li {
+	/* margin-bottom: 0.5rem; */
+	font-size: 0.9rem;
+	cursor: pointer;
+	padding: 0.5rem;
+	font-weight: 600;
+	color: #777;
+}
+
+.traductionsContainer li:hover {
+	background-color: #ccc;
+	color: #000;
+}
+
+.input {
+	padding-left: 0.5rem;
+	width: 100%;
+	border: none;
+	/* border-top: 1px #ccc solid; */
+	box-shadow: inset 1px 1px 2px 1px #ccc;
+	height: 40px;
+}
+
+.input:focus {
+	outline: none;
+}
+
+.btn {
+	width: 100%;
+	border: none;
+	background-color: var(--navColor);
+	color: var(--white);
+	padding: 0.75rem 0;
+	cursor: pointer;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
