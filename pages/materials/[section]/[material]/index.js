@@ -292,6 +292,7 @@ export const getStaticPaths = async () => {
 		.from('materials')
 		.select('*')
 		.eq('lang', 'ru')
+		.neq('section', 'book')
 
 	const paths = materials.map(material => ({
 		params: { section: material.section, material: material.id.toString() },
