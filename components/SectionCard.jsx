@@ -29,7 +29,10 @@ const SectionCard = ({ material }) => {
 
 	return (
 		<div className={styles.container}>
-			<Link href={`/materials/${material.section}/${material.id}`} passHref>
+			<Link
+				href={`/materials/${material.section}/${
+					section === 'book' ? material.id + 1 : material.id
+				}`}>
 				<a href=''>
 					<div
 						className={styles.img}
@@ -42,8 +45,7 @@ const SectionCard = ({ material }) => {
 				<Link
 					href={`/materials/${material.section}/${
 						section === 'book' ? material.id + 1 : material.id
-					}`}
-					passHref>
+					}`}>
 					<a href=''>
 						<h4 className={styles.title}>{material.title_ru.slice(0, 20)}</h4>
 					</a>
