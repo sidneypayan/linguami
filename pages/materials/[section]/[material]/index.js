@@ -121,7 +121,6 @@ const Material = ({ material: single_material }) => {
 			x: xCoordinate,
 			y: e.pageY - 50,
 		})
-		console.log(window.innerWidth)
 	}
 
 	return (
@@ -220,11 +219,14 @@ const Material = ({ material: single_material }) => {
 						{/* POST CONTENT */}
 
 						{showAccents ? (
-							<p
-								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(single_material.content_accents),
-								}}
-								className='text-accents'></p>
+							// <p
+							// 	dangerouslySetInnerHTML={{
+							// 		__html: DOMPurify.sanitize(single_material.content_accents),
+							// 	}}
+							// 	className='text-accents'></p>
+							<p onClick={e => getCoordinates(e)} className={styles.text}>
+								<Words content={single_material.content_accents} />
+							</p>
 						) : (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
 								<Words content={single_material.content} />

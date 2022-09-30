@@ -12,6 +12,8 @@ const initialState = {
 export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (word, thunkAPI) => {
+		word = word.match(/[\u0430-\u044f]+/gi).join('')
+
 		try {
 			const { data } = await axios.get(
 				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=ru-fr&text=${word}&flags=004`
@@ -47,7 +49,6 @@ const wordsSlice = createSlice({
 		},
 		[translateWord.fulfilled]: (state, { payload }) => {
 			let asp
-			let pos
 			let form
 			const word = payload.word
 			const wordInfos = payload.data.def[0]
@@ -64,28 +65,6 @@ const wordsSlice = createSlice({
 			} else {
 				form = 'nominatif'
 			}
-			// switch (wordInfos.pos) {
-			// 	case 'noun':
-			// 		pos = 'nom'
-			// 		break
-			// 	case 'verb':
-			// 		pos = 'verbe'
-			// 		break
-			// 	case 'preposition':
-			// 		pos = 'préposition'
-			// 		break
-			// 	case 'conjunction':
-			// 		pos = 'conjonction'
-			// 		break
-			// 	case 'adjective':
-			// 		pos = 'adjectif'
-			// 		break
-			// 	case 'pronoun':
-			// 		pos = 'pronom'
-			// 		break
-			// 	default:
-			// 		pos = wordInfos.pos
-			// }
 
 			const definitions = wordInfos.tr.map(def => def.text).splice(0, 5)
 

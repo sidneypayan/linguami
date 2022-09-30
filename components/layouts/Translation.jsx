@@ -6,13 +6,16 @@ import {
 	cleanTranslation,
 } from '../../features/words/wordsSlice'
 import TranslationLoader from './TranslationLoader'
+import Link from 'next/link'
+import { useUserContext } from '../../context/user'
 
 const Translation = ({ coordinates }) => {
+	const { isUserLoggedIn } = useUserContext()
 	const position = {
 		left: coordinates.x + 'px',
 		top: coordinates.y + 'px',
 	}
-	// console.log(position)
+
 	const dispatch = useDispatch()
 	const ref = useRef()
 	const { translation, isTranslationOpen, translation_loading } = useSelector(
@@ -32,6 +35,21 @@ const Translation = ({ coordinates }) => {
 			document.removeEventListener('mousedown', checkIfClickedOutside)
 		}
 	}, [dispatch, isTranslationOpen])
+
+	if (!isUserLoggedIn) {
+		return (
+			isTranslationOpen && (
+				<div style={position} ref={ref} className={styles.container}>
+					<div className={styles.registerContainer}>
+						Créez un compte pour pouvoir utiliser l&apos; outil de traduction
+					</div>
+					<Link href='/register'>
+						<button className={styles.btn}>S&apos;enregistrer</button>
+					</Link>
+				</div>
+			)
+		)
+	}
 
 	return (
 		isTranslationOpen && (
