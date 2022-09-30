@@ -64,6 +64,24 @@ const Material = ({ material: single_material }) => {
 		}
 	}
 
+	const displayAudioPlayer = section => {
+		if (
+			section !== 'trailer' &&
+			section !== 'extract' &&
+			section !== 'eralash' &&
+			section !== 'music' &&
+			section !== 'cartoon' &&
+			section !== 'galileo' &&
+			section !== 'diverse'
+		) {
+			return (
+				<audio
+					controls='controls'
+					src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
+			)
+		}
+	}
+
 	// useEffect(() => {
 	// 	if (material) {
 	// 		dispatch(getMaterial(material))
@@ -93,10 +111,17 @@ const Material = ({ material: single_material }) => {
 	// }
 
 	const getCoordinates = e => {
+		const xCoordinate =
+			window.innerWidth < 768
+				? e.pageX - e.pageX / 2
+				: window.innerWidth < 1024
+				? e.pageX - e.pageX / 3
+				: e.pageX - 100
 		setCoordinates({
-			x: e.pageX + 50,
-			y: e.pageY - 200,
+			x: xCoordinate,
+			y: e.pageY - 50,
 		})
+		console.log(window.innerWidth)
 	}
 
 	return (
@@ -119,9 +144,7 @@ const Material = ({ material: single_material }) => {
 					<div className={styles.audioContainer}>
 						{getImageRegardingSection(section)}
 
-						<audio
-							controls='controls'
-							src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
+						{displayAudioPlayer(section)}
 
 						{section === 'book' && isBookMenuOpen && (
 							<>
