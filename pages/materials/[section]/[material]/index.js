@@ -3,30 +3,24 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
+
 import { faArrowLeft, faXmark, faBook } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../../../styles/materials/Material.module.css'
 import Link from 'next/link'
-import DOMPurify from 'isomorphic-dompurify'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import {
-	getMaterial,
-	getBookChapters,
-} from '../../../../features/materials/materialsSlice'
+import { getBookChapters } from '../../../../features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
 import BookMenu from '../../../../components/layouts/BookMenu'
 import Translation from '../../../../components/layouts/Translation'
 import Words from '../../../../components/layouts/Words'
+import WordsContainer from '../../../../components/material/WordsContainer'
 
 import { useUserContext } from '../../../../context/user'
 
 const Material = ({ material: single_material }) => {
-	const { user, isUserLoggedIn } = useUserContext()
 	const dispatch = useDispatch()
-	// const { single_material, single_material_loading } = useSelector(
-	// 	store => store.materials
-	// )
+	const { user } = useUserContext()
 
 	const bookName = single_material.book_name
 	const router = useRouter()
@@ -66,13 +60,13 @@ const Material = ({ material: single_material }) => {
 
 	const displayAudioPlayer = section => {
 		if (
-			section !== 'trailer' &&
-			section !== 'extract' &&
-			section !== 'eralash' &&
-			section !== 'music' &&
-			section !== 'cartoon' &&
-			section !== 'galileo' &&
-			section !== 'diverse'
+			section === 'dialogue' ||
+			section === 'culture' ||
+			section === 'slice-of-life' ||
+			section === 'place' ||
+			section === 'podcast' ||
+			section === 'book' ||
+			section === 'short-story'
 		) {
 			return (
 				<audio
@@ -82,11 +76,27 @@ const Material = ({ material: single_material }) => {
 		}
 	}
 
-	// useEffect(() => {
-	// 	if (material) {
-	// 		dispatch(getMaterial(material))
-	// 	}
-	// }, [dispatch, material])
+	const displayVideo = section => {
+		if (
+			section === 'trailer' ||
+			section === 'eralash' ||
+			section === 'music' ||
+			section === 'galileo' ||
+			section === 'diverse' ||
+			section === 'extract' ||
+			section === 'cartoon'
+		) {
+			return (
+				<div className={styles.videoContainer}>
+					<iframe
+						src={single_material.video}
+						frameBorder='0'
+						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
+						allowFullscreen></iframe>
+				</div>
+			)
+		}
+	}
 
 	useEffect(() => {
 		if (bookName) {
@@ -97,18 +107,6 @@ const Material = ({ material: single_material }) => {
 	useEffect(() => {
 		setIsBookMenuOpen(false)
 	}, [material])
-
-	// if (single_material_loading) {
-	// 	return (
-	// 		<div className='loader'>
-	// 			<Image
-	// 				src='/img/loader.gif'
-	// 				width={200}
-	// 				height={200}
-	// 				alt='loader'></Image>
-	// 		</div>
-	// 	)
-	// }
 
 	const getCoordinates = e => {
 		const xCoordinate =
@@ -131,83 +129,54 @@ const Material = ({ material: single_material }) => {
 				icon={faArrowLeft}
 				size='2xl'
 			/>
+
 			<div className={styles.container}>
 				<div className={styles.titleContainer}>
 					<h1 className={`${styles.title} headline`}>
 						{single_material.title_ru}
 					</h1>
 				</div>
-				<div className={styles.mediaContainer}>
-					{/* AUDIO PLAYER */}
 
+				{/* MEDIACONTAINER*/}
+				<div className={styles.mediaContainer}>
 					<div className={styles.audioContainer}>
 						{getImageRegardingSection(section)}
 
+						{/* DISPLAY AUDIO */}
 						{displayAudioPlayer(section)}
 
-						{section === 'book' && isBookMenuOpen && (
+						{/* CHAPTER MENU */}
+						{section === 'book' && (
 							<>
 								<button
-									onClick={() => setIsBookMenuOpen(false)}
+									onClick={() => setIsBookMenuOpen(!isBookMenuOpen)}
 									className={styles.bookMenuBtn}>
-									Cacher le menu des chapitres
+									{isBookMenuOpen
+										? 'Cacher le menu des chapitres'
+										: 'Afficher le menu des chapitres'}
 									<FontAwesomeIcon
 										className={styles.bookMenuIcon}
-										icon={faXmark}
+										icon={isBookMenuOpen ? faXmark : faBook}
 									/>
 								</button>
-
-								<BookMenu />
+								{isBookMenuOpen && <BookMenu />}
 							</>
 						)}
-
-						{section === 'book' && !isBookMenuOpen && (
-							<>
-								<button
-									onClick={() => setIsBookMenuOpen(true)}
-									className={styles.bookMenuBtn}>
-									Afficher le menu des chapitres
-									<FontAwesomeIcon
-										className={styles.bookMenuIcon}
-										icon={faBook}
-									/>
-								</button>
-							</>
-						)}
-
-						{/* <div className='audio-player__speed-icons'>
-								<a className='audio-player__turtle-icon'>
-									<Image src="" alt=""></Image>
-								</a>
-								<a className='audio-player__hare-icon'>
-									<Image src="" alt=""></Image>
-								</a>
-							</div> */}
 					</div>
 
-					{/* DISPLAY VIDEO REGARDING THE SECTION */}
-
-					{(single_material.section === 'trailer' ||
-						single_material.section === 'eralash' ||
-						single_material.section === 'music' ||
-						single_material.section === 'galileo' ||
-						single_material.section === 'diverse' ||
-						single_material.section === 'extract' ||
-						single_material.section === 'cartoon') && (
-						<div className={styles.videoContainer}>
-							<iframe
-								src={single_material.video}
-								frameBorder='0'
-								allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
-								allowFullscreen></iframe>
-						</div>
-					)}
+					{/* DISPLAY VIDEO */}
+					{displayVideo(section)}
 				</div>
 
+				{/* TextContainer */}
 				<div className={styles.textContainer}>
 					<div>
-						<Translation coordinates={coordinates} />
-						{/* BUTTON ACCENTS */}
+						<Translation
+							coordinates={coordinates}
+							materialId={single_material.id}
+							userId={user && user.id}
+						/>
+
 						<button
 							onClick={() => setShowAccents(!showAccents)}
 							type='button'
@@ -216,14 +185,7 @@ const Material = ({ material: single_material }) => {
 							Montrer les accents
 						</button>
 
-						{/* POST CONTENT */}
-
 						{showAccents ? (
-							// <p
-							// 	dangerouslySetInnerHTML={{
-							// 		__html: DOMPurify.sanitize(single_material.content_accents),
-							// 	}}
-							// 	className='text-accents'></p>
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
 								<Words content={single_material.content_accents} />
 							</p>
@@ -233,7 +195,6 @@ const Material = ({ material: single_material }) => {
 							</p>
 						)}
 
-						{/* END POST CONTENT */}
 						<button
 							type='button'
 							id='checkMaterial'
@@ -241,55 +202,11 @@ const Material = ({ material: single_material }) => {
 							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
 						</button>
 					</div>
-
-					{/* DISPLAY AUDIO REGARDING THE SECTION */}
 				</div>
 
+				{/* WordsContainer */}
 				<div className={styles.rightContainer}>
-					<div className={styles.wordsContainer}>
-						{isUserLoggedIn ? (
-							<>
-								<h3 className='headline'>Mots</h3>
-								<ul>
-									<li>
-										<span className='lesson__original-word'>russian word</span>{' '}
-										-{' '}
-										<span className='lesson__translated-word'>french word</span>
-										<i className='far fa-trash-alt lesson__trash'></i>
-									</li>
-								</ul>
-							</>
-						) : (
-							<>
-								<h4 className='headline'>Créez un compte pour pouvoir :</h4>
-								<ul className='lesson__words-list'>
-									<li>
-										<FontAwesomeIcon icon={faThumbsUp} /> Traduire
-										n&apos;importe quel mot du texte en un clique
-									</li>
-									<li>
-										<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots
-										traduits sur cette même page
-									</li>
-									<li>
-										<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
-										traductions dans un dictionnaire personnel lié à votre
-										compte
-									</li>
-									<li>
-										<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
-									</li>
-								</ul>
-								<Link href='/register'>
-									<button
-										type='button'
-										className={`${styles.registerBtn} mainBtn`}>
-										S&apos;enregistrer
-									</button>
-								</Link>
-							</>
-						)}
-					</div>
+					<WordsContainer />
 				</div>
 			</div>
 		</>

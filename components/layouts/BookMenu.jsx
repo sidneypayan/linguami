@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 const BookMenu = () => {
 	const { chapters } = useSelector(store => store.materials)
+	console.log(chapters)
 
 	return (
 		<div className={styles.container}>
@@ -12,7 +13,7 @@ const BookMenu = () => {
 					chapters.map(chapter => (
 						<Link key={chapter.id} href={`/materials/book/${chapter.id}`}>
 							<a>
-								<li>{chapter.title}</li>
+								<li>{chapter.title_ru}</li>
 							</a>
 						</Link>
 					))}

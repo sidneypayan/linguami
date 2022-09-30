@@ -4,12 +4,13 @@ import { useRef, useEffect } from 'react'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
+	addWordToDictionary,
 } from '../../features/words/wordsSlice'
 import TranslationLoader from './TranslationLoader'
 import Link from 'next/link'
 import { useUserContext } from '../../context/user'
 
-const Translation = ({ coordinates }) => {
+const Translation = ({ coordinates, materialId, userId }) => {
 	const { isUserLoggedIn } = useUserContext()
 	const position = {
 		left: coordinates.x + 'px',
@@ -35,6 +36,18 @@ const Translation = ({ coordinates }) => {
 			document.removeEventListener('mousedown', checkIfClickedOutside)
 		}
 	}, [dispatch, isTranslationOpen])
+
+	const addWord = e => {
+		dispatch(
+			addWordToDictionary({
+				originalWord: translation.word,
+				translatedWord: e.target.textContent,
+				userId,
+				materialId,
+			})
+		)
+		dispatch(toggleTranslationContainer(false))
+	}
 
 	if (!isUserLoggedIn) {
 		return (
@@ -63,7 +76,9 @@ const Translation = ({ coordinates }) => {
 						</div>
 						<ul className={styles.traductionsContainer}>
 							{translation.definitions?.map((definition, index) => (
-								<li key={index}>{definition}</li>
+								<li key={index} onClick={e => addWord(e)}>
+									{definition}
+								</li>
 							))}
 						</ul>
 					</>

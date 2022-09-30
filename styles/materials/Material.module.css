@@ -111,30 +111,6 @@
 	margin-top: 4rem !important;
 }
 
-.wordsContainer {
-	color: var(--secondaryTextColor);
-	font-weight: bold;
-	font-size: 15px;
-}
-
-.wordsContainer h4 {
-	font-size: 1.25rem;
-	margin: 0;
-	padding: 0;
-}
-
-.wordsContainer ul {
-	margin-top: 2rem;
-}
-
-.wordsContainer li {
-	margin-top: 0.8rem;
-}
-
-.wordsContainer svg {
-	color: #337ab7;
-}
-
 .showAccentsBtn {
 	padding: 0.5rem 0.75rem;
 	margin-bottom: 2rem;

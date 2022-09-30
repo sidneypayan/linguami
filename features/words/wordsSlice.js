@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { supabase } from '../../lib/supabase'
 
 const initialState = {
 	userWords: [],
@@ -7,6 +8,8 @@ const initialState = {
 	translation: {},
 	addedWords: {},
 	isTranslationOpen: false,
+	user_material_words: [],
+	user_words: [],
 }
 
 export const translateWord = createAsyncThunk(
@@ -25,12 +28,26 @@ export const translateWord = createAsyncThunk(
 	}
 )
 
-// export const addWordToUserDictionary = createAsyncThunk(
-// 	'words/addWordsToUserDictionary',
-// 	async (word, thunkAPI) => {
-// 		// console.log(word)
-// 	}
-// )
+export const addWordToDictionary = createAsyncThunk(
+	'words/addWordsToUserDictionary',
+	async (word, thunkAPI) => {
+		const { originalWord, translatedWord, userId, materialId } = word
+
+		const { data, error } = await supabase.from('user_words').insert([
+			{
+				word_ru: originalWord,
+				word_fr: translatedWord,
+				user_id: userId,
+				material_id: materialId,
+			},
+		])
+
+		return {
+			originalWord,
+			translatedWord,
+		}
+	}
+)
 
 const wordsSlice = createSlice({
 	name: 'words',
@@ -73,6 +90,10 @@ const wordsSlice = createSlice({
 		},
 		[translateWord.rejected]: (state, { payload }) => {
 			state.translation_loading = false
+		},
+		[addWordToDictionary.fulfilled]: (state, { payload }) => {
+			console.log(payload)
+			state.user_material_words = [...state.user_material_words, payload]
 		},
 	},
 })
