@@ -32,19 +32,54 @@ export const addWordToDictionary = createAsyncThunk(
 	'words/addWordsToUserDictionary',
 	async (word, thunkAPI) => {
 		const { originalWord, translatedWord, userId, materialId } = word
+		try {
+			const { data, error } = await supabase.from('user_words').insert([
+				{
+					word_ru: originalWord,
+					word_fr: translatedWord,
+					user_id: userId,
+					material_id: materialId,
+				},
+			])
 
-		const { data, error } = await supabase.from('user_words').insert([
-			{
-				word_ru: originalWord,
-				word_fr: translatedWord,
-				user_id: userId,
-				material_id: materialId,
-			},
-		])
+			return data
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
 
-		return {
-			originalWord,
-			translatedWord,
+export const getUserWords = createAsyncThunk(
+	'words/getUserWords',
+
+	async (param, thunkAPI) => {
+		const { userId, materialId } = param
+		try {
+			const { data, error } = await supabase
+				.from('user_words')
+				.select('*')
+				.eq('user_id', userId)
+				.eq('material_id', materialId)
+
+			return data
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const deleteUserWord = createAsyncThunk(
+	'words/deleteUserWord',
+	async (param, thunkAPI) => {
+		try {
+			const { data, error } = await supabase
+				.from('user_words')
+				.delete()
+				.eq('id', param)
+
+			return param
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
 		}
 	}
 )
@@ -92,8 +127,15 @@ const wordsSlice = createSlice({
 			state.translation_loading = false
 		},
 		[addWordToDictionary.fulfilled]: (state, { payload }) => {
-			console.log(payload)
-			state.user_material_words = [...state.user_material_words, payload]
+			state.user_material_words = [...state.user_material_words, ...payload]
+		},
+		[getUserWords.fulfilled]: (state, { payload }) => {
+			state.user_material_words = payload
+		},
+		[deleteUserWord.fulfilled]: (state, { payload }) => {
+			state.user_material_words = state.user_material_words.filter(
+				word => word.id !== payload
+			)
 		},
 	},
 })

@@ -21,3 +21,13 @@
 .wordsContainer svg {
 	color: #337ab7;
 }
+
+.row {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.trashIcon {
+	cursor: pointer;
+}

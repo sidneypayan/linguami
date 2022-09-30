@@ -7,10 +7,26 @@ import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import styles from '../../styles/materials/WordsContainer.module.css'
+import { getUserWords, deleteUserWord } from '../../features/words/wordsSlice'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const WordsContainer = () => {
-	const { isUserLoggedIn } = useUserContext()
+	const router = useRouter()
+	const dispatch = useDispatch()
+	const { user, isUserLoggedIn } = useUserContext()
 	const { user_material_words } = useSelector(store => store.words)
+	const materialId = router.query.material
+	const userId = user?.id
+
+	const handleDelete = id => {
+		dispatch(deleteUserWord(id))
+	}
+
+	useEffect(() => {
+		dispatch(getUserWords({ materialId, userId }))
+	}, [])
+
 	return (
 		<div className={styles.wordsContainer}>
 			{isUserLoggedIn ? (
@@ -18,19 +34,19 @@ const WordsContainer = () => {
 					<h3 className='headline'>Mots</h3>
 					<ul>
 						{user_material_words.map((words, index) => (
-							<li key={index}>
+							<li key={index} className={styles.row}>
 								{' '}
 								<span className={styles.originalWord}>
-									{words.originalWord}
-								</span>{' '}
-								-{' '}
-								<span className={styles.translatedWord}>
-									{words.translatedWord}
-								</span>
-								<FontAwesomeIcon icon={faTrashAlt} />
+									{words.word_ru}
+								</span> -{' '}
+								<span className={styles.translatedWord}>{words.word_fr}</span>
+								<FontAwesomeIcon
+									className={styles.trashIcon}
+									icon={faTrashAlt}
+									onClick={() => handleDelete(words.id)}
+								/>
 							</li>
 						))}
-						<li></li>
 					</ul>
 				</>
 			) : (

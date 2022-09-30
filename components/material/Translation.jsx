@@ -1,27 +1,29 @@
-import styles from '../../styles/Translation.module.css'
+import styles from '../../styles/materials/Translation.module.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
 	addWordToDictionary,
 } from '../../features/words/wordsSlice'
-import TranslationLoader from './TranslationLoader'
 import Link from 'next/link'
 import { useUserContext } from '../../context/user'
 
 const Translation = ({ coordinates, materialId, userId }) => {
+	const dispatch = useDispatch()
+	const ref = useRef()
+
+	const { translation, isTranslationOpen, translation_loading } = useSelector(
+		store => store.words
+	)
+
+	const [personalTranslation, setPersonalTranslation] = useState('')
 	const { isUserLoggedIn } = useUserContext()
+
 	const position = {
 		left: coordinates.x + 'px',
 		top: coordinates.y + 'px',
 	}
-
-	const dispatch = useDispatch()
-	const ref = useRef()
-	const { translation, isTranslationOpen, translation_loading } = useSelector(
-		store => store.words
-	)
 
 	useEffect(() => {
 		const checkIfClickedOutside = e => {
@@ -38,15 +40,19 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	}, [dispatch, isTranslationOpen])
 
 	const addWord = e => {
+		const translatedWord = personalTranslation
+			? personalTranslation
+			: e.target.textContent
 		dispatch(
 			addWordToDictionary({
-				originalWord: translation.word,
-				translatedWord: e.target.textContent,
+				originalWord: translation.inf,
+				translatedWord: translatedWord,
 				userId,
 				materialId,
 			})
 		)
 		dispatch(toggleTranslationContainer(false))
+		setPersonalTranslation('')
 	}
 
 	if (!isUserLoggedIn) {
@@ -65,32 +71,33 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	}
 
 	return (
-		isTranslationOpen && (
+		isTranslationOpen &&
+		!translation_loading && (
 			<div style={position} ref={ref} className={styles.container}>
-				{translation_loading ? (
-					<TranslationLoader />
-				) : (
-					<>
-						<div className={styles.inf}>
-							<span>{translation.form}</span> - <span>{translation.inf}</span>
-						</div>
-						<ul className={styles.traductionsContainer}>
-							{translation.definitions?.map((definition, index) => (
-								<li key={index} onClick={e => addWord(e)}>
-									{definition}
-								</li>
-							))}
-						</ul>
-					</>
-				)}
+				<>
+					<div className={styles.inf}>
+						<span>{translation.form}</span> - <span>{translation.inf}</span>
+					</div>
+					<ul className={styles.traductionsContainer}>
+						{translation.definitions?.map((definition, index) => (
+							<li key={index} onClick={addWord}>
+								{definition}
+							</li>
+						))}
+					</ul>
+				</>
 
-				<form>
+				<form onSubmit={addWord}>
 					<input
 						className={styles.input}
 						type='text'
 						placeholder='votre traduction'
+						value={personalTranslation}
+						onChange={e => setPersonalTranslation(e.target.value)}
 					/>
-					<button className={styles.btn}>Ajouter</button>
+					<button disabled={!personalTranslation} className={styles.btn}>
+						Ajouter
+					</button>
 				</form>
 			</div>
 		)

@@ -15,8 +15,6 @@ import {
 } from '../../../features/materials/materialsSlice'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import BookMenu from '../../../components/layouts/BookMenu'
-// import { supabase } from '../../../lib/supabase'
 
 const Section = () => {
 	const router = useRouter()
@@ -67,15 +65,7 @@ const Section = () => {
 			<div className={styles.sectionsWrapper}>
 				<LevelBar />
 				<div className={styles.container}>
-					{/* <div style={{ left: left() }} className={styles.bookMenu}>
-						<BookMenu
-							isBookMenuOpen={isBookMenuOpen}
-							closeBookMenu={closeBookMenu}
-							chapters={chapters}
-						/>
-					</div> */}
 					{materials.slice(sliceStart, sliceEnd).map(material => {
-						const bookName = material.book_name || null
 						return <SectionCard key={material.id} material={material} />
 					})}
 				</div>

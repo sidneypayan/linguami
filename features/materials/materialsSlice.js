@@ -8,9 +8,6 @@ const initialState = {
 	filtered_materials: [],
 	level: 'all',
 	search: '',
-	// single_material: {},
-	// single_material_loading: false,
-	// single_material_error: false,
 	totalMaterials: 0,
 	numOfPages: 1,
 	page: 1,
@@ -37,23 +34,6 @@ export const getMaterials = createAsyncThunk(
 		}
 	}
 )
-
-// export const getMaterial = createAsyncThunk(
-// 	'materials/getMaterial',
-// 	async (param, thunkAPI) => {
-// 		try {
-// 			let { data: material, error } = await supabase
-// 				.from('materials')
-// 				.select('*')
-// 				.eq('id', param)
-// 				.single()
-// 			if (error) console.log(error)
-// 			return material
-// 		} catch (error) {
-// 			return thunkAPI.rejectWithValue(error)
-// 		}
-// 	}
-// )
 
 export const getBookChapters = createAsyncThunk(
 	'materials/getBookChapters',
@@ -129,17 +109,6 @@ const materialsSlice = createSlice({
 			state.materials_loading = false
 			state.materials_error = payload
 		},
-		// [getMaterial.pending]: state => {
-		// 	state.single_material_loading = true
-		// },
-		// [getMaterial.fulfilled]: (state, { payload }) => {
-		// 	state.single_material_loading = false
-		// 	state.single_material = payload
-		// },
-		// [getMaterial.rejected]: (state, { payload }) => {
-		// 	state.single_material_loading = false
-		// 	state.single_material_error = payload
-		// },
 		[getBookChapters.pending]: state => {
 			state.chapters_loading = true
 		},
