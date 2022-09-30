@@ -23,11 +23,15 @@
 }
 
 .row {
+	width: 100%;
+	justify-content: center;
 	display: flex;
 	gap: 0.5rem;
 	align-items: center;
 }
 
 .trashIcon {
+	visibility: hidden;
 	cursor: pointer;
+	margin-left: auto;
 }

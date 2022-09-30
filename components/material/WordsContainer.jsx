@@ -23,6 +23,31 @@ const WordsContainer = () => {
 		dispatch(deleteUserWord(id))
 	}
 
+	const showTrash = e => {
+		if (e.target.classList.contains('row')) {
+			e.target.lastElementChild.style.visibility = 'visible'
+		}
+		if (e.target.classList.contains('originalWord')) {
+			e.target.nextElementSibling.nextElementSibling.style.visibility =
+				'visible'
+		}
+		if (e.target.classList.contains('translatedWord')) {
+			e.target.nextElementSibling.style.visibility = 'visible'
+		}
+	}
+
+	const hideTrash = e => {
+		if (e.target.classList.contains('row')) {
+			e.target.lastElementChild.style.visibility = 'hidden'
+		}
+		if (e.target.classList.contains('originalWord')) {
+			e.target.nextElementSibling.nextElementSibling.style.visibility = 'hidden'
+		}
+		if (e.target.classList.contains('translatedWord')) {
+			e.target.nextElementSibling.style.visibility = 'hidden'
+		}
+	}
+
 	useEffect(() => {
 		dispatch(getUserWords({ materialId, userId }))
 	}, [])
@@ -34,12 +59,19 @@ const WordsContainer = () => {
 					<h3 className='headline'>Mots</h3>
 					<ul>
 						{user_material_words.map((words, index) => (
-							<li key={index} className={styles.row}>
+							<li
+								key={index}
+								className={`${styles.row} row`}
+								onMouseEnter={showTrash}
+								onMouseLeave={hideTrash}>
 								{' '}
-								<span className={styles.originalWord}>
+								<span className={`${styles.originalWord} originalWord`}>
 									{words.word_ru}
-								</span> -{' '}
-								<span className={styles.translatedWord}>{words.word_fr}</span>
+								</span>{' '}
+								-{' '}
+								<span className={`${styles.translatedWord} translatedWord`}>
+									{words.word_fr}
+								</span>
 								<FontAwesomeIcon
 									className={styles.trashIcon}
 									icon={faTrashAlt}
