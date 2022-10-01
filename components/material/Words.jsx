@@ -11,7 +11,7 @@ const Words = ({ content }) => {
 
 	const purifiedContent = DOMPurify.sanitize(content)
 	const brRegex = /[<br>]+/
-	const regexAll = /[<br>]+|[ .,;:?!–—«»"]|[\u0430-\u044f\ё\е́\-]+/gi
+	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
 	const regexWordsOnly = /[\u0430-\u044f]+/gi
 
 	const wrapWords = text => {
