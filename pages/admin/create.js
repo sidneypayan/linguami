@@ -3,29 +3,8 @@ import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
 import { sections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
-import dynamic from 'next/dynamic'
-import 'suneditor/dist/css/suneditor.min.css' // Import Sun Editor's CSS File
 import { useDispatch } from 'react-redux'
 import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
-
-const SunEditor = dynamic(() => import('suneditor-react'), {
-	ssr: false,
-})
-
-const SunEditorOptions = {
-	buttonList: [
-		['undo'],
-		['redo'],
-		['bold', 'underline', 'italic'],
-		['outdent', 'indent'],
-		['formatBlock', 'align'],
-		['fullScreen'],
-		['blockquote'],
-		['list'],
-		['image', 'link', 'video', 'audio'],
-		['preview'],
-	],
-}
 
 const Create = () => {
 	const dispatch = useDispatch()
@@ -53,7 +32,12 @@ const Create = () => {
 
 	const submitMaterial = e => {
 		e.preventDefault()
-		// console.log(formData)
+		formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
+		formData.content_accents = formData.content_accents.replace(
+			/(\r\n|\n|\r)/gm,
+			'<br>'
+		)
+
 		dispatch(postMaterial(formData))
 	}
 
@@ -87,7 +71,7 @@ const Create = () => {
 						name='level'
 						id='level'>
 						<option value='débutant'>débutant</option>
-						<option value='intermediaire'>intermediaire</option>
+						<option value='intermédiaire'>intermediaire</option>
 						<option value='avancé'>avancé</option>
 					</select>
 				</div>
@@ -108,15 +92,6 @@ const Create = () => {
 						id='title_fr'
 						name='title_fr'
 					/>
-
-					{/* <input
-						onChange={e => handleChange(e)}
-						value={formData.description}
-						placeholder='Description'
-						type='text'
-						id='description'
-						name='description'
-					/> */}
 				</div>
 				<div className={styles.media}>
 					<input
@@ -127,8 +102,7 @@ const Create = () => {
 						id='img'
 						name='img'
 					/>
-					{/* </div>
-				<div className={styles.level}> */}
+
 					<input
 						onChange={e => handleChange(e)}
 						value={formData.audio}
@@ -137,8 +111,7 @@ const Create = () => {
 						id='audio'
 						name='audio'
 					/>
-					{/* </div>
-				<div className={styles.level}> */}
+
 					<input
 						onChange={e => handleChange(e)}
 						value={formData.video}
@@ -157,8 +130,7 @@ const Create = () => {
 						id='book_name'
 						name='book_name'
 					/>
-					{/* </div>
-				<div className={styles.level}> */}
+
 					<input
 						onChange={e => handleChange(e)}
 						value={formData.chapter}
@@ -181,22 +153,6 @@ const Create = () => {
 						onChange={e => handleChange(e)}
 						placeholder='Content with accents'
 					/>
-					{/* <SunEditor
-						onChange={handleSunEditor}
-						name='text'
-						height='350px'
-						placeholder='Content'
-						setOptions={SunEditorOptions}
-						value={formData.text}
-					/>
-					<SunEditor
-						onChange={e => handleSunEditor(e)}
-						name='textwithaccents'
-						height='350px'
-						placeholder='Content accents'
-						setOptions={SunEditorOptions}
-						value={formData.textwithaccents}
-					/> */}
 				</div>
 				<input type='submit' className='mainBtn' value='Envoyer' />
 			</form>
