@@ -89,8 +89,7 @@ const Material = ({ material: single_material }) => {
 					<iframe
 						src={single_material.video}
 						frameBorder='0'
-						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
-						allowFullscreen></iframe>
+						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'></iframe>
 				</div>
 			)
 		}

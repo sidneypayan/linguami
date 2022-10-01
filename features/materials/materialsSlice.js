@@ -28,6 +28,7 @@ export const getMaterials = createAsyncThunk(
 				.select('*')
 				.eq('lang', 'ru')
 				.eq('section', param)
+				.order('id', { ascending: false })
 			return materials
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
