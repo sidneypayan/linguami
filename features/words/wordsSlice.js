@@ -52,8 +52,8 @@ export const addWordToDictionary = createAsyncThunk(
 	}
 )
 
-export const getUserWords = createAsyncThunk(
-	'words/getUserWords',
+export const getUserMaterialWords = createAsyncThunk(
+	'words/getUserMaterialWords',
 
 	async (param, thunkAPI) => {
 		const { userId, materialId } = param
@@ -148,18 +148,23 @@ const wordsSlice = createSlice({
 			state.translation_error = payload
 		},
 		[addWordToDictionary.fulfilled]: (state, { payload }) => {
-			state.user_material_words = [...state.user_material_words, ...payload]
+			state.user_words = [...state.user_words, ...payload]
+			state.user_material_words = state.user_material_words = [
+				...state.user_material_words,
+				...payload,
+			]
 		},
-		[getUserWords.fulfilled]: (state, { payload }) => {
+		[getAllUserWords.fulfilled]: (state, { payload }) => {
+			state.user_words = payload
+		},
+		[getUserMaterialWords.fulfilled]: (state, { payload }) => {
 			state.user_material_words = payload
 		},
 		[deleteUserWord.fulfilled]: (state, { payload }) => {
 			state.user_material_words = state.user_material_words.filter(
 				word => word.id !== payload
 			)
-		},
-		[getAllUserWords.fulfilled]: (state, { payload }) => {
-			state.user_words = payload
+			state.user_words = state.user_words.filter(word => word.id !== payload)
 		},
 	},
 })

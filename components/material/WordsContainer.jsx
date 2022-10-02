@@ -7,7 +7,10 @@ import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import styles from '../../styles/materials/WordsContainer.module.css'
-import { getUserWords, deleteUserWord } from '../../features/words/wordsSlice'
+import {
+	getUserMaterialWords,
+	deleteUserWord,
+} from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
@@ -49,8 +52,8 @@ const WordsContainer = () => {
 	}
 
 	useEffect(() => {
-		dispatch(getUserWords({ materialId, userId }))
-	}, [])
+		dispatch(getUserMaterialWords({ materialId, userId }))
+	}, [dispatch, materialId, userId])
 
 	return (
 		<div className={styles.wordsContainer}>
