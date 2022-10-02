@@ -58,7 +58,7 @@ const Section = () => {
 		<>
 			<FontAwesomeIcon
 				onClick={() => router.back()}
-				className='back-arrow '
+				className='back-arrow'
 				icon={faArrowLeft}
 				size='2xl'
 			/>

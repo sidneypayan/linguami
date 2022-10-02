@@ -76,7 +76,7 @@ const Pagination = () => {
 			</button>
 
 			<button
-				className={page === 1 && styles.pageBtnActive}
+				className={page === 1 ? styles.pageBtnActive : undefined}
 				onClick={() => dispatch(changePage(1))}>
 				1
 			</button>
@@ -84,14 +84,14 @@ const Pagination = () => {
 			{pages.slice(sliceStart, sliceEnd).map(pageNumber => (
 				<button
 					key={pageNumber}
-					className={page === pageNumber && styles.pageBtnActive}
+					className={page === pageNumber ? styles.pageBtnActive : undefined}
 					onClick={() => dispatch(changePage(pageNumber))}>
 					{pageNumber}
 				</button>
 			))}
 
 			<button
-				className={page === numOfPages && styles.pageBtnActive}
+				className={page === numOfPages ? styles.pageBtnActive : undefined}
 				onClick={() => dispatch(changePage(numOfPages))}>
 				{numOfPages}
 			</button>

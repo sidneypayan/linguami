@@ -53,8 +53,6 @@ const SectionCard = ({ material }) => {
 
 				<div className={styles.infoContainer}>
 					<div>
-						{/* <span>{material.section}</span>
-						<span> {material.level}</span> */}
 						<h5 className={styles.titleTranslation}>
 							{material.title_ru.slice(0, 20)}
 						</h5>
@@ -64,7 +62,6 @@ const SectionCard = ({ material }) => {
 			<div className={styles.icon}>
 				<FontAwesomeIcon icon={faFilm} size='2xl' />
 			</div>
-			{/* <span className={styles.section}>{material.section}</span> */}
 			<span className={changeBackgroundLevel(material.level)}>
 				{changeLevelDescription(material.level)}
 			</span>

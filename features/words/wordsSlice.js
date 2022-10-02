@@ -3,8 +3,9 @@ import axios from 'axios'
 import { supabase } from '../../lib/supabase'
 
 const initialState = {
-	userWords: [],
+	user_words: [],
 	translation_loading: false,
+	translation_error: null,
 	translation: {},
 	addedWords: {},
 	isTranslationOpen: false,
@@ -21,6 +22,7 @@ export const translateWord = createAsyncThunk(
 			const { data } = await axios.get(
 				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=ru-fr&text=${word}&flags=004`
 			)
+			if (!data.def.length) throw new Error('no translation')
 			return { word, data }
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -60,6 +62,23 @@ export const getUserWords = createAsyncThunk(
 				.select('*')
 				.eq('user_id', userId)
 				.eq('material_id', materialId)
+
+			return data
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const getAllUserWords = createAsyncThunk(
+	'words/getAllUserWords',
+
+	async (param, thunkAPI) => {
+		try {
+			const { data, error } = await supabase
+				.from('user_words')
+				.select('*')
+				.eq('user_id', param)
 
 			return data
 		} catch (error) {
@@ -124,6 +143,7 @@ const wordsSlice = createSlice({
 			state.translation_loading = false
 		},
 		[translateWord.rejected]: (state, { payload }) => {
+			state.translation_error = 'Aucune traduction trouvée'
 			state.translation_loading = false
 		},
 		[addWordToDictionary.fulfilled]: (state, { payload }) => {
@@ -136,6 +156,9 @@ const wordsSlice = createSlice({
 			state.user_material_words = state.user_material_words.filter(
 				word => word.id !== payload
 			)
+		},
+		[getAllUserWords.fulfilled]: (state, { payload }) => {
+			state.user_words = payload
 		},
 	},
 })

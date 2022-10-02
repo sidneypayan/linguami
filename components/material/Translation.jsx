@@ -13,9 +13,12 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	const dispatch = useDispatch()
 	const ref = useRef()
 
-	const { translation, isTranslationOpen, translation_loading } = useSelector(
-		store => store.words
-	)
+	const {
+		translation,
+		isTranslationOpen,
+		translation_loading,
+		translation_error,
+	} = useSelector(store => store.words)
 
 	const [personalTranslation, setPersonalTranslation] = useState('')
 	const { isUserLoggedIn } = useUserContext()
@@ -76,7 +79,11 @@ const Translation = ({ coordinates, materialId, userId }) => {
 			<div style={position} ref={ref} className={styles.container}>
 				<>
 					<div className={styles.inf}>
-						<span>{translation.form}</span> - <span>{translation.inf}</span>
+						{translation_error ? (
+							<span>{translation_error}</span>
+						) : (
+							<span>{translation.form}</span> - <span>{translation.inf}</span>
+						)}
 					</div>
 					<ul className={styles.traductionsContainer}>
 						{translation.definitions?.map((definition, index) => (

@@ -13,10 +13,8 @@
 	padding: 0 5rem;
 	margin: 0 auto;
 	display: flex;
-	/* position: sticky; */
 	position: relative;
 	height: 100%;
-	/* top: 0; */
 	justify-content: space-between;
 	align-items: center;
 	color: #fff;
@@ -25,9 +23,7 @@
 
 .menuContainer {
 	display: flex;
-	/* gap: 1.5rem; */
-	font-weight: 500;
-	font-size: 1.1rem;
+	font-size: 1.05rem;
 }
 
 .menuContainer li {

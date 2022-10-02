@@ -23,10 +23,10 @@ const Navbar = () => {
 					<Link href='/materials'>
 						<li onClick={() => setIsNavExpanded(false)}>Materiel</li>
 					</Link>
-					{/* <Link href='/cours'>
-						<li onClick={() => setIsNavExpanded(false)}>Cours</li>
+					<Link href='/dictionary'>
+						<li onClick={() => setIsNavExpanded(false)}>Dictionnaire</li>
 					</Link>
-					<Link href='/blog'>
+					{/* <Link href='/blog'>
 						<li onClick={() => setIsNavExpanded(false)}>Blog</li>
 					</Link> */}
 				</ul>

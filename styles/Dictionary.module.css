@@ -1,0 +1,46 @@
+.container {
+	min-height: 75vh;
+}
+
+.table {
+	width: 40%;
+	margin: 0 auto;
+	margin-top: 5rem;
+	border-collapse: collapse;
+}
+
+.table tr {
+	display: flex;
+	align-items: center;
+	padding: 1rem 0;
+	border-bottom: 1px solid rgb(224, 224, 224);
+}
+
+.tableOriginalWord,
+.tableTranslatedWord {
+	width: 25%;
+}
+
+.tableCheckWord {
+	width: 10%;
+}
+
+.tableOriginalWord {
+	font-weight: 600;
+	color: #2582e7;
+}
+
+.tableTranslatedWord {
+	color: var(--secondaryTextColor);
+}
+
+.tableIcon {
+	width: 50%;
+	text-align: right;
+	color: var(--secondaryTextColor);
+	cursor: pointer;
+}
+
+.tableIcon :hover {
+	color: var(--primaryTextColor);
+}
