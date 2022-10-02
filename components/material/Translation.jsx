@@ -82,7 +82,9 @@ const Translation = ({ coordinates, materialId, userId }) => {
 						{translation_error ? (
 							<span>{translation_error}</span>
 						) : (
-							<span>{translation.form}</span> - <span>{translation.inf}</span>
+							<>
+								<span>{translation.form}</span> - <span>{translation.inf}</span>
+							</>
 						)}
 					</div>
 					<ul className={styles.traductionsContainer}>
