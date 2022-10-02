@@ -44,33 +44,13 @@ const Words = ({ content }) => {
 		))
 	}
 
-	// const wrapWords = text => {
-	// 	const matchAll = text.match(regexAll)
-	// 	return matchAll.map((match, index) =>
-	// 		regexWordsOnly.test(match) ? (
-	// 			<span
-	// 				key={index}
-	// 				className={styles.translate}
-	// 				onClick={e => handleClick(e)}>
-	// 				{match}
-	// 			</span>
-	// 		) : brRegex.test(match) ? (
-	// 			<span key={index} className={styles.break}></span>
-	// 		) : (
-	// 			match
-	// 		)
-	// 	)
-	// }
-
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		console.log(e.target.parentElement)
 		dispatch(translateWord({ word, sentence }))
 		dispatch(toggleTranslationContainer())
 	}
 
-	// return <>{wrapWords(purifiedContent)}</>
 	return <>{wrapSentences(purifiedContent)}</>
 }
 
