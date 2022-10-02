@@ -18,11 +18,11 @@
 
 .tableOriginalWord,
 .tableTranslatedWord {
-	width: 25%;
+	width: 20%;
 }
 
 .tableCheckWord {
-	width: 10%;
+	width: 5%;
 }
 
 .tableOriginalWord {
@@ -34,8 +34,13 @@
 	color: var(--secondaryTextColor);
 }
 
-.tableIcon {
+.tableWordSentence {
 	width: 50%;
+	font-size: 0.9rem;
+}
+
+.tableIcon {
+	width: 5%;
 	text-align: right;
 	color: var(--secondaryTextColor);
 	cursor: pointer;

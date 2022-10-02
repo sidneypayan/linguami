@@ -11,11 +11,14 @@ const initialState = {
 	isTranslationOpen: false,
 	user_material_words: [],
 	user_words: [],
+	word_sentence: [],
 }
 
 export const translateWord = createAsyncThunk(
 	'words/translateWord',
-	async (word, thunkAPI) => {
+	async (param, thunkAPI) => {
+		const { word, sentence } = param
+
 		word = word.match(/[\u0430-\u044f]+/gi).join('')
 
 		try {
@@ -24,7 +27,7 @@ export const translateWord = createAsyncThunk(
 			)
 			if (!data.def.length)
 				return thunkAPI.rejectWithValue('Aucune traduction trouvée')
-			return { word, data }
+			return { word, data, sentence }
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
@@ -34,7 +37,8 @@ export const translateWord = createAsyncThunk(
 export const addWordToDictionary = createAsyncThunk(
 	'words/addWordsToUserDictionary',
 	async (word, thunkAPI) => {
-		const { originalWord, translatedWord, userId, materialId } = word
+		const { originalWord, translatedWord, userId, materialId, word_sentence } =
+			word
 		try {
 			const { data, error } = await supabase.from('user_words').insert([
 				{
@@ -42,6 +46,7 @@ export const addWordToDictionary = createAsyncThunk(
 					word_fr: translatedWord,
 					user_id: userId,
 					material_id: materialId,
+					word_sentence: word_sentence,
 				},
 			])
 
@@ -142,6 +147,7 @@ const wordsSlice = createSlice({
 			state.translation_error = false
 			state.translation = { word, asp, inf, form, definitions }
 			state.translation_loading = false
+			state.word_sentence = payload.sentence
 		},
 		[translateWord.rejected]: (state, { payload }) => {
 			state.translation_loading = false

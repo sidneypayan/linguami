@@ -10,34 +10,68 @@ const Words = ({ content }) => {
 	const dispatch = useDispatch()
 
 	const purifiedContent = DOMPurify.sanitize(content)
-	const brRegex = /[<br>]+/
-	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
-	const regexWordsOnly = /[\u0430-\u044f]+/gi
 
-	const wrapWords = text => {
-		const matchAll = text.match(regexAll)
-		return matchAll.map((match, index) =>
-			regexWordsOnly.test(match) ? (
-				<span
-					key={index}
-					className={styles.translate}
-					onClick={e => handleClick(e)}>
-					{match}
+	// Regex pour match les <br>
+	const brRegex = /[<br>]+/
+	// Regex pour match tous type de caractères et <br>
+	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
+	// Regex pour match uniquement les lettres russes
+	const regexWordsOnly = /[\u0430-\u044f]+/gi
+	// Regex pour match les phrases
+	const regexSentences =
+		/[<br>]+|[A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[….!?$]/gi
+	const wrapSentences = text => {
+		const matchSentences = text.match(regexSentences)
+		return matchSentences.map((sentence, index) => (
+			<>
+				<span key={index} className={styles.sentence}>
+					{sentence.match(regexAll).map((word, index) =>
+						regexWordsOnly.test(word) ? (
+							<span
+								key={index}
+								className={styles.translate}
+								onClick={e => handleClick(e)}>
+								{word}
+							</span>
+						) : brRegex.test(word) ? (
+							<span key={index} className={styles.break}></span>
+						) : (
+							word
+						)
+					)}
 				</span>
-			) : brRegex.test(match) ? (
-				<span key={index} className={styles.break}></span>
-			) : (
-				match
-			)
-		)
+			</>
+		))
 	}
 
+	// const wrapWords = text => {
+	// 	const matchAll = text.match(regexAll)
+	// 	return matchAll.map((match, index) =>
+	// 		regexWordsOnly.test(match) ? (
+	// 			<span
+	// 				key={index}
+	// 				className={styles.translate}
+	// 				onClick={e => handleClick(e)}>
+	// 				{match}
+	// 			</span>
+	// 		) : brRegex.test(match) ? (
+	// 			<span key={index} className={styles.break}></span>
+	// 		) : (
+	// 			match
+	// 		)
+	// 	)
+	// }
+
 	const handleClick = e => {
-		dispatch(translateWord(e.target.textContent))
+		const word = e.target.textContent
+		const sentence = e.target.parentElement.textContent
+		console.log(e.target.parentElement)
+		dispatch(translateWord({ word, sentence }))
 		dispatch(toggleTranslationContainer())
 	}
 
-	return <>{wrapWords(purifiedContent)}</>
+	// return <>{wrapWords(purifiedContent)}</>
+	return <>{wrapSentences(purifiedContent)}</>
 }
 
 export default Words

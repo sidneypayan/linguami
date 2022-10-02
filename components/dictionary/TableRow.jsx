@@ -2,7 +2,7 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 import styles from '../../styles/Dictionary.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
@@ -42,6 +42,7 @@ const TableRow = () => {
 				</td>
 				<td className={styles.tableOriginalWord}>{word.word_ru}</td>
 				<td className={styles.tableTranslatedWord}>{word.word_fr}</td>
+				<td className={styles.tableWordSentence}>{word.word_sentence}</td>
 				<td className={styles.tableIcon}>
 					<FontAwesomeIcon
 						onClick={() => dispatch(deleteUserWord(word.id))}

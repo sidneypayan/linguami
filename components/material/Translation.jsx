@@ -18,6 +18,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		isTranslationOpen,
 		translation_loading,
 		translation_error,
+		word_sentence,
 	} = useSelector(store => store.words)
 
 	const [personalTranslation, setPersonalTranslation] = useState('')
@@ -52,6 +53,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 				translatedWord: translatedWord,
 				userId,
 				materialId,
+				word_sentence,
 			})
 		)
 		dispatch(toggleTranslationContainer(false))
