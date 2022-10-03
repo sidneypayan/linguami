@@ -49,11 +49,15 @@ const FlashCards = () => {
 				Essayez de vous souvenir de la traduction en français
 			</h3>
 			<div className={styles.wordsContainer}>
-				<div className={styles.word}>{wordsLeft[cardIndex].word_ru}</div>
+				<div className={styles.originalWord}>
+					{wordsLeft[cardIndex].word_ru}
+				</div>
 
 				{showAnswer ? (
 					<>
-						<div className={styles.word}>{wordsLeft[cardIndex].word_fr}</div>
+						<div className={styles.translatedWord}>
+							{wordsLeft[cardIndex].word_fr}
+						</div>
 						<div className={styles.btnsContainer}>
 							<button
 								className={styles.guessedBtn}

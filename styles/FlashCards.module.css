@@ -26,13 +26,20 @@
 	line-height: 2.5rem;
 }
 
-.word {
+.originalWord,
+.translatedWord {
 	text-align: center;
 	justify-self: center;
 	font-size: 3rem;
 	font-weight: 600;
+	margin-bottom: 3rem;
+}
+
+.originalWord {
 	color: var(--navColor);
-	margin-bottom: 4rem;
+}
+.translatedWord {
+	color: #aaa;
 }
 
 .btnsContainer {
@@ -49,10 +56,14 @@
 }
 
 .guessedBtn {
-	background-color: green;
+	border-radius: 3px;
+	font-weight: 500;
+	background-color: #46a049;
 }
 .notguessedBtn {
-	background-color: red;
+	border-radius: 3px;
+	font-weight: 500;
+	background-color: #dc3545;
 }
 
 .showAnswerBtn {

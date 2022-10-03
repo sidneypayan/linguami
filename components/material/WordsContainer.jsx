@@ -85,12 +85,14 @@ const WordsContainer = () => {
 							</li>
 						))}
 					</ul>
-					<button
-						onClick={() => dispatch(toggleFlashcardsContainer(true))}
-						type='button'
-						className={styles.flashcardsBtn}>
-						Réviser les mots
-					</button>
+					{user_material_words.length > 0 && (
+						<button
+							onClick={() => dispatch(toggleFlashcardsContainer(true))}
+							type='button'
+							className={styles.flashcardsBtn}>
+							Réviser les mots
+						</button>
+					)}
 				</>
 			) : (
 				<>

@@ -119,94 +119,96 @@ const Material = ({ material: single_material }) => {
 	}
 
 	return (
-		<>
-			<FontAwesomeIcon
-				onClick={() => router.back()}
-				className='back-arrow '
-				icon={faArrowLeft}
-				size='2xl'
-			/>
+		single_material && (
+			<>
+				<FontAwesomeIcon
+					onClick={() => router.back()}
+					className='back-arrow '
+					icon={faArrowLeft}
+					size='2xl'
+				/>
 
-			<div className={styles.container}>
-				<div className={styles.titleContainer}>
-					<h1 className={`${styles.title} headline`}>
-						{single_material.title_ru}
-					</h1>
-				</div>
-
-				{/* MEDIACONTAINER*/}
-				<div className={styles.mediaContainer}>
-					<div className={styles.audioContainer}>
-						{getImageRegardingSection(section)}
-
-						{/* DISPLAY AUDIO */}
-						{displayAudioPlayer(section)}
-
-						{/* CHAPTER MENU */}
-						{section === 'book' && (
-							<>
-								<button
-									onClick={() => setIsBookMenuOpen(!isBookMenuOpen)}
-									className={styles.bookMenuBtn}>
-									{isBookMenuOpen
-										? 'Cacher le menu des chapitres'
-										: 'Afficher le menu des chapitres'}
-									<FontAwesomeIcon
-										className={styles.bookMenuIcon}
-										icon={isBookMenuOpen ? faXmark : faBook}
-									/>
-								</button>
-								{isBookMenuOpen && <BookMenu />}
-							</>
-						)}
+				<div className={styles.container}>
+					<div className={styles.titleContainer}>
+						<h1 className={`${styles.title} headline`}>
+							{single_material.title_ru}
+						</h1>
 					</div>
 
-					{/* DISPLAY VIDEO */}
-					{displayVideo(section)}
-				</div>
+					{/* MEDIACONTAINER*/}
+					<div className={styles.mediaContainer}>
+						<div className={styles.audioContainer}>
+							{getImageRegardingSection(section)}
 
-				{/* TextContainer */}
-				<div className={styles.textContainer}>
-					<div>
-						<Translation
-							coordinates={coordinates}
-							materialId={single_material.id}
-							userId={user && user.id}
-						/>
+							{/* DISPLAY AUDIO */}
+							{displayAudioPlayer(section)}
 
-						<button
-							onClick={() => setShowAccents(!showAccents)}
-							type='button'
-							id='show-accents'
-							className={`${styles.showAccentsBtn} mainBtn`}>
-							Montrer les accents
-						</button>
+							{/* CHAPTER MENU */}
+							{section === 'book' && (
+								<>
+									<button
+										onClick={() => setIsBookMenuOpen(!isBookMenuOpen)}
+										className={styles.bookMenuBtn}>
+										{isBookMenuOpen
+											? 'Cacher le menu des chapitres'
+											: 'Afficher le menu des chapitres'}
+										<FontAwesomeIcon
+											className={styles.bookMenuIcon}
+											icon={isBookMenuOpen ? faXmark : faBook}
+										/>
+									</button>
+									{isBookMenuOpen && <BookMenu />}
+								</>
+							)}
+						</div>
 
-						{showAccents ? (
-							<p onClick={e => getCoordinates(e)} className={styles.text}>
-								<Words content={single_material.content_accents} />
-							</p>
-						) : (
-							<p onClick={e => getCoordinates(e)} className={styles.text}>
-								<Words content={single_material.content} />
-							</p>
-						)}
+						{/* DISPLAY VIDEO */}
+						{displayVideo(section)}
+					</div>
 
-						<button
-							type='button'
-							id='checkMaterial'
-							className={`${styles.checkLesson} mainBtn`}>
-							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
-						</button>
+					{/* TextContainer */}
+					<div className={styles.textContainer}>
+						<div>
+							<Translation
+								coordinates={coordinates}
+								materialId={single_material.id}
+								userId={user && user.id}
+							/>
+
+							<button
+								onClick={() => setShowAccents(!showAccents)}
+								type='button'
+								id='show-accents'
+								className={`${styles.showAccentsBtn} mainBtn`}>
+								Montrer les accents
+							</button>
+
+							{showAccents ? (
+								<p onClick={e => getCoordinates(e)} className={styles.text}>
+									<Words content={single_material.content_accents} />
+								</p>
+							) : (
+								<p onClick={e => getCoordinates(e)} className={styles.text}>
+									<Words content={single_material.content} />
+								</p>
+							)}
+
+							<button
+								type='button'
+								id='checkMaterial'
+								className={`${styles.checkLesson} mainBtn`}>
+								J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
+							</button>
+						</div>
+					</div>
+
+					{/* WordsContainer */}
+					<div className={styles.rightContainer}>
+						<WordsContainer />
 					</div>
 				</div>
-
-				{/* WordsContainer */}
-				<div className={styles.rightContainer}>
-					<WordsContainer />
-				</div>
-			</div>
-		</>
+			</>
+		)
 	)
 }
 
