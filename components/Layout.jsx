@@ -1,8 +1,13 @@
 import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
+import { useSelector } from 'react-redux'
+import FlashCards from './flashcards/Flashcards'
 
 const Layout = ({ children }) => {
-	return (
+	const { isFlashcardsOpen } = useSelector(store => store.cards)
+	return isFlashcardsOpen ? (
+		<FlashCards />
+	) : (
 		<>
 			<Navbar />
 			{children}

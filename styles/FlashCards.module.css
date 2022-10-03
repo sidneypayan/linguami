@@ -1,32 +1,22 @@
 .container {
-	position: absolute;
-	z-index: 2;
+	position: relative;
 	display: flex;
-	height: 50rem;
-	height: 100%;
-	width: 50rem;
+	height: 100vh;
 	width: 100%;
 	background-color: var(--white);
 	flex-direction: column;
-	left: 0;
-	right: 0;
-	margin-left: auto;
-	margin-right: auto;
-	/* margin-top: 2rem; */
-	border-radius: 3px;
 	align-items: center;
 }
 
 .flashcardsTitle {
 	margin-top: 5rem;
-	width: 70%;
 	text-align: center;
 	line-height: 2.5rem;
 	font-weight: 600;
 }
 
 .wordsContainer {
-	margin-top: 25vh;
+	margin-top: 20vh;
 	text-align: center;
 }
 
@@ -76,13 +66,13 @@
 }
 
 .congratsContainer {
-	margin-top: 25%;
+	margin-top: 20vh;
 }
 
 .closeIcon {
 	color: var(--navColor);
 	position: absolute;
-	top: 3rem;
+	top: 2rem;
 	right: 7rem;
 	cursor: pointer;
 }
