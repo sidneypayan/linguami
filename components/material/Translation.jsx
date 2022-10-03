@@ -47,10 +47,13 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		const translatedWord = personalTranslation
 			? personalTranslation
 			: e.target.textContent
+
+		const originalWord = translation.inf ? translation.inf : translation.word
+
 		dispatch(
 			addWordToDictionary({
-				originalWord: translation.inf,
-				translatedWord: translatedWord,
+				originalWord,
+				translatedWord,
 				userId,
 				materialId,
 				word_sentence,
@@ -79,24 +82,32 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		isTranslationOpen &&
 		!translation_loading && (
 			<div style={position} ref={ref} className={styles.container}>
-				<>
-					<div className={styles.inf}>
-						{translation_error ? (
-							<span>{translation_error}</span>
-						) : (
-							<>
-								<span>{translation.form}</span> - <span>{translation.inf}</span>
-							</>
-						)}
-					</div>
-					<ul className={styles.traductionsContainer}>
-						{translation.definitions?.map((definition, index) => (
-							<li key={index} onClick={addWord}>
-								{definition}
-							</li>
-						))}
-					</ul>
-				</>
+				{translation_error ? (
+					<>
+						<div className={styles.inf}>
+							<span>{translation.word}</span>
+						</div>
+						<ul className={styles.traductionsContainer}>
+							<li className={styles.errMsg}>{translation_error}</li>
+						</ul>
+					</>
+				) : (
+					<>
+						<div className={styles.inf}>
+							<span>{translation.form}</span> - <span>{translation.inf}</span>
+						</div>
+						<ul className={styles.traductionsContainer}>
+							{translation.definitions?.map((definition, index) => (
+								<li
+									className={styles.translatedWord}
+									key={index}
+									onClick={addWord}>
+									{definition}
+								</li>
+							))}
+						</ul>
+					</>
+				)}
 
 				<form onSubmit={addWord}>
 					<input

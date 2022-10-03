@@ -9,7 +9,7 @@
 	position: relative;
 	grid-column-start: 1;
 	grid-column-end: 2;
-	padding: 0 2rem;
+	/* padding: 0 2rem; */
 }
 
 .bookMenuBtn {
@@ -138,6 +138,10 @@
 
 .text {
 	white-space: pre-line;
+	font-size: 18px;
+	line-height: 1.75rem;
+	font-family: Verdana;
+	padding-right: 2rem;
 }
 
 .text-accents {
@@ -197,6 +201,10 @@
 	.img,
 	.imgPlace {
 		display: none;
+	}
+
+	.text {
+		padding: 0;
 	}
 }
 

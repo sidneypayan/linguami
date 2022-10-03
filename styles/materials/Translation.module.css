@@ -23,7 +23,7 @@
 	text-align: center;
 }
 
-.traductionsContainer li {
+.translatedWord {
 	font-size: 0.9rem;
 	cursor: pointer;
 	padding: 0.25rem 0.5rem;
@@ -31,9 +31,17 @@
 	color: var(--secondaryTextColor);
 }
 
-.traductionsContainer li:hover {
+.translatedWord:hover {
 	background-color: #ccc;
 	color: #000;
+}
+
+.errMsg {
+	font-size: 0.9rem;
+	padding: 0.25rem 0.5rem;
+	font-weight: 600;
+	color: #dc3545;
+	text-align: center;
 }
 
 .input {

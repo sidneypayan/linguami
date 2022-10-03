@@ -168,38 +168,38 @@ const Material = ({ material: single_material }) => {
 
 					{/* TextContainer */}
 					<div className={styles.textContainer}>
-						<div>
-							<Translation
-								coordinates={coordinates}
-								materialId={single_material.id}
-								userId={user && user.id}
-							/>
+						{/* <div> */}
+						<Translation
+							coordinates={coordinates}
+							materialId={single_material.id}
+							userId={user && user.id}
+						/>
 
-							<button
-								onClick={() => setShowAccents(!showAccents)}
-								type='button'
-								id='show-accents'
-								className={`${styles.showAccentsBtn} mainBtn`}>
-								Montrer les accents
-							</button>
+						<button
+							onClick={() => setShowAccents(!showAccents)}
+							type='button'
+							id='show-accents'
+							className={`${styles.showAccentsBtn} mainBtn`}>
+							Montrer les accents
+						</button>
 
-							{showAccents ? (
-								<p onClick={e => getCoordinates(e)} className={styles.text}>
-									<Words content={single_material.content_accents} />
-								</p>
-							) : (
-								<p onClick={e => getCoordinates(e)} className={styles.text}>
-									<Words content={single_material.content} />
-								</p>
-							)}
+						{showAccents ? (
+							<p onClick={e => getCoordinates(e)} className={styles.text}>
+								<Words content={single_material.content_accents} />
+							</p>
+						) : (
+							<p onClick={e => getCoordinates(e)} className={styles.text}>
+								<Words content={single_material.content} />
+							</p>
+						)}
 
-							<button
-								type='button'
-								id='checkMaterial'
-								className={`${styles.checkLesson} mainBtn`}>
-								J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
-							</button>
-						</div>
+						<button
+							type='button'
+							id='checkMaterial'
+							className={`${styles.checkLesson} mainBtn`}>
+							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
+						</button>
+						{/* </div> */}
 					</div>
 
 					{/* WordsContainer */}

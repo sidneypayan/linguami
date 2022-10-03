@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import {
 	translateWord,
 	toggleTranslationContainer,
+	cleanTranslation,
 } from '../../features/words/wordsSlice'
 
 const Words = ({ content }) => {
@@ -49,6 +50,7 @@ const Words = ({ content }) => {
 		const sentence = e.target.parentElement.textContent
 		dispatch(translateWord({ word, sentence }))
 		dispatch(toggleTranslationContainer())
+		dispatch(cleanTranslation())
 	}
 
 	return <>{wrapSentences(purifiedContent)}</>

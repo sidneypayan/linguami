@@ -26,8 +26,10 @@ export const translateWord = createAsyncThunk(
 			const { data } = await axios.get(
 				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=ru-fr&text=${word}&flags=004`
 			)
-			if (!data.def.length)
-				return thunkAPI.rejectWithValue('Aucune traduction trouvée')
+			if (!data.def.length) {
+				return { word, sentence }
+			}
+			// return thunkAPI.rejectWithValue('Aucune traduction trouvée')
 			return { word, data, sentence }
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -126,27 +128,34 @@ const wordsSlice = createSlice({
 			state.translation_loading = true
 		},
 		[translateWord.fulfilled]: (state, { payload }) => {
-			let asp
-			let form
 			const word = payload.word
-			const wordInfos = payload.data.def[0]
-			const inf = wordInfos.text || null
+			if (payload.data) {
+				let asp
+				let form
 
-			if (wordInfos.asp === 'несов') {
-				asp = 'imperfectif'
+				const wordInfos = payload.data.def[0]
+				const inf = wordInfos.text || null
+
+				if (wordInfos.asp === 'несов') {
+					asp = 'imperfectif'
+				} else {
+					asp = 'perfectif'
+				}
+
+				if (wordInfos.pos === 'verb') {
+					form = 'infinitif'
+				} else {
+					form = 'nominatif'
+				}
+
+				const definitions = wordInfos.tr.map(def => def.text).splice(0, 5)
+
+				state.translation = { word, asp, inf, form, definitions }
+				state.translation_error = false
 			} else {
-				asp = 'perfectif'
+				state.translation_error = 'Aucune traduction trouvée'
+				state.translation = { word }
 			}
-
-			if (wordInfos.pos === 'verb') {
-				form = 'infinitif'
-			} else {
-				form = 'nominatif'
-			}
-
-			const definitions = wordInfos.tr.map(def => def.text).splice(0, 5)
-			state.translation_error = false
-			state.translation = { word, asp, inf, form, definitions }
 			state.translation_loading = false
 			state.word_sentence = payload.sentence
 		},
