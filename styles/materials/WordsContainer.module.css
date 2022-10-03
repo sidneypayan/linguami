@@ -1,6 +1,5 @@
 .wordsContainer {
 	color: var(--secondaryTextColor);
-	font-weight: bold;
 	font-size: 15px;
 }
 
@@ -28,6 +27,11 @@
 	display: flex;
 	gap: 0.5rem;
 	align-items: center;
+}
+
+.originalWord {
+	color: #2582e7;
+	font-weight: 600;
 }
 
 .trashIcon {

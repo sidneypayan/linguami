@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { supabase } from '../../lib/supabase'
+import { toast } from 'react-toastify'
 
 const initialState = {
 	user_words: [],
@@ -159,6 +160,7 @@ const wordsSlice = createSlice({
 				...state.user_material_words,
 				...payload,
 			]
+			toast.success('Mot ajouté avec succès')
 		},
 		[getAllUserWords.fulfilled]: (state, { payload }) => {
 			state.user_words = payload

@@ -36,7 +36,6 @@ const Dictionary = () => {
 
 	return (
 		<div className={styles.container}>
-			<LevelBar />
 			<div className={styles.table}>
 				{user_words &&
 					user_words.map((word, index) => (
