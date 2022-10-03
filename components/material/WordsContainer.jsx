@@ -13,12 +13,14 @@ import {
 } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 
 const WordsContainer = () => {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
 	const { user_material_words } = useSelector(store => store.words)
+	const { isFlashcardsOpen } = useSelector(store => store.cards)
 	const materialId = router.query.material
 	const userId = user?.id
 
@@ -83,6 +85,12 @@ const WordsContainer = () => {
 							</li>
 						))}
 					</ul>
+					<button
+						onClick={() => dispatch(toggleFlashcardsContainer(true))}
+						type='button'
+						className={styles.flashcardsBtn}>
+						Réviser les mots
+					</button>
 				</>
 			) : (
 				<>

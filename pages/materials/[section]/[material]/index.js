@@ -13,10 +13,13 @@ import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
+import Flashcards from '../../../../components/flashcards/Flashcards'
+import { useSelector } from 'react-redux'
 
 import { useUserContext } from '../../../../context/user'
 
 const Material = ({ material: single_material }) => {
+	const { isFlashcardsOpen } = useSelector(store => store.cards)
 	const dispatch = useDispatch()
 	const { user } = useUserContext()
 
@@ -128,6 +131,8 @@ const Material = ({ material: single_material }) => {
 			/>
 
 			<div className={styles.container}>
+				{isFlashcardsOpen && <Flashcards />}
+
 				<div className={styles.titleContainer}>
 					<h1 className={`${styles.title} headline`}>
 						{single_material.title_ru}
