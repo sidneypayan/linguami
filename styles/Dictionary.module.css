@@ -3,7 +3,7 @@
 }
 
 .table {
-	width: 70%;
+	width: 60%;
 	margin: 0 auto;
 	margin: 5rem auto;
 }
@@ -61,5 +61,11 @@
 
 	.tableCheckWord {
 		width: 10%;
+	}
+}
+
+@media (max-width: 1023px) {
+	.table {
+		width: 80%;
 	}
 }

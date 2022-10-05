@@ -102,6 +102,7 @@ body {
 	position: relative;
 	font-family: 'Open Sans', sans-serif;
 	background-color: var(--backgroundColor);
+	/* background-color: #fff; */
 	color: var(--primaryTextColor);
 	color: #555;
 	line-height: 1.5rem;

@@ -1,32 +1,72 @@
 .container {
-	width: 80%;
-	margin: 0 auto;
-	margin-top: 5rem;
+	width: 935px;
+	margin: 5rem auto;
 }
 
 .materialsContainer {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 4rem;
-	margin: 3rem 0;
+	margin: 3rem auto;
+	height: 200px;
 }
 
-.materials img {
-	border-radius: 3px;
-	min-width: 155px;
-	cursor: pointer;
+.materialsCarouselWrapper {
+	position: relative;
+	display: flex;
+	height: 250px;
+	overflow-x: scroll;
+	border-bottom-right-radius: 3px;
+	border-top-right-radius: 3px;
 }
+
+.materialsCarouselWrapper::-webkit-scrollbar {
+	display: none;
+}
+
+.materialsCarouselContainer {
+	position: absolute;
+	gap: 5px;
+	display: flex;
+	height: 200px;
+	width: 100%;
+	transition: all 0.3s ease;
+}
+
+.imgContainer {
+	cursor: pointer;
+	position: relative;
+	width: 230px;
+	height: 180px;
+}
+
+.imgContainer img {
+	border-radius: 3px;
+}
+
+/* .img {
+	cursor: pointer;
+	background-size: cover;
+	background-position: center;
+	min-width: 180px;
+	min-height: 180px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+} */
 
 .materials p {
+	display: none;
 	color: var(--navColor);
 	color: var(--secondaryTextColor);
 }
 
+.carouselTitle {
+	color: var(--parimaryTextColor);
+	font-weight: 600;
+}
+
 .materialsTitle {
 	cursor: pointer;
-	font-size: 1.35rem;
-	margin: 1rem 0;
-	font-weight: 500;
+	font-size: 1.05rem;
+	margin: 0.5rem 0;
+	font-weight: 600;
 	color: var(--primaryBtnColor);
 }
 
@@ -41,7 +81,52 @@
 	font-weight: 600;
 }
 
-@media (max-width: 767px) {
+/* .carouselBtnWrapper {
+	position: relative;
+	width: 930px;
+} */
+
+.prev,
+.next {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 1;
+	position: absolute;
+	background-color: rgba(63, 63, 63, 0.5);
+	width: 2rem;
+	height: 180px;
+}
+
+.prev svg,
+.next svg {
+	color: #eee;
+}
+
+.prev {
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	left: 0rem;
+}
+
+.next {
+	border-bottom-right-radius: 3px;
+	border-top-right-radius: 3px;
+	right: 0;
+}
+
+@media (max-width: 529px) {
+	.container {
+		width: 230px;
+	}
+}
+
+@media (min-width: 530px) and (max-width: 767px) {
+	.container {
+		width: 465px;
+	}
+
 	.materialsContainer {
 		display: block;
 		text-align: center;
@@ -52,14 +137,8 @@
 	}
 }
 
-@media (max-width: 1023px) {
-	.materialsContainer {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-@media (max-width: 1199px) {
+@media (min-width: 768px) and (max-width: 1023px) {
 	.container {
-		width: 90%;
+		width: 700px;
 	}
 }
