@@ -59,7 +59,7 @@ const WordsContainer = () => {
 
 	return (
 		<div className={styles.wordsContainer}>
-			{isUserLoggedIn ? (
+			{isUserLoggedIn && user_material_words ? (
 				<>
 					<h3 className='headline'>Mots</h3>
 					<ul>
@@ -85,14 +85,12 @@ const WordsContainer = () => {
 							</li>
 						))}
 					</ul>
-					{user_material_words.length > 0 && (
-						<button
-							onClick={() => dispatch(toggleFlashcardsContainer(true))}
-							type='button'
-							className={styles.flashcardsBtn}>
-							Réviser les mots
-						</button>
-					)}
+					<button
+						onClick={() => dispatch(toggleFlashcardsContainer(true))}
+						type='button'
+						className={styles.flashcardsBtn}>
+						Réviser les mots
+					</button>
 				</>
 			) : (
 				<>
