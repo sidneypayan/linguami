@@ -1,12 +1,13 @@
 .container {
 	width: 70%;
-	margin: 3rem auto;
+	margin: 6rem auto;
 	text-align: center;
 }
 
 .ressourceContainer {
 	display: flex;
-	margin: 4rem 0;
+	margin-top: 4rem;
+	margin-bottom: 8rem;
 	justify-content: space-between;
 }
 
