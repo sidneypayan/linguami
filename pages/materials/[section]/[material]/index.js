@@ -78,11 +78,16 @@ const Material = ({ material: single_material }) => {
 		if (
 			section === 'trailer' ||
 			section === 'eralash' ||
-			section === 'music' ||
 			section === 'galileo' ||
 			section === 'diverse' ||
 			section === 'extract' ||
-			section === 'cartoon'
+			section === 'cartoon' ||
+			section === 'rock' ||
+			section === 'pop' ||
+			section === 'traditional' ||
+			section === 'variety' ||
+			section === 'folk' ||
+			section === 'kids'
 		) {
 			return (
 				<div className={styles.videoContainer}>
