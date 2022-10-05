@@ -108,7 +108,12 @@
 
 @media (max-width: 529px) {
 	.container {
-		width: 230px;
+		width: 320px;
+	}
+
+	.prev,
+	.next {
+		display: none;
 	}
 }
 
