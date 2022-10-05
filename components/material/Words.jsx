@@ -19,8 +19,10 @@ const Words = ({ content }) => {
 	// Regex pour match uniquement les lettres russes
 	const regexWordsOnly = /[\u0430-\u044f]+/gi
 	// Regex pour match les phrases
+	// const regexSentences =
+	// 	/[<br>]+|[0-9\A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[….!?$]/gi
 	const regexSentences =
-		/[<br>]+|[0-9\A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[;….!?$]/gi
+		/[0-9\A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[….!?<br>$]+/gi
 	const wrapSentences = text => {
 		const matchSentences = text.match(regexSentences)
 		return matchSentences.map((sentence, index) => (
