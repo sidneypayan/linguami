@@ -3,11 +3,6 @@
 	margin: 5rem auto;
 }
 
-.materialsContainer {
-	margin: 3rem auto;
-	height: 200px;
-}
-
 .materialsCarouselWrapper {
 	position: relative;
 	display: flex;
@@ -37,12 +32,6 @@
 
 .imgContainer img {
 	border-radius: 3px;
-}
-
-.materials p {
-	display: none;
-	color: var(--navColor);
-	color: var(--secondaryTextColor);
 }
 
 .carouselTitle {
@@ -99,9 +88,9 @@
 	right: 0;
 }
 
-@media (max-width: 529px) {
+@media (max-width: 767px) {
 	.container {
-		width: 320px;
+		width: 350px;
 	}
 
 	.prev,
@@ -110,23 +99,13 @@
 	}
 }
 
-@media (min-width: 530px) and (max-width: 767px) {
+@media (min-width: 768px) and (max-width: 1180px) {
 	.container {
-		width: 465px;
+		width: 585px;
 	}
 
-	.materialsContainer {
-		display: block;
-		text-align: center;
-	}
-
-	.materials {
-		margin-bottom: 5rem;
-	}
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-	.container {
-		width: 700px;
+	.prev,
+	.next {
+		display: none;
 	}
 }
