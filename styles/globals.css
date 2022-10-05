@@ -197,6 +197,12 @@ img {
 	color: var(--navColor);
 }
 
+@media (min-width: 1267px) {
+	.back-arrow {
+		margin-left: 7rem;
+	}
+}
+
 .white-wrapper {
 	width: 100%;
 	background-color: var(--white);

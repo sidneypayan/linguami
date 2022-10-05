@@ -31,14 +31,20 @@
 	color: var(--thirdColor);
 }
 
+.copyrightContainer {
+	text-align: center;
+}
+
 @media (max-width: 1023px) {
 	.container {
 		flex-direction: column;
+		padding: 2rem;
 	}
 
 	.linksContainer ul {
 		display: flex;
 		gap: 2rem;
 		list-style-type: none;
+		text-align: center;
 	}
 }
