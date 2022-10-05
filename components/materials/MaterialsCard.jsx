@@ -13,6 +13,7 @@ const MaterialsCard = ({ material }) => {
 						objectFit='cover'
 						quality={100}
 						alt={material.title}
+						loading='eager'
 					/>
 				</Link>
 			</div>
