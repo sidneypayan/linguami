@@ -41,16 +41,6 @@
 	border-radius: 3px;
 }
 
-/* .img {
-	cursor: pointer;
-	background-size: cover;
-	background-position: center;
-	min-width: 180px;
-	min-height: 180px;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
-} */
-
 .materials p {
 	display: none;
 	color: var(--navColor);

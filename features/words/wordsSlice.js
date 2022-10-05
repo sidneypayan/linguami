@@ -20,7 +20,7 @@ export const translateWord = createAsyncThunk(
 	async (param, thunkAPI) => {
 		const { word, sentence } = param
 
-		word = word.match(/[\u0430-\u044f]+/gi).join('')
+		word = word.match(/[\u0430-\u044f\ё]+/gi).join('')
 
 		try {
 			const { data } = await axios.get(
