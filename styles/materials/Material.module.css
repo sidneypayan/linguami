@@ -9,7 +9,7 @@
 	position: relative;
 	grid-column-start: 1;
 	grid-column-end: 2;
-	/* padding: 0 2rem; */
+	margin-left: 2.5rem;
 }
 
 .bookMenuBtn {
@@ -221,5 +221,11 @@
 		grid-column-start: 1;
 		grid-column-end: 3;
 		grid-row-start: 3;
+	}
+}
+
+@media (max-width: 1267px) {
+	.mediaContainer {
+		margin-left: 0;
 	}
 }

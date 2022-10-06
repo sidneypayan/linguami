@@ -21,27 +21,26 @@ const Words = ({ content }) => {
 	// Regex pour match les phrases
 	const regexSentences =
 		/[0-9\A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[….!?<br>]+/gi
+
 	const wrapSentences = text => {
 		const matchSentences = text.match(regexSentences)
-		return matchSentences.map((sentence, index) => (
-			<>
-				<span key={index} className={styles.sentence}>
-					{sentence.match(regexAll).map((word, index) =>
-						regexWordsOnly.test(word) ? (
-							<span
-								key={index}
-								className={styles.translate}
-								onClick={e => handleClick(e)}>
-								{word}
-							</span>
-						) : brRegex.test(word) ? (
-							<span key={index} className={styles.break}></span>
-						) : (
-							word
-						)
-					)}
-				</span>
-			</>
+		return matchSentences.map((sentence, sentenceIndex) => (
+			<span key={sentenceIndex} className={styles.sentence}>
+				{sentence.match(regexAll).map((word, wordIndex) =>
+					regexWordsOnly.test(word) ? (
+						<span
+							key={wordIndex}
+							className={styles.translate}
+							onClick={e => handleClick(e)}>
+							{word}
+						</span>
+					) : brRegex.test(word) ? (
+						<span key={wordIndex} className={styles.break}></span>
+					) : (
+						<span key={wordIndex}>{word}</span>
+					)
+				)}
+			</span>
 		))
 	}
 

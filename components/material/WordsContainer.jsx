@@ -14,13 +14,17 @@ import {
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
+// import { useState } from 'react'
 
 const WordsContainer = () => {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
-	const { user_material_words } = useSelector(store => store.words)
-	const { isFlashcardsOpen } = useSelector(store => store.cards)
+	const { user_material_words, user_material_words_pending } = useSelector(
+		store => store.words
+	)
+	// const [userMaterialWords, setUserMaterialWords] = useState()
+	// const { isFlashcardsOpen } = useSelector(store => store.cards)
 	const materialId = router.query.material
 	const userId = user?.id
 
@@ -54,8 +58,14 @@ const WordsContainer = () => {
 	}
 
 	useEffect(() => {
-		dispatch(getUserMaterialWords({ materialId, userId }))
-	}, [dispatch, materialId, userId])
+		if (isUserLoggedIn) dispatch(getUserMaterialWords({ materialId, userId }))
+	}, [
+		dispatch,
+		isUserLoggedIn,
+		materialId,
+		userId,
+		user_material_words_pending,
+	])
 
 	return (
 		<div className={styles.wordsContainer}>

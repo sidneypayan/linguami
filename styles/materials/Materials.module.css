@@ -8,6 +8,7 @@
 	display: flex;
 	height: 250px;
 	overflow-x: scroll;
+	scrollbar-width: none;
 }
 
 .materialsCarouselWrapper::-webkit-scrollbar {

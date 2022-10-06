@@ -10,17 +10,18 @@ import { useEffect, useState } from 'react'
 import {
 	getAllUserWords,
 	deleteUserWord,
+	deleteUserWords,
 } from '../../features/words/wordsSlice'
-import LevelBar from '../../components/layouts/LevelBar'
 
 const Dictionary = () => {
-	const { user } = useUserContext()
-	const { user_words } = useSelector(store => store.words)
 	const dispatch = useDispatch()
-	// const [checkedWords, setCheckedWords] = useState([])
+	const { user, isUserLoggedIn } = useUserContext()
+	const userId = user?.id
+	const { user_words, user_words_pending, user_material_words_pending } =
+		useSelector(store => store.words)
+	const [checkedWords, setCheckedWords] = useState([])
 
 	const handleCheck = e => {
-		console.log(e.target.value)
 		if (e.target.checked) {
 			setCheckedWords([...checkedWords, e.target.value])
 		} else {
@@ -31,25 +32,39 @@ const Dictionary = () => {
 	}
 
 	useEffect(() => {
-		dispatch(getAllUserWords(user.id))
-	}, [])
+		if (isUserLoggedIn) dispatch(getAllUserWords(userId))
+	}, [
+		dispatch,
+		isUserLoggedIn,
+		userId,
+		user_words_pending,
+		user_material_words_pending,
+	])
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.table}>
+				{/* <div className={styles.rowWords}>
+					<div className={styles.tableWordSentence}></div>
+					<div className={styles.tableIcon}>
+						<FontAwesomeIcon
+							onClick={() => dispatch(deleteUserWords(checkedWords))}
+							icon={faTrashAlt}
+						/>
+					</div>
+				</div> */}
 				{user_words &&
 					user_words.map((word, index) => (
 						<div className={styles.rowWords} key={index}>
-							<div className={styles.tableCheckWord}>
+							{/* <div className={styles.tableCheckWord}>
 								<input onChange={handleCheck} type='checkbox' value={word.id} />
-							</div>
+							</div> */}
 							<div className={styles.tableWords}>
 								<span className={styles.tableOriginalWord}>{word.word_ru}</span>
 								<span className={styles.tableTranslatedWord}>
 									{word.word_fr}
 								</span>
 							</div>
-
 							<div className={styles.tableWordSentence}>
 								{word.word_sentence}
 							</div>

@@ -5,13 +5,14 @@ import { toast } from 'react-toastify'
 
 const initialState = {
 	user_words: [],
+	user_words_pending: false,
+	user_material_words: [],
+	user_material_words_pending: false,
+	translation: {},
 	translation_loading: false,
 	translation_error: false,
-	translation: {},
-	addedWords: {},
+	// addedWords: {},
 	isTranslationOpen: false,
-	user_material_words: [],
-	user_words: [],
 	word_sentence: [],
 }
 
@@ -82,12 +83,12 @@ export const getUserMaterialWords = createAsyncThunk(
 export const getAllUserWords = createAsyncThunk(
 	'words/getAllUserWords',
 
-	async (param, thunkAPI) => {
+	async (userId, thunkAPI) => {
 		try {
 			const { data, error } = await supabase
 				.from('user_words')
 				.select('*')
-				.eq('user_id', param)
+				.eq('user_id', userId)
 
 			return data
 		} catch (error) {
@@ -103,9 +104,24 @@ export const deleteUserWord = createAsyncThunk(
 			const { data, error } = await supabase
 				.from('user_words')
 				.delete()
-				.eq('id', param)
+				.match({ id: param })
 
-			return param
+			return data.id
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+export const deleteUserWords = createAsyncThunk(
+	'words/deleteUserWords',
+	async (param, thunkAPI) => {
+		try {
+			const { data, error } = await supabase
+				.from('user_words')
+				.delete()
+				.in('id', param)
+
+			return data.id
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
@@ -177,11 +193,22 @@ const wordsSlice = createSlice({
 		[getUserMaterialWords.fulfilled]: (state, { payload }) => {
 			state.user_material_words = payload
 		},
+		[deleteUserWord.pending]: state => {
+			state.user_material_words_pending = true
+		},
 		[deleteUserWord.fulfilled]: (state, { payload }) => {
 			state.user_material_words = state.user_material_words.filter(
 				word => word.id !== payload
 			)
 			state.user_words = state.user_words.filter(word => word.id !== payload)
+			state.user_material_words_pending = false
+		},
+		[deleteUserWords.pending]: state => {
+			state.user_words_pending = true
+		},
+		[deleteUserWords.fulfilled]: (state, { payload }) => {
+			state.user_words = state.user_words.filter(word => word.id !== payload)
+			state.user_words_pending = false
 		},
 	},
 })

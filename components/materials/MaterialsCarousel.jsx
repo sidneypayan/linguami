@@ -7,7 +7,6 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useState, useRef } from 'react'
 import MaterialsCard from './MaterialsCard'
 import { useEffect } from 'react'
-import { useLayoutEffect } from 'react'
 
 const MaterialsCarousel = ({ materials }) => {
 	const [left, setLeft] = useState(0)
@@ -17,11 +16,11 @@ const MaterialsCarousel = ({ materials }) => {
 	const carouselWrapperRef = useRef(null)
 	const carouselContainerRef = useRef(null)
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		setCarouselContainerWidth(carouselContainerRef.current.scrollWidth)
 	}, [])
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		setCarouselWrapperWidth(carouselWrapperRef.current.clientWidth)
 	}, [])
 

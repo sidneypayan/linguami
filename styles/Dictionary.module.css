@@ -1,11 +1,12 @@
 .container {
+	/* margin-top: 5rem; */
 	min-height: 75vh;
 }
 
 .table {
 	width: 60%;
 	margin: 0 auto;
-	margin: 5rem auto;
+	margin: 10rem auto;
 }
 
 .rowWords {
