@@ -204,6 +204,7 @@ img {
 }
 
 .white-wrapper {
+	position: relative;
 	width: 100%;
 	background-color: var(--white);
 }

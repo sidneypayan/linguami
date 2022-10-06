@@ -10,7 +10,13 @@ const Homepage = () => {
 				<h3 className='headline'>Apprentissage multisupport</h3>
 				<div className={styles.ressourceContainer}>
 					<div className={styles.ressourceItem}>
-						<Image src='/img/video.png' alt='video' width={100} height={100} />
+						<Image
+							layout='fixed'
+							src='/img/video.png'
+							alt='video'
+							width={100}
+							height={100}
+						/>
 						<h4>Video</h4>
 						<p>
 							Extraits de films, bandes-annonces, clips musicaux, découvrez nos
@@ -18,7 +24,13 @@ const Homepage = () => {
 						</p>
 					</div>
 					<div className={styles.ressourceItem}>
-						<Image src='/img/audio.png' alt='audio' width={100} height={100} />
+						<Image
+							layout='fixed'
+							src='/img/audio.png'
+							alt='audio'
+							width={100}
+							height={100}
+						/>
 						<h4>Audio</h4>
 						<p>
 							Dialogues, chansons, audiobooks, évadez-vous avec nos contenus
@@ -26,7 +38,13 @@ const Homepage = () => {
 						</p>
 					</div>
 					<div className={styles.ressourceItem}>
-						<Image src='/img/text.png' alt='text' width={100} height={100} />
+						<Image
+							layout='fixed'
+							src='/img/text.png'
+							alt='text'
+							width={100}
+							height={100}
+						/>
 						<h4>Textes</h4>
 						<p>
 							Découvrez nos textes sur la culture, les mythes et légendes,
