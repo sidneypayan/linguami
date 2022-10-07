@@ -60,13 +60,15 @@ const UserProvider = ({ children }) => {
 		router.push('/')
 	}
 
-	const loginWithThirdPartyOAuth = async provider => {
-		const { user, session, error } = await supabase.auth
-			.signIn({
-				provider,
-			})
-			.then(setUser(user))
+	const loginWithThirdPartyOAuth = async () => {
+		const { user, session, error } = await supabase.auth.signIn({
+			provider: 'facebook',
+		})
+
+		setUser(user)
 	}
+
+	console.log(user)
 
 	const logout = async () => {
 		supabase.auth.signOut()

@@ -89,7 +89,7 @@ const Register = () => {
 					<div className={styles.socialContainer}>
 						<button
 							className={styles.socialBtn}
-							onClick={() => loginWithThirdPartyOAuth('facebook')}>
+							onClick={loginWithThirdPartyOAuth()}>
 							<Image
 								src='/img/facebook.png'
 								alt='facebook'
@@ -145,6 +145,7 @@ const Register = () => {
 									placeholder='nom'
 									name='name'
 									value={values.name}
+									autoComplete='username'
 								/>
 							</div>
 						)}
@@ -155,6 +156,7 @@ const Register = () => {
 								placeholder='email'
 								name='email'
 								value={values.email}
+								autoComplete='email'
 							/>
 						</div>
 						<div>
@@ -164,6 +166,7 @@ const Register = () => {
 								placeholder='mot de passe'
 								name='password'
 								value={values.password}
+								autoComplete='current-password'
 							/>
 						</div>
 
