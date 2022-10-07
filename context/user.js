@@ -69,14 +69,12 @@ const UserProvider = ({ children }) => {
 
 		if (error) {
 			console.log(error)
-			// return toast.error(error.message)
 		}
 
 		setUser(user)
-
-		router.push('/')
-		// toast.success('Vous êtes bien connecté')
 	}
+
+	console.log(user)
 
 	const logout = async () => {
 		supabase.auth.signOut()
