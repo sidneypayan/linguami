@@ -50,9 +50,7 @@ const UserProvider = ({ children }) => {
 				return toast.error('Vos identifiants sont erronés')
 			}
 			if (error.message === 'Email not confirmed') {
-				return toast.error(
-					"Veuillez confirmer l'email que nous vous avons envoyé"
-				)
+				return toast.error("Nous vous avons envoyé un mail d'inscription")
 			}
 			return toast.error(error.message)
 		}
@@ -72,9 +70,9 @@ const UserProvider = ({ children }) => {
 		}
 
 		setUser(user)
+		toast.success('Vous êtes bien connecté')
+		router.push('/')
 	}
-
-	console.log(user)
 
 	const logout = async () => {
 		supabase.auth.signOut()
@@ -101,7 +99,7 @@ const UserProvider = ({ children }) => {
 
 		if (data) {
 			toast.success('Mot de passe mis à jour avec succès')
-			router.push('/login')
+			router.push('/register')
 		}
 		if (error) toast.error('Erreur avec le mot de passe')
 	}
