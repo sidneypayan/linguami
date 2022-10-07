@@ -89,7 +89,7 @@ const Register = () => {
 					<div className={styles.socialContainer}>
 						<button
 							className={styles.socialBtn}
-							onClick={loginWithThirdPartyOAuth()}>
+							onClick={() => loginWithThirdPartyOAuth('facebook')}>
 							<Image
 								src='/img/facebook.png'
 								alt='facebook'

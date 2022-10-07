@@ -60,15 +60,13 @@ const UserProvider = ({ children }) => {
 		router.push('/')
 	}
 
-	const loginWithThirdPartyOAuth = async () => {
+	const loginWithThirdPartyOAuth = async provider => {
 		const { user, session, error } = await supabase.auth.signIn({
-			provider: 'facebook',
+			provider,
 		})
 
 		setUser(user)
 	}
-
-	console.log(user)
 
 	const logout = async () => {
 		supabase.auth.signOut()
@@ -144,6 +142,8 @@ const UserProvider = ({ children }) => {
 			setIsUserLoggedIn(false)
 		}
 	}, [user])
+
+	console.log(supabase.auth.session())
 
 	const exposed = {
 		user,
