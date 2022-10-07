@@ -64,14 +64,13 @@ const UserProvider = ({ children }) => {
 		const { user, session, error } = await supabase.auth.signIn({
 			provider,
 		})
-
-		setUser(user)
 	}
 
 	const logout = async () => {
 		supabase.auth.signOut()
 		setUser(null)
 		toast.success('Déconnexion en cours...')
+		router.push('/')
 	}
 
 	const askNewPassword = async email => {
@@ -130,9 +129,10 @@ const UserProvider = ({ children }) => {
 	}, [user])
 
 	useEffect(() => {
-		supabase.auth.onAuthStateChange((event, session) => {
+		supabase.auth.onAuthStateChange(async (event, session) => {
 			if (event === 'USER_DELETE') setUser(null)
 		})
+		if (user) setUser(user)
 	}, [])
 
 	useEffect(() => {
@@ -142,8 +142,6 @@ const UserProvider = ({ children }) => {
 			setIsUserLoggedIn(false)
 		}
 	}, [user])
-
-	console.log(supabase.auth.session())
 
 	const exposed = {
 		user,
