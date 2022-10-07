@@ -70,7 +70,6 @@ const UserProvider = ({ children }) => {
 		supabase.auth.signOut()
 		setUser(null)
 		toast.success('Déconnexion en cours...')
-		router.push('/')
 	}
 
 	const askNewPassword = async email => {
@@ -132,7 +131,6 @@ const UserProvider = ({ children }) => {
 		supabase.auth.onAuthStateChange(async (event, session) => {
 			if (event === 'USER_DELETE') setUser(null)
 		})
-		if (user) setUser(user)
 	}, [])
 
 	useEffect(() => {
@@ -142,6 +140,10 @@ const UserProvider = ({ children }) => {
 			setIsUserLoggedIn(false)
 		}
 	}, [user])
+
+	useEffect(() => {
+		setUser(supabase.auth.user())
+	}, [])
 
 	const exposed = {
 		user,
