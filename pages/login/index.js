@@ -11,7 +11,7 @@ const initialState = {
 }
 
 const Login = () => {
-	const { login, askNewPassword } = useUserContext()
+	const { login, askNewPassword, loginWithFacebook } = useUserContext()
 
 	const [values, setValues] = useState(initialState)
 	const [resetPassword, setResetPassword] = useState(false)
@@ -54,6 +54,10 @@ const Login = () => {
 						alt='bear'
 						width={125}
 						height={150}></Image>
+				</div>
+
+				<div>
+					<button onClick={loginWithFacebook}>Faceboook</button>
 				</div>
 
 				{resetPassword ? (

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styles from '../../styles/Homepage.module.css'
 import Hero from './Hero'
+import Link from 'next/link'
 
 const Homepage = () => {
 	return (
@@ -93,7 +94,11 @@ const Homepage = () => {
 							Inscrivez-vous et traduisez n&apos;importe quel mot de
 							n&apos;importe quel texte
 						</p>
-						<button className={`${styles.btn} mainBtn`}>S&apos;inscrire</button>
+						<Link href='/materials'>
+							<button className={`${styles.btn} mainBtn`}>
+								S&apos;inscrire
+							</button>
+						</Link>
 					</div>
 				</div>
 			</div>

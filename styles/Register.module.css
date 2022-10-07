@@ -1,0 +1,155 @@
+.wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background-color: var(--white);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--white);
+}
+
+.switchBtnContainer {
+	display: flex;
+	justify-content: space-between;
+}
+
+.switchBtn {
+	padding: 1.5rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background-color: transparent;
+	width: 50%;
+	cursor: pointer;
+	color: var(--primaryTextColor);
+	font-weight: 500;
+}
+
+.switchBtn.active {
+	background-color: rgb(216, 209, 209);
+}
+
+.socialContainer {
+	width: 80%;
+}
+
+.title {
+	text-align: center;
+	font-size: 1.6rem;
+	font-weight: 400;
+}
+
+.existingAccount {
+	margin-top: 2rem;
+	font-size: 0.85rem;
+	line-height: 1.2rem;
+}
+
+.existingAccount a {
+	color: var(--navColor);
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.formContainer {
+	text-align: center;
+	width: 300px;
+}
+
+.formContainer input {
+	width: 100%;
+	border: none;
+	background-color: var(--backgroundColor);
+	height: 40px;
+	margin-bottom: 0.5rem;
+	padding: 1rem;
+	border-radius: 3px;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.formContainer h2 {
+	margin-bottom: 2.5rem;
+	font-size: 1.75rem;
+}
+
+.btn {
+	margin-top: 1rem;
+	padding: 0.75rem 1rem;
+	width: 100%;
+	background-color: var(--navColor);
+}
+
+.resetText {
+	font-weight: 500;
+	text-align: left;
+	color: var(--navColor);
+}
+
+.resetBtn {
+	cursor: pointer;
+	margin-top: 0.5rem;
+	display: block;
+	border: none;
+	background-color: inherit;
+	font-size: 0.85rem;
+	color: var(--navColor);
+	text-decoration: underline;
+	text-align: left;
+}
+
+.error {
+	font-size: 0.85rem;
+	color: red;
+}
+
+.socialBtn {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	padding: 1rem;
+	background-color: transparent;
+	border: 1px solid var(--navColor);
+	border-radius: 3px;
+	cursor: pointer;
+	font-weight: 500;
+	color: var(--primaryTextColor);
+	margin-bottom: 1rem;
+	gap: 1rem;
+}
+
+.socialBtn:hover {
+	background-color: #eee;
+}
+
+.socialBtn svg {
+	margin-right: 1rem;
+	font-size: 1.5rem;
+	color: #385898;
+}
+
+.backBtn {
+	position: absolute;
+	left: 2rem;
+	top: 2rem;
+	display: flex;
+	align-items: center;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	color: #2196f3;
+	font-weight: 500;
+}

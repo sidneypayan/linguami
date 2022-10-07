@@ -10,8 +10,21 @@ import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
 
 const Navbar = () => {
-	const { user, userProfile, isUserLoggedIn, logout } = useUserContext()
+	const { user, userProfile, isUserLoggedIn, logout, toggleMember } =
+		useUserContext()
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
+
+	const handleClickOnLogin = type => {
+		if (type === 'login') {
+			toggleMember(true)
+		}
+
+		if (type === 'register') {
+			toggleMember(false)
+		}
+
+		setIsNavExpanded(!isNavExpanded)
+	}
 
 	return (
 		<nav className={styles.nav}>
@@ -32,21 +45,21 @@ const Navbar = () => {
 					<UserMenu />
 				) : (
 					<div className={styles.btnContainer}>
-						<Link href='/login'>
+						<Link href='/register'>
 							<button
-								onClick={() => setIsNavExpanded(false)}
+								onClick={() => handleClickOnLogin('login')}
 								className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
 								Se connecter
 							</button>
 						</Link>
-
+						{/* 
 						<Link href='/register'>
 							<button
-								onClick={() => setIsNavExpanded(false)}
+								onClick={() => handleClickOnLogin('register')}
 								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
 								S&apos;inscrire
 							</button>
-						</Link>
+						</Link> */}
 					</div>
 				)}
 

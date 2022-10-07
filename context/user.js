@@ -12,6 +12,7 @@ const UserProvider = ({ children }) => {
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
+	const [isMember, setIsMember] = useState(true)
 
 	const register = async data => {
 		const { name, email, password } = data
@@ -32,9 +33,7 @@ const UserProvider = ({ children }) => {
 			return toast.error(error)
 		}
 
-		toast.success(
-			'Vous êtes bien enregistré. Veuillez vérifier le mail que nous avous avons envoyé :)'
-		)
+		toast.success('Veuillez vérifier le mail que nous avous avons envoyé :)')
 
 		router.back()
 	}
@@ -61,6 +60,22 @@ const UserProvider = ({ children }) => {
 		setUser(user)
 		toast.success('Vous êtes bien connecté')
 		router.push('/')
+	}
+
+	const loginWithThirdPartyOAuth = async provider => {
+		const { user, session, error } = await supabase.auth.signIn({
+			provider,
+		})
+
+		if (error) {
+			console.log(error)
+			// return toast.error(error.message)
+		}
+
+		setUser(user)
+
+		router.push('/')
+		// toast.success('Vous êtes bien connecté')
 	}
 
 	const logout = async () => {
@@ -91,6 +106,10 @@ const UserProvider = ({ children }) => {
 			router.push('/login')
 		}
 		if (error) toast.error('Erreur avec le mot de passe')
+	}
+
+	const toggleMember = value => {
+		setIsMember(value)
 	}
 
 	useEffect(() => {
@@ -141,9 +160,12 @@ const UserProvider = ({ children }) => {
 		isUserLoggedIn,
 		register,
 		login,
+		loginWithThirdPartyOAuth,
 		logout,
 		askNewPassword,
 		setNewPassword,
+		toggleMember,
+		isMember,
 	}
 
 	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>

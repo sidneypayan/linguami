@@ -44,6 +44,11 @@
 .loginBtn {
 	border: solid 2px var(--primaryBtnColor);
 	background-color: transparent;
+	transition: 0.5s;
+}
+
+.loginBtn:hover {
+	background-color: var(--primaryBtnColor);
 }
 
 .registerBtn:hover {
@@ -68,6 +73,7 @@
 	right: 3rem;
 	/* width: 50px; */
 }
+
 .mobileIconClose {
 	visibility: hidden;
 	/* display: none; */
