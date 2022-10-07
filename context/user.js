@@ -61,16 +61,11 @@ const UserProvider = ({ children }) => {
 	}
 
 	const loginWithThirdPartyOAuth = async provider => {
-		const { user, session, error } = await supabase.auth.signIn(
-			{
+		const { user, session, error } = await supabase.auth
+			.signIn({
 				provider,
-			},
-			{
-				redirectTo: 'https://linguami.com',
-			}
-		)
-
-		setUser(user)
+			})
+			.then(setUser(user))
 	}
 
 	const logout = async () => {
