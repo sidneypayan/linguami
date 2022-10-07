@@ -1,4 +1,4 @@
-import styles from '../../styles/Login.module.css'
+import styles from '../../styles/Register.module.css'
 import Image from 'next/image'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
