@@ -40,12 +40,10 @@ const Register = () => {
 
 		if (isMember) {
 			login(values)
-			console.log(values)
 			return
 		}
 
 		register(values)
-		console.log(values)
 	}
 
 	return (
