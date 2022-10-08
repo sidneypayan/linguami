@@ -1,7 +1,18 @@
 import Head from 'next/head'
 import Homepage from '../components/homepage'
+import { supabase } from '../lib/supabase'
+import jwtDecode from 'jwt-decode'
+import { useUserContext } from '../context/user'
+import { useEffect } from 'react'
 
-export default function Home() {
+export default function Home({ user }) {
+	const { getUserFromServer } = useUserContext()
+
+	useEffect(() => {
+		if (user) getUserFromServer(user)
+	}, [])
+
+	console.log(user)
 	return (
 		<div>
 			<Head>
@@ -17,12 +28,28 @@ export default function Home() {
 	)
 }
 
-// export const getServerSideProps = context => {
-// 	console.log(context.res)
-// 	const cookies = context.req.cookies
-// 	return {
-// 		props: {
-// 			cookies,
-// 		},
-// 	}
-// }
+export const getServerSideProps = async ({ req }) => {
+	if (req.cookies['sb-access-token']) {
+		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
+
+		const { data: user, error } = await supabase
+			.from('users')
+			.select('*')
+			.eq('id', decodedToken.sub)
+			.single()
+
+		console.log(decodedToken)
+
+		return {
+			props: {
+				user,
+			},
+		}
+	} else {
+		return {
+			props: {
+				user: null,
+			},
+		}
+	}
+}

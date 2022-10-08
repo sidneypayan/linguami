@@ -64,4 +64,36 @@ const Admin = () => {
 	)
 }
 
+export const getServerSideProps = async ({ req }) => {
+	if (req.cookies['sb-access-token']) {
+		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
+
+		const { data: user, error } = await supabase
+			.from('users')
+			.select('*')
+			.eq('id', decodedToken.sub)
+			.single()
+
+		if (user.role !== 'admin') {
+			return {
+				redirect: {
+					destination: '/',
+					permanent: false,
+				},
+			}
+		}
+	} else {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: { user: 'user' },
+	}
+}
+
 export default Admin
