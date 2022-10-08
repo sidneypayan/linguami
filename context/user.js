@@ -9,18 +9,20 @@ const UserContext = createContext()
 const UserProvider = ({ children }) => {
 	const router = useRouter()
 
-	const getLocalStorageUser = () => {
-		return JSON.parse(localStorage.getItem('supabase.auth.token'))
-			.currentSession.user
-	}
-
-	const [user, setUser] = useState(
-		supabase.auth.user() || getLocalStorageUser() || null
-	)
+	const [localUser, setLocalUser] = useState(null)
+	const [user, setUser] = useState(supabase.auth.user() || localUser || null)
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
 	const [isMember, setIsMember] = useState(true)
+
+	useEffect(() => {
+		const getLocalStorageUser = JSON.parse(
+			localStorage.getItem('supabase.auth.token')
+		).currentSession.user
+
+		setLocalUser(getLocalStorageUser)
+	}, [])
 
 	const register = async data => {
 		const { name, email, password } = data
