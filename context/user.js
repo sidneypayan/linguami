@@ -102,9 +102,7 @@ const UserProvider = ({ children }) => {
 		setIsMember(value)
 	}
 
-	const getUserFromServer = user => {
-		setUser(user)
-	}
+	console.log(supabase.auth.session())
 
 	useEffect(() => {
 		const getUserProfile = async () => {
@@ -160,7 +158,6 @@ const UserProvider = ({ children }) => {
 		setNewPassword,
 		toggleMember,
 		isMember,
-		getUserFromServer,
 	}
 
 	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>
