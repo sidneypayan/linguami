@@ -8,6 +8,7 @@ const UserContext = createContext()
 
 const UserProvider = ({ children }) => {
 	const router = useRouter()
+
 	const [user, setUser] = useState(supabase.auth.user() || null)
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
@@ -64,6 +65,8 @@ const UserProvider = ({ children }) => {
 		const { user, session, error } = await supabase.auth.signIn({
 			provider,
 		})
+
+		router.push('/materials')
 	}
 
 	const logout = async () => {
@@ -108,7 +111,7 @@ const UserProvider = ({ children }) => {
 				const { data: profile } = await supabase
 					.from('users')
 					.select('*')
-					.eq('id', user.id)
+					.eq('id', user?.id)
 					.single()
 
 				setUserProfile({ ...sessionUser, ...profile })
@@ -140,10 +143,6 @@ const UserProvider = ({ children }) => {
 			setIsUserLoggedIn(false)
 		}
 	}, [user])
-
-	useEffect(() => {
-		setUser(supabase.auth.user())
-	}, [])
 
 	const exposed = {
 		user,

@@ -3,8 +3,7 @@ import Link from 'next/link'
 import jwtDecode from 'jwt-decode'
 import { supabase } from '../../lib/supabase'
 
-const Admin = ({ user }) => {
-	console.log(user)
+const Admin = () => {
 	return (
 		<div className='wrapper-large'>
 			<Link href='/admin/create'>
@@ -63,38 +62,6 @@ const Admin = ({ user }) => {
 			</ul>
 		</div>
 	)
-}
-
-export const getServerSideProps = async ({ req }) => {
-	if (req.cookies['sb-access-token']) {
-		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
-
-		const { data: user, error } = await supabase
-			.from('users')
-			.select('*')
-			.eq('id', decodedToken.sub)
-			.single()
-
-		if (user.role !== 'admin') {
-			return {
-				redirect: {
-					destination: '/',
-					permanent: false,
-				},
-			}
-		}
-	} else {
-		return {
-			redirect: {
-				destination: '/',
-				permanent: false,
-			},
-		}
-	}
-
-	return {
-		props: { user: 'user' },
-	}
 }
 
 export default Admin
