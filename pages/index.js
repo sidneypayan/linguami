@@ -16,3 +16,13 @@ export default function Home() {
 		</div>
 	)
 }
+
+// export const getServerSideProps = context => {
+// 	console.log(context.res)
+// 	const cookies = context.req.cookies
+// 	return {
+// 		props: {
+// 			cookies,
+// 		},
+// 	}
+// }

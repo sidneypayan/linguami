@@ -9,7 +9,14 @@ const UserContext = createContext()
 const UserProvider = ({ children }) => {
 	const router = useRouter()
 
-	const [user, setUser] = useState(supabase.auth.user() || null)
+	const getLocalStorageUser = () => {
+		return JSON.parse(localStorage.getItem('supabase.auth.token'))
+			.currentSession.user
+	}
+
+	const [user, setUser] = useState(
+		supabase.auth.user() || getLocalStorageUser() || null
+	)
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
@@ -65,13 +72,12 @@ const UserProvider = ({ children }) => {
 		const { user, session, error } = await supabase.auth.signIn({
 			provider,
 		})
-
-		router.push('/materials')
 	}
 
 	const logout = async () => {
 		supabase.auth.signOut()
 		setUser(null)
+		setUserProfile(null)
 		toast.success('Déconnexion en cours...')
 	}
 
