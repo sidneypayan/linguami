@@ -20,7 +20,6 @@ export default function Home({ user }) {
 }
 
 export const getServerSideProps = async ({ req }) => {
-	console.log(supabase.auth.session())
 	// if (req.cookies['sb-access-token']) {
 	// 	const decodedToken = jwtDecode(req.cookies['sb-access-token'])
 
