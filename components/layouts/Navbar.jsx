@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
+import { GiBookmarklet } from 'react-icons/gi'
+import { HiOutlineAcademicCap } from 'react-icons/hi'
 
 const Navbar = () => {
 	const { user, userProfile, isUserLoggedIn, logout, toggleMember } =
@@ -73,12 +75,26 @@ const Navbar = () => {
 				)}
 			</div>
 			{!isNavExpanded && (
-				<FontAwesomeIcon
-					onClick={() => setIsNavExpanded(!isNavExpanded)}
-					className={styles.mobileIconOpen}
-					icon={faBars}
-					size='xl'
-				/>
+				<div className={styles.educationalMenuContainer}>
+					<ul>
+						<Link href='/dictionary'>
+							<li>
+								<GiBookmarklet />
+								<span>Mon dictionnaire</span>
+							</li>
+						</Link>
+						<li>
+							<HiOutlineAcademicCap />
+							<span>Mes matériels</span>
+						</li>
+					</ul>
+					<FontAwesomeIcon
+						onClick={() => setIsNavExpanded(!isNavExpanded)}
+						className={styles.mobileIconOpen}
+						icon={faBars}
+						size='xl'
+					/>
+				</div>
 			)}
 		</nav>
 	)

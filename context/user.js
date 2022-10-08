@@ -102,18 +102,9 @@ const UserProvider = ({ children }) => {
 		setIsMember(value)
 	}
 
-	const checkUser = async () => {
-		const user = await supabase.auth.user()
-		if (user) setUser(user)
-	}
-
-	useEffect(() => {
-		checkUser()
-	}, [])
-
 	useEffect(() => {
 		const getUserProfile = async () => {
-			const sessionUser = await supabase.auth.user()
+			const sessionUser = supabase.auth.user()
 
 			setUser(sessionUser)
 

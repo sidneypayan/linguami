@@ -36,16 +36,16 @@
 }
 
 @media (max-width: 767px) {
-	.container ul {
-		justify-content: space-around;
+	.container {
+		display: none;
 	}
 }
 
-@media (max-width: 1267px) {
+@media (min-width: 768px) and (max-width: 1267px) {
 	.container {
 		display: flex;
 		position: sticky;
-		top: 64px;
+		/* top: 64px; */
 		min-width: 100%;
 		height: 50px;
 		z-index: 2;
