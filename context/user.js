@@ -139,9 +139,13 @@ const UserProvider = ({ children }) => {
 				toast.success('Déconnexion en cours...')
 			}
 			if (event === 'SIGNED_IN') {
-				setUser(user)
+				// setTimeout(() => {
+
+				// }, 1000)
+
 				toast.success('Vous êtes bien connecté')
 				router.push('/materials')
+				setUser(user)
 			}
 		})
 	}, [])
