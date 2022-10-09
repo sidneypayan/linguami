@@ -57,6 +57,7 @@ const UserProvider = ({ children }) => {
 		}
 
 		setUser(user)
+		router.push('/')
 		toast.success('Vous êtes bien connecté')
 	}
 
@@ -101,53 +102,44 @@ const UserProvider = ({ children }) => {
 		setIsMember(value)
 	}
 
+	// useEffect(() => {
+	// 	const getUserProfile = async () => {
+	// 		const sessionUser = supabase.auth.user()
+
+	// 		setUser(sessionUser)
+
+	// 		if (sessionUser) {
+	// 			const { data: profile } = await supabase
+	// 				.from('users')
+	// 				.select('*')
+	// 				.eq('id', sessionUser.id)
+	// 				.single()
+
+	// 			setUserProfile({ ...sessionUser, ...profile })
+
+	// 			setIsLoading(false)
+	// 		}
+	// 	}
+
+	// 	supabase.auth.onAuthStateChange(() => {
+	// 		getUserProfile()
+	// 	})
+
+	// 	getUserProfile()
+	// }, [])
+
 	useEffect(() => {
-		const getUserProfile = async () => {
-			const sessionUser = supabase.auth.user()
-
-			setUser(sessionUser)
-
-			if (sessionUser) {
-				const { data: profile } = await supabase
-					.from('users')
-					.select('*')
-					.eq('id', sessionUser.id)
-					.single()
-
-				setUserProfile({ ...sessionUser, ...profile })
-
-				setIsLoading(false)
-			}
-		}
-
 		supabase.auth.onAuthStateChange(() => {
-			getUserProfile()
+			setUser(supabase.auth.user())
 		})
-
-		getUserProfile()
 	}, [])
 
-	useEffect(() => {
-		axios.post('/api/auth', {
-			event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
-			session: supabase.auth.session(),
-		})
-	}, [user])
-
 	// useEffect(() => {
-	// 	supabase.auth.onAuthStateChange((event, session) => {
-	// 		console.log(event)
-	// 		if (event === 'USER_DELETE') setUser(null)
-	// 		if (event === 'SIGNED_OUT') {
-	// 			setUser(null)
-	// 			setUserProfile(null)
-	// 			toast.success('Déconnexion en cours...')
-	// 		}
-	// 		if (event === 'SIGNED_IN') {
-	// 			setUser(session)
-	// 		}
+	// 	axios.post('/api/auth', {
+	// 		event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
+	// 		session: supabase.auth.session(),
 	// 	})
-	// }, [])
+	// }, [user])
 
 	useEffect(() => {
 		if (user) {
