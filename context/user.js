@@ -135,11 +135,7 @@ const UserProvider = ({ children }) => {
 			if (event === 'SIGNED_IN') {
 				setUser(session)
 				toast.success('Vous êtes bien connecté')
-				// if (router.pathname === '/register') {
-				// 	router.push('/materials')
-				// } else {
-				// 	router.back()
-				// }
+				router.push('/materials')
 			}
 		})
 	}, [])
