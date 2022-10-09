@@ -189,11 +189,17 @@ const Material = ({ material: single_material }) => {
 
 						{showAccents ? (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
-								<Words content={single_material.content_accents} />
+								<Words
+									content={single_material.content_accents}
+									materialId={single_material.id}
+								/>
 							</p>
 						) : (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
-								<Words content={single_material.content} />
+								<Words
+									content={single_material.content}
+									materialId={single_material.id}
+								/>
 							</p>
 						)}
 

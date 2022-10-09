@@ -32,12 +32,14 @@
 	background-color: transparent;
 	width: 50%;
 	cursor: pointer;
-	color: var(--primaryTextColor);
+	background-color: #ddd;
+	color: var(--secondaryTextColor);
 	font-weight: 500;
 }
 
 .switchBtn.active {
-	background-color: rgb(216, 209, 209);
+	background-color: var(--white);
+	color: var(--primaryTextColor);
 }
 
 .socialContainer {

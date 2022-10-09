@@ -148,6 +148,9 @@
 	display: block;
 	margin: 4rem auto;
 	padding: 0.75rem 3rem;
+	background-color: transparent;
+	border: 2px solid var(--navColor);
+	color: var(--navColor);
 }
 
 .registerBtn {

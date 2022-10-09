@@ -6,8 +6,9 @@ import {
 	toggleTranslationContainer,
 	cleanTranslation,
 } from '../../features/words/wordsSlice'
+import { addBeingStudiedMaterial } from '../../features/userMaterials/userMaterialsSlice'
 
-const Words = ({ content }) => {
+const Words = ({ content, materialId }) => {
 	const dispatch = useDispatch()
 
 	const purifiedContent = DOMPurify.sanitize(content)
@@ -50,6 +51,7 @@ const Words = ({ content }) => {
 		dispatch(translateWord({ word, sentence }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
+		dispatch(addBeingStudiedMaterial(materialId))
 	}
 
 	return <>{wrapSentences(purifiedContent)}</>

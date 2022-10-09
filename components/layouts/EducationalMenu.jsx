@@ -34,10 +34,12 @@ const EducationalMenu = () => {
 							<span>Mon dictionnaire</span>
 						</li>
 					</Link>
-					<li>
-						<HiOutlineAcademicCap />
-						<span>Mes matériels</span>
-					</li>
+					<Link href='/my-materials'>
+						<li>
+							<HiOutlineAcademicCap />
+							<span>Mes matériels</span>
+						</li>
+					</Link>
 				</ul>
 			</nav>
 		</div>

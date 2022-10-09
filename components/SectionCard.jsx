@@ -47,14 +47,20 @@ const SectionCard = ({ material }) => {
 						section === 'book' ? material.id + 1 : material.id
 					}`}>
 					<a href=''>
-						<h4 className={styles.title}>{material.title_ru.slice(0, 20)}</h4>
+						<h4 className={styles.title}>
+							{material.title_ru.length > 20
+								? material.title_ru.slice(0, 20) + '...'
+								: material.title_ru}
+						</h4>
 					</a>
 				</Link>
 
 				<div className={styles.infoContainer}>
 					<div>
 						<h5 className={styles.titleTranslation}>
-							{material.title_ru.slice(0, 20)}
+							{material.title_ru.length > 20
+								? material.title_ru.slice(0, 20) + '...'
+								: material.title_ru}
 						</h5>
 					</div>
 				</div>
