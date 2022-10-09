@@ -141,7 +141,7 @@ const UserProvider = ({ children }) => {
 			if (event === 'SIGNED_IN') {
 				setUser(user)
 				toast.success('Vous êtes bien connecté')
-				router.push('/')
+				router.push('/materials')
 			}
 		})
 	}, [])
