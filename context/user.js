@@ -66,7 +66,7 @@ const UserProvider = ({ children }) => {
 			{
 				provider,
 			},
-			{ redirectTo: 'https://linguami.com' }
+			{ redirectTo: 'https://linguami.com/materials' }
 		)
 	}
 
