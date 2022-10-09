@@ -58,15 +58,9 @@ const UserProvider = ({ children }) => {
 	}
 
 	const loginWithThirdPartyOAuth = async provider => {
-		const { user, session, error } = await supabase.auth.signIn(
-			{
-				provider,
-			}
-			// { redirectTo: 'https://linguami.com/materials' },
-			// { shouldCreateUser: true }
-		)
-
-		setUser(user)
+		const { user, session, error } = await supabase.auth.signIn({
+			provider,
+		})
 	}
 
 	const logout = async () => {
@@ -141,14 +135,10 @@ const UserProvider = ({ children }) => {
 			if (event === 'SIGNED_IN') {
 				setUser(session)
 				toast.success('Vous êtes bien connecté')
-				if (router.pathname !== '/register') {
-					router.back()
-				} else {
-					router.push('/materials')
-				}
+				router.push('/materials')
 			}
 		})
-	}, [router])
+	}, [])
 
 	useEffect(() => {
 		if (user) {
