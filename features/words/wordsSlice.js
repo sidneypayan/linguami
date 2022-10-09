@@ -11,7 +11,6 @@ const initialState = {
 	translation: {},
 	translation_loading: false,
 	translation_error: false,
-	// addedWords: {},
 	isTranslationOpen: false,
 	word_sentence: [],
 }

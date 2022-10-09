@@ -81,7 +81,7 @@
 	display: none;
 }
 
-@media (width < 767px) {
+@media (width < 768px) {
 	.container {
 		display: none;
 	}

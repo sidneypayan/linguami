@@ -14,7 +14,6 @@ import {
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
-// import { useState } from 'react'
 
 const WordsContainer = () => {
 	const router = useRouter()
@@ -23,8 +22,7 @@ const WordsContainer = () => {
 	const { user_material_words, user_material_words_pending } = useSelector(
 		store => store.words
 	)
-	// const [userMaterialWords, setUserMaterialWords] = useState()
-	// const { isFlashcardsOpen } = useSelector(store => store.cards)
+
 	const materialId = router.query.material
 	const userId = user?.id
 

@@ -13,7 +13,6 @@ import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
-import Flashcards from '../../../../components/flashcards/Flashcards'
 import { useUserContext } from '../../../../context/user'
 
 const Material = ({ material: single_material }) => {

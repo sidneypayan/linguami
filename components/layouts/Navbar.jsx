@@ -76,18 +76,20 @@ const Navbar = () => {
 			</div>
 			{!isNavExpanded && (
 				<div className={styles.educationalMenuContainer}>
-					<ul>
-						<Link href='/dictionary'>
+					{isUserLoggedIn && (
+						<ul>
+							<Link href='/dictionary'>
+								<li>
+									<GiBookmarklet />
+									<span>Mon dictionnaire</span>
+								</li>
+							</Link>
 							<li>
-								<GiBookmarklet />
-								<span>Mon dictionnaire</span>
+								<HiOutlineAcademicCap />
+								<span>Mes matériels</span>
 							</li>
-						</Link>
-						<li>
-							<HiOutlineAcademicCap />
-							<span>Mes matériels</span>
-						</li>
-					</ul>
+						</ul>
+					)}
 					<FontAwesomeIcon
 						onClick={() => setIsNavExpanded(!isNavExpanded)}
 						className={styles.mobileIconOpen}

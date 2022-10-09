@@ -8,18 +8,23 @@ import styles from '../../styles/FlashCards.module.css'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
+import { useRouter } from 'next/router'
 
 const FlashCards = () => {
+	const router = useRouter()
+	console.log(router)
 	const dispatch = useDispatch()
-	const { user_material_words } = useSelector(store => store.words)
-	// const {} = useSelector(store => store.cards)
+	const { user_material_words, user_words } = useSelector(store => store.words)
 	const [cardIndex, setCardIndex] = useState(0)
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [wordsLeft, setWordsLeft] = useState([])
 
+	const wordsArray =
+		router.pathname === '/dictionary' ? user_words : user_material_words
+
 	useEffect(() => {
-		setWordsLeft(user_material_words)
-	}, [user_material_words])
+		setWordsLeft(wordsArray)
+	}, [wordsArray])
 
 	const nextWord = (status, id) => {
 		if (status === 'notguessed') {
