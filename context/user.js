@@ -55,6 +55,9 @@ const UserProvider = ({ children }) => {
 			}
 			return toast.error(error.message)
 		}
+
+		setUser(user)
+		toast.success('Vous êtes bien connecté')
 	}
 
 	const loginWithThirdPartyOAuth = async provider => {
@@ -64,7 +67,10 @@ const UserProvider = ({ children }) => {
 	}
 
 	const logout = async () => {
-		supabase.auth.signOut()
+		await supabase.auth.signOut()
+		setUser(null)
+		router.push('/')
+		toast.success('Déconnexion en cours...')
 	}
 
 	const askNewPassword = async email => {
@@ -105,7 +111,7 @@ const UserProvider = ({ children }) => {
 				const { data: profile } = await supabase
 					.from('users')
 					.select('*')
-					.eq('id', user?.id)
+					.eq('id', sessionUser.id)
 					.single()
 
 				setUserProfile({ ...sessionUser, ...profile })
@@ -114,8 +120,12 @@ const UserProvider = ({ children }) => {
 			}
 		}
 
+		supabase.auth.onAuthStateChange(() => {
+			getUserProfile()
+		})
+
 		getUserProfile()
-	}, [user])
+	}, [])
 
 	useEffect(() => {
 		axios.post('/api/auth', {
@@ -124,20 +134,20 @@ const UserProvider = ({ children }) => {
 		})
 	}, [user])
 
-	useEffect(() => {
-		supabase.auth.onAuthStateChange((event, session) => {
-			console.log(event)
-			if (event === 'USER_DELETE') setUser(null)
-			if (event === 'SIGNED_OUT') {
-				setUser(null)
-				setUserProfile(null)
-				toast.success('Déconnexion en cours...')
-			}
-			if (event === 'SIGNED_IN') {
-				setUser(session)
-			}
-		})
-	}, [])
+	// useEffect(() => {
+	// 	supabase.auth.onAuthStateChange((event, session) => {
+	// 		console.log(event)
+	// 		if (event === 'USER_DELETE') setUser(null)
+	// 		if (event === 'SIGNED_OUT') {
+	// 			setUser(null)
+	// 			setUserProfile(null)
+	// 			toast.success('Déconnexion en cours...')
+	// 		}
+	// 		if (event === 'SIGNED_IN') {
+	// 			setUser(session)
+	// 		}
+	// 	})
+	// }, [])
 
 	useEffect(() => {
 		if (user) {
