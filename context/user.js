@@ -102,36 +102,30 @@ const UserProvider = ({ children }) => {
 		setIsMember(value)
 	}
 
-	// useEffect(() => {
-	// 	const getUserProfile = async () => {
-	// 		const sessionUser = supabase.auth.user()
-
-	// 		setUser(sessionUser)
-
-	// 		if (sessionUser) {
-	// 			const { data: profile } = await supabase
-	// 				.from('users')
-	// 				.select('*')
-	// 				.eq('id', sessionUser.id)
-	// 				.single()
-
-	// 			setUserProfile({ ...sessionUser, ...profile })
-
-	// 			setIsLoading(false)
-	// 		}
-	// 	}
-
-	// 	supabase.auth.onAuthStateChange(() => {
-	// 		getUserProfile()
-	// 	})
-
-	// 	getUserProfile()
-	// }, [])
-
 	useEffect(() => {
+		const getUserProfile = async () => {
+			const sessionUser = supabase.auth.user()
+
+			setUser(sessionUser)
+
+			if (sessionUser) {
+				const { data: profile } = await supabase
+					.from('users')
+					.select('*')
+					.eq('id', sessionUser.id)
+					.single()
+
+				setUserProfile({ ...sessionUser, ...profile })
+
+				setIsLoading(false)
+			}
+		}
+
 		supabase.auth.onAuthStateChange(() => {
-			setUser(supabase.auth.user())
+			getUserProfile()
 		})
+
+		getUserProfile()
 	}, [])
 
 	// useEffect(() => {
