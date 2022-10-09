@@ -15,6 +15,7 @@ export const getUserMaterials = createAsyncThunk(
 			.select(
 				'id, title_ru, title_fr, img, level, section, user_materials!inner(material_id)'
 			)
+			.eq('user_materials.user_id', supabase.auth.user().id)
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
