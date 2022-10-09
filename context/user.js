@@ -68,6 +68,8 @@ const UserProvider = ({ children }) => {
 			},
 			{ redirectTo: 'https://linguami.com/materials' }
 		)
+
+		setUser(user)
 	}
 
 	const logout = async () => {
