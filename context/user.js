@@ -61,8 +61,9 @@ const UserProvider = ({ children }) => {
 		const { user, session, error } = await supabase.auth.signIn(
 			{
 				provider,
-			},
-			{ redirectTo: 'https://linguami.com/materials' }
+			}
+			// { redirectTo: 'https://linguami.com/materials' },
+			// { shouldCreateUser: true }
 		)
 
 		setUser(user)
@@ -140,7 +141,8 @@ const UserProvider = ({ children }) => {
 			if (event === 'SIGNED_IN') {
 				setUser(user)
 				toast.success('Vous êtes bien connecté')
-				router.push('/')
+				// router.push('/materials')
+				router.back()
 			}
 		})
 	}, [])
