@@ -55,10 +55,6 @@ const UserProvider = ({ children }) => {
 			}
 			return toast.error(error.message)
 		}
-
-		setUser(user)
-		toast.success('Vous êtes bien connecté')
-		router.push('/')
 	}
 
 	const loginWithThirdPartyOAuth = async provider => {
@@ -74,9 +70,6 @@ const UserProvider = ({ children }) => {
 
 	const logout = async () => {
 		supabase.auth.signOut()
-		setUser(null)
-		setUserProfile(null)
-		toast.success('Déconnexion en cours...')
 	}
 
 	const askNewPassword = async email => {
@@ -139,6 +132,16 @@ const UserProvider = ({ children }) => {
 	useEffect(() => {
 		supabase.auth.onAuthStateChange(async (event, session) => {
 			if (event === 'USER_DELETE') setUser(null)
+			if (event === 'SIGNED_OUT') {
+				setUser(null)
+				setUserProfile(null)
+				toast.success('Déconnexion en cours...')
+			}
+			if (event === 'SIGNED_IN') {
+				setUser(user)
+				toast.success('Vous êtes bien connecté')
+				router.push('/')
+			}
 		})
 	}, [])
 
