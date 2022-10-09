@@ -71,7 +71,7 @@ const UserProvider = ({ children }) => {
 		} else {
 			setTimeout(() => {
 				router.push('/register')
-			}, 500)
+			}, 1000)
 		}
 	}
 
