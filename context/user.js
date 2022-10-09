@@ -139,24 +139,25 @@ const UserProvider = ({ children }) => {
 				toast.success('Déconnexion en cours...')
 			}
 			if (event === 'SIGNED_IN') {
-				const getUserProfile = async () => {
-					const sessionUser = supabase.auth.user()
+				// const getUserProfile = async () => {
+				// 	const sessionUser = supabase.auth.user()
 
-					setUser(sessionUser)
+				// 	setUser(sessionUser)
 
-					if (sessionUser) {
-						const { data: profile } = await supabase
-							.from('users')
-							.select('*')
-							.eq('id', user?.id)
-							.single()
+				// 	if (sessionUser) {
+				// 		const { data: profile } = await supabase
+				// 			.from('users')
+				// 			.select('*')
+				// 			.eq('id', user?.id)
+				// 			.single()
 
-						setUser(sessionUser)
-						setUserProfile({ ...sessionUser, ...profile })
-						setIsLoading(false)
-					}
-				}
-				getUserProfile()
+				// 		setUser(sessionUser)
+				// 		setUserProfile({ ...sessionUser, ...profile })
+				// 		setIsLoading(false)
+				// 	}
+				// }
+				// getUserProfile()
+				setUser(session)
 				toast.success('Vous êtes bien connecté')
 				router.push('/materials')
 			}
