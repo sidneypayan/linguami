@@ -134,13 +134,10 @@ const UserProvider = ({ children }) => {
 				toast.success('Déconnexion en cours...')
 			}
 			if (event === 'SIGNED_IN') {
-				setTimeout(() => {
-					setUser(session)
-				}, 500)
-				// router.push('/materials')
+				setUser(session)
 			}
 		})
-	}, [router])
+	}, [])
 
 	useEffect(() => {
 		if (user) {
