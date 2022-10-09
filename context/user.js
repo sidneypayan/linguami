@@ -65,6 +65,14 @@ const UserProvider = ({ children }) => {
 		const { user, session, error } = await supabase.auth.signIn({
 			provider,
 		})
+
+		if (error) {
+			console.log(error)
+		} else {
+			setTimeout(() => {
+				router.push('/register')
+			}, 500)
+		}
 	}
 
 	const logout = async () => {
