@@ -125,7 +125,7 @@ const UserProvider = ({ children }) => {
 	}, [user])
 
 	useEffect(() => {
-		supabase.auth.onAuthStateChange(async (event, session) => {
+		supabase.auth.onAuthStateChange((event, session) => {
 			if (event === 'USER_DELETE') setUser(null)
 			if (event === 'SIGNED_OUT') {
 				setUser(null)
@@ -135,7 +135,11 @@ const UserProvider = ({ children }) => {
 			if (event === 'SIGNED_IN') {
 				setUser(session)
 				toast.success('Vous êtes bien connecté')
-				router.push('/materials')
+				if (router.pathname === 'register') {
+					router.push('/materials')
+				} else {
+					router.back()
+				}
 			}
 		})
 	}, [])
