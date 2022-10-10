@@ -15,7 +15,7 @@ const Words = ({ content, materialId }) => {
 	// const purifiedContent = content
 
 	// Regex pour match les <br>
-	const brRegex = /br/
+	const brRegex = /[<br>?]+/
 	// Regex pour match tous type de caractères et <br>
 	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
 	// Regex pour match uniquement les lettres russes
@@ -36,11 +36,8 @@ const Words = ({ content, materialId }) => {
 							onClick={e => handleClick(e)}>
 							{word}
 						</span>
-					) : brRegex.test(word) ? (
-						<>
-							<span key={wordIndex} className={styles.break}></span>
-							<span key={wordIndex} className={styles.break}></span>
-						</>
+					) : word.match(brRegex) ? (
+						<span key={wordIndex} className={styles.break}></span>
 					) : (
 						<span key={wordIndex}>{word}</span>
 					)
