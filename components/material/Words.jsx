@@ -12,10 +12,10 @@ const Words = ({ content, materialId }) => {
 	const dispatch = useDispatch()
 
 	const purifiedContent = DOMPurify.sanitize(content)
-	// const purifiedContent = content
 
 	// Regex pour match les <br>
-	const brRegex = /<br>/g
+	const brRegex = /[<br>]/
+	const brRegex1 = /<br>/g
 	// Regex pour match tous type de caractères et <br>
 	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
 	// Regex pour match uniquement les lettres russes
@@ -36,12 +36,14 @@ const Words = ({ content, materialId }) => {
 							onClick={e => handleClick(e)}>
 							{word}
 						</span>
-					) : brRegex.test(word) ? (
+					) : word.match(brRegex1) ? (
 						word
-							.match(brRegex)
+							.match(brRegex1)
 							.map((match, index) => (
-								<span key={index} className={styles.break}></span>
+								<span key={wordIndex} className={styles.break}></span>
 							))
+					) : brRegex.test(word) ? (
+						<span key={wordIndex} className={styles.break}></span>
 					) : (
 						<span key={wordIndex}>{word}</span>
 					)
