@@ -106,9 +106,9 @@ export const materials = [
 	},
 	{
 		category: 'music',
-		img: 'traditional.jpg',
-		title: 'traditionnelle',
-		param: 'traditional',
+		img: 'trad.jpg',
+		title: 'trad/folk',
+		param: 'trad',
 		text: "Galileo est une émission de vulgarisation très populaire en Russie. Son présentateur déjanté y aborde des thèmes aussi variés que l'art, la science, la technologie, le sport, l'alimentation etc. Grâce à la grande variété des sujets traités, vous élargirez votre vocabulaire tout en vous cultivant.",
 	},
 	{
@@ -116,13 +116,6 @@ export const materials = [
 		img: 'variety.jpg',
 		title: 'variété',
 		param: 'variety',
-		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-	},
-	{
-		category: 'music',
-		img: 'folk.jpg',
-		title: 'folk',
-		param: 'folk',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
 	},
 	{
