@@ -14,6 +14,7 @@ import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
 import { useUserContext } from '../../../../context/user'
+import { sections } from '../../../../data/sections'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
@@ -56,15 +57,7 @@ const Material = ({ material: single_material }) => {
 	}
 
 	const displayAudioPlayer = section => {
-		if (
-			section === 'dialogue' ||
-			section === 'culture' ||
-			section === 'slice-of-life' ||
-			section === 'place' ||
-			section === 'podcast' ||
-			section === 'book' ||
-			section === 'short-story'
-		) {
+		if (sections.audio.includes(section)) {
 			return (
 				<audio
 					controls='controls'
@@ -74,20 +67,7 @@ const Material = ({ material: single_material }) => {
 	}
 
 	const displayVideo = section => {
-		if (
-			section === 'trailer' ||
-			section === 'eralash' ||
-			section === 'galileo' ||
-			section === 'diverse' ||
-			section === 'extract' ||
-			section === 'cartoon' ||
-			section === 'rock' ||
-			section === 'pop' ||
-			section === 'traditional' ||
-			section === 'variety' ||
-			section === 'folk' ||
-			section === 'kids'
-		) {
+		if (sections.music.includes(section) || sections.video.includes(section)) {
 			return (
 				<div className={styles.videoContainer}>
 					<iframe
