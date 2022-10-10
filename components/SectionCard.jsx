@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { sections } from '../data/sections'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilm, faMusic, faFileAudio } from '@fortawesome/free-solid-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
@@ -29,52 +30,37 @@ const SectionCard = ({ material }) => {
 
 	const changeIconRegardingSection = section => {
 		let icon
-		if (
-			material.section === 'dialogue' ||
-			material.section === 'culture' ||
-			material.section === 'slice-of-life' ||
-			material.section === 'place' ||
-			material.section === 'book' ||
-			material.section === 'podcast'
-		) {
+
+		if (sections.audio.includes(section)) {
 			icon = faFileAudio
 		}
-		if (
-			material.section === 'rock' ||
-			material.section === 'pop' ||
-			material.section === 'trad' ||
-			material.section === 'variety' ||
-			material.section === 'kids'
-		) {
+		if (sections.music.includes(section)) {
 			icon = faMusic
 		}
-		if (
-			material.section === 'trailer' ||
-			material.section === 'extract' ||
-			material.section === 'cartoon' ||
-			material.section === 'eralash' ||
-			material.section === 'diverse' ||
-			material.section === 'galileo'
-		) {
+		if (sections.video.includes(section)) {
 			icon = faFilm
 		}
+
 		return icon
 	}
 
 	return (
 		<div className={styles.container}>
-			<Link
-				href={`/materials/${material.section}/${
-					section === 'book' ? material.id + 1 : material.id
-				}`}>
-				<a href=''>
-					<div
-						className={styles.img}
-						style={{
-							backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${material.img})`,
-						}}></div>
-				</a>
-			</Link>
+			<div className={styles.imgContainer}>
+				<Link
+					href={`/materials/${material.section}/${
+						section === 'book' ? material.id + 1 : material.id
+					}`}>
+					<Image
+						src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${material.img}`}
+						layout='fill'
+						objectFit='cover'
+						quality={100}
+						alt={material.title}
+						loading='eager'
+					/>
+				</Link>
+			</div>
 			<div className={styles.textContainer}>
 				<Link
 					href={`/materials/${material.section}/${

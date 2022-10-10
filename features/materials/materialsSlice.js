@@ -55,7 +55,7 @@ export const getBookChapters = createAsyncThunk(
 )
 
 const resetPagination = state => {
-	state.totalMaterials = state.filtered_materials.length + 1
+	state.totalMaterials = state.filtered_materials.length
 	state.numOfPages = Math.ceil(state.totalMaterials / state.materialsPerPage)
 
 	state.sliceStart = 0
@@ -102,7 +102,7 @@ const materialsSlice = createSlice({
 			state.materials_loading = false
 			state.materials = payload
 			state.filtered_materials = payload
-			state.totalMaterials = state.filtered_materials.length + 1
+			state.totalMaterials = state.filtered_materials.length
 			state.numOfPages = Math.ceil(
 				state.totalMaterials / state.materialsPerPage
 			)

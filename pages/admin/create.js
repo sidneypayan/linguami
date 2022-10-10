@@ -1,7 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import jwtDecode from 'jwt-decode'
 import { useState } from 'react'
-import { sections } from '../../data/sections'
+import { allSections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
 import { useDispatch } from 'react-redux'
 import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
@@ -59,7 +59,7 @@ const Create = () => {
 						value={formData.section}
 						name='section'
 						id='section'>
-						{sections.map((section, index) => (
+						{allSections.map((section, index) => (
 							<option value={section} key={index}>
 								{section}
 							</option>

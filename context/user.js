@@ -128,12 +128,12 @@ const UserProvider = ({ children }) => {
 		getUserProfile()
 	}, [])
 
-	// useEffect(() => {
-	// 	axios.post('/api/auth', {
-	// 		event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
-	// 		session: supabase.auth.session(),
-	// 	})
-	// }, [user])
+	useEffect(() => {
+		axios.post('/api/auth', {
+			event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
+			session: supabase.auth.session(),
+		})
+	}, [user])
 
 	useEffect(() => {
 		if (user) {

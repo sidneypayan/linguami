@@ -1,11 +1,22 @@
 .container {
 	position: relative;
-	max-height: 125px;
+	max-height: 135px;
 	background-color: var(--white);
 	border-radius: 3px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+}
+
+.imgContainer {
+	cursor: pointer;
+	position: relative;
+	width: 135px;
+	height: 135px;
+}
+.imgContainer img {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
 }
 
 .textContainer {
@@ -34,16 +45,6 @@
 .titleTranslation {
 	font-size: 1rem;
 	color: var(--navColor);
-}
-
-.img {
-	cursor: pointer;
-	background-size: cover;
-	background-position: center;
-	min-width: 125px;
-	min-height: 125px;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
 }
 
 .icon {

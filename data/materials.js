@@ -1,3 +1,5 @@
+// Utilisé sur la page materials
+
 export const materials = [
 	{
 		category: 'text & audio',
