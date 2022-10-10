@@ -10,13 +10,6 @@ export const materials = [
 	},
 	{
 		category: 'text & audio',
-		img: 'legends.jpg',
-		title: 'folklore et légendes',
-		param: 'culture',
-		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
-	},
-	{
-		category: 'text & audio',
 		img: 'slice-of-life.jpg',
 		title: 'tranches de vie',
 		param: 'slice-of-life',
@@ -28,6 +21,20 @@ export const materials = [
 		title: 'beaux endroits',
 		param: 'place',
 		text: 'La Russie est un vaste pays qui compte parmi les plus beaux endroits de la planète. Nous vous emmenons pour une visite passionnante qui vous donnera l’occasion de pratiquer la langue tout en vous émerveillant.',
+	},
+	{
+		category: 'text & audio',
+		img: 'culture.jpg',
+		title: 'culture',
+		param: 'culture',
+		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
+	},
+	{
+		category: 'text & audio',
+		img: 'legends.jpg',
+		title: 'légendes et folklore',
+		param: 'legend',
+		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
 	},
 	{
 		category: 'text & audio',

@@ -2,7 +2,7 @@ export const sections = {
 	audio: [
 		'dialogue',
 		'culture',
-		'legends',
+		'legend',
 		'slice-of-life',
 		'place',
 		'podcast',
@@ -16,7 +16,7 @@ export const sections = {
 export const allSections = [
 	'dialogue',
 	'culture',
-	'legends',
+	'legend',
 	'slice-of-life',
 	'place',
 	'podcast',
