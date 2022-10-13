@@ -10,6 +10,7 @@
 	--primaryTextColor: #444;
 	--secondaryTextColor: #777;
 	--primaryBtnColor: #184e77;
+	--blueColor: #2582e7;
 }
 
 *,
@@ -115,6 +116,7 @@ h4,
 h5,
 h6 {
 	margin-bottom: 1.5rem;
+	margin-top: 1.5rem;
 	color: var(--primaryBtnColor);
 }
 
@@ -126,10 +128,12 @@ h1 {
 
 h2 {
 	font-size: 2.441rem;
+	line-height: 2.5rem;
 }
 
 h3 {
 	font-size: 1.953rem;
+	line-height: 2.25rem;
 }
 
 h4 {
@@ -142,7 +146,7 @@ h5 {
 
 p {
 	margin-bottom: 1.5rem;
-	max-width: 40em;
+	/* max-width: 40em; */
 }
 
 a {

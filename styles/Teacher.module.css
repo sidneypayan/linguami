@@ -1,0 +1,72 @@
+.container {
+	padding: 0 1rem;
+	text-align: center;
+	max-width: 1140px;
+	margin: 5rem auto;
+}
+
+.teacherPic {
+	border-radius: 50%;
+}
+
+.iconContainer {
+	display: flex;
+	gap: 0.75rem;
+	justify-content: center;
+	margin-top: 2rem;
+}
+
+.iconContainer svg {
+	color: var(--navColor);
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+.titleTeacher {
+	font-weight: 500;
+}
+
+.subTitleTeacher {
+	font-weight: 500;
+	font-size: 1.5rem;
+	color: var(--secondaryTextColor);
+}
+
+.teacherText {
+	max-width: 720px;
+	margin: 2rem auto;
+	color: var(--secondaryTextColor);
+}
+
+.titleAvis {
+	font-weight: 500;
+	margin-top: 4rem;
+	margin-bottom: 2rem;
+}
+
+.teacherAvis {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.teacherAvis div {
+	width: 300px;
+	position: relative;
+	margin-top: 2rem;
+	background-color: var(--white);
+	border-radius: 3px;
+	padding: 1.5rem;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+	color: var(--secondaryTextColor);
+}
+
+.avisImg {
+	position: absolute;
+	top: -45px;
+	left: 40%;
+	border-radius: 50%;
+	width: 75px;
+	height: 75px;
+}

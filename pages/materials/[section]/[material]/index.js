@@ -44,7 +44,8 @@ const Material = ({ material: single_material }) => {
 			section === 'culture' ||
 			section === 'slice-of-life' ||
 			section === 'book' ||
-			section === 'short-story'
+			section === 'short-story' ||
+			section === 'legend'
 		) {
 			return (
 				<div

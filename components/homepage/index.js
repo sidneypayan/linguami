@@ -65,7 +65,9 @@ const Homepage = () => {
 							Prenez des cours à distance avec un professeur diplômé et
 							bénéfissiez d&apos;un apprentissage personnalisé.
 						</p>
-						<button className={`${styles.btn} mainBtn`}>Commencez !</button>
+						<Link href='/teacher'>
+							<button className={`${styles.btn} mainBtn`}>Commencez !</button>
+						</Link>
 					</div>
 					<div className={styles.imgContainer}>
 						<Image

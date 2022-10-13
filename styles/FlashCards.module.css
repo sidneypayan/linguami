@@ -33,6 +33,7 @@
 	font-size: 3rem;
 	font-weight: 600;
 	margin-bottom: 3rem;
+	line-height: 2.75rem;
 }
 
 .originalWord {
@@ -44,6 +45,7 @@
 
 .btnsContainer {
 	display: flex;
+	justify-content: space-around;
 	gap: 1rem;
 }
 

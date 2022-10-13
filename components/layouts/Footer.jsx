@@ -52,16 +52,18 @@ const Footer = () => {
 
 				<div className={styles.linksContainer}>
 					<ul>
-						<li>
-							<Link href='<?php $root_path ?>/donate'>A propos de nous</Link>
-						</li>
+						{/* <li>
+							<Link>A propos de nous</Link>
+						</li> */}
 						<li>
 							<Link href='https://paypal.me/linguami' target='_blank'>
 								Nous soutenir
 							</Link>
 						</li>
 						<li>
-							<Link href='<?php $root_path ?>/contact'>Nous contacter</Link>
+							<Link href='mailto:contact@linguami.com?Subject=Contact%20from%20linguami'>
+								Nous contacter
+							</Link>
 						</li>
 					</ul>
 				</div>
