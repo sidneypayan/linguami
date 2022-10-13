@@ -31,16 +31,16 @@ const Teacher = () => {
 				l&apos;université de Moscou
 			</h3>
 			<p className={styles.teacherText}>
-				Natacha est passionnée par l&apos;apprentissage et l'enseignement des
-				langues. Elle vous guidera dans votre apprentissage du russe à travers
-				un accompagnement personnalisé. Le russe est une langue compliquée, mais
-				son apprentissage peut-être grandement facilité grâce à un professeur
-				attentionné qui connaît vos difficultés et suit la bonne méthodologie.
-				Grâce à son expérience avec des élèves français, elle est familière des
-				difficultés que rencontrent les apprenants francophones de la langue
-				russe. Elle parle aussi anglais ce qui lui permet de prendre en charge
-				des élèves anglophones si besoin. Natacha est la principale rédactrice
-				du contenu de ce site.
+				Natacha est passionnée par l&apos;apprentissage et l&apos;enseignement
+				des langues. Elle vous guidera dans votre apprentissage du russe à
+				travers un accompagnement personnalisé. Le russe est une langue
+				compliquée, mais son apprentissage peut-être grandement facilité grâce à
+				un professeur attentionné qui connaît vos difficultés et suit la bonne
+				méthodologie. Grâce à son expérience avec des élèves français, elle est
+				familière des difficultés que rencontrent les apprenants francophones de
+				la langue russe. Elle parle aussi anglais ce qui lui permet de prendre
+				en charge des élèves anglophones si besoin. Natacha est la principale
+				rédactrice du contenu de ce site.
 			</p>
 
 			{/* <hr class="main-hr mt-4"> */}
