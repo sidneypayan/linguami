@@ -75,9 +75,11 @@ const UserMaterials = () => {
 							<div className={styles.imgContainer}>
 								<Image
 									src='/img/studying.jpg'
-									layout='fill'
-									objectFit='cover'
+									// layout='fill'
+									// objectFit='cover'
 									quality={100}
+									width={250}
+									height={250}
 									alt='studying'
 									loading='eager'
 								/>
