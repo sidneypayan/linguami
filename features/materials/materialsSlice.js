@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 
 const initialState = {
 	materials: [],
@@ -215,6 +216,12 @@ const materialsSlice = createSlice({
 			state.user_materials_status_loading = false
 			state.user_materials_status_error = payload
 		},
+		[addMaterialToStudied.fulfilled]: () => {
+			toast.success(
+				'Félicitations, un pas de plus vers la maîtrise de la langue russe !'
+			)
+		},
+
 		[getBookChapters.pending]: state => {
 			state.chapters_loading = true
 		},

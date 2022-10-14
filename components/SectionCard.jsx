@@ -15,7 +15,6 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
 import { useRouter } from 'next/router'
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
-	console.log(checkIfUserMaterialIsInMaterials)
 	const router = useRouter()
 	const { section } = router.query
 
