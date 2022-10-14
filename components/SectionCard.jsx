@@ -1,12 +1,21 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { sections } from '../data/sections'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilm, faMusic, faFileAudio } from '@fortawesome/free-solid-svg-icons'
+import {
+	faFilm,
+	faMusic,
+	faFileAudio,
+	faCircleCheck,
+} from '@fortawesome/free-solid-svg-icons'
+import { faClock } from '@fortawesome/free-regular-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
 import { useRouter } from 'next/router'
-
-const SectionCard = ({ material }) => {
+const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
+	console.log(checkIfUserMaterialIsInMaterials)
 	const router = useRouter()
 	const { section } = router.query
 
@@ -46,6 +55,17 @@ const SectionCard = ({ material }) => {
 
 	return (
 		<div className={styles.container}>
+			{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+				checkIfUserMaterialIsInMaterials.is_being_studied && (
+					<FontAwesomeIcon icon={faClock} className={styles.beingStudiedCard} />
+				)}
+			{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+				checkIfUserMaterialIsInMaterials.is_studied && (
+					<FontAwesomeIcon
+						icon={faCircleCheck}
+						className={styles.studiedCard}
+					/>
+				)}
 			<div className={styles.imgContainer}>
 				<Link
 					href={`/materials/${material.section}/${
@@ -75,15 +95,11 @@ const SectionCard = ({ material }) => {
 					</a>
 				</Link>
 
-				<div className={styles.infoContainer}>
-					<div>
-						<h5 className={styles.titleTranslation}>
-							{material.title_ru.length > 20
-								? material.title_ru.slice(0, 20) + '...'
-								: material.title_ru}
-						</h5>
-					</div>
-				</div>
+				<h5 className={styles.titleTranslation}>
+					{material.title_ru.length > 20
+						? material.title_ru.slice(0, 20) + '...'
+						: material.title_ru}
+				</h5>
 			</div>
 			<div className={styles.icon}>
 				<FontAwesomeIcon

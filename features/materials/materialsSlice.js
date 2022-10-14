@@ -6,6 +6,12 @@ const initialState = {
 	materials_loading: true,
 	materials_error: false,
 	filtered_materials: [],
+	user_materials: [],
+	user_materials_loading: false,
+	user_materials_error: false,
+	user_materials_status: [],
+	user_materials_loading_status: false,
+	user_materials_error_status: false,
 	level: 'all',
 	search: '',
 	totalMaterials: 0,
@@ -32,6 +38,82 @@ export const getMaterials = createAsyncThunk(
 			return materials
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const getUserMaterials = createAsyncThunk(
+	'userMaterials/getUserMaterials',
+	async (_, thunkAPI) => {
+		const { data: userMaterials, error } = await supabase
+			.from('materials')
+			.select(
+				'id, title_ru, title_fr, img, level, section, user_materials!inner(material_id), user_materials(is_being_studied, is_studied)'
+			)
+			.eq('user_materials.user_id', supabase.auth.user().id)
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		return userMaterials
+	}
+)
+
+export const getUserMaterialsStatus = createAsyncThunk(
+	'userMaterials/getUserMaterialsStatus',
+	async (_, thunkAPI) => {
+		const { data: userMaterialsStatus, error } = await supabase
+			.from('user_materials')
+			.select('material_id, is_being_studied, is_studied')
+			.eq('user_id', supabase.auth.user().id)
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		return userMaterialsStatus
+	}
+)
+
+export const addBeingStudiedMaterial = createAsyncThunk(
+	'userMaterials/addBeingStudiedMaterial',
+	async (param, thunkAPI) => {
+		const { data: material, error } = await supabase
+			.from('user_materials')
+			.insert([
+				{
+					user_id: supabase.auth.user().id,
+					material_id: param,
+				},
+			])
+	}
+)
+
+export const addMaterialToStudied = createAsyncThunk(
+	'userMaterials/addMaterialToStudied',
+	async (id, thunkAPI) => {
+		const { data: doMaterialExists, error } = await supabase
+			.from('user_materials')
+			.select('material_id')
+			.match({ user_id: supabase.auth.user().id, material_id: id })
+
+		if (doMaterialExists.length < 1) {
+			const { data: material, error } = await supabase
+				.from('user_materials')
+				.insert([
+					{
+						user_id: supabase.auth.user().id,
+						material_id: id,
+						is_being_studied: false,
+						is_studied: true,
+					},
+				])
+		} else {
+			const { error } = await supabase
+				.from('user_materials')
+				.update({ is_being_studied: false, is_studied: true })
+				.match({ user_id: supabase.auth.user().id, material_id: id })
 		}
 	}
 )
@@ -110,6 +192,28 @@ const materialsSlice = createSlice({
 		[getMaterials.rejected]: (state, { payload }) => {
 			state.materials_loading = false
 			state.materials_error = payload
+		},
+		[getUserMaterials.pending]: state => {
+			state.user_materials_loading = true
+		},
+		[getUserMaterials.fulfilled]: (state, { payload }) => {
+			state.user_materials = payload
+			state.user_materials_loading = false
+		},
+		[getUserMaterials.rejected]: (state, { payload }) => {
+			state.user_materials_loading = false
+			state.user_materials_error = payload
+		},
+		[getUserMaterialsStatus.pending]: state => {
+			state.user_materials_status_loading = true
+		},
+		[getUserMaterialsStatus.fulfilled]: (state, { payload }) => {
+			state.user_materials_status = payload
+			state.user_materials_status_loading = false
+		},
+		[getUserMaterialsStatus.rejected]: (state, { payload }) => {
+			state.user_materials_status_loading = false
+			state.user_materials_status_error = payload
 		},
 		[getBookChapters.pending]: state => {
 			state.chapters_loading = true

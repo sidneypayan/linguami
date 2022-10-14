@@ -15,6 +15,7 @@ import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
+import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
@@ -185,9 +186,10 @@ const Material = ({ material: single_material }) => {
 						)}
 
 						<button
+							onClick={() => dispatch(addMaterialToStudied(single_material.id))}
 							type='button'
 							id='checkMaterial'
-							className={`${styles.checkLesson} mainBtn`}>
+							className={`${styles.checkLesson} ${styles.checkedLesson} mainBtn`}>
 							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
 						</button>
 						{/* </div> */}

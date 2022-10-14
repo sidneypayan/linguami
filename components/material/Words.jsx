@@ -6,7 +6,7 @@ import {
 	toggleTranslationContainer,
 	cleanTranslation,
 } from '../../features/words/wordsSlice'
-import { addBeingStudiedMaterial } from '../../features/userMaterials/userMaterialsSlice'
+import { addBeingStudiedMaterial } from '../../features/materials/materialsSlice'
 
 const Words = ({ content, materialId }) => {
 	const dispatch = useDispatch()

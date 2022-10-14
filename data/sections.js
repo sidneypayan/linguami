@@ -7,6 +7,7 @@ export const sections = {
 		'place',
 		'podcast',
 		'book',
+		'book-chapter',
 		'short-story',
 	],
 	video: ['trailer', 'extract', 'cartoon', 'eralash', 'galileo', 'diverse'],

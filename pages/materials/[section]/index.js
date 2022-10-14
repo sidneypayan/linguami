@@ -11,9 +11,10 @@ import styles from '../../../styles/sections/Sections.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import {
 	getMaterials,
+	getUserMaterialsStatus,
 	filterMaterials,
 } from '../../../features/materials/materialsSlice'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 const Section = () => {
@@ -23,16 +24,24 @@ const Section = () => {
 	const {
 		materials_loading,
 		filtered_materials: materials,
+		user_materials_status: user_materials,
 		level,
-		page,
 		sliceStart,
 		sliceEnd,
 		numOfPages,
 	} = useSelector(store => store.materials)
 
+	const checkIfUserMaterialIsInMaterials = id => {
+		const matchingMaterials = user_materials.find(
+			userMaterial => userMaterial.material_id === id
+		)
+		return matchingMaterials
+	}
+
 	useEffect(() => {
 		if (section) {
 			dispatch(getMaterials(section))
+			dispatch(getUserMaterialsStatus(section))
 		}
 	}, [section, dispatch])
 
@@ -66,7 +75,15 @@ const Section = () => {
 				<LevelBar />
 				<div className={styles.container}>
 					{materials.slice(sliceStart, sliceEnd).map(material => {
-						return <SectionCard key={material.id} material={material} />
+						return (
+							<SectionCard
+								checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+									material.id
+								)}
+								key={material.id}
+								material={material}
+							/>
+						)
 					})}
 				</div>
 				{numOfPages > 1 && <Pagination />}

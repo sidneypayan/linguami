@@ -2,7 +2,7 @@
 	z-index: 2;
 	position: absolute;
 	width: 70px;
-	height: calc(100% - 168px - 64px);
+	height: calc(100% - 144px - 64px);
 	background-color: #1d3557;
 	background-color: var(--primaryBtnColor);
 	overflow-x: hidden;

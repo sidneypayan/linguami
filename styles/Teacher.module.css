@@ -24,6 +24,7 @@
 
 .titleTeacher {
 	font-weight: 500;
+	margin: 2rem 0;
 }
 
 .subTitleTeacher {
@@ -47,7 +48,7 @@
 .teacherAvis {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: 1.5rem;
 	justify-content: center;
 }
 
@@ -60,6 +61,12 @@
 	padding: 1.5rem;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 	color: var(--secondaryTextColor);
+}
+
+.teacherAvis h3 {
+	font-size: 1.75rem;
+	font-weight: 500;
+	margin-bottom: 1rem;
 }
 
 .avisImg {

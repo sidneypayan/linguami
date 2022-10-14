@@ -1,4 +1,4 @@
-import styles from '../../styles/materials/EducationalMenu.module.css'
+import styles from '../../styles/EducationalMenu.module.css'
 // import { SiGoogletranslate } from 'react-icons/si'
 import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'

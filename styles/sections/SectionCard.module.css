@@ -8,12 +8,29 @@
 	justify-content: space-between;
 }
 
+.beingStudiedCard,
+.studiedCard {
+	position: absolute;
+	top: -0.5rem;
+	right: -0.5rem;
+	font-size: 1.8rem;
+}
+
+.beingStudiedCard {
+	color: rgba(24, 78, 119, 0.7);
+}
+
+.studiedCard {
+	color: rgba(28, 153, 28, 0.7);
+}
+
 .imgContainer {
 	cursor: pointer;
 	position: relative;
 	width: 135px;
 	height: 135px;
 }
+
 .imgContainer img {
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
@@ -22,12 +39,6 @@
 .textContainer {
 	padding: 2rem;
 	flex: 2;
-}
-
-.infoContainer span,
-.infoContainer svg {
-	color: var(--navColor);
-	font-size: 0.9rem;
 }
 
 .title,
