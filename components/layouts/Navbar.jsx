@@ -38,9 +38,9 @@ const Navbar = () => {
 					<Link href='/materials'>
 						<li onClick={() => setIsNavExpanded(false)}>Materiel</li>
 					</Link>
-					{/* <Link href='/blog'>
+					<Link href='/blog'>
 						<li onClick={() => setIsNavExpanded(false)}>Blog</li>
-					</Link> */}
+					</Link>
 				</ul>
 
 				{isUserLoggedIn ? (
