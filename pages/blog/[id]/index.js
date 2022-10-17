@@ -1,9 +1,16 @@
 import styles from '../../../styles/blog/Post.module.css'
 import { supabase } from '../../../lib/supabase'
+import { useEffect, useState } from 'react'
 
 const Post = ({ post }) => {
+	const [singlePost, setSinglePost] = useState(null)
+
+	useEffect(() => {
+		setSinglePost(post)
+	}, [post])
+
 	return (
-		post && (
+		singlePost && (
 			<div className={styles.container}>
 				<h1>{post.title}</h1>
 				<p dangerouslySetInnerHTML={{ __html: post.content }}></p>

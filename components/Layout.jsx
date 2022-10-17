@@ -3,7 +3,8 @@ import Footer from './layouts/Footer'
 import EducationalMenu from './layouts/EducationalMenu'
 import { useSelector } from 'react-redux'
 import { useUserContext } from '../context/user'
-import FlashCards from './flashcards/Flashcards'
+import FlashCards from './games/Flashcards'
+import DragAndDrop from './games/DragAndDrop'
 
 const Layout = ({ children }) => {
 	const { isUserLoggedIn } = useUserContext()

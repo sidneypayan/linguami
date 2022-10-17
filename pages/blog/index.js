@@ -1,7 +1,6 @@
 import styles from '../../styles/blog/Posts.module.css'
 import BlogCard from '../../components/blog/BlogCard'
 import { supabase } from '../../lib/supabase'
-import Hero from '../../components/homepage/Hero'
 
 const Blog = ({ posts }) => {
 	return (
@@ -18,6 +17,7 @@ export const getServerSideProps = async () => {
 		.from('posts')
 		.select('*')
 		.eq('lang', 'ru')
+		.order('id', { ascending: false })
 
 	return {
 		props: {
