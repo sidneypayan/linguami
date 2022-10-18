@@ -12,7 +12,7 @@ const Blog = ({ posts }) => {
 	)
 }
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
 	const { data: posts, error } = await supabase
 		.from('posts')
 		.select('*')
@@ -23,6 +23,7 @@ export const getServerSideProps = async () => {
 		props: {
 			posts,
 		},
+		revalidate: 60,
 	}
 }
 
