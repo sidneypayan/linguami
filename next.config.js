@@ -3,7 +3,7 @@ const nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
 	images: {
-		domains: ['linguami.s3.eu-west-3.amazonaws.com'],
+		domains: ['fxadatcycupiinjjdzpe.supabase.co'],
 	},
 }
 

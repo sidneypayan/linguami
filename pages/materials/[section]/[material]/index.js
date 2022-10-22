@@ -16,6 +16,7 @@ import WordsContainer from '../../../../components/material/WordsContainer'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
+import Player from '../../../../components/Player'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
@@ -35,7 +36,7 @@ const Material = ({ material: single_material }) => {
 				<div
 					className={styles.imgPlace}
 					style={{
-						backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img})`,
+						backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
 					}}></div>
 			)
 		}
@@ -52,18 +53,19 @@ const Material = ({ material: single_material }) => {
 				<div
 					className={styles.img}
 					style={{
-						backgroundImage: `url(https://linguami.s3.eu-west-3.amazonaws.com/images/${single_material.img})`,
+						backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
 					}}></div>
 			)
 		}
 	}
 
-	const displayAudioPlayer = section => {
+	const displayAudioPlayer = (section, audio) => {
 		if (sections.audio.includes(section)) {
 			return (
-				<audio
-					controls='controls'
-					src={`https://linguami.s3.eu-west-3.amazonaws.com/audio/${single_material.audio}`}></audio>
+				// <audio
+				// 	controls='controls'
+				// 	src={`${process.env.NEXT_PUBLIC_SUPABASE_AUDIO}${single_material.audio}`}></audio>
+				<Player src={process.env.NEXT_PUBLIC_SUPABASE_AUDIO + audio} />
 			)
 		}
 	}
@@ -125,9 +127,10 @@ const Material = ({ material: single_material }) => {
 					<div className={styles.mediaContainer}>
 						<div className={styles.audioContainer}>
 							{getImageRegardingSection(section)}
-
 							{/* DISPLAY AUDIO */}
-							{displayAudioPlayer(section)}
+							<div className={styles.playerContainer}>
+								{displayAudioPlayer(section, single_material.audio)}
+							</div>
 
 							{/* CHAPTER MENU */}
 							{section === 'book' && (

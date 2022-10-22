@@ -71,7 +71,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						section === 'book' ? material.id + 1 : material.id
 					}`}>
 					<Image
-						src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${material.img}`}
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
 						layout='fill'
 						objectFit='cover'
 						quality={100}
