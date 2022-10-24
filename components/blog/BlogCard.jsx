@@ -20,7 +20,7 @@ const BlogCard = ({ post }) => {
 								layout='fill'
 								objectFit='cover'
 								quality={100}
-								src={`https://linguami.s3.eu-west-3.amazonaws.com/images/${post.img}`}
+								src={process.env.NEXT_PUBLIC_SUPABASE_IMAGE + post.img}
 								alt={post.title}
 							/>
 						</div>
