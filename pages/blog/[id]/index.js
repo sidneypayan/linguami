@@ -1,6 +1,7 @@
 import styles from '../../../styles/blog/Post.module.css'
 import { supabase } from '../../../lib/supabase'
 import { useEffect, useState } from 'react'
+import Head from 'next/head'
 
 const Post = ({ post }) => {
 	const [singlePost, setSinglePost] = useState(null)
@@ -11,10 +12,16 @@ const Post = ({ post }) => {
 
 	return (
 		singlePost && (
-			<div className={styles.container}>
-				<h1>{post.title}</h1>
-				<p dangerouslySetInnerHTML={{ __html: post.content }}></p>
-			</div>
+			<>
+				<Head>
+					<title>{post.title}</title>
+					<meta name='description' content={post.description} />
+				</Head>
+				<div className={styles.container}>
+					<h1>{post.title}</h1>
+					<p dangerouslySetInnerHTML={{ __html: post.content }}></p>
+				</div>
+			</>
 		)
 	)
 }

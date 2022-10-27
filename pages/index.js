@@ -6,10 +6,10 @@ export default function Home() {
 	return (
 		<div>
 			<Head>
-				<title>Linguami</title>
+				<title>Linguami | Page d&apos;accueil</title>
 				<meta
 					name='description'
-					content='Site de langue pour apprendre le russe'
+					content="Linguami est une site de langue dédié à l'apprentissage du russe pour les francophones. Sur notre site vous trouverez une grande variété de supports vidéos, audio, textes pour étudier tous les aspects de la langue russe."
 				/>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>

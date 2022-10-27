@@ -6,7 +6,7 @@ import styles from '../../styles/admin/Create.module.css'
 import { useDispatch } from 'react-redux'
 import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
 
-const Create = () => {
+const CreateMaterial = () => {
 	const dispatch = useDispatch()
 	const [formData, setFormData] = useState({
 		lang: 'ru',
@@ -192,4 +192,4 @@ export const getServerSideProps = async ({ req }) => {
 	}
 }
 
-export default Create
+export default CreateMaterial

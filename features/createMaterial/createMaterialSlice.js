@@ -41,6 +41,21 @@ export const postMaterial = createAsyncThunk(
 	}
 )
 
+export const postPost = createAsyncThunk(
+	'createMaterial/postMaterial',
+	async (post, thunkAPI) => {
+		const { lang, title, img, content } = post
+		const { data, error } = await supabase.from('posts').insert([
+			{
+				lang: lang,
+				title: title,
+				img: img,
+				content: content,
+			},
+		])
+	}
+)
+
 const createMaterialSlice = createSlice({
 	name: 'createMaterial',
 	initialState,

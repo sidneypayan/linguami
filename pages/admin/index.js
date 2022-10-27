@@ -6,8 +6,11 @@ import { supabase } from '../../lib/supabase'
 const Admin = () => {
 	return (
 		<div className='wrapper-large'>
-			<Link href='/admin/create'>
-				<button className={`${styles.btn} mainBtn`}> Créer un materiel</button>
+			<Link href='/admin/create-material'>
+				<button className={`${styles.btn} mainBtn`}>Créer un materiel</button>
+			</Link>
+			<Link href='/admin/create-post'>
+				<button className={`${styles.btn} mainBtn`}>Créer un post</button>
 			</Link>
 			<h2>Sections</h2>
 			<div className={styles.container}>

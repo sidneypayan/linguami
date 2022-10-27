@@ -9,6 +9,7 @@ import { getUserMaterials } from '../../features/materials/materialsSlice'
 import SectionCard from '../../components/SectionCard'
 import styles from '../../styles/MyMaterials.module.css'
 import Image from 'next/image'
+import Head from 'next/head'
 
 const UserMaterials = () => {
 	const dispatch = useDispatch()
@@ -62,6 +63,9 @@ const UserMaterials = () => {
 
 	return (
 		<>
+			<Head>
+				<title>Linguami | Mes materiels</title>
+			</Head>
 			{!displayMaterials && (
 				<div className={styles.wrapper}>
 					<div className={styles.filterContainer}>
