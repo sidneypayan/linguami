@@ -110,7 +110,7 @@ const UserProvider = ({ children }) => {
 
 			if (sessionUser) {
 				const { data: profile } = await supabase
-					.from('users')
+					.from('users_profile')
 					.select('*')
 					.eq('id', sessionUser.id)
 					.single()
@@ -127,6 +127,8 @@ const UserProvider = ({ children }) => {
 
 		getUserProfile()
 	}, [])
+
+	console.log(userProfile)
 
 	useEffect(() => {
 		axios.post('/api/auth', {

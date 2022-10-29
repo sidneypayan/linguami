@@ -44,13 +44,14 @@ export const postMaterial = createAsyncThunk(
 export const postPost = createAsyncThunk(
 	'createMaterial/postMaterial',
 	async (post, thunkAPI) => {
-		const { lang, title, img, content } = post
+		const { lang, title, img, content, description } = post
 		const { data, error } = await supabase.from('posts').insert([
 			{
 				lang: lang,
 				title: title,
 				img: img,
 				content: content,
+				description: description,
 			},
 		])
 	}

@@ -12,6 +12,7 @@ const CreatePost = () => {
 		title: '',
 		img: '',
 		content: '',
+		description: '',
 	})
 
 	const handleChange = e => {
