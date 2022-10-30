@@ -84,7 +84,7 @@ export const getServerSideProps = async ({ req }) => {
 		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
 
 		const { data: user, error } = await supabase
-			.from('users')
+			.from('users_profile')
 			.select('*')
 			.eq('id', decodedToken.sub)
 			.single()

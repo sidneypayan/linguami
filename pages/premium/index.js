@@ -168,7 +168,7 @@ const Premium = () => {
 						<ListItemIcon>
 							<CheckCircle sx={{ color: '#1e6091' }} />
 						</ListItemIcon>
-						<ListItemText primary='Nous réjouir de voir que notre travail est utile et apporte quelque chose aux personnes désirant apprendre le russe et découvrir le monde russe sous différentes facettes' />
+						<ListItemText primary="Nous réjouir de voir que vous appréciez notre travail et qu'il vous est utile." />
 					</ListItem>
 				</List>
 			</Card>

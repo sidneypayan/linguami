@@ -14,7 +14,8 @@ const Hero = () => {
 						</span>
 					</h2>
 					<p className={styles.subtitle}>
-						Apprenez une langue moderne et parlée par les locuteurs natifs.
+						Apprenez une langue moderne et parlée par les locuteurs natifs.{' '}
+						<br />
 						<span className={styles.subtitleLargeScreen}>
 							Découvrez une culture et rejoignez une communauté basée sur
 							l&apos;entraide et l&apos;amitié entre les peuples.
