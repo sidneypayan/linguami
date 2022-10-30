@@ -68,7 +68,7 @@ const Register = () => {
 						<span className={styles.socialText}>Google</span>
 					</button>
 				</div>
-				<Divider sx={{ margin: '1rem 0' }}>ou</Divider>
+				<Divider sx={{ marginBottom: '1rem' }}>ou</Divider>
 				<form onSubmit={handleSubmit} className={styles.formContainer}>
 					<div>
 						<input
@@ -101,13 +101,13 @@ const Register = () => {
 							autoComplete='current-password'
 						/>
 					</div>
+					<button className={`${styles.btn} mainBtn`}>
+						S&apos;enregistrer
+					</button>
 					<p className={styles.existingAccount}>
 						Vous avez déjà un compte ?<br />
 						<Link href='/login'>Connectez vous !</Link>
 					</p>
-					<button className={`${styles.btn} mainBtn`}>
-						S&apos;enregistrer
-					</button>
 				</form>
 			</div>
 		</div>

@@ -62,7 +62,7 @@ const Login = () => {
 						<span className={styles.socialText}>Google</span>
 					</button>
 				</div>
-				<Divider sx={{ margin: '1rem 0' }}>ou</Divider>
+				<Divider sx={{ marginBottom: '1rem' }}>ou</Divider>
 				<form onSubmit={handleSubmit} className={styles.formContainer}>
 					<div>
 						<input
@@ -84,11 +84,12 @@ const Login = () => {
 							autoComplete='current-password'
 						/>
 					</div>
+
+					<button className={`${styles.btn} mainBtn`}>Se connecter</button>
 					<p className={styles.existingAccount}>
 						Vous n&apos;avez pas encore de compte ? <br />
 						<Link href='/register'>Inscrivez-vous gratuitement !</Link>
 					</p>
-					<button className={`${styles.btn} mainBtn`}>Se connecter</button>
 				</form>
 			</div>
 		</div>

@@ -2,6 +2,30 @@ import Image from 'next/image'
 import styles from '../../styles/Homepage.module.css'
 import Hero from './Hero'
 import Link from 'next/link'
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Box,
+	Divider,
+	styled,
+	Typography,
+} from '@mui/material'
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { Stack } from '@mui/system'
+
+const StyledStack = styled(Stack)(({ theme }) => ({
+	justifyContent: 'space-between',
+	gap: '2rem',
+	[theme.breakpoints.up('md')]: {
+		flexDirection: 'row',
+	},
+	[theme.breakpoints.down('md')]: {
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+}))
 
 const Homepage = () => {
 	return (
@@ -24,6 +48,7 @@ const Homepage = () => {
 							ressources vidéos pour apprendre tout en vous divertissant.
 						</p>
 					</div>
+
 					<div className={styles.ressourceItem}>
 						<Image
 							layout='fixed'
@@ -57,9 +82,9 @@ const Homepage = () => {
 
 				<div className={styles.hrSmall}></div>
 
-				<div className={styles.ctaContainer}>
+				<div className={`${styles.ctaContainer} + ${styles.ctaContainerWhite}`}>
 					<div className={styles.ctaContainerText}>
-						<div className={styles.hr}></div>
+						{/* <div className={styles.hr}></div> */}
 						<h3 className='headline'>Apprendre avec un locuteur natif</h3>
 						<p>
 							Prenez des cours à distance avec un professeur diplômé et
@@ -90,7 +115,7 @@ const Homepage = () => {
 					</div>
 
 					<div className={styles.ctaContainerText}>
-						<div className={styles.hr}></div>
+						{/* <div className={styles.hr}></div> */}
 						<h3 className='headline'>Outlil de traduction intégré</h3>
 						<p>
 							Inscrivez-vous et traduisez n&apos;importe quel mot de
@@ -102,6 +127,60 @@ const Homepage = () => {
 							</button>
 						</Link>
 					</div>
+				</div>
+				<div className='hr'></div>
+				<h2 className='headline'>Comment utiliser le système de traduction</h2>
+				<div className='wrapper-small'>
+					<Accordion>
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls='panel1a-content'
+							id='panel1a-header'>
+							<Typography variant='h6'>
+								Traduire les mots des materiels
+							</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							<StyledStack>
+								<Typography maxWidth='350px' textAlign='left' mt={5}>
+									Traduisez n&apos;importe quel mot d&apos;un simple clique
+								</Typography>
+								<Divider orientation='vertical'></Divider>
+								<Box
+									margin='0'
+									component='img'
+									maxHeight='250px'
+									alt='comment traduire'
+									src='/img/translation.gif'
+								/>
+							</StyledStack>
+						</AccordionDetails>
+					</Accordion>
+					<Accordion>
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls='panel1a-content'
+							id='panel1a-header'>
+							<Typography variant='h6'>
+								Ajouter une traduction à son dictionnaire
+							</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							<StyledStack>
+								<Typography maxWidth='350px' textAlign='left' mt={5}>
+									Ajouter une traduction à son dictionnaire personnel est tout
+									aussi simple
+								</Typography>
+								<Box
+									margin='0'
+									component='img'
+									maxHeight='250px'
+									alt='comment traduire'
+									src='/img/add_translation.gif'
+								/>
+							</StyledStack>
+						</AccordionDetails>
+					</Accordion>
 				</div>
 			</div>
 		</>

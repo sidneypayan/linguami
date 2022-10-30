@@ -221,6 +221,16 @@ img {
 	margin: 5rem auto;
 }
 
+.wrapper-medium {
+	width: 60%;
+	margin: 5rem auto;
+}
+
+.wrapper-small {
+	max-width: 900px;
+	margin: 5rem auto;
+}
+
 .mainBtn {
 	border: none;
 	background-color: var(--primaryBtnColor);
@@ -236,7 +246,7 @@ img {
 	height: 5px;
 	background-color: var(--navColor);
 	border-radius: 50px;
-	margin: 0 auto;
+	margin: 3rem auto;
 }
 
 .title {
