@@ -80,11 +80,8 @@ const Homepage = () => {
 					</div>
 				</div>
 
-				<div className={styles.hrSmall}></div>
-
 				<div className={`${styles.ctaContainer} + ${styles.ctaContainerWhite}`}>
 					<div className={styles.ctaContainerText}>
-						{/* <div className={styles.hr}></div> */}
 						<h3 className='headline'>Apprendre avec un locuteur natif</h3>
 						<p>
 							Prenez des cours à distance avec un professeur diplômé et
@@ -115,7 +112,6 @@ const Homepage = () => {
 					</div>
 
 					<div className={styles.ctaContainerText}>
-						{/* <div className={styles.hr}></div> */}
 						<h3 className='headline'>Outlil de traduction intégré</h3>
 						<p>
 							Inscrivez-vous et traduisez n&apos;importe quel mot de
@@ -128,8 +124,10 @@ const Homepage = () => {
 						</Link>
 					</div>
 				</div>
-				<div className='hr'></div>
-				<h2 className='headline'>Comment utiliser le système de traduction</h2>
+				<Divider sx={{ width: '50%', margin: '3rem auto' }}></Divider>
+				<h2 style={{ marginTop: '4rem' }}>
+					Comment utiliser le système de traduction
+				</h2>
 				<div className='wrapper-small'>
 					<Accordion>
 						<AccordionSummary
@@ -147,6 +145,7 @@ const Homepage = () => {
 								</Typography>
 								<Divider orientation='vertical'></Divider>
 								<Box
+									sx={{ borderRadius: '3px' }}
 									margin='0'
 									component='img'
 									maxHeight='250px'
@@ -172,6 +171,7 @@ const Homepage = () => {
 									aussi simple
 								</Typography>
 								<Box
+									sx={{ borderRadius: '3px' }}
 									margin='0'
 									component='img'
 									maxHeight='250px'

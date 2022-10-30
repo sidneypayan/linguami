@@ -228,7 +228,7 @@ img {
 
 .wrapper-small {
 	max-width: 900px;
-	margin: 5rem auto;
+	margin: 4rem auto;
 }
 
 .mainBtn {
@@ -239,14 +239,6 @@ img {
 	font-weight: 500;
 	border-radius: 3px;
 	cursor: pointer;
-}
-
-.hr {
-	width: 25%;
-	height: 5px;
-	background-color: var(--navColor);
-	border-radius: 50px;
-	margin: 3rem auto;
 }
 
 .title {
