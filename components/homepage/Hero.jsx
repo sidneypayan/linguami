@@ -8,13 +8,17 @@ const Hero = () => {
 			<div className={styles.container}>
 				<div className={styles.textContainer}>
 					<h2 className={styles.title}>
-						Linguami, <br />
-						bien plus qu&apos;un site de langue !
+						Linguami <br />
+						<span className={styles.subtitleLargeScreen}>
+							bien plus qu&apos;un site de langue
+						</span>
 					</h2>
 					<p className={styles.subtitle}>
 						Apprenez une langue moderne et parlée par les locuteurs natifs.
-						Découvrez une culture et rejoignez une communauté basée sur
-						l&apos;entraide et l&apos;amitié entre les peuples.
+						<span className={styles.subtitleLargeScreen}>
+							Découvrez une culture et rejoignez une communauté basée sur
+							l&apos;entraide et l&apos;amitié entre les peuples.
+						</span>
 					</p>
 					<Link href='/materials'>
 						<button className={`${styles.btn} mainBtn`}>Commencez !</button>
@@ -31,7 +35,7 @@ const Hero = () => {
 					/>
 				</div>
 			</div>
-			<div className={styles.wave}>
+			<div className={`${styles.wave} + ${styles.subtitleLargeScreen}`}>
 				<svg
 					data-name='Layer 1'
 					xmlns='http://www.w3.org/2000/svg'

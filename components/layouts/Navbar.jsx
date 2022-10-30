@@ -12,19 +12,10 @@ import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'
 
 const Navbar = () => {
-	const { user, userProfile, isUserLoggedIn, logout, toggleMember } =
-		useUserContext()
+	const { user, userProfile, isUserLoggedIn } = useUserContext()
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
 
-	const handleClickOnLogin = type => {
-		if (type === 'login') {
-			toggleMember(true)
-		}
-
-		if (type === 'register') {
-			toggleMember(false)
-		}
-
+	const handleClick = type => {
 		setIsNavExpanded(!isNavExpanded)
 	}
 
@@ -47,21 +38,21 @@ const Navbar = () => {
 					<UserMenu />
 				) : (
 					<div className={styles.btnContainer}>
-						<Link href='/register'>
+						<Link href='/login'>
 							<button
-								onClick={() => handleClickOnLogin('login')}
+								onClick={handleClick}
 								className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
 								Se connecter
 							</button>
 						</Link>
-						{/* 
+
 						<Link href='/register'>
 							<button
-								onClick={() => handleClickOnLogin('register')}
+								onClick={handleClick}
 								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
 								S&apos;inscrire
 							</button>
-						</Link> */}
+						</Link>
 					</div>
 				)}
 

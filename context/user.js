@@ -13,7 +13,6 @@ const UserProvider = ({ children }) => {
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
-	const [isMember, setIsMember] = useState(true)
 
 	const register = async data => {
 		const { name, email, password } = data
@@ -26,9 +25,9 @@ const UserProvider = ({ children }) => {
 			}
 		)
 
-		if (user.identities.length === 0) {
-			return toast.error('Cet email est déjà utilisé')
-		}
+		// if (user.identities.length === 0) {
+		// 	return toast.error('Cet email est déjà utilisé')
+		// }
 
 		if (error) {
 			return toast.error(error)
@@ -98,10 +97,6 @@ const UserProvider = ({ children }) => {
 		if (error) toast.error('Erreur avec le mot de passe')
 	}
 
-	const toggleMember = value => {
-		setIsMember(value)
-	}
-
 	useEffect(() => {
 		const getUserProfile = async () => {
 			const sessionUser = supabase.auth.user()
@@ -127,8 +122,6 @@ const UserProvider = ({ children }) => {
 
 		getUserProfile()
 	}, [])
-
-	console.log(userProfile)
 
 	useEffect(() => {
 		axios.post('/api/auth', {
@@ -156,8 +149,6 @@ const UserProvider = ({ children }) => {
 		logout,
 		askNewPassword,
 		setNewPassword,
-		toggleMember,
-		isMember,
 	}
 
 	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>

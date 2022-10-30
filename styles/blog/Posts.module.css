@@ -52,6 +52,7 @@
 	cursor: pointer;
 	color: var(--firstTextColor);
 	font-weight: 500;
+	background-color: inherit;
 }
 
 .blogCardBtn:hover {

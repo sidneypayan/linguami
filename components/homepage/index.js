@@ -96,7 +96,7 @@ const Homepage = () => {
 							Inscrivez-vous et traduisez n&apos;importe quel mot de
 							n&apos;importe quel texte
 						</p>
-						<Link href='/materials'>
+						<Link href='/register'>
 							<button className={`${styles.btn} mainBtn`}>
 								S&apos;inscrire
 							</button>
