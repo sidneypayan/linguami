@@ -1,12 +1,11 @@
 import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 
 const initialState = {
 	material: {},
 	materialEdit: {},
 	edit: false,
-	edit_loading: false,
-	edit_error: false,
 }
 
 export const postMaterial = createAsyncThunk(
@@ -26,7 +25,8 @@ export const postMaterial = createAsyncThunk(
 			content,
 			content_accents,
 		} = material
-		const { data, error } = await supabase.from('materials').insert([
+
+		const { error } = await supabase.from('materials').insert([
 			{
 				lang: lang,
 				section: section,
@@ -42,14 +42,15 @@ export const postMaterial = createAsyncThunk(
 				content_accents: content_accents,
 			},
 		])
+		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
 
 export const postPost = createAsyncThunk(
-	'createMaterial/postMaterial',
+	'createMaterial/postPost',
 	async (post, thunkAPI) => {
 		const { lang, title, img, content, description } = post
-		const { data, error } = await supabase.from('posts').insert([
+		const { error } = await supabase.from('posts').insert([
 			{
 				lang: lang,
 				title: title,
@@ -58,6 +59,7 @@ export const postPost = createAsyncThunk(
 				description: description,
 			},
 		])
+		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
 
@@ -68,7 +70,8 @@ export const editMaterial = createAsyncThunk(
 			.from('materials')
 			.select('*')
 			.eq('id', id)
-		if (error) return error
+
+		if (error) return thunkAPI.rejectWithValue(error.message)
 
 		return material
 	}
@@ -82,7 +85,7 @@ export const updateMaterial = createAsyncThunk(
 			.update(material)
 			.eq('id', material.id)
 
-		if (error) return error
+		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
 
@@ -90,28 +93,33 @@ const createMaterialSlice = createSlice({
 	name: 'createMaterial',
 	initialState,
 	extraReducers: {
-		[editMaterial.pending]: state => {
-			state.edit_loading = true
+		[postMaterial.fulfilled]: () => {
+			toast.success('POST SUCCESS !')
+		},
+		[postMaterial.rejected]: (_, { payload }) => {
+			toast.error(payload)
+		},
+		[postPost.fulfilled]: () => {
+			toast.success('POST SUCCESS !')
+		},
+		[postPost.rejected]: (_, { payload }) => {
+			toast.error(payload)
 		},
 		[editMaterial.fulfilled]: (state, { payload }) => {
 			const [material] = payload
-			console.log(payload)
 			state.edit = true
-			state.edit_loading = false
 			state.materialEdit = material
 		},
-		[editMaterial.rejected]: (state, { payload }) => {
-			state.edit_loading = false
-			state.edit_error = payload
+		[editMaterial.rejected]: (_, { payload }) => {
+			toast.error(payload)
 		},
-
-		[updateMaterial.fulfilled]: (state, { payload }) => {
+		[updateMaterial.fulfilled]: state => {
 			state.edit = false
 			state.materialEdit = {}
+			toast.success('EDIT SUCCESS !')
 		},
-		[updateMaterial.rejected]: (state, { payload }) => {
-			state.edit_loading = false
-			state.edit_error = payload
+		[updateMaterial.rejected]: (_, { payload }) => {
+			toast.error(payload)
 		},
 	},
 })
