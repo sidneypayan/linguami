@@ -17,10 +17,11 @@ import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
 import Player from '../../../../components/Player'
+import { editMaterial } from '../../../../features/createMaterial/createMaterialSlice'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
-	const { user } = useUserContext()
+	const { user, isUserAdmin } = useUserContext()
 
 	const bookName = single_material.book_name
 	const router = useRouter()
@@ -29,6 +30,11 @@ const Material = ({ material: single_material }) => {
 	const [showAccents, setShowAccents] = useState(false)
 	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
+
+	const handleEditMaterial = () => {
+		dispatch(editMaterial(single_material.id))
+		router.push('/admin/create-material')
+	}
 
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
@@ -61,12 +67,7 @@ const Material = ({ material: single_material }) => {
 
 	const displayAudioPlayer = (section, audio) => {
 		if (sections.audio.includes(section)) {
-			return (
-				// <audio
-				// 	controls='controls'
-				// 	src={`${process.env.NEXT_PUBLIC_SUPABASE_AUDIO}${single_material.audio}`}></audio>
-				<Player src={process.env.NEXT_PUBLIC_SUPABASE_AUDIO + audio} />
-			)
+			return <Player src={process.env.NEXT_PUBLIC_SUPABASE_AUDIO + audio} />
 		}
 	}
 
@@ -171,6 +172,16 @@ const Material = ({ material: single_material }) => {
 							className={`${styles.showAccentsBtn} mainBtn`}>
 							Montrer les accents
 						</button>
+						{isUserAdmin && (
+							<button
+								onClick={handleEditMaterial}
+								type='button'
+								id='show-accents'
+								className={`${styles.showAccentsBtn} mainBtn`}
+								style={{ marginLeft: '1rem' }}>
+								Edit material
+							</button>
+						)}
 
 						{showAccents ? (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>

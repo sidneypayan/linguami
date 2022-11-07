@@ -3,6 +3,10 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
 	material: {},
+	materialEdit: {},
+	edit: false,
+	edit_loading: false,
+	edit_error: false,
 }
 
 export const postMaterial = createAsyncThunk(
@@ -57,9 +61,59 @@ export const postPost = createAsyncThunk(
 	}
 )
 
+export const editMaterial = createAsyncThunk(
+	'createMaterial/editMaterial',
+	async (id, thunkAPI) => {
+		const { data: material, error } = await supabase
+			.from('materials')
+			.select('*')
+			.eq('id', id)
+		if (error) return error
+
+		return material
+	}
+)
+
+export const updateMaterial = createAsyncThunk(
+	'createMaterial/updateMaterial',
+	async (material, thunkAPI) => {
+		const { error } = await supabase
+			.from('materials')
+			.update(material)
+			.eq('id', material.id)
+
+		if (error) return error
+	}
+)
+
 const createMaterialSlice = createSlice({
 	name: 'createMaterial',
 	initialState,
+	extraReducers: {
+		[editMaterial.pending]: state => {
+			state.edit_loading = true
+		},
+		[editMaterial.fulfilled]: (state, { payload }) => {
+			const [material] = payload
+			console.log(payload)
+			state.edit = true
+			state.edit_loading = false
+			state.materialEdit = material
+		},
+		[editMaterial.rejected]: (state, { payload }) => {
+			state.edit_loading = false
+			state.edit_error = payload
+		},
+
+		[updateMaterial.fulfilled]: (state, { payload }) => {
+			state.edit = false
+			state.materialEdit = {}
+		},
+		[updateMaterial.rejected]: (state, { payload }) => {
+			state.edit_loading = false
+			state.edit_error = payload
+		},
+	},
 })
 
 export default createMaterialSlice.reducer

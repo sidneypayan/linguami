@@ -69,8 +69,12 @@ const Register = () => {
 					</button>
 				</div>
 				<Divider sx={{ marginBottom: '1rem' }}>ou</Divider>
-				<form onSubmit={handleSubmit} className={styles.formContainer}>
+				<form
+					data-testid='form'
+					onSubmit={handleSubmit}
+					className={styles.formContainer}>
 					<div>
+						<label htmlFor='name'>Name</label>
 						<input
 							onChange={handleChange}
 							type='text'
@@ -78,10 +82,12 @@ const Register = () => {
 							name='name'
 							value={values.name}
 							autoComplete='username'
+							id='name'
 						/>
 					</div>
 
 					<div>
+						<label htmlFor='email'>Email</label>
 						<input
 							onChange={handleChange}
 							type='email'
@@ -89,9 +95,11 @@ const Register = () => {
 							name='email'
 							value={values.email}
 							autoComplete='email'
+							id='email'
 						/>
 					</div>
 					<div>
+						<label htmlFor='password'>Password</label>
 						<input
 							onChange={handleChange}
 							type='password'
@@ -99,10 +107,11 @@ const Register = () => {
 							name='password'
 							value={values.password}
 							autoComplete='current-password'
+							id='password'
 						/>
 					</div>
-					<button className={`${styles.btn} mainBtn`}>
-						S&apos;enregistrer
+					<button type='submit' className={`${styles.btn} mainBtn`}>
+						Register
 					</button>
 					<p className={styles.existingAccount}>
 						Vous avez déjà un compte ?<br />

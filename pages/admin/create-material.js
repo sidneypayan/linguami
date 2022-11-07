@@ -1,13 +1,17 @@
 import { supabase } from '../../lib/supabase'
 import jwtDecode from 'jwt-decode'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { allSections } from '../../data/sections'
 import styles from '../../styles/admin/Create.module.css'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
+import { updateMaterial } from '../../features/createMaterial/createMaterialSlice'
+import DOMPurify from 'isomorphic-dompurify'
 
 const CreateMaterial = () => {
 	const dispatch = useDispatch()
+	const { materialEdit, edit } = useSelector(store => store.createMaterial)
+	console.log(materialEdit)
 	const [formData, setFormData] = useState({
 		lang: 'ru',
 		section: 'dialogues',
@@ -32,14 +36,39 @@ const CreateMaterial = () => {
 
 	const submitMaterial = e => {
 		e.preventDefault()
-		formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
-		formData.content_accents = formData.content_accents.replace(
-			/(\r\n|\n|\r)/gm,
-			'<br>'
-		)
 
-		dispatch(postMaterial(formData))
+		if (!edit) {
+			formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
+			formData.content_accents = formData.content_accents.replace(
+				/(\r\n|\n|\r)/gm,
+				'<br>'
+			)
+			dispatch(postMaterial(formData))
+		} else {
+			dispatch(updateMaterial(formData))
+		}
+
+		setFormData({
+			lang: 'ru',
+			section: 'dialogues',
+			book_name: '',
+			chapter: '',
+			level: 'débutant',
+			title_ru: '',
+			title_fr: '',
+			img: '',
+			audio: '',
+			video: '',
+			content: '',
+			content_accents: '',
+		})
 	}
+
+	useEffect(() => {
+		if (materialEdit) {
+			setFormData(materialEdit)
+		}
+	}, [materialEdit])
 
 	return (
 		<div className='wrapper-large'>
@@ -48,7 +77,7 @@ const CreateMaterial = () => {
 				<div className={styles.optionsContainer}>
 					<select
 						onChange={e => handleChange(e)}
-						value={formData.lang}
+						value={formData.lang ?? undefined}
 						name='lang'
 						id='lang'>
 						<option value='ru'>Russe</option>
@@ -56,7 +85,7 @@ const CreateMaterial = () => {
 					</select>
 					<select
 						onChange={e => handleChange(e)}
-						value={formData.section}
+						value={formData.section ?? undefined}
 						name='section'
 						id='section'>
 						{allSections.map((section, index) => (
@@ -67,7 +96,7 @@ const CreateMaterial = () => {
 					</select>
 					<select
 						onChange={e => handleChange(e)}
-						value={formData.level}
+						value={formData.level ?? undefined}
 						name='level'
 						id='level'>
 						<option value='débutant'>débutant</option>
@@ -78,7 +107,7 @@ const CreateMaterial = () => {
 				<div className={styles.titleContainer}>
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.title_ru}
+						value={formData.title_ru ?? undefined}
 						placeholder='Title ru'
 						type='text'
 						id='title_ru'
@@ -86,7 +115,7 @@ const CreateMaterial = () => {
 					/>
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.title_fr}
+						value={formData.title_fr ?? undefined}
 						placeholder='Title fr'
 						type='text'
 						id='title_fr'
@@ -96,7 +125,7 @@ const CreateMaterial = () => {
 				<div className={styles.media}>
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.img}
+						value={formData.img ?? undefined}
 						placeholder='Image'
 						type='text'
 						id='img'
@@ -105,7 +134,7 @@ const CreateMaterial = () => {
 
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.audio}
+						value={formData.audio ?? undefined}
 						placeholder='Audio'
 						type='text'
 						id='audio'
@@ -114,7 +143,7 @@ const CreateMaterial = () => {
 
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.video}
+						value={formData.video ?? undefined}
 						placeholder='Video'
 						type='text'
 						id='video'
@@ -124,7 +153,7 @@ const CreateMaterial = () => {
 				<div className={styles.media}>
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.bookName}
+						value={formData.book_name ?? undefined}
 						placeholder='Book Name'
 						type='text'
 						id='book_name'
@@ -133,7 +162,7 @@ const CreateMaterial = () => {
 
 					<input
 						onChange={e => handleChange(e)}
-						value={formData.chapter}
+						value={formData.chapter ?? undefined}
 						placeholder='Chapter'
 						type='text'
 						id='chapter'
@@ -143,18 +172,22 @@ const CreateMaterial = () => {
 				<div className={styles.text}>
 					<textarea
 						name='content'
-						value={formData.content}
+						value={formData.content ?? undefined}
 						onChange={e => handleChange(e)}
 						placeholder='Content'
 					/>
 					<textarea
 						name='content_accents'
-						value={formData.content_accents}
+						value={formData.content_accents ?? undefined}
 						onChange={e => handleChange(e)}
 						placeholder='Content with accents'
 					/>
 				</div>
-				<input type='submit' className='mainBtn' value='Envoyer' />
+				<input
+					type='submit'
+					className='mainBtn'
+					value={`${edit ? 'Editer' : 'Envoyer'} `}
+				/>
 			</form>
 		</div>
 	)

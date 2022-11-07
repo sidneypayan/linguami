@@ -13,6 +13,7 @@ const UserProvider = ({ children }) => {
 	const [userProfile, setUserProfile] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
+	const [isUserAdmin, setIsUserAdmin] = useState(null)
 
 	const register = async data => {
 		const { name, email, password } = data
@@ -24,10 +25,6 @@ const UserProvider = ({ children }) => {
 				},
 			}
 		)
-
-		// if (user.identities.length === 0) {
-		// 	return toast.error('Cet email est déjà utilisé')
-		// }
 
 		if (error) {
 			return toast.error(error)
@@ -111,6 +108,7 @@ const UserProvider = ({ children }) => {
 					.single()
 
 				setUserProfile({ ...sessionUser, ...profile })
+				setIsUserAdmin(profile.role)
 
 				setIsLoading(false)
 			}
@@ -140,6 +138,7 @@ const UserProvider = ({ children }) => {
 
 	const exposed = {
 		user,
+		isUserAdmin,
 		userProfile,
 		isLoading,
 		isUserLoggedIn,
