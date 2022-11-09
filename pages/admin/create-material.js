@@ -49,7 +49,7 @@ const CreateMaterial = () => {
 	}
 
 	useEffect(() => {
-		if (materialEdit) {
+		if (Object.keys(materialEdit).length > 0) {
 			setFormData(materialEdit)
 		}
 	}, [materialEdit])
