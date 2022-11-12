@@ -6,10 +6,14 @@ import styles from '../../styles/admin/Create.module.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { postMaterial } from '../../features/createMaterial/createMaterialSlice'
 import { updateMaterial } from '../../features/createMaterial/createMaterialSlice'
+import TextEditor from '../../components/TextEditor'
 
 const CreateMaterial = () => {
 	const dispatch = useDispatch()
 	const { materialEdit, edit } = useSelector(store => store.createMaterial)
+
+	const [contentValue, setContentValue] = useState('')
+	const [contentAccentsValue, setContentAccentsValue] = useState('')
 
 	const [formData, setFormData] = useState({
 		lang: 'ru',
@@ -25,6 +29,8 @@ const CreateMaterial = () => {
 		content: '',
 		content_accents: '',
 	})
+
+	console.log(formData)
 
 	const handleChange = e => {
 		const { name, value } = e.target
@@ -53,6 +59,16 @@ const CreateMaterial = () => {
 			setFormData(materialEdit)
 		}
 	}, [materialEdit])
+
+	useEffect(() => {
+		setFormData(prevData => ({ ...prevData, content: contentValue }))
+	}, [contentValue])
+	useEffect(() => {
+		setFormData(prevData => ({
+			...prevData,
+			content_accents: contentAccentsValue,
+		}))
+	}, [contentAccentsValue])
 
 	return (
 		<div className='wrapper-large'>
@@ -153,7 +169,7 @@ const CreateMaterial = () => {
 						name='chapter'
 					/>
 				</div>
-				<div className={styles.text}>
+				{/* <div className={styles.text}>
 					<textarea
 						name='content'
 						value={formData.content ?? ''}
@@ -166,8 +182,30 @@ const CreateMaterial = () => {
 						onChange={e => handleChange(e)}
 						placeholder='Content with accents'
 					/>
+				</div> */}
+				<div className={styles.text}>
+					<TextEditor
+						value={contentValue}
+						handleContentChange={setContentValue}
+					/>
+					<TextEditor
+						value={contentAccentsValue}
+						handleContentChange={setContentAccentsValue}
+					/>
+					{/* <ReactQuill
+						style={{
+							flexBasis: '50%',
+							height: '500px',
+							backgroundColor: 'white',
+						}}
+						name='content_accents'
+						theme='snow'
+						value={contentAccentsValue}
+						onChange={setContentAccentsValue}
+					/> */}
 				</div>
 				<input
+					style={{ margin: '4rem auto', width: '25%' }}
 					type='submit'
 					className='mainBtn'
 					value={`${edit ? 'Editer' : 'Envoyer'} `}
