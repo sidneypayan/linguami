@@ -17,7 +17,7 @@ import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
 import Player from '../../../../components/Player'
-import { editMaterial } from '../../../../features/createMaterial/createMaterialSlice'
+import { editContent } from '../../../../features/createContent/createContentSlice'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
@@ -31,9 +31,9 @@ const Material = ({ material: single_material }) => {
 	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
 
-	const handleEditMaterial = () => {
-		dispatch(editMaterial(single_material.id))
-		router.push('/admin/create-material')
+	const handleEditContent = () => {
+		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
+		router.push('/admin/create')
 	}
 
 	const getImageRegardingSection = section => {
@@ -174,7 +174,7 @@ const Material = ({ material: single_material }) => {
 						</button>
 						{isUserAdmin && (
 							<button
-								onClick={handleEditMaterial}
+								onClick={handleEditContent}
 								type='button'
 								id='show-accents'
 								className={`${styles.showAccentsBtn} mainBtn`}
@@ -186,14 +186,14 @@ const Material = ({ material: single_material }) => {
 						{showAccents ? (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
 								<Words
-									content={single_material.content_accents}
+									content={single_material.body_accents}
 									materialId={single_material.id}
 								/>
 							</p>
 						) : (
 							<p onClick={e => getCoordinates(e)} className={styles.text}>
 								<Words
-									content={single_material.content}
+									content={single_material.body}
 									materialId={single_material.id}
 								/>
 							</p>

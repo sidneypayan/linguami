@@ -35,7 +35,7 @@ const BlogCard = ({ post }) => {
 						<div className={styles.metaBox}>20-04-2021</div>
 						<p
 							dangerouslySetInnerHTML={{
-								__html: post.content.slice(0, 240) + '...',
+								__html: post.body.slice(0, 240) + '...',
 							}}></p>
 						<Link href={`/blog/${post.id}`}>
 							<button className={styles.blogCardBtn}>Lire plus &rarr;</button>

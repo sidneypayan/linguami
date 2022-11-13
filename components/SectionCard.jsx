@@ -87,18 +87,12 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					}`}>
 					<a href=''>
 						<h4 className={styles.title}>
-							{material.title_ru.length > 20
-								? material.title_ru.slice(0, 20) + '...'
-								: material.title_ru}
+							{material.title.length > 20
+								? material.title.slice(0, 20) + '...'
+								: material.title}
 						</h4>
 					</a>
 				</Link>
-
-				<h5 className={styles.titleTranslation}>
-					{material.title_ru.length > 20
-						? material.title_ru.slice(0, 20) + '...'
-						: material.title_ru}
-				</h5>
 			</div>
 			<div className={styles.icon}>
 				<FontAwesomeIcon

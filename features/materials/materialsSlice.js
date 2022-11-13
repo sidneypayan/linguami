@@ -164,7 +164,6 @@ const materialsSlice = createSlice({
 			resetPagination(state)
 		},
 		searchMaterial: (state, { payload }) => {
-			console.log(payload)
 			state.filtered_materials = state.materials.filter(item =>
 				item.title_ru.toLowerCase().includes(payload.toLowerCase())
 			)
