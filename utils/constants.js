@@ -21,3 +21,21 @@ export const materialData = {
 	body: '',
 	body_accents: '',
 }
+
+export const sectionsForAdmin = [
+	'dialogue',
+	'culture',
+	'legend',
+	'slice-of-life',
+	'place',
+	'podcast',
+	'book',
+	'short-story',
+	'trailer',
+	'extract',
+	'cartoon',
+	'eralash',
+	'galileo',
+	'diverse',
+	'music',
+]
