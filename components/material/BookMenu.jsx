@@ -13,7 +13,7 @@ const BookMenu = () => {
 					chapters.map(chapter => (
 						<Link key={chapter.id} href={`/materials/book/${chapter.id}`}>
 							<a>
-								<li>{chapter.title_ru}</li>
+								<li>{chapter.title}</li>
 							</a>
 						</Link>
 					))}

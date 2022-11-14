@@ -98,13 +98,13 @@ const CreateMaterial = () => {
 					<CreatePostForm
 						formData={formData}
 						handleChange={handleChange}
-						onChange={setBody}
+						// onChange={onChange}
 					/>
 				) : (
 					<CreateMaterialForm
 						formData={formData}
 						handleChange={handleChange}
-						onChange={setBodyAccents}
+						// onChange={onChange}
 					/>
 				)}
 				<Button
