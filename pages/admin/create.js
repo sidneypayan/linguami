@@ -7,7 +7,7 @@ import {
 	createContent,
 	updateContent,
 } from '../../features/createContent/createContentSlice'
-import { Button, Container } from '@mui/material'
+import { Button, Container, Stack } from '@mui/material'
 import { CreatePostForm, CreateMaterialForm } from '../../components'
 import { postData, materialData } from '../../utils/constants'
 import { toggleContentType } from '../../features/createContent/createContentSlice'
@@ -23,8 +23,6 @@ const CreateMaterial = () => {
 	const [formData, setFormData] = useState(materialData)
 	const [bodyValue, setBodyValue] = useState('')
 
-	console.log(formData)
-
 	const handleChange = e => {
 		const { name, value } = e.target
 
@@ -34,6 +32,7 @@ const CreateMaterial = () => {
 	}
 
 	const submitContent = e => {
+		console.log('ok')
 		e.preventDefault()
 		if (!edit && contentType !== 'posts') {
 			formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
@@ -46,6 +45,7 @@ const CreateMaterial = () => {
 
 		if (!edit) {
 			dispatch(createContent({ content: formData, contentType }))
+			setFormData(materialData)
 		} else {
 			dispatch(updateContent({ content: formData, contentType }))
 			router.back()
@@ -74,19 +74,27 @@ const CreateMaterial = () => {
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
-			<Button
-				onClick={() =>
-					dispatch(
-						toggleContentType(
-							contentType === 'materials' ? 'posts' : 'materials'
+			<Stack direction='row' mb={4} gap={2} justifyContent='space-between'>
+				<Button
+					onClick={() =>
+						dispatch(
+							toggleContentType(
+								contentType === 'materials' ? 'posts' : 'materials'
+							)
 						)
-					)
-				}
-				variant='contained'
-				sx={{ display: 'block', margin: '2rem auto' }}>
-				Create {contentType === 'materials' ? 'posts' : 'materials'}
-			</Button>
+					}
+					variant='contained'>
+					Create {contentType === 'materials' ? 'posts' : 'materials'}
+				</Button>
+			</Stack>
 			<form onSubmit={submitContent}>
+				<Button
+					type='submit'
+					variant='contained'
+					size='large'
+					sx={{ display: 'block', margin: '0 auto', marginBottom: '2rem' }}>
+					{edit ? 'EDIT' : 'CREATE'}
+				</Button>
 				{contentType === 'posts' ? (
 					<CreatePostForm
 						formData={formData}
@@ -96,13 +104,6 @@ const CreateMaterial = () => {
 				) : (
 					<CreateMaterialForm formData={formData} handleChange={handleChange} />
 				)}
-				<Button
-					type='submit'
-					variant='contained'
-					size='large'
-					sx={{ display: 'block', margin: '4rem auto' }}>
-					Envoyer
-				</Button>
 			</form>
 		</Container>
 	)

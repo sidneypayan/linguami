@@ -107,14 +107,14 @@ const CreateMaterialForm = ({ formData, handleChange, setBodyValue }) => {
 					value={formData.body ?? ''}
 					handleChange={handleChange}
 					name='body'
-					multiline='true'
+					multiline={true}
 				/>
 				<FormRow
 					label='Body accents'
 					value={formData.body_accents ?? ''}
 					handleChange={handleChange}
 					name='body_accents'
-					multiline='true'
+					multiline={true}
 				/>
 			</Box>
 		</>
