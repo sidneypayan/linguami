@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { FormRow, FormRowSelect, TextEditor } from '../components'
 import { lang } from '../utils/constants'
 
-const CreatePostForm = ({ formData, handleChange }) => {
+const CreatePostForm = ({ formData, handleChange, setBodyValue }) => {
 	return (
 		<>
 			<Box
@@ -48,7 +48,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 			</Box>
 
 			<Box>
-				<TextEditor value={formData.body ?? ''} handleChange={handleChange} />
+				<TextEditor value={formData.body ?? ''} setValue={setBodyValue} />
 			</Box>
 		</>
 	)

@@ -11,23 +11,23 @@ import { Button, Container } from '@mui/material'
 import { CreatePostForm, CreateMaterialForm } from '../../components'
 import { postData, materialData } from '../../utils/constants'
 import { toggleContentType } from '../../features/createContent/createContentSlice'
+import { useRouter } from 'next/router'
 
 const CreateMaterial = () => {
+	const router = useRouter()
 	const dispatch = useDispatch()
 	const { contentType, contentEdit, edit } = useSelector(
 		store => store.createContent
 	)
 
 	const [formData, setFormData] = useState(materialData)
-	const [body, setBody] = useState('')
-	const [bodyAccents, setBodyAccents] = useState('')
-
-	console.log(body)
+	const [bodyValue, setBodyValue] = useState('')
 
 	console.log(formData)
 
 	const handleChange = e => {
 		const { name, value } = e.target
+
 		setFormData(prev => {
 			return { ...prev, [name]: value }
 		})
@@ -35,35 +35,28 @@ const CreateMaterial = () => {
 
 	const submitContent = e => {
 		e.preventDefault()
-		// if (!edit) {
-		// 	formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
-		// 	formData.content_accents = formData.content_accents.replace(
-		// 		/(\r\n|\n|\r)/gm,
-		// 		'<br>'
-		// 	)
-		// 	dispatch(createContent(formData, contentType))
-		// } else {
-		//
-		// }
+		if (!edit && contentType !== 'posts') {
+			formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
+			formData.content_accents = formData.content_accents.replace(
+				/(\r\n|\n|\r)/gm,
+				'<br>'
+			)
+			dispatch(createContent(formData, contentType))
+		}
 
 		if (!edit) {
 			dispatch(createContent({ content: formData, contentType }))
 		} else {
 			dispatch(updateContent({ content: formData, contentType }))
+			router.back()
 		}
 	}
 
 	useEffect(() => {
 		setFormData(prev => {
-			return { ...prev, body: body }
+			return { ...prev, body: bodyValue }
 		})
-	}, [body])
-
-	useEffect(() => {
-		setFormData(prev => {
-			return { ...prev, body_accents: bodyAccents }
-		})
-	}, [bodyAccents])
+	}, [bodyValue])
 
 	useEffect(() => {
 		if (Object.keys(contentEdit).length > 0) {
@@ -98,14 +91,10 @@ const CreateMaterial = () => {
 					<CreatePostForm
 						formData={formData}
 						handleChange={handleChange}
-						// onChange={onChange}
+						setBodyValue={setBodyValue}
 					/>
 				) : (
-					<CreateMaterialForm
-						formData={formData}
-						handleChange={handleChange}
-						// onChange={onChange}
-					/>
+					<CreateMaterialForm formData={formData} handleChange={handleChange} />
 				)}
 				<Button
 					type='submit'

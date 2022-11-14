@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 
-const FormRow = ({ handleChange, label, value, name }) => {
+const FormRow = ({ handleChange, label, value, name, multiline = false }) => {
 	return (
 		<TextField
 			label={label}
@@ -9,6 +9,8 @@ const FormRow = ({ handleChange, label, value, name }) => {
 			onChange={handleChange}
 			name={name}
 			sx={{ backgroundColor: 'white' }}
+			multiline={multiline}
+			rows={20}
 		/>
 	)
 }

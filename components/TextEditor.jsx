@@ -1,11 +1,8 @@
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
 const ReactQuill = dynamic(import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
 
-const TextEditor = () => {
-	const [value, setValue] = useState('')
-
+const TextEditor = ({ setValue, value }) => {
 	const modules = {
 		toolbar: [
 			[{ header: [1, 2, false] }],
@@ -42,7 +39,7 @@ const TextEditor = () => {
 				backgroundColor: 'white',
 			}}
 			theme='snow'
-			editorValue={value}
+			value={value}
 			onChange={setValue}
 			modules={modules}
 			formats={formats}

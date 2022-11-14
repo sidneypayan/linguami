@@ -3,7 +3,7 @@ import { FormRow, FormRowSelect, TextEditor } from '.'
 import { allSections } from '../data/sections'
 import { lang, level } from '../utils/constants'
 
-const CreateMaterialForm = ({ formData, handleChange, setValue }) => {
+const CreateMaterialForm = ({ formData, handleChange, setBodyValue }) => {
 	return (
 		<>
 			<Box
@@ -102,8 +102,20 @@ const CreateMaterialForm = ({ formData, handleChange, setValue }) => {
 					gap: 1,
 					mb: 1,
 				}}>
-				<TextEditor value={formData.body ?? ''} onChange={setValue} />
-				<TextEditor value={formData.body_accents ?? ''} onChange={setValue} />
+				<FormRow
+					label='Body'
+					value={formData.body ?? ''}
+					handleChange={handleChange}
+					name='body'
+					multiline='true'
+				/>
+				<FormRow
+					label='Body accents'
+					value={formData.body_accents ?? ''}
+					handleChange={handleChange}
+					name='body_accents'
+					multiline='true'
+				/>
 			</Box>
 		</>
 	)
