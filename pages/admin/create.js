@@ -36,8 +36,8 @@ const CreateMaterial = () => {
 	const submitContent = e => {
 		e.preventDefault()
 		if (!edit && contentType !== 'posts') {
-			formData.content = formData.content.replace(/(\r\n|\n|\r)/gm, '<br>')
-			formData.content_accents = formData.content_accents.replace(
+			formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
+			formData.body_accents = formData.body_accents.replace(
 				/(\r\n|\n|\r)/gm,
 				'<br>'
 			)
