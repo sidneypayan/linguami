@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
-import { FormRow, FormRowSelect, TextEditor } from '.'
+import { FormRow, FormRowSelect } from '.'
 import { allSections } from '../data/sections'
 import { lang, level } from '../utils/constants'
 
-const CreateMaterialForm = ({ formData, handleChange, setBodyValue }) => {
+const CreateMaterialForm = ({ formData, handleChange }) => {
 	return (
 		<>
 			<Box

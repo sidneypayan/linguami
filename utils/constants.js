@@ -10,10 +10,10 @@ export const postData = {
 
 export const materialData = {
 	lang: 'ru',
-	section: 'dialogue',
+	section: '',
 	book_name: '',
 	book_chapter: '',
-	level: 'débutant',
+	level: '',
 	title: '',
 	img: '',
 	audio: '',

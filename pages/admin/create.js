@@ -1,27 +1,40 @@
 import { supabase } from '../../lib/supabase'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
+import { Button, Container, Stack } from '@mui/material'
+import { CreatePostForm, CreateMaterialForm } from '../../components'
 import {
 	createContent,
 	updateContent,
-} from '../../features/createContent/createContentSlice'
-import { Button, Container, Stack } from '@mui/material'
-import { CreatePostForm, CreateMaterialForm } from '../../components'
-import { postData, materialData } from '../../utils/constants'
-import { toggleContentType } from '../../features/createContent/createContentSlice'
+} from '../../features/content/contentSlice'
 import { useRouter } from 'next/router'
+import { materialData, postData } from '../../utils/constants'
 
 const CreateMaterial = () => {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { contentType, contentEdit, edit } = useSelector(
-		store => store.createContent
+	const { contentEdit, edit, create_content_error } = useSelector(
+		store => store.content
 	)
 
 	const [formData, setFormData] = useState(materialData)
 	const [bodyValue, setBodyValue] = useState('')
+	const [contentType, setContentType] = useState('materials')
+
+	const toggleContent = () => {
+		setContentType(prevValue =>
+			prevValue === 'materials' ? 'posts' : 'materials'
+		)
+		setFormData(contentType === 'materials' ? postData : materialData)
+	}
+
+	console.log(contentType)
+
+	useEffect(() => {
+		if (!create_content_error)
+			setFormData(contentType === 'materials' ? materialData : postData)
+	}, [create_content_error, contentType])
 
 	const handleChange = e => {
 		const { name, value } = e.target
@@ -32,7 +45,6 @@ const CreateMaterial = () => {
 	}
 
 	const submitContent = e => {
-		console.log('ok')
 		e.preventDefault()
 		if (!edit && contentType !== 'posts') {
 			formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
@@ -40,16 +52,14 @@ const CreateMaterial = () => {
 				/(\r\n|\n|\r)/gm,
 				'<br>'
 			)
-			dispatch(createContent(formData, contentType))
+			return dispatch(createContent({ content: formData, contentType }))
 		}
 
-		if (!edit) {
-			dispatch(createContent({ content: formData, contentType }))
-			setFormData(materialData)
-		} else {
-			dispatch(updateContent({ content: formData, contentType }))
-			router.back()
-		}
+		if (!edit && contentType === 'posts')
+			return dispatch(createContent({ content: formData, contentType }))
+
+		if (edit) return dispatch(updateContent({ content: formData, contentType }))
+		router.back()
 	}
 
 	useEffect(() => {
@@ -63,27 +73,19 @@ const CreateMaterial = () => {
 			return setFormData(contentEdit)
 		}
 
-		if (contentType === 'materials') {
-			setFormData(materialData)
-		}
+		// if (contentType === 'materials') {
+		// 	setFormData(materialData)
+		// }
 
-		if (contentType === 'posts') {
-			setFormData(postData)
-		}
-	}, [contentType, contentEdit])
+		// if (contentType === 'posts') {
+		// 	setFormData(postData)
+		// }
+	}, [contentEdit])
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
 			<Stack direction='row' mb={4} gap={2} justifyContent='space-between'>
-				<Button
-					onClick={() =>
-						dispatch(
-							toggleContentType(
-								contentType === 'materials' ? 'posts' : 'materials'
-							)
-						)
-					}
-					variant='contained'>
+				<Button onClick={toggleContent} variant='contained'>
 					Create {contentType === 'materials' ? 'posts' : 'materials'}
 				</Button>
 			</Stack>

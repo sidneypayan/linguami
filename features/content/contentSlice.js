@@ -6,18 +6,19 @@ const initialState = {
 	contentEdit: {},
 	contentType: 'materials',
 	edit: false,
+	create_content_error: true,
 }
 
 export const createContent = createAsyncThunk(
-	'createContent/createContent',
+	'content/createContent',
 	async ({ content, contentType }, thunkAPI) => {
-		const { error } = await supabase.from(contentType).insert([content])
+		const { error } = await supabase.from(contentType).insert(content)
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
 
 export const editContent = createAsyncThunk(
-	'createContent/editContent',
+	'content/editContent',
 	async ({ id, contentType }, thunkAPI) => {
 		const { data: content, error } = await supabase
 			.from(contentType)
@@ -31,9 +32,8 @@ export const editContent = createAsyncThunk(
 )
 
 export const updateContent = createAsyncThunk(
-	'createContent/updateContent',
+	'content/updateContent',
 	async ({ content, contentType }, thunkAPI) => {
-		console.log(content, contentType)
 		const { error } = await supabase
 			.from(contentType)
 			.update(content)
@@ -43,19 +43,20 @@ export const updateContent = createAsyncThunk(
 	}
 )
 
-const createContentSlice = createSlice({
-	name: 'createContent',
+const contentSlice = createSlice({
+	name: 'content',
 	initialState,
-	reducers: {
-		toggleContentType(state, { payload }) {
-			state.contentType = payload
-		},
-	},
+	reducers: {},
 	extraReducers: {
-		[createContent.fulfilled]: () => {
-			toast.success('POST SUCCESS !')
+		[createContent.pending]: state => {
+			state.create_content_error = true
 		},
-		[createContent.rejected]: (_, { payload }) => {
+		[createContent.fulfilled]: state => {
+			toast.success('POST SUCCESS !')
+			state.create_content_error = false
+		},
+		[createContent.rejected]: (state, { payload }) => {
+			state.create_content_error = true
 			toast.error(payload)
 		},
 		[editContent.fulfilled]: (state, { payload }) => {
@@ -77,5 +78,4 @@ const createContentSlice = createSlice({
 	},
 })
 
-export default createContentSlice.reducer
-export const { toggleContentType } = createContentSlice.actions
+export default contentSlice.reducer
