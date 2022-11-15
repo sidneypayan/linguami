@@ -7,7 +7,7 @@ import { useUserContext } from '../../../context/user'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Button } from '@mui/material'
-import { toggleContentType } from '../../../features/createContent/createContentSlice'
+import { toggleContentType } from '../../../features/content/contentSlice'
 import { useRouter } from 'next/router'
 
 const Post = ({ post }) => {

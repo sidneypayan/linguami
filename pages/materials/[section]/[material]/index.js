@@ -17,7 +17,7 @@ import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
 import Player from '../../../../components/Player'
-import { editContent } from '../../../../features/createContent/createContentSlice'
+import { editContent } from '../../../../features/content/contentSlice'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
