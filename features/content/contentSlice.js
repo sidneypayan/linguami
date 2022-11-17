@@ -46,7 +46,11 @@ export const updateContent = createAsyncThunk(
 const contentSlice = createSlice({
 	name: 'content',
 	initialState,
-	reducers: {},
+	reducers: {
+		toggleContentType: (state, { payload }) => {
+			state.contentType = payload
+		},
+	},
 	extraReducers: {
 		[createContent.pending]: state => {
 			state.create_content_error = true
@@ -79,3 +83,4 @@ const contentSlice = createSlice({
 })
 
 export default contentSlice.reducer
+export const { toggleContentType } = contentSlice.actions

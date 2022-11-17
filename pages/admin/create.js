@@ -7,6 +7,7 @@ import { CreatePostForm, CreateMaterialForm } from '../../components'
 import {
 	createContent,
 	updateContent,
+	toggleContentType,
 } from '../../features/content/contentSlice'
 import { useRouter } from 'next/router'
 import { materialData, postData } from '../../utils/constants'
@@ -14,17 +15,16 @@ import { materialData, postData } from '../../utils/constants'
 const CreateMaterial = () => {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { contentEdit, edit, create_content_error } = useSelector(
+	const { contentType, contentEdit, edit, create_content_error } = useSelector(
 		store => store.content
 	)
 
 	const [formData, setFormData] = useState(materialData)
 	const [bodyValue, setBodyValue] = useState('')
-	const [contentType, setContentType] = useState('materials')
 
 	const toggleContent = () => {
-		setContentType(prevValue =>
-			prevValue === 'materials' ? 'posts' : 'materials'
+		dispatch(
+			toggleContentType(contentType === 'materials' ? 'posts' : 'materials')
 		)
 		setFormData(contentType === 'materials' ? postData : materialData)
 	}
