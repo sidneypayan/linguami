@@ -205,6 +205,13 @@ img {
 	}
 }
 
+p > a {
+	text-decoration: underline;
+}
+p > a:hover {
+	font-weight: 500;
+}
+
 .white-wrapper {
 	position: relative;
 	width: 100%;

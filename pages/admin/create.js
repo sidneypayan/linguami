@@ -2,8 +2,12 @@ import { supabase } from '../../lib/supabase'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Container, Stack } from '@mui/material'
-import { CreatePostForm, CreateMaterialForm } from '../../components'
+import { Box, Button, Container, Stack } from '@mui/material'
+import {
+	CreatePostForm,
+	CreateMaterialForm,
+	TextEditor,
+} from '../../components'
 import {
 	createContent,
 	updateContent,
@@ -13,14 +17,14 @@ import { useRouter } from 'next/router'
 import { materialData, postData } from '../../utils/constants'
 
 const CreateMaterial = () => {
+	const [formData, setFormData] = useState(materialData)
+	const [value, setValue] = useState('')
+
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { contentType, contentEdit, edit, create_content_error } = useSelector(
 		store => store.content
 	)
-
-	const [formData, setFormData] = useState(materialData)
-	const [bodyValue, setBodyValue] = useState('')
 
 	const toggleContent = () => {
 		dispatch(
@@ -28,8 +32,6 @@ const CreateMaterial = () => {
 		)
 		setFormData(contentType === 'materials' ? postData : materialData)
 	}
-
-	console.log(contentType)
 
 	useEffect(() => {
 		if (!create_content_error)
@@ -64,23 +66,17 @@ const CreateMaterial = () => {
 
 	useEffect(() => {
 		setFormData(prev => {
-			return { ...prev, body: bodyValue }
+			return { ...prev, body: value }
 		})
-	}, [bodyValue])
+	}, [value])
 
 	useEffect(() => {
 		if (Object.keys(contentEdit).length > 0) {
 			return setFormData(contentEdit)
 		}
-
-		// if (contentType === 'materials') {
-		// 	setFormData(materialData)
-		// }
-
-		// if (contentType === 'posts') {
-		// 	setFormData(postData)
-		// }
 	}, [contentEdit])
+
+	console.log(formData)
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
@@ -98,11 +94,15 @@ const CreateMaterial = () => {
 					{edit ? 'EDIT' : 'CREATE'}
 				</Button>
 				{contentType === 'posts' ? (
-					<CreatePostForm
-						formData={formData}
-						handleChange={handleChange}
-						setBodyValue={setBodyValue}
-					/>
+					<>
+						<CreatePostForm formData={formData} handleChange={handleChange} />
+						<Box>
+							<TextEditor
+								value={edit ? formData.body : value}
+								setValue={setValue}
+							/>
+						</Box>
+					</>
 				) : (
 					<CreateMaterialForm formData={formData} handleChange={handleChange} />
 				)}
