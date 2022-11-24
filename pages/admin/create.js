@@ -72,11 +72,10 @@ const CreateMaterial = () => {
 
 	useEffect(() => {
 		if (Object.keys(contentEdit).length > 0) {
-			return setFormData(contentEdit)
+			setFormData(contentEdit)
+			setValue(contentEdit.body)
 		}
 	}, [contentEdit])
-
-	console.log(formData)
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
@@ -97,10 +96,7 @@ const CreateMaterial = () => {
 					<>
 						<CreatePostForm formData={formData} handleChange={handleChange} />
 						<Box>
-							<TextEditor
-								value={edit ? formData.body : value}
-								setValue={setValue}
-							/>
+							<TextEditor value={value} setValue={setValue} />
 						</Box>
 					</>
 				) : (
