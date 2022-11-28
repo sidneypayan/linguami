@@ -47,6 +47,21 @@ const CreatePostForm = ({ formData, handleChange, value }) => {
 					name='img'
 				/>
 			</Box>
+			<Box
+				sx={{
+					display: 'grid',
+					gridTemplateColumns: 'repeat(1, 1fr)',
+					gap: 1,
+					mb: 1,
+				}}>
+				<FormRow
+					label='Body'
+					value={formData.body ?? ''}
+					handleChange={handleChange}
+					name='body'
+					multiline={true}
+				/>
+			</Box>
 		</>
 	)
 }

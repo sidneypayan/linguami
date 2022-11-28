@@ -10,8 +10,15 @@ import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
 import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'
+import { useRouter } from 'next/router'
+
+import ru from '../../locales/ru'
+import fr from '../../locales/fr'
 
 const Navbar = () => {
+	const router = useRouter()
+	const { locale } = router
+	const t = locale === 'fr' ? fr : ru
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
 	const [isNavExpanded, setIsNavExpanded] = useState(false)
 
@@ -27,10 +34,10 @@ const Navbar = () => {
 						<li onClick={() => setIsNavExpanded(false)}>Accueil</li>
 					</Link>
 					<Link href='/materials'>
-						<li onClick={() => setIsNavExpanded(false)}>Materiel</li>
+						<li onClick={() => setIsNavExpanded(false)}>{t.material}</li>
 					</Link>
 					<Link href='/blog'>
-						<li onClick={() => setIsNavExpanded(false)}>Blog</li>
+						<li onClick={() => setIsNavExpanded(false)}>{t.blog}</li>
 					</Link>
 				</ul>
 

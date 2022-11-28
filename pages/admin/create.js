@@ -18,7 +18,7 @@ import { materialData, postData } from '../../utils/constants'
 
 const CreateMaterial = () => {
 	const [formData, setFormData] = useState(materialData)
-	const [value, setValue] = useState('')
+	// const [value, setValue] = useState('')
 
 	const router = useRouter()
 	const dispatch = useDispatch()
@@ -64,16 +64,16 @@ const CreateMaterial = () => {
 		router.back()
 	}
 
-	useEffect(() => {
-		setFormData(prev => {
-			return { ...prev, body: value }
-		})
-	}, [value])
+	// useEffect(() => {
+	// 	setFormData(prev => {
+	// 		return { ...prev, body: value }
+	// 	})
+	// }, [value])
 
 	useEffect(() => {
 		if (Object.keys(contentEdit).length > 0) {
 			setFormData(contentEdit)
-			setValue(contentEdit.body)
+			// setValue(contentEdit.body)
 		}
 	}, [contentEdit])
 
@@ -95,9 +95,9 @@ const CreateMaterial = () => {
 				{contentType === 'posts' ? (
 					<>
 						<CreatePostForm formData={formData} handleChange={handleChange} />
-						<Box>
+						{/* <Box>
 							<TextEditor value={value} setValue={setValue} />
-						</Box>
+						</Box> */}
 					</>
 				) : (
 					<CreateMaterialForm formData={formData} handleChange={handleChange} />

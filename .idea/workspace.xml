@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7d1009f0-a97d-4005-b254-6ba09958a5d5" name="Default Changelist" comment="" />
+    <list default="true" id="7d1009f0-a97d-4005-b254-6ba09958a5d5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/components/CreatePostForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/CreatePostForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/blog/BlogCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/blog/BlogCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/sections.js" beforeDir="false" afterPath="$PROJECT_DIR$/data/sections.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/create.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/create.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/blog/[id]/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/blog/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/blog/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/constants.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
   <component name="ProjectId" id="2F25mEMNdFnnm5nHh1m9Y32rgVh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -22,6 +40,7 @@
       <option name="presentableId" value="Default" />
       <updated>1663677498124</updated>
       <workItem from="1663677498580" duration="6000" />
+      <workItem from="1669532509918" duration="1000" />
     </task>
     <servers />
   </component>

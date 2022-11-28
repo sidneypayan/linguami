@@ -1,11 +1,7 @@
 import styles from '../../styles/blog/Posts.module.css'
 import BlogCard from '../../components/blog/BlogCard'
+import { supabase } from '../../lib/supabase'
 import Head from 'next/head'
-import { sortPostsByDate } from '../../utils/helpers'
-
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
 
 const Blog = ({ posts }) => {
 	return (
@@ -27,25 +23,17 @@ const Blog = ({ posts }) => {
 }
 
 export const getStaticProps = async () => {
-	const files = fs.readdirSync(path.join('posts'))
-
-	const posts = files.map(filename => {
-		const slug = filename.replace('.mdx', '')
-
-		const markdownWithMeta = fs.readFileSync(
-			path.join('posts', filename),
-			'utf-8'
-		)
-
-		const { data: frontmatter } = matter(markdownWithMeta)
-
-		return { slug, frontmatter }
-	})
+	const { data: posts, error } = await supabase
+		.from('posts')
+		.select('*')
+		.eq('lang', 'ru')
+		.order('id', { ascending: false })
 
 	return {
 		props: {
-			posts: posts.sort(sortPostsByDate),
+			posts,
 		},
+		revalidate: 60,
 	}
 }
 

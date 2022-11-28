@@ -30,6 +30,7 @@ export const sectionsForAdmin = [
 	'place',
 	'podcast',
 	'book',
+	'book-chapter',
 	'short-story',
 	'trailer',
 	'extract',
