@@ -2,7 +2,7 @@
 	position: sticky;
 	top: 0;
 	background-color: var(--navColor);
-	/* background-color: #a100f2; */
+	background-color: #4a148c;
 	height: 64px;
 	color: #fff;
 	z-index: 3;

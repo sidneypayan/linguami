@@ -1,17 +1,25 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-	reactStrictMode: true,
-	swcMinify: true,
-	images: {
-		domains: ['fxadatcycupiinjjdzpe.supabase.co'],
-	},
-	i18n: {
-		locales: ['fr', 'ru'],
-		defaultLocale: 'fr',
-	},
-}
+// /** @type {import('next').NextConfig} */
+// const nextTranslate = require('next-translate')
 
-module.exports = nextConfig
+// module.exports = nextTranslate({
+// 	webpack: (config, { isServer, webpack }) => {
+// 		return config
+// 	},
+// })
+
+// const nextConfig = {
+// 	reactStrictMode: true,
+// 	swcMinify: true,
+// 	images: {
+// 		domains: ['fxadatcycupiinjjdzpe.supabase.co'],
+// 	},
+// }
+
+// module.exports = nextConfig
+
+const nextTranslate = require('next-translate')
+
+module.exports = nextTranslate({})
 
 // const withMDX = require('@next/mdx')({
 // 	extension: /\.mdx?$/,

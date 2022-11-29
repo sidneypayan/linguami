@@ -1,104 +1,144 @@
-import Link from 'next/link'
-import styles from '../../styles/Navbar.module.css'
 import { useState } from 'react'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
 import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'
-import { useRouter } from 'next/router'
+import useTranslation from 'next-translate/useTranslation'
+import {
+	AppBar,
+	Avatar,
+	Box,
+	Button,
+	Container,
+	Divider,
+	Drawer,
+	IconButton,
+	Link,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+	Menu,
+	MenuItem,
+	Stack,
+	Toolbar,
+	Tooltip,
+	Typography,
+} from '@mui/material'
 
-import ru from '../../locales/ru'
-import fr from '../../locales/fr'
+import MenuIcon from '@mui/icons-material/Menu'
 
-const Navbar = () => {
-	const router = useRouter()
-	const { locale } = router
-	const t = locale === 'fr' ? fr : ru
+const drawerWidth = '80%'
+const navigationLinks = [
+	{ name: 'matériels', href: '/material' },
+	{ name: 'blog', href: '/blog' },
+]
+
+const Navbar = props => {
+	const { t, lang } = useTranslation()
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
-	const [isNavExpanded, setIsNavExpanded] = useState(false)
 
-	const handleClick = type => {
-		setIsNavExpanded(!isNavExpanded)
+	const { window } = props
+	const [mobileOpen, setMobileOpen] = useState(false)
+
+	const handleDrawerToggle = () => {
+		setMobileOpen(!mobileOpen)
 	}
 
+	const drawer = (
+		<Box
+			onClick={handleDrawerToggle}
+			sx={{ textAlign: 'center', bgcolor: '#4a148c' }}>
+			<List sx={{ color: '#fff' }}>
+				{navigationLinks.map(link => (
+					<ListItem key={link.name} disablePadding>
+						<ListItemButton href={link.href} sx={{ textAlign: 'center' }}>
+							<ListItemText primary={link.name} />
+						</ListItemButton>
+					</ListItem>
+				))}
+			</List>
+
+			<Box sx={{ bgcolor: '#4a148c', height: '100vh' }}>
+				<Button variant='outlined' href='/login' sx={{ marginRight: '2rem' }}>
+					{t('common:signin')}
+				</Button>
+
+				<Button variant='contained' href='/register' sx={{ bgcolor: 'purple' }}>
+					{t('common:register')}
+				</Button>
+			</Box>
+		</Box>
+	)
+
+	const container =
+		window !== undefined ? () => window().document.body : undefined
+
 	return (
-		<nav className={styles.nav}>
-			<div className={`${styles.container} ${isNavExpanded && styles.show}`}>
-				<ul className={styles.menuContainer}>
-					<Link href='/'>
-						<li onClick={() => setIsNavExpanded(false)}>Accueil</li>
-					</Link>
-					<Link href='/materials'>
-						<li onClick={() => setIsNavExpanded(false)}>{t.material}</li>
-					</Link>
-					<Link href='/blog'>
-						<li onClick={() => setIsNavExpanded(false)}>{t.blog}</li>
-					</Link>
-				</ul>
+		<Box sx={{ display: 'flex' }}>
+			<AppBar
+				component='nav'
+				sx={{
+					bgcolor: 'secondaryPurple',
+				}}>
+				<Toolbar>
+					<IconButton
+						color='inherit'
+						aria-label='open drawer'
+						edge='start'
+						onClick={handleDrawerToggle}
+						sx={{ mr: 2, display: { sm: 'none' } }}>
+						<MenuIcon />
+					</IconButton>
 
-				{isUserLoggedIn ? (
-					<UserMenu />
-				) : (
-					<div className={styles.btnContainer}>
-						<Link href='/login'>
-							<button
-								onClick={handleClick}
-								className={`mainBtn ${styles.btn} ${styles.loginBtn}`}>
-								Se connecter
-							</button>
-						</Link>
+					<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+						{navigationLinks.map(link => (
+							<Button href={link.href} key={link.name} sx={{ color: '#fff' }}>
+								{link.name}
+							</Button>
+						))}
+					</Box>
 
-						<Link href='/register'>
-							<button
-								onClick={handleClick}
-								className={`mainBtn login ${styles.btn} ${styles.registerBtn}`}>
-								S&apos;inscrire
-							</button>
-						</Link>
-					</div>
-				)}
+					<Box
+						sx={{
+							display: { xs: 'none', sm: 'flex' },
+							marginLeft: 'auto',
+							gap: '1rem',
+						}}>
+						<Button sx={{ color: '#fff' }} variant='outlined' href='/login'>
+							{t('common:signin')}
+						</Button>
 
-				{isNavExpanded && (
-					<FontAwesomeIcon
-						onClick={() => setIsNavExpanded(!isNavExpanded)}
-						className={styles.mobileIconClose}
-						icon={faXmark}
-						size='xl'
-					/>
-				)}
-			</div>
-			{!isNavExpanded && (
-				<div className={styles.educationalMenuContainer}>
-					{isUserLoggedIn && (
-						<ul>
-							<Link href='/dictionary'>
-								<li>
-									<GiBookmarklet />
-									<span>Mon dictionnaire</span>
-								</li>
-							</Link>
-							<Link href='/my-materials'>
-								<li>
-									<HiOutlineAcademicCap />
-									<span>Mes matériels</span>
-								</li>
-							</Link>
-						</ul>
-					)}
-					<FontAwesomeIcon
-						onClick={() => setIsNavExpanded(!isNavExpanded)}
-						className={styles.mobileIconOpen}
-						icon={faBars}
-						size='xl'
-					/>
-				</div>
-			)}
-		</nav>
+						<Button
+							variant='contained'
+							href='/register'
+							sx={{ bgcolor: 'purple' }}>
+							{t('common:register')}
+						</Button>
+					</Box>
+				</Toolbar>
+			</AppBar>
+
+			<Box component='nav'>
+				<Drawer
+					container={container}
+					variant='temporary'
+					open={mobileOpen}
+					onClose={handleDrawerToggle}
+					ModalProps={{
+						keepMounted: true, // Better open performance on mobile.
+					}}
+					sx={{
+						display: { xs: 'block', sm: 'none' },
+						'& .MuiDrawer-paper': {
+							boxSizing: 'border-box',
+							width: drawerWidth,
+						},
+					}}>
+					{drawer}
+				</Drawer>
+			</Box>
+		</Box>
 	)
 }
 

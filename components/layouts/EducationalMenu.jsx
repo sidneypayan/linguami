@@ -4,8 +4,10 @@ import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import useTranslation from 'next-translate/useTranslation'
 
 const EducationalMenu = () => {
+	const { t, lang } = useTranslation()
 	const containerRef = useRef()
 	const [isMenuOpen, setIsMenuOpen] = useState(null)
 
@@ -31,13 +33,13 @@ const EducationalMenu = () => {
 					<Link href='/dictionary'>
 						<li>
 							<GiBookmarklet />
-							<span>Mon dictionnaire</span>
+							<span>{t('common:mydictionary')}</span>
 						</li>
 					</Link>
 					<Link href='/my-materials'>
 						<li>
 							<HiOutlineAcademicCap />
-							<span>Mes matériels</span>
+							<span>{t('common:materials')}</span>
 						</li>
 					</Link>
 				</ul>

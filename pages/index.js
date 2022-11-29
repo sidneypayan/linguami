@@ -4,7 +4,7 @@ import Script from 'next/script'
 
 export default function Home() {
 	return (
-		<div>
+		<>
 			<Head>
 				<title>Linguami | Page d&apos;accueil</title>
 				<meta
@@ -13,7 +13,6 @@ export default function Home() {
 				/>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-
 			<Script
 				strategy='afterInteractive'
 				src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
@@ -31,8 +30,7 @@ export default function Home() {
   `,
 				}}
 			/>
-
 			<Homepage />
-		</div>
+		</>
 	)
 }

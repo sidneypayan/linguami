@@ -102,8 +102,8 @@ body {
 	/* font-family: 'Montserrat', sans-serif; */
 	position: relative;
 	font-family: 'Open Sans', sans-serif;
-	background-color: var(--backgroundColor);
-	/* background-color: #fff; */
+	/* background-color: var(--backgroundColor); */
+	background-color: #fff;
 	color: var(--primaryTextColor);
 	color: #555;
 	line-height: 1.5rem;
@@ -116,6 +116,7 @@ h4,
 h5,
 h6 {
 	color: var(--primaryBtnColor);
+	color: #9c27b0;
 }
 
 h1 {
@@ -163,6 +164,14 @@ img {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.hr-custom {
+	height: 10px;
+	width: 350px;
+	border-radius: 50px;
+	background-color: #9c27b0;
+	margin: 3rem auto;
 }
 
 .beginner {

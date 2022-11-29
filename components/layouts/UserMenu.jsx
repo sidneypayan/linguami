@@ -10,8 +10,10 @@ import {
 import { useUserContext } from '../../context/user.js'
 import { useState, useEffect, useRef } from 'react'
 import styles from '../../styles/UserMenu.module.css'
+import useTranslation from 'next-translate/useTranslation'
 
 const UserMenu = () => {
+	const { t, lang } = useTranslation()
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const { user, userProfile, logout } = useUserContext()
 
@@ -50,11 +52,11 @@ const UserMenu = () => {
 					<ul>
 						<li>
 							<FontAwesomeIcon icon={faGear} size='lg' />
-							<span>Réglages</span>
+							<span>{t('common:settings')}</span>
 						</li>
 						<li>
 							<FontAwesomeIcon icon={faRightFromBracket} size='lg' />
-							<span onClick={() => logout()}>Se déconnecter</span>
+							<span onClick={() => logout()}>{t('common:logout')}</span>
 						</li>
 					</ul>
 				</div>

@@ -7,13 +7,17 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
+	Button,
+	Container,
 	Divider,
+	Grid,
 	styled,
 	Typography,
 } from '@mui/material'
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Stack } from '@mui/system'
+import useTranslation from 'next-translate/useTranslation'
 
 const StyledStack = styled(Stack)(({ theme }) => ({
 	justifyContent: 'space-between',
@@ -26,121 +30,210 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 		alignItems: 'center',
 	},
 }))
+const StyledGridItem = styled(Grid)({
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	gap: '1rem',
+	textAlign: 'center',
+	marginBottom: '2rem',
+})
 
 const Homepage = () => {
+	const { t, lang } = useTranslation()
+
+	const multimedia = [
+		{
+			img: '/img/video.png',
+			title: t('home:video'),
+			subtitle: t('home:videosubtitle'),
+		},
+		{
+			img: '/img/audio.png',
+			title: t('home:audio'),
+			subtitle: t('home:audiosubtitle'),
+		},
+		{
+			img: '/img/text.png',
+			title: t('home:text'),
+			subtitle: t('home:textsubtitle'),
+		},
+		{
+			img: '/img/dictionary.png',
+			title: t('home:dictionary'),
+			subtitle: t('home:dictionarysubtitle'),
+		},
+		{
+			img: '/img/flashcards.png',
+			title: t('home:flashcards'),
+			subtitle: t('home:flashcardssubtitle'),
+		},
+	]
+
 	return (
 		<>
 			<Hero />
-			<div className={styles.container}>
-				<h3 className='headline'>Apprentissage multisupport</h3>
-				<div className={styles.ressourceContainer}>
-					<div className={styles.ressourceItem}>
-						<Image
-							layout='fixed'
-							src='/img/video.png'
-							alt='video'
-							width={100}
-							height={100}
-						/>
-						<h4>Video</h4>
-						<p>
-							Extraits de films, bandes-annonces, clips musicaux, découvrez nos
-							ressources vidéos pour apprendre tout en vous divertissant.
-						</p>
-					</div>
+			<Container width={1440} sx={{ marginTop: '5rem' }}>
+				<Typography variant='h3' align='center'>
+					{t('home:multimedia')}
+				</Typography>
+				<div className='hr-custom'></div>
+				<Grid
+					container
+					justifyContent='space-between'
+					alignItems='center'
+					m='4rem auto'>
+					{multimedia.map((icon, index) => (
+						<StyledGridItem key={index} item xs={6} sm={4} lg={2}>
+							<Image
+								layout='fixed'
+								src={icon.img}
+								alt='video'
+								width={75}
+								height={75}
+							/>
+							<Typography variant='h5'>{icon.title}</Typography>
+							<Typography variant='subtitle' color='primaryGrey'>
+								{icon.subtitle}
+							</Typography>
+						</StyledGridItem>
+					))}
+				</Grid>
 
-					<div className={styles.ressourceItem}>
-						<Image
-							layout='fixed'
-							src='/img/audio.png'
-							alt='audio'
-							width={100}
-							height={100}
+				<Stack
+					sx={{
+						width: '1000px',
+						maxWidth: '100%',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+						padding: '4rem',
+						borderRadius: '3px',
+						gap: '1.5rem',
+						margin: '0 auto',
+						marginTop: '5rem',
+					}}>
+					<Box
+						width='50%'
+						minWidth={175}
+						sx={{
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+						}}>
+						<Box
+							component='img'
+							src='/img/translator.png'
+							alt='translator'
+							width={175}
+							height={175}
 						/>
-						<h4>Audio</h4>
-						<p>
-							Dialogues, chansons, audiobooks, évadez-vous avec nos contenus
-							audio.
-						</p>
-					</div>
-					<div className={styles.ressourceItem}>
-						<Image
-							layout='fixed'
-							src='/img/text.png'
-							alt='text'
-							width={100}
-							height={100}
-						/>
-						<h4>Textes</h4>
-						<p>
-							Découvrez nos textes sur la culture, les mythes et légendes,
-							plongez vous dans des histoires toutes plus passionantes les unes
-							que les autres.
-						</p>
-					</div>
-				</div>
+					</Box>
 
-				<div className={`${styles.ctaContainer} + ${styles.ctaContainerWhite}`}>
-					<div className={styles.ctaContainerText}>
-						<h3 className='headline'>Apprendre avec un locuteur natif</h3>
-						<p>
+					<Stack gap='1rem'>
+						<Typography variant='h4' align='center'>
+							Outlil de traduction intégré
+						</Typography>
+						<Typography variant='subtitle' color='primaryGrey' align='center'>
+							Inscrivez-vous et traduisez n&apos;importe quel mot de
+							n&apos;importe quel texte
+						</Typography>
+						<Link href='/register'>
+							<Button
+								variant='contained'
+								size='large'
+								sx={{
+									width: '200px',
+									display: 'block',
+									margin: '0 auto',
+									bgcolor: 'primaryPurple',
+									marginTop: '1rem',
+								}}>
+								S&apos;inscrire
+							</Button>
+						</Link>
+					</Stack>
+				</Stack>
+
+				<Stack
+					sx={{
+						width: '1000px',
+						maxWidth: '100%',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+						padding: '4rem',
+						borderRadius: '3px',
+						gap: '1.5rem',
+						margin: '0 auto',
+						marginTop: '5rem',
+					}}>
+					<Stack gap='1rem'>
+						<Typography variant='h4' align='center'>
+							Apprendre avec un locuteur natif
+						</Typography>
+						<Typography variant='subtitle' color='primaryGrey' align='center'>
 							Prenez des cours à distance avec un professeur diplômé et
 							bénéfissiez d&apos;un apprentissage personnalisé.
-						</p>
+						</Typography>
 						<Link href='/teacher'>
-							<button className={`${styles.btn} mainBtn`}>Commencez !</button>
+							<Button
+								variant='contained'
+								size='large'
+								sx={{
+									width: '200px',
+									display: 'block',
+									margin: '0 auto',
+									marginTop: '1rem',
+									bgcolor: 'primaryPurple',
+								}}>
+								Commencez !
+							</Button>
 						</Link>
-					</div>
-					<div className={styles.imgContainer}>
-						<Image
+					</Stack>
+					<Box
+						width='50%'
+						minWidth={175}
+						sx={{
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+						}}>
+						<Box
+							component='img'
 							src='/img/teacher.png'
 							alt='teacher'
 							width={175}
 							height={175}
 						/>
-					</div>
-				</div>
+					</Box>
+				</Stack>
 
-				<div className={styles.ctaContainer}>
-					<div className={styles.imgContainer}>
-						<Image
-							src='/img/translator.png'
-							alt='translate'
-							width={175}
-							height={175}
-						/>
-					</div>
+				{/* ACCORDION */}
 
-					<div className={styles.ctaContainerText}>
-						<h3 className='headline'>Outlil de traduction intégré</h3>
-						<p>
-							Inscrivez-vous et traduisez n&apos;importe quel mot de
-							n&apos;importe quel texte
-						</p>
-						<Link href='/register'>
-							<button className={`${styles.btn} mainBtn`}>
-								S&apos;inscrire
-							</button>
-						</Link>
-					</div>
-				</div>
-				<Divider sx={{ width: '50%', margin: '3rem auto' }}></Divider>
-				<h2 style={{ marginTop: '4rem' }}>
+				<Typography variant='h4' align='center' mt='8rem'>
 					Comment utiliser le système de traduction
-				</h2>
+				</Typography>
+				<div className='hr-custom'></div>
 				<div className='wrapper-small'>
 					<Accordion>
 						<AccordionSummary
 							expandIcon={<ExpandMoreIcon />}
 							aria-controls='panel1a-content'
 							id='panel1a-header'>
-							<Typography variant='h6'>
+							<Typography variant='h6' color='primaryGrey'>
 								Traduire les mots des materiels
 							</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
 							<StyledStack>
-								<Typography maxWidth='350px' textAlign='left' mt={5}>
+								<Typography
+									variant='body1'
+									maxWidth='350px'
+									textAlign='left'
+									mt={5}>
 									Traduisez n&apos;importe quel mot d&apos;un simple clique
 								</Typography>
 								<Divider orientation='vertical'></Divider>
@@ -160,7 +253,7 @@ const Homepage = () => {
 							expandIcon={<ExpandMoreIcon />}
 							aria-controls='panel1a-content'
 							id='panel1a-header'>
-							<Typography variant='h6'>
+							<Typography variant='h6' color='primaryGrey'>
 								Ajouter une traduction à son dictionnaire
 							</Typography>
 						</AccordionSummary>
@@ -182,7 +275,7 @@ const Homepage = () => {
 						</AccordionDetails>
 					</Accordion>
 				</div>
-			</div>
+			</Container>
 		</>
 	)
 }
