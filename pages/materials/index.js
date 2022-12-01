@@ -2,6 +2,7 @@ import styles from '../../styles/materials/Materials.module.css'
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
 import { materials } from '../../data/materials'
 import Head from 'next/head'
+import { Container, Typography } from '@mui/material'
 
 const Material = () => {
 	const textes = materials.filter(
@@ -18,12 +19,12 @@ const Material = () => {
 					content='Apprenez le russe grâce à nos sections variées et interactives. Dialogues, livres audio, extraits de films, chansons et bien plus encore vous permettront de travailler sur la langue russe de manière ludique et efficace.'
 				/>
 			</Head>
-			<div className={styles.container}>
-				<h4 className={styles.carouselTitle}>Textes & Audio</h4>
+			<div style={{ margin: '10rem auto' }} className={styles.container}>
+				<Typography variant='h5'>Textes & Audio</Typography>
 				<MaterialsCarousel materials={textes} />
-				<h4 className={styles.carouselTitle}>Vidéos</h4>
+				<Typography variant='h5'>Vidéos</Typography>
 				<MaterialsCarousel materials={video} />
-				<h4 className={styles.carouselTitle}>Musique</h4>
+				<Typography variant='h5'>Musique</Typography>
 				<MaterialsCarousel materials={music} />
 			</div>
 		</>

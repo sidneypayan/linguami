@@ -14,7 +14,17 @@ import {
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
 import { useRouter } from 'next/router'
+import {
+	Box,
+	Card,
+	CardActionArea,
+	CardContent,
+	CardMedia,
+	Stack,
+	Typography,
+} from '@mui/material'
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
+	const title = material.title
 	const router = useRouter()
 	const { section } = router.query
 
@@ -52,58 +62,152 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 		return icon
 	}
 
+	console.log(material.title)
+
 	return (
-		<div className={styles.container}>
-			{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-				checkIfUserMaterialIsInMaterials.is_being_studied && (
-					<FontAwesomeIcon icon={faClock} className={styles.beingStudiedCard} />
-				)}
-			{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-				checkIfUserMaterialIsInMaterials.is_studied && (
-					<FontAwesomeIcon
-						icon={faCircleCheck}
-						className={styles.studiedCard}
-					/>
-				)}
-			<div className={styles.imgContainer}>
-				<Link
-					href={`/materials/${material.section}/${
-						section === 'book' ? material.id + 1 : material.id
-					}`}>
-					<Image
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
-						layout='fill'
-						objectFit='cover'
-						quality={100}
-						alt={material.title}
-						loading='eager'
-					/>
-				</Link>
-			</div>
-			<div className={styles.textContainer}>
-				<Link
-					href={`/materials/${material.section}/${
-						section === 'book' ? material.id + 1 : material.id
-					}`}>
-					<a href=''>
-						<h4 className={styles.title}>
-							{material.title.length > 20
-								? material.title.slice(0, 20) + '...'
-								: material.title}
-						</h4>
-					</a>
-				</Link>
-			</div>
-			<div className={styles.icon}>
-				<FontAwesomeIcon
-					icon={changeIconRegardingSection(material.section)}
-					size='2xl'
+		// <Card
+		// 	sx={{
+		// 		display: 'flex',
+		// 		backgroundColor: '#fafafa',
+		// 		justifyContent: 'space-between',
+		// 		width: '50%',
+		// 		margin: '0 auto',
+		// 		boxShadow: '0px 5px 10px -3px rgba(0, 0, 0, 0.1)',
+		// 	}}>
+		// 	{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+		// 		checkIfUserMaterialIsInMaterials.is_being_studied && (
+		// 			<FontAwesomeIcon icon={faClock} className={styles.beingStudiedCard} />
+		// 		)}
+		// 	{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+		// 		checkIfUserMaterialIsInMaterials.is_studied && (
+		// 			<FontAwesomeIcon
+		// 				icon={faCircleCheck}
+		// 				className={styles.studiedCard}
+		// 			/>
+		// 		)}
+		// 	<Box>
+		// 		<Link
+		// 			href={`/materials/${material.section}/${
+		// 				section === 'book' ? material.id + 1 : material.id
+		// 			}`}>
+		// 			<Box
+		// 				minHeight={135}
+		// 				minWidth={135}
+		// 				component='img'
+		// 				sx={{
+		// 					borderBottomLeftRadius: '3px',
+		// 					borderTopLeftRadius: '3px',
+		// 					cursor: 'pointer',
+		// 				}}
+		// 				src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
+		// 				alt={material.title}
+		// 			/>
+		// 		</Link>
+		// 	</Box>
+
+		// 	<Stack sx={{ padding: '2rem 1.5rem', marginRight: 'auto' }}>
+		// 		<Link
+		// 			href={`/materials/${material.section}/${
+		// 				section === 'book' ? material.id + 1 : material.id
+		// 			}`}>
+		// 			<Typography variant='h6' color='#0C509A' sx={{ cursor: 'pointer' }}>
+		// 				{material.title.length > 20
+		// 					? material.title.slice(0, 20) + '...'
+		// 					: material.title}
+		// 			</Typography>
+		// 		</Link>
+
+		// 		<Stack direction='row' gap={1}>
+		// 			<Typography variant='small' color='#0C509A'>
+		// 				{material.section}
+		// 			</Typography>
+		// 			<Typography variant='small' color='#0C509A'>
+		// 				{material.level}
+		// 			</Typography>
+		// 		</Stack>
+		// 	</Stack>
+		// 	<div className={styles.icon}>
+		// 		<FontAwesomeIcon
+		// 			icon={changeIconRegardingSection(material.section)}
+		// 			size='2xl'
+		// 		/>
+		// 	</div>
+		// 	<span className={changeBackgroundColorRegardingLevel(material.level)}>
+		// 		{changeLevelName(material.level)}
+		// 	</span>
+		// </Card>
+		<CardActionArea
+			href={`/materials/${material.section}/${
+				section === 'book' ? material.id + 1 : material.id
+			}`}>
+			<Card
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					height: 135,
+					boxShadow: 'none',
+					backgroundColor: '#f5f5f5',
+				}}>
+				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+					checkIfUserMaterialIsInMaterials.is_being_studied && (
+						<FontAwesomeIcon
+							icon={faClock}
+							className={styles.beingStudiedCard}
+						/>
+					)}
+				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+					checkIfUserMaterialIsInMaterials.is_studied && (
+						<FontAwesomeIcon
+							icon={faCircleCheck}
+							className={styles.studiedCard}
+						/>
+					)}
+				<CardMedia
+					component='img'
+					sx={{ width: 135, height: 135, margin: 0 }}
+					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
+					alt='Live from space album cover'
 				/>
-			</div>
-			<span className={changeBackgroundColorRegardingLevel(material.level)}>
-				{changeLevelName(material.level)}
-			</span>
-		</div>
+
+				<CardContent
+					sx={{
+						width: '100%',
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+					}}>
+					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						<Typography component='div' variant='h5' color='#424242'>
+							{material.title}
+						</Typography>
+
+						<Box sx={{ display: 'flex', gap: 1 }}>
+							<Typography
+								variant='subtitle1'
+								component='div'
+								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								{material.section}
+							</Typography>
+							<Typography
+								variant='subtitle1'
+								component='div'
+								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								{material.level}
+							</Typography>
+						</Box>
+					</Box>
+					<Box sx={{ justifySelf: 'end', color: 'clrGrey2' }}>
+						<FontAwesomeIcon
+							icon={changeIconRegardingSection(material.section)}
+							size='2xl'
+						/>
+					</Box>
+				</CardContent>
+				<span className={changeBackgroundColorRegardingLevel(material.level)}>
+					{changeLevelName(material.level)}
+				</span>
+			</Card>
+		</CardActionArea>
 	)
 }
 

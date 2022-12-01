@@ -1,10 +1,10 @@
 .container {
 	position: relative;
 	max-height: 135px;
-	background-color: var(--white);
 	border-radius: 3px;
 	display: flex;
-	align-items: center;
+	background-color: #fafafa;
+	box-shadow: 0px 5px 10px -3px rgba(0, 0, 0, 0.1);
 	justify-content: space-between;
 }
 
@@ -37,7 +37,10 @@
 }
 
 .textContainer {
-	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	padding-left: 1rem;
 	flex: 2;
 }
 
@@ -53,12 +56,20 @@
 	color: var(--primaryBtnColor);
 }
 
+.subtitle {
+	display: flex;
+	gap: 0.5rem;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
 .titleTranslation {
 	font-size: 1rem;
 	color: var(--navColor);
 }
 
 .icon {
+	align-self: center;
 	padding-right: 2rem;
 	color: var(--primaryBtnColor);
 }

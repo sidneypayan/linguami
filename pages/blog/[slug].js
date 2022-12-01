@@ -5,20 +5,19 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import fs from 'fs'
 import path from 'path'
+import { Container, Typography } from '@mui/material'
 
 const Post = ({ frontmatter: { title, date, img }, slug, content }) => {
-	// if (!content || !title || !date || !img || !slug) {
-	// 	return <h1>Loading...</h1>
-	// }
-
 	return (
 		<>
 			<Head>
 				<title>{title}</title>
 				{/* <meta name='description' content={description} /> */}
 			</Head>
-			<div className={styles.container}>
-				<h1>{title}</h1>
+			<Container maxWidth='md' sx={{ margin: '10rem auto' }}>
+				<Typography variant='h1' align='center'>
+					{title}
+				</Typography>
 				<div className={styles.imgContainer}>
 					<Image
 						layout='fill'
@@ -32,7 +31,7 @@ const Post = ({ frontmatter: { title, date, img }, slug, content }) => {
 				<p
 					style={{ lineHeight: '2rem' }}
 					dangerouslySetInnerHTML={{ __html: marked(content) }}></p>
-			</div>
+			</Container>
 		</>
 	)
 }

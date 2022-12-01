@@ -12,9 +12,16 @@ import { purple, grey } from '@mui/material/colors'
 function MyApp({ Component, pageProps }) {
 	const myTheme = createTheme({
 		palette: {
-			primaryPurple: purple[500],
+			clrPrimary1: '#432874',
+			clrPrimary2: '#432879',
+			clrPrimary3: '#4f2a93',
+			clrBtn1: '#4f2a93',
+			clrBtn2: '#0056BB',
 			secondaryPurple: purple[900],
-			primaryGrey: grey[600],
+			clrGrey1: grey[800],
+			clrGrey2: grey[700],
+			clrGrey3: grey[600],
+			clrGrey4: grey[500],
 			// primaryGrey: '#7e919f',
 		},
 	})

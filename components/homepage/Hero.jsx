@@ -13,7 +13,7 @@ const Hero = () => {
 				position: 'relative',
 				padding: '5rem 0',
 				backgroundImage:
-					'linear-gradient(to bottom, #4a148c, #531690, #5d1895, #661a99, #6f1c9d, #761ea0, #7c1fa3, #8321a6, #8922a9, #9024ab, #9625ae, #9c27b0)',
+					'linear-gradient(to bottom, #432874, #432875, #432876, #432877, #432878, #44287a, #45297d, #46297f, #482984, #4a2a89, #4d2a8e, #4f2a93)',
 			}}>
 			<Stack
 				direction='row'
@@ -44,7 +44,7 @@ const Hero = () => {
 							l&apos;entraide et l&apos;amitié entre les peuples.
 						</span> */}
 					</Typography>
-					<Link href='/materials'>
+					{/* <Link href='/materials'>
 						<Button
 							variant='contained'
 							size='large'
@@ -52,11 +52,11 @@ const Hero = () => {
 								display: 'block',
 								margin: '0 auto',
 								marginTop: '2rem',
-								bgcolor: 'primaryPurple',
+								bgcolor: '#4a148c',
 							}}>
 							{t('home:start')}
 						</Button>
-					</Link>
+					</Link> */}
 				</Box>
 
 				<Box
@@ -74,6 +74,7 @@ const Hero = () => {
 					}}
 				/>
 			</Stack>
+
 			<div className={styles.wave}>
 				<svg
 					data-name='Layer 1'
@@ -81,7 +82,7 @@ const Hero = () => {
 					viewBox='0 0 1200 120'
 					preserveAspectRatio='none'>
 					<path
-						d='M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z'
+						d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z'
 						className={styles.shapeFill}></path>
 				</svg>
 			</div>

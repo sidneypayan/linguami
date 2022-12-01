@@ -55,13 +55,14 @@
 	width: 100%;
 	overflow: hidden;
 	line-height: 0;
+	transform: rotate(180deg);
 }
 
 .wave svg {
 	position: relative;
 	display: block;
-	width: calc(155% + 1.3px);
-	height: 150px;
+	width: calc(150% + 1.3px);
+	height: 100px;
 }
 
 .wave .shapeFill {

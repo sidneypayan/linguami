@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import styles from '../../styles/Homepage.module.css'
 import Hero from './Hero'
 import Link from 'next/link'
 import {
@@ -147,7 +146,7 @@ const Homepage = () => {
 									width: '200px',
 									display: 'block',
 									margin: '0 auto',
-									bgcolor: 'primaryPurple',
+									bgcolor: 'clrBtn1',
 									marginTop: '1rem',
 								}}>
 								S&apos;inscrire
@@ -186,7 +185,7 @@ const Homepage = () => {
 									display: 'block',
 									margin: '0 auto',
 									marginTop: '1rem',
-									bgcolor: 'primaryPurple',
+									bgcolor: 'clrBtn1',
 								}}>
 								Commencez !
 							</Button>

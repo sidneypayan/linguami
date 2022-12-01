@@ -1,20 +1,29 @@
 .container {
 	position: relative;
-	display: grid;
-	grid-template-columns: repeat(3, 35% 40% 25%);
+	display: flex;
+	/* grid-template-columns: repeat(3, 35% 40% 25%); */
 	row-gap: 2rem;
 }
 
 .mediaContainer {
 	position: relative;
-	grid-column-start: 1;
-	grid-column-end: 2;
+	/* grid-column-start: 1;
+	grid-column-end: 2; */
 	margin-left: 6rem;
 }
 
 .playerContainer {
 	margin-top: 2rem;
 	width: 80%;
+}
+
+.playerContainerBis {
+	position: fixed;
+	/* margin-top: 2rem; */
+	width: 100%;
+	left: 0;
+	bottom: 0;
+	z-index: 2;
 }
 
 .bookMenuBtn {
@@ -39,10 +48,10 @@
 .titleContainer {
 	margin: 4rem 0;
 	text-align: center;
-	grid-column-start: 1;
+	/* grid-column-start: 1;
 	grid-column-end: 3;
 	grid-row-start: 1;
-	grid-row-end: 2;
+	grid-row-end: 2; */
 }
 
 .title {
@@ -67,17 +76,7 @@
 	border-radius: 3px;
 }
 
-.videoContainer,
-.audioContainer {
-	position: sticky;
-	top: 65px;
-}
-
-.videoContainer {
-	text-align: center;
-}
-
-.videoContainer iframe {
+.iframe {
 	width: 80%;
 	height: 250px;
 }
@@ -99,12 +98,13 @@
 }
 
 .rightContainer {
-	grid-column-start: 3;
+	/* grid-column-start: 3;
 	grid-column-end: 4;
 	grid-row-start: 1;
-	grid-row-end: 4;
+	grid-row-end: 4; */
 	background-color: var(--white);
 	padding: 2rem;
+	background-color: #fafafa;
 }
 
 .rightContainer h3 {

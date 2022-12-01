@@ -14,6 +14,15 @@ import {
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
+import {
+	Button,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	Typography,
+} from '@mui/material'
+import { ThumbUpOffAlt } from '@mui/icons-material'
 
 const WordsContainer = () => {
 	const router = useRouter()
@@ -66,13 +75,15 @@ const WordsContainer = () => {
 	])
 
 	return (
-		<div className={styles.wordsContainer}>
+		<div>
 			{isUserLoggedIn && user_material_words ? (
 				<>
-					<h3 className='headline'>Mots</h3>
-					<ul>
+					<Typography variant='h5' align='center'>
+						Vocabulaire
+					</Typography>
+					<List sx={{ margin: '2rem auto' }}>
 						{user_material_words.map((words, index) => (
-							<li
+							<ListItem
 								key={index}
 								className={`${styles.row} row`}
 								onMouseEnter={showTrash}
@@ -90,41 +101,77 @@ const WordsContainer = () => {
 									icon={faTrashAlt}
 									onClick={() => handleDelete(words.id)}
 								/>
-							</li>
+							</ListItem>
 						))}
-					</ul>
-					<button
-						onClick={() => dispatch(toggleFlashcardsContainer(true))}
-						type='button'
-						className={styles.flashcardsBtn}>
+					</List>
+					<Button
+						variant='contained'
+						size='large'
+						sx={{
+							display: 'block',
+							margin: '0 auto',
+							backgroundColor: 'clrPrimary1',
+						}}
+						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
 						Réviser les mots
-					</button>
+					</Button>
 				</>
 			) : (
 				<>
-					<h4 className='headline'>Créez un compte pour pouvoir :</h4>
-					<ul className='lesson__words-list'>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Traduire n&apos;importe quel
-							mot du texte en un clique
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Conserver les mots traduits
-							sur cette même page
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Sauvegarder toutes vos
-							traductions dans un dictionnaire personnel lié à votre compte
-						</li>
-						<li>
-							<FontAwesomeIcon icon={faThumbsUp} /> Soutenir notre travail
-						</li>
-					</ul>
-					<Link href='/register'>
-						<button type='button' className={`${styles.registerBtn} mainBtn`}>
-							S&apos;enregistrer
-						</button>
-					</Link>
+					<Typography variant='h5' align='center'>
+						Créez un compte pour pouvoir :
+					</Typography>
+
+					<List sx={{ margin: '2rem auto' }}>
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText
+								primary="Traduire n'importe quel
+							mot du texte en un clique"
+							/>
+						</ListItem>
+
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText
+								primary='Conserver les mots traduits
+                  sur cette même page'
+							/>
+						</ListItem>
+
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText
+								primary='Sauvegarder toutes vos
+                  traductions dans un dictionnaire personnel lié à votre compte'
+							/>
+						</ListItem>
+
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText primary='Soutenir notre travail' />
+						</ListItem>
+					</List>
+
+					<Button
+						variant='contained'
+						sx={{
+							display: 'block',
+							margin: '0 auto',
+							backgroundColor: 'clrPrimary1',
+						}}
+						size='large'
+						href='/register'>
+						S&apos;enregistrer
+					</Button>
 				</>
 			)}
 		</div>

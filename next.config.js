@@ -1,4 +1,4 @@
-// /** @type {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 // const nextTranslate = require('next-translate')
 
 // module.exports = nextTranslate({
@@ -7,19 +7,21 @@
 // 	},
 // })
 
-// const nextConfig = {
-// 	reactStrictMode: true,
-// 	swcMinify: true,
-// 	images: {
-// 		domains: ['fxadatcycupiinjjdzpe.supabase.co'],
-// 	},
-// }
+const nextConfig = {
+	reactStrictMode: true,
+	swcMinify: true,
+	images: {
+		domains: ['fxadatcycupiinjjdzpe.supabase.co'],
+	},
+}
 
 // module.exports = nextConfig
 
 const nextTranslate = require('next-translate')
 
-module.exports = nextTranslate({})
+module.exports = nextTranslate(nextConfig)
+
+// module.exports = nextTranslate({})
 
 // const withMDX = require('@next/mdx')({
 // 	extension: /\.mdx?$/,

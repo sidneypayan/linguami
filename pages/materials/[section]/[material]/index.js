@@ -1,13 +1,7 @@
+import { useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faXmark, faBook } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../../../styles/materials/Material.module.css'
 import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
-import { getBookChapters } from '../../../../features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
@@ -18,17 +12,23 @@ import { sections } from '../../../../data/sections'
 import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
 import Player from '../../../../components/Player'
 import { editContent } from '../../../../features/content/contentSlice'
+import {
+	Box,
+	Button,
+	Container,
+	IconButton,
+	Stack,
+	Typography,
+} from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
 
 const Material = ({ material: single_material }) => {
 	const dispatch = useDispatch()
-	const { user, isUserAdmin } = useUserContext()
-
-	const bookName = single_material.book_name
 	const router = useRouter()
+	const { user, isUserAdmin } = useUserContext()
 	const { material, section } = router.query
 
 	const [showAccents, setShowAccents] = useState(false)
-	const [isBookMenuOpen, setIsBookMenuOpen] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
 
 	const handleEditContent = () => {
@@ -46,23 +46,6 @@ const Material = ({ material: single_material }) => {
 					}}></div>
 			)
 		}
-
-		if (
-			section === 'dialogue' ||
-			section === 'culture' ||
-			section === 'slice-of-life' ||
-			section === 'book' ||
-			section === 'short-story' ||
-			section === 'legend'
-		) {
-			return (
-				<div
-					className={styles.img}
-					style={{
-						backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
-					}}></div>
-			)
-		}
 	}
 
 	const displayAudioPlayer = (section, audio) => {
@@ -74,25 +57,14 @@ const Material = ({ material: single_material }) => {
 	const displayVideo = section => {
 		if (sections.music.includes(section) || sections.video.includes(section)) {
 			return (
-				<div className={styles.videoContainer}>
-					<iframe
-						src={single_material.video}
-						frameBorder='0'
-						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
-				</div>
+				<iframe
+					className={styles.iframe}
+					src={single_material.video}
+					frameBorder='0'
+					allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
 			)
 		}
 	}
-
-	useEffect(() => {
-		if (bookName) {
-			dispatch(getBookChapters(bookName))
-		}
-	}, [dispatch, bookName])
-
-	useEffect(() => {
-		setIsBookMenuOpen(false)
-	}, [material])
 
 	const getCoordinates = e => {
 		const xCoordinate =
@@ -109,112 +81,134 @@ const Material = ({ material: single_material }) => {
 
 	return (
 		single_material && (
-			<>
-				<FontAwesomeIcon
-					onClick={() => router.back()}
-					className='back-arrow '
-					icon={faArrowLeft}
-					size='2xl'
-				/>
+			<Stack
+				sx={{
+					flexDirection: {
+						sx: 'column',
+						md: 'row',
+					},
+				}}>
+				<Container
+					disableGutters
+					maxWidth='100%'
+					sx={{ margin: '0 auto', marginTop: '5rem' }}>
+					<IconButton
+						sx={{ marginLeft: '2rem' }}
+						aria-label='back'
+						onClick={() => router.back()}>
+						<ArrowBack fontSize='large' />
+					</IconButton>
 
-				<div className={styles.container}>
-					<div className={styles.titleContainer}>
-						<h1 className={`${styles.title} headline`}>
-							{single_material.title_ru}
-						</h1>
-					</div>
+					<Typography variant='h3' align='center'>
+						{single_material.title}
+					</Typography>
 
-					{/* MEDIACONTAINER*/}
-					<div className={styles.mediaContainer}>
-						<div className={styles.audioContainer}>
-							{getImageRegardingSection(section)}
-							{/* DISPLAY AUDIO */}
-							<div className={styles.playerContainer}>
-								{displayAudioPlayer(section, single_material.audio)}
-							</div>
-
-							{/* CHAPTER MENU */}
-							{section === 'book' && (
-								<>
-									<button
-										onClick={() => setIsBookMenuOpen(!isBookMenuOpen)}
-										className={styles.bookMenuBtn}>
-										{isBookMenuOpen
-											? 'Cacher le menu des chapitres'
-											: 'Afficher le menu des chapitres'}
-										<FontAwesomeIcon
-											className={styles.bookMenuIcon}
-											icon={isBookMenuOpen ? faXmark : faBook}
-										/>
-									</button>
-									{isBookMenuOpen && <BookMenu />}
-								</>
-							)}
-						</div>
-
-						{/* DISPLAY VIDEO */}
+					<Container
+						maxWidth='md'
+						sx={{
+							margin: '5rem auto',
+							position: 'sticky',
+							top: '70px',
+							textAlign: 'center',
+							zIndex: '2',
+						}}>
+						{getImageRegardingSection(section)}
 						{displayVideo(section)}
-					</div>
+					</Container>
 
-					{/* TextContainer */}
-					<div className={styles.textContainer}>
-						{/* <div> */}
+					<Container maxWidth='md'>
 						<Translation
 							coordinates={coordinates}
 							materialId={single_material.id}
 							userId={user && user.id}
 						/>
 
-						<button
+						<Button
+							sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+							variant='contained'
 							onClick={() => setShowAccents(!showAccents)}
 							type='button'
-							id='show-accents'
-							className={`${styles.showAccentsBtn} mainBtn`}>
+							id='show-accents'>
 							Montrer les accents
-						</button>
+						</Button>
+						{/* CHAPTER MENU */}
+						{section === 'book' && (
+							<BookMenu bookName={single_material.book_name} />
+						)}
 						{isUserAdmin && (
-							<button
+							<Button
+								sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+								variant='contained'
 								onClick={handleEditContent}
 								type='button'
 								id='show-accents'
-								className={`${styles.showAccentsBtn} mainBtn`}
 								style={{ marginLeft: '1rem' }}>
 								Edit material
-							</button>
+							</Button>
 						)}
 
 						{showAccents ? (
-							<p onClick={e => getCoordinates(e)} className={styles.text}>
+							<Typography
+								color='clrGrey2'
+								sx={{ fontSize: '1.1rem' }}
+								variant='subtitle1'
+								onClick={e => getCoordinates(e)}>
 								<Words
 									content={single_material.body_accents}
 									materialId={single_material.id}
 								/>
-							</p>
+							</Typography>
 						) : (
-							<p onClick={e => getCoordinates(e)} className={styles.text}>
+							<Typography
+								color='clrGrey2'
+								sx={{ fontSize: '1.1rem' }}
+								variant='subtitle1'
+								onClick={e => getCoordinates(e)}>
 								<Words
 									content={single_material.body}
 									materialId={single_material.id}
 								/>
-							</p>
+							</Typography>
 						)}
 
-						<button
+						<Button
+							variant='outlined'
+							size='large'
+							sx={{
+								display: 'block',
+								margin: '0 auto',
+							}}
 							onClick={() => dispatch(addMaterialToStudied(single_material.id))}
 							type='button'
-							id='checkMaterial'
-							className={`${styles.checkLesson} ${styles.checkedLesson} mainBtn`}>
+							id='checkMaterial'>
 							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
-						</button>
-						{/* </div> */}
-					</div>
+						</Button>
+					</Container>
 
-					{/* WordsContainer */}
-					<div className={styles.rightContainer}>
-						<WordsContainer />
-					</div>
-				</div>
-			</>
+					<Box
+						sx={{
+							position: 'sticky',
+							bottom: 0,
+							boxShadow: '0px -10px 15px -5px rgba(0,0,0,0.1)',
+							marginTop: '4rem',
+						}}>
+						{displayAudioPlayer(section, single_material.audio)}
+					</Box>
+				</Container>
+				<Container
+					sx={{
+						maxWidth: {
+							xs: '100%',
+							sm: '35%',
+							md: '30%',
+							lg: '25%',
+						},
+						bgcolor: '#fafafa',
+						paddingTop: '4rem',
+					}}>
+					<WordsContainer />
+				</Container>
+			</Stack>
 		)
 	)
 }

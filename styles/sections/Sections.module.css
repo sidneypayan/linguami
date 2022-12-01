@@ -1,12 +1,13 @@
 .sectionsWrapper {
 	position: relative;
 	height: 100%;
+	margin: 10rem auto;
 }
 
 .container {
 	min-height: 50vh;
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	/* grid-template-columns: repeat(2, 1fr); */
 	padding: 0 2rem;
 	max-width: 1140px;
 	margin: 5rem auto;
@@ -17,7 +18,7 @@
 
 @media (max-width: 1023px) {
 	.container {
-		display: block;
+		grid-template-columns: 1fr;
 	}
 }
 @media (max-width: 479px) {

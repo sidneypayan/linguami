@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
 	) : (
 		<>
 			<Navbar />
-			{isUserLoggedIn && <EducationalMenu />}
+			{/* {isUserLoggedIn && <EducationalMenu />} */}
 			{children}
 			<Footer />
 		</>

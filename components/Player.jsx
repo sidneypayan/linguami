@@ -7,9 +7,8 @@ const Player = ({ src }) => {
 			url='https://fxadatcycupiinjjdzpe.supabase.co/storage/v1/object/public/linguami/audio/l_ami_d_enfance_ru.mp3?t=2022-10-22T13%3A34%3A00.892Z'
 			controls={true}
 			style={{
-				backgroundColor: '#fff',
+				// backgroundColor: '#fff',
 				boxShadow: 'none',
-				borderRadius: '3px',
 			}}
 			src={src}
 		/>

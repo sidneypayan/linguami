@@ -1,4 +1,3 @@
-import styles from '../../styles/blog/Posts.module.css'
 import BlogCard from '../../components/blog/BlogCard'
 import Head from 'next/head'
 import { sortPostsByDate } from '../../utils/helpers'
@@ -6,6 +5,7 @@ import { sortPostsByDate } from '../../utils/helpers'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { Container } from '@mui/material'
 
 const Blog = ({ posts }) => {
 	return (
@@ -17,11 +17,11 @@ const Blog = ({ posts }) => {
 					content="Retrouvez des articles sur la langue, l'histoire et la culture russe. En complément de nos matériels d'apprentissage, nous rédigeons régulièrement des articles afin de vous immerger dans le monde russe et ses particularités."
 				/>
 			</Head>
-			<div className={styles.container}>
+			<Container sx={{ margin: '10rem auto' }}>
 				{posts.map((post, index) => (
 					<BlogCard key={index} post={post} />
 				))}
-			</div>
+			</Container>
 		</>
 	)
 }

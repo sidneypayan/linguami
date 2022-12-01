@@ -16,6 +16,7 @@ import {
 } from '../../../features/materials/materialsSlice'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { Box, Container } from '@mui/material'
 
 const Section = () => {
 	const router = useRouter()
@@ -71,9 +72,18 @@ const Section = () => {
 				icon={faArrowLeft}
 				size='2xl'
 			/>
-			<div className={styles.sectionsWrapper}>
+			<Container sx={{ margin: '10rem auto' }}>
 				<LevelBar />
-				<div className={styles.container}>
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: {
+							sx: '1fr',
+							md: 'repeat(2, 1fr)',
+						},
+						rowGap: 3,
+						columnGap: 8,
+					}}>
 					{materials.slice(sliceStart, sliceEnd).map(material => {
 						return (
 							<SectionCard
@@ -85,9 +95,9 @@ const Section = () => {
 							/>
 						)
 					})}
-				</div>
+				</Box>
 				{numOfPages > 1 && <Pagination />}
-			</div>
+			</Container>
 		</>
 	)
 }

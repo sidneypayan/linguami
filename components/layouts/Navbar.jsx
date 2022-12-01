@@ -6,37 +6,49 @@ import { HiOutlineAcademicCap } from 'react-icons/hi'
 import useTranslation from 'next-translate/useTranslation'
 import {
 	AppBar,
-	Avatar,
 	Box,
 	Button,
-	Container,
 	Divider,
 	Drawer,
 	IconButton,
-	Link,
 	List,
 	ListItem,
 	ListItemButton,
 	ListItemText,
-	Menu,
-	MenuItem,
-	Stack,
 	Toolbar,
-	Tooltip,
-	Typography,
 } from '@mui/material'
 
 import MenuIcon from '@mui/icons-material/Menu'
 
 const drawerWidth = '80%'
-const navigationLinks = [
-	{ name: 'matériels', href: '/material' },
-	{ name: 'blog', href: '/blog' },
-]
 
 const Navbar = props => {
 	const { t, lang } = useTranslation()
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
+
+	const navigationLinks = [
+		{ name: t('common:material'), href: '/materials' },
+		{ name: t('common:blog'), href: '/blog' },
+	]
+
+	const userNavigationLinks = [
+		{
+			name: t('common:mydictionary'),
+			href: '/dictionary',
+			icon: (
+				<GiBookmarklet style={{ fontSize: '1.5rem', marginRight: '.25rem' }} />
+			),
+		},
+		{
+			name: t('common:mymaterials'),
+			href: '/my-materials',
+			icon: (
+				<HiOutlineAcademicCap
+					style={{ fontSize: '1.5rem', marginRight: '.25rem' }}
+				/>
+			),
+		},
+	]
 
 	const { window } = props
 	const [mobileOpen, setMobileOpen] = useState(false)
@@ -48,7 +60,7 @@ const Navbar = props => {
 	const drawer = (
 		<Box
 			onClick={handleDrawerToggle}
-			sx={{ textAlign: 'center', bgcolor: '#4a148c' }}>
+			sx={{ textAlign: 'center', bgcolor: '#4a148c', height: '100vh' }}>
 			<List sx={{ color: '#fff' }}>
 				{navigationLinks.map(link => (
 					<ListItem key={link.name} disablePadding>
@@ -59,15 +71,42 @@ const Navbar = props => {
 				))}
 			</List>
 
-			<Box sx={{ bgcolor: '#4a148c', height: '100vh' }}>
-				<Button variant='outlined' href='/login' sx={{ marginRight: '2rem' }}>
-					{t('common:signin')}
-				</Button>
+			{!isUserLoggedIn && (
+				<Box sx={{ bgcolor: '#4a148c', height: '100vh' }}>
+					<Button variant='outlined' href='/login' sx={{ marginRight: '2rem' }}>
+						{t('common:signin')}
+					</Button>
 
-				<Button variant='contained' href='/register' sx={{ bgcolor: 'purple' }}>
-					{t('common:register')}
-				</Button>
-			</Box>
+					<Button
+						variant='contained'
+						href='/register'
+						sx={{ bgcolor: 'purple' }}>
+						{t('common:register')}
+					</Button>
+				</Box>
+			)}
+
+			{isUserLoggedIn && (
+				<Divider color='#fff' width='50%' sx={{ margin: '1rem auto' }} />
+			)}
+
+			{isUserLoggedIn &&
+				userNavigationLinks.map(link => (
+					<Box
+						key={link.name}
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							marginRight: '.5rem',
+							color: '#fff',
+						}}>
+						{link.icon}
+						<Button href={link.href} sx={{ color: '#fff' }}>
+							{link.name}
+						</Button>
+					</Box>
+				))}
 		</Box>
 	)
 
@@ -75,13 +114,13 @@ const Navbar = props => {
 		window !== undefined ? () => window().document.body : undefined
 
 	return (
-		<Box sx={{ display: 'flex' }}>
+		<Box sx={{ display: 'flex', marginBottom: '64px' }}>
 			<AppBar
 				component='nav'
 				sx={{
-					bgcolor: 'secondaryPurple',
+					bgcolor: 'clrPrimary1',
 				}}>
-				<Toolbar>
+				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'
@@ -98,24 +137,51 @@ const Navbar = props => {
 							</Button>
 						))}
 					</Box>
-
 					<Box
 						sx={{
-							display: { xs: 'none', sm: 'flex' },
-							marginLeft: 'auto',
-							gap: '1rem',
+							display: {
+								xs: 'none',
+								sm: 'flex',
+								alignItems: 'center',
+							},
 						}}>
-						<Button sx={{ color: '#fff' }} variant='outlined' href='/login'>
-							{t('common:signin')}
-						</Button>
-
-						<Button
-							variant='contained'
-							href='/register'
-							sx={{ bgcolor: 'purple' }}>
-							{t('common:register')}
-						</Button>
+						{isUserLoggedIn &&
+							userNavigationLinks.map(link => (
+								<Box
+									key={link.name}
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										marginRight: '.5rem',
+									}}>
+									{link.icon}
+									<Button href={link.href} sx={{ color: '#fff' }}>
+										{link.name}
+									</Button>
+								</Box>
+							))}
 					</Box>
+
+					{isUserLoggedIn ? (
+						<UserMenu />
+					) : (
+						<Box
+							sx={{
+								display: { xs: 'none', sm: 'flex' },
+								gap: '1rem',
+							}}>
+							<Button sx={{ color: '#fff' }} variant='outlined' href='/login'>
+								{t('common:signin')}
+							</Button>
+
+							<Button
+								variant='contained'
+								href='/register'
+								sx={{ bgcolor: 'purple' }}>
+								{t('common:register')}
+							</Button>
+						</Box>
+					)}
 				</Toolbar>
 			</AppBar>
 
