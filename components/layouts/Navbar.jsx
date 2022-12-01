@@ -29,6 +29,7 @@ const Navbar = props => {
 	const navigationLinks = [
 		{ name: t('common:material'), href: '/materials' },
 		{ name: t('common:blog'), href: '/blog' },
+		{ name: t('common:teacher'), href: '/teacher' },
 	]
 
 	const userNavigationLinks = [

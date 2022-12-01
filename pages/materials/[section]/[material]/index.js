@@ -177,6 +177,7 @@ const Material = ({ material: single_material }) => {
 							sx={{
 								display: 'block',
 								margin: '0 auto',
+								marginTop: '2rem',
 							}}
 							onClick={() => dispatch(addMaterialToStudied(single_material.id))}
 							type='button'

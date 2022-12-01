@@ -24,6 +24,9 @@ function MyApp({ Component, pageProps }) {
 			clrGrey4: grey[500],
 			// primaryGrey: '#7e919f',
 		},
+		typography: {
+			fontFamily: ['Open Sans'],
+		},
 	})
 
 	return (

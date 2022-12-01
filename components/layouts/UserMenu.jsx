@@ -109,7 +109,7 @@ const UserMenu = () => {
 				}}
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-				<MenuItem>
+				{/* <MenuItem>
 					<Avatar /> My account
 				</MenuItem>
 				<Divider />
@@ -119,7 +119,7 @@ const UserMenu = () => {
 						<Settings fontSize='small' />
 					</ListItemIcon>
 					Settings
-				</MenuItem>
+				</MenuItem> */}
 				<MenuItem onClick={() => logout()}>
 					<ListItemIcon>
 						<Logout fontSize='small' />

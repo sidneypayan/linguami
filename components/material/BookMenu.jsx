@@ -71,7 +71,7 @@ const BookMenu = ({ bookName }) => {
 				sx={{
 					marginBottom: '2rem',
 					marginLeft: '1rem',
-					backgroundColor: 'primaryPurple',
+					backgroundColor: 'clrPrimary1',
 					color: '#fff',
 				}}
 				variant='contained'

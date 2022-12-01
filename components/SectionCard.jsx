@@ -164,9 +164,9 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					)}
 				<CardMedia
 					component='img'
-					sx={{ width: 135, height: 135, margin: 0 }}
+					sx={{ maxWidth: 135, height: 135, margin: 0 }}
 					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
-					alt='Live from space album cover'
+					alt={material.title}
 				/>
 
 				<CardContent
@@ -177,7 +177,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						alignItems: 'center',
 					}}>
 					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
-						<Typography component='div' variant='h5' color='#424242'>
+						<Typography component='div' variant='h5' color='clrPrimary1'>
 							{material.title}
 						</Typography>
 
