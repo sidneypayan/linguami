@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps }) {
 			clrPrimary1: '#432874',
 			clrPrimary2: '#432879',
 			clrPrimary3: '#4f2a93',
+			clrPrimary4: '#992F7B',
 			clrBtn1: '#4f2a93',
 			clrBtn2: '#0056BB',
 			secondaryPurple: purple[900],

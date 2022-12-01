@@ -21,7 +21,6 @@ const Teacher = () => {
 				/>
 			</Head>
 			<Container
-				maxWidth='md'
 				sx={{
 					display: 'flex',
 					flexDirection: 'column',
@@ -68,6 +67,7 @@ const Teacher = () => {
 					l&apos;université de Moscou
 				</Typography>
 				<Typography
+					width='75%'
 					variant='body1'
 					mt={4}
 					mb={8}
@@ -90,7 +90,7 @@ const Teacher = () => {
 					L&apos;avis des élèves
 				</Typography>
 
-				<Stack direction='row' gap={2}>
+				<Stack direction='row' gap={4}>
 					<Card sx={{ flex: 1 }}>
 						<CardContent>
 							<Typography variant='h4' align='center' m={2}>

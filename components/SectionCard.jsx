@@ -177,7 +177,11 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						alignItems: 'center',
 					}}>
 					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
-						<Typography component='div' variant='h5' color='clrPrimary1'>
+						<Typography
+							component='div'
+							variant='h6'
+							color='clrPrimary1'
+							sx={{ lineHeight: '1.5rem' }}>
 							{material.title}
 						</Typography>
 

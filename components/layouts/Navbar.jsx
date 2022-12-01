@@ -3,6 +3,7 @@ import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
 import { GiBookmarklet } from 'react-icons/gi'
 import { HiOutlineAcademicCap } from 'react-icons/hi'
+import { HiHome } from 'react-icons/hi'
 import useTranslation from 'next-translate/useTranslation'
 import {
 	AppBar,
@@ -27,6 +28,7 @@ const Navbar = props => {
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
 
 	const navigationLinks = [
+		{ name: <HiHome style={{ fontSize: '1.5rem' }} />, href: '/' },
 		{ name: t('common:material'), href: '/materials' },
 		{ name: t('common:blog'), href: '/blog' },
 		{ name: t('common:teacher'), href: '/teacher' },

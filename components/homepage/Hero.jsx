@@ -11,7 +11,7 @@ const Hero = () => {
 		<Box
 			sx={{
 				position: 'relative',
-				padding: '5rem 0',
+				padding: '4rem 0',
 				backgroundImage:
 					'linear-gradient(to bottom, #432874, #432875, #432876, #432877, #432878, #44287a, #45297d, #46297f, #482984, #4a2a89, #4d2a8e, #4f2a93)',
 			}}>
@@ -31,34 +31,33 @@ const Hero = () => {
 						lg: 'left',
 					},
 				}}>
-				<Box maxWidth={800}>
+				<Box maxWidth={825}>
 					<Typography color='#fff' variant='h2' mb={4}>
 						<span style={{ fontWeight: '400' }}>Linguami,</span> <br />
 						{t('home:title')}
 					</Typography>
 					<Typography variant='h5' color='#fff'>
 						{t('home:subtitle')}
-						{/* <br />
-						<span className={styles.subtitleLargeScreen}>
-							Découvrez une culture et rejoignez une communauté basée sur
-							l&apos;entraide et l&apos;amitié entre les peuples.
-						</span> */}
 					</Typography>
-					{/* <Link href='/materials'>
-						<Button
-							variant='contained'
-							size='large'
-							sx={{
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '2rem',
-								bgcolor: '#4a148c',
-							}}>
-							{t('home:start')}
-						</Button>
-					</Link> */}
+					<Button
+						align='center'
+						size='large'
+						sx={{
+							backgroundColor: 'clrPrimary4',
+							display: 'block',
+							margin: '0 auto',
+							marginTop: '3rem',
+							width: '150px',
+						}}
+						href='/materials'
+						variant='contained'>
+						Commencer
+					</Button>
 				</Box>
 
+				<Box component='img' width={250} height={250} src='/img/wizard.png' />
+
+				{/* 
 				<Box
 					component='img'
 					src='/img/bear.png'
@@ -72,7 +71,7 @@ const Hero = () => {
 							lg: 'block',
 						},
 					}}
-				/>
+				/> */}
 			</Stack>
 
 			<div className={styles.wave}>
