@@ -75,7 +75,7 @@ const Navbar = props => {
 			</List>
 
 			{!isUserLoggedIn && (
-				<Box sx={{ bgcolor: '#4a148c', height: '100vh' }}>
+				<Box sx={{ bgcolor: 'clrPrimary1', height: '100vh' }}>
 					<Button variant='outlined' href='/login' sx={{ marginRight: '2rem' }}>
 						{t('common:signin')}
 					</Button>
