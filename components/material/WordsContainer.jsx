@@ -2,8 +2,7 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faTrashAlt } from '@fortawesome/free-regular-svg-icons'
-import Link from 'next/link'
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import styles from '../../styles/materials/WordsContainer.module.css'
@@ -75,7 +74,7 @@ const WordsContainer = () => {
 	])
 
 	return (
-		<div>
+		<>
 			{isUserLoggedIn && user_material_words ? (
 				<>
 					<Typography variant='h5' align='center'>
@@ -118,7 +117,14 @@ const WordsContainer = () => {
 				</>
 			) : (
 				<>
-					<Typography variant='h5' align='center'>
+					<Typography
+						variant='h5'
+						align='center'
+						sx={{
+							marginTop: {
+								md: '5rem',
+							},
+						}}>
 						Créez un compte pour pouvoir :
 					</Typography>
 
@@ -165,7 +171,8 @@ const WordsContainer = () => {
 						variant='contained'
 						sx={{
 							display: 'block',
-							margin: '0 auto',
+							margin: '2rem auto',
+							width: '150px',
 							backgroundColor: 'clrPrimary1',
 						}}
 						size='large'
@@ -174,7 +181,7 @@ const WordsContainer = () => {
 					</Button>
 				</>
 			)}
-		</div>
+		</>
 	)
 }
 

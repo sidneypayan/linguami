@@ -1,15 +1,18 @@
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '../../features/materials/materialsSlice'
 import SectionCard from '../../components/SectionCard'
-import styles from '../../styles/MyMaterials.module.css'
-import Image from 'next/image'
 import Head from 'next/head'
+import {
+	Card,
+	CardActionArea,
+	Container,
+	IconButton,
+	Stack,
+	Typography,
+} from '@mui/material'
+import { Box } from '@mui/system'
+import { ArrowBack } from '@mui/icons-material'
 
 const UserMaterials = () => {
 	const dispatch = useDispatch()
@@ -51,8 +54,6 @@ const UserMaterials = () => {
 		)
 	}
 
-	// console.log(filteredUserMaterials)
-
 	useEffect(() => {
 		setFilteredUserMaterials(user_materials)
 	}, [user_materials])
@@ -66,71 +67,98 @@ const UserMaterials = () => {
 			<Head>
 				<title>Linguami | Mes materiels</title>
 			</Head>
-			{!displayMaterials && (
-				<div className={styles.wrapper}>
-					<div className={styles.filterContainer}>
-						<div
+			<Container
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					minHeight: 'calc(100vh - 144px)',
+				}}>
+				{!displayMaterials && (
+					<Stack
+						justifyContent='center'
+						gap={2}
+						sx={{
+							flexDirection: {
+								sx: 'column',
+								md: 'row',
+							},
+						}}>
+						<CardActionArea
 							onClick={() => {
 								filterUserMaterialsByStatus('is_being_studied')
 								setDisplayMaterials(true)
-							}}
-							className={styles.filterCard}>
-							<p>En cours d&apos;étude</p>
-							<div className={styles.imgContainer}>
-								<Image
+							}}>
+							<Card>
+								<Typography variant='h6' align='center' p={2}>
+									En cours d&apos;étude
+								</Typography>
+								<Box
+									component='img'
 									src='/img/studying.jpg'
-									// layout='fill'
-									// objectFit='cover'
-									quality={100}
-									width={250}
+									alt='studied'
+									width='100%'
 									height={250}
-									alt='studying'
-									loading='eager'
 								/>
-							</div>
-						</div>
-						<div
+							</Card>
+						</CardActionArea>
+						<CardActionArea
 							onClick={() => {
 								filterUserMaterialsByStatus('is_studied')
 								setDisplayMaterials(true)
-							}}
-							className={styles.filterCard}>
-							<p>Etudiés</p>
-							<div className={styles.imgContainer}>
-								<Image
+							}}>
+							<Card>
+								<Typography variant='h6' align='center' p={2}>
+									Etudiés
+								</Typography>
+
+								<Box
+									component='img'
 									src='/img/studied.jpg'
-									layout='fill'
-									objectFit='cover'
-									quality={100}
 									alt='studied'
-									loading='eager'
+									width='100%'
+									height={250}
 								/>
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
-			{displayMaterials && (
-				<>
-					<FontAwesomeIcon
-						onClick={() => setDisplayMaterials(false)}
-						className='back-arrow'
-						icon={faArrowLeft}
-						size='2xl'
-					/>
-					<div className={styles.container}>
-						{filteredUserMaterials.map(material => (
-							<SectionCard
-								key={material.id}
-								material={material}
-								checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-									material.id
-								)}
-							/>
-						))}
-					</div>
-				</>
-			)}
+							</Card>
+						</CardActionArea>
+					</Stack>
+				)}
+				{displayMaterials && (
+					<>
+						<IconButton
+							sx={{
+								position: 'absolute',
+								top: '6rem',
+								left: '5%',
+								color: 'clrBtn2',
+							}}
+							aria-label='back'
+							onClick={() => setDisplayMaterials(false)}>
+							<ArrowBack fontSize='large' />
+						</IconButton>
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									sx: '1fr',
+									md: 'repeat(2, 1fr)',
+								},
+								rowGap: 3,
+								columnGap: 8,
+							}}>
+							{filteredUserMaterials.map(material => (
+								<SectionCard
+									key={material.id}
+									material={material}
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+										material.id
+									)}
+								/>
+							))}
+						</Box>
+					</>
+				)}
+			</Container>
 		</>
 	)
 }

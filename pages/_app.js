@@ -18,12 +18,11 @@ function MyApp({ Component, pageProps }) {
 			clrPrimary4: '#992F7B',
 			clrBtn1: '#4f2a93',
 			clrBtn2: '#0056BB',
-			secondaryPurple: purple[900],
 			clrGrey1: grey[800],
 			clrGrey2: grey[700],
 			clrGrey3: grey[600],
 			clrGrey4: grey[500],
-			// primaryGrey: '#7e919f',
+			clrCardBg: '#f5f5f5',
 		},
 		typography: {
 			fontFamily: ['Open Sans'],

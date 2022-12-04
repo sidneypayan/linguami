@@ -81,135 +81,139 @@ const Material = ({ material: single_material }) => {
 
 	return (
 		single_material && (
-			<Stack
-				sx={{
-					flexDirection: {
-						sx: 'column',
-						md: 'row',
-					},
-				}}>
-				<Container
-					disableGutters
-					maxWidth='100%'
-					sx={{ margin: '0 auto', marginTop: '5rem' }}>
-					<IconButton
-						sx={{ marginLeft: '2rem' }}
-						aria-label='back'
-						onClick={() => router.back()}>
-						<ArrowBack fontSize='large' />
-					</IconButton>
+			<>
+				<IconButton
+					sx={{
+						position: 'absolute',
+						top: '6rem',
+						left: '5%',
+						color: 'clrBtn2',
+					}}
+					aria-label='back'
+					onClick={() => router.back()}>
+					<ArrowBack fontSize='large' />
+				</IconButton>
+				<Stack
+					sx={{
+						flexDirection: {
+							sx: 'column',
+							md: 'row',
+						},
+					}}>
+					<Container disableGutters maxWidth='100%' sx={{ marginTop: '8rem' }}>
+						<Typography variant='h3' align='center'>
+							{single_material.title}
+						</Typography>
 
-					<Typography variant='h3' align='center'>
-						{single_material.title}
-					</Typography>
+						<Container
+							maxWidth='md'
+							sx={{
+								margin: '5rem auto',
+								position: 'sticky',
+								top: '70px',
+								textAlign: 'center',
+								zIndex: '2',
+							}}>
+							{getImageRegardingSection(section)}
+							{displayVideo(section)}
+						</Container>
 
-					<Container
-						maxWidth='md'
-						sx={{
-							margin: '5rem auto',
-							position: 'sticky',
-							top: '70px',
-							textAlign: 'center',
-							zIndex: '2',
-						}}>
-						{getImageRegardingSection(section)}
-						{displayVideo(section)}
-					</Container>
+						<Container maxWidth='md'>
+							<Translation
+								coordinates={coordinates}
+								materialId={single_material.id}
+								userId={user && user.id}
+							/>
 
-					<Container maxWidth='md'>
-						<Translation
-							coordinates={coordinates}
-							materialId={single_material.id}
-							userId={user && user.id}
-						/>
-
-						<Button
-							sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
-							variant='contained'
-							onClick={() => setShowAccents(!showAccents)}
-							type='button'
-							id='show-accents'>
-							Montrer les accents
-						</Button>
-						{/* CHAPTER MENU */}
-						{section === 'book' && (
-							<BookMenu bookName={single_material.book_name} />
-						)}
-						{isUserAdmin && (
 							<Button
 								sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
 								variant='contained'
-								onClick={handleEditContent}
+								onClick={() => setShowAccents(!showAccents)}
 								type='button'
-								id='show-accents'
-								style={{ marginLeft: '1rem' }}>
-								Edit material
+								id='show-accents'>
+								Montrer les accents
 							</Button>
-						)}
+							{/* CHAPTER MENU */}
+							{section === 'book' && (
+								<BookMenu bookName={single_material.book_name} />
+							)}
+							{isUserAdmin && (
+								<Button
+									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+									variant='contained'
+									onClick={handleEditContent}
+									type='button'
+									id='show-accents'
+									style={{ marginLeft: '1rem' }}>
+									Edit material
+								</Button>
+							)}
 
-						{showAccents ? (
-							<Typography
-								color='clrGrey2'
-								sx={{ fontSize: '1.1rem' }}
-								variant='subtitle1'
-								onClick={e => getCoordinates(e)}>
-								<Words
-									content={single_material.body_accents}
-									materialId={single_material.id}
-								/>
-							</Typography>
-						) : (
-							<Typography
-								color='clrGrey2'
-								sx={{ fontSize: '1.1rem' }}
-								variant='subtitle1'
-								onClick={e => getCoordinates(e)}>
-								<Words
-									content={single_material.body}
-									materialId={single_material.id}
-								/>
-							</Typography>
-						)}
+							{showAccents ? (
+								<Typography
+									color='clrGrey2'
+									sx={{ fontSize: '1.1rem' }}
+									variant='subtitle1'
+									onClick={e => getCoordinates(e)}>
+									<Words
+										content={single_material.body_accents}
+										materialId={single_material.id}
+									/>
+								</Typography>
+							) : (
+								<Typography
+									color='clrGrey2'
+									sx={{ fontSize: '1.1rem' }}
+									variant='subtitle1'
+									onClick={e => getCoordinates(e)}>
+									<Words
+										content={single_material.body}
+										materialId={single_material.id}
+									/>
+								</Typography>
+							)}
 
-						<Button
-							variant='outlined'
-							size='large'
+							<Button
+								variant='outlined'
+								size='large'
+								sx={{
+									display: 'block',
+									margin: '0 auto',
+									marginTop: '2rem',
+								}}
+								onClick={() =>
+									dispatch(addMaterialToStudied(single_material.id))
+								}
+								type='button'
+								id='checkMaterial'>
+								J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
+							</Button>
+						</Container>
+
+						<Box
 							sx={{
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '2rem',
-							}}
-							onClick={() => dispatch(addMaterialToStudied(single_material.id))}
-							type='button'
-							id='checkMaterial'>
-							J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
-						</Button>
+								position: 'sticky',
+								bottom: 0,
+								boxShadow: '0px -10px 15px -5px rgba(0,0,0,0.1)',
+								marginTop: '4rem',
+							}}>
+							{displayAudioPlayer(section, single_material.audio)}
+						</Box>
 					</Container>
-
-					<Box
+					<Container
 						sx={{
-							position: 'sticky',
-							bottom: 0,
-							boxShadow: '0px -10px 15px -5px rgba(0,0,0,0.1)',
-							marginTop: '4rem',
+							maxWidth: {
+								xs: '100%',
+								md: '35%',
+								lg: '25%',
+							},
+							bgcolor: '#fafafa',
+							paddingTop: '4rem',
 						}}>
-						{displayAudioPlayer(section, single_material.audio)}
-					</Box>
-				</Container>
-				<Container
-					sx={{
-						maxWidth: {
-							xs: '100%',
-							sm: '35%',
-							md: '30%',
-							lg: '25%',
-						},
-						bgcolor: '#fafafa',
-						paddingTop: '4rem',
-					}}>
-					<WordsContainer />
-				</Container>
-			</Stack>
+						<WordsContainer />
+					</Container>
+				</Stack>
+			</>
 		)
 	)
 }

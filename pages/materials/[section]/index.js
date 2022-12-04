@@ -1,13 +1,7 @@
 import Image from 'next/image'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import SectionCard from '../../../components/SectionCard'
 import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
-import styles from '../../../styles/sections/Sections.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import {
 	getMaterials,
@@ -16,7 +10,8 @@ import {
 } from '../../../features/materials/materialsSlice'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Box, Container } from '@mui/material'
+import { Box, Container, IconButton } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
 
 const Section = () => {
 	const router = useRouter()
@@ -66,12 +61,17 @@ const Section = () => {
 
 	return (
 		<>
-			<FontAwesomeIcon
-				onClick={() => router.back()}
-				className='back-arrow'
-				icon={faArrowLeft}
-				size='2xl'
-			/>
+			<IconButton
+				sx={{
+					position: 'absolute',
+					top: '6rem',
+					left: '5%',
+					color: 'clrBtn2',
+				}}
+				aria-label='back'
+				onClick={() => router.back()}>
+				<ArrowBack fontSize='large' />
+			</IconButton>
 			<Container sx={{ margin: '10rem auto' }}>
 				<LevelBar />
 				<Box

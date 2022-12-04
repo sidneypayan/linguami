@@ -30,8 +30,8 @@ const Navbar = props => {
 	const navigationLinks = [
 		{ name: <HiHome style={{ fontSize: '1.5rem' }} />, href: '/' },
 		{ name: t('common:material'), href: '/materials' },
-		{ name: t('common:blog'), href: '/blog' },
 		{ name: t('common:teacher'), href: '/teacher' },
+		{ name: t('common:blog'), href: '/blog' },
 	]
 
 	const userNavigationLinks = [
@@ -63,7 +63,7 @@ const Navbar = props => {
 	const drawer = (
 		<Box
 			onClick={handleDrawerToggle}
-			sx={{ textAlign: 'center', bgcolor: '#4a148c', height: '100vh' }}>
+			sx={{ textAlign: 'center', bgcolor: 'clrPrimary1', height: '100vh' }}>
 			<List sx={{ color: '#fff' }}>
 				{navigationLinks.map(link => (
 					<ListItem key={link.name} disablePadding>
@@ -117,7 +117,10 @@ const Navbar = props => {
 		window !== undefined ? () => window().document.body : undefined
 
 	return (
-		<Box sx={{ display: 'flex', marginBottom: '64px' }}>
+		<Box
+			sx={{
+				display: 'flex',
+			}}>
 			<AppBar
 				component='nav'
 				sx={{

@@ -1,6 +1,7 @@
 import styles from '../../styles/materials/Materials.module.css'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Typography } from '@mui/material'
 
 const MaterialsCard = ({ material }) => {
 	return (
@@ -19,7 +20,9 @@ const MaterialsCard = ({ material }) => {
 			</div>
 
 			<Link href={`/materials/${material.param}`}>
-				<h4 className={styles.materialsTitle}>{material.title}</h4>
+				<Typography mt={0.5} variant='subtitle1' sx={{ fontWeight: '600' }}>
+					{material.title}
+				</Typography>
 			</Link>
 		</div>
 	)

@@ -2,7 +2,8 @@ import styles from '../../styles/materials/Materials.module.css'
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
 import { materials } from '../../data/materials'
 import Head from 'next/head'
-import { Container, Typography } from '@mui/material'
+import { Container, IconButton, Typography } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
 
 const Material = () => {
 	const textes = materials.filter(
@@ -20,11 +21,17 @@ const Material = () => {
 				/>
 			</Head>
 			<div style={{ margin: '10rem auto' }} className={styles.container}>
-				<Typography variant='h5'>Textes & Audio</Typography>
+				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+					Textes & Audio
+				</Typography>
 				<MaterialsCarousel materials={textes} />
-				<Typography variant='h5'>Vidéos</Typography>
+				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+					Vidéos
+				</Typography>
 				<MaterialsCarousel materials={video} />
-				<Typography variant='h5'>Musique</Typography>
+				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+					Musique
+				</Typography>
 				<MaterialsCarousel materials={music} />
 			</div>
 		</>

@@ -1,9 +1,3 @@
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
-import styles from '../../styles/Dictionary.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import { useEffect, useState } from 'react'
@@ -14,6 +8,17 @@ import {
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import Link from 'next/link'
 import Head from 'next/head'
+import {
+	Button,
+	Container,
+	IconButton,
+	Table,
+	TableCell,
+	TableContainer,
+	TableRow,
+	Typography,
+} from '@mui/material'
+import { DeleteOutline } from '@mui/icons-material'
 
 const Dictionary = () => {
 	const dispatch = useDispatch()
@@ -48,53 +53,56 @@ const Dictionary = () => {
 			<Head>
 				<title>Linguami | Dictionnaire personnel</title>
 			</Head>
-			<div className={styles.container}>
-				<div className={styles.table}>
-					{user_words.length > 0 && (
-						<button
-							onClick={() => dispatch(toggleFlashcardsContainer(true))}
-							type='button'
-							className={styles.flashcardsBtn}>
-							Réviser les mots
-						</button>
-					)}
-					{user_words.length > 0 ? (
-						user_words.map((word, index) => (
-							<div className={styles.rowWords} key={index}>
-								<div className={styles.tableWords}>
-									<span className={styles.tableOriginalWord}>
-										{word.word_ru}
-									</span>
-									<span className={styles.tableTranslatedWord}>
-										{word.word_fr}
-									</span>
-								</div>
-								<div className={styles.tableWordSentence}>
-									{word.word_sentence}
-								</div>
-								<div className={styles.tableIcon}>
-									<FontAwesomeIcon
-										onClick={() => dispatch(deleteUserWord(word.id))}
-										icon={faTrashAlt}
-									/>
-								</div>
-							</div>
-						))
-					) : (
-						<>
-							<p className={styles.nowordsText}>
-								Vous n&apos;avez pas encore de mots dans votre dictionnaire.
-								Choisissez un materiel à étudier, cliquez sur un mot du texte
-								puis sur sa traduction afin de l&apos;ajouter à votre
-								dictionnaire.
-							</p>
-							<Link href='/materials'>
-								<button className={styles.flashcardsBtn}>Commencer</button>
-							</Link>
-						</>
-					)}
-				</div>
-			</div>
+			<Container sx={{ margin: '10rem auto' }} maxWidth='lg'>
+				{user_words.length > 0 && (
+					<Button
+						sx={{
+							backgroundColor: 'clrBtn1',
+							display: 'block',
+							margin: '2rem auto',
+							width: '175px',
+						}}
+						variant='contained'
+						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
+						Réviser les mots
+					</Button>
+				)}
+				<TableContainer>
+					<Table>
+						{user_words.length > 0 ? (
+							user_words.map((word, index) => (
+								<TableRow key={index}>
+									<TableCell>
+										<Typography sx={{ fontWeight: '600' }} variant='subtitle1'>
+											{word.word_ru}
+										</Typography>
+										<Typography variant='subtitle1'>{word.word_fr}</Typography>
+									</TableCell>
+									<TableCell>{word.word_sentence}</TableCell>
+									<TableCell>
+										<IconButton
+											onClick={() => dispatch(deleteUserWord(word.id))}>
+											<DeleteOutline />
+										</IconButton>
+									</TableCell>
+								</TableRow>
+							))
+						) : (
+							<>
+								<Typography variant='subtitle1'>
+									Vous n&apos;avez pas encore de mots dans votre dictionnaire.
+									Choisissez un materiel à étudier, cliquez sur un mot du texte
+									puis sur sa traduction afin de l&apos;ajouter à votre
+									dictionnaire.
+								</Typography>
+								<Link href='/materials'>
+									<Button variant='contained'>Commencer</Button>
+								</Link>
+							</>
+						)}
+					</Table>
+				</TableContainer>
+			</Container>
 		</>
 	)
 }

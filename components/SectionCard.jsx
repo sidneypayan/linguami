@@ -1,5 +1,3 @@
-import Image from 'next/image'
-import Link from 'next/link'
 import { sections } from '../data/sections'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -20,7 +18,6 @@ import {
 	CardActionArea,
 	CardContent,
 	CardMedia,
-	Stack,
 	Typography,
 } from '@mui/material'
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
@@ -65,77 +62,6 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	console.log(material.title)
 
 	return (
-		// <Card
-		// 	sx={{
-		// 		display: 'flex',
-		// 		backgroundColor: '#fafafa',
-		// 		justifyContent: 'space-between',
-		// 		width: '50%',
-		// 		margin: '0 auto',
-		// 		boxShadow: '0px 5px 10px -3px rgba(0, 0, 0, 0.1)',
-		// 	}}>
-		// 	{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-		// 		checkIfUserMaterialIsInMaterials.is_being_studied && (
-		// 			<FontAwesomeIcon icon={faClock} className={styles.beingStudiedCard} />
-		// 		)}
-		// 	{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-		// 		checkIfUserMaterialIsInMaterials.is_studied && (
-		// 			<FontAwesomeIcon
-		// 				icon={faCircleCheck}
-		// 				className={styles.studiedCard}
-		// 			/>
-		// 		)}
-		// 	<Box>
-		// 		<Link
-		// 			href={`/materials/${material.section}/${
-		// 				section === 'book' ? material.id + 1 : material.id
-		// 			}`}>
-		// 			<Box
-		// 				minHeight={135}
-		// 				minWidth={135}
-		// 				component='img'
-		// 				sx={{
-		// 					borderBottomLeftRadius: '3px',
-		// 					borderTopLeftRadius: '3px',
-		// 					cursor: 'pointer',
-		// 				}}
-		// 				src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
-		// 				alt={material.title}
-		// 			/>
-		// 		</Link>
-		// 	</Box>
-
-		// 	<Stack sx={{ padding: '2rem 1.5rem', marginRight: 'auto' }}>
-		// 		<Link
-		// 			href={`/materials/${material.section}/${
-		// 				section === 'book' ? material.id + 1 : material.id
-		// 			}`}>
-		// 			<Typography variant='h6' color='#0C509A' sx={{ cursor: 'pointer' }}>
-		// 				{material.title.length > 20
-		// 					? material.title.slice(0, 20) + '...'
-		// 					: material.title}
-		// 			</Typography>
-		// 		</Link>
-
-		// 		<Stack direction='row' gap={1}>
-		// 			<Typography variant='small' color='#0C509A'>
-		// 				{material.section}
-		// 			</Typography>
-		// 			<Typography variant='small' color='#0C509A'>
-		// 				{material.level}
-		// 			</Typography>
-		// 		</Stack>
-		// 	</Stack>
-		// 	<div className={styles.icon}>
-		// 		<FontAwesomeIcon
-		// 			icon={changeIconRegardingSection(material.section)}
-		// 			size='2xl'
-		// 		/>
-		// 	</div>
-		// 	<span className={changeBackgroundColorRegardingLevel(material.level)}>
-		// 		{changeLevelName(material.level)}
-		// 	</span>
-		// </Card>
 		<CardActionArea
 			href={`/materials/${material.section}/${
 				section === 'book' ? material.id + 1 : material.id
@@ -146,7 +72,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					alignItems: 'center',
 					height: 135,
 					boxShadow: 'none',
-					backgroundColor: '#f5f5f5',
+					backgroundColor: 'clrCardBg',
 				}}>
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
 					checkIfUserMaterialIsInMaterials.is_being_studied && (

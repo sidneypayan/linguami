@@ -17,7 +17,13 @@ const Blog = ({ posts }) => {
 					content="Retrouvez des articles sur la langue, l'histoire et la culture russe. En complément de nos matériels d'apprentissage, nous rédigeons régulièrement des articles afin de vous immerger dans le monde russe et ses particularités."
 				/>
 			</Head>
-			<Container sx={{ margin: '10rem auto' }}>
+			<Container
+				sx={{
+					margin: {
+						xs: '5rem auto',
+						md: '10rem auto',
+					},
+				}}>
 				{posts.map((post, index) => (
 					<BlogCard key={index} post={post} />
 				))}
