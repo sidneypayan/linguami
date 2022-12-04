@@ -63,6 +63,10 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 
 	return (
 		<CardActionArea
+			sx={{
+				maxWidth: '500px',
+				margin: '0 auto',
+			}}
 			href={`/materials/${material.section}/${
 				section === 'book' ? material.id + 1 : material.id
 			}`}>

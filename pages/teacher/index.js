@@ -59,15 +59,20 @@ const Teacher = () => {
 					</Button>
 				</Stack>
 
-				<Typography m={2} variant='h3'>
+				<Typography m={2} variant='h3' align='center'>
 					Cours de russe par Skype
 				</Typography>
-				<Typography m={2} variant='h5' color='clrPrimary3'>
+				<Typography m={2} variant='h5' color='clrPrimary3' align='center'>
 					Professeure de l&apos;Alliance française <br /> diplômée de
 					l&apos;université de Moscou
 				</Typography>
 				<Typography
-					width='75%'
+					sx={{
+						width: {
+							xs: '100%',
+							sm: '75%',
+						},
+					}}
 					variant='body1'
 					mt={4}
 					mb={8}
@@ -90,8 +95,15 @@ const Teacher = () => {
 					L&apos;avis des élèves
 				</Typography>
 
-				<Stack direction='row' gap={4}>
-					<Card sx={{ flex: 1 }}>
+				<Stack
+					gap={4}
+					sx={{
+						flexDirection: {
+							xs: 'column',
+							md: 'row',
+						},
+					}}>
+					<Card>
 						<CardContent>
 							<Typography variant='h4' align='center' m={2}>
 								David
@@ -111,7 +123,7 @@ const Teacher = () => {
 					/> */}
 						</CardContent>
 					</Card>
-					<Card sx={{ flex: 1 }}>
+					<Card>
 						<CardContent>
 							<Typography variant='h4' align='center' m={2}>
 								Carole
@@ -132,7 +144,7 @@ const Teacher = () => {
 					/> */}
 						</CardContent>
 					</Card>
-					<Card sx={{ flex: 1 }}>
+					<Card>
 						<CardContent>
 							<Typography variant='h4' align='center' m={2}>
 								Daniel

@@ -21,7 +21,10 @@ const Post = ({ frontmatter: { title, date, img }, slug, content }) => {
 						sm: '10rem auto',
 					},
 				}}>
-				<Typography variant='h1' align='center'>
+				<Typography
+					variant='h1'
+					align='center'
+					sx={{ typography: { xs: 'h2', md: 'h1' } }}>
 					{title}
 				</Typography>
 				<Box
