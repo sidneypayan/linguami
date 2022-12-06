@@ -2,10 +2,13 @@
 	"home": "accueil",
 	"material": "Материал",
 	"blog": "Блог",
+	"teacher": "Уроки",
 	"signin": "Войти",
 	"register": "Зарегистрироваться",
 	"settings": "Параметры",
 	"logout": "Выйти",
 	"mydictionary": "Мой словарь",
-	"mymaterials": "Mои материалы"
+	"mymaterials": "Mои материалы",
+	"support": "Поддержать нас",
+	"contact": "Связаться с нами"
 }

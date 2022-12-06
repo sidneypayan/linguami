@@ -1,8 +1,11 @@
 import styles from '../../styles/Footer.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
+import useTranslation from 'next-translate/useTranslation'
 
 const Footer = () => {
+	const { t, lang } = useTranslation()
+
 	return (
 		<div className='white-wrapper'>
 			<footer className={styles.container}>
@@ -57,12 +60,12 @@ const Footer = () => {
 						</li> */}
 						<li>
 							<Link href='https://paypal.me/linguami' target='_blank'>
-								Nous soutenir
+								{t('common:support')}
 							</Link>
 						</li>
 						<li>
 							<Link href='mailto:contact@linguami.com?Subject=Contact%20from%20linguami'>
-								Nous contacter
+								{t('common:contact')}
 							</Link>
 						</li>
 					</ul>

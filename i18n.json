@@ -3,6 +3,7 @@
 	"defaultLocale": "fr",
 	"pages": {
 		"*": ["common"],
-		"/": ["home"]
+		"/": ["home"],
+		"/materials": ["materials"]
 	}
 }

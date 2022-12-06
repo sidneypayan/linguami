@@ -50,7 +50,7 @@ const Hero = () => {
 						}}
 						href='/materials'
 						variant='contained'>
-						Commencer
+						{t('home:start')}
 					</Button>
 				</Box>
 

@@ -9,6 +9,7 @@ import {
 import { addBeingStudiedMaterial } from '../../features/materials/materialsSlice'
 
 const Words = ({ content, materialId }) => {
+	console.log(content)
 	const dispatch = useDispatch()
 
 	const purifiedContent = DOMPurify.sanitize(content)
@@ -17,7 +18,7 @@ const Words = ({ content, materialId }) => {
 	const brRegex = /[<br>]/
 	const brRegex1 = /<br>/g
 	// Regex pour match tous type de caractères et <br>
-	const regexAll = /[<br>]+|[ ….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi
+	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
 	// Regex pour match uniquement les lettres russes
 	const regexWordsOnly = /[\u0430-\u044f]+/gi
 	// Regex pour match les phrases

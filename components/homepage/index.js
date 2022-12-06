@@ -59,7 +59,7 @@ const Homepage = () => {
 		},
 		{
 			img: '/img/dictionary.png',
-			title: t('home:dictionary'),
+			title: t('home:dictonary'),
 			subtitle: t('home:dictionarysubtitle'),
 		},
 		{
@@ -132,11 +132,10 @@ const Homepage = () => {
 
 					<Stack gap='1rem'>
 						<Typography variant='h4' align='center'>
-							Outlil de traduction intégré
+							{t('home:translator')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
-							Inscrivez-vous et traduisez n&apos;importe quel mot de
-							n&apos;importe quel texte
+							{t('home:translatorsubtitle')}
 						</Typography>
 						<Link href='/register'>
 							<Button
@@ -149,7 +148,7 @@ const Homepage = () => {
 									bgcolor: 'clrBtn1',
 									marginTop: '1rem',
 								}}>
-								S&apos;inscrire
+								{t('home:register')}
 							</Button>
 						</Link>
 					</Stack>
@@ -170,7 +169,7 @@ const Homepage = () => {
 					}}>
 					<Stack gap='1rem'>
 						<Typography variant='h4' align='center'>
-							Apprendre avec un locuteur natif
+							{t('home:native')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
 							Prenez des cours à distance avec un professeur diplômé et
@@ -187,7 +186,7 @@ const Homepage = () => {
 									marginTop: '1rem',
 									bgcolor: 'clrBtn1',
 								}}>
-								Commencez !
+								{t('home:start')}
 							</Button>
 						</Link>
 					</Stack>
@@ -213,7 +212,7 @@ const Homepage = () => {
 				{/* ACCORDION */}
 
 				<Typography variant='h4' align='center' mt='8rem'>
-					Comment utiliser le système de traduction
+					FAQ
 				</Typography>
 				<div className='hr-custom'></div>
 				<div className='wrapper-small'>
@@ -223,7 +222,7 @@ const Homepage = () => {
 							aria-controls='panel1a-content'
 							id='panel1a-header'>
 							<Typography variant='h6' color='primaryGrey'>
-								Traduire les mots des materiels
+								{t('home:faqtranslation')}
 							</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
@@ -233,7 +232,7 @@ const Homepage = () => {
 									maxWidth='350px'
 									textAlign='left'
 									mt={5}>
-									Traduisez n&apos;importe quel mot d&apos;un simple clique
+									{t('home:faqtranslationsubtitle')}
 								</Typography>
 								<Divider orientation='vertical'></Divider>
 								<Box
@@ -253,14 +252,13 @@ const Homepage = () => {
 							aria-controls='panel1a-content'
 							id='panel1a-header'>
 							<Typography variant='h6' color='primaryGrey'>
-								Ajouter une traduction à son dictionnaire
+								{t('home:faqaddword')}
 							</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
 							<StyledStack>
 								<Typography maxWidth='350px' textAlign='left' mt={5}>
-									Ajouter une traduction à son dictionnaire personnel est tout
-									aussi simple
+									{t('home:faqaddwordsubtitle')}
 								</Typography>
 								<Box
 									sx={{ borderRadius: '3px' }}
