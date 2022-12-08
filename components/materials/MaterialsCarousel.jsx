@@ -50,16 +50,16 @@ const MaterialsCarousel = ({ materials }) => {
 
 	return (
 		<Swiper
-			spaceBetween={25}
+			spaceBetween={10}
 			slidesPerView={1.5}
 			modules={[Navigation]}
 			navigation
 			breakpoints={{
-				650: {
-					slidesPerView: 2.5,
+				600: {
+					slidesPerView: 3,
 				},
-				900: {
-					slidesPerView: 3.5,
+				950: {
+					slidesPerView: 4,
 				},
 			}}>
 			{/* <SwiperButtonPrev />

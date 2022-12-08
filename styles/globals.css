@@ -173,7 +173,7 @@ img {
 	left: 0 !important;
 	border-radius: 3px 0 0 3px;
 	color: #fff !important;
-	padding: 0 1.5rem;
+	padding: 0 1.25rem;
 }
 
 .swiper-button-next {
@@ -184,7 +184,7 @@ img {
 	border-radius: 0 3px 3px 0;
 	color: #fff !important;
 	height: 180px !important;
-	padding: 0 1.5rem;
+	padding: 0 1.25rem;
 }
 
 .wave {

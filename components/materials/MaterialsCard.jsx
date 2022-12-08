@@ -8,7 +8,7 @@ const MaterialsCard = ({ material }) => {
 		<Box>
 			<Link href={`/materials/${material.param}`}>
 				<Box
-					width={230}
+					maxWidth={230}
 					height={180}
 					sx={{ position: 'relative', cursor: 'pointer' }}>
 					<Image

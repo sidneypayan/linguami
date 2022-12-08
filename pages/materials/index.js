@@ -2,7 +2,7 @@ import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
 // import { materials } from '../../data/materials'
 import { materials_ru, materials_fr } from '../../utils/constants'
 import Head from 'next/head'
-import { Container, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import useTranslation from 'next-translate/useTranslation'
 import { useEffect, useState } from 'react'
 
@@ -34,7 +34,7 @@ const Material = () => {
 					content='Apprenez le russe grâce à nos sections variées et interactives. Dialogues, livres audio, extraits de films, chansons et bien plus encore vous permettront de travailler sur la langue russe de manière ludique et efficace.'
 				/>
 			</Head>
-			<Container maxWidth='md' sx={{ margin: '10rem auto' }}>
+			<Box p={5} maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
 				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
 					{t('materials:text')}
 				</Typography>
@@ -47,7 +47,7 @@ const Material = () => {
 					{t('materials:music')}
 				</Typography>
 				<MaterialsCarousel materials={music} />
-			</Container>
+			</Box>
 		</>
 	)
 }
