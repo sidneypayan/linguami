@@ -12,8 +12,11 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
+import useTranslation from 'next-translate/useTranslation'
 
 const Section = () => {
+	const { t, lang } = useTranslation()
+	const newLang = lang === 'fr' ? 'ru' : 'fr'
 	const router = useRouter()
 	const { section } = router.query
 	const dispatch = useDispatch()
@@ -36,10 +39,10 @@ const Section = () => {
 
 	useEffect(() => {
 		if (section) {
-			dispatch(getMaterials(section))
+			dispatch(getMaterials({ newLang, section }))
 			dispatch(getUserMaterialsStatus(section))
 		}
-	}, [section, dispatch])
+	}, [newLang, section, dispatch])
 
 	useEffect(() => {
 		if (level) {

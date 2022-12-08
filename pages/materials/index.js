@@ -1,18 +1,30 @@
-import styles from '../../styles/materials/Materials.module.css'
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
-import { materials } from '../../data/materials'
+// import { materials } from '../../data/materials'
+import { materials_ru, materials_fr } from '../../utils/constants'
 import Head from 'next/head'
-import { Typography } from '@mui/material'
+import { Container, Typography } from '@mui/material'
 import useTranslation from 'next-translate/useTranslation'
+import { useEffect, useState } from 'react'
 
 const Material = () => {
 	const { t, lang } = useTranslation()
-	console.log(lang)
+	const [materials, setMaterials] = useState([])
+
+	useEffect(() => {
+		if (lang === 'fr') {
+			setMaterials(materials_ru)
+		}
+		if (lang === 'ru') {
+			setMaterials(materials_fr)
+		}
+	}, [lang])
+
 	const textes = materials.filter(
 		material => material.category === 'text & audio'
 	)
 	const video = materials.filter(material => material.category === 'video')
 	const music = materials.filter(material => material.category === 'music')
+
 	return (
 		<>
 			<Head>
@@ -22,20 +34,20 @@ const Material = () => {
 					content='Apprenez le russe grâce à nos sections variées et interactives. Dialogues, livres audio, extraits de films, chansons et bien plus encore vous permettront de travailler sur la langue russe de manière ludique et efficace.'
 				/>
 			</Head>
-			<div style={{ margin: '10rem auto' }} className={styles.container}>
-				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+			<Container maxWidth='md' sx={{ margin: '10rem auto' }}>
+				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
 					{t('materials:text')}
 				</Typography>
 				<MaterialsCarousel materials={textes} />
-				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
 					{t('materials:video')}
 				</Typography>
 				<MaterialsCarousel materials={video} />
-				<Typography variant='h5' mb={1} sx={{ fontWeight: '500' }}>
+				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
 					{t('materials:music')}
 				</Typography>
 				<MaterialsCarousel materials={music} />
-			</div>
+			</Container>
 		</>
 	)
 }

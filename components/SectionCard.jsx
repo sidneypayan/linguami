@@ -59,8 +59,6 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 		return icon
 	}
 
-	console.log(material.title)
-
 	return (
 		<CardActionArea
 			sx={{

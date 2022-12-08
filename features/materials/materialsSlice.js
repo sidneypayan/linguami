@@ -29,12 +29,14 @@ const initialState = {
 export const getMaterials = createAsyncThunk(
 	'materials/getMaterials',
 	async (param, thunkAPI) => {
+		const { newLang: lang, section } = param
+
 		try {
 			let { data: materials, error } = await supabase
 				.from('materials')
 				.select('*')
-				.eq('lang', 'ru')
-				.eq('section', param)
+				.eq('lang', lang)
+				.eq('section', section)
 				.order('id', { ascending: false })
 			return materials
 		} catch (error) {

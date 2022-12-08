@@ -166,6 +166,27 @@ img {
 	margin-right: auto;
 }
 
+.swiper-button-prev {
+	background-color: rgba(33, 33, 33, 0.3);
+	height: 180px !important;
+	top: 22px !important;
+	left: 0 !important;
+	border-radius: 3px 0 0 3px;
+	color: #fff !important;
+	padding: 0 1.5rem;
+}
+
+.swiper-button-next {
+	background-color: rgba(33, 33, 33, 0.3);
+	height: 180px !important;
+	top: 22px !important;
+	right: 0 !important;
+	border-radius: 0 3px 3px 0;
+	color: #fff !important;
+	height: 180px !important;
+	padding: 0 1.5rem;
+}
+
 .wave {
 	position: absolute;
 	bottom: 0;
