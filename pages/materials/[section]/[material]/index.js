@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
-import styles from '../../../../styles/materials/Material.module.css'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import BookMenu from '../../../../components/material/BookMenu'
@@ -21,8 +20,11 @@ import {
 	Typography,
 } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
+import useTranslation from 'next-translate/useTranslation'
+import Image from 'next/image'
 
 const Material = ({ material: single_material }) => {
+	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user, isUserAdmin } = useUserContext()
@@ -39,11 +41,23 @@ const Material = ({ material: single_material }) => {
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
 			return (
-				<div
-					className={styles.imgPlace}
-					style={{
-						backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
-					}}></div>
+				<Container
+					maxWidth='sm'
+					sx={{ margin: '0 auto', marginBottom: '5rem' }}>
+					<Box width={600} height={230} sx={{ position: 'relative' }}>
+						<Image
+							style={{ borderRadius: '3px' }}
+							alt={single_material.title}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
+							layout='fill'
+						/>
+					</Box>
+					{/* <div
+						className={styles.imgPlace}
+						style={{
+							backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
+						}}></div> */}
+				</Container>
 			)
 		}
 	}
@@ -57,11 +71,23 @@ const Material = ({ material: single_material }) => {
 	const displayVideo = section => {
 		if (sections.music.includes(section) || sections.video.includes(section)) {
 			return (
-				<iframe
-					className={styles.iframe}
-					src={single_material.video}
-					frameBorder='0'
-					allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
+				<Box
+					maxWidth='100%'
+					width={450}
+					sx={{
+						margin: '0 auto',
+						marginBottom: '5rem',
+						position: 'sticky',
+						top: '70px',
+						textAlign: 'center',
+						zIndex: '2',
+					}}>
+					<iframe
+						style={{ height: '250px', width: '450px', maxWidth: '100%' }}
+						src={single_material.video}
+						frameBorder='0'
+						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
+				</Box>
 			)
 		}
 	}
@@ -100,23 +126,22 @@ const Material = ({ material: single_material }) => {
 							md: 'row',
 						},
 					}}>
-					<Container disableGutters maxWidth='100%' sx={{ marginTop: '8rem' }}>
-						<Typography variant='h3' align='center'>
+					<Container maxWidth='100%' sx={{ marginTop: '8rem' }}>
+						<Typography
+							variant='h1'
+							sx={{
+								typography: { xs: 'h4', sm: 'h3' },
+								width: '750px',
+								maxWidth: '100%',
+								margin: '2rem auto',
+							}}
+							align='center'
+							mb={5}>
 							{single_material.title}
 						</Typography>
 
-						<Container
-							maxWidth='md'
-							sx={{
-								margin: '5rem auto',
-								position: 'sticky',
-								top: '70px',
-								textAlign: 'center',
-								zIndex: '2',
-							}}>
-							{getImageRegardingSection(section)}
-							{displayVideo(section)}
-						</Container>
+						{getImageRegardingSection(section)}
+						{displayVideo(section)}
 
 						<Container maxWidth='md'>
 							<Translation
@@ -208,7 +233,7 @@ const Material = ({ material: single_material }) => {
 								lg: '25%',
 							},
 							bgcolor: '#fafafa',
-							paddingTop: '4rem',
+							paddingTop: '8rem',
 						}}>
 						<WordsContainer />
 					</Container>

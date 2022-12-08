@@ -108,7 +108,7 @@ const WordsContainer = () => {
 						size='large'
 						sx={{
 							display: 'block',
-							margin: '0 auto',
+							margin: '2rem auto',
 							backgroundColor: 'clrPrimary1',
 						}}
 						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
