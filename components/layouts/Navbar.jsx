@@ -67,7 +67,9 @@ const Navbar = props => {
 			<List sx={{ color: '#fff' }}>
 				{navigationLinks.map(link => (
 					<ListItem key={link.name} disablePadding>
-						<ListItemButton href={link.href} sx={{ textAlign: 'center' }}>
+						<ListItemButton
+							href={`/${lang + link.href}`}
+							sx={{ textAlign: 'center' }}>
 							<ListItemText primary={link.name} />
 						</ListItemButton>
 					</ListItem>
@@ -105,7 +107,7 @@ const Navbar = props => {
 							color: '#fff',
 						}}>
 						{link.icon}
-						<Button href={link.href} sx={{ color: '#fff' }}>
+						<Button href={`/${lang + link.href}`} sx={{ color: '#fff' }}>
 							{link.name}
 						</Button>
 					</Box>
@@ -138,7 +140,10 @@ const Navbar = props => {
 
 					<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
 						{navigationLinks.map(link => (
-							<Button href={link.href} key={link.name} sx={{ color: '#fff' }}>
+							<Button
+								href={`/${lang + link.href}`}
+								key={link.name}
+								sx={{ color: '#fff' }}>
 								{link.name}
 							</Button>
 						))}
@@ -161,7 +166,7 @@ const Navbar = props => {
 										marginRight: '.5rem',
 									}}>
 									{link.icon}
-									<Button href={link.href} sx={{ color: '#fff' }}>
+									<Button href={`/${lang + link.href}`} sx={{ color: '#fff' }}>
 										{link.name}
 									</Button>
 								</Box>

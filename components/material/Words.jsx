@@ -39,7 +39,6 @@ const Words = ({ content, materialId }) => {
 			return matchSentences.map((sentence, index) => (
 				<span key={index} className={styles.sentence}>
 					{wrapWords(sentence)}
-					{console.log(wrapWords(sentence))}
 				</span>
 			))
 		}
@@ -48,7 +47,7 @@ const Words = ({ content, materialId }) => {
 	const wrapWords = sentences => {
 		// regexAll permet de conserver les espaces et la ponctuation
 		return sentences.match(regexAll).map((item, index) => {
-			if (/br/.test(item)) {
+			if (/^br$/.test(item)) {
 				return <span key={index} className={styles.break}></span>
 			}
 
