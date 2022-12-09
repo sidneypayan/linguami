@@ -1,8 +1,7 @@
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
-// import { materials } from '../../data/materials'
 import { materials_ru, materials_fr } from '../../utils/constants'
 import Head from 'next/head'
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import useTranslation from 'next-translate/useTranslation'
 import { useEffect, useState } from 'react'
 

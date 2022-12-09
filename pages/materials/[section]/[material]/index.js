@@ -150,14 +150,17 @@ const Material = ({ material: single_material }) => {
 								userId={user && user.id}
 							/>
 
-							<Button
-								sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
-								variant='contained'
-								onClick={() => setShowAccents(!showAccents)}
-								type='button'
-								id='show-accents'>
-								Montrer les accents
-							</Button>
+							{lang === 'fr' && (
+								<Button
+									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+									variant='contained'
+									onClick={() => setShowAccents(!showAccents)}
+									type='button'
+									id='show-accents'>
+									Montrer les accents
+								</Button>
+							)}
+
 							{/* CHAPTER MENU */}
 							{section === 'book' && (
 								<BookMenu bookName={single_material.book_name} />
@@ -243,13 +246,17 @@ const Material = ({ material: single_material }) => {
 	)
 }
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps = async ({ params, locale }) => {
+	const lang = locale === 'ru' ? 'fr' : 'ru'
+
 	const { data: material, error } = await supabase
 		.from('materials')
 		.select('*')
-		.eq('lang', 'ru')
+		.eq('lang', lang)
 		.eq('id', params.material)
 		.single()
+
+	console.log(material)
 
 	return {
 		props: {

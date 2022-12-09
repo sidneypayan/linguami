@@ -20,8 +20,10 @@ import {
 	CardMedia,
 	Typography,
 } from '@mui/material'
+import useTranslation from 'next-translate/useTranslation'
+
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
-	const title = material.title
+	const { t, lang } = useTranslation()
 	const router = useRouter()
 	const { section } = router.query
 
@@ -65,7 +67,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				maxWidth: '500px',
 				margin: '0 auto',
 			}}
-			href={`/materials/${material.section}/${
+			href={`/${lang}/materials/${material.section}/${
 				section === 'book' ? material.id + 1 : material.id
 			}`}>
 			<Card

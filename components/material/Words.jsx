@@ -1,5 +1,4 @@
 import styles from '../../styles/materials/Material.module.css'
-import DOMPurify from 'isomorphic-dompurify'
 import { useDispatch } from 'react-redux'
 import {
 	translateWord,
@@ -7,50 +6,65 @@ import {
 	cleanTranslation,
 } from '../../features/words/wordsSlice'
 import { addBeingStudiedMaterial } from '../../features/materials/materialsSlice'
+import useTranslation from 'next-translate/useTranslation'
+import { useState } from 'react'
+import { useEffect } from 'react'
 
 const Words = ({ content, materialId }) => {
-	console.log(content)
+	const { t, lang } = useTranslation()
+
+	const [regexAll, setRegexAll] = useState('')
+	const [regexWords, setRegexWords] = useState('')
+	const [regexSentences, setRegexSentences] = useState('')
 	const dispatch = useDispatch()
 
-	const purifiedContent = DOMPurify.sanitize(content)
+	useEffect(() => {
+		if (lang === 'ru') {
+			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u00C0-\u00FF\-]+/gi)
+			setRegexWords(/[A-Z\a-z]+/gi)
+		}
+		if (lang === 'fr') {
+			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u0430-\u044f\ё\е́\-]+/gi)
+			setRegexWords(/[\u0430-\u044f]+/gi)
+		}
 
-	// Regex pour match les <br>
-	const brRegex = /[<br>]/
-	const brRegex1 = /<br>/g
-	// Regex pour match tous type de caractères et <br>
-	const regexAll = /[<br>]+|[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi
-	// Regex pour match uniquement les lettres russes
-	const regexWordsOnly = /[\u0430-\u044f]+/gi
-	// Regex pour match les phrases
-	const regexSentences =
-		/[0-9\A-Z\a-z\u0430-\u044f\ё\е́\ ,;:'"«»–—-]+[….!?<br>]+/gi
+		setRegexSentences(
+			/[\d+\w+\u00C0-\u00FF\u0430-\u044f ,;:'"«»–—-]+[….!?br]/gi
+		)
+	}, [lang])
 
 	const wrapSentences = text => {
-		const matchSentences = text.match(regexSentences)
-		return matchSentences.map((sentence, sentenceIndex) => (
-			<span key={sentenceIndex} className={styles.sentence}>
-				{sentence.match(regexAll).map((word, wordIndex) =>
-					regexWordsOnly.test(word) ? (
-						<span
-							key={wordIndex}
-							className={styles.translate}
-							onClick={e => handleClick(e)}>
-							{word}
-						</span>
-					) : word.match(brRegex1) ? (
-						word
-							.match(brRegex1)
-							.map((match, index) => (
-								<span key={wordIndex} className={styles.break}></span>
-							))
-					) : brRegex.test(word) ? (
-						<span key={wordIndex} className={styles.break}></span>
-					) : (
-						<span key={wordIndex}>{word}</span>
-					)
-				)}
-			</span>
-		))
+		if (regexSentences) {
+			const matchSentences = text.match(regexSentences)
+			return matchSentences.map((sentence, index) => (
+				<span key={index} className={styles.sentence}>
+					{wrapWords(sentence)}
+					{console.log(wrapWords(sentence))}
+				</span>
+			))
+		}
+	}
+
+	const wrapWords = sentences => {
+		// regexAll permet de conserver les espaces et la ponctuation
+		return sentences.match(regexAll).map((item, index) => {
+			if (/br/.test(item)) {
+				return <span key={index} className={styles.break}></span>
+			}
+
+			if (regexWords.test(item)) {
+				return (
+					<span
+						key={index}
+						className={styles.translate}
+						onClick={e => handleClick(e)}>
+						{item}
+					</span>
+				)
+			}
+
+			return item
+		})
 	}
 
 	const handleClick = e => {
@@ -62,7 +76,7 @@ const Words = ({ content, materialId }) => {
 		dispatch(addBeingStudiedMaterial(materialId))
 	}
 
-	return <>{wrapSentences(purifiedContent)}</>
+	return wrapSentences(content)
 }
 
 export default Words
