@@ -178,13 +178,6 @@ export const materials_fr = [
 		text: 'Ici vous trouverez des livres audio accompagnés de leur texte. Ainsi vous élargirez votre vocabulaire et améliorerez votre compréhension orale tout en voyageant dans le monde passionnant de la littérature.',
 	},
 	{
-		category: 'text & audio',
-		img: 'short-story.jpg',
-		title: 'Короткие рассказы',
-		param: 'short-story',
-		text: "Les histoires courtes ont le même objectif que les livres audio, mais sont plus condensées. Idéal pour ceux d'entre vous qui ne souhaitent pas se plonger dans un livre de plusieurs chapitres.",
-	},
-	{
 		category: 'video',
 		img: 'trailer.jpg',
 		title: 'Трейлеры',
