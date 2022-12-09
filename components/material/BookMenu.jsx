@@ -15,7 +15,6 @@ import {
 } from '@mui/material'
 
 const BookMenu = ({ bookName }) => {
-	console.log(bookName)
 	const { chapters } = useSelector(store => store.materials)
 	const dispatch = useDispatch()
 

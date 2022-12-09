@@ -172,13 +172,6 @@ export const materials_fr = [
 	},
 	{
 		category: 'text & audio',
-		img: 'podcast.jpg',
-		title: 'podcast',
-		param: 'podcast',
-		text: 'Avec nos podcast apprenez-en plus sur les particularités de la langue russe.',
-	},
-	{
-		category: 'text & audio',
 		img: 'audiobook.jpg',
 		title: 'Аудиокниги',
 		param: 'book',

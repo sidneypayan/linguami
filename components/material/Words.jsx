@@ -7,8 +7,8 @@ import {
 } from '../../features/words/wordsSlice'
 import { addBeingStudiedMaterial } from '../../features/materials/materialsSlice'
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import DOMPurify from 'isomorphic-dompurify'
 
 const Words = ({ content, materialId }) => {
 	const { t, lang } = useTranslation()
@@ -18,10 +18,12 @@ const Words = ({ content, materialId }) => {
 	const [regexSentences, setRegexSentences] = useState('')
 	const dispatch = useDispatch()
 
+	const clean = DOMPurify.sanitize(content)
+
 	useEffect(() => {
 		if (lang === 'ru') {
 			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u00C0-\u00FF\-]+/gi)
-			setRegexWords(/[A-Z\a-z]+/gi)
+			setRegexWords(/[\w]+/gi)
 		}
 		if (lang === 'fr') {
 			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u0430-\u044f\ё\е́\-]+/gi)
@@ -75,7 +77,7 @@ const Words = ({ content, materialId }) => {
 		dispatch(addBeingStudiedMaterial(materialId))
 	}
 
-	return wrapSentences(content)
+	return wrapSentences(clean)
 }
 
 export default Words

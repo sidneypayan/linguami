@@ -14,6 +14,7 @@ import { editContent } from '../../../../features/content/contentSlice'
 import {
 	Box,
 	Button,
+	CardMedia,
 	Container,
 	IconButton,
 	Stack,
@@ -44,14 +45,38 @@ const Material = ({ material: single_material }) => {
 				<Container
 					maxWidth='sm'
 					sx={{ margin: '0 auto', marginBottom: '5rem' }}>
-					<Box width={600} height={230} sx={{ position: 'relative' }}>
-						<Image
+					{/* <Box
+						width={600}
+						height={230}
+						sx={{
+							backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
+							backgroundPosition: 'center',
+						}}></Box> */}
+					{/* <Image
 							style={{ borderRadius: '3px' }}
 							alt={single_material.title}
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
 							layout='fill'
-						/>
-					</Box>
+						/> */}
+
+					<CardMedia
+						component='img'
+						sx={{ maxWidth: 600, height: 230, borderRadius: '3px' }}
+						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
+						alt={material.title}
+					/>
+
+					{/* <Box
+						component='img'
+						sx={{
+							// height: 230,
+							// width: 600,
+							maxHeight: '230',
+							maxWidth: '600',
+						}}
+						alt={single_material.title}
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
+					/> */}
 					{/* <div
 						className={styles.imgPlace}
 						style={{
@@ -255,8 +280,6 @@ export const getStaticProps = async ({ params, locale }) => {
 		.eq('lang', lang)
 		.eq('id', params.material)
 		.single()
-
-	console.log(material)
 
 	return {
 		props: {

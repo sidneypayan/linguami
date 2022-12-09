@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 
 const FlashCards = () => {
 	const router = useRouter()
-	console.log(router)
 	const dispatch = useDispatch()
 	const { user_material_words, user_words } = useSelector(store => store.words)
 	const [cardIndex, setCardIndex] = useState(0)
