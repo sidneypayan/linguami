@@ -31,7 +31,7 @@ const Words = ({ content, materialId }) => {
 		}
 
 		setRegexSentences(
-			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….!?br]/gi
+			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….:!?br]/gi
 		)
 	}, [lang])
 
