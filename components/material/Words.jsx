@@ -71,7 +71,7 @@ const Words = ({ content, materialId }) => {
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		dispatch(translateWord({ word, sentence }))
+		dispatch(translateWord({ word, sentence, lang }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
 		dispatch(addBeingStudiedMaterial(materialId))

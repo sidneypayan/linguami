@@ -18,13 +18,16 @@ const initialState = {
 export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
-		const { word, sentence } = param
+		const { word, sentence, lang } = param
+		const langPair = lang === 'fr' ? 'ru-fr' : 'fr-ru'
+		console.log(param)
 
-		word = word.match(/[\u0430-\u044f\ё]+/gi).join('')
+		word = lang === 'fr' ? word.match(/[\u0430-\u044f\ё]+/gi).join('') : word
+		console.log(word)
 
 		try {
 			const { data } = await axios.get(
-				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=ru-fr&text=${word}&flags=004`
+				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=${langPair}&text=${word}&flags=004`
 			)
 			if (!data.def.length) {
 				return { word, sentence }

@@ -1,4 +1,5 @@
 .container {
+	z-index: 1;
 	position: absolute;
 	background-color: var(--white);
 	font-size: 15px;
