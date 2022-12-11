@@ -18,7 +18,7 @@ const Teacher = () => {
 	return (
 		<>
 			<Head>
-				<title>Linguami | {t('teacher:pagetitle')}</title>
+				<title>{`${t('teacher:pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('teacher:description')} />
 			</Head>
 			<Container

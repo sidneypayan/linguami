@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import Image from 'next/image'
+import Head from 'next/head'
 
 const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation()
@@ -45,43 +45,12 @@ const Material = ({ material: single_material }) => {
 				<Container
 					maxWidth='sm'
 					sx={{ margin: '0 auto', marginBottom: '5rem' }}>
-					{/* <Box
-						width={600}
-						height={230}
-						sx={{
-							backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
-							backgroundPosition: 'center',
-						}}></Box> */}
-					{/* <Image
-							style={{ borderRadius: '3px' }}
-							alt={single_material.title}
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
-							layout='fill'
-						/> */}
-
 					<CardMedia
 						component='img'
 						sx={{ maxWidth: 600, height: 230, borderRadius: '3px' }}
 						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
 						alt={material.title}
 					/>
-
-					{/* <Box
-						component='img'
-						sx={{
-							// height: 230,
-							// width: 600,
-							maxHeight: '230',
-							maxWidth: '600',
-						}}
-						alt={single_material.title}
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
-					/> */}
-					{/* <div
-						className={styles.imgPlace}
-						style={{
-							backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.img})`,
-						}}></div> */}
 				</Container>
 			)
 		}
@@ -110,7 +79,6 @@ const Material = ({ material: single_material }) => {
 					<iframe
 						style={{ height: '250px', width: '450px', maxWidth: '100%' }}
 						src={single_material.video}
-						frameBorder='0'
 						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
 				</Box>
 			)
@@ -133,6 +101,10 @@ const Material = ({ material: single_material }) => {
 	return (
 		single_material && (
 			<>
+				<Head>
+					<title>{`${single_material.title} | Linguami`}</title>
+					<meta name='description' content={t('materials:description')} />
+				</Head>
 				<IconButton
 					sx={{
 						position: 'absolute',

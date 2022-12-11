@@ -14,7 +14,7 @@ const Blog = ({ posts }) => {
 	return (
 		<>
 			<Head>
-				<title>Linguami | {t('blog:pagetitle')}</title>
+				<title>{`${t('blog:pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('blog:description')} />
 			</Head>
 			<Container

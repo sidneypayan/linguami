@@ -2,7 +2,7 @@
 	"locales": ["fr", "ru"],
 	"defaultLocale": "fr",
 	"pages": {
-		"*": ["common"],
+		"*": ["common", "materials"],
 		"/": ["home"],
 		"/materials": ["materials"],
 		"/register": ["register"],

@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { Box, Container, IconButton } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
+import Head from 'next/head'
 
 const Section = () => {
 	const { t, lang } = useTranslation()
@@ -64,6 +65,10 @@ const Section = () => {
 
 	return (
 		<>
+			<Head>
+				<title>Section | Linguami</title>
+				<meta name='description' content={t('materials:description')} />
+			</Head>
 			<IconButton
 				sx={{
 					position: 'absolute',

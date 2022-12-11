@@ -9,7 +9,7 @@ export default function Home() {
 	return (
 		<>
 			<Head>
-				<title>Linguami | {t('home:pagetitle')}</title>
+				<title>{`${t('home:pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('home:description')} />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>

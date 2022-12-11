@@ -27,7 +27,7 @@ const Material = () => {
 	return (
 		<>
 			<Head>
-				<title>Linguami | {t('materials:pagetitle')}</title>
+				<title>{`${t('materials:pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('materials:description')} />
 			</Head>
 			<Box p={5} maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
