@@ -5,6 +5,7 @@ import styles from '../styles/Register.module.css'
 import { useUserContext } from '../context/user'
 import { Divider } from '@mui/material'
 import Link from 'next/link'
+import useTranslation from 'next-translate/useTranslation'
 
 const initialState = {
 	email: '',
@@ -12,6 +13,7 @@ const initialState = {
 }
 
 const Login = () => {
+	const { t, lang } = useTranslation()
 	const [values, setValues] = useState(initialState)
 
 	const { login, loginWithThirdPartyOAuth } = useUserContext()
@@ -62,13 +64,13 @@ const Login = () => {
 						<span className={styles.socialText}>Google</span>
 					</button>
 				</div>
-				<Divider sx={{ marginBottom: '1rem' }}>ou</Divider>
+				<Divider sx={{ marginBottom: '1rem' }}>{t('register:or')}</Divider>
 				<form onSubmit={handleSubmit} className={styles.formContainer}>
 					<div>
 						<input
 							onChange={handleChange}
 							type='email'
-							placeholder='email'
+							placeholder={t('register:email')}
 							name='email'
 							value={values.email}
 							autoComplete='email'
@@ -78,17 +80,20 @@ const Login = () => {
 						<input
 							onChange={handleChange}
 							type='password'
-							placeholder='mot de passe'
+							placeholder={t('register:password')}
 							name='password'
 							value={values.password}
 							autoComplete='current-password'
 						/>
 					</div>
 
-					<button className={`${styles.btn} mainBtn`}>Se connecter</button>
+					<button className={`${styles.btn} mainBtn`}>
+						{t('register:signin')}
+					</button>
 					<p className={styles.existingAccount}>
-						Vous n&apos;avez pas encore de compte ? <br />
-						<Link href='/register'>Inscrivez-vous gratuitement !</Link>
+						{t('register:noaccount')}
+						<br />
+						<Link href={`/${lang}/register`}>{t('register:register')}</Link>
 					</p>
 				</form>
 			</div>

@@ -9,18 +9,20 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
+import useTranslation from 'next-translate/useTranslation'
 
 const Teacher = () => {
+	const { t, lang } = useTranslation()
+	const img = lang === 'ru' ? '/img/sidney.jpg' : '/img/natacha.jpg'
+
 	return (
 		<>
 			<Head>
-				<title>Linguami | Cours de russe</title>
-				<meta
-					name='description'
-					content='Nos professeurs de langue russe natifs et diplômés vous proposent des cours de russe personnalisés et adaptés à vos objectifs. Prenez des cours de russe selon vos disponibilités et sans bouger de chez vous grâce à nos cours à distance.'
-				/>
+				<title>Linguami | {t('teacher:pagetitle')}</title>
+				<meta name='description' content={t('teacher:description')} />
 			</Head>
 			<Container
+				maxWidth='md'
 				sx={{
 					display: 'flex',
 					flexDirection: 'column',
@@ -32,7 +34,7 @@ const Teacher = () => {
 					width={200}
 					height={200}
 					sx={{ borderRadius: '50%' }}
-					src='/img/natacha.jpg'
+					src={img}
 					alt='teacher'
 				/>
 				<Typography
@@ -40,19 +42,19 @@ const Teacher = () => {
 					variant='body1'
 					m={2}
 					sx={{ fontWeight: '600' }}>
-					Contacter Natacha
+					{t('teacher:contact')}
 				</Typography>
 				<Stack direction='row' gap={1} m={2} sx={{ fontSize: '1.5rem' }}>
 					<Button
 						sx={{ backgroundColor: 'clrPrimary3' }}
-						href='skype:red.fox000?chat'
+						href={t('teacher:skype')}
 						variant='contained'
 						startIcon={<FaSkype />}>
 						Skype
 					</Button>
 					<Button
 						sx={{ backgroundColor: 'clrPrimary3' }}
-						href='mailto:redfox000@yandex.ru?Subject=Cours%20de%20russe'
+						href={t('teacher:mail')}
 						variant='contained'
 						startIcon={<FaEnvelope />}>
 						Mail
@@ -60,12 +62,14 @@ const Teacher = () => {
 				</Stack>
 
 				<Typography m={2} variant='h3' align='center'>
-					Cours de russe par Skype
+					{t('teacher:title')}
 				</Typography>
-				<Typography m={2} variant='h5' color='clrPrimary3' align='center'>
-					Professeure de l&apos;Alliance française <br /> diplômée de
-					l&apos;université de Moscou
-				</Typography>
+				{lang === 'fr' && (
+					<Typography m={2} variant='h5' color='clrPrimary3' align='center'>
+						Professeure de l&apos;Alliance française <br /> diplômée de
+						l&apos;université de Moscou
+					</Typography>
+				)}
 				<Typography
 					sx={{
 						width: {
@@ -73,99 +77,94 @@ const Teacher = () => {
 							sm: '75%',
 						},
 					}}
-					variant='body1'
+					variant='subtitle1'
 					mt={4}
 					mb={8}
 					textAlign='center'
 					color='clrGrey3'>
-					Natacha est passionnée par l&apos;apprentissage et l&apos;enseignement
-					des langues. Elle vous guidera dans votre apprentissage du russe à
-					travers un accompagnement personnalisé. Le russe est une langue
-					compliquée, mais son apprentissage peut-être grandement facilité grâce
-					à un professeur attentionné qui connaît vos difficultés et suit la
-					bonne méthodologie. Grâce à son expérience avec des élèves français,
-					elle est familière des difficultés que rencontrent les apprenants
-					francophones de la langue russe. Elle parle aussi anglais ce qui lui
-					permet de prendre en charge des élèves anglophones si besoin. Natacha
-					est la principale rédactrice du contenu de ce site.
+					{t('teacher:text')}
 				</Typography>
 
-				{/* <hr class="main-hr mt-4"> */}
-				<Typography variant='h4' mt={2} mb={4}>
-					L&apos;avis des élèves
-				</Typography>
+				{lang === 'fr' && (
+					<>
+						<Typography variant='h4' mt={2} mb={4}>
+							L&apos;avis des élèves
+						</Typography>
 
-				<Stack
-					gap={4}
-					sx={{
-						flexDirection: {
-							xs: 'column',
-							md: 'row',
-						},
-					}}>
-					<Card>
-						<CardContent>
-							<Typography variant='h4' align='center' m={2}>
-								David
-							</Typography>
-							<Typography variant='body1' color='clrGrey3' align='center'>
-								Natacha se donne beaucoup de mal pour préparer le cours suivant
-								en fonction du besoin du moment. Les moyens pour apprendre sont
-								sur mesure. Super ambiance. J&apos;attends chaque cours avec
-								impatience
-							</Typography>
-							{/* <Image
+						<Stack
+							gap={4}
+							sx={{
+								flexDirection: {
+									xs: 'column',
+									md: 'row',
+								},
+							}}>
+							<Card>
+								<CardContent>
+									<Typography variant='h4' align='center' m={2}>
+										David
+									</Typography>
+									<Typography variant='body1' color='clrGrey3' align='center'>
+										Natacha se donne beaucoup de mal pour préparer le cours
+										suivant en fonction du besoin du moment. Les moyens pour
+										apprendre sont sur mesure. Super ambiance. J&apos;attends
+										chaque cours avec impatience
+									</Typography>
+									{/* <Image
 						className={styles.avisImg}
 						width={75}
 						height={75}
 						src='/img/avis1.png'
 						alt='student one'
 					/> */}
-						</CardContent>
-					</Card>
-					<Card>
-						<CardContent>
-							<Typography variant='h4' align='center' m={2}>
-								Carole
-							</Typography>
-							<Typography variant='body1' color='clrGrey3' align='center'>
-								Je suis très satisfaite du cours. Natalia est attentive aux
-								différents besoins des élèves, gentille et agréable.
-								L&apos;apprentissage est rapide et facile grâce à sa pedagogie.
-								Autres points forts, la flexibilité pour les horaires et le bon
-								matériel didactique (livres, audios) mis à disposition
-							</Typography>
-							{/* <Image
+								</CardContent>
+							</Card>
+							<Card>
+								<CardContent>
+									<Typography variant='h4' align='center' m={2}>
+										Carole
+									</Typography>
+									<Typography variant='body1' color='clrGrey3' align='center'>
+										Je suis très satisfaite du cours. Natalia est attentive aux
+										différents besoins des élèves, gentille et agréable.
+										L&apos;apprentissage est rapide et facile grâce à sa
+										pedagogie. Autres points forts, la flexibilité pour les
+										horaires et le bon matériel didactique (livres, audios) mis
+										à disposition
+									</Typography>
+									{/* <Image
 						className={styles.avisImg}
 						width={75}
 						height={75}
 						src='/img/avis2.png'
 						alt='student two'
 					/> */}
-						</CardContent>
-					</Card>
-					<Card>
-						<CardContent>
-							<Typography variant='h4' align='center' m={2}>
-								Daniel
-							</Typography>
-							<Typography variant='body1' color='clrGrey3' align='center'>
-								Depuis 1 an j&apos;apprends le Russe avec Natacha et je suis
-								très satisfait de ma professeure, je progresse facilement et
-								j&apos;ai pu commencer quelques dialogues lors de 2 voyages à
-								Saint Petersbourg. Sa méthode d&apos;apprentissage est facile et
-								complète
-							</Typography>
-							{/* <Image
+								</CardContent>
+							</Card>
+							<Card>
+								<CardContent>
+									<Typography variant='h4' align='center' m={2}>
+										Daniel
+									</Typography>
+									<Typography variant='body1' color='clrGrey3' align='center'>
+										Depuis 1 an j&apos;apprends le Russe avec Natacha et je suis
+										très satisfait de ma professeure, je progresse facilement et
+										j&apos;ai pu commencer quelques dialogues lors de 2 voyages
+										à Saint Petersbourg. Sa méthode d&apos;apprentissage est
+										facile et complète
+									</Typography>
+									{/* <Image
 						className={styles.avisImg}
 						width={75}
 						height={75}
 						src='/img/avis3.png'
 						alt='student three'
 					/> */}
-						</CardContent>
-					</Card>
-				</Stack>
+								</CardContent>
+							</Card>
+						</Stack>
+					</>
+				)}
 			</Container>
 		</>
 	)

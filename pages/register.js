@@ -5,6 +5,7 @@ import styles from '../styles/Register.module.css'
 import { useUserContext } from '../context/user'
 import { Divider } from '@mui/material'
 import Link from 'next/link'
+import useTranslation from 'next-translate/useTranslation'
 
 const initialState = {
 	name: '',
@@ -13,6 +14,7 @@ const initialState = {
 }
 
 const Register = () => {
+	const { t, lang } = useTranslation()
 	const [values, setValues] = useState(initialState)
 
 	const { register, loginWithThirdPartyOAuth } = useUserContext()
@@ -68,17 +70,17 @@ const Register = () => {
 						<span className={styles.socialText}>Google</span>
 					</button>
 				</div>
-				<Divider sx={{ marginBottom: '1rem' }}>ou</Divider>
+				<Divider sx={{ marginBottom: '1rem' }}>{t('register:or')}</Divider>
 				<form
 					data-testid='form'
 					onSubmit={handleSubmit}
 					className={styles.formContainer}>
 					<div>
-						<label htmlFor='name'>Name</label>
+						{/* <label htmlFor='name'>{t('register:name')}</label> */}
 						<input
 							onChange={handleChange}
 							type='text'
-							placeholder='nom'
+							placeholder={t('register:name')}
 							name='name'
 							value={values.name}
 							autoComplete='username'
@@ -87,11 +89,11 @@ const Register = () => {
 					</div>
 
 					<div>
-						<label htmlFor='email'>Email</label>
+						{/* <label htmlFor='email'>{t('register:email')}</label> */}
 						<input
 							onChange={handleChange}
 							type='email'
-							placeholder='email'
+							placeholder={t('register:email')}
 							name='email'
 							value={values.email}
 							autoComplete='email'
@@ -99,11 +101,11 @@ const Register = () => {
 						/>
 					</div>
 					<div>
-						<label htmlFor='password'>Password</label>
+						{/* <label htmlFor='password'>{t('register:password')}</label> */}
 						<input
 							onChange={handleChange}
 							type='password'
-							placeholder='mot de passe'
+							placeholder={t('register:password')}
 							name='password'
 							value={values.password}
 							autoComplete='current-password'
@@ -111,11 +113,12 @@ const Register = () => {
 						/>
 					</div>
 					<button type='submit' className={`${styles.btn} mainBtn`}>
-						Register
+						{t('register:register')}
 					</button>
 					<p className={styles.existingAccount}>
-						Vous avez déjà un compte ?<br />
-						<Link href='/login'>Connectez vous !</Link>
+						{t('register:haveaccount')}
+						<br />
+						<Link href={`/${lang}/login`}>{t('register:signin')}</Link>
 					</p>
 				</form>
 			</div>

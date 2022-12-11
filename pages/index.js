@@ -1,16 +1,16 @@
 import Head from 'next/head'
 import Homepage from '../components/homepage'
 import Script from 'next/script'
+import useTranslation from 'next-translate/useTranslation'
 
 export default function Home() {
+	const { t, lang } = useTranslation()
+
 	return (
 		<>
 			<Head>
-				<title>Linguami | Page d&apos;accueil</title>
-				<meta
-					name='description'
-					content="Linguami est une site de langue dédié à l'apprentissage du russe pour les francophones. Sur notre site vous trouverez une grande variété de supports vidéos, audio, textes pour étudier tous les aspects de la langue russe."
-				/>
+				<title>Linguami | {t('home:pagetitle')}</title>
+				<meta name='description' content={t('home:description')} />
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<Script

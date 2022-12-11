@@ -78,13 +78,16 @@ const Navbar = props => {
 
 			{!isUserLoggedIn && (
 				<Box sx={{ bgcolor: 'clrPrimary1', height: '100vh' }}>
-					<Button variant='outlined' href='/login' sx={{ marginRight: '2rem' }}>
+					<Button
+						variant='outlined'
+						href={`/${lang}/login`}
+						sx={{ marginRight: '2rem' }}>
 						{t('common:signin')}
 					</Button>
 
 					<Button
 						variant='contained'
-						href='/register'
+						href={`/${lang}/register`}
 						sx={{ bgcolor: 'purple' }}>
 						{t('common:register')}
 					</Button>
@@ -181,13 +184,16 @@ const Navbar = props => {
 								display: { xs: 'none', sm: 'flex' },
 								gap: '1rem',
 							}}>
-							<Button sx={{ color: '#fff' }} variant='outlined' href='/login'>
+							<Button
+								sx={{ color: '#fff' }}
+								variant='outlined'
+								href={`/${lang}/login`}>
 								{t('common:signin')}
 							</Button>
 
 							<Button
 								variant='contained'
-								href='/register'
+								href={`/${lang}/register`}
 								sx={{ bgcolor: 'purple' }}>
 								{t('common:register')}
 							</Button>

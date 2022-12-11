@@ -1,5 +1,6 @@
 {
-	"home": "accueil",
+	"pagetitle": "Site d'apprentissage de la langue russe",
+	"description": "Linguami est une site de langue dédié à l'apprentissage du russe pour les francophones. Sur notre site vous trouverez une grande variété de supports vidéos, audio, textes pour étudier tous les aspects de la langue russe.",
 	"material": "matériel",
 	"blog": "blog",
 	"signin": "Se connecter",

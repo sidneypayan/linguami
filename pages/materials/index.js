@@ -27,11 +27,8 @@ const Material = () => {
 	return (
 		<>
 			<Head>
-				<title>Linguami | Matériels</title>
-				<meta
-					name='description'
-					content='Apprenez le russe grâce à nos sections variées et interactives. Dialogues, livres audio, extraits de films, chansons et bien plus encore vous permettront de travailler sur la langue russe de manière ludique et efficace.'
-				/>
+				<title>Linguami | {t('materials:pagetitle')}</title>
+				<meta name='description' content={t('materials:description')} />
 			</Head>
 			<Box p={5} maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
 				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>

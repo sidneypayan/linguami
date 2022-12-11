@@ -6,16 +6,16 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { Container } from '@mui/material'
+import useTranslation from 'next-translate/useTranslation'
 
 const Blog = ({ posts }) => {
+	const { t, lang } = useTranslation()
+
 	return (
 		<>
 			<Head>
-				<title>Blog | Linguami</title>
-				<meta
-					name='description'
-					content="Retrouvez des articles sur la langue, l'histoire et la culture russe. En complément de nos matériels d'apprentissage, nous rédigeons régulièrement des articles afin de vous immerger dans le monde russe et ses particularités."
-				/>
+				<title>Linguami | {t('blog:pagetitle')}</title>
+				<meta name='description' content={t('blog:description')} />
 			</Head>
 			<Container
 				sx={{

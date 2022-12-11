@@ -4,6 +4,10 @@
 	"pages": {
 		"*": ["common"],
 		"/": ["home"],
-		"/materials": ["materials"]
+		"/materials": ["materials"],
+		"/register": ["register"],
+		"/login": ["register"],
+		"/teacher": ["teacher"],
+		"/blog": ["blog"]
 	}
 }
