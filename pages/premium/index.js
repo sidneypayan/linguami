@@ -44,7 +44,7 @@ const Premium = () => {
 							1 mois
 						</Typography>
 						<Typography variant='h5' component='h2' mb={3}>
-							5€
+							6€
 						</Typography>
 					</Stack>
 					<Divider />
@@ -75,12 +75,16 @@ const Premium = () => {
 							<ListItemText primary='Système de flashcards pour réviser votre vocabulaire' />
 						</ListItem>
 					</List>
-					<Button
-						variant='contained'
-						size='large'
-						sx={{ backgroundColor: '#1e6091', margin: '1rem' }}>
-						Choisir
-					</Button>
+					<form action='/create-checkout-session' method='POST'>
+						<input type='hidden' name='priceId' value='price_G0FvDp6vZvdwRZ' />
+						{/* <button type="submit">Checkout</button> */}
+						<Button
+							variant='contained'
+							size='large'
+							sx={{ backgroundColor: '#1e6091', margin: '1rem' }}>
+							Choisir
+						</Button>
+					</form>
 				</StyledCard>
 				<StyledCard>
 					<Stack
@@ -91,7 +95,7 @@ const Premium = () => {
 							3 mois
 						</Typography>
 						<Typography variant='h5' component='h2' mb={3}>
-							12€
+							15€
 						</Typography>
 					</Stack>
 					<Divider />

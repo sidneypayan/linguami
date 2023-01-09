@@ -19,13 +19,18 @@ import {
 	Typography,
 } from '@mui/material'
 import { DeleteOutline } from '@mui/icons-material'
+import Image from 'next/image'
 
 const Dictionary = () => {
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
 	const userId = user?.id
-	const { user_words, user_words_pending, user_material_words_pending } =
-		useSelector(store => store.words)
+	const {
+		user_words,
+		user_words_loading,
+		user_words_pending,
+		user_material_words_pending,
+	} = useSelector(store => store.words)
 	const [checkedWords, setCheckedWords] = useState([])
 
 	const handleCheck = e => {
@@ -47,6 +52,18 @@ const Dictionary = () => {
 		user_words_pending,
 		user_material_words_pending,
 	])
+
+	if (user_words_loading) {
+		return (
+			<div className='loader'>
+				<Image
+					src='/img/loader.gif'
+					width={200}
+					height={200}
+					alt='loader'></Image>
+			</div>
+		)
+	}
 
 	return (
 		<>

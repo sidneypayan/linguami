@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 
 const initialState = {
 	user_words: [],
+	user_words_loading: true,
 	user_words_pending: false,
 	user_material_words: [],
 	user_material_words_pending: false,
@@ -191,6 +192,7 @@ const wordsSlice = createSlice({
 		},
 		[getAllUserWords.fulfilled]: (state, { payload }) => {
 			state.user_words = payload
+			state.user_words_loading = false
 		},
 		[getUserMaterialWords.fulfilled]: (state, { payload }) => {
 			state.user_material_words = payload

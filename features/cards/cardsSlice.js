@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
 	words: [],
 	isFlashcardsOpen: false,
-	isDragAndDropOpen: false,
 }
 
 const cardsSlice = createSlice({
