@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
+import { mergeUserMaterial } from '../../utils/helpers'
 
 const initialState = {
 	materials: [],
@@ -49,17 +50,17 @@ export const getUserMaterials = createAsyncThunk(
 	'userMaterials/getUserMaterials',
 	async (_, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
-			.from('materials')
+			.from('user_materials')
 			.select(
-				'id, title, img, level, section, user_materials!inner(material_id, is_being_studied, is_studied)'
+				'material_id, is_being_studied, is_studied, materials(title, img, level, section)'
 			)
-			.eq('user_materials.user_id', supabase.auth.user().id)
+			.eq('user_id', supabase.auth.user().id)
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
 
-		return userMaterials
+		return mergeUserMaterial(userMaterials)
 	}
 )
 

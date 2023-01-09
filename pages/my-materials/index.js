@@ -25,12 +25,12 @@ const UserMaterials = () => {
 		let filteredMaterials
 		if (status === 'is_being_studied') {
 			filteredMaterials = user_materials.filter(
-				userMaterial => userMaterial.user_materials.is_being_studied
+				userMaterial => userMaterial.is_being_studied
 			)
 		}
 		if (status === 'is_studied') {
 			filteredMaterials = user_materials.filter(
-				userMaterial => userMaterial.user_materials.is_studied
+				userMaterial => userMaterial.is_studied
 			)
 		}
 		if (status === 'all') {
@@ -43,14 +43,13 @@ const UserMaterials = () => {
 	const checkIfUserMaterialIsInMaterials = id => {
 		const filteredUserMaterialsStatus = filteredUserMaterials.map(
 			filteredUserMaterial => ({
-				material_id: filteredUserMaterial.id,
-				...filteredUserMaterial.user_materials,
+				id: filteredUserMaterial.id,
+				...filteredUserMaterial,
 			})
 		)
 
 		return filteredUserMaterialsStatus.find(
-			filteredUserMaterialStatus =>
-				filteredUserMaterialStatus.material_id === id
+			filteredUserMaterialStatus => filteredUserMaterialStatus.id === id
 		)
 	}
 
