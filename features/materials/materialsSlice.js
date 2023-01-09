@@ -51,7 +51,7 @@ export const getUserMaterials = createAsyncThunk(
 		const { data: userMaterials, error } = await supabase
 			.from('materials')
 			.select(
-				'id, title, img, level, section, user_materials!inner(material_id), user_materials(is_being_studied, is_studied)'
+				'id, title, img, level, section, user_materials!inner(material_id, is_being_studied, is_studied)'
 			)
 			.eq('user_materials.user_id', supabase.auth.user().id)
 

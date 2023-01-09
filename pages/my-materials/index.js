@@ -25,12 +25,12 @@ const UserMaterials = () => {
 		let filteredMaterials
 		if (status === 'is_being_studied') {
 			filteredMaterials = user_materials.filter(
-				userMaterial => userMaterial.user_materials[0].is_being_studied
+				userMaterial => userMaterial.user_materials.is_being_studied
 			)
 		}
 		if (status === 'is_studied') {
 			filteredMaterials = user_materials.filter(
-				userMaterial => userMaterial.user_materials[0].is_studied
+				userMaterial => userMaterial.user_materials.is_studied
 			)
 		}
 		if (status === 'all') {
@@ -44,7 +44,7 @@ const UserMaterials = () => {
 		const filteredUserMaterialsStatus = filteredUserMaterials.map(
 			filteredUserMaterial => ({
 				material_id: filteredUserMaterial.id,
-				...filteredUserMaterial.user_materials[0],
+				...filteredUserMaterial.user_materials,
 			})
 		)
 
@@ -72,7 +72,8 @@ const UserMaterials = () => {
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
-					minHeight: 'calc(100vh - 144px)',
+					minHeight: 'calc(100vh - 500px)',
+					margin: '10rem auto',
 				}}>
 				{!displayMaterials && (
 					<Stack
