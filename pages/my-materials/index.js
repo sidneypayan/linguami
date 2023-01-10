@@ -13,10 +13,13 @@ import {
 } from '@mui/material'
 import { Box } from '@mui/system'
 import { ArrowBack } from '@mui/icons-material'
+import useTranslation from 'next-translate/useTranslation'
 
 const UserMaterials = () => {
+	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const { user_materials } = useSelector(store => store.materials)
+	console.log(user_materials)
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
@@ -58,8 +61,8 @@ const UserMaterials = () => {
 	}, [user_materials])
 
 	useEffect(() => {
-		dispatch(getUserMaterials())
-	}, [dispatch])
+		dispatch(getUserMaterials(lang))
+	}, [dispatch, lang])
 
 	return (
 		<>

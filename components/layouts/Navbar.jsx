@@ -1,9 +1,6 @@
 import { useState } from 'react'
 import { useUserContext } from '../../context/user.js'
 import UserMenu from './UserMenu'
-import { GiBookmarklet } from 'react-icons/gi'
-import { HiOutlineAcademicCap } from 'react-icons/hi'
-import { HiHome } from 'react-icons/hi'
 import useTranslation from 'next-translate/useTranslation'
 import {
 	AppBar,
@@ -15,11 +12,13 @@ import {
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemIcon,
 	ListItemText,
 	Toolbar,
 } from '@mui/material'
 
 import MenuIcon from '@mui/icons-material/Menu'
+import { Article, HistoryEdu, Home, School } from '@mui/icons-material'
 
 const drawerWidth = '80%'
 
@@ -28,28 +27,25 @@ const Navbar = props => {
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
 
 	const navigationLinks = [
-		{ name: <HiHome style={{ fontSize: '1.5rem' }} />, href: '/' },
-		{ name: t('common:material'), href: '/materials' },
-		{ name: t('common:teacher'), href: '/teacher' },
-		{ name: t('common:blog'), href: '/blog' },
-	]
-
-	const userNavigationLinks = [
 		{
-			name: t('common:mydictionary'),
-			href: '/dictionary',
-			icon: (
-				<GiBookmarklet style={{ fontSize: '1.5rem', marginRight: '.25rem' }} />
-			),
+			name: t('common:home'),
+			icon: <Home style={{ fontSize: '1.5rem' }} />,
+			href: '/',
 		},
 		{
-			name: t('common:mymaterials'),
-			href: '/my-materials',
-			icon: (
-				<HiOutlineAcademicCap
-					style={{ fontSize: '1.5rem', marginRight: '.25rem' }}
-				/>
-			),
+			name: t('common:material'),
+			icon: <Article style={{ fontSize: '1.5rem' }} />,
+			href: '/materials',
+		},
+		{
+			name: t('common:teacher'),
+			icon: <School style={{ fontSize: '1.5rem' }} />,
+			href: '/teacher',
+		},
+		{
+			name: t('common:blog'),
+			icon: <HistoryEdu style={{ fontSize: '1.5rem' }} />,
+			href: '/blog',
 		},
 	]
 
@@ -67,9 +63,8 @@ const Navbar = props => {
 			<List sx={{ color: '#fff' }}>
 				{navigationLinks.map(link => (
 					<ListItem key={link.name} disablePadding>
-						<ListItemButton
-							href={`/${lang + link.href}`}
-							sx={{ textAlign: 'center' }}>
+						<ListItemButton href={`/${lang + link.href}`}>
+							<ListItemIcon sx={{ color: '#fff' }}>{link.icon}</ListItemIcon>
 							<ListItemText primary={link.name} />
 						</ListItemButton>
 					</ListItem>
@@ -93,28 +88,6 @@ const Navbar = props => {
 					</Button>
 				</Box>
 			)}
-
-			{isUserLoggedIn && (
-				<Divider color='#fff' width='50%' sx={{ margin: '1rem auto' }} />
-			)}
-
-			{isUserLoggedIn &&
-				userNavigationLinks.map(link => (
-					<Box
-						key={link.name}
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							marginRight: '.5rem',
-							color: '#fff',
-						}}>
-						{link.icon}
-						<Button href={`/${lang + link.href}`} sx={{ color: '#fff' }}>
-							{link.name}
-						</Button>
-					</Box>
-				))}
 		</Box>
 	)
 
@@ -158,23 +131,7 @@ const Navbar = props => {
 								sm: 'flex',
 								alignItems: 'center',
 							},
-						}}>
-						{isUserLoggedIn &&
-							userNavigationLinks.map(link => (
-								<Box
-									key={link.name}
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										marginRight: '.5rem',
-									}}>
-									{link.icon}
-									<Button href={`/${lang + link.href}`} sx={{ color: '#fff' }}>
-										{link.name}
-									</Button>
-								</Box>
-							))}
-					</Box>
+						}}></Box>
 
 					{isUserLoggedIn ? (
 						<UserMenu />

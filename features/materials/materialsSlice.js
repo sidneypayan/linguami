@@ -48,13 +48,14 @@ export const getMaterials = createAsyncThunk(
 
 export const getUserMaterials = createAsyncThunk(
 	'userMaterials/getUserMaterials',
-	async (_, thunkAPI) => {
+	async (lang, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
 			.select(
 				'material_id, is_being_studied, is_studied, materials(title, img, level, section)'
 			)
 			.eq('user_id', supabase.auth.user().id)
+			.eq('materials.lang', lang)
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
