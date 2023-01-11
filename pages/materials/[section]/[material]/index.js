@@ -28,7 +28,7 @@ const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserAdmin } = useUserContext()
+	const { user, isUserAdmin, learningLanguage } = useUserContext()
 	const { material, section } = router.query
 
 	const [showAccents, setShowAccents] = useState(false)
@@ -147,7 +147,7 @@ const Material = ({ material: single_material }) => {
 								userId={user && user.id}
 							/>
 
-							{lang === 'fr' && (
+							{learningLanguage === 'ru' && (
 								<Button
 									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
 									variant='contained'
@@ -244,12 +244,9 @@ const Material = ({ material: single_material }) => {
 }
 
 export const getStaticProps = async ({ params, locale }) => {
-	const lang = locale === 'ru' ? 'fr' : 'ru'
-
 	const { data: material, error } = await supabase
 		.from('materials')
 		.select('*')
-		.eq('lang', lang)
 		.eq('id', params.material)
 		.single()
 

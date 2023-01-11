@@ -28,7 +28,7 @@ const Navbar = props => {
 
 	const navigationLinks = [
 		{
-			name: t('common:home'),
+			name: 'Linguami',
 			icon: <Home style={{ fontSize: '1.5rem' }} />,
 			href: '/',
 		},
@@ -124,14 +124,6 @@ const Navbar = props => {
 							</Button>
 						))}
 					</Box>
-					<Box
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'flex',
-								alignItems: 'center',
-							},
-						}}></Box>
 
 					{isUserLoggedIn ? (
 						<UserMenu />

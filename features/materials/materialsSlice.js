@@ -30,7 +30,7 @@ const initialState = {
 export const getMaterials = createAsyncThunk(
 	'materials/getMaterials',
 	async (param, thunkAPI) => {
-		const { newLang: lang, section } = param
+		const { learningLanguage: lang, section } = param
 
 		try {
 			let { data: materials, error } = await supabase
@@ -51,9 +51,7 @@ export const getUserMaterials = createAsyncThunk(
 	async (lang, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
-			.select(
-				'material_id, is_being_studied, is_studied, materials(title, img, level, section)'
-			)
+			.select('*, materials!inner(title, img, level, section)')
 			.eq('user_id', supabase.auth.user().id)
 			.eq('materials.lang', lang)
 

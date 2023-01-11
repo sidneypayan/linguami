@@ -14,10 +14,12 @@ import { Box, Container, IconButton } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 import Head from 'next/head'
+import { useUserContext } from '../../../context/user'
 
 const Section = () => {
 	const { t, lang } = useTranslation()
-	const newLang = lang === 'fr' ? 'ru' : 'fr'
+	const { learningLanguage } = useUserContext()
+
 	const router = useRouter()
 	const { section } = router.query
 	const dispatch = useDispatch()
@@ -40,10 +42,10 @@ const Section = () => {
 
 	useEffect(() => {
 		if (section) {
-			dispatch(getMaterials({ newLang, section }))
+			dispatch(getMaterials({ learningLanguage, section }))
 			dispatch(getUserMaterialsStatus(section))
 		}
-	}, [newLang, section, dispatch])
+	}, [learningLanguage, section, dispatch])
 
 	useEffect(() => {
 		if (level) {

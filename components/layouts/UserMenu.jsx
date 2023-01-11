@@ -19,6 +19,7 @@ import {
 	MenuBook,
 	Settings,
 } from '@mui/icons-material'
+import LanguageMenu from './LanguageMenu.jsx'
 
 const UserMenu = () => {
 	const { t, lang } = useTranslation()
@@ -41,6 +42,7 @@ const UserMenu = () => {
 					alignItems: 'center',
 					textAlign: 'center',
 				}}>
+				<LanguageMenu />
 				<IconButton
 					onClick={handleClick}
 					size='small'

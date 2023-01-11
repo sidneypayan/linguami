@@ -14,6 +14,16 @@ const UserProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
 	const [isUserAdmin, setIsUserAdmin] = useState(null)
+	const [learningLanguage, setLearningLanguage] = useState(() => {
+		if (
+			typeof window !== 'undefined' &&
+			localStorage.getItem('learning_language')
+		) {
+			return localStorage.getItem('learning_language')
+		} else {
+			return 'fr'
+		}
+	})
 
 	const register = async data => {
 		const { name, email, password } = data
@@ -94,6 +104,14 @@ const UserProvider = ({ children }) => {
 		if (error) toast.error('Erreur avec le mot de passe')
 	}
 
+	const changeLearningLanguage = async lang => {
+		localStorage.setItem('learning_language', lang)
+		setLearningLanguage(lang)
+		const { data, error } = await supabase.from('users_profile').update({
+			learning_language: lang,
+		})
+	}
+
 	useEffect(() => {
 		const getUserProfile = async () => {
 			const sessionUser = supabase.auth.user()
@@ -148,6 +166,8 @@ const UserProvider = ({ children }) => {
 		logout,
 		askNewPassword,
 		setNewPassword,
+		learningLanguage,
+		changeLearningLanguage,
 	}
 
 	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>
