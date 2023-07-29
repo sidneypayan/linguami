@@ -1,0 +1,97 @@
+.container {
+	position: relative;
+	display: flex;
+	height: 100vh;
+	width: 100%;
+	background-color: var(--white);
+	flex-direction: column;
+	align-items: center;
+}
+
+.flashcardsTitle {
+	margin-top: 5rem;
+	text-align: center;
+	line-height: 2.5rem;
+	font-weight: 600;
+}
+
+.wordsContainer {
+	margin-top: 20vh;
+	text-align: center;
+}
+
+.wordsContainer p {
+	color: var(--navColor);
+	font-size: 1.5rem;
+	line-height: 2.5rem;
+}
+
+.originalWord,
+.translatedWord {
+	text-align: center;
+	justify-self: center;
+	font-size: 3rem;
+	font-weight: 600;
+	margin-bottom: 3rem;
+	line-height: 2.75rem;
+}
+
+.originalWord {
+	color: var(--navColor);
+}
+.translatedWord {
+	color: #aaa;
+}
+
+.btnsContainer {
+	display: flex;
+	justify-content: space-around;
+	gap: 1rem;
+}
+
+.btnsContainer button {
+	padding: 0.75rem;
+	border: none;
+	font-size: 0.95rem;
+	color: var(--white);
+	cursor: pointer;
+}
+
+.guessedBtn {
+	border-radius: 3px;
+	font-weight: 500;
+	background-color: #46a049;
+}
+.notguessedBtn {
+	border-radius: 3px;
+	font-weight: 500;
+	background-color: #dc3545;
+}
+
+.showAnswerBtn {
+	display: block;
+	margin: 0 auto;
+	border: none;
+	padding: 0.75rem;
+	color: var(--secondaryBtnColor);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.congratsContainer {
+	margin-top: 20vh;
+}
+
+.closeIcon {
+	color: var(--navColor);
+	position: absolute;
+	top: 2rem;
+	right: 7rem;
+	cursor: pointer;
+}
+
+@media (max-width: 1023px) {
+	.closeIcon {
+		right: 3rem;
+	}
+}

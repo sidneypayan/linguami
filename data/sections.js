@@ -1,0 +1,38 @@
+export const sections = {
+	audio: [
+		'dialogue',
+		'culture',
+		'legend',
+		'slice-of-life',
+		'place',
+		'podcast',
+		'book',
+		'book-chapter',
+		'short-story',
+	],
+	video: ['trailer', 'extract', 'cartoon', 'eralash', 'galileo', 'diverse'],
+	music: ['rock', 'pop', 'trad', 'variety', 'kids'],
+}
+
+export const allSections = [
+	'dialogue',
+	'culture',
+	'legend',
+	'slice-of-life',
+	'place',
+	'podcast',
+	'book',
+	'book-chapter',
+	'short-story',
+	'trailer',
+	'extract',
+	'cartoon',
+	'eralash',
+	'galileo',
+	'diverse',
+	'rock',
+	'pop',
+	'trad',
+	'variety',
+	'kids',
+]

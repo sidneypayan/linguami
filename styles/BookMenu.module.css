@@ -1,0 +1,41 @@
+.container {
+	width: 350px;
+	background-color: var(--white);
+	padding: 0 2rem;
+	height: 400px;
+	overflow-y: scroll;
+	border-radius: 3px;
+	margin-top: 2rem;
+}
+
+.container::-webkit-scrollbar {
+	width: 12px;
+	background-color: #ccc;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.container::-webkit-scrollbar-thumb {
+	background-color: var(--navColor);
+	border-radius: 3px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+	background-color: var(--primaryBtnColor);
+}
+
+.chaptersContainer {
+	margin-top: 2rem;
+}
+
+.chaptersContainer li {
+	text-decoration: underline;
+	margin-bottom: 0.75rem;
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: var(--navColor);
+}
+
+.chaptersContainer li:hover {
+	font-weight: 700;
+}

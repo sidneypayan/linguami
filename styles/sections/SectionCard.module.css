@@ -1,0 +1,115 @@
+.container {
+	position: relative;
+	max-height: 135px;
+	border-radius: 3px;
+	display: flex;
+	background-color: #fafafa;
+	box-shadow: 0px 5px 10px -3px rgba(0, 0, 0, 0.1);
+	justify-content: space-between;
+}
+
+.beingStudiedCard,
+.studiedCard {
+	position: absolute;
+	top: -0.5rem;
+	right: -0.5rem;
+	font-size: 1.8rem;
+}
+
+.beingStudiedCard {
+	color: rgba(24, 78, 119, 0.7);
+}
+
+.studiedCard {
+	color: rgba(28, 153, 28, 0.7);
+}
+
+.imgContainer {
+	cursor: pointer;
+	position: relative;
+	width: 135px;
+	height: 135px;
+}
+
+.imgContainer img {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+
+.textContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	padding-left: 1rem;
+	flex: 2;
+}
+
+.title,
+.titleTranslation {
+	cursor: pointer;
+	margin-bottom: 0.25rem;
+	font-weight: 400;
+}
+
+.title {
+	font-size: 1.25rem;
+	color: var(--primaryBtnColor);
+}
+
+.subtitle {
+	display: flex;
+	gap: 0.5rem;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.titleTranslation {
+	font-size: 1rem;
+	color: var(--navColor);
+}
+
+.icon {
+	align-self: center;
+	padding-right: 2rem;
+	color: var(--primaryBtnColor);
+}
+
+.level {
+	position: absolute;
+	color: var(--white);
+	top: 0;
+	left: 0;
+	padding: 0 0.3rem;
+	font-size: 0.8rem;
+	font-weight: 700;
+	border-top-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+@media (max-width: 1023px) {
+	.container {
+		width: 70%;
+		margin: 0 auto;
+		margin-bottom: 2rem;
+	}
+}
+
+@media (max-width: 767px) {
+	.container {
+		width: 90%;
+	}
+}
+
+@media (max-width: 479px) {
+	.container {
+		width: 95%;
+	}
+
+	.textContainer {
+		padding: 1rem;
+	}
+
+	.icon {
+		padding-right: 1rem;
+	}
+}

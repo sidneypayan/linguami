@@ -1,0 +1,246 @@
+.container {
+	position: relative;
+	display: flex;
+	/* grid-template-columns: repeat(3, 35% 40% 25%); */
+	row-gap: 2rem;
+}
+
+.mediaContainer {
+	position: relative;
+	/* grid-column-start: 1;
+	grid-column-end: 2; */
+	margin-left: 6rem;
+}
+
+.playerContainer {
+	margin-top: 2rem;
+	width: 80%;
+}
+
+.playerContainerBis {
+	position: fixed;
+	/* margin-top: 2rem; */
+	width: 100%;
+	left: 0;
+	bottom: 0;
+	z-index: 2;
+}
+
+.bookMenuBtn {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	font-size: 0.95rem;
+	border: none;
+	background-color: var(--primaryBtnColor);
+	color: var(--white);
+	padding: 0.5rem 1rem;
+	border-radius: 3px;
+	cursor: pointer;
+	width: 350px;
+	margin-top: 2rem;
+}
+
+.bookMenuIcon {
+	font-size: 1.25rem;
+}
+
+.titleContainer {
+	margin: 4rem 0;
+	text-align: center;
+	/* grid-column-start: 1;
+	grid-column-end: 3;
+	grid-row-start: 1;
+	grid-row-end: 2; */
+}
+
+.title {
+	font-weight: 500;
+	font-size: 2.5rem;
+}
+
+.img {
+	background-size: cover;
+	background-position: center;
+	min-width: 250px;
+	min-height: 250px;
+	border-radius: 3px;
+}
+
+.imgPlace {
+	background-size: cover;
+	background-position: center;
+	width: 600px;
+	height: 240px;
+	max-width: 100%;
+	border-radius: 3px;
+}
+
+/* .iframe {
+	width: 442px;
+	max-width: 100%;
+	height: 250px;
+} */
+
+.audioContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right: 2rem;
+}
+
+.audioContainer audio {
+	width: 250px;
+}
+
+.textContainer {
+	margin-top: 2rem;
+	line-height: 1.75rem;
+}
+
+.rightContainer {
+	/* grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 1;
+	grid-row-end: 4; */
+	background-color: var(--white);
+	padding: 2rem;
+	background-color: #fafafa;
+}
+
+.rightContainer h3 {
+	text-align: center;
+	font-weight: 400;
+	margin: 0;
+}
+
+.rightContainer h4 {
+	margin-top: 4rem !important;
+}
+
+.showAccentsBtn {
+	padding: 0.5rem 0.75rem;
+	margin-bottom: 2rem;
+	font-size: 0.9rem;
+}
+
+.break::after {
+	content: '\a';
+	white-space: pre;
+}
+
+.translate {
+	padding: 2px 0;
+	cursor: pointer;
+}
+
+.translate:hover,
+.translate:focus,
+.translate:active {
+	background-color: #8c7ae6;
+	color: #fff;
+	padding: 2px 0;
+	border-radius: 4px;
+}
+
+.text {
+	white-space: pre-line;
+	font-size: 18px;
+	line-height: 1.75rem;
+	font-family: Verdana;
+	padding-right: 2rem;
+}
+
+.checkLesson {
+	display: block;
+	margin: 4rem auto;
+	padding: 0.75rem 3rem;
+	background-color: transparent;
+	border: 2px solid var(--navColor);
+	color: var(--navColor);
+}
+
+.registerBtn {
+	margin: 2rem auto;
+	padding: 0.85rem 3.5rem;
+	border-radius: 0;
+	display: block;
+}
+
+@media (width < 768px) {
+	.container {
+		grid-template-columns: 1fr;
+		row-gap: 0;
+	}
+
+	.titleContainer {
+		margin: 0;
+	}
+
+	.title {
+		font-size: 2rem;
+	}
+
+	.mediaContainer {
+		position: sticky;
+		top: 52px;
+		grid-row-start: 2;
+	}
+	.audioContainer {
+		margin-right: 0;
+	}
+
+	.textContainer {
+		grid-row-start: 3;
+		padding: 0 2rem;
+	}
+
+	.rightContainer {
+		grid-column-start: 1;
+		grid-row-start: 4;
+	}
+
+	.audioContainer audio {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+
+	.img,
+	.imgPlace {
+		display: none;
+	}
+
+	.text {
+		padding: 0;
+	}
+}
+
+@media (width < 520px) {
+	.videoContainer iframe {
+		width: 100%;
+		height: 200px;
+	}
+}
+
+@media (width >= 768px) and (width < 1024px) {
+	.container {
+		grid-template-columns: repeat(2, 40% 60%);
+	}
+
+	.titleContainer {
+		margin-bottom: 0;
+	}
+
+	.rightContainer {
+		grid-column-start: 1;
+		grid-column-end: 3;
+		grid-row-start: 3;
+	}
+}
+
+@media (max-width: 1267px) {
+	.mediaContainer {
+		margin-left: 0;
+	}
+}

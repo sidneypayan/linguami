@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7d1009f0-a97d-4005-b254-6ba09958a5d5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/components/layouts/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/layouts/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/materials/MaterialsCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/materials/MaterialsCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locales/fr/common.json" beforeDir="false" afterPath="$PROJECT_DIR$/locales/fr/common.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/materials/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/materials/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/styles/globals.css" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2F25mEMNdFnnm5nHh1m9Y32rgVh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7d1009f0-a97d-4005-b254-6ba09958a5d5" name="Default Changelist" comment="" />
+      <created>1663677498124</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1663677498124</updated>
+      <workItem from="1663677498580" duration="6000" />
+      <workItem from="1669532509918" duration="1000" />
+      <workItem from="1670141825346" duration="9000" />
+    </task>
+    <servers />
+  </component>
+</project>

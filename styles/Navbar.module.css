@@ -1,0 +1,159 @@
+.nav {
+	position: sticky;
+	top: 0;
+	background-color: var(--navColor);
+	background-color: #4a148c;
+	height: 64px;
+	color: #fff;
+	z-index: 3;
+}
+
+.container {
+	width: 100%;
+	padding: 0 5rem;
+	margin: 0 auto;
+	display: flex;
+	position: relative;
+	height: 100%;
+	justify-content: space-between;
+	align-items: center;
+	color: #fff;
+	z-index: 1;
+}
+
+.menuContainer {
+	display: flex;
+	font-size: 1.05rem;
+}
+
+.menuContainer li {
+	padding: 0.5rem 0.75rem;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.menuContainer li:hover {
+	background-color: var(--primaryBtnColor);
+}
+
+.btnContainer {
+	display: flex;
+	gap: 1rem;
+}
+
+.loginBtn {
+	border: solid 2px var(--primaryBtnColor);
+	background-color: transparent;
+	transition: 0.5s;
+}
+
+.loginBtn:hover {
+	background-color: var(--primaryBtnColor);
+}
+
+.registerBtn:hover {
+	box-shadow: 0px 2px 3px var(--primaryBtnColor),
+		0px 2px 3px var(--primaryBtnColor);
+	transition: 0.3s;
+}
+
+.btn {
+	padding: 0.65rem 1.5rem;
+	color: #fff;
+	font-weight: 500;
+	border-radius: 3px;
+}
+
+.mobileIconOpen {
+	visibility: hidden;
+
+	cursor: pointer;
+}
+
+.mobileIconClose {
+	visibility: hidden;
+	cursor: pointer;
+	position: absolute;
+	top: 3rem;
+	right: 3rem;
+}
+
+.educationalMenuContainer {
+	display: none;
+}
+
+@media (width < 768px) {
+	.container {
+		display: none;
+	}
+
+	.nav {
+		height: 52px;
+	}
+
+	.educationalMenuContainer {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		padding: 0 1rem;
+	}
+
+	.educationalMenuContainer ul {
+		display: flex;
+		gap: 2rem;
+	}
+
+	.educationalMenuContainer ul li {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	.educationalMenuContainer svg {
+		font-size: 1.75rem;
+		margin-right: 0.75rem;
+	}
+
+	.mobileIconOpen,
+	.mobileIconClose {
+		visibility: visible;
+	}
+
+	.mobileIconOpen {
+		position: absolute;
+		right: 0.5rem;
+	}
+
+	.container.show {
+		display: flex;
+		width: 100%;
+		height: 100vh;
+		background-color: var(--navColor);
+		flex-direction: column;
+		justify-content: center;
+		color: #fff;
+		padding: 0 5rem;
+		z-index: 1;
+	}
+
+	.menuContainer {
+		flex-direction: column;
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+}
+
+@media (width < 479px) {
+	.educationalMenuContainer {
+		justify-content: space-between;
+	}
+
+	.educationalMenuContainer svg {
+		margin-right: 0.25rem;
+	}
+
+	.educationalMenuContainer ul {
+		gap: 1rem;
+	}
+}
