@@ -3,7 +3,6 @@ import Image from 'next/image'
 import { Box, Typography } from '@mui/material'
 
 const MaterialsCard = ({ material }) => {
-
 	return (
 		<Link href={`/materials/${material.section}`}>
 			<Box>
@@ -14,12 +13,12 @@ const MaterialsCard = ({ material }) => {
 					<Image
 						style={{ borderRadius: '3px', objectFit: 'cover' }}
 						src={`/img/${material.img}`}
-						fill
 						sizes={100}
 						quality={100}
 						alt={material.title}
 						priority={true}
-					// loading='eager'
+						layout='fill'
+						// loading='eager'
 					/>
 				</Box>
 
