@@ -20,7 +20,6 @@ import {
 } from '@mui/material'
 import { DeleteOutline } from '@mui/icons-material'
 import Image from 'next/image'
-import useTranslation from 'next-translate/useTranslation'
 
 const Dictionary = () => {
 	const dispatch = useDispatch()
@@ -33,7 +32,6 @@ const Dictionary = () => {
 		user_material_words_pending,
 	} = useSelector(store => store.words)
 	const [checkedWords, setCheckedWords] = useState([])
-	const { lang } = useTranslation()
 
 	const handleCheck = e => {
 		if (e.target.checked) {
@@ -66,6 +64,8 @@ const Dictionary = () => {
 			</div>
 		)
 	}
+
+	console.log(user_words_loading)
 
 	return (
 		<>
@@ -120,7 +120,7 @@ const Dictionary = () => {
 									puis sur sa traduction afin de l&apos;ajouter à votre
 									dictionnaire.
 								</Typography>
-								<Link href={`${lang}/materials`}>
+								<Link href='materials'>
 									<Button variant='contained'>Commencer</Button>
 								</Link>
 							</>
