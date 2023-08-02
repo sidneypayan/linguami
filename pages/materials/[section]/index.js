@@ -50,7 +50,7 @@ const Section = () => {
 		if (level) {
 			dispatch(filterMaterials({ section, level }))
 		}
-	}, [section, level, dispatch])
+	}, [level, dispatch])
 
 	if (materials_loading) {
 		return (
