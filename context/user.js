@@ -14,6 +14,7 @@ const UserProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
 	const [isUserAdmin, setIsUserAdmin] = useState(null)
+	const [isUserPremium, setIsUserPremium] = useState(null)
 	const [defaultLearningLanguage, setDefaultLearningLanguage] = useState(null)
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
@@ -48,7 +49,7 @@ const UserProvider = ({ children }) => {
 			password,
 			options: {
 				data: {
-					learning_language: learningLanguage,
+					learning_language: userLearningLanguage,
 				},
 			},
 		})
@@ -68,10 +69,12 @@ const UserProvider = ({ children }) => {
 
 	const login = async userData => {
 		const { email, password } = userData
-		const { data, error } = await supabase.auth.signInWithPassword({
+		const { data, error } = await supabase.auth.signIn({
 			email,
 			password,
 		})
+
+		console.log(data)
 
 		if (error) {
 			if (error.message === 'Invalid login credentials') {
@@ -83,7 +86,8 @@ const UserProvider = ({ children }) => {
 			return toast.error(error.message)
 		}
 
-		setUser(supabase.auth.getUser())
+		// setUser(supabase.auth.getUser())
+
 		router.push('/')
 		toast.success('Vous êtes bien connecté')
 	}
@@ -132,36 +136,7 @@ const UserProvider = ({ children }) => {
 
 	// useEffect(() => {
 	// 	if (user) {
-	// 	const getUserProfile = async () => {
-
-	// 			const { data: userData } = await supabase
-	// 				.from('users_profile')
-	// 				.select('*')
-	// 				.eq('id', user.id)
-	// 				.single()
-
-	// 			setUserProfile({ ...user, ...userData })
-	// 			setIsLoading(false)
-	// 		}
-
-	// 	supabase.auth.onAuthStateChange(() => {
-	// 		getUserProfile()
-	// 	})
-
-	// 	getUserProfile()
-
-	// }
-	// }, [user])
-
-	// useEffect(() => {
-
-	// 	supabase.auth.onAuthStateChange((event, session) => {
-
-	// 		const {user} = session
-	// 		setUser(user)
-
 	// 		const getUserProfile = async () => {
-
 	// 			const { data: userData } = await supabase
 	// 				.from('users_profile')
 	// 				.select('*')
@@ -172,31 +147,48 @@ const UserProvider = ({ children }) => {
 	// 			setIsLoading(false)
 	// 		}
 
-	// 		if (event == 'SIGNED_IN') {
-
+	// 		supabase.auth.onAuthStateChange(() => {
 	// 			getUserProfile()
-	// 			setIsUserAdmin(userProfile.role)
-	// 		}
-	// 	  })
-	// }, [])
+	// 		})
 
-	// console.log(isUserAdmin)
-
-	// useEffect(() => {
-	// 	userProfile?.role && setIsUserAdmin(userProfile.role)
-	// }, [userProfile])
-
-	// console.log(isUserAdmin)
-	// console.log(userProfile)
-
-	// useEffect(() => {
-	// 	axios.post('/api/auth', {
-	// 		event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
-	// 		session: supabase.auth.getSession(),
-	// 	})
+	// 		getUserProfile()
+	// 	}
 	// }, [user])
 
 	useEffect(() => {
+		supabase.auth.onAuthStateChange((event, session) => {
+			if (event == 'SIGNED_IN') {
+				const getUserProfile = async () => {
+					const { data: userData } = await supabase
+						.from('users_profile')
+						.select('*')
+						.eq('id', user.id)
+						.single()
+
+					setUserProfile({ ...user, ...userData })
+					setIsLoading(false)
+				}
+
+				const { user } = session
+				setUser(user)
+				getUserProfile()
+			}
+		})
+	}, [])
+
+	useEffect(() => {
+		if (userProfile) {
+			setIsUserAdmin(userProfile?.role)
+			setIsUserPremium(userProfile?.is_premium)
+		}
+	}, [userProfile])
+
+	useEffect(() => {
+		axios.post('/api/auth', {
+			event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
+			session: supabase.auth.session(),
+		})
+
 		if (user) {
 			setIsUserLoggedIn(true)
 		} else {
@@ -207,7 +199,7 @@ const UserProvider = ({ children }) => {
 	const exposed = {
 		user,
 		isUserAdmin,
-		// userProfile,
+		userProfile,
 		isLoading,
 		isUserLoggedIn,
 		register,
