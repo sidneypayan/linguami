@@ -25,8 +25,6 @@ const UserProvider = ({ children }) => {
 		}
 	})
 
-	console.log(defaultLearningLanguage, userLearningLanguage)
-
 	// useEffect(() => {
 	// 	userProfile.user_metadata.learning_language ? setLearningLanguage(userProfile.user_metadata.learning_language) :
 	// }, [])

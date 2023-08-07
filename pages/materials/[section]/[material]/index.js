@@ -28,9 +28,8 @@ const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserAdmin, learningLanguage } = useUserContext()
+	const { user, isUserAdmin, userLearningLanguage } = useUserContext()
 	const { material, section } = router.query
-	console.log(learningLanguage)
 
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
@@ -91,8 +90,8 @@ const Material = ({ material: single_material }) => {
 			window.innerWidth < 768
 				? e.pageX - e.pageX / 2
 				: window.innerWidth < 1024
-					? e.pageX - e.pageX / 3
-					: e.pageX - 100
+				? e.pageX - e.pageX / 3
+				: e.pageX - 100
 		setCoordinates({
 			x: xCoordinate,
 			y: e.pageY - 50,
@@ -148,7 +147,7 @@ const Material = ({ material: single_material }) => {
 								userId={user && user.id}
 							/>
 
-							{learningLanguage === 'ru' && (
+							{userLearningLanguage === 'ru' && (
 								<Button
 									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
 									variant='contained'

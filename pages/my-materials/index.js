@@ -18,7 +18,7 @@ import { useUserContext } from '../../context/user'
 const UserMaterials = () => {
 	const dispatch = useDispatch()
 	const { user_materials } = useSelector(store => store.materials)
-	const { learningLanguage } = useUserContext()
+	const { userLearningLanguage } = useUserContext()
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
@@ -60,8 +60,8 @@ const UserMaterials = () => {
 	}, [user_materials])
 
 	useEffect(() => {
-		dispatch(getUserMaterials(learningLanguage))
-	}, [dispatch, learningLanguage])
+		dispatch(getUserMaterials(userLearningLanguage))
+	}, [dispatch, userLearningLanguage])
 
 	return (
 		<>
