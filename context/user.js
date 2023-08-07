@@ -31,15 +31,13 @@ const UserProvider = ({ children }) => {
 	// 	userProfile.user_metadata.learning_language ? setLearningLanguage(userProfile.user_metadata.learning_language) :
 	// }, [])
 
-	// useEffect(() => {
-	// 	const getUser = async () => {
-	// 		const {
-	// 			data: { user },
-	// 		} = await supabase.auth.getUser()
-	// 		setUser(user)
-	// 	}
-	// 	getUser()
-	// }, [])
+	useEffect(() => {
+		const getUser = () => {
+			const { user } = supabase.auth.session()
+			setUser(user)
+		}
+		getUser()
+	}, [])
 
 	const register = async userData => {
 		const { email, password } = userData
