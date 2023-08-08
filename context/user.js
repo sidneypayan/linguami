@@ -30,11 +30,13 @@ const UserProvider = ({ children }) => {
 	// }, [])
 
 	useEffect(() => {
-		const getUser = () => {
-			const { user } = supabase.auth.session()
-			setUser(user)
+		if (supabase.auth.session()) {
+			const getUser = () => {
+				const { user } = supabase.auth.session()
+				setUser(user)
+			}
+			getUser()
 		}
-		getUser()
 	}, [])
 
 	const register = async userData => {
