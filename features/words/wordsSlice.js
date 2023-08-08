@@ -19,10 +19,14 @@ const initialState = {
 export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
-		let { word, sentence, lang } = param
-		const langPair = lang === 'fr' ? 'ru-fr' : 'fr-ru'
+		let { word, sentence, userLearningLanguage } = param
+		console.log(userLearningLanguage)
+		const langPair = userLearningLanguage === 'ru' ? 'ru-fr' : 'fr-ru'
 
-		word = lang === 'fr' ? word.match(/[\u0430-\u044f\ё]+/gi).join('') : word
+		word =
+			userLearningLanguage === 'ru'
+				? word.match(/[\u0430-\u044f\ё]+/gi).join('')
+				: word
 
 		try {
 			const { data } = await axios.get(

@@ -9,10 +9,11 @@ import { addBeingStudiedMaterial } from '../../features/materials/materialsSlice
 import useTranslation from 'next-translate/useTranslation'
 import { useState, useEffect } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
+import { useUserContext } from '../../context/user'
 
 const Words = ({ content, materialId }) => {
 	const { t, lang } = useTranslation()
-
+	const { userLearningLanguage } = useUserContext()
 	const [regexAll, setRegexAll] = useState('')
 	const [regexWords, setRegexWords] = useState('')
 	const [regexSentences, setRegexSentences] = useState('')
@@ -21,11 +22,11 @@ const Words = ({ content, materialId }) => {
 	const clean = DOMPurify.sanitize(content)
 
 	useEffect(() => {
-		if (lang === 'ru') {
+		if (userLearningLanguage === 'fr') {
 			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u00C0-\u00FF\-]+/gi)
 			setRegexWords(/[\w]+/gi)
 		}
-		if (lang === 'fr') {
+		if (userLearningLanguage === 'ru') {
 			setRegexAll(/[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi)
 			setRegexWords(/[\u0430-\u044f]+/gi)
 		}
@@ -33,7 +34,7 @@ const Words = ({ content, materialId }) => {
 		setRegexSentences(
 			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….:!?br]/gi
 		)
-	}, [lang])
+	}, [userLearningLanguage])
 
 	const wrapSentences = text => {
 		if (regexSentences) {
@@ -71,7 +72,8 @@ const Words = ({ content, materialId }) => {
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		dispatch(translateWord({ word, sentence, lang }))
+		console.log(userLearningLanguage)
+		dispatch(translateWord({ word, sentence, userLearningLanguage }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
 		dispatch(addBeingStudiedMaterial(materialId))
