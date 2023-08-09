@@ -1,14 +1,36 @@
 {
-	"locales": ["fr", "ru"],
+	"locales": [
+		"fr",
+		"ru"
+	],
 	"defaultLocale": "fr",
 	"pages": {
-		"*": ["common"],
-		"/": ["home"],
-		"/blog": ["blog"],
-		"/materials": ["materials"],
-		"/materials/[section]": ["materials"],
-		"/login": ["register"],
-		"/register": ["register"],
-		"/teacher": ["teacher"]
+		"*": [
+			"common"
+		],
+		"/": [
+			"home"
+		],
+		"/blog": [
+			"blog"
+		],
+		"/materials": [
+			"materials"
+		],
+		"/materials/[section]": [
+			"materials"
+		],
+		"/login": [
+			"register"
+		],
+		"/register": [
+			"register"
+		],
+		"/signin": [
+			"register"
+		],
+		"/teacher": [
+			"teacher"
+		]
 	}
 }

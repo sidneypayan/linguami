@@ -3,8 +3,8 @@
 	"name": "Nom",
 	"email": "Email",
 	"password": "Mot de passe",
-	"register": "S'enregistrer",
-	"haveaccount": "Vous avez déjà un compte ?",
-	"noaccount": "Vous n'avez pas encore de compte ?",
-	"signin": "Se connecter"
+	"signup": "Créer son compte",
+	"haveaccount": "Vous avez un compte ?",
+	"noaccount": "Pas de compte ?",
+	"signin": "Connection"
 }
