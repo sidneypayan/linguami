@@ -72,6 +72,17 @@
 	background-color: var(--navColor);
 }
 
+.inputWithBtn {
+	position: relative;
+}
+
+.btnInsideInput {
+	width: 75px;
+	border: none;
+	position: absolute;
+	transform: translateX(-4rem);
+}
+
 .resetText {
 	font-weight: 500;
 	text-align: left;

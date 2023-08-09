@@ -76,7 +76,7 @@ const Login = () => {
 							autoComplete='email'
 						/>
 					</div>
-					<div>
+					<div className={styles.inputWithBtn}>
 						<input
 							onChange={handleChange}
 							type='password'
@@ -85,6 +85,7 @@ const Login = () => {
 							value={values.password}
 							autoComplete='current-password'
 						/>
+						<button className={styles.btnInsideInput}>Oublié ?</button>
 					</div>
 
 					<button className={`${styles.btn} mainBtn`}>{t('signin')}</button>

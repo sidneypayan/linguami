@@ -25,10 +25,6 @@ const UserProvider = ({ children }) => {
 		}
 	})
 
-	// useEffect(() => {
-	// 	userProfile.user_metadata.learning_language ? setLearningLanguage(userProfile.user_metadata.learning_language) :
-	// }, [])
-
 	useEffect(() => {
 		if (supabase.auth.session()) {
 			const getUser = () => {
@@ -72,8 +68,6 @@ const UserProvider = ({ children }) => {
 			password,
 		})
 
-		console.log(data)
-
 		if (error) {
 			if (error.message === 'Invalid login credentials') {
 				return toast.error('Vos identifiants sont erronés')
@@ -83,8 +77,6 @@ const UserProvider = ({ children }) => {
 			}
 			return toast.error(error.message)
 		}
-
-		// setUser(supabase.auth.getUser())
 
 		router.push('/')
 		toast.success('Vous êtes bien connecté')
@@ -131,27 +123,6 @@ const UserProvider = ({ children }) => {
 		localStorage.setItem('learning_language', learningLanguage)
 		setUserLearningLanguage(learningLanguage)
 	}
-
-	// useEffect(() => {
-	// 	if (user) {
-	// 		const getUserProfile = async () => {
-	// 			const { data: userData } = await supabase
-	// 				.from('users_profile')
-	// 				.select('*')
-	// 				.eq('id', user.id)
-	// 				.single()
-
-	// 			setUserProfile({ ...user, ...userData })
-	// 			setIsLoading(false)
-	// 		}
-
-	// 		supabase.auth.onAuthStateChange(() => {
-	// 			getUserProfile()
-	// 		})
-
-	// 		getUserProfile()
-	// 	}
-	// }, [user])
 
 	useEffect(() => {
 		supabase.auth.onAuthStateChange((event, session) => {
