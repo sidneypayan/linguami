@@ -16,8 +16,6 @@ const Signin = () => {
     const [values, setValues] = useState(initialState)
     const [formState, setFormState] = useState('signin')
 
-    console.log(formState)
-
     const { login, register, loginWithThirdPartyOAuth } = useUserContext()
 
     const handleChange = e => {
@@ -42,7 +40,7 @@ const Signin = () => {
                 return
             }
 
-            register(values)
+            return register(values)
         }
 
         return login(values)
@@ -107,7 +105,7 @@ const Signin = () => {
                 />
 
                 <Button onClick={handleSubmit} variant="contained" size='large'>
-                    {t('signin')}
+                    {formState === 'signin' ? t('signin') : t('signup')}
                 </Button>
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                     {formState === 'signin' ? t('noaccount') : t('haveaccount')}
