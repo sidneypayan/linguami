@@ -11,7 +11,7 @@ const initialState = {
     password: '',
 }
 
-const signin = () => {
+const Signin = () => {
     const { t } = useTranslation('register')
     const [values, setValues] = useState(initialState)
     const [formState, setFormState] = useState('signin')
@@ -118,4 +118,4 @@ const signin = () => {
     </Stack >
 }
 
-export default signin
+export default Signin
