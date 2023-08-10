@@ -29,6 +29,9 @@
 		"/signin": [
 			"register"
 		],
+		"/ask-password": [
+			"register"
+		],
 		"/teacher": [
 			"teacher"
 		]

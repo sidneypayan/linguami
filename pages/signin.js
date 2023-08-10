@@ -4,7 +4,8 @@ import { toast } from 'react-toastify'
 import Image from 'next/image'
 import styles from '../styles/Register.module.css'
 import { useUserContext } from '../context/user'
-import { Box, Divider, Stack, Button, FormControl, InputLabel, TextField, Typography } from '@mui/material'
+import { Box, Divider, Stack, Button, TextField, Typography, InputAdornment } from '@mui/material'
+import Link from 'next/link'
 
 const initialState = {
     email: '',
@@ -89,15 +90,24 @@ const Signin = () => {
                 />
 
                 <TextField
+
                     fullWidth
                     onChange={handleChange}
                     type='password'
                     label={t('password')}
-
                     name='password'
                     value={values.password}
                     autoComplete='current-password'
                     id='password'
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position='end'>
+                                <Link href='/ask-password'>
+                                    <Button>Oublié ?</Button>
+                                </Link>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
 
                 <Button fullWidth type='submit' variant="contained" size='large'>
