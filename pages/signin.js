@@ -76,17 +76,12 @@ const Signin = () => {
                 </Button>
             </Stack>
             <Divider sx={{ marginBottom: '1rem' }}>{t('or')}</Divider>
-            <FormControl
-                sx={{ display: 'flex', gap: '1rem' }}
-                fullWidth
-                data-testid='form'
-            >
-
+            <form style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }} onSubmit={handleSubmit}>
                 <TextField
+                    fullWidth
                     onChange={handleChange}
                     type='email'
                     label={t('email')}
-
                     name='email'
                     value={values.email}
                     autoComplete='email'
@@ -94,6 +89,7 @@ const Signin = () => {
                 />
 
                 <TextField
+                    fullWidth
                     onChange={handleChange}
                     type='password'
                     label={t('password')}
@@ -104,14 +100,15 @@ const Signin = () => {
                     id='password'
                 />
 
-                <Button onClick={handleSubmit} variant="contained" size='large'>
+                <Button fullWidth type='submit' variant="contained" size='large'>
                     {formState === 'signin' ? t('signin') : t('signup')}
                 </Button>
+
                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                     {formState === 'signin' ? t('noaccount') : t('haveaccount')}
                     <Button onClick={() => setFormState(formState === 'signin' ? 'signup' : 'signin')} sx={{ marginLeft: '.5rem', textTransform: 'capitalize', textDecoration: 'underline' }} size='small'  >Cliquez ici</Button>
                 </Typography>
-            </FormControl>
+            </form>
         </Box>
     </Stack >
 }

@@ -53,7 +53,7 @@ const UserProvider = ({ children }) => {
 		}
 
 		toast.success(
-			'Nous vous avons envoyé un lien afin de confirmer votre inscription'
+			'Nous vous avons envoyé un mail de confirmation'
 		)
 
 		setTimeout(() => {
