@@ -6,5 +6,8 @@
 	"signup": "Créer son compte",
 	"haveaccount": "Vous avez un compte ?",
 	"noaccount": "Pas de compte ?",
-	"signin": "Connection"
+	"signin": "Connection",
+	"confirmSignUp": "Cliquez afin de confirmer votre inscription",
+	"updatePassword": "Choisissez un nouveau mot de passe",
+	"confirm": "Valider"
 }

@@ -26,10 +26,19 @@
 		"/register": [
 			"register"
 		],
+		"/confirm-signup": [
+			"register"
+		],
+		"/set-password-signin": [
+			"register"
+		],
+		"/set-password": [
+			"register"
+		],
 		"/signin": [
 			"register"
 		],
-		"/ask-password": [
+		"/update-password": [
 			"register"
 		],
 		"/teacher": [
