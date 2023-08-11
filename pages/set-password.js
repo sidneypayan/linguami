@@ -34,7 +34,7 @@ const AskPassword = () => {
         <>
             <Stack height='calc(100vh - 144px)' alignItems='center' justifyContent='center'>
                 <Box width='500px'>
-                    <Typography variant='h4' textAlign='center' mb={4}>Réinitialiser son mot de passe</Typography>
+                    <Typography variant='h4' textAlign='center' mb={4}>Définissez un nouveau mot de passe</Typography>
                     <form style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }} onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
@@ -46,7 +46,7 @@ const AskPassword = () => {
                             label={t('password')}
                         />
                         <Button fullWidth type='submit' variant="contained" size='large'>
-                            Définir un nouveau mot de passe
+                            Valider
                         </Button>
                     </form>
                 </Box>

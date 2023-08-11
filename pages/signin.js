@@ -101,7 +101,7 @@ const Signin = () => {
                     InputProps={{
                         endAdornment: (
                             formState === 'signin' ? <InputAdornment position='end'>
-                                <Link href='/ask-password'>
+                                <Link href='/update-password'>
                                     <Button>Oublié ?</Button>
                                 </Link>
                             </InputAdornment> : null

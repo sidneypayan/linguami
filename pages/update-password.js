@@ -10,7 +10,7 @@ const initialState = {
 }
 
 
-const AskPassword = () => {
+const UpdatePassword = () => {
     const { t } = useTranslation('register')
     const [values, setValues] = useState(initialState)
     const { askNewPassword } = useUserContext()
@@ -40,7 +40,7 @@ const AskPassword = () => {
         <>
             <Stack height='calc(100vh - 144px)' alignItems='center' justifyContent='center'>
                 <Box width='500px'>
-                    <Typography variant='h4' textAlign='center' mb={4}>Réinitialiser son mot de passe</Typography>
+                    <Typography variant='h4' textAlign='center' mb={4}>Réinitialisation du mot de passe</Typography>
                     <form style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }} onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
@@ -63,4 +63,4 @@ const AskPassword = () => {
     )
 }
 
-export default AskPassword
+export default UpdatePassword

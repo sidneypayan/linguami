@@ -112,6 +112,8 @@ const UserProvider = ({ children }) => {
 			password: password,
 		})
 
+		console.log(data)
+
 		if (data) {
 			toast.success('Mot de passe mis à jour avec succès')
 			router.push('/')
