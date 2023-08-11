@@ -90,7 +90,6 @@ const Signin = () => {
                 />
 
                 <TextField
-
                     fullWidth
                     onChange={handleChange}
                     type='password'
@@ -101,11 +100,11 @@ const Signin = () => {
                     id='password'
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment position='end'>
+                            formState === 'signin' ? <InputAdornment position='end'>
                                 <Link href='/ask-password'>
                                     <Button>Oublié ?</Button>
                                 </Link>
-                            </InputAdornment>
+                            </InputAdornment> : null
                         ),
                     }}
                 />

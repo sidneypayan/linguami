@@ -98,8 +98,6 @@ const UserProvider = ({ children }) => {
 	const askNewPassword = async email => {
 		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email)
 
-		console.log(data)
-
 		if (error) {
 			return toast.error(error)
 		}
@@ -116,7 +114,7 @@ const UserProvider = ({ children }) => {
 
 		if (data) {
 			toast.success('Mot de passe mis à jour avec succès')
-			router.push('/register')
+			router.push('/')
 		}
 		if (error) toast.error('Erreur avec le mot de passe')
 	}
