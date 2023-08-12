@@ -26,20 +26,6 @@ const UserProvider = ({ children }) => {
 			}
 			getUser()
 		}
-
-		if (user) {
-			const getUserLearningLanguage = async () => {
-				let { data, error } = await supabase
-					.from('users_profile')
-					.select('learning_language')
-
-				const { learning_language } = data[0]
-
-				setUserLearningLanguage(learning_language)
-			}
-
-			getUserLearningLanguage()
-		}
 	}, [])
 
 	useEffect(() => {
@@ -62,7 +48,7 @@ const UserProvider = ({ children }) => {
 				setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
 			}
 		}
-	}, [user])
+	}, [user, userLearningLanguage])
 
 	const register = async userData => {
 		const { email, password } = userData
