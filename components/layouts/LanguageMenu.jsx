@@ -54,7 +54,7 @@ const StyledMenu = styled(props => (
 
 const LanguageMenu = () => {
 	const { t, lang } = useTranslation('common')
-	const { defaultLearningLanguage, userLearningLanguage, changeLearningLanguage } = useUserContext()
+	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
 
 	const languages = [
 		{
@@ -100,7 +100,7 @@ const LanguageMenu = () => {
 				</Typography>
 				<Image
 					alt={userLearningLanguage}
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage ?? defaultLearningLanguage}.png`}
+					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
 					width={25}
 					height={25}
 				/>

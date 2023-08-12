@@ -19,11 +19,26 @@ const UserProvider = ({ children }) => {
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
 	useEffect(() => {
-		if (!userLearningLanguage) {
-			setDefaultLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
-			setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
+		if (user) {
+			const getUserLearningLanguage = async () => {
+				let { data, error } = await supabase
+					.from('users_profile')
+					.select('learning_language')
+
+				const { learning_language } = data[0]
+
+				setUserLearningLanguage(learning_language)
+			}
+
+			getUserLearningLanguage()
+		} else {
+			if (localStorage.getItem('learning_language')) {
+				setUserLearningLanguage(localStorage.getItem('learning_language'))
+			} else {
+				setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
+			}
 		}
-	})
+	}, [user])
 
 	useEffect(() => {
 		if (supabase.auth.session()) {
@@ -52,9 +67,7 @@ const UserProvider = ({ children }) => {
 			return toast.error(error)
 		}
 
-		toast.success(
-			'Nous vous avons envoyé un mail de confirmation'
-		)
+		toast.success('Nous vous avons envoyé un mail de confirmation')
 
 		setTimeout(() => {
 			router.push('/')
@@ -112,8 +125,6 @@ const UserProvider = ({ children }) => {
 			password: password,
 		})
 
-		console.log(data)
-
 		if (data) {
 			toast.success('Mot de passe mis à jour avec succès')
 			router.push('/')
@@ -122,8 +133,17 @@ const UserProvider = ({ children }) => {
 	}
 
 	const changeLearningLanguage = async learningLanguage => {
-		localStorage.setItem('learning_language', learningLanguage)
-		setUserLearningLanguage(learningLanguage)
+		if (user) {
+			const { data, error } = await supabase
+				.from('users_profile')
+				.update({ learning_language: learningLanguage })
+				.eq('id', user.id)
+			const { learning_language } = data[0]
+			setUserLearningLanguage(learning_language)
+		} else {
+			localStorage.setItem('learning_language', learningLanguage)
+			setUserLearningLanguage(learningLanguage)
+		}
 	}
 
 	useEffect(() => {
