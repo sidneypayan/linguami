@@ -19,6 +19,30 @@ const UserProvider = ({ children }) => {
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
 	useEffect(() => {
+		if (supabase.auth.session()) {
+			const getUser = () => {
+				const { user } = supabase.auth.session()
+				setUser(user)
+			}
+			getUser()
+		}
+
+		if (user) {
+			const getUserLearningLanguage = async () => {
+				let { data, error } = await supabase
+					.from('users_profile')
+					.select('learning_language')
+
+				const { learning_language } = data[0]
+
+				setUserLearningLanguage(learning_language)
+			}
+
+			getUserLearningLanguage()
+		}
+	}, [])
+
+	useEffect(() => {
 		if (user) {
 			const getUserLearningLanguage = async () => {
 				let { data, error } = await supabase
@@ -39,16 +63,6 @@ const UserProvider = ({ children }) => {
 			}
 		}
 	}, [user])
-
-	useEffect(() => {
-		if (supabase.auth.session()) {
-			const getUser = () => {
-				const { user } = supabase.auth.session()
-				setUser(user)
-			}
-			getUser()
-		}
-	}, [])
 
 	const register = async userData => {
 		const { email, password } = userData
