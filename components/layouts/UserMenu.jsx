@@ -34,7 +34,6 @@ const UserMenu = () => {
 					alignItems: 'center',
 					textAlign: 'center',
 				}}>
-				{/* <LanguageMenu /> */}
 				<IconButton
 					onClick={handleClick}
 					size='small'
@@ -79,10 +78,6 @@ const UserMenu = () => {
 				}}
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-				{/* <MenuItem>
-					<Avatar /> My account
-				</MenuItem>
-				<Divider /> */}
 				<MenuItem component={Link} href='/dictionary'>
 					<ListItemIcon>
 						<MenuBook />

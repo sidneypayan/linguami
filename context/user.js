@@ -11,11 +11,9 @@ const UserProvider = ({ children }) => {
 
 	const [user, setUser] = useState(null)
 	const [userProfile, setUserProfile] = useState(null)
-	const [isLoading, setIsLoading] = useState(true)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
 	const [isUserAdmin, setIsUserAdmin] = useState(null)
 	const [isUserPremium, setIsUserPremium] = useState(null)
-	const [defaultLearningLanguage, setDefaultLearningLanguage] = useState(null)
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
 	useEffect(() => {
@@ -24,12 +22,7 @@ const UserProvider = ({ children }) => {
 				const { user } = supabase.auth.session()
 				setUser(user)
 			}
-			getUser()
-		}
-	}, [])
 
-	useEffect(() => {
-		if (user) {
 			const getUserLearningLanguage = async () => {
 				let { data, error } = await supabase
 					.from('users_profile')
@@ -40,15 +33,41 @@ const UserProvider = ({ children }) => {
 				setUserLearningLanguage(learning_language)
 			}
 
+			getUser()
 			getUserLearningLanguage()
 		} else {
+			console.log('no user')
 			if (localStorage.getItem('learning_language')) {
 				setUserLearningLanguage(localStorage.getItem('learning_language'))
 			} else {
 				setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
 			}
 		}
-	}, [user, userLearningLanguage])
+	}, [])
+
+	// useEffect(() => {
+	// 	if (user) {
+	// 		console.log('user')
+	// 		const getUserLearningLanguage = async () => {
+	// 			let { data, error } = await supabase
+	// 				.from('users_profile')
+	// 				.select('learning_language')
+
+	// 			const { learning_language } = data[0]
+
+	// 			setUserLearningLanguage(learning_language)
+	// 		}
+
+	// 		getUserLearningLanguage()
+	// 	} else {
+	// 		console.log('no user')
+	// 		if (localStorage.getItem('learning_language')) {
+	// 			setUserLearningLanguage(localStorage.getItem('learning_language'))
+	// 		} else {
+	// 			setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
+	// 		}
+	// 	}
+	// }, [user])
 
 	const register = async userData => {
 		const { email, password } = userData
@@ -157,7 +176,6 @@ const UserProvider = ({ children }) => {
 						.single()
 
 					setUserProfile({ ...user, ...userData })
-					setIsLoading(false)
 				}
 
 				const { user } = session
@@ -191,7 +209,6 @@ const UserProvider = ({ children }) => {
 		user,
 		isUserAdmin,
 		userProfile,
-		isLoading,
 		isUserLoggedIn,
 		register,
 		login,
@@ -199,7 +216,6 @@ const UserProvider = ({ children }) => {
 		logout,
 		askNewPassword,
 		setNewPassword,
-		defaultLearningLanguage,
 		userLearningLanguage,
 		changeLearningLanguage,
 	}
