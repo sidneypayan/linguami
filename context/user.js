@@ -18,23 +18,20 @@ const UserProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (supabase.auth.session()) {
-			const getUser = () => {
+			const getUser = async () => {
 				const { user } = supabase.auth.session()
-				setUser(user)
-			}
-
-			const getUserLearningLanguage = async () => {
-				let { data, error } = await supabase
+				const { data: userData } = await supabase
 					.from('users_profile')
-					.select('learning_language')
+					.select('*')
+					.eq('id', user.id)
+					.single()
 
-				const { learning_language } = data[0]
-
-				setUserLearningLanguage(learning_language)
+				setUserProfile({ ...user, ...userData })
+				setUser(user)
+				setUserLearningLanguage(userData.learning_language)
 			}
 
 			getUser()
-			getUserLearningLanguage()
 		} else {
 			console.log('no user')
 			if (localStorage.getItem('learning_language')) {
@@ -45,29 +42,7 @@ const UserProvider = ({ children }) => {
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	if (user) {
-	// 		console.log('user')
-	// 		const getUserLearningLanguage = async () => {
-	// 			let { data, error } = await supabase
-	// 				.from('users_profile')
-	// 				.select('learning_language')
-
-	// 			const { learning_language } = data[0]
-
-	// 			setUserLearningLanguage(learning_language)
-	// 		}
-
-	// 		getUserLearningLanguage()
-	// 	} else {
-	// 		console.log('no user')
-	// 		if (localStorage.getItem('learning_language')) {
-	// 			setUserLearningLanguage(localStorage.getItem('learning_language'))
-	// 		} else {
-	// 			setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
-	// 		}
-	// 	}
-	// }, [user])
+	console.log(userProfile)
 
 	const register = async userData => {
 		const { email, password } = userData
@@ -127,7 +102,7 @@ const UserProvider = ({ children }) => {
 		toast.success('Déconnexion en cours...')
 	}
 
-	const askNewPassword = async email => {
+	const updatePassword = async email => {
 		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email)
 
 		if (error) {
@@ -214,7 +189,7 @@ const UserProvider = ({ children }) => {
 		login,
 		loginWithThirdPartyOAuth,
 		logout,
-		askNewPassword,
+		updatePassword,
 		setNewPassword,
 		userLearningLanguage,
 		changeLearningLanguage,
