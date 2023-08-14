@@ -65,8 +65,6 @@ const Dictionary = () => {
 		)
 	}
 
-	console.log(user_words_loading)
-
 	return (
 		<>
 			<Head>

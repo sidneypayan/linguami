@@ -72,7 +72,6 @@ const Words = ({ content, materialId }) => {
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		console.log(userLearningLanguage)
 		dispatch(translateWord({ word, sentence, userLearningLanguage }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())

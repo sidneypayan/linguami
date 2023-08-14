@@ -33,7 +33,6 @@ const UserProvider = ({ children }) => {
 
 			getUser()
 		} else {
-			console.log('no user')
 			if (localStorage.getItem('learning_language')) {
 				setUserLearningLanguage(localStorage.getItem('learning_language'))
 			} else {
@@ -41,8 +40,6 @@ const UserProvider = ({ children }) => {
 			}
 		}
 	}, [])
-
-	console.log(userProfile)
 
 	const register = async userData => {
 		const { email, password } = userData

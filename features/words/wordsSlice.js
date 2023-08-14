@@ -20,7 +20,6 @@ export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
 		let { word, sentence, userLearningLanguage } = param
-		console.log(userLearningLanguage)
 		const langPair = userLearningLanguage === 'ru' ? 'ru-fr' : 'fr-ru'
 
 		word =
