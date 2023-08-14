@@ -25,8 +25,8 @@ import {
 import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
-const Material = ({ material: single_material }) => {
-	// console.log(userMaterialsStatus)
+const Material = ({ material: single_material, userSession }) => {
+	console.log(userSession)
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -100,7 +100,7 @@ const Material = ({ material: single_material }) => {
 		})
 	}
 
-	console.log(single_material)
+
 
 	return (
 		single_material && (
@@ -259,22 +259,28 @@ const Material = ({ material: single_material }) => {
 }
 
 export const getStaticProps = async ({ params }) => {
+
 	const { data: material } = await supabase
 		.from('materials')
 		.select('*')
 		.eq('id', params.material)
 		.single()
 
+	const userSession = supabase.auth.session()
+
+
+
 	// const { data: userMaterialsStatus } = await supabase
 	// 	.from('user_materials')
-	// 	.select('material_id, is_being_studied, is_studied')
-	// 	.eq('user_id', supabase.auth.user().id)
-	// 	.eq('material_id', material.id)
+	// 	.select('is_being_studied, is_studied')
+	// 	.eq('user_id', '44614ddb-ad7e-4ed0-baab-f12ea031e4b5')
+	// 	.eq('material_id', params.material)
+
 
 	return {
 		props: {
 			material,
-			// userMaterialsStatus
+			userSession
 		},
 		revalidate: 60,
 	}
