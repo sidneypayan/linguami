@@ -50,22 +50,25 @@ const Words = ({ content, materialId }) => {
 	const wrapWords = sentences => {
 		// regexAll permet de conserver les espaces et la ponctuation
 		return sentences.match(regexAll).map((item, index) => {
-			if (/^br$/.test(item)) {
-				return <span key={index} className={styles.break}></span>
-			}
 
-			if (regexWords.test(item)) {
-				return (
-					<span
-						key={index}
-						className={styles.translate}
-						onClick={e => handleClick(e)}>
-						{item}
-					</span>
-				)
-			}
+			if (item) {
+				if (/^br$/.test(item)) {
+					return <span key={index} className={styles.break}></span>
+				}
 
-			return item
+				if (regexWords.test(item)) {
+					return (
+						<span
+							key={index}
+							className={styles.translate}
+							onClick={e => handleClick(e)}>
+							{item}
+						</span>
+					)
+				}
+
+				return item
+			}
 		})
 	}
 

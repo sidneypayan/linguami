@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
+import { addBeingStudiedMaterial } from '../../../../features/materials/materialsSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
@@ -25,6 +26,7 @@ import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
 const Material = ({ material: single_material }) => {
+	// console.log(userMaterialsStatus)
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -90,13 +92,15 @@ const Material = ({ material: single_material }) => {
 			window.innerWidth < 768
 				? e.pageX - e.pageX / 2
 				: window.innerWidth < 1024
-				? e.pageX - e.pageX / 3
-				: e.pageX - 100
+					? e.pageX - e.pageX / 3
+					: e.pageX - 100
 		setCoordinates({
 			x: xCoordinate,
 			y: e.pageY - 50,
 		})
 	}
+
+	console.log(single_material)
 
 	return (
 		single_material && (
@@ -147,6 +151,15 @@ const Material = ({ material: single_material }) => {
 								userId={user && user.id}
 							/>
 
+							<Button
+								sx={{ marginBottom: '2rem', marginRight: '1rem', backgroundColor: 'clrPrimary1' }}
+								variant='contained'
+								onClick={() => dispatch(addBeingStudiedMaterial(single_material.id))}
+								type='button'
+								id='show-accents'>
+								Commencer à étudier ce matériel
+							</Button>
+
 							{userLearningLanguage === 'ru' && (
 								<Button
 									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
@@ -173,6 +186,8 @@ const Material = ({ material: single_material }) => {
 									Edit material
 								</Button>
 							)}
+
+
 
 							{showAccents ? (
 								<Typography
@@ -243,16 +258,23 @@ const Material = ({ material: single_material }) => {
 	)
 }
 
-export const getStaticProps = async ({ params, locale }) => {
-	const { data: material, error } = await supabase
+export const getStaticProps = async ({ params }) => {
+	const { data: material } = await supabase
 		.from('materials')
 		.select('*')
 		.eq('id', params.material)
 		.single()
 
+	// const { data: userMaterialsStatus } = await supabase
+	// 	.from('user_materials')
+	// 	.select('material_id, is_being_studied, is_studied')
+	// 	.eq('user_id', supabase.auth.user().id)
+	// 	.eq('material_id', material.id)
+
 	return {
 		props: {
 			material,
+			// userMaterialsStatus
 		},
 		revalidate: 60,
 	}

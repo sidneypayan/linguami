@@ -218,9 +218,14 @@ const materialsSlice = createSlice({
 				state.user_materials_status_loading = false
 				state.user_materials_status_error = payload
 			})
+			.addCase(addBeingStudiedMaterial.fulfilled, () => {
+				toast.success(
+					"Matériel ajouté à vos matériels en cours d'étude"
+				)
+			})
 			.addCase(addMaterialToStudied.fulfilled, () => {
 				toast.success(
-					'Félicitations, un pas de plus vers la maîtrise de la langue russe !'
+					'Bravo, un pas de plus vers la maîtrise de la langue russe !'
 				)
 			})
 			.addCase(getBookChapters.pending, state => {
