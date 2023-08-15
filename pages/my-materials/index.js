@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '../../features/materials/materialsSlice'
@@ -16,6 +17,7 @@ import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
 const UserMaterials = () => {
+	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const { user_materials } = useSelector(store => store.materials)
 	const { userLearningLanguage } = useUserContext()
@@ -70,10 +72,6 @@ const UserMaterials = () => {
 			</Head>
 			<Container
 				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					minHeight: 'calc(100vh - 500px)',
 					margin: '10rem auto',
 				}}>
 				{!displayMaterials && (
@@ -81,6 +79,8 @@ const UserMaterials = () => {
 						justifyContent='center'
 						gap={2}
 						sx={{
+							margin: '0 auto',
+							width: '500px',
 							flexDirection: {
 								sx: 'column',
 								md: 'row',

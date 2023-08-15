@@ -1,16 +1,21 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
-import { addBeingStudiedMaterial } from '../../../../features/materials/materialsSlice'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+	addBeingStudiedMaterial,
+	removeBeingStudiedMaterial,
+	getUserMaterialStatus,
+	addMaterialToStudied,
+} from '../../../../features/materials/materialsSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
-import { addMaterialToStudied } from '../../../../features/materials/materialsSlice'
+
 import Player from '../../../../components/Player'
 import { editContent } from '../../../../features/content/contentSlice'
 import {
@@ -25,16 +30,24 @@ import {
 import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
-const Material = ({ material: single_material, userSession }) => {
-	console.log(userSession)
+const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user, isUserAdmin, userLearningLanguage } = useUserContext()
 	const { material, section } = router.query
-
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
+
+	const { user_material_status } = useSelector(store => store.materials)
+
+	const { is_being_studied, is_studied } = user_material_status
+
+	useEffect(() => {
+		if (single_material) {
+			dispatch(getUserMaterialStatus(single_material.id))
+		}
+	}, [user_material_status])
 
 	const handleEditContent = () => {
 		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
@@ -92,15 +105,13 @@ const Material = ({ material: single_material, userSession }) => {
 			window.innerWidth < 768
 				? e.pageX - e.pageX / 2
 				: window.innerWidth < 1024
-					? e.pageX - e.pageX / 3
-					: e.pageX - 100
+				? e.pageX - e.pageX / 3
+				: e.pageX - 100
 		setCoordinates({
 			x: xCoordinate,
 			y: e.pageY - 50,
 		})
 	}
-
-
 
 	return (
 		single_material && (
@@ -151,15 +162,45 @@ const Material = ({ material: single_material, userSession }) => {
 								userId={user && user.id}
 							/>
 
-							<Button
-								sx={{ marginBottom: '2rem', marginRight: '1rem', backgroundColor: 'clrPrimary1' }}
-								variant='contained'
-								onClick={() => dispatch(addBeingStudiedMaterial(single_material.id))}
-								type='button'
-								id='show-accents'>
-								Commencer à étudier ce matériel
-							</Button>
+							{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
+							afficher le bouton proposant de l'aouter aux matériels en cours
+							d'étude */}
 
+							{!is_being_studied && !is_studied && (
+								<Button
+									sx={{
+										marginBottom: '2rem',
+										marginRight: '1rem',
+										backgroundColor: 'clrPrimary1',
+									}}
+									variant='contained'
+									onClick={() =>
+										dispatch(addBeingStudiedMaterial(single_material.id))
+									}
+									type='button'
+									id='show-accents'>
+									Commencer à étudier ce matériel
+								</Button>
+							)}
+
+							{is_being_studied && (
+								<Button
+									sx={{
+										marginBottom: '2rem',
+										marginRight: '1rem',
+										backgroundColor: 'clrPrimary1',
+									}}
+									variant='contained'
+									onClick={() =>
+										dispatch(removeBeingStudiedMaterial(single_material.id))
+									}
+									type='button'
+									id='show-accents'>
+									Ne plus étudier ce matériel
+								</Button>
+							)}
+
+							{/* Si la langue russe est sélectionné, montrer le bouton permettant d'afficher les accents */}
 							{userLearningLanguage === 'ru' && (
 								<Button
 									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
@@ -171,10 +212,13 @@ const Material = ({ material: single_material, userSession }) => {
 								</Button>
 							)}
 
-							{/* CHAPTER MENU */}
+							{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
+
 							{section === 'book' && (
 								<BookMenu bookName={single_material.book_name} />
 							)}
+
+							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
 							{isUserAdmin && (
 								<Button
 									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
@@ -187,8 +231,7 @@ const Material = ({ material: single_material, userSession }) => {
 								</Button>
 							)}
 
-
-
+							{/* Afficher le texte avec ou sans accents en fonction de l'état de showAccents */}
 							{showAccents ? (
 								<Typography
 									color='clrGrey2'
@@ -213,21 +256,25 @@ const Material = ({ material: single_material, userSession }) => {
 								</Typography>
 							)}
 
-							<Button
-								variant='outlined'
-								size='large'
-								sx={{
-									display: 'block',
-									margin: '0 auto',
-									marginTop: '2rem',
-								}}
-								onClick={() =>
-									dispatch(addMaterialToStudied(single_material.id))
-								}
-								type='button'
-								id='checkMaterial'>
-								J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
-							</Button>
+							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
+
+							{!is_studied && (
+								<Button
+									variant='outlined'
+									size='large'
+									sx={{
+										display: 'block',
+										margin: '0 auto',
+										marginTop: '2rem',
+									}}
+									onClick={() =>
+										dispatch(addMaterialToStudied(single_material.id))
+									}
+									type='button'
+									id='checkMaterial'>
+									J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
+								</Button>
+							)}
 						</Container>
 
 						<Box
@@ -259,28 +306,15 @@ const Material = ({ material: single_material, userSession }) => {
 }
 
 export const getStaticProps = async ({ params }) => {
-
 	const { data: material } = await supabase
 		.from('materials')
 		.select('*')
 		.eq('id', params.material)
 		.single()
 
-	const userSession = supabase.auth.session()
-
-
-
-	// const { data: userMaterialsStatus } = await supabase
-	// 	.from('user_materials')
-	// 	.select('is_being_studied, is_studied')
-	// 	.eq('user_id', '44614ddb-ad7e-4ed0-baab-f12ea031e4b5')
-	// 	.eq('material_id', params.material)
-
-
 	return {
 		props: {
 			material,
-			userSession
 		},
 		revalidate: 60,
 	}

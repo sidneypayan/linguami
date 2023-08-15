@@ -14,6 +14,9 @@ const initialState = {
 	user_materials_status: [],
 	user_materials_status_loading: false,
 	user_materials_status_error: false,
+	user_material_status: [],
+	user_material_status_loading: false,
+	user_material_status_error: false,
 	level: 'all',
 	search: '',
 	totalMaterials: 0,
@@ -79,6 +82,24 @@ export const getUserMaterialsStatus = createAsyncThunk(
 	}
 )
 
+export const getUserMaterialStatus = createAsyncThunk(
+	'userMaterials/getUserMaterialStatus',
+	async (param, thunkAPI) => {
+		const { data: userMaterialStatus, error } = await supabase
+			.from('user_materials')
+			.select('is_being_studied, is_studied')
+			.match({ user_id: supabase.auth.user().id, material_id: param })
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		if (userMaterialStatus[0]) return userMaterialStatus[0]
+
+		return { is_being_studied: false, is_studied: false }
+	}
+)
+
 export const addBeingStudiedMaterial = createAsyncThunk(
 	'userMaterials/addBeingStudiedMaterial',
 	async (param, thunkAPI) => {
@@ -90,6 +111,16 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 					material_id: param,
 				},
 			])
+	}
+)
+
+export const removeBeingStudiedMaterial = createAsyncThunk(
+	'userMaterials/removeBeingStudiedMaterial',
+	async (param, thunkAPI) => {
+		const { data: material, error } = await supabase
+			.from('user_materials')
+			.delete()
+			.match({ user_id: supabase.auth.user().id, material_id: param })
 	}
 )
 
@@ -218,10 +249,22 @@ const materialsSlice = createSlice({
 				state.user_materials_status_loading = false
 				state.user_materials_status_error = payload
 			})
+			.addCase(getUserMaterialStatus.pending, state => {
+				state.user_material_status_loading = true
+			})
+			.addCase(getUserMaterialStatus.fulfilled, (state, { payload }) => {
+				state.user_material_status = payload
+				state.user_material_status_loading = false
+			})
+			.addCase(getUserMaterialStatus.rejected, (state, { payload }) => {
+				state.user_material_status_loading = false
+				state.user_material_status_error = payload
+			})
 			.addCase(addBeingStudiedMaterial.fulfilled, () => {
-				toast.success(
-					"Matériel ajouté à vos matériels en cours d'étude"
-				)
+				toast.success("Matériel ajouté à vos matériels en cours d'étude")
+			})
+			.addCase(removeBeingStudiedMaterial.fulfilled, () => {
+				toast.success("Matériel retiré de vos matériels en cours d'étude")
 			})
 			.addCase(addMaterialToStudied.fulfilled, () => {
 				toast.success(

@@ -3,8 +3,10 @@
 	"name": "Имя",
 	"email": "Почта",
 	"password": "Пароль",
-	"register": "Зарегистрироваться",
-	"haveaccount": "У вас уже есть аккаунт?",
-	"noaccount": "Нет аккаунта?",
-	"signin": "Войти"
+	"signupTitle": "Зарегистрироваться",
+	"haveaccount": "У меня уже есть аккаунт",
+	"noaccount": "Создать аккаунт",
+	"signinTitle": "Вход",
+	"signinBtn": "Войти",
+	"forgot": "Забыли?"
 }

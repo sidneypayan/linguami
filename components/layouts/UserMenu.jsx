@@ -101,7 +101,7 @@ const UserMenu = () => {
 					<ListItemIcon>
 						<Logout />
 					</ListItemIcon>
-					Logout
+					{t('logout')}
 				</MenuItem>
 			</Menu>
 		</>

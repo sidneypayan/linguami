@@ -1,48 +1,20 @@
 {
-	"locales": [
-		"fr",
-		"ru"
-	],
+	"locales": ["fr", "ru"],
 	"defaultLocale": "fr",
 	"pages": {
-		"*": [
-			"common"
-		],
-		"/": [
-			"home"
-		],
-		"/blog": [
-			"blog"
-		],
-		"/materials": [
-			"materials"
-		],
-		"/materials/[section]": [
-			"materials"
-		],
-		"/login": [
-			"register"
-		],
-		"/register": [
-			"register"
-		],
-		"/confirm-signup": [
-			"register"
-		],
-		"/set-password-signin": [
-			"register"
-		],
-		"/set-password": [
-			"register"
-		],
-		"/signin": [
-			"register"
-		],
-		"/update-password": [
-			"register"
-		],
-		"/teacher": [
-			"teacher"
-		]
+		"*": ["common"],
+		"/": ["home"],
+		"/blog": ["blog"],
+		"/materials": ["materials"],
+		"/materials/[section]": ["materials"],
+		"/my-materials": ["materials"],
+		"/login": ["register"],
+		"/register": ["register"],
+		"/confirm-signup": ["register"],
+		"/set-password-signin": ["register"],
+		"/set-password": ["register"],
+		"/signin": ["register"],
+		"/update-password": ["register"],
+		"/teacher": ["teacher"]
 	}
 }
