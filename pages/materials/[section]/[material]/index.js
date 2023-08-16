@@ -105,8 +105,8 @@ const Material = ({ material: single_material }) => {
 			window.innerWidth < 768
 				? e.pageX - e.pageX / 2
 				: window.innerWidth < 1024
-				? e.pageX - e.pageX / 3
-				: e.pageX - 100
+					? e.pageX - e.pageX / 3
+					: e.pageX - 100
 		setCoordinates({
 			x: xCoordinate,
 			y: e.pageY - 50,
@@ -138,7 +138,7 @@ const Material = ({ material: single_material }) => {
 							md: 'row',
 						},
 					}}>
-					<Container maxWidth='100%' sx={{ marginTop: '8rem' }}>
+					<Container disableGutters maxWidth='100%' sx={{ marginTop: '8rem' }}>
 						<Typography
 							variant='h1'
 							sx={{
