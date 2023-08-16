@@ -95,7 +95,7 @@ export const getServerSideProps = async ({ req }) => {
 	)
 
 	return {
-		props: { count: await sectionCount },
+		props: { count: sectionCount },
 	}
 }
 

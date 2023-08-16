@@ -1,4 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
+import jwtDecode from 'jwt-decode'
+import { supabase } from '../../lib/supabase'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '../../features/materials/materialsSlice'
@@ -16,7 +18,8 @@ import { Box } from '@mui/system'
 import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
-const UserMaterials = () => {
+const UserMaterials = (user) => {
+
 	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const { user_materials } = useSelector(store => store.materials)
@@ -163,6 +166,33 @@ const UserMaterials = () => {
 			</Container>
 		</>
 	)
+}
+
+export const getServerSideProps = async ({ req }) => {
+	if (req.cookies['sb-access-token']) {
+		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
+
+		const { data: user, error } = await supabase
+			.from('users_profile')
+			.select('*')
+			.eq('id', decodedToken.sub)
+			.single()
+
+
+
+
+		return {
+			props: user,
+		}
+	}
+
+	return {
+		redirect: {
+			destination: '/',
+			permanent: false,
+		},
+	}
+
 }
 
 export default UserMaterials

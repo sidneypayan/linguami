@@ -30,6 +30,7 @@ const initialState = {
 	chapters_error: false,
 }
 
+
 export const getMaterials = createAsyncThunk(
 	'materials/getMaterials',
 	async (param, thunkAPI) => {

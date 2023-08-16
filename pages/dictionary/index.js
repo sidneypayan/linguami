@@ -1,3 +1,5 @@
+import jwtDecode from 'jwt-decode'
+import { supabase } from '../../lib/supabase'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import { useEffect, useState } from 'react'
@@ -128,6 +130,33 @@ const Dictionary = () => {
 			</Container>
 		</>
 	)
+}
+
+export const getServerSideProps = async ({ req }) => {
+	if (req.cookies['sb-access-token']) {
+		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
+
+		const { data: user, error } = await supabase
+			.from('users_profile')
+			.select('*')
+			.eq('id', decodedToken.sub)
+			.single()
+
+
+
+
+		return {
+			props: user,
+		}
+	}
+
+	return {
+		redirect: {
+			destination: '/',
+			permanent: false,
+		},
+	}
+
 }
 
 export default Dictionary
