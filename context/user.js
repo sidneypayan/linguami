@@ -11,9 +11,9 @@ const UserProvider = ({ children }) => {
 
 	const [user, setUser] = useState(null)
 	const [userProfile, setUserProfile] = useState(null)
-	const [isUserLoggedIn, setIsUserLoggedIn] = useState(null)
-	const [isUserAdmin, setIsUserAdmin] = useState(null)
-	const [isUserPremium, setIsUserPremium] = useState(null)
+	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+	const [isUserAdmin, setIsUserAdmin] = useState(false)
+	const [isUserPremium, setIsUserPremium] = useState(false)
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
 	useEffect(() => {
@@ -153,6 +153,10 @@ const UserProvider = ({ children }) => {
 				const { user } = session
 				setUser(user)
 				getUserProfile()
+			}
+
+			if (event == 'SIGNED_OUT') {
+				setIsUserAdmin(false)
 			}
 		})
 	}, [])

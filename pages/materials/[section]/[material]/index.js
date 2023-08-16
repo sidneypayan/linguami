@@ -34,7 +34,7 @@ const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserAdmin, userLearningLanguage } = useUserContext()
+	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
@@ -166,7 +166,7 @@ const Material = ({ material: single_material }) => {
 							afficher le bouton proposant de l'aouter aux matériels en cours
 							d'étude */}
 
-							{!is_being_studied && !is_studied && (
+							{!is_being_studied && !is_studied && isUserLoggedIn && (
 								<Button
 									sx={{
 										marginBottom: '2rem',
@@ -183,7 +183,7 @@ const Material = ({ material: single_material }) => {
 								</Button>
 							)}
 
-							{is_being_studied && (
+							{is_being_studied && isUserLoggedIn && (
 								<Button
 									sx={{
 										marginBottom: '2rem',
