@@ -157,6 +157,7 @@ const UserProvider = ({ children }) => {
 
 			if (event == 'SIGNED_OUT') {
 				setIsUserAdmin(false)
+				setIsUserPremium(false)
 			}
 		})
 	}, [])
