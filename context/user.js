@@ -3,11 +3,16 @@ import { supabase } from '../lib/supabase'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+// import { useSelector, useDispatch } from 'react-redux'
+// import {
+// 	cleanUserMaterialStatus
+// } from '../features/materials/materialsSlice'
 
 const UserContext = createContext()
 
 const UserProvider = ({ children }) => {
 	const router = useRouter()
+	// const dispatch = useDispatch()
 
 	const [user, setUser] = useState(null)
 	const [userProfile, setUserProfile] = useState(null)
@@ -158,6 +163,7 @@ const UserProvider = ({ children }) => {
 			if (event == 'SIGNED_OUT') {
 				setIsUserAdmin(false)
 				setIsUserPremium(false)
+				// dispatch(cleanUserMaterialStatus())
 			}
 		})
 	}, [])

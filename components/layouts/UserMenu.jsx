@@ -12,10 +12,13 @@ import {
 import { Article, Logout, MenuBook, AccountCircle } from '@mui/icons-material'
 // import LanguageMenu from './LanguageMenu.jsx'
 import Link from 'next/link'
+import { useSelector, useDispatch } from 'react-redux'
+import { cleanUserMaterialStatus } from '../../features/materials/materialsSlice.js'
 
 const UserMenu = () => {
 	const { t, lang } = useTranslation('common')
 	const { user, userProfile, logout } = useUserContext()
+	const dispatch = useDispatch()
 
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
@@ -101,7 +104,10 @@ const UserMenu = () => {
 					</ListItemIcon>
 					Settings
 				</MenuItem> */}
-				<MenuItem onClick={() => logout()}>
+				<MenuItem onClick={() => {
+					logout()
+					dispatch(cleanUserMaterialStatus())
+				}}>
 					<ListItemIcon>
 						<Logout />
 					</ListItemIcon>

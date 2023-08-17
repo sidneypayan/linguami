@@ -209,6 +209,9 @@ const materialsSlice = createSlice({
 			state.sliceEnd = state.page * 10
 			state.sliceStart = state.sliceEnd - 10
 		},
+		cleanUserMaterialStatus: (state) => {
+			state.user_materials_status = []
+		}
 	},
 	extraReducers: builder => {
 		builder
@@ -288,5 +291,5 @@ const materialsSlice = createSlice({
 
 export default materialsSlice.reducer
 
-export const { filterMaterials, showAllMaterials, searchMaterial, changePage } =
+export const { filterMaterials, showAllMaterials, searchMaterial, changePage, cleanUserMaterialStatus } =
 	materialsSlice.actions
