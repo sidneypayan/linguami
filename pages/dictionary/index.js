@@ -113,7 +113,7 @@ const Dictionary = () => {
 										</TableCell>
 									</TableRow>
 								</tbody>
-							)}
+							))}
 						</Table>
 					</TableContainer>
 				</Container >
