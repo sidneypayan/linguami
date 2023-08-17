@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import jwtDecode from 'jwt-decode'
 import { supabase } from '../../lib/supabase'
 import { useSelector, useDispatch } from 'react-redux'
@@ -19,11 +20,13 @@ import {
 	TableContainer,
 	TableRow,
 	Typography,
+	Stack
 } from '@mui/material'
 import { DeleteOutline } from '@mui/icons-material'
 import Image from 'next/image'
 
 const Dictionary = () => {
+	const { t } = useTranslation('common')
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
 	const userId = user?.id
@@ -72,8 +75,9 @@ const Dictionary = () => {
 			<Head>
 				<title>Linguami | Dictionnaire personnel</title>
 			</Head>
-			<Container sx={{ margin: '10rem auto' }} maxWidth='lg'>
-				{user_words.length > 0 && (
+
+			{user_words.length > 0 ?
+				<Container sx={{ margin: '10rem auto' }} maxWidth='lg' >
 					<Button
 						sx={{
 							backgroundColor: 'clrBtn1',
@@ -85,11 +89,9 @@ const Dictionary = () => {
 						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
 						Réviser les mots
 					</Button>
-				)}
-				<TableContainer>
-					<Table>
-						{user_words.length > 0 ? (
-							user_words.map((word, index) => (
+					<TableContainer>
+						<Table>
+							{user_words.map((word, index) => (
 								<tbody key={index}>
 									<TableRow>
 										<TableCell>
@@ -111,23 +113,20 @@ const Dictionary = () => {
 										</TableCell>
 									</TableRow>
 								</tbody>
-							))
-						) : (
-							<>
-								<Typography variant='subtitle1'>
-									Vous n&apos;avez pas encore de mots dans votre dictionnaire.
-									Choisissez un materiel à étudier, cliquez sur un mot du texte
-									puis sur sa traduction afin de l&apos;ajouter à votre
-									dictionnaire.
-								</Typography>
-								<Link href='materials'>
-									<Button variant='contained'>Commencer</Button>
-								</Link>
-							</>
-						)}
-					</Table>
-				</TableContainer>
-			</Container>
+							)}
+						</Table>
+					</TableContainer>
+				</Container >
+				:
+				<Container maxWidth='md' sx={{ textAlign: 'center', margin: '10rem auto' }}>
+					<Typography variant='subtitle1' mb={5}>
+						{t('nowords')}
+					</Typography>
+					<Link href='/materials'>
+						<Button variant='contained'>{t('start')}</Button>
+					</Link>
+				</Container>
+			}
 		</>
 	)
 }

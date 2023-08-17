@@ -78,7 +78,7 @@ const Words = ({ content, materialId }) => {
 		dispatch(translateWord({ word, sentence, userLearningLanguage }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
-		dispatch(addBeingStudiedMaterial(materialId))
+		// dispatch(addBeingStudiedMaterial(materialId))
 	}
 
 	return wrapSentences(clean)

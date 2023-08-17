@@ -5,13 +5,13 @@ import {
 	Box,
 	Divider,
 	IconButton,
-	Link,
 	ListItemIcon,
 	Menu,
 	MenuItem,
 } from '@mui/material'
 import { Article, Logout, MenuBook, AccountCircle } from '@mui/icons-material'
 // import LanguageMenu from './LanguageMenu.jsx'
+import Link from 'next/link'
 
 const UserMenu = () => {
 	const { t, lang } = useTranslation('common')
@@ -78,18 +78,22 @@ const UserMenu = () => {
 				}}
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-				<MenuItem component={Link} href='/dictionary'>
-					<ListItemIcon>
-						<MenuBook />
-					</ListItemIcon>
-					{t('mydictionary')}
-				</MenuItem>
-				<MenuItem component={Link} href='/my-materials'>
-					<ListItemIcon>
-						<Article />
-					</ListItemIcon>
-					{t('mymaterials')}
-				</MenuItem>
+				<Link href='/dictionary'>
+					<MenuItem >
+						<ListItemIcon>
+							<MenuBook />
+						</ListItemIcon>
+						{t('mydictionary')}
+					</MenuItem>
+				</Link>
+				<Link href='/my-materials'>
+					<MenuItem  >
+						<ListItemIcon>
+							<Article />
+						</ListItemIcon>
+						{t('mymaterials')}
+					</MenuItem>
+				</Link>
 				<Divider />
 				{/* <MenuItem>
 					<ListItemIcon>

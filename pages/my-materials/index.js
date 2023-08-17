@@ -96,7 +96,7 @@ const UserMaterials = (user) => {
 							}}>
 							<Card>
 								<Typography variant='h6' align='center' p={2}>
-									En cours d&apos;étude
+									{t('being_studied')}
 								</Typography>
 								<Box
 									component='img'
@@ -114,7 +114,7 @@ const UserMaterials = (user) => {
 							}}>
 							<Card>
 								<Typography variant='h6' align='center' p={2}>
-									Etudiés
+									{t('studied')}
 								</Typography>
 
 								<Box
