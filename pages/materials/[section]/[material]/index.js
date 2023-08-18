@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { useRouter } from 'next/router'
@@ -31,7 +31,6 @@ import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
 const Material = ({ material: single_material }) => {
-	const { t, lang } = useTranslation()
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } = useUserContext()
@@ -118,7 +117,7 @@ const Material = ({ material: single_material }) => {
 			<>
 				<Head>
 					<title>{`${single_material.title} | Linguami`}</title>
-					<meta name='description' content={t('description')} />
+					<meta name='description' content={single_material.title} />
 				</Head>
 				<IconButton
 					sx={{

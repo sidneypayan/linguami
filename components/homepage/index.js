@@ -3,9 +3,7 @@ import Image from 'next/image'
 import Hero from './Hero'
 import Link from 'next/link'
 import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
+
 	Box,
 	Button,
 	Container,
@@ -72,7 +70,7 @@ const Homepage = () => {
 	return (
 		<>
 			<Hero />
-			<Container width={1440} sx={{ marginTop: '5rem' }}>
+			<Container width={1440} sx={{ margin: '5rem auto' }}>
 				<Typography variant='h3' align='center'>
 					{t('multimedia')}
 				</Typography>
@@ -127,7 +125,7 @@ const Homepage = () => {
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
 							{t('translatorsubtitle')}
 						</Typography>
-						<Link href='/register'>
+						<Link href='/signin'>
 							<Button
 								variant='contained'
 								size='large'
@@ -159,11 +157,10 @@ const Homepage = () => {
 					}}>
 					<Stack gap='1rem'>
 						<Typography variant='h4' align='center'>
-							{t('native')}
+							{t('teacher')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
-							Prenez des cours à distance avec un professeur diplômé et
-							bénéfissiez d&apos;un apprentissage personnalisé.
+							{t('teachersubtitle')}
 						</Typography>
 						<Link href='/teacher'>
 							<Button
@@ -198,70 +195,75 @@ const Homepage = () => {
 						/>
 					</Box>
 				</Stack>
+				<Typography variant='h3' align='center' mt='10rem'>
+					Nos outils pour votre apprentissage
+				</Typography>
+				{/* <div style={{ margin: '8rem auto' }} className='hr-custom'></div> */}
+				<div className='hr-custom'></div>
 
-				{/* ACCORDION */}
-				{/* 
-				<Typography variant='h4' align='center' mt='8rem'>
-					FAQ
-				</Typography> */}
-				<div style={{ margin: '8rem auto' }} className='hr-custom'></div>
-				<div className='wrapper-small'>
-					{/* <Accordion>
-						<AccordionSummary
-							expandIcon={<ExpandMoreIcon />}
-							aria-controls='panel1a-content'
-							id='panel1a-header'>
-							<Typography variant='h6' color='primaryGrey'>
-								{t('faqtranslation')}
-							</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							<StyledStack>
-								<Typography
-									variant='body1'
-									maxWidth='350px'
-									textAlign='left'
-									mt={5}>
-									{t('faqtranslationsubtitle')}
-								</Typography>
-								<Divider orientation='vertical'></Divider>
-								<Box
-									sx={{ borderRadius: '3px' }}
-									margin='0'
-									component='img'
-									maxHeight='250px'
-									alt='comment traduire'
-									src='/img/translation.gif'
-								/>
-							</StyledStack>
-						</AccordionDetails>
-					</Accordion> */}
-					<Stack
-						sx={{
-							width: '1000px',
-							maxWidth: '100%',
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-							padding: '4rem',
-							borderRadius: '3px',
-							gap: '1.5rem',
-							margin: '0 auto',
-							marginTop: '5rem',
-						}}>
-						<Typography variant='h6' mt={5}>
-							{t('gif')}
+
+
+				<Stack sx={{
+					width: '1000px',
+					maxWidth: '100%',
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+					padding: '4rem',
+					borderRadius: '3px',
+					gap: '4rem',
+					margin: '0 auto',
+
+				}}>
+					<Box>
+						<Typography textAlign='center' variant='h5' mb={5} >
+							{t('giftranslatortitle')}
 						</Typography>
-						<Box
-							sx={{ borderRadius: '3px' }}
-							margin='0'
-							component='img'
-							maxHeight='250px'
-							alt='comment traduire'
-							src='/img/add_translation.gif'
-						/>
-					</Stack>
-				</div>
+						<Typography textAlign='center'  >
+							{t('giftranslatorsubtitle')}
+						</Typography>
+					</Box>
+					<Box
+						sx={{ borderRadius: '3px' }}
+						margin='0 auto'
+						component='img'
+						maxHeight='250px'
+						maxWidth='350px'
+						alt='comment traduire'
+						src='/img/add_translation.gif'
+					/>
+				</Stack>
+				<Stack sx={{
+					width: '1000px',
+					maxWidth: '100%',
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+					padding: '4rem',
+					borderRadius: '3px',
+					gap: '4rem',
+					margin: '0 auto',
+					marginTop: '5rem',
+				}}>
+
+					<Box
+						sx={{ borderRadius: '3px' }}
+						margin='0 auto'
+						component='img'
+						maxHeight='250px'
+						maxWidth='350px'
+						alt='comment traduire'
+						src='/img/add_translation.gif'
+					/>
+					<Box>
+						<Typography textAlign='center' variant='h5' mb={5} >
+							{t('flashcards')}
+						</Typography>
+						<Typography textAlign='center'  >
+							{t('gifflashcardssubtitle')}
+						</Typography>
+					</Box>
+				</Stack>
 			</Container>
 		</>
 	)

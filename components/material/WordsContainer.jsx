@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -22,8 +23,10 @@ import {
 	Typography,
 } from '@mui/material'
 import { ThumbUpOffAlt } from '@mui/icons-material'
+import Link from 'next/link'
 
 const WordsContainer = () => {
+	const { t } = useTranslation('register')
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
@@ -144,7 +147,7 @@ const WordsContainer = () => {
 								<ThumbUpOffAlt />
 							</ListItemIcon>
 							<ListItemText
-								primary='Conserver les mots traduits
+								primary='Conserver le vocabulaire de ce texte
                   sur cette même page'
 							/>
 						</ListItem>
@@ -155,8 +158,14 @@ const WordsContainer = () => {
 							</ListItemIcon>
 							<ListItemText
 								primary='Sauvegarder toutes vos
-                  traductions dans un dictionnaire personnel lié à votre compte'
+                  traductions dans un dictionnaire personnel'
 							/>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText primary='Réviser votre vocabulaire avec notre outil flashcards' />
 						</ListItem>
 
 						<ListItem disablePadding>
@@ -166,19 +175,20 @@ const WordsContainer = () => {
 							<ListItemText primary='Soutenir notre travail' />
 						</ListItem>
 					</List>
-
-					<Button
-						variant='contained'
-						sx={{
-							display: 'block',
-							margin: '2rem auto',
-							width: '150px',
-							backgroundColor: 'clrPrimary1',
-						}}
-						size='large'
-						href='/register'>
-						S&apos;enregistrer
-					</Button>
+					<Link href='/signin'>
+						<Button
+							variant='contained'
+							sx={{
+								display: 'block',
+								margin: '2rem auto',
+								width: '150px',
+								backgroundColor: 'clrPrimary1',
+							}}
+							size='large'
+						>
+							{t('signinBtn')}
+						</Button>
+					</Link>
 				</>
 			)}
 		</>
