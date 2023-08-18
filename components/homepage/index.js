@@ -200,13 +200,13 @@ const Homepage = () => {
 				</Stack>
 
 				{/* ACCORDION */}
-
+				{/* 
 				<Typography variant='h4' align='center' mt='8rem'>
 					FAQ
-				</Typography>
-				<div className='hr-custom'></div>
+				</Typography> */}
+				<div style={{ margin: '8rem auto' }} className='hr-custom'></div>
 				<div className='wrapper-small'>
-					<Accordion>
+					{/* <Accordion>
 						<AccordionSummary
 							expandIcon={<ExpandMoreIcon />}
 							aria-controls='panel1a-content'
@@ -235,32 +235,32 @@ const Homepage = () => {
 								/>
 							</StyledStack>
 						</AccordionDetails>
-					</Accordion>
-					<Accordion>
-						<AccordionSummary
-							expandIcon={<ExpandMoreIcon />}
-							aria-controls='panel1a-content'
-							id='panel1a-header'>
-							<Typography variant='h6' color='primaryGrey'>
-								{t('faqaddword')}
-							</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							<StyledStack>
-								<Typography maxWidth='350px' textAlign='left' mt={5}>
-									{t('faqaddwordsubtitle')}
-								</Typography>
-								<Box
-									sx={{ borderRadius: '3px' }}
-									margin='0'
-									component='img'
-									maxHeight='250px'
-									alt='comment traduire'
-									src='/img/add_translation.gif'
-								/>
-							</StyledStack>
-						</AccordionDetails>
-					</Accordion>
+					</Accordion> */}
+					<Stack
+						sx={{
+							width: '1000px',
+							maxWidth: '100%',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+							padding: '4rem',
+							borderRadius: '3px',
+							gap: '1.5rem',
+							margin: '0 auto',
+							marginTop: '5rem',
+						}}>
+						<Typography variant='h6' mt={5}>
+							{t('gif')}
+						</Typography>
+						<Box
+							sx={{ borderRadius: '3px' }}
+							margin='0'
+							component='img'
+							maxHeight='250px'
+							alt='comment traduire'
+							src='/img/add_translation.gif'
+						/>
+					</Stack>
 				</div>
 			</Container>
 		</>
