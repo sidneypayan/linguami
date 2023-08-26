@@ -26,7 +26,7 @@ import { ThumbUpOffAlt } from '@mui/icons-material'
 import Link from 'next/link'
 
 const WordsContainer = () => {
-	const { t } = useTranslation('register')
+	const { t } = useTranslation('materials')
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
@@ -128,7 +128,7 @@ const WordsContainer = () => {
 								md: '5rem',
 							},
 						}}>
-						Créez un compte pour pouvoir :
+						{t('createaccount')}
 					</Typography>
 
 					<List sx={{ margin: '2rem auto' }}>
@@ -136,43 +136,27 @@ const WordsContainer = () => {
 							<ListItemIcon>
 								<ThumbUpOffAlt />
 							</ListItemIcon>
-							<ListItemText
-								primary="Traduire n'importe quel
-							mot du texte en un clique"
-							/>
+							<ListItemText primary={t('translatewords')} />
 						</ListItem>
 
 						<ListItem disablePadding>
 							<ListItemIcon>
 								<ThumbUpOffAlt />
 							</ListItemIcon>
-							<ListItemText
-								primary='Conserver le vocabulaire de ce texte
-                  sur cette même page'
-							/>
+							<ListItemText primary={t('savewords')} />
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemIcon>
+								<ThumbUpOffAlt />
+							</ListItemIcon>
+							<ListItemText primary={t('repeatwords')} />
 						</ListItem>
 
 						<ListItem disablePadding>
 							<ListItemIcon>
 								<ThumbUpOffAlt />
 							</ListItemIcon>
-							<ListItemText
-								primary='Sauvegarder toutes vos
-                  traductions dans un dictionnaire personnel'
-							/>
-						</ListItem>
-						<ListItem disablePadding>
-							<ListItemIcon>
-								<ThumbUpOffAlt />
-							</ListItemIcon>
-							<ListItemText primary='Réviser votre vocabulaire avec notre outil flashcards' />
-						</ListItem>
-
-						<ListItem disablePadding>
-							<ListItemIcon>
-								<ThumbUpOffAlt />
-							</ListItemIcon>
-							<ListItemText primary='Soutenir notre travail' />
+							<ListItemText primary={t('supportus')} />
 						</ListItem>
 					</List>
 					<Link href='/signin'>
@@ -181,12 +165,11 @@ const WordsContainer = () => {
 							sx={{
 								display: 'block',
 								margin: '2rem auto',
-								width: '150px',
+								width: '250px',
 								backgroundColor: 'clrPrimary1',
 							}}
-							size='large'
-						>
-							{t('signinBtn')}
+							size='large'>
+							{t('noaccount')}
 						</Button>
 					</Link>
 				</>

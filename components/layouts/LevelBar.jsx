@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import styles from '../../styles/LevelBar.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRotateLeft, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -11,6 +12,7 @@ import { useState } from 'react'
 import { searchMaterial } from '../../features/materials/materialsSlice'
 
 const LevelBar = () => {
+	const { t } = useTranslation('section')
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { section } = router.query
@@ -31,7 +33,7 @@ const LevelBar = () => {
 			<form onSubmit={handleSubmit} className={styles.searchContainer}>
 				<input
 					type='text'
-					placeholder='Rechercher...'
+					placeholder={t('search')}
 					name='search'
 					value={search}
 					onChange={e => setSearch(e.target.value)}
@@ -49,7 +51,7 @@ const LevelBar = () => {
 						className={styles.icon}>
 						A1/A2
 					</p>
-					<span className={styles.tooltiptext}>Débutant</span>
+					<span className={styles.tooltiptext}>{t('beginner')}</span>
 				</div>
 				<div className={styles.tooltip}>
 					<p
@@ -59,7 +61,7 @@ const LevelBar = () => {
 						className={styles.icon}>
 						B1/B2
 					</p>
-					<span className={styles.tooltiptext}>Intermédiaire</span>
+					<span className={styles.tooltiptext}>{t('intermediate')}</span>
 				</div>
 				<div className={styles.tooltip}>
 					<p
@@ -69,13 +71,13 @@ const LevelBar = () => {
 						className={styles.icon}>
 						C1/C2
 					</p>
-					<span className={styles.tooltiptext}>Avancé</span>
+					<span className={styles.tooltiptext}>{t('advanced')}</span>
 				</div>
 				<div className={styles.tooltip}>
 					<p onClick={handleClear} className={styles.icon}>
 						<FontAwesomeIcon icon={faArrowRotateLeft} size='lg' />
 					</p>
-					<span className={styles.tooltiptext}>Montrer tout</span>
+					<span className={styles.tooltiptext}>{t('showall')}</span>
 				</div>
 			</div>
 		</div>

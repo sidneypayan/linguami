@@ -1,4 +1,4 @@
-
+import useTranslation from 'next-translate/useTranslation'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { useRouter } from 'next/router'
@@ -31,9 +31,11 @@ import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
 const Material = ({ material: single_material }) => {
+	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } = useUserContext()
+	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } =
+		useUserContext()
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
@@ -104,8 +106,8 @@ const Material = ({ material: single_material }) => {
 			window.innerWidth < 768
 				? e.pageX - e.pageX / 2
 				: window.innerWidth < 1024
-					? e.pageX - e.pageX / 3
-					: e.pageX - 100
+				? e.pageX - e.pageX / 3
+				: e.pageX - 100
 		setCoordinates({
 			x: xCoordinate,
 			y: e.pageY - 50,
@@ -207,7 +209,7 @@ const Material = ({ material: single_material }) => {
 									onClick={() => setShowAccents(!showAccents)}
 									type='button'
 									id='show-accents'>
-									Montrer les accents
+									{t('showaccents')}
 								</Button>
 							)}
 
@@ -271,7 +273,7 @@ const Material = ({ material: single_material }) => {
 									}
 									type='button'
 									id='checkMaterial'>
-									J&apos;ai terminé cette leçon <i className='fas fa-check'></i>
+									{t('lessonlearnt')} <i className='fas fa-check'></i>
 								</Button>
 							)}
 						</Container>

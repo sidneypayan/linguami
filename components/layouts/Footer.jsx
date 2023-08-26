@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 const Footer = () => {
-	const { t, lang } = useTranslation('common')
+	const { t } = useTranslation('common')
 
 	return (
 		<div className='white-wrapper'>
@@ -49,7 +49,7 @@ const Footer = () => {
 				<div className={styles.copyrightContainer}>
 					<p>
 						Copyright &copy; {`${new Date().getFullYear()} `}
-						Tous droits réservés
+						{t('allrights')}
 					</p>
 				</div>
 

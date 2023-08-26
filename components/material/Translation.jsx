@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import styles from '../../styles/materials/Translation.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRef, useEffect, useState } from 'react'
@@ -10,6 +11,7 @@ import Link from 'next/link'
 import { useUserContext } from '../../context/user'
 
 const Translation = ({ coordinates, materialId, userId }) => {
+	const { t } = useTranslation('materials', 'register')
 	const dispatch = useDispatch()
 	const ref = useRef()
 
@@ -68,10 +70,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 			isTranslationOpen && (
 				<div style={position} ref={ref} className={styles.container}>
 					<div className={styles.registerContainer}>
-						Créez un compte pour pouvoir utiliser l&apos; outil de traduction
+						{t('registertotranslate')}
 					</div>
-					<Link href='/register'>
-						<button className={styles.btn}>S&apos;enregistrer</button>
+					<Link href='/signin'>
+						<button className={styles.btn}>{t('noaccount')}</button>
 					</Link>
 				</div>
 			)
