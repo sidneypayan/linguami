@@ -47,7 +47,10 @@ const Footer = () => {
 				</div>
 
 				<div className={styles.copyrightContainer}>
-					<p>Copyright &copy; 2022 Linguami. All rights reserved.</p>
+					<p>
+						Copyright &copy; {`${new Date().getFullYear()} `}
+						Tous droits réservés
+					</p>
 				</div>
 
 				<div className={styles.linksContainer}>
