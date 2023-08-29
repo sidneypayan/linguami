@@ -1,7 +1,8 @@
-import { Box } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { FormRow, FormRowSelect } from '.'
 import { allSections } from '../data/sections'
 import { lang, level } from '../utils/constants'
+import { Image, AudioFile } from '@mui/icons-material'
 
 const CreateMaterialForm = ({ formData, handleChange }) => {
 	return (
@@ -56,18 +57,28 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					gap: 1,
 					mb: 1,
 				}}>
-				<FormRow
+				{/* <FormRow
 					label='Image'
 					value={formData.img ?? ''}
 					handleChange={handleChange}
 					name='img'
-				/>
-				<FormRow
+				/> */}
+				<Button component='label' variant='outlined' startIcon={<Image />}>
+					Ajouter une image
+					<input name='img' hidden type='file' />
+				</Button>
+				<Button component='label' variant='outlined' startIcon={<AudioFile />}>
+					Ajouter un audio
+					<input name='audio' hidden type='file' />
+				</Button>
+
+				{/* <FormRow
 					label='Audio'
 					value={formData.audio ?? ''}
 					handleChange={handleChange}
 					name='audio'
-				/>
+				/> */}
+
 				<FormRow
 					label='Video'
 					value={formData.video ?? ''}
