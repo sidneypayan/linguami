@@ -38,13 +38,18 @@ const CreateMaterial = () => {
 			setFormData(contentType === 'materials' ? materialData : postData)
 	}, [create_content_error, contentType])
 
-	const handleChange = e => {
+	const handleChange = (e, fileName = null) => {
+		// if (fileName) return console.log(fileName)
 		const { name, value } = e.target
+
+		console.log(fileName)
 
 		setFormData(prev => {
 			return { ...prev, [name]: value }
 		})
 	}
+
+	// console.log(formData)
 
 	const submitContent = e => {
 		e.preventDefault()

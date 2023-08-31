@@ -12,7 +12,8 @@ const initialState = {
 export const createContent = createAsyncThunk(
 	'content/createContent',
 	async ({ content, contentType }, thunkAPI) => {
-		const { error } = await supabase.from(contentType).insert(content)
+		console.log(content)
+		// const { error } = await supabase.from(contentType).insert(content)
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
