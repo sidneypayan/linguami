@@ -2,23 +2,20 @@ import { supabase } from '../../lib/supabase'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Container, Stack } from '@mui/material'
-import {
-	CreatePostForm,
-	CreateMaterialForm,
-	TextEditor,
-} from '../../components'
+import { Button, Container, Stack } from '@mui/material'
+import { CreatePostForm, CreateMaterialForm } from '../../components'
 import {
 	createContent,
 	updateContent,
 	toggleContentType,
+	// uploadFile,
 } from '../../features/content/contentSlice'
 import { useRouter } from 'next/router'
 import { materialData, postData } from '../../utils/constants'
 
 const CreateMaterial = () => {
 	const [formData, setFormData] = useState(materialData)
-	// const [value, setValue] = useState('')
+	const [files, setFiles] = useState([])
 
 	const router = useRouter()
 	const dispatch = useDispatch()
@@ -38,18 +35,22 @@ const CreateMaterial = () => {
 			setFormData(contentType === 'materials' ? materialData : postData)
 	}, [create_content_error, contentType])
 
-	const handleChange = (e, fileName = null) => {
-		// if (fileName) return console.log(fileName)
-		const { name, value } = e.target
+	const handleChange = e => {
+		let { name, value } = e.target
 
-		console.log(fileName)
+		if (name === 'image' || name === 'audio') {
+			const file = e.target.files[0]
+			value = file.name
+
+			setFiles(prev => {
+				return [...prev, { file, fileName: value, fileType: name }]
+			})
+		}
 
 		setFormData(prev => {
 			return { ...prev, [name]: value }
 		})
 	}
-
-	// console.log(formData)
 
 	const submitContent = e => {
 		e.preventDefault()
@@ -59,7 +60,7 @@ const CreateMaterial = () => {
 				/(\r\n|\n|\r)/gm,
 				'<br>'
 			)
-			return dispatch(createContent({ content: formData, contentType }))
+			return dispatch(createContent({ content: formData, contentType, files }))
 		}
 
 		if (!edit && contentType === 'posts')
@@ -69,16 +70,9 @@ const CreateMaterial = () => {
 		router.back()
 	}
 
-	// useEffect(() => {
-	// 	setFormData(prev => {
-	// 		return { ...prev, body: value }
-	// 	})
-	// }, [value])
-
 	useEffect(() => {
 		if (Object.keys(contentEdit).length > 0) {
 			setFormData(contentEdit)
-			// setValue(contentEdit.body)
 		}
 	}, [contentEdit])
 
@@ -100,9 +94,6 @@ const CreateMaterial = () => {
 				{contentType === 'posts' ? (
 					<>
 						<CreatePostForm formData={formData} handleChange={handleChange} />
-						{/* <Box>
-							<TextEditor value={value} setValue={setValue} />
-						</Box> */}
 					</>
 				) : (
 					<CreateMaterialForm formData={formData} handleChange={handleChange} />

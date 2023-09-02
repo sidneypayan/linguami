@@ -3,29 +3,8 @@ import { FormRow, FormRowSelect } from '.'
 import { allSections } from '../data/sections'
 import { lang, level } from '../utils/constants'
 import { Image, AudioFile } from '@mui/icons-material'
-import { useState } from 'react'
 
-const CreateMaterialForm = ({ formData, handleChange }) => {
-	const [file, setFile] = useState('')
-	const [fileName, setFileName] = useState('')
-	const handleFileChange = e => {
-		if (!e.target.files) {
-			return
-		}
-		const file = e.target.files[0]
-		const { name: fileName } = file
-		const { name } = e.target
-
-		console.log(file, fileName, name)
-
-		// setFile(e.target.files[0])
-		// setFileName(name)
-
-		handleChange(e, fileName)
-	}
-
-	// console.log(file, fileName)
-
+const CreateMaterialForm = ({ formData, handleChange, handleFileChange }) => {
 	return (
 		<>
 			<Box
@@ -86,11 +65,11 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 				/> */}
 				<Button component='label' variant='outlined' startIcon={<Image />}>
 					Ajouter une image
-					<input onChange={handleFileChange} name='img' hidden type='file' />
+					<input onChange={handleChange} name='image' hidden type='file' />
 				</Button>
 				<Button component='label' variant='outlined' startIcon={<AudioFile />}>
 					Ajouter un audio
-					<input onChange={handleFileChange} name='audio' hidden type='file' />
+					<input onChange={handleChange} name='audio' hidden type='file' />
 				</Button>
 
 				{/* <FormRow

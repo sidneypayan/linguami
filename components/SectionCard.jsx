@@ -95,7 +95,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					<CardMedia
 						component='img'
 						sx={{ maxWidth: 135, height: 135, margin: 0 }}
-						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
+						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
 						alt={material.title}
 					/>
 

@@ -11,9 +11,23 @@ const initialState = {
 
 export const createContent = createAsyncThunk(
 	'content/createContent',
-	async ({ content, contentType }, thunkAPI) => {
-		console.log(content)
-		// const { error } = await supabase.from(contentType).insert(content)
+	async ({ content, contentType, files }, thunkAPI) => {
+		const { error } = await supabase.from(contentType).insert(content)
+
+		if (files) {
+			const uploadFiles = async (file, fileName, fileType) => {
+				const { data, error } = await supabase.storage
+					.from('linguami')
+					.upload(`${fileType}/${fileName}`, file, {
+						cacheControl: '3600',
+						upsert: false,
+					})
+
+				if (error) console.log(error)
+			}
+
+			files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
+		}
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
@@ -43,6 +57,20 @@ export const updateContent = createAsyncThunk(
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
+
+// export const uploadFile = createAsyncThunk(
+// 	'content/uploadFile',
+// 	async ({ file, path, name }, thunkAPI) => {
+// 		let subpath = ''
+// 		if (name === 'img') subpath = 'image'
+// 		if (name === 'audio') subpath = 'audio'
+// 		const { data, error } = await supabase.storage
+// 			.from('linguami')
+// 			.upload(`public/linguami/${subpath}/${path}`, file)
+
+// 		if (error) return thunkAPI.rejectWithValue(error.message)
+// 	}
+// )
 
 const contentSlice = createSlice({
 	name: 'content',

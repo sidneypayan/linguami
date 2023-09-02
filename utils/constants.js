@@ -260,7 +260,7 @@ export const materialData = {
 	book_chapter: '',
 	level: '',
 	title: '',
-	img: '',
+	image: '',
 	audio: '',
 	video: '',
 	body: '',

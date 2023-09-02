@@ -30,7 +30,6 @@ const initialState = {
 	chapters_error: false,
 }
 
-
 export const getMaterials = createAsyncThunk(
 	'materials/getMaterials',
 	async (param, thunkAPI) => {
@@ -55,7 +54,7 @@ export const getUserMaterials = createAsyncThunk(
 	async (lang, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
-			.select('*, materials!inner(title, img, level, section)')
+			.select('*, materials!inner(title, image, level, section)')
 			.eq('user_id', supabase.auth.user().id)
 			.eq('materials.lang', lang)
 
@@ -209,9 +208,9 @@ const materialsSlice = createSlice({
 			state.sliceEnd = state.page * 10
 			state.sliceStart = state.sliceEnd - 10
 		},
-		cleanUserMaterialStatus: (state) => {
+		cleanUserMaterialStatus: state => {
 			state.user_materials_status = []
-		}
+		},
 	},
 	extraReducers: builder => {
 		builder
@@ -291,5 +290,10 @@ const materialsSlice = createSlice({
 
 export default materialsSlice.reducer
 
-export const { filterMaterials, showAllMaterials, searchMaterial, changePage, cleanUserMaterialStatus } =
-	materialsSlice.actions
+export const {
+	filterMaterials,
+	showAllMaterials,
+	searchMaterial,
+	changePage,
+	cleanUserMaterialStatus,
+} = materialsSlice.actions

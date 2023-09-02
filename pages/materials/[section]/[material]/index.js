@@ -64,7 +64,7 @@ const Material = ({ material: single_material }) => {
 					<CardMedia
 						component='img'
 						sx={{ maxWidth: 600, height: 230, borderRadius: '3px' }}
-						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.img}`}
+						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.image}`}
 						alt={material.title}
 					/>
 				</Container>
