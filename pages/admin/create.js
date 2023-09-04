@@ -23,6 +23,8 @@ const CreateMaterial = () => {
 		store => store.content
 	)
 
+	console.log(edit)
+
 	const toggleContent = () => {
 		dispatch(
 			toggleContentType(contentType === 'materials' ? 'posts' : 'materials')
@@ -79,9 +81,11 @@ const CreateMaterial = () => {
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
 			<Stack direction='row' mb={4} gap={2} justifyContent='space-between'>
-				<Button onClick={toggleContent} variant='contained'>
-					Create {contentType === 'materials' ? 'posts' : 'materials'}
-				</Button>
+				{!edit && (
+					<Button onClick={toggleContent} variant='contained'>
+						Create {contentType === 'materials' ? 'posts' : 'materials'}
+					</Button>
+				)}
 			</Stack>
 			<form onSubmit={submitContent}>
 				<Button
