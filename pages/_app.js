@@ -8,6 +8,7 @@ import { store } from '../features/store'
 import { Provider } from 'react-redux'
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material'
 import { purple, grey } from '@mui/material/colors'
+import Script from 'next/script'
 
 function MyApp({ Component, pageProps }) {
 	let myTheme = createTheme({
@@ -32,16 +33,29 @@ function MyApp({ Component, pageProps }) {
 	myTheme = responsiveFontSizes(myTheme)
 
 	return (
-		<ThemeProvider theme={myTheme}>
-			<UserProvider>
-				<Provider store={store}>
-					<Layout>
-						<Component {...pageProps} />
-					</Layout>
-					<ToastContainer position='top-center' autoClose={2000} />
-				</Provider>
-			</UserProvider>
-		</ThemeProvider>
+		<>
+			<Script src='https://www.googletagmanager.com/gtag/js?id=G-F5Y7VLZM8N' />
+			<Script id='google-analytics'>
+				{`
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}');
+        `}
+			</Script>
+
+			<ThemeProvider theme={myTheme}>
+				<UserProvider>
+					<Provider store={store}>
+						<Layout>
+							<Component {...pageProps} />
+						</Layout>
+						<ToastContainer position='top-center' autoClose={2000} />
+					</Provider>
+				</UserProvider>
+			</ThemeProvider>
+		</>
 	)
 }
 
