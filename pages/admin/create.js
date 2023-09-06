@@ -23,8 +23,6 @@ const CreateMaterial = () => {
 		store => store.content
 	)
 
-	console.log(edit)
-
 	const toggleContent = () => {
 		dispatch(
 			toggleContentType(contentType === 'materials' ? 'posts' : 'materials')
