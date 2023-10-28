@@ -26,7 +26,7 @@ import { ThumbUpOffAlt } from '@mui/icons-material'
 import Link from 'next/link'
 
 const WordsContainer = () => {
-	const { t } = useTranslation('materials')
+	const { t } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user, isUserLoggedIn } = useUserContext()
@@ -81,7 +81,7 @@ const WordsContainer = () => {
 			{isUserLoggedIn && user_material_words ? (
 				<>
 					<Typography variant='h5' align='center'>
-						Vocabulaire
+						{t('vocabulary')}
 					</Typography>
 					<List sx={{ margin: '2rem auto' }}>
 						{user_material_words.map((words, index) => (
@@ -115,7 +115,7 @@ const WordsContainer = () => {
 							backgroundColor: 'clrPrimary1',
 						}}
 						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
-						Réviser les mots
+						{t('repeatwords')}
 					</Button>
 				</>
 			) : (
@@ -149,7 +149,7 @@ const WordsContainer = () => {
 							<ListItemIcon>
 								<ThumbUpOffAlt />
 							</ListItemIcon>
-							<ListItemText primary={t('repeatwords')} />
+							<ListItemText primary={t('flashcards')} />
 						</ListItem>
 
 						<ListItem disablePadding>

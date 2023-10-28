@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { useUserContext } from '../../context/user'
 
 const Translation = ({ coordinates, materialId, userId }) => {
-	const { t } = useTranslation('materials', 'register')
+	const { t } = useTranslation('words')
 	const dispatch = useDispatch()
 	const ref = useRef()
 

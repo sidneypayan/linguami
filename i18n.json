@@ -7,7 +7,7 @@
 		"/blog": ["blog"],
 		"/materials": ["materials"],
 		"/materials/[section]": ["materials", "section"],
-		"/materials/[section]/[material]": ["register", "materials"],
+		"/materials/[section]/[material]": ["register", "materials", "words"],
 		"/my-materials": ["materials"],
 		"/login": ["register"],
 		"/register": ["register"],

@@ -180,7 +180,7 @@ const Material = ({ material: single_material }) => {
 									}
 									type='button'
 									id='show-accents'>
-									Commencer à étudier ce matériel
+									{t('startstudying')}
 								</Button>
 							)}
 

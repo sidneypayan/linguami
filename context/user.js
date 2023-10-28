@@ -12,8 +12,7 @@ const UserContext = createContext()
 
 const UserProvider = ({ children }) => {
 	const router = useRouter()
-	// const dispatch = useDispatch()
-
+	console.log(router.locale)
 	const [user, setUser] = useState(null)
 	const [userProfile, setUserProfile] = useState(null)
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)

@@ -25,13 +25,7 @@
 	"kids": "Enfants",
 	"being_studied": "En cours d'étude",
 	"studied": "Etudiés",
+	"startstudying": "Commencer à étudier ce matériel",
 	"showaccents": "Montrer les accents",
-	"lessonlearnt": "J'ai terminé cette leçon",
-	"noaccount": "Créer un compte",
-	"registertotranslate": "Créez un compte pour pouvoir utiliser l'outil de traduction",
-	"createaccount": "Créez un compte pour pouvoir :",
-	"translatewords": "traduire n'importe quel mot en un clique",
-	"savewords": "sauvegarder toutes vos traductions dans un dictionnaire personnel",
-	"repeatwords": "réviser votre vocabulaire avec notre outil flashcards",
-	"supportus": "soutenir notre travail"
+	"lessonlearnt": "J'ai terminé cette leçon"
 }
