@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps }) {
 
 	return (
 		<>
-			<Script src='https://www.googletagmanager.com/gtag/js?id=G-F5Y7VLZM8N' />
+			<Script src='https://www.googletagmanager.com/gtag/js?id=G-7LP9JK5JHQ' />
 			<Script id='google-analytics'>
 				{`
   window.dataLayer = window.dataLayer || [];
