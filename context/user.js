@@ -104,7 +104,9 @@ const UserProvider = ({ children }) => {
 	}
 
 	const updatePassword = async email => {
-		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email)
+		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
+			redirectTo: `${process.env.NEXT_PUBLIC_API_URL}/set-password`,
+		})
 
 		if (error) {
 			return toast.error(error)
