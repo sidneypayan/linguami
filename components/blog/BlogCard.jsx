@@ -10,8 +10,9 @@ const BlogCard = ({ post }) => {
 				<Link href={`/blog/${post.slug}`}>
 					<div className={styles.imgContainer}>
 						<Image
-							layout='fill'
-							objectFit='cover'
+							fill
+							style={{ objectFit: 'cover' }}
+							sizes={100}
 							quality={100}
 							src={
 								process.env.NEXT_PUBLIC_SUPABASE_IMAGE + post.frontmatter.img
