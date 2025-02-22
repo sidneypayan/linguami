@@ -17,8 +17,7 @@ const MaterialsCard = ({ material }) => {
 						quality={100}
 						alt={material.title}
 						priority={true}
-						layout='fill'
-						// loading='eager'
+						fill
 					/>
 				</Box>
 
