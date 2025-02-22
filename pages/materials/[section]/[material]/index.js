@@ -331,6 +331,13 @@ export const getStaticPaths = async () => {
 		params: { section: material.section, material: material.id.toString() },
 	}))
 
+	if (!materials) {
+		return {
+			paths: [],
+			fallback: false,
+		}
+	}
+
 	return {
 		paths,
 		fallback: 'blocking',
