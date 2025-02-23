@@ -34,7 +34,7 @@ const Hero = () => {
 				}}>
 				<Box maxWidth={825}>
 					<Typography color='#fff' variant='h2' component='h1' mb={4}>
-						<span style={{ fontWeight: '400' }}>Linguami,</span> <br />
+						<span style={{ fontWeight: '400' }}>{t('hero')}</span> <br />
 						{t('title')}
 					</Typography>
 					<Typography mb={4} variant='h5' color='#fff'>
