@@ -20,9 +20,9 @@ const UserProvider = ({ children }) => {
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 
 	useEffect(() => {
-		if (supabase.auth.session()) {
+		if (supabase.auth.getSession()) {
 			const getUser = async () => {
-				const { user } = supabase.auth.session()
+				const { user } = supabase.auth.getSession()
 				const { data: userData } = await supabase
 					.from('users_profile')
 					.select('*')
@@ -70,7 +70,7 @@ const UserProvider = ({ children }) => {
 
 	const login = async userData => {
 		const { email, password } = userData
-		const { data, error } = await supabase.auth.signIn({
+		const { data, error } = await supabase.auth.signInWithPassword({
 			email,
 			password,
 		})
@@ -90,7 +90,7 @@ const UserProvider = ({ children }) => {
 	}
 
 	const loginWithThirdPartyOAuth = async provider => {
-		const { user, session, error } = await supabase.auth.signIn({
+		const { user, session, error } = await supabase.auth.signInWithOAuth({
 			provider,
 		})
 	}
@@ -103,7 +103,7 @@ const UserProvider = ({ children }) => {
 	}
 
 	const updatePassword = async email => {
-		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
+		let { data, error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${process.env.NEXT_PUBLIC_API_URL}/set-password`,
 		})
 
@@ -117,7 +117,7 @@ const UserProvider = ({ children }) => {
 	}
 
 	const setNewPassword = async password => {
-		const { data, error } = await supabase.auth.update({
+		const { data, error } = await supabase.auth.updateUser({
 			password: password,
 		})
 
@@ -178,7 +178,7 @@ const UserProvider = ({ children }) => {
 	useEffect(() => {
 		axios.post('/api/auth', {
 			event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
-			session: supabase.auth.session(),
+			session: supabase.auth.getSession(),
 		})
 
 		if (user) {
