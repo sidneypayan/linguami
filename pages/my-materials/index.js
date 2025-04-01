@@ -18,12 +18,13 @@ import { Box } from '@mui/system'
 import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
-const UserMaterials = (user) => {
-
+const UserMaterials = user => {
 	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const { user_materials } = useSelector(store => store.materials)
 	const { userLearningLanguage } = useUserContext()
+
+	console.log(user_materials)
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
@@ -178,9 +179,6 @@ export const getServerSideProps = async ({ req }) => {
 			.eq('id', decodedToken.sub)
 			.single()
 
-
-
-
 		return {
 			props: user,
 		}
@@ -192,7 +190,6 @@ export const getServerSideProps = async ({ req }) => {
 			permanent: false,
 		},
 	}
-
 }
 
 export default UserMaterials
