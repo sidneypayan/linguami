@@ -32,14 +32,20 @@ const UserProvider = ({ children }) => {
 				setUserProfile({ ...user, ...userData })
 				setUser(user)
 				setUserLearningLanguage(userData.learning_language)
+				localStorage.setItem('learning_language', userData.learning_language)
 			}
 
 			getUser()
 		} else {
-			if (localStorage.getItem('learning_language')) {
-				setUserLearningLanguage(localStorage.getItem('learning_language'))
+			const storedLanguage = localStorage.getItem('learning_language')
+
+			if (storedLanguage) {
+				setUserLearningLanguage(storedLanguage)
 			} else {
-				setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
+				localStorage.setItem(
+					'learning_language',
+					router.locale === 'ru' ? 'fr' : 'ru'
+				)
 			}
 		}
 	}, [])
@@ -47,15 +53,19 @@ const UserProvider = ({ children }) => {
 	const register = async userData => {
 		const { email, password } = userData
 
-		const { data, error } = await supabase.auth.signUp({
-			email,
-			password,
-			options: {
+		const { user, session, error } = await supabase.auth.signUp(
+			{
+				email,
+				password,
+			},
+			{
 				data: {
 					learning_language: userLearningLanguage,
 				},
-			},
-		})
+			}
+		)
+
+		console.log('Réponse après signUp:', user, session, error)
 
 		if (error) {
 			return toast.error(error)
@@ -130,15 +140,16 @@ const UserProvider = ({ children }) => {
 
 	const changeLearningLanguage = async learningLanguage => {
 		if (user) {
-			const { data, error } = await supabase
+			const { data } = await supabase
 				.from('users_profile')
 				.update({ learning_language: learningLanguage })
 				.eq('id', user.id)
 			const { learning_language } = data[0]
 			setUserLearningLanguage(learning_language)
-		} else {
 			localStorage.setItem('learning_language', learningLanguage)
+		} else {
 			setUserLearningLanguage(learningLanguage)
+			localStorage.setItem('learning_language', learningLanguage)
 		}
 	}
 
