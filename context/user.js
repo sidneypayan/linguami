@@ -46,10 +46,15 @@ const UserProvider = ({ children }) => {
 					'learning_language',
 					router.locale === 'ru' ? 'fr' : 'ru'
 				)
-				setUserLearningLanguage(storedLanguage)
+				setUserLearningLanguage(
+					'learning_language',
+					router.locale === 'ru' ? 'fr' : 'ru'
+				)
 			}
 		}
 	}, [])
+
+	console.log(userLearningLanguage)
 
 	const register = async userData => {
 		const { email, password } = userData
