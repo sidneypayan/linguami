@@ -10,7 +10,7 @@ export const mergeUserMaterial = userMaterials => {
 		is_studied: userMaterial.is_studied,
 		id: userMaterial.material_id,
 		title: userMaterial.materials.title,
-		img: userMaterial.materials.img,
+		image: userMaterial.materials.image,
 		level: userMaterial.materials.level,
 		section: userMaterial.materials.section,
 	}))
