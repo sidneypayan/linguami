@@ -46,6 +46,7 @@ const UserProvider = ({ children }) => {
 					'learning_language',
 					router.locale === 'ru' ? 'fr' : 'ru'
 				)
+				setUserLearningLanguage(storedLanguage)
 			}
 		}
 	}, [])
