@@ -10,6 +10,7 @@ import {
 	getUserMaterialStatus,
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
+import { getActivities } from '../../../../features/activities/activitiesSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
@@ -37,7 +38,7 @@ import {
 import { ArrowBack } from '@mui/icons-material'
 import Head from 'next/head'
 
-const Material = ({ material: single_material, h5pActivities }) => {
+const Material = ({ material: single_material }) => {
 	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -46,8 +47,10 @@ const Material = ({ material: single_material, h5pActivities }) => {
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
+	// const [h5pActivities, seth5pActivities] = useState()
 
 	const { user_material_status } = useSelector(store => store.materials)
+	const { activities } = useSelector(store => store.activities)
 
 	const { is_being_studied, is_studied } = user_material_status
 
@@ -56,6 +59,12 @@ const Material = ({ material: single_material, h5pActivities }) => {
 			dispatch(getUserMaterialStatus(single_material.id))
 		}
 	}, [user_material_status])
+
+	useEffect(() => {
+		if (single_material) {
+			dispatch(getActivities(single_material.id))
+		}
+	}, [dispatch, single_material])
 
 	const handleEditContent = () => {
 		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
@@ -109,9 +118,17 @@ const Material = ({ material: single_material, h5pActivities }) => {
 	}
 
 	const displayh5pActivities = () => {
+		if (!activities || activities.length === 0) {
+			return (
+				<p>
+					Créez un compte pour profiter des activités proposées sous ce texte
+				</p>
+			)
+		}
+
 		return (
 			<div>
-				{h5pActivities.map(activity => {
+				{activities.map(activity => {
 					const h5pJsonPath =
 						process.env.NEXT_PUBLIC_SUPABASE_H5P +
 						activity.material_id +
@@ -345,15 +362,15 @@ export const getStaticProps = async ({ params }) => {
 		.eq('id', params.material)
 		.single()
 
-	const { data: h5pActivities } = await supabase
-		.from('h5p')
-		.select('*')
-		.eq('material_id', params.material)
+	// const { data: h5pActivities } = await supabase
+	// 	.from('h5p')
+	// 	.select('*')
+	// 	.eq('material_id', params.material)
 
 	return {
 		props: {
 			material,
-			h5pActivities,
+			// h5pActivities,
 		},
 		revalidate: 60,
 	}
