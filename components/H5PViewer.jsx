@@ -1,5 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { H5P } from 'h5p-standalone'
+import {
+	Box,
+	Button,
+	CardMedia,
+	Container,
+	IconButton,
+	Stack,
+	Typography,
+} from '@mui/material'
 
 const H5PViewer = ({ h5pJsonPath }) => {
 	const containerRef = useRef(null)
@@ -19,7 +28,7 @@ const H5PViewer = ({ h5pJsonPath }) => {
 		}
 	}, [h5pJsonPath])
 
-	return <div ref={containerRef} />
+	return <Box sx={{ mt: 4 }} ref={containerRef} />
 }
 
 export default H5PViewer

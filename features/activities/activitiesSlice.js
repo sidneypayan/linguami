@@ -15,6 +15,7 @@ export const getActivities = createAsyncThunk(
 				.from('h5p')
 				.select('*')
 				.eq('material_id', param)
+				.order('order', { ascending: true })
 
 			return data
 		} catch (error) {

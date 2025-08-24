@@ -120,9 +120,12 @@ const Material = ({ material: single_material }) => {
 	const displayh5pActivities = () => {
 		if (!activities || activities.length === 0) {
 			return (
-				<p>
-					Créez un compte pour profiter des activités proposées sous ce texte
-				</p>
+				<Typography
+					variant='subtitle1'
+					sx={{ fontWeight: '600', mt: 4 }}
+					align='center'>
+					{t('h5p')}
+				</Typography>
 			)
 		}
 
@@ -236,7 +239,7 @@ const Material = ({ material: single_material }) => {
 									}
 									type='button'
 									id='show-accents'>
-									Ne plus étudier ce matériel
+									{t('stopstudying')}
 								</Button>
 							)}
 
