@@ -1,4 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { useRouter } from 'next/router'
@@ -9,6 +10,7 @@ import {
 	getUserMaterialStatus,
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
+import { getActivities } from '../../../../features/activities/activitiesSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
@@ -17,6 +19,12 @@ import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 
 import Player from '../../../../components/Player'
+
+const H5PViewer = dynamic(() => import('../../../../components/H5PViewer'), {
+	ssr: false,
+})
+
+// import H5PViewer from '../../../../components/H5PViewer'
 import { editContent } from '../../../../features/content/contentSlice'
 import {
 	Box,
@@ -39,8 +47,10 @@ const Material = ({ material: single_material }) => {
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
+	// const [h5pActivities, seth5pActivities] = useState()
 
 	const { user_material_status } = useSelector(store => store.materials)
+	const { activities } = useSelector(store => store.activities)
 
 	const { is_being_studied, is_studied } = user_material_status
 
@@ -49,6 +59,12 @@ const Material = ({ material: single_material }) => {
 			dispatch(getUserMaterialStatus(single_material.id))
 		}
 	}, [user_material_status])
+
+	useEffect(() => {
+		if (single_material) {
+			dispatch(getActivities(single_material.id))
+		}
+	}, [dispatch, single_material])
 
 	const handleEditContent = () => {
 		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
@@ -99,6 +115,32 @@ const Material = ({ material: single_material }) => {
 				</Box>
 			)
 		}
+	}
+
+	const displayh5pActivities = () => {
+		if (!activities || activities.length === 0) {
+			return (
+				<Typography
+					variant='subtitle1'
+					sx={{ fontWeight: '600', mt: 4 }}
+					align='center'>
+					{t('h5p')}
+				</Typography>
+			)
+		}
+
+		return (
+			<div>
+				{activities.map(activity => {
+					const h5pJsonPath =
+						process.env.NEXT_PUBLIC_SUPABASE_H5P +
+						activity.material_id +
+						activity.h5p_url
+
+					return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
+				})}
+			</div>
+		)
 	}
 
 	const getCoordinates = e => {
@@ -164,7 +206,7 @@ const Material = ({ material: single_material }) => {
 							/>
 
 							{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
-							afficher le bouton proposant de l'aouter aux matériels en cours
+							afficher le bouton proposant de l'ajouter aux matériels en cours
 							d'étude */}
 
 							{!is_being_studied && !is_studied && isUserLoggedIn && (
@@ -197,7 +239,7 @@ const Material = ({ material: single_material }) => {
 									}
 									type='button'
 									id='show-accents'>
-									Ne plus étudier ce matériel
+									{t('stopstudying')}
 								</Button>
 							)}
 
@@ -258,6 +300,16 @@ const Material = ({ material: single_material }) => {
 							)}
 
 							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
+							<br />
+							{/* <iframe
+								src='/h5p/473/scs.html'
+								title='Activité H5P'
+								width='100%'
+								height='250'
+								style={{ border: 'none' }}
+							/> */}
+
+							{displayh5pActivities()}
 
 							{!is_studied && (
 								<Button
@@ -313,9 +365,15 @@ export const getStaticProps = async ({ params }) => {
 		.eq('id', params.material)
 		.single()
 
+	// const { data: h5pActivities } = await supabase
+	// 	.from('h5p')
+	// 	.select('*')
+	// 	.eq('material_id', params.material)
+
 	return {
 		props: {
 			material,
+			// h5pActivities,
 		},
 		revalidate: 60,
 	}

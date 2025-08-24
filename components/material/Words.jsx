@@ -29,7 +29,7 @@ const Words = ({ content }) => {
 		}
 
 		setRegexSentences(
-			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….:!?br]/gi
+			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….:!?|<br\s*\/?>]/gi
 		)
 	}, [userLearningLanguage])
 
@@ -51,11 +51,21 @@ const Words = ({ content }) => {
 	const wrapWords = sentences => {
 		// regexAll permet de conserver les espaces et la ponctuation
 		return sentences.match(regexAll).map((item, index) => {
+			// Vérifie si item correspond à br et fait un saut à la ligne si c'est le cas
 			if (item) {
 				if (/^br$/.test(item)) {
 					return <span key={index} className={styles.break}></span>
 				}
 
+				// if (/^br$/.test(item)) {
+				// 	return <br key={index} />
+				// }
+
+				// if (/^<br\s*\/?>$/.test(item)) {
+				// 	return <br key={index} />
+				// }
+
+				// Vérifie si item correspond à un mot et lui applique le style translate si c'est le cas
 				if (regexWords.test(item)) {
 					return (
 						<span
