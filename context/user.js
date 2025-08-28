@@ -51,8 +51,6 @@ const UserProvider = ({ children }) => {
 		}
 	}, [])
 
-	console.log(userLearningLanguage)
-
 	const register = async userData => {
 		const { email, password } = userData
 
@@ -67,8 +65,6 @@ const UserProvider = ({ children }) => {
 				},
 			}
 		)
-
-		console.log('Réponse après signUp:', user, session, error)
 
 		if (error) {
 			return toast.error(error)

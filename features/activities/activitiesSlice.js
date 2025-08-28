@@ -11,7 +11,7 @@ export const getActivities = createAsyncThunk(
 	'activities/getActivities',
 	async (param, thunkAPI) => {
 		try {
-			const { data, error } = await supabase
+			const { data } = await supabase
 				.from('h5p')
 				.select('*')
 				.eq('material_id', param)

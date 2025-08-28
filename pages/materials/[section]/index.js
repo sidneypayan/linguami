@@ -32,8 +32,6 @@ const Section = () => {
 		numOfPages,
 	} = useSelector(store => store.materials)
 
-
-
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
 			userMaterial => userMaterial.material_id === id

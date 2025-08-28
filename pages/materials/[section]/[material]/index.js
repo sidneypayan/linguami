@@ -365,15 +365,9 @@ export const getStaticProps = async ({ params }) => {
 		.eq('id', params.material)
 		.single()
 
-	// const { data: h5pActivities } = await supabase
-	// 	.from('h5p')
-	// 	.select('*')
-	// 	.eq('material_id', params.material)
-
 	return {
 		props: {
 			material,
-			// h5pActivities,
 		},
 		revalidate: 60,
 	}
