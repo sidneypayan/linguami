@@ -36,6 +36,13 @@ const Lessons = () => {
 		}
 	}, [lessons])
 
+	useEffect(() => {
+		if (slug && lessons.length > 0) {
+			const lesson = lessons.find(l => l.slug === slug)
+			setSelectedLesson(lesson)
+		}
+	}, [slug, lessons])
+
 	return (
 		<>
 			<Head>
@@ -46,8 +53,10 @@ const Lessons = () => {
 				<LessonsMenu
 					lessonsInfos={lessonsInfos}
 					onSelectLesson={slug => {
-						const lesson = lessons.find(l => l.slug === slug)
-						setSelectedLesson(lesson)
+						router.push({
+							pathname: '/lessons',
+							query: { slug },
+						})
 					}}
 				/>
 
