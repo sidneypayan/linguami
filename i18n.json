@@ -16,6 +16,7 @@
 		"/set-password": ["register"],
 		"/signin": ["register"],
 		"/update-password": ["register"],
-		"/teacher": ["teacher"]
+		"/teacher": ["teacher"],
+		"/lessons": ["lessons"]
 	}
 }

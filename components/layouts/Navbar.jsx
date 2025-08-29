@@ -20,7 +20,14 @@ import {
 import Link from 'next/link'
 
 import MenuIcon from '@mui/icons-material/Menu'
-import { Article, HistoryEdu, Home, School } from '@mui/icons-material'
+import {
+	Article,
+	HistoryEdu,
+	Home,
+	School,
+	MenuBook,
+} from '@mui/icons-material'
+
 import LanguageMenu from './LanguageMenu.jsx'
 
 const drawerWidth = '80%'
@@ -45,6 +52,11 @@ const Navbar = props => {
 			name: t('teacher'),
 			icon: <School style={{ fontSize: '1.5rem' }} />,
 			href: '/teacher',
+		},
+		{
+			name: t('lessons'),
+			icon: <MenuBook style={{ fontSize: '1.5rem' }} />,
+			href: '/lessons',
 		},
 		{
 			name: t('blog'),

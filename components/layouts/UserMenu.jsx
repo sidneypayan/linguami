@@ -82,7 +82,7 @@ const UserMenu = () => {
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
 				<Link href='/dictionary'>
-					<MenuItem >
+					<MenuItem>
 						<ListItemIcon>
 							<MenuBook />
 						</ListItemIcon>
@@ -90,7 +90,7 @@ const UserMenu = () => {
 					</MenuItem>
 				</Link>
 				<Link href='/my-materials'>
-					<MenuItem  >
+					<MenuItem>
 						<ListItemIcon>
 							<Article />
 						</ListItemIcon>
@@ -98,16 +98,12 @@ const UserMenu = () => {
 					</MenuItem>
 				</Link>
 				<Divider />
-				{/* <MenuItem>
-					<ListItemIcon>
-						<Settings />
-					</ListItemIcon>
-					Settings
-				</MenuItem> */}
-				<MenuItem onClick={() => {
-					logout()
-					dispatch(cleanUserMaterialStatus())
-				}}>
+
+				<MenuItem
+					onClick={() => {
+						logout()
+						dispatch(cleanUserMaterialStatus())
+					}}>
 					<ListItemIcon>
 						<Logout />
 					</ListItemIcon>
