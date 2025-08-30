@@ -1,11 +1,27 @@
-import { Box, Container, Typography } from '@mui/material'
+import useTranslation from 'next-translate/useTranslation'
+import { Box, Container, Typography, Paper } from '@mui/material'
 
 const Lesson = ({ lesson }) => {
+	const { t } = useTranslation('lessons')
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
-		return <p>Aucune donnée disponible pour cette leçon.</p>
+		return (
+			<Box
+				sx={{ m: 'auto', backgroundColor: 'clrCardBg', borderRadius: 5 }}
+				maxWidth='50%'
+				flex={1}
+				p={4}>
+				{/* Contenu principal */}
+
+				<Typography variant='h4' gutterBottom>
+					{t('title')}
+				</Typography>
+				<Typography variant='body1' color='text.secondary'>
+					{t('subtitle')}
+				</Typography>
+			</Box>
+		)
 	}
 
-	console.log(lesson)
 	return (
 		<Container maxWidth='md'>
 			{lesson.blocks.map((block, index) => {

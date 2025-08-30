@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
 import {
 	List,
@@ -36,6 +37,7 @@ const getLevelIcon = level => {
 }
 
 const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
+	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
 
 	const toggleLevel = level => {
@@ -69,7 +71,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 					<ListItemButton onClick={() => toggleLevel(level)}>
 						<ListItemIcon>{getLevelIcon(level)}</ListItemIcon>
 						<ListItemText
-							primary={`Leçons  ${level}`}
+							primary={`${t('level')}  ${level}`}
 							primaryTypographyProps={{ fontWeight: 'bold' }}
 						/>
 						{openLevels[level] ? <ExpandLess /> : <ExpandMore />}
@@ -81,7 +83,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 									key={lesson.slug}
 									sx={{ pl: 4 }}
 									onClick={() => onSelectLesson(lesson.slug)}>
-									<ListItemText primary={lesson.titleFr} />
+									<ListItemText primary={lesson.titleRu} />
 								</ListItemButton>
 							))}
 						</List>
