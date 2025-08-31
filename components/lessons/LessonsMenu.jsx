@@ -78,12 +78,12 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 					</ListItemButton>
 					<Collapse in={openLevels[level]} timeout='auto' unmountOnExit>
 						<List component='div' disablePadding>
-							{lessonsByLevel[level].map(lesson => (
+							{lessonsByLevel[level].map((lesson, index) => (
 								<ListItemButton
 									key={lesson.slug}
 									sx={{ pl: 4 }}
 									onClick={() => onSelectLesson(lesson.slug)}>
-									<ListItemText primary={lesson.titleRu} />
+									<ListItemText primary={`${index + 1} - ${lesson.titleRu}`} />
 								</ListItemButton>
 							))}
 						</List>

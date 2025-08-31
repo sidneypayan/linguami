@@ -11,7 +11,10 @@ export const getLessons = createAsyncThunk(
 	'lessons/getLessons',
 	async (param, thunkAPI) => {
 		try {
-			const { data } = await supabase.from('lessons').select('*')
+			const { data } = await supabase
+				.from('lessons')
+				.select('*')
+				.order('order', { ascending: true })
 			return data
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)

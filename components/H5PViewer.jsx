@@ -1,14 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { H5P } from 'h5p-standalone'
-import {
-	Box,
-	Button,
-	CardMedia,
-	Container,
-	IconButton,
-	Stack,
-	Typography,
-} from '@mui/material'
+import { Box } from '@mui/material'
 
 const H5PViewer = ({ h5pJsonPath }) => {
 	const containerRef = useRef(null)

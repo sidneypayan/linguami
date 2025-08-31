@@ -12,7 +12,7 @@ const Lesson = ({ lesson }) => {
 				p={4}>
 				{/* Contenu principal */}
 
-				<Typography variant='h4' gutterBottom>
+				<Typography gutterBottom variant='h4'>
 					{t('title')}
 				</Typography>
 				<Typography variant='body1' color='text.secondary'>
@@ -29,6 +29,7 @@ const Lesson = ({ lesson }) => {
 					case 'mainTitle':
 						return (
 							<Typography
+								gutterBottom
 								key={index}
 								align='center'
 								variant='h3'
@@ -39,30 +40,27 @@ const Lesson = ({ lesson }) => {
 					case 'subtitle':
 						return (
 							<Typography
+								sx={{ mb: 10 }}
 								key={index}
 								align='center'
 								variant='h5'
-								component='h2'
-								sx={{ mt: 2, mb: 10 }}>
+								component='h2'>
 								{block.text}
 							</Typography>
 						)
 					case 'title':
 						return (
-							<Typography variant='h6' sx={{ mb: 2 }}>
+							<Typography variant='h6' sx={{ mt: 2, mb: 1 }}>
 								{block.text}
 							</Typography>
 						)
 					case 'paragraph':
 						return (
-							<Typography
-								sx={{ mb: 2 }}
-								dangerouslySetInnerHTML={{ __html: block.text }}
-							/>
+							<Typography dangerouslySetInnerHTML={{ __html: block.text }} />
 						)
 					case 'list':
 						return (
-							<ul>
+							<Box component='ul' sx={{ mt: 2, mb: 3, pl: 2 }}>
 								{block.items.map((item, index) => (
 									<li key={index}>
 										<Typography
@@ -71,7 +69,7 @@ const Lesson = ({ lesson }) => {
 										/>
 									</li>
 								))}
-							</ul>
+							</Box>
 						)
 
 					case 'examples':
@@ -88,9 +86,8 @@ const Lesson = ({ lesson }) => {
 									<Typography
 										key={index}
 										variant='body2'
-										sx={{ fontStyle: 'italic' }}>
-										{example}
-									</Typography>
+										sx={{ fontStyle: 'italic' }}
+										dangerouslySetInnerHTML={{ __html: example }}></Typography>
 								))}
 							</Box>
 						)

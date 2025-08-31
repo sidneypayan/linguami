@@ -24,7 +24,6 @@ const H5PViewer = dynamic(() => import('../../../../components/H5PViewer'), {
 	ssr: false,
 })
 
-// import H5PViewer from '../../../../components/H5PViewer'
 import { editContent } from '../../../../features/content/contentSlice'
 import {
 	Box,
@@ -47,7 +46,6 @@ const Material = ({ material: single_material }) => {
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
-	// const [h5pActivities, seth5pActivities] = useState()
 
 	const { user_material_status } = useSelector(store => store.materials)
 	const { activities } = useSelector(store => store.activities)
@@ -301,13 +299,6 @@ const Material = ({ material: single_material }) => {
 
 							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
 							<br />
-							{/* <iframe
-								src='/h5p/473/scs.html'
-								title='Activité H5P'
-								width='100%'
-								height='250'
-								style={{ border: 'none' }}
-							/> */}
 
 							{displayh5pActivities()}
 
