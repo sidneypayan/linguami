@@ -56,7 +56,10 @@ const Lesson = ({ lesson }) => {
 						)
 					case 'paragraph':
 						return (
-							<Typography dangerouslySetInnerHTML={{ __html: block.text }} />
+							<Typography
+								sx={{ mt: 2, mb: 2 }}
+								dangerouslySetInnerHTML={{ __html: block.text }}
+							/>
 						)
 					case 'list':
 						return (
