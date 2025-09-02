@@ -49,7 +49,7 @@ const Lessons = () => {
 				<title>{`${t('pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('description')} />
 			</Head>
-			<Stack direction='row' sx={{ margin: '10rem' }}>
+			<Stack direction='row' sx={{ margin: '10rem', alignItems: 'flex-start' }}>
 				<LessonsMenu
 					lessonsInfos={lessonsInfos}
 					onSelectLesson={slug => {

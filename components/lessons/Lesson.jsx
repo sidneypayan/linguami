@@ -6,12 +6,16 @@ const Lesson = ({ lesson }) => {
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
 			<Box
-				sx={{ m: 'auto', backgroundColor: 'clrCardBg', borderRadius: 5 }}
+				sx={{
+					margin: '0 auto',
+					backgroundColor: 'clrCardBg',
+					borderRadius: 5,
+					position: 'sticky',
+					top: '160px',
+				}}
 				maxWidth='50%'
 				flex={1}
 				p={4}>
-				{/* Contenu principal */}
-
 				<Typography gutterBottom variant='h4'>
 					{t('title')}
 				</Typography>

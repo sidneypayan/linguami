@@ -62,7 +62,6 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 				top: '160px',
 				p: 0,
 				overflow: 'hidden',
-				alignSelf: 'flex-start',
 			}}
 			component='nav'
 			aria-labelledby='nested-list-subheader'>
