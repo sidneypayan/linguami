@@ -5,8 +5,6 @@ import 'swiper/css/navigation'
 import { Navigation } from 'swiper'
 
 const MaterialsCarousel = ({ materials }) => {
-
-
 	return (
 		<Swiper
 			spaceBetween={10}

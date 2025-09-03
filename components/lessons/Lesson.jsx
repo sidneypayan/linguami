@@ -7,13 +7,14 @@ const Lesson = ({ lesson }) => {
 		return (
 			<Box
 				sx={{
+					display: { xs: 'none', md: 'block' },
 					margin: '0 auto',
 					backgroundColor: 'clrCardBg',
 					borderRadius: 5,
 					position: 'sticky',
 					top: '160px',
 				}}
-				maxWidth='50%'
+				maxWidth='md'
 				flex={1}
 				p={4}>
 				<Typography gutterBottom variant='h4'>
@@ -27,7 +28,7 @@ const Lesson = ({ lesson }) => {
 	}
 
 	return (
-		<Container maxWidth='md'>
+		<Container maxWidth='md' sx={{ mt: { xs: '2rem', md: 0 } }}>
 			{lesson.blocks.map((block, index) => {
 				switch (block.type) {
 					case 'mainTitle':
@@ -44,7 +45,7 @@ const Lesson = ({ lesson }) => {
 					case 'subtitle':
 						return (
 							<Typography
-								sx={{ mb: 10 }}
+								sx={{ mb: { xs: 5, md: 10 } }}
 								key={index}
 								align='center'
 								variant='h5'
