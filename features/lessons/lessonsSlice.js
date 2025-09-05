@@ -23,7 +23,7 @@ export const getLessons = createAsyncThunk(
 )
 
 const lessonsSlice = createSlice({
-	name: 'activities',
+	name: 'lessons',
 	initialState,
 	reducers: {},
 	extraReducers: builder => {

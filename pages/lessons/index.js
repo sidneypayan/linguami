@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation'
 import LessonsMenu from '../../components/lessons/LessonsMenu'
 import Lesson from '../../components/lessons/Lesson'
 import Head from 'next/head'
-import { Stack } from '@mui/material'
+import { Stack, Typography, Container } from '@mui/material'
 import { getLessons } from '../../features/lessons/lessonsSlice'
 
 const Lessons = () => {

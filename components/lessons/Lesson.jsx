@@ -1,8 +1,25 @@
+import { useEffect } from 'react'
+import dynamic from 'next/dynamic'
+import { useSelector, useDispatch } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Container, Typography, Paper } from '@mui/material'
+import { getActivities } from '../../features/activities/activitiesSlice'
+
+const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
+	ssr: false,
+})
 
 const Lesson = ({ lesson }) => {
 	const { t } = useTranslation('lessons')
+	const dispatch = useDispatch()
+	const { activities } = useSelector(store => store.activities)
+
+	useEffect(() => {
+		if (lesson) {
+			dispatch(getActivities(lesson.id))
+		}
+	}, [dispatch, lesson])
+
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
 			<Box
@@ -19,6 +36,33 @@ const Lesson = ({ lesson }) => {
 					{t('subtitle')}
 				</Typography>
 			</Box>
+		)
+	}
+
+	const displayh5pActivities = () => {
+		if (!activities || activities.length === 0) {
+			return (
+				<Typography
+					variant='subtitle1'
+					sx={{ fontWeight: '600', mt: 4 }}
+					align='center'>
+					{t('h5p')}
+				</Typography>
+			)
+		}
+
+		return (
+			<Container>
+				{activities.map(activity => {
+					const h5pJsonPath =
+						process.env.NEXT_PUBLIC_SUPABASE_H5P +
+						'lessons/' +
+						activity.material_id +
+						activity.h5p_url
+
+					return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
+				})}
+			</Container>
 		)
 	}
 
@@ -99,6 +143,7 @@ const Lesson = ({ lesson }) => {
 						return null
 				}
 			})}
+			{displayh5pActivities()}
 		</Container>
 	)
 }
