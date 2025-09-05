@@ -1,5 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import {
 	List,
 	ListItemText,
@@ -40,6 +43,9 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
 
+	const theme = useTheme()
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+
 	const toggleLevel = level => {
 		setOpenLevels(prev => ({ ...prev, [level]: !prev[level] }))
 	}
@@ -54,15 +60,15 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 	return (
 		<List
 			sx={{
-				width: '100%',
+				width: '80%',
 				maxWidth: 360,
 				bgcolor: 'clrCardBg',
 				borderRadius: 5,
-				position: 'sticky',
-				top: '160px',
-				p: 0,
 				overflow: 'hidden',
-				alignSelf: 'flex-start',
+				m: '0 auto',
+				position: { sx: 'static', md: 'sticky' },
+				top: { sx: 0, md: '160px' },
+				p: 0,
 			}}
 			component='nav'
 			aria-labelledby='nested-list-subheader'>
@@ -82,7 +88,12 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 								<ListItemButton
 									key={lesson.slug}
 									sx={{ pl: 4 }}
-									onClick={() => onSelectLesson(lesson.slug)}>
+									onClick={() => {
+										onSelectLesson(lesson.slug)
+										if (isSmallScreen) {
+											setOpenLevels({})
+										}
+									}}>
 									<ListItemText primary={`${index + 1} - ${lesson.titleRu}`} />
 								</ListItemButton>
 							))}

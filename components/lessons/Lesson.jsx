@@ -23,12 +23,17 @@ const Lesson = ({ lesson }) => {
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
 			<Box
-				sx={{ m: 'auto', backgroundColor: 'clrCardBg', borderRadius: 5 }}
-				maxWidth='50%'
+				sx={{
+					display: { xs: 'none', md: 'block' },
+					margin: '0 auto',
+					backgroundColor: 'clrCardBg',
+					borderRadius: 5,
+					position: 'sticky',
+					top: '160px',
+				}}
+				maxWidth='md'
 				flex={1}
 				p={4}>
-				{/* Contenu principal */}
-
 				<Typography gutterBottom variant='h4'>
 					{t('title')}
 				</Typography>
@@ -67,7 +72,7 @@ const Lesson = ({ lesson }) => {
 	}
 
 	return (
-		<Container maxWidth='md'>
+		<Container maxWidth='md' sx={{ mt: { xs: '2rem', md: 0 } }}>
 			{lesson.blocks.map((block, index) => {
 				switch (block.type) {
 					case 'mainTitle':
@@ -84,7 +89,7 @@ const Lesson = ({ lesson }) => {
 					case 'subtitle':
 						return (
 							<Typography
-								sx={{ mb: 10 }}
+								sx={{ mb: { xs: 5, md: 10 } }}
 								key={index}
 								align='center'
 								variant='h5'

@@ -27,7 +27,7 @@ const Material = () => {
 				<meta name='description' content={t('description')} />
 			</Head>
 
-			<Box p={5} maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
+			<Box maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
 				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
 					{t('text')}
 				</Typography>
