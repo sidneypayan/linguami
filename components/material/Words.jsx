@@ -20,16 +20,16 @@ const Words = ({ content }) => {
 
 	useEffect(() => {
 		if (userLearningLanguage === 'fr') {
-			setRegexAll(/[ ….,;:?!–—«»"']|[\w\u00C0-\u00FF\-]+/gi)
+			setRegexAll(/[ ….,;:?!–—«»"'’()]|[\w\u00C0-\u00FF\-]+/gi)
 			setRegexWords(/[\w]+/gi)
 		}
 		if (userLearningLanguage === 'ru') {
-			setRegexAll(/[ ….,;:?!–—«»"]|[\w\u0430-\u044f\ё\е́\-]+/gi)
+			setRegexAll(/[ ….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi)
 			setRegexWords(/[\u0430-\u044f]+/gi)
 		}
 
 		setRegexSentences(
-			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'"«»–—-]+[….:!?|<br\s*\/?>]/gi
+			/[\d+\w+\u00C0-\u00FF\u0430-\u044f\ё\е́\- ,;:'’"«»()–—-]+[….:!?|<br\s*\/?>]/gi
 		)
 	}, [userLearningLanguage])
 
