@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
-import { Box, Container, Typography, Paper } from '@mui/material'
+import { Box, Container, Typography, Divider } from '@mui/material'
 import { getActivities } from '../../features/activities/activitiesSlice'
 
 const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
@@ -57,17 +57,23 @@ const Lesson = ({ lesson }) => {
 		}
 
 		return (
-			<Container>
-				{activities.map(activity => {
-					const h5pJsonPath =
-						process.env.NEXT_PUBLIC_SUPABASE_H5P +
-						'lessons/' +
-						activity.material_id +
-						activity.h5p_url
+			<>
+				<Divider sx={{ mt: 10, mb: 8 }} />
+				<Container>
+					<Typography variant='h4' component='h3' align='center'>
+						{t('exercices')}
+					</Typography>
+					{activities.map(activity => {
+						const h5pJsonPath =
+							process.env.NEXT_PUBLIC_SUPABASE_H5P +
+							'lessons/' +
+							activity.material_id +
+							activity.h5p_url
 
-					return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
-				})}
-			</Container>
+						return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
+					})}
+				</Container>
+			</>
 		)
 	}
 
