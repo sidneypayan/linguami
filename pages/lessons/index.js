@@ -11,6 +11,8 @@ import { getLessons } from '../../features/lessons/lessonsSlice'
 const Lessons = () => {
 	const router = useRouter()
 	const { slug } = router.query
+	const lang = router.locale
+
 	const { t } = useTranslation('lessons')
 	const dispatch = useDispatch()
 	const { lessons } = useSelector(store => store.lessons)
@@ -20,8 +22,8 @@ const Lessons = () => {
 
 	// 1. Récupération des données
 	useEffect(() => {
-		dispatch(getLessons())
-	}, [dispatch])
+		dispatch(getLessons({ lang }))
+	}, [dispatch, lang])
 
 	// 2. Traitement des données
 	useEffect(() => {

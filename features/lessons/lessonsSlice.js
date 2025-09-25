@@ -10,10 +10,13 @@ const initialState = {
 export const getLessons = createAsyncThunk(
 	'lessons/getLessons',
 	async (param, thunkAPI) => {
+		const { lang } = param
+
 		try {
 			const { data } = await supabase
 				.from('lessons')
 				.select('*')
+				.eq('lang', lang)
 				.order('order', { ascending: true })
 			return data
 		} catch (error) {
