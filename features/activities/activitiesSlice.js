@@ -9,12 +9,13 @@ const initialState = {
 
 export const getActivities = createAsyncThunk(
 	'activities/getActivities',
-	async (param, thunkAPI) => {
+	async ({ id, type }, thunkAPI) => {
 		try {
 			const { data } = await supabase
 				.from('h5p')
 				.select('*')
-				.eq('material_id', param)
+				.eq('material_id', id)
+				.eq('type', type)
 				.order('order', { ascending: true })
 
 			return data

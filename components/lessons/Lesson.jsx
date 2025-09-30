@@ -1,7 +1,7 @@
+import useTranslation from 'next-translate/useTranslation'
 import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
 import { Box, Container, Typography, Divider } from '@mui/material'
 import { getActivities } from '../../features/activities/activitiesSlice'
 
@@ -11,12 +11,13 @@ const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
 
 const Lesson = ({ lesson }) => {
 	const { t } = useTranslation('lessons')
+
 	const dispatch = useDispatch()
 	const { activities } = useSelector(store => store.activities)
 
 	useEffect(() => {
 		if (lesson) {
-			dispatch(getActivities(lesson.id))
+			dispatch(getActivities({ id: lesson.id, type: 'lessons' }))
 		}
 	}, [dispatch, lesson])
 
@@ -84,8 +85,8 @@ const Lesson = ({ lesson }) => {
 					case 'mainTitle':
 						return (
 							<Typography
-								gutterBottom
 								key={index}
+								gutterBottom
 								align='center'
 								variant='h3'
 								component='h1'>
@@ -95,8 +96,8 @@ const Lesson = ({ lesson }) => {
 					case 'subtitle':
 						return (
 							<Typography
-								sx={{ mb: { xs: 5, md: 10 } }}
 								key={index}
+								sx={{ mb: { xs: 5, md: 10 } }}
 								align='center'
 								variant='h5'
 								component='h2'>
@@ -105,20 +106,21 @@ const Lesson = ({ lesson }) => {
 						)
 					case 'title':
 						return (
-							<Typography variant='h6' sx={{ mt: 2, mb: 1 }}>
+							<Typography key={index} variant='h6' sx={{ mt: 2, mb: 1 }}>
 								{block.text}
 							</Typography>
 						)
 					case 'paragraph':
 						return (
 							<Typography
+								key={index}
 								sx={{ mt: 2, mb: 2 }}
 								dangerouslySetInnerHTML={{ __html: block.text }}
 							/>
 						)
 					case 'list':
 						return (
-							<Box component='ul' sx={{ mt: 2, mb: 3, pl: 2 }}>
+							<Box component='ul' sx={{ mt: 2, mb: 3, pl: 2 }} key={index}>
 								{block.items.map((item, index) => (
 									<li key={index}>
 										<Typography
@@ -139,7 +141,8 @@ const Lesson = ({ lesson }) => {
 									borderRadius: 1,
 									mb: 2,
 									mt: 2,
-								}}>
+								}}
+								key={index}>
 								{block.items.map((example, index) => (
 									<Typography
 										key={index}

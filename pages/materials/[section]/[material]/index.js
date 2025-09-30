@@ -56,11 +56,11 @@ const Material = ({ material: single_material }) => {
 		if (single_material) {
 			dispatch(getUserMaterialStatus(single_material.id))
 		}
-	}, [user_material_status])
+	}, [dispatch, single_material])
 
 	useEffect(() => {
 		if (single_material) {
-			dispatch(getActivities(single_material.id))
+			dispatch(getActivities({ id: single_material.id, type: 'materials' }))
 		}
 	}, [dispatch, single_material])
 
@@ -132,6 +132,7 @@ const Material = ({ material: single_material }) => {
 				{activities.map(activity => {
 					const h5pJsonPath =
 						process.env.NEXT_PUBLIC_SUPABASE_H5P +
+						'materials/' +
 						activity.material_id +
 						activity.h5p_url
 
