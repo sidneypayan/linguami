@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { useRouter } from 'next/router'
 
 import {
 	List,
@@ -42,6 +43,8 @@ const getLevelIcon = level => {
 const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
+	const router = useRouter()
+	console.log(router.query.slug)
 
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
@@ -87,14 +90,28 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 							{lessonsByLevel[level].map((lesson, index) => (
 								<ListItemButton
 									key={lesson.slug}
-									sx={{ pl: 4 }}
+									sx={{
+										pl: 4,
+										backgroundColor:
+											router.query.slug === lesson.slug ? '#EBEBEB' : 'inherit',
+										borderLeft:
+											router.query.slug === lesson.slug
+												? '4px solid #1976d2'
+												: 'none',
+									}}
 									onClick={() => {
 										onSelectLesson(lesson.slug)
 										if (isSmallScreen) {
 											setOpenLevels({})
 										}
 									}}>
-									<ListItemText primary={`${index + 1} - ${lesson.titleRu}`} />
+									<ListItemText
+										primary={`${index + 1} - ${lesson.titleRu}`}
+										primaryTypographyProps={{
+											fontWeight:
+												router.query.slug === lesson.slug ? 'bold' : 'normal',
+										}}
+									/>
 								</ListItemButton>
 							))}
 						</List>
