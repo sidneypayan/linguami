@@ -5,8 +5,9 @@ import useTranslation from 'next-translate/useTranslation'
 import LessonsMenu from '../../components/lessons/LessonsMenu'
 import Lesson from '../../components/lessons/Lesson'
 import Head from 'next/head'
-import { Stack, Typography, Container } from '@mui/material'
+import { Stack } from '@mui/material'
 import { getLessons } from '../../features/lessons/lessonsSlice'
+import { getUserLessonStatus } from '../../features/lessons/lessonsSlice'
 
 const Lessons = () => {
 	const router = useRouter()
@@ -16,6 +17,8 @@ const Lessons = () => {
 	const { t } = useTranslation('lessons')
 	const dispatch = useDispatch()
 	const { lessons } = useSelector(store => store.lessons)
+	const { user_lesson_status } = useSelector(store => store.lessons)
+	const { is_studied } = user_lesson_status
 	const [lessonsInfos, setLessonsInfos] = useState([])
 
 	const [selectedLesson, setSelectedLesson] = useState(null)
@@ -45,6 +48,12 @@ const Lessons = () => {
 		}
 	}, [slug, lessons])
 
+	useEffect(() => {
+		if (selectedLesson) {
+			dispatch(getUserLessonStatus(selectedLesson.id))
+		}
+	}, [dispatch, selectedLesson])
+
 	return (
 		<>
 			<Head>
@@ -70,7 +79,9 @@ const Lessons = () => {
 					alignItems: 'flex-start',
 				}}>
 				<LessonsMenu
+					lessonSlug={slug}
 					lessonsInfos={lessonsInfos}
+					isLessonStudied={is_studied}
 					onSelectLesson={slug => {
 						router.push({
 							pathname: '/lessons',
@@ -79,7 +90,7 @@ const Lessons = () => {
 					}}
 				/>
 
-				<Lesson lesson={selectedLesson} />
+				<Lesson lesson={selectedLesson} isLessonStudied={is_studied} />
 			</Stack>
 		</>
 	)

@@ -1,10 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { supabase } from '../../lib/supabase'
+import { toast } from 'react-toastify'
 
 const initialState = {
 	lessons: [],
 	lessons_loading: true,
 	lessons_pending: false,
+	lessons_error: false,
+	user_lessons_status: [],
+	user_lessons_status_loading: false,
+	user_lessons_status_error: false,
+	user_lesson_status: [],
+	user_lesson_status_loading: false,
+	user_lesson_status_error: false,
 }
 
 export const getLessons = createAsyncThunk(
@@ -25,6 +33,67 @@ export const getLessons = createAsyncThunk(
 	}
 )
 
+export const addLessonToStudied = createAsyncThunk(
+	'userLesson/addLessonToStudied',
+	async (id, thunkAPI) => {
+		const { data: doLessonExists, error } = await supabase
+			.from('user_lessons')
+			.select('lesson_id')
+			.match({ user_id: supabase.auth.user().id, lesson_id: id })
+
+		if (doLessonExists.length < 1) {
+			const { data: lesson, error } = await supabase
+				.from('user_lessons')
+				.insert([
+					{
+						user_id: supabase.auth.user().id,
+						lesson_id: id,
+						is_studied: true,
+					},
+				])
+		} else {
+			const { error } = await supabase
+				.from('user_materials')
+				.update({ is_studied: true })
+				.match({ user_id: supabase.auth.user().id, lesson_id: id })
+		}
+	}
+)
+
+export const getUserLessonsStatus = createAsyncThunk(
+	'userLesson/getUserLessonsStatus',
+	async (_, thunkAPI) => {
+		const { data: userLessonsStatus, error } = await supabase
+			.from('user_lessons')
+			.select('lesson_id, is_studied')
+			.eq('user_id', supabase.auth.user().id)
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		return userLessonsStatus
+	}
+)
+
+export const getUserLessonStatus = createAsyncThunk(
+	'userLesson/getUserLessonStatus',
+	async (param, thunkAPI) => {
+		const { data: userLessonStatus, error } = await supabase
+			.from('user_lessons')
+			.select('is_studied')
+			.match({ user_id: supabase.auth.user().id, lesson_id: param })
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		if (userLessonStatus[0]) return userLessonStatus[0]
+
+		return { is_studied: false }
+	}
+)
+
 const lessonsSlice = createSlice({
 	name: 'lessons',
 	initialState,
@@ -41,6 +110,33 @@ const lessonsSlice = createSlice({
 			.addCase(getLessons.rejected, (state, { payload }) => {
 				state.lessons_loading = false
 				state.lessons_error = payload
+			})
+			.addCase(getUserLessonsStatus.pending, state => {
+				state.user_lessons_status_loading = true
+			})
+			.addCase(getUserLessonsStatus.fulfilled, (state, { payload }) => {
+				state.user_lessons_status = payload
+				state.user_lessons_status_loading = false
+			})
+			.addCase(getUserLessonsStatus.rejected, (state, { payload }) => {
+				state.user_lessons_status_loading = false
+				state.user_lessons_status_error = payload
+			})
+			.addCase(getUserLessonStatus.pending, state => {
+				state.user_lesson_status_loading = true
+			})
+			.addCase(getUserLessonStatus.fulfilled, (state, { payload }) => {
+				state.user_lesson_status = payload
+				state.user_lesson_status_loading = false
+			})
+			.addCase(getUserLessonStatus.rejected, (state, { payload }) => {
+				state.user_lesson_status_loading = false
+				state.user_lesson_status_error = payload
+			})
+			.addCase(addLessonToStudied.fulfilled, () => {
+				toast.success(
+					'Bravo, un pas de plus vers la maîtrise de la langue russe !'
+				)
 			})
 	},
 })

@@ -1,9 +1,9 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { useRouter } from 'next/router'
-
+import { getUserLessonsStatus } from '../../features/lessons/lessonsSlice'
 import {
 	List,
 	ListItemText,
@@ -13,6 +13,7 @@ import {
 	Divider,
 } from '@mui/material'
 import InboxIcon from '@mui/icons-material/MoveToInbox'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { ExpandLess, ExpandMore } from '@mui/icons-material/'
 import { FaSeedling, FaTree, FaGraduationCap } from 'react-icons/fa'
 import { GiSprout } from 'react-icons/gi'
@@ -40,14 +41,27 @@ const getLevelIcon = level => {
 	}
 }
 
-const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
+const LessonsMenu = ({
+	lessonsInfos,
+	onSelectLesson,
+	lessonSlug,
+	isLessonStudied,
+}) => {
 	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
-	const router = useRouter()
-	console.log(router.query.slug)
+
+	const dispatch = useDispatch()
+	const { user_lessons_status } = useSelector(store => store.lessons)
 
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+
+	const checkIfUserLessonIsInLessons = id => {
+		const matchingLessons = user_lessons_status.find(
+			userLesson => userLesson.lesson_id === id
+		)
+		return matchingLessons
+	}
 
 	const toggleLevel = level => {
 		setOpenLevels(prev => ({ ...prev, [level]: !prev[level] }))
@@ -59,6 +73,10 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 		acc[level] = lessonsInfos.filter(lesson => lesson.lessonLevel === level)
 		return acc
 	}, {})
+
+	useEffect(() => {
+		dispatch(getUserLessonsStatus())
+	}, [dispatch])
 
 	return (
 		<List
@@ -93,11 +111,9 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 									sx={{
 										pl: 4,
 										backgroundColor:
-											router.query.slug === lesson.slug ? '#EBEBEB' : 'inherit',
+											lessonSlug === lesson.slug ? '#EBEBEB' : 'inherit',
 										borderLeft:
-											router.query.slug === lesson.slug
-												? '4px solid #1976d2'
-												: 'none',
+											lessonSlug === lesson.slug ? '4px solid #1976d2' : 'none',
 									}}
 									onClick={() => {
 										onSelectLesson(lesson.slug)
@@ -109,9 +125,15 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson }) => {
 										primary={`${index + 1} - ${lesson.titleRu}`}
 										primaryTypographyProps={{
 											fontWeight:
-												router.query.slug === lesson.slug ? 'bold' : 'normal',
+												lessonSlug === lesson.slug ? 'bold' : 'normal',
 										}}
 									/>
+
+									{checkIfUserLessonIsInLessons(lesson.id) && (
+										<ListItemIcon sx={{ minWidth: 30 }}>
+											<CheckCircleIcon sx={{ color: 'green' }} />
+										</ListItemIcon>
+									)}
 								</ListItemButton>
 							))}
 						</List>

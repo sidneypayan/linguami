@@ -2,16 +2,16 @@ import useTranslation from 'next-translate/useTranslation'
 import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
-import { Box, Container, Typography, Divider } from '@mui/material'
+import { Box, Container, Typography, Divider, Button } from '@mui/material'
 import { getActivities } from '../../features/activities/activitiesSlice'
+import { addLessonToStudied } from '../../features/lessons/lessonsSlice'
 
 const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
 	ssr: false,
 })
 
-const Lesson = ({ lesson }) => {
+const Lesson = ({ lesson, isLessonStudied }) => {
 	const { t } = useTranslation('lessons')
-
 	const dispatch = useDispatch()
 	const { activities } = useSelector(store => store.activities)
 
@@ -158,6 +158,22 @@ const Lesson = ({ lesson }) => {
 				}
 			})}
 			{displayh5pActivities()}
+
+			{!isLessonStudied && (
+				<Button
+					variant='outlined'
+					size='large'
+					sx={{
+						display: 'block',
+						margin: '0 auto',
+						marginTop: '2rem',
+					}}
+					onClick={() => dispatch(addLessonToStudied(lesson.id))}
+					type='button'
+					id='checkMaterial'>
+					{t('lessonlearnt')} <i className='fas fa-check'></i>
+				</Button>
+			)}
 		</Container>
 	)
 }
