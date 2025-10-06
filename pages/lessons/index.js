@@ -6,8 +6,10 @@ import LessonsMenu from '../../components/lessons/LessonsMenu'
 import Lesson from '../../components/lessons/Lesson'
 import Head from 'next/head'
 import { Stack } from '@mui/material'
-import { getLessons } from '../../features/lessons/lessonsSlice'
-import { getUserLessonStatus } from '../../features/lessons/lessonsSlice'
+import {
+	getLessons,
+	getUserLessonStatus,
+} from '../../features/lessons/lessonsSlice'
 
 const Lessons = () => {
 	const router = useRouter()
@@ -17,8 +19,7 @@ const Lessons = () => {
 	const { t } = useTranslation('lessons')
 	const dispatch = useDispatch()
 	const { lessons } = useSelector(store => store.lessons)
-	const { user_lesson_status } = useSelector(store => store.lessons)
-	const { is_studied } = user_lesson_status
+
 	const [lessonsInfos, setLessonsInfos] = useState([])
 
 	const [selectedLesson, setSelectedLesson] = useState(null)
@@ -36,6 +37,7 @@ const Lessons = () => {
 				titleRu: lesson.title_ru,
 				lessonLevel: lesson.level,
 				slug: lesson.slug,
+				id: lesson.id,
 			}))
 			setLessonsInfos(gatherLessonsInfos)
 		}
@@ -81,7 +83,6 @@ const Lessons = () => {
 				<LessonsMenu
 					lessonSlug={slug}
 					lessonsInfos={lessonsInfos}
-					isLessonStudied={is_studied}
 					onSelectLesson={slug => {
 						router.push({
 							pathname: '/lessons',
@@ -90,7 +91,7 @@ const Lessons = () => {
 					}}
 				/>
 
-				<Lesson lesson={selectedLesson} isLessonStudied={is_studied} />
+				<Lesson lesson={selectedLesson} />
 			</Stack>
 		</>
 	)

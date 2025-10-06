@@ -41,12 +41,7 @@ const getLevelIcon = level => {
 	}
 }
 
-const LessonsMenu = ({
-	lessonsInfos,
-	onSelectLesson,
-	lessonSlug,
-	isLessonStudied,
-}) => {
+const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
 
@@ -56,7 +51,7 @@ const LessonsMenu = ({
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
-	const checkIfUserLessonIsInLessons = id => {
+	const checkIfUserLessonIsStudied = id => {
 		const matchingLessons = user_lessons_status.find(
 			userLesson => userLesson.lesson_id === id
 		)
@@ -129,9 +124,9 @@ const LessonsMenu = ({
 										}}
 									/>
 
-									{checkIfUserLessonIsInLessons(lesson.id) && (
+									{checkIfUserLessonIsStudied(lesson.id) && (
 										<ListItemIcon sx={{ minWidth: 30 }}>
-											<CheckCircleIcon sx={{ color: 'green' }} />
+											<CheckCircleIcon sx={{ color: '#1c991cb3' }} />
 										</ListItemIcon>
 									)}
 								</ListItemButton>

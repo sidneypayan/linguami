@@ -4,16 +4,23 @@ import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
 import { Box, Container, Typography, Divider, Button } from '@mui/material'
 import { getActivities } from '../../features/activities/activitiesSlice'
-import { addLessonToStudied } from '../../features/lessons/lessonsSlice'
+import {
+	addLessonToStudied,
+	getUserLessonsStatus,
+	getUserLessonStatus,
+} from '../../features/lessons/lessonsSlice'
 
 const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
 	ssr: false,
 })
 
-const Lesson = ({ lesson, isLessonStudied }) => {
+const Lesson = ({ lesson }) => {
 	const { t } = useTranslation('lessons')
 	const dispatch = useDispatch()
 	const { activities } = useSelector(store => store.activities)
+
+	const { user_lesson_status } = useSelector(store => store.lessons)
+	const isLessonStudied = user_lesson_status?.is_studied
 
 	useEffect(() => {
 		if (lesson) {
@@ -168,7 +175,11 @@ const Lesson = ({ lesson, isLessonStudied }) => {
 						margin: '0 auto',
 						marginTop: '2rem',
 					}}
-					onClick={() => dispatch(addLessonToStudied(lesson.id))}
+					onClick={async () => {
+						await dispatch(addLessonToStudied(lesson.id))
+						dispatch(getUserLessonsStatus())
+						dispatch(getUserLessonStatus(lesson.id))
+					}}
 					type='button'
 					id='checkMaterial'>
 					{t('lessonlearnt')} <i className='fas fa-check'></i>
