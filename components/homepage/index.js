@@ -27,7 +27,17 @@ const StyledGridItem = styled(Grid)({
 const Homepage = () => {
 	const { t } = useTranslation('home')
 	const [open, setOpen] = useState(false)
+	const [videoSrc, setVideoSrc] = useState('')
 	const [modalName, setModalName] = useState('')
+
+	const handleOpen = src => {
+		setVideoSrc(src)
+		setOpen(true)
+	}
+	const handleClose = () => {
+		setVideoSrc('')
+		setOpen(false)
+	}
 
 	const multimedia = [
 		{
@@ -56,9 +66,6 @@ const Homepage = () => {
 			subtitle: t('flashcardssubtitle'),
 		},
 	]
-
-	const handleOpen = () => setOpen(true)
-	const handleClose = () => setOpen(false)
 
 	return (
 		<>
@@ -93,7 +100,13 @@ const Homepage = () => {
 							top: '50%',
 							left: '50%',
 							transform: 'translate(-50%, -50%)',
-							width: '65%',
+
+							width: {
+								xs: '95%', // 95% de largeur sur les petits écrans (xs = téléphone)
+								sm: '80%', // 80% sur les écrans moyens
+								md: '65%', // 65% sur les grands écrans
+							},
+
 							bgcolor: 'background.paper',
 							boxShadow: 24,
 							p: 4,
@@ -103,7 +116,7 @@ const Homepage = () => {
 							loop
 							autoPlay
 							style={{ width: '100%' }}
-							src='/img/add_translation.mp4'></video>
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_VIDEO}/${videoSrc}`}></video>
 					</Box>
 				</Modal>
 
@@ -147,7 +160,7 @@ const Homepage = () => {
 						</Typography>
 
 						<Button
-							onClick={() => handleOpen('translator')}
+							onClick={() => handleOpen('translator.mp4')}
 							variant='contained'
 							size='large'
 							sx={{
@@ -184,7 +197,7 @@ const Homepage = () => {
 						</Typography>
 
 						<Button
-							onClick={() => handleOpen('dictionary')}
+							onClick={() => handleOpen('dictionary.mp4')}
 							variant='contained'
 							size='large'
 							sx={{
@@ -256,7 +269,7 @@ const Homepage = () => {
 						</Typography>
 
 						<Button
-							onClick={() => handleOpen('flashcards')}
+							onClick={() => handleOpen('flashcards.mp4')}
 							variant='contained'
 							size='large'
 							sx={{
@@ -291,20 +304,20 @@ const Homepage = () => {
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
 							{t('teachersubtitle')}
 						</Typography>
-
-						<Button
-							onClick={handleOpen}
-							variant='contained'
-							size='large'
-							sx={{
-								width: '200px',
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '1rem',
-								bgcolor: 'clrBtn1',
-							}}>
-							{t('start')}
-						</Button>
+						<Link href='/teacher'>
+							<Button
+								variant='contained'
+								size='large'
+								sx={{
+									width: '200px',
+									display: 'block',
+									margin: '0 auto',
+									marginTop: '1rem',
+									bgcolor: 'clrBtn1',
+								}}>
+								{t('start')}
+							</Button>
+						</Link>
 					</Stack>
 					<Box
 						width='50%'
