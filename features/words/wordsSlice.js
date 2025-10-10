@@ -58,6 +58,14 @@ export const addWordToDictionary = createAsyncThunk(
 				},
 			])
 
+			if (error) {
+				const message = error.message.includes('duplicate key value')
+					? 'Ce mot est déjà enregistré.'
+					: error.message
+
+				return thunkAPI.rejectWithValue({ error: message })
+			}
+
 			return data
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -191,6 +199,10 @@ const wordsSlice = createSlice({
 					...payload,
 				]
 				toast.success('Mot ajouté avec succès')
+			})
+			.addCase(addWordToDictionary.rejected, (state, action) => {
+				const errorMessage = action.payload?.error || 'Erreur inconnue'
+				toast.error(errorMessage)
 			})
 			.addCase(getAllUserWords.fulfilled, (state, { payload }) => {
 				state.user_words = payload
