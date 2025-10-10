@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { supabase } from '../../lib/supabase'
 import { toast } from 'react-toastify'
-import { getMessage } from '../../utils/helpers'
+import { getaddWordsToUserDictionaryMessage } from '../../utils/helpers'
 
 const initialState = {
 	user_words: [],
@@ -66,18 +66,24 @@ export const addWordToDictionary = createAsyncThunk(
 			])
 
 			if (error) {
-				const code = error.message.includes('duplicate key value')
+				const errorMessage = error.message.includes('duplicate key value')
 					? 'duplicate_translation'
 					: 'unexpected_error'
 
-				const message = getMessage(code, lang)
+				const message = getaddWordsToUserDictionaryMessage(errorMessage, lang)
 
 				return thunkAPI.rejectWithValue({ error: message })
 			}
-			const message = getMessage('success_add_translation', lang)
+			const message = getaddWordsToUserDictionaryMessage(
+				'success_add_translation',
+				lang
+			)
 			return { success: message, data }
 		} catch (error) {
-			const message = getMessage('unexpected_error', lang)
+			const message = getaddWordsToUserDictionaryMessage(
+				'unexpected_error',
+				lang
+			)
 			return thunkAPI.rejectWithValue({ error: message })
 		}
 	}
@@ -209,9 +215,9 @@ const wordsSlice = createSlice({
 					...payload.data,
 				]
 				const successMessage = payload.success
-				toast.error(successMessage)
+				toast.success(successMessage)
 			})
-			.addCase(addWordToDictionary.rejected, action => {
+			.addCase(addWordToDictionary.rejected, (_, action) => {
 				const errorMessage = action.payload?.error || 'Erreur inconnue'
 				toast.error(errorMessage)
 			})

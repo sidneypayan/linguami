@@ -18,7 +18,7 @@ export const mergeUserMaterial = userMaterials => {
 	return newUserMaterials
 }
 
-export const getMessage = (code, lang = 'fr') => {
+export const getaddWordsToUserDictionaryMessage = (code, lang = 'fr') => {
 	const messages = {
 		success_add_translation: {
 			fr: 'Traduction ajoutée avec succès.',
