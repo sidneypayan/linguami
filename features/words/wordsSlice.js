@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { supabase } from '../../lib/supabase'
 import { toast } from 'react-toastify'
+import { getMessage } from '../../utils/helpers'
 
 const initialState = {
 	user_words: [],
@@ -45,8 +46,14 @@ export const translateWord = createAsyncThunk(
 export const addWordToDictionary = createAsyncThunk(
 	'words/addWordsToUserDictionary',
 	async (word, thunkAPI) => {
-		const { originalWord, translatedWord, userId, materialId, word_sentence } =
-			word
+		const {
+			originalWord,
+			translatedWord,
+			userId,
+			materialId,
+			word_sentence,
+			lang,
+		} = word
 		try {
 			const { data, error } = await supabase.from('user_words').insert([
 				{
@@ -59,16 +66,19 @@ export const addWordToDictionary = createAsyncThunk(
 			])
 
 			if (error) {
-				const message = error.message.includes('duplicate key value')
-					? 'Ce mot est déjà enregistré.'
-					: error.message
+				const code = error.message.includes('duplicate key value')
+					? 'duplicate_translation'
+					: 'unexpected_error'
+
+				const message = getMessage(code, lang)
 
 				return thunkAPI.rejectWithValue({ error: message })
 			}
-
-			return data
+			const message = getMessage('success_add_translation', lang)
+			return { success: message, data }
 		} catch (error) {
-			return thunkAPI.rejectWithValue(error)
+			const message = getMessage('unexpected_error', lang)
+			return thunkAPI.rejectWithValue({ error: message })
 		}
 	}
 )
@@ -193,14 +203,15 @@ const wordsSlice = createSlice({
 				state.translation_error = payload
 			})
 			.addCase(addWordToDictionary.fulfilled, (state, { payload }) => {
-				state.user_words = [...state.user_words, ...payload]
+				state.user_words = [...state.user_words, ...payload.data]
 				state.user_material_words = state.user_material_words = [
 					...state.user_material_words,
-					...payload,
+					...payload.data,
 				]
-				toast.success('Mot ajouté avec succès')
+				const successMessage = payload.success
+				toast.error(successMessage)
 			})
-			.addCase(addWordToDictionary.rejected, (state, action) => {
+			.addCase(addWordToDictionary.rejected, action => {
 				const errorMessage = action.payload?.error || 'Erreur inconnue'
 				toast.error(errorMessage)
 			})

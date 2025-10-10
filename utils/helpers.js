@@ -17,3 +17,22 @@ export const mergeUserMaterial = userMaterials => {
 
 	return newUserMaterials
 }
+
+export const getMessage = (code, lang = 'fr') => {
+	const messages = {
+		success_add_translation: {
+			fr: 'Traduction ajoutée avec succès.',
+			ru: 'Перевод успешно добавлен.',
+		},
+		duplicate_translation: {
+			fr: 'Cette traduction est déjà enregistrée.',
+			ru: 'Этот перевод уже существует.',
+		},
+		unexpected_error: {
+			fr: 'Une erreur inattendue est survenue.',
+			ru: 'An unexpected error occurred.',
+		},
+	}
+
+	return messages[code]?.[lang] || messages[code]?.['en'] || 'Unknown error'
+}
