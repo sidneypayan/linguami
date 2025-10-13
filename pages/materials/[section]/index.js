@@ -83,6 +83,7 @@ const Section = () => {
 				<title>{`${t('pagetitle')} | Linguami`}</title>
 				<meta name='description' content={t('description')} />
 			</Head>
+
 			<IconButton
 				sx={{
 					position: 'absolute',
@@ -94,6 +95,7 @@ const Section = () => {
 				onClick={() => router.back()}>
 				<ArrowBack fontSize='large' />
 			</IconButton>
+
 			<Container sx={{ margin: '10rem auto' }}>
 				<LevelBar />
 				<Box
