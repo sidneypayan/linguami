@@ -9,6 +9,12 @@ import {
 	getUserMaterialsStatus,
 	filterMaterials,
 } from '../../../features/materials/materialsSlice'
+import {
+	getBooks,
+	filterBooks,
+	getBookChapters,
+} from '../../../features/books/booksSlice'
+
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton } from '@mui/material'
@@ -21,6 +27,7 @@ const Section = () => {
 	const { userLearningLanguage } = useUserContext()
 	const router = useRouter()
 	const { section } = router.query
+
 	const dispatch = useDispatch()
 	const {
 		materials_loading,
@@ -32,6 +39,8 @@ const Section = () => {
 		numOfPages,
 	} = useSelector(store => store.materials)
 
+	const { filtered_books } = useSelector(store => store.books)
+
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
 			userMaterial => userMaterial.material_id === id
@@ -40,17 +49,21 @@ const Section = () => {
 	}
 
 	useEffect(() => {
-		if (section) {
+		if (section && section !== 'books') {
 			dispatch(getMaterials({ userLearningLanguage, section }))
 			dispatch(getUserMaterialsStatus(section))
+		} else {
+			dispatch(getBooks({ userLearningLanguage }))
 		}
 	}, [userLearningLanguage, section, dispatch])
 
 	useEffect(() => {
-		if (level) {
+		if (level && section !== 'books') {
 			dispatch(filterMaterials({ section, level }))
+		} else {
+			dispatch(filterBooks({ level }))
 		}
-	}, [level, dispatch])
+	}, [section, level, dispatch])
 
 	if (materials_loading) {
 		return (
@@ -63,7 +76,7 @@ const Section = () => {
 			</div>
 		)
 	}
-
+	console.log(filtered_books)
 	return (
 		<>
 			<Head>
@@ -93,17 +106,29 @@ const Section = () => {
 						rowGap: 3,
 						columnGap: 8,
 					}}>
-					{filtered_materials.slice(sliceStart, sliceEnd).map(material => {
-						return (
-							<SectionCard
-								checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-									material.id
-								)}
-								key={material.id}
-								material={material}
-							/>
-						)
-					})}
+					{section !== 'books' && filtered_materials?.length > 0
+						? filtered_materials
+								.slice(sliceStart, sliceEnd)
+								.map(material => (
+									<SectionCard
+										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+											material.id
+										)}
+										key={material.id}
+										material={material}
+									/>
+								))
+						: filtered_books
+								.slice(sliceStart, sliceEnd)
+								.map(book => (
+									<SectionCard
+										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+											book.id
+										)}
+										key={book.id}
+										material={book}
+									/>
+								))}
 				</Box>
 				{numOfPages > 1 && <Pagination />}
 			</Container>
