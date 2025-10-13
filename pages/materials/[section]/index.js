@@ -49,7 +49,7 @@ const Section = () => {
 	}
 
 	useEffect(() => {
-		if (section && section !== 'books') {
+		if (section && section !== 'book' && section !== 'books') {
 			dispatch(getMaterials({ userLearningLanguage, section }))
 			dispatch(getUserMaterialsStatus(section))
 		} else {
@@ -58,7 +58,7 @@ const Section = () => {
 	}, [userLearningLanguage, section, dispatch])
 
 	useEffect(() => {
-		if (level && section !== 'books') {
+		if (level && section !== 'book' && section !== 'books') {
 			dispatch(filterMaterials({ section, level }))
 		} else {
 			dispatch(filterBooks({ level }))
