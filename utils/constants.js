@@ -137,7 +137,7 @@ export const materials_ru = [
 export const materials_fr = [
 	{
 		category: 'text & audio',
-		img: 'd.jpg',
+		img: 'dialogues.jpg',
 		title: 'Диалоги',
 		section: 'dialogues',
 		text: 'Nos dialogues utilisent des tournures de phrases actuelles dans des situations variées. Ils vous aideront à maîtriser la langue parlée par les Russes au quotidien.',

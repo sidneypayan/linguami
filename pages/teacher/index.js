@@ -13,7 +13,10 @@ import {
 
 const Teacher = () => {
 	const { t, lang } = useTranslation('teacher')
-	const img = lang === 'ru' ? '/img/sidney.jpg' : '/img/natacha.jpg'
+	const img =
+		lang === 'ru'
+			? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/sidney.jpg`
+			: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/natacha.jpg`
 
 	return (
 		<>

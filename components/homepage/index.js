@@ -41,27 +41,27 @@ const Homepage = () => {
 
 	const multimedia = [
 		{
-			img: '/img/video.png',
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video.png`,
 			title: t('video'),
 			subtitle: t('videosubtitle'),
 		},
 		{
-			img: '/img/audio.png',
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio.png`,
 			title: t('audio'),
 			subtitle: t('audiosubtitle'),
 		},
 		{
-			img: '/img/text.png',
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text.png`,
 			title: t('text'),
 			subtitle: t('textsubtitle'),
 		},
 		{
-			img: '/img/dictionary.png',
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`,
 			title: t('dictionary'),
 			subtitle: t('dictionarysubtitle'),
 		},
 		{
-			img: '/img/flashcards.png',
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`,
 			title: t('flashcards'),
 			subtitle: t('flashcardssubtitle'),
 		},
@@ -144,7 +144,7 @@ const Homepage = () => {
 						}}>
 						<Box
 							component='img'
-							src='/img/translator.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/translator.png`}
 							alt='translator'
 							width={175}
 							height={175}
@@ -221,7 +221,7 @@ const Homepage = () => {
 						}}>
 						<Box
 							component='img'
-							src='/img/dictionary.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`}
 							alt='dictionary'
 							width={175}
 							height={175}
@@ -253,7 +253,7 @@ const Homepage = () => {
 						}}>
 						<Box
 							component='img'
-							src='/img/flashcards.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`}
 							alt='flashcards'
 							width={175}
 							height={175}
@@ -330,7 +330,7 @@ const Homepage = () => {
 						}}>
 						<Box
 							component='img'
-							src='/img/teacher.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/teacher.png`}
 							alt='teacher'
 							width={175}
 							height={175}

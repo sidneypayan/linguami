@@ -67,7 +67,7 @@ const Hero = () => {
 					component='img'
 					width={250}
 					height={250}
-					src='/img/wizard.png'
+					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
 				/>
 			</Stack>
 

@@ -69,7 +69,7 @@ const Section = () => {
 		return (
 			<div className='loader'>
 				<Image
-					src='/img/loader.gif'
+					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/loader.gif`}
 					width={200}
 					height={200}
 					alt='loader'></Image>

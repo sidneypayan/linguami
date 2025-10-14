@@ -20,7 +20,7 @@ import {
 	TableContainer,
 	TableRow,
 	Typography,
-	Stack
+	Stack,
 } from '@mui/material'
 import { DeleteOutline } from '@mui/icons-material'
 import Image from 'next/image'
@@ -62,7 +62,7 @@ const Dictionary = () => {
 		return (
 			<div className='loader'>
 				<Image
-					src='/img/loader.gif'
+					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/loader.gif`}
 					width={200}
 					height={200}
 					alt='loader'></Image>
@@ -76,8 +76,8 @@ const Dictionary = () => {
 				<title>Linguami | Dictionnaire personnel</title>
 			</Head>
 
-			{user_words.length > 0 ?
-				<Container sx={{ margin: '10rem auto' }} maxWidth='lg' >
+			{user_words.length > 0 ? (
+				<Container sx={{ margin: '10rem auto' }} maxWidth='lg'>
 					<Button
 						sx={{
 							backgroundColor: 'clrBtn1',
@@ -116,9 +116,11 @@ const Dictionary = () => {
 							))}
 						</Table>
 					</TableContainer>
-				</Container >
-				:
-				<Container maxWidth='md' sx={{ textAlign: 'center', margin: '10rem auto' }}>
+				</Container>
+			) : (
+				<Container
+					maxWidth='md'
+					sx={{ textAlign: 'center', margin: '10rem auto' }}>
 					<Typography variant='subtitle1' mb={5}>
 						{t('nowords')}
 					</Typography>
@@ -126,7 +128,7 @@ const Dictionary = () => {
 						<Button variant='contained'>{t('start')}</Button>
 					</Link>
 				</Container>
-			}
+			)}
 		</>
 	)
 }
@@ -141,9 +143,6 @@ export const getServerSideProps = async ({ req }) => {
 			.eq('id', decodedToken.sub)
 			.single()
 
-
-
-
 		return {
 			props: user,
 		}
@@ -155,7 +154,6 @@ export const getServerSideProps = async ({ req }) => {
 			permanent: false,
 		},
 	}
-
 }
 
 export default Dictionary
