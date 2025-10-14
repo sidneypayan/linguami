@@ -14,7 +14,7 @@ const Footer = () => {
 						<div>
 							<Link href='https://www.facebook.com/linguami/' target='_blank'>
 								<Image
-									src='/img/icon-fb.png'
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/icon-fb.png`}
 									alt='facebook'
 									width={32}
 									height={32}
@@ -24,7 +24,7 @@ const Footer = () => {
 						<div>
 							<Link href='https://twitter.com/linguami/' target='_blank'>
 								<Image
-									src='/img/icon-twitter.png'
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/icon-twitter.png`}
 									alt='twitter'
 									width={32}
 									height={32}
@@ -36,7 +36,7 @@ const Footer = () => {
 								href='https://www.youtube.com/channel/UCVtNeYVhksLsMqYmCCAFFIg/'
 								target='_blank'>
 								<Image
-									src='/img/icon-youtube.png'
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/icon-youtube.png`}
 									alt='youtube'
 									width={32}
 									height={32}

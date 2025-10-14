@@ -2,7 +2,6 @@ import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import styles from '../styles/Register.module.css'
 import { useUserContext } from '../context/user'
 import {
 	Box,
@@ -68,7 +67,7 @@ const Signin = () => {
 						sx={{ padding: '0.75rem 1rem' }}
 						onClick={() => loginWithThirdPartyOAuth('facebook')}>
 						<Image
-							src='/img/facebook.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.png`}
 							alt='facebook'
 							width={25}
 							height={25}></Image>
@@ -79,7 +78,7 @@ const Signin = () => {
 						sx={{ padding: '0.75rem 1rem' }}
 						onClick={() => loginWithThirdPartyOAuth('google')}>
 						<Image
-							src='/img/google.png'
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/google.png`}
 							alt='google'
 							width={25}
 							height={25}></Image>

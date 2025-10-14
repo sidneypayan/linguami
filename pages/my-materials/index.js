@@ -99,7 +99,7 @@ const UserMaterials = user => {
 								</Typography>
 								<Box
 									component='img'
-									src='/img/studying.jpg'
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/studying.jpg`}
 									alt='studied'
 									width='100%'
 									height={250}
@@ -118,7 +118,7 @@ const UserMaterials = user => {
 
 								<Box
 									component='img'
-									src='/img/studied.jpg'
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/studied.jpg`}
 									alt='studied'
 									width='100%'
 									height={250}
