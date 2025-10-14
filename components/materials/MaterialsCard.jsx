@@ -12,7 +12,7 @@ const MaterialsCard = ({ material }) => {
 					sx={{ position: 'relative', cursor: 'pointer' }}>
 					<Image
 						style={{ borderRadius: '3px', objectFit: 'cover' }}
-						src={`/img/${material.img}`}
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${material.img}`}
 						sizes={100}
 						quality={100}
 						alt={material.title}

@@ -24,8 +24,6 @@ const UserMaterials = user => {
 	const { user_materials } = useSelector(store => store.materials)
 	const { userLearningLanguage } = useUserContext()
 
-	console.log(user_materials)
-
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
 
