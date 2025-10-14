@@ -256,8 +256,8 @@ const Material = ({ material: single_material }) => {
 
 							{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
 
-							{section === 'book' && (
-								<BookMenu bookName={single_material.book_name} />
+							{section === 'books' && (
+								<BookMenu bookName={single_material.book_id} />
 							)}
 
 							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
@@ -369,7 +369,7 @@ export const getStaticPaths = async () => {
 	const { data: materials, error } = await supabase
 		.from('materials')
 		.select('*')
-		.neq('section', 'book')
+		.neq('section', 'books')
 
 	if (!materials) {
 		return {

@@ -41,6 +41,8 @@ const Section = () => {
 
 	const { filtered_books } = useSelector(store => store.books)
 
+	console.log(filtered_books)
+
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
 			userMaterial => userMaterial.material_id === id
