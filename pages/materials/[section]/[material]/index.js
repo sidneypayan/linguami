@@ -8,7 +8,7 @@ import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
 	getUserMaterialStatus,
-  getUserMaterialsStatus,
+	getUserMaterialsStatus,
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
 import { getActivities } from '../../../../features/activities/activitiesSlice'
@@ -240,7 +240,7 @@ const Material = ({ material: single_material }) => {
 											removeBeingStudiedMaterial(single_material.id)
 										)
 										dispatch(getUserMaterialStatus(single_material.id))
-                    dispatch(getUserMaterialsStatus())
+										dispatch(getUserMaterialsStatus())
 									}}
 									type='button'
 									id='show-accents'>
@@ -321,7 +321,7 @@ const Material = ({ material: single_material }) => {
 									onClick={async () => {
 										await dispatch(addMaterialToStudied(single_material.id))
 										dispatch(getUserMaterialStatus(single_material.id))
-										dispatch(getUserMaterialsStatus()
+										dispatch(getUserMaterialsStatus())
 									}}
 									type='button'
 									id='checkMaterial'>
