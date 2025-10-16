@@ -5,15 +5,11 @@ import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
 import { useSelector, useDispatch } from 'react-redux'
 import {
+	getBooks,
 	getMaterials,
 	getUserMaterialsStatus,
 	filterMaterials,
 } from '../../../features/materials/materialsSlice'
-import {
-	getBooks,
-	filterBooks,
-	getBookChapters,
-} from '../../../features/books/booksSlice'
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -31,6 +27,7 @@ const Section = () => {
 	const dispatch = useDispatch()
 	const {
 		materials_loading,
+		books_loading,
 		filtered_materials,
 		user_materials_status,
 		level,
@@ -38,10 +35,6 @@ const Section = () => {
 		sliceEnd,
 		numOfPages,
 	} = useSelector(store => store.materials)
-
-	const { filtered_books } = useSelector(store => store.books)
-
-	console.log(filtered_books)
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
@@ -51,27 +44,27 @@ const Section = () => {
 	}
 
 	useEffect(() => {
-		if (section && section !== 'books' && section !== 'books') {
-			dispatch(getMaterials({ userLearningLanguage, section }))
-			dispatch(getUserMaterialsStatus(section))
-		} else {
+		if (!userLearningLanguage || !section) return
+
+		if (section === 'books') {
 			dispatch(getBooks({ userLearningLanguage }))
+		} else {
+			dispatch(getMaterials({ userLearningLanguage, section }))
+			dispatch(getUserMaterialsStatus())
 		}
 	}, [userLearningLanguage, section, dispatch])
 
 	useEffect(() => {
-		if (level && section !== 'books' && section !== 'books') {
-			dispatch(filterMaterials({ section, level }))
-		} else {
-			dispatch(filterBooks({ level }))
-		}
+		if (!level || !section || section === 'books') return
+
+		dispatch(filterMaterials({ section, level }))
 	}, [section, level, dispatch])
 
-	if (materials_loading) {
+	if (materials_loading && books_loading) {
 		return (
 			<div className='loader'>
 				<Image
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/loader.gif`}
+					src='/img/loader.gif'
 					width={200}
 					height={200}
 					alt='loader'></Image>
@@ -110,29 +103,18 @@ const Section = () => {
 						rowGap: 3,
 						columnGap: 8,
 					}}>
-					{section !== 'books' && filtered_materials?.length > 0
-						? filtered_materials
-								.slice(sliceStart, sliceEnd)
-								.map(material => (
-									<SectionCard
-										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-											material.id
-										)}
-										key={material.id}
-										material={material}
-									/>
-								))
-						: filtered_books
-								.slice(sliceStart, sliceEnd)
-								.map(book => (
-									<SectionCard
-										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-											book.id
-										)}
-										key={book.id}
-										material={book}
-									/>
-								))}
+					{filtered_materials?.length > 0 &&
+						filtered_materials
+							.slice(sliceStart, sliceEnd)
+							.map(material => (
+								<SectionCard
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+										material.id
+									)}
+									key={material.id}
+									material={material}
+								/>
+							))}
 				</Box>
 				{numOfPages > 1 && <Pagination />}
 			</Container>

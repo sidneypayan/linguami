@@ -6,17 +6,23 @@ import { mergeUserMaterial } from '../../utils/helpers'
 const initialState = {
 	materials: [],
 	materials_loading: true,
-	materials_error: false,
+	materials_error: null,
+	books: [],
+	books_loading: true,
+	books_error: null,
+	first_chapter: null,
+	first_chapter_loading: true,
+	first_chapter_error: null,
 	filtered_materials: [],
 	user_materials: [],
 	user_materials_loading: false,
-	user_materials_error: false,
+	user_materials_error: null,
 	user_materials_status: [],
 	user_materials_status_loading: false,
-	user_materials_status_error: false,
+	user_materials_status_error: null,
 	user_material_status: [],
 	user_material_status_loading: false,
-	user_material_status_error: false,
+	user_material_status_error: null,
 	level: 'all',
 	search: '',
 	totalMaterials: 0,
@@ -29,6 +35,24 @@ const initialState = {
 	chapters_loading: false,
 	chapters_error: false,
 }
+
+export const getBooks = createAsyncThunk(
+	'materials/getBooks',
+	async (param, thunkAPI) => {
+		const { userLearningLanguage: lang } = param
+
+		try {
+			let { data: books, error } = await supabase
+				.from('books')
+				.select('*')
+				.eq('lang', lang)
+				.order('id', { ascending: false })
+			return books
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
 
 export const getMaterials = createAsyncThunk(
 	'materials/getMaterials',
@@ -50,7 +74,7 @@ export const getMaterials = createAsyncThunk(
 )
 
 export const getUserMaterials = createAsyncThunk(
-	'userMaterials/getUserMaterials',
+	'materials/getUserMaterials',
 	async (lang, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
@@ -67,7 +91,7 @@ export const getUserMaterials = createAsyncThunk(
 )
 
 export const getUserMaterialsStatus = createAsyncThunk(
-	'userMaterials/getUserMaterialsStatus',
+	'materials/getUserMaterialsStatus',
 	async (_, thunkAPI) => {
 		const { data: userMaterialsStatus, error } = await supabase
 			.from('user_materials')
@@ -83,7 +107,7 @@ export const getUserMaterialsStatus = createAsyncThunk(
 )
 
 export const getUserMaterialStatus = createAsyncThunk(
-	'userMaterials/getUserMaterialStatus',
+	'materials/getUserMaterialStatus',
 	async (param, thunkAPI) => {
 		const { data: userMaterialStatus, error } = await supabase
 			.from('user_materials')
@@ -101,7 +125,7 @@ export const getUserMaterialStatus = createAsyncThunk(
 )
 
 export const addBeingStudiedMaterial = createAsyncThunk(
-	'userMaterials/addBeingStudiedMaterial',
+	'materials/addBeingStudiedMaterial',
 	async (param, thunkAPI) => {
 		const { data: material, error } = await supabase
 			.from('user_materials')
@@ -115,7 +139,7 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 )
 
 export const removeBeingStudiedMaterial = createAsyncThunk(
-	'userMaterials/removeBeingStudiedMaterial',
+	'materials/removeBeingStudiedMaterial',
 	async (param, thunkAPI) => {
 		const { data: material, error } = await supabase
 			.from('user_materials')
@@ -125,7 +149,7 @@ export const removeBeingStudiedMaterial = createAsyncThunk(
 )
 
 export const addMaterialToStudied = createAsyncThunk(
-	'userMaterials/addMaterialToStudied',
+	'materials/addMaterialToStudied',
 	async (id, thunkAPI) => {
 		const { data: doMaterialExists, error } = await supabase
 			.from('user_materials')
@@ -152,15 +176,37 @@ export const addMaterialToStudied = createAsyncThunk(
 	}
 )
 
+export const getFirstChapterOfBook = createAsyncThunk(
+	'materials/getFirstChapterOfBook',
+	async (param, thunkAPI) => {
+		const { userLearningLanguage: lang, bookId } = param
+
+		try {
+			const { data: chapters, error } = await supabase
+				.from('materials')
+				.select('*')
+				.eq('lang', lang)
+				.eq('book_id', bookId)
+				.order('chapter_number', { ascending: true }) // ou 'id' si pas de champ d'ordre
+				.limit(1)
+
+			if (error) throw error
+			return chapters[0] // le premier chapitre
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
 export const getBookChapters = createAsyncThunk(
 	'materials/getBookChapters',
-	async (bookName, thunkAPI) => {
+	async (bookId, thunkAPI) => {
 		try {
 			let { data: chapters, error } = await supabase
 				.from('materials')
-				.select('*')
-				.eq('section', 'book-chapter')
-				.eq('book_name', bookName)
+				.select('id, title')
+				.eq('section', 'book-chapters')
+				.eq('book_id', bookId)
 				.order('id')
 			if (error) console.log(error)
 			return chapters
@@ -216,6 +262,7 @@ const materialsSlice = createSlice({
 		builder
 			.addCase(getMaterials.pending, state => {
 				state.materials_loading = true
+				state.materials_error = null
 			})
 			.addCase(getMaterials.fulfilled, (state, { payload }) => {
 				state.materials_loading = false
@@ -230,8 +277,26 @@ const materialsSlice = createSlice({
 				state.materials_loading = false
 				state.materials_error = payload
 			})
+			.addCase(getBooks.pending, state => {
+				state.books_loading = true
+				state.books_error = null
+			})
+			.addCase(getBooks.fulfilled, (state, { payload }) => {
+				state.books_loading = false
+				state.books = payload
+				state.filtered_materials = payload
+				state.totalMaterials = state.filtered_materials.length
+				state.numOfPages = Math.ceil(
+					state.totalMaterials / state.materialsPerPage
+				)
+			})
+			.addCase(getBooks.rejected, (state, { payload }) => {
+				state.books_loading = false
+				state.books_error = payload
+			})
 			.addCase(getUserMaterials.pending, state => {
 				state.user_materials_loading = true
+				state.user_materials_error = null
 			})
 			.addCase(getUserMaterials.fulfilled, (state, { payload }) => {
 				state.user_materials = payload
@@ -243,6 +308,7 @@ const materialsSlice = createSlice({
 			})
 			.addCase(getUserMaterialsStatus.pending, state => {
 				state.user_materials_status_loading = true
+				state.user_materials_status_error = null
 			})
 			.addCase(getUserMaterialsStatus.fulfilled, (state, { payload }) => {
 				state.user_materials_status = payload
@@ -254,6 +320,7 @@ const materialsSlice = createSlice({
 			})
 			.addCase(getUserMaterialStatus.pending, state => {
 				state.user_material_status_loading = true
+				state.user_material_status_error = null
 			})
 			.addCase(getUserMaterialStatus.fulfilled, (state, { payload }) => {
 				state.user_material_status = payload
@@ -276,6 +343,7 @@ const materialsSlice = createSlice({
 			})
 			.addCase(getBookChapters.pending, state => {
 				state.chapters_loading = true
+				state.chapters_error = null
 			})
 			.addCase(getBookChapters.fulfilled, (state, { payload }) => {
 				state.chapters_loading = false
@@ -284,6 +352,18 @@ const materialsSlice = createSlice({
 			.addCase(getBookChapters.rejected, (state, { payload }) => {
 				state.chapters_loading = false
 				state.chapters_error = payload
+			})
+			.addCase(getFirstChapterOfBook.pending, state => {
+				state.first_chapter_loading = true
+				state.first_chapter_error = null
+			})
+			.addCase(getFirstChapterOfBook.fulfilled, (state, { payload }) => {
+				state.first_chapter_loading = false
+				state.first_chapter = payload
+			})
+			.addCase(getFirstChapterOfBook.rejected, (state, { payload }) => {
+				state.first_chapter_loading = false
+				state.first_chapter_error = payload
 			})
 	},
 })

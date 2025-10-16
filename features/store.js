@@ -5,7 +5,6 @@ import wordsSlice from './words/wordsSlice'
 import cardsSlice from './cards/cardsSlice'
 import activitiesSlice from './activities/activitiesSlice'
 import lessonsSlice from './lessons/lessonsSlice'
-import booksSlice from './books/booksSlice'
 
 export const store = configureStore({
 	reducer: {
@@ -15,6 +14,5 @@ export const store = configureStore({
 		cards: cardsSlice,
 		activities: activitiesSlice,
 		lessons: lessonsSlice,
-		books: booksSlice,
 	},
 })

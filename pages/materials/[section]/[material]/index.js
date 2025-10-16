@@ -8,6 +8,7 @@ import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
 	getUserMaterialStatus,
+  getUserMaterialsStatus,
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
 import { getActivities } from '../../../../features/activities/activitiesSlice'
@@ -53,15 +54,15 @@ const Material = ({ material: single_material }) => {
 	const { is_being_studied, is_studied } = user_material_status
 
 	useEffect(() => {
-		if (single_material) {
-			dispatch(getUserMaterialStatus(single_material.id))
-		}
+		if (!single_material?.id) return
+
+		dispatch(getUserMaterialStatus(single_material.id))
 	}, [dispatch, single_material])
 
 	useEffect(() => {
-		if (single_material) {
-			dispatch(getActivities({ id: single_material.id, type: 'materials' }))
-		}
+		if (!single_material?.id) return
+
+		dispatch(getActivities({ id: single_material.id, type: 'materials' }))
 	}, [dispatch, single_material])
 
 	const handleEditContent = () => {
@@ -154,7 +155,6 @@ const Material = ({ material: single_material }) => {
 			y: e.pageY - 50,
 		})
 	}
-
 	return (
 		single_material && (
 			<>
@@ -216,9 +216,11 @@ const Material = ({ material: single_material }) => {
 										backgroundColor: 'clrPrimary1',
 									}}
 									variant='contained'
-									onClick={() =>
-										dispatch(addBeingStudiedMaterial(single_material.id))
-									}
+									onClick={async () => {
+										await dispatch(addBeingStudiedMaterial(single_material.id))
+										dispatch(getUserMaterialStatus(single_material.id))
+										dispatch(getUserMaterialsStatus())
+									}}
 									type='button'
 									id='show-accents'>
 									{t('startstudying')}
@@ -233,9 +235,13 @@ const Material = ({ material: single_material }) => {
 										backgroundColor: 'clrPrimary1',
 									}}
 									variant='contained'
-									onClick={() =>
-										dispatch(removeBeingStudiedMaterial(single_material.id))
-									}
+									onClick={async () => {
+										await dispatch(
+											removeBeingStudiedMaterial(single_material.id)
+										)
+										dispatch(getUserMaterialStatus(single_material.id))
+                    dispatch(getUserMaterialsStatus())
+									}}
 									type='button'
 									id='show-accents'>
 									{t('stopstudying')}
@@ -257,7 +263,7 @@ const Material = ({ material: single_material }) => {
 							{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
 
 							{section === 'books' && (
-								<BookMenu bookName={single_material.book_id} />
+								<BookMenu bookId={single_material.book_id} />
 							)}
 
 							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
@@ -312,9 +318,11 @@ const Material = ({ material: single_material }) => {
 										margin: '0 auto',
 										marginTop: '2rem',
 									}}
-									onClick={() =>
-										dispatch(addMaterialToStudied(single_material.id))
-									}
+									onClick={async () => {
+										await dispatch(addMaterialToStudied(single_material.id))
+										dispatch(getUserMaterialStatus(single_material.id))
+										dispatch(getUserMaterialsStatus()
+									}}
 									type='button'
 									id='checkMaterial'>
 									{t('lessonlearnt')} <i className='fas fa-check'></i>

@@ -1,4 +1,5 @@
 import { sections } from '../data/sections'
+import { useDispatch } from 'react-redux'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
@@ -12,6 +13,7 @@ import {
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
 import { useRouter } from 'next/router'
+import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
 import {
 	Box,
 	Card,
@@ -21,11 +23,29 @@ import {
 	Typography,
 } from '@mui/material'
 import Link from 'next/link'
+import { useUserContext } from '../context/user'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
+	const dispatch = useDispatch()
 	const router = useRouter()
-
 	const { section } = router.query
+	const { userLearningLanguage } = useUserContext()
+
+	const handleClick = async () => {
+		try {
+			const chapter = await dispatch(
+				getFirstChapterOfBook({
+					bookId: material.id,
+					userLearningLanguage,
+				})
+			).unwrap()
+
+			router.push(`/materials/books/${chapter.id}`)
+		} catch (error) {
+			console.error('Erreur lors de la récupération du chapitre :', error)
+			// Tu peux afficher un message d'erreur ici si besoin
+		}
+	}
 
 	const changeLevelName = level => {
 		let newLevel
@@ -60,89 +80,93 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 		return icon
 	}
 
-	return (
-		<Link
-			href={`${section ?? 'materials/' + material.section}/${
-				section === 'books' ? material.id + 1 : material.id
-			}`}>
-			{/* <Link href={`${section ?? 'materials/' + material.section}/${material.id}`}> */}
-			<CardActionArea
+	const SectionCardContent = () => (
+		<CardActionArea
+			sx={{
+				maxWidth: '500px',
+				margin: '0 auto',
+			}}>
+			<Card
 				sx={{
-					maxWidth: '500px',
-					margin: '0 auto',
+					display: 'flex',
+					alignItems: 'center',
+					height: 135,
+					boxShadow: 'none',
+					backgroundColor: 'clrCardBg',
 				}}>
-				<Card
+				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+					checkIfUserMaterialIsInMaterials.is_being_studied && (
+						<FontAwesomeIcon
+							icon={faClock}
+							className={styles.beingStudiedCard}
+						/>
+					)}
+				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
+					checkIfUserMaterialIsInMaterials.is_studied && (
+						<FontAwesomeIcon
+							icon={faCircleCheck}
+							className={styles.studiedCard}
+						/>
+					)}
+				<CardMedia
+					component='img'
+					sx={{ maxWidth: 135, height: 135, margin: 0 }}
+					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
+					alt={material.title}
+				/>
+
+				<CardContent
 					sx={{
+						width: '100%',
 						display: 'flex',
+						justifyContent: 'space-between',
 						alignItems: 'center',
-						height: 135,
-						boxShadow: 'none',
-						backgroundColor: 'clrCardBg',
 					}}>
-					{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-						checkIfUserMaterialIsInMaterials.is_being_studied && (
-							<FontAwesomeIcon
-								icon={faClock}
-								className={styles.beingStudiedCard}
-							/>
-						)}
-					{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
-						checkIfUserMaterialIsInMaterials.is_studied && (
-							<FontAwesomeIcon
-								icon={faCircleCheck}
-								className={styles.studiedCard}
-							/>
-						)}
-					<CardMedia
-						component='img'
-						sx={{ maxWidth: 135, height: 135, margin: 0 }}
-						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
-						alt={material.title}
-					/>
+					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						<Typography
+							component='div'
+							variant='h6'
+							color='clrPrimary1'
+							sx={{ lineHeight: '1.5rem' }}>
+							{material.title}
+						</Typography>
 
-					<CardContent
-						sx={{
-							width: '100%',
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}>
-						<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						<Box sx={{ display: 'flex', gap: 1 }}>
 							<Typography
+								variant='subtitle1'
 								component='div'
-								variant='h6'
-								color='clrPrimary1'
-								sx={{ lineHeight: '1.5rem' }}>
-								{material.title}
+								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								{material.section}
 							</Typography>
+							<Typography
+								variant='subtitle1'
+								component='div'
+								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								{material.level}
+							</Typography>
+						</Box>
+					</Box>
+					<Box sx={{ justifySelf: 'end', color: 'clrGrey2' }}>
+						<FontAwesomeIcon
+							icon={changeIconRegardingSection(material.section)}
+							size='2xl'
+						/>
+					</Box>
+				</CardContent>
+				<span className={changeBackgroundColorRegardingLevel(material.level)}>
+					{changeLevelName(material.level)}
+				</span>
+			</Card>
+		</CardActionArea>
+	)
 
-							<Box sx={{ display: 'flex', gap: 1 }}>
-								<Typography
-									variant='subtitle1'
-									component='div'
-									sx={{ fontWeight: '500', color: 'clrGrey2' }}>
-									{material.section}
-								</Typography>
-								<Typography
-									variant='subtitle1'
-									component='div'
-									sx={{ fontWeight: '500', color: 'clrGrey2' }}>
-									{material.level}
-								</Typography>
-							</Box>
-						</Box>
-						<Box sx={{ justifySelf: 'end', color: 'clrGrey2' }}>
-							<FontAwesomeIcon
-								icon={changeIconRegardingSection(material.section)}
-								size='2xl'
-							/>
-						</Box>
-					</CardContent>
-					<span className={changeBackgroundColorRegardingLevel(material.level)}>
-						{changeLevelName(material.level)}
-					</span>
-				</Card>
-			</CardActionArea>
+	return section === 'books' ? (
+		<button onClick={handleClick} className={styles.cardButton}>
+			<SectionCardContent />
+		</button>
+	) : (
+		<Link href={`${material.section}/${material.id}`}>
+			<SectionCardContent />
 		</Link>
 	)
 }
