@@ -5,6 +5,7 @@ const initialState = {
 	activities: [],
 	activities_loading: true,
 	activities_pending: false,
+	activities_error: null,
 }
 
 export const getActivities = createAsyncThunk(
@@ -33,6 +34,7 @@ const activitiesSlice = createSlice({
 		builder
 			.addCase(getActivities.pending, state => {
 				state.activities_loading = true
+				state.activities_error = null
 			})
 			.addCase(getActivities.fulfilled, (state, { payload }) => {
 				state.activities_loading = false

@@ -3,10 +3,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 
 const initialState = {
-	contentEdit: {},
+	editingContent: {},
 	contentType: 'materials',
-	edit: false,
-	create_content_error: true,
+	isEditingContent: false,
+	create_content_loading: true,
+	create_content_error: null,
+	edit_content_loading: true,
+	edit_content_error: null,
 }
 
 export const createContent = createAsyncThunk(
@@ -26,7 +29,11 @@ export const createContent = createAsyncThunk(
 				if (error) console.log(error)
 			}
 
-			files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
+			// files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
+
+			await Promise.all(
+				files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
+			)
 		}
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
@@ -58,20 +65,6 @@ export const updateContent = createAsyncThunk(
 	}
 )
 
-// export const uploadFile = createAsyncThunk(
-// 	'content/uploadFile',
-// 	async ({ file, path, name }, thunkAPI) => {
-// 		let subpath = ''
-// 		if (name === 'img') subpath = 'image'
-// 		if (name === 'audio') subpath = 'audio'
-// 		const { data, error } = await supabase.storage
-// 			.from('linguami')
-// 			.upload(`public/linguami/${subpath}/${path}`, file)
-
-// 		if (error) return thunkAPI.rejectWithValue(error.message)
-// 	}
-// )
-
 const contentSlice = createSlice({
 	name: 'content',
 	initialState,
@@ -83,30 +76,41 @@ const contentSlice = createSlice({
 	extraReducers: builder => {
 		builder
 			.addCase(createContent.pending, state => {
-				state.create_content_error = true
+				state.create_content_loading = true
+				state.create_content_error = null
 			})
 			.addCase(createContent.fulfilled, state => {
 				toast.success('POST SUCCESS !')
-				state.create_content_error = false
+				state.create_content_loading = false
+				state.create_content_error = null
 			})
-			.addCase(createContent, (state, { payload }) => {
-				state.create_content_error = true
+			.addCase(createContent.rejected, (state, { payload }) => {
+				state.create_content_loading = false
+				state.create_content_error = payload
 				toast.error(payload)
+			})
+			.addCase(editContent.pending, state => {
+				state.edit_content_loading = true
+				state.edit_content_error = null
 			})
 			.addCase(editContent.fulfilled, (state, { payload }) => {
 				const [content] = payload
-				state.edit = true
-				state.contentEdit = content
+				state.isEditingContent = true
+				state.editingContent = content
+				state.edit_content_loading = false
+				state.edit_content_error = null
 			})
 			.addCase(editContent.rejected, (_, { payload }) => {
+				state.edit_content_error = payload
 				toast.error(payload)
 			})
 			.addCase(updateContent.fulfilled, state => {
-				state.edit = false
-				state.contentEdit = {}
+				state.isEditingContent = false
+				state.editingContent = {}
 				toast.success('EDIT SUCCESS !')
 			})
 			.addCase(updateContent.rejected, (_, { payload }) => {
+				state.edit_content_loading = true
 				toast.error(payload)
 			})
 	},

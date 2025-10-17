@@ -12,7 +12,7 @@ const initialState = {
 	user_material_words_pending: false,
 	translation: {},
 	translation_loading: false,
-	translation_error: false,
+	translation_error: null,
 	isTranslationOpen: false,
 	word_sentence: [],
 }
@@ -196,7 +196,7 @@ const wordsSlice = createSlice({
 					const definitions = wordInfos.tr.map(def => def.text).splice(0, 5)
 
 					state.translation = { word, asp, inf, form, definitions }
-					state.translation_error = false
+					state.translation_error = null
 				} else {
 					state.translation_error = 'Aucune traduction trouvée'
 					state.translation = { word }

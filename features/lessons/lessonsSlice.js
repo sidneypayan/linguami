@@ -6,13 +6,13 @@ const initialState = {
 	lessons: [],
 	lessons_loading: true,
 	lessons_pending: false,
-	lessons_error: false,
+	lessons_error: null,
 	user_lessons_status: [],
-	user_lessons_status_loading: false,
-	user_lessons_status_error: false,
+	user_lessons_status_loading: true,
+	user_lessons_status_error: null,
 	user_lesson_status: [],
-	user_lesson_status_loading: false,
-	user_lesson_status_error: false,
+	user_lesson_status_loading: true,
+	user_lesson_status_error: null,
 }
 
 export const getLessons = createAsyncThunk(
@@ -34,7 +34,7 @@ export const getLessons = createAsyncThunk(
 )
 
 export const addLessonToStudied = createAsyncThunk(
-	'userLesson/addLessonToStudied',
+	'lessons/addLessonToStudied',
 	async (id, thunkAPI) => {
 		const { data: doLessonExists, error } = await supabase
 			.from('user_lessons')
@@ -61,7 +61,7 @@ export const addLessonToStudied = createAsyncThunk(
 )
 
 export const getUserLessonsStatus = createAsyncThunk(
-	'userLesson/getUserLessonsStatus',
+	'lessons/getUserLessonsStatus',
 	async (_, thunkAPI) => {
 		const { data: userLessonsStatus, error } = await supabase
 			.from('user_lessons')
@@ -77,7 +77,7 @@ export const getUserLessonsStatus = createAsyncThunk(
 )
 
 export const getUserLessonStatus = createAsyncThunk(
-	'userLesson/getUserLessonStatus',
+	'lessons/getUserLessonStatus',
 	async (param, thunkAPI) => {
 		const { data: userLessonStatus, error } = await supabase
 			.from('user_lessons')
@@ -102,9 +102,11 @@ const lessonsSlice = createSlice({
 		builder
 			.addCase(getLessons.pending, state => {
 				state.lessons_loading = true
+				state.lessons_error = null
 			})
 			.addCase(getLessons.fulfilled, (state, { payload }) => {
 				state.lessons_loading = false
+				state.lessons_error = null
 				state.lessons = payload
 			})
 			.addCase(getLessons.rejected, (state, { payload }) => {
@@ -113,10 +115,12 @@ const lessonsSlice = createSlice({
 			})
 			.addCase(getUserLessonsStatus.pending, state => {
 				state.user_lessons_status_loading = true
+				state.user_lessons_status_error = null
 			})
 			.addCase(getUserLessonsStatus.fulfilled, (state, { payload }) => {
 				state.user_lessons_status = payload
 				state.user_lessons_status_loading = false
+				state.user_lessons_status_error = null
 			})
 			.addCase(getUserLessonsStatus.rejected, (state, { payload }) => {
 				state.user_lessons_status_loading = false
@@ -124,10 +128,12 @@ const lessonsSlice = createSlice({
 			})
 			.addCase(getUserLessonStatus.pending, state => {
 				state.user_lesson_status_loading = true
+				state.user_lesson_status_error = null
 			})
 			.addCase(getUserLessonStatus.fulfilled, (state, { payload }) => {
 				state.user_lesson_status = payload
 				state.user_lesson_status_loading = false
+				state.user_lesson_status_error = null
 			})
 			.addCase(getUserLessonStatus.rejected, (state, { payload }) => {
 				state.user_lesson_status_loading = false

@@ -8,7 +8,6 @@ import {
 	createContent,
 	updateContent,
 	toggleContentType,
-	// uploadFile,
 } from '../../features/content/contentSlice'
 import { useRouter } from 'next/router'
 import { materialData, postData } from '../../utils/constants'
