@@ -21,53 +21,7 @@ const Admin = ({
 			<Typography mt={3} mb={3} variant='h3'>
 				Sections
 			</Typography>
-			{/* <Box
-				gap={2}
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(5, 1fr)',
-				}}>
-				{materialsCount.map((materialsCount, index) => (
-					<Card key={index}>
-						<CardContent sx={{ textAlign: 'center' }}>
-							<Link href={`/materials/${materialsCount.section}`}>
-								<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-									{materialsCount.section}
-								</Typography>
-							</Link>
-							<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-								{materialsCount.count}
-							</Typography>
-						</CardContent>
-					</Card>
-				))}
 
-				<Card>
-					<CardContent sx={{ textAlign: 'center' }}>
-						<Link href='/materials/books'>
-							<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-								musics
-							</Typography>
-						</Link>
-						<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-							{musicCount}
-						</Typography>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardContent sx={{ textAlign: 'center' }}>
-						<Link href='/materials/books'>
-							<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-								books
-							</Typography>
-						</Link>
-						<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-							{booksCount}
-						</Typography>
-					</CardContent>
-				</Card>
-			</Box> */}
 			{materialsCountByLang.map(({ lang, counts }) => {
 				// Récupérer les musiques et livres pour cette langue
 				const music = musicCountByLang.find(m => m.lang === lang)
