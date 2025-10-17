@@ -7,7 +7,7 @@ export const sections = {
 		'beautiful-places',
 		'podcasts',
 		'books',
-		'book-chapter',
+		'book-chapters',
 		'short-stories',
 	],
 	video: [
@@ -29,7 +29,7 @@ export const allSections = [
 	'beautiful-places',
 	'podcasts',
 	'books',
-	'book-chapter',
+	'book-chapters',
 	'short-stories',
 	'movie-trailers',
 	'movie-clips',

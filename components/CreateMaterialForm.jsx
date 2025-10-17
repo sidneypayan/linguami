@@ -2,7 +2,7 @@ import { Box, Button } from '@mui/material'
 import { FormRow, FormRowSelect } from '.'
 import { allSections } from '../data/sections'
 import { lang, level } from '../utils/constants'
-import { Image, AudioFile } from '@mui/icons-material'
+import { Image as ImageIcon, AudioFile } from '@mui/icons-material'
 
 const CreateMaterialForm = ({ formData, handleChange, handleFileChange }) => {
 	return (
@@ -63,7 +63,7 @@ const CreateMaterialForm = ({ formData, handleChange, handleFileChange }) => {
 					handleChange={handleChange}
 					name='img'
 				/> */}
-				<Button component='label' variant='outlined' startIcon={<Image />}>
+				<Button component='label' variant='outlined' startIcon={<ImageIcon />}>
 					Ajouter une image
 					<input onChange={handleChange} name='image' hidden type='file' />
 				</Button>
@@ -94,16 +94,16 @@ const CreateMaterialForm = ({ formData, handleChange, handleFileChange }) => {
 					mb: 1,
 				}}>
 				<FormRow
-					label='Book Name'
-					value={formData.book_name ?? ''}
+					label='Book Id'
+					value={formData.book_id ?? ''}
 					handleChange={handleChange}
-					name='book_name'
+					name='book_id'
 				/>
 				<FormRow
-					label='Book Chapter'
-					value={formData.book_chapter ?? ''}
+					label='Chapter Number'
+					value={formData.chapter_number ?? ''}
 					handleChange={handleChange}
-					name='book_chapter'
+					name='chapter_number'
 				/>
 			</Box>
 			<Box

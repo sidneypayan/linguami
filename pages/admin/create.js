@@ -18,9 +18,12 @@ const CreateMaterial = () => {
 
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { contentType, contentEdit, edit, create_content_error } = useSelector(
-		store => store.content
-	)
+	const {
+		contentType,
+		editingContent,
+		isEditingContent,
+		create_content_error,
+	} = useSelector(store => store.content)
 
 	const toggleContent = () => {
 		dispatch(
@@ -51,34 +54,65 @@ const CreateMaterial = () => {
 		})
 	}
 
-	const submitContent = e => {
+	// const submitContent = e => {
+	// 	e.preventDefault()
+	// 	if (!isEditingContent && contentType !== 'posts') {
+	// 		formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
+	// 		formData.body_accents = formData.body_accents.replace(
+	// 			/(\r\n|\n|\r)/gm,
+	// 			'<br>'
+	// 		)
+	// 		return dispatch(createContent({ content: formData, contentType, files }))
+	// 	}
+
+	// 	if (!isEditingContent && contentType === 'posts')
+	// 		return dispatch(createContent({ content: formData, contentType }))
+
+	// 	if (isEditingContent)
+	// 		return dispatch(updateContent({ content: formData, contentType }))
+	// 	router.back()
+	// }
+
+	const submitContent = async e => {
 		e.preventDefault()
-		if (!edit && contentType !== 'posts') {
-			formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
-			formData.body_accents = formData.body_accents.replace(
-				/(\r\n|\n|\r)/gm,
-				'<br>'
-			)
-			return dispatch(createContent({ content: formData, contentType, files }))
+
+		try {
+			const cleanedFormData = {
+				...formData,
+				body: formData.body.replace(/(\r\n|\n|\r)/gm, '<br>'),
+				body_accents: formData.body_accents.replace(/(\r\n|\n|\r)/gm, '<br>'),
+			}
+
+			if (!isEditingContent && contentType !== 'posts') {
+				await dispatch(
+					createContent({ content: cleanedFormData, contentType, files })
+				).unwrap()
+			} else if (!isEditingContent && contentType === 'posts') {
+				await dispatch(
+					createContent({ content: formData, contentType })
+				).unwrap()
+			} else if (isEditingContent) {
+				await dispatch(
+					updateContent({ content: formData, contentType })
+				).unwrap()
+			}
+
+			router.back()
+		} catch (err) {
+			console.error('Erreur lors de l’envoi du contenu :', err)
 		}
-
-		if (!edit && contentType === 'posts')
-			return dispatch(createContent({ content: formData, contentType }))
-
-		if (edit) return dispatch(updateContent({ content: formData, contentType }))
-		router.back()
 	}
 
 	useEffect(() => {
-		if (Object.keys(contentEdit).length > 0) {
-			setFormData(contentEdit)
+		if (Object.keys(editingContent).length > 0) {
+			setFormData(editingContent)
 		}
-	}, [contentEdit])
+	}, [editingContent])
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
 			<Stack direction='row' mb={4} gap={2} justifyContent='space-between'>
-				{!edit && (
+				{!isEditingContent && (
 					<Button onClick={toggleContent} variant='contained'>
 						Create {contentType === 'materials' ? 'posts' : 'materials'}
 					</Button>
@@ -90,7 +124,7 @@ const CreateMaterial = () => {
 					variant='contained'
 					size='large'
 					sx={{ display: 'block', margin: '0 auto', marginBottom: '2rem' }}>
-					{edit ? 'EDIT' : 'CREATE'}
+					{isEditingContent ? 'EDIT' : 'CREATE'}
 				</Button>
 				{contentType === 'posts' ? (
 					<>

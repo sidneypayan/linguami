@@ -257,7 +257,7 @@ export const materialData = {
 	lang: 'ru',
 	section: '',
 	book_id: '',
-	book_chapter: '',
+	chapter_number: '',
 	level: '',
 	title: '',
 	image: '',
