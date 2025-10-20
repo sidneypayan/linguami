@@ -1,220 +1,322 @@
-import { useState, useEffect, createContext, useContext } from 'react'
-import { supabase } from '../lib/supabase'
+// /context/UserContext.jsx
+import {
+	useState,
+	useEffect,
+	useMemo,
+	useCallback,
+	createContext,
+	useContext,
+} from 'react'
+import { supabase } from '../lib/supabase' // client navigateur (@supabase/ssr)
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import axios from 'axios'
-// import { useSelector, useDispatch } from 'react-redux'
-// import {
-// 	cleanUserMaterialStatus
-// } from '../features/materials/materialsSlice'
 
-const UserContext = createContext()
+// --------------------------------------------------------
+// Contexte
+// --------------------------------------------------------
+const UserContext = createContext(undefined)
 
 const UserProvider = ({ children }) => {
 	const router = useRouter()
+
+	// ---- Etats
 	const [user, setUser] = useState(null)
 	const [userProfile, setUserProfile] = useState(null)
-	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
 	const [isUserAdmin, setIsUserAdmin] = useState(false)
 	const [isUserPremium, setIsUserPremium] = useState(false)
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
+	const [isBootstrapping, setIsBootstrapping] = useState(true)
 
-	useEffect(() => {
-		if (supabase.auth.session()) {
-			const getUser = async () => {
-				const { user } = supabase.auth.session()
-				const { data: userData } = await supabase
-					.from('users_profile')
-					.select('*')
-					.eq('id', user.id)
-					.single()
+	// ---- Helpers
+	const safeToastError = (err, fallback = 'Une erreur est survenue') => {
+		const message = (typeof err === 'string' ? err : err?.message) || fallback
+		toast.error(message)
+	}
 
-				setUserProfile({ ...user, ...userData })
-				setUser(user)
-				setUserLearningLanguage(userData.learning_language)
-				localStorage.setItem('learning_language', userData.learning_language)
-			}
-
-			getUser()
-		} else {
-			const storedLanguage = localStorage.getItem('learning_language')
-
-			if (storedLanguage) {
-				setUserLearningLanguage(storedLanguage)
-			} else {
-				localStorage.setItem(
-					'learning_language',
-					router.locale === 'ru' ? 'fr' : 'ru'
-				)
-				setUserLearningLanguage(router.locale === 'ru' ? 'fr' : 'ru')
-			}
-		}
+	const fetchUserProfile = useCallback(async userId => {
+		const { data, error } = await supabase
+			.from('users_profile')
+			.select('*')
+			.eq('id', userId)
+			.maybeSingle() // 0 ou 1 row → pas d'erreur 406 si absent
+		if (error) throw error
+		return data
 	}, [])
 
-	const register = async userData => {
-		const { email, password } = userData
+	const hydrateFromSession = useCallback(
+		async session => {
+			if (!session?.user) {
+				setUser(null)
+				setUserProfile(null)
+				setIsUserAdmin(false)
+				setIsUserPremium(false)
+				return
+			}
+			const signedUser = session.user
+			setUser(signedUser)
 
-		const { user, session, error } = await supabase.auth.signUp(
-			{
-				email,
-				password,
-			},
-			{
-				data: {
-					learning_language: userLearningLanguage,
-				},
+			try {
+				const profile = await fetchUserProfile(signedUser.id)
+				if (profile) {
+					setUserProfile({ ...signedUser, ...profile })
+					setIsUserAdmin(profile?.role === 'admin') // ajuste selon ton schéma
+					setIsUserPremium(!!profile?.is_premium)
+
+					if (profile?.learning_language) {
+						setUserLearningLanguage(profile.learning_language)
+						try {
+							localStorage.setItem(
+								'learning_language',
+								profile.learning_language
+							)
+						} catch {}
+					}
+				} else {
+					// Pas de ligne dans users_profile : on garde le user “Auth”
+					setUserProfile(signedUser)
+				}
+			} catch (err) {
+				safeToastError(err, 'Impossible de charger le profil utilisateur')
+			}
+		},
+		[fetchUserProfile]
+	)
+
+	// --------------------------------------------------------
+	// Bootstrap initial (lecture session, init langue invité)
+	// --------------------------------------------------------
+	useEffect(() => {
+		let cancelled = false
+
+		const init = async () => {
+			try {
+				const { data: { session } = {} } = await supabase.auth.getSession()
+				if (session?.user) {
+					await hydrateFromSession(session)
+				} else {
+					// invité : init langue depuis localStorage ou fallback basé sur locale
+					try {
+						const stored = localStorage.getItem('learning_language')
+						const fallback = router?.locale === 'ru' ? 'fr' : 'ru'
+						const lang = stored || fallback
+						setUserLearningLanguage(lang)
+						if (!stored) localStorage.setItem('learning_language', lang)
+					} catch {}
+				}
+			} finally {
+				if (!cancelled) setIsBootstrapping(false)
+			}
+		}
+
+		init()
+		return () => {
+			cancelled = true
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	// --------------------------------------------------------
+	// Listener d’auth (UI uniquement — aucune redirection ici)
+	// --------------------------------------------------------
+	useEffect(() => {
+		const { data: { subscription } = {} } = supabase.auth.onAuthStateChange(
+			(event, session) => {
+				// Evite l'async direct dans le callback (reco Supabase)
+				setTimeout(async () => {
+					try {
+						if (
+							event === 'INITIAL_SESSION' ||
+							event === 'TOKEN_REFRESHED' ||
+							event === 'SIGNED_IN'
+						) {
+							// hydrate silencieusement, sans redirection
+							await hydrateFromSession(session)
+							return
+						}
+
+						if (event === 'SIGNED_OUT') {
+							setUser(null)
+							setUserProfile(null)
+							setIsUserAdmin(false)
+							setIsUserPremium(false)
+							// Ici tu peux toaster si besoin, mais sans forcer la redirection
+							// toast.success('Déconnexion en cours...')
+						}
+					} catch (err) {
+						safeToastError(err)
+					}
+				}, 0)
 			}
 		)
 
-		if (error) {
-			return toast.error(error)
+		return () => {
+			subscription?.unsubscribe?.()
 		}
+	}, [hydrateFromSession])
 
-		toast.success('Nous vous avons envoyé un mail de confirmation')
+	// --------------------------------------------------------
+	// Actions Auth (v2)
+	// --------------------------------------------------------
+	const register = useCallback(
+		async ({ email, password }) => {
+			const { error } = await supabase.auth.signUp({
+				email,
+				password,
+				options: {
+					data: { learning_language: userLearningLanguage },
+					// callback après confirmation (doit être whitelisted)
+					emailRedirectTo: `${
+						process.env.NEXT_PUBLIC_API_URL || window.location.origin
+					}/auth/callback`,
+				},
+			})
+			if (error) return safeToastError(error)
 
-		setTimeout(() => {
+			toast.success('Nous vous avons envoyé un mail de confirmation')
+			// Redirection douce, optionnelle
+			setTimeout(() => router.push('/'), 1200)
+		},
+		[router, userLearningLanguage]
+	)
+
+	const login = useCallback(
+		async ({ email, password }) => {
+			const { error } = await supabase.auth.signInWithPassword({
+				email,
+				password,
+			})
+			if (error) {
+				if (error.message === 'Invalid login credentials') {
+					return toast.error('Vos identifiants sont erronés')
+				}
+				if (error.message === 'Email not confirmed') {
+					return toast.error("Nous vous avons envoyé un mail d'inscription")
+				}
+				return safeToastError(error)
+			}
+
+			// 👉 Rediriger UNIQUEMENT ici (vrai login) — pas dans le listener
+			toast.success('Vous êtes bien connecté')
 			router.push('/')
-		}, 3500)
-	}
+		},
+		[router]
+	)
 
-	const login = async userData => {
-		const { email, password } = userData
-		const { data, error } = await supabase.auth.signIn({
-			email,
-			password,
-		})
-
-		if (error) {
-			if (error.message === 'Invalid login credentials') {
-				return toast.error('Vos identifiants sont erronés')
-			}
-			if (error.message === 'Email not confirmed') {
-				return toast.error("Nous vous avons envoyé un mail d'inscription")
-			}
-			return toast.error(error.message)
-		}
-
-		router.push('/')
-		toast.success('Vous êtes bien connecté')
-	}
-
-	const loginWithThirdPartyOAuth = async provider => {
-		const { user, session, error } = await supabase.auth.signIn({
+	const loginWithThirdPartyOAuth = useCallback(async provider => {
+		const { error } = await supabase.auth.signInWithOAuth({
 			provider,
+			options: {
+				redirectTo: process.env.NEXT_PUBLIC_API_URL || window.location.origin,
+			},
 		})
-	}
+		if (error) safeToastError(error)
+		// Redirection gérée par le provider / callback
+	}, [])
 
-	const logout = async () => {
-		await supabase.auth.signOut()
-		setUser(null)
-		router.push('/')
-		toast.success('Déconnexion en cours...')
-	}
+	const logout = useCallback(async () => {
+		const { error } = await supabase.auth.signOut()
+		if (error) return safeToastError(error)
+		// Le listener gère le reset d’état ; pas de redirection forcée ici
+	}, [])
 
-	const updatePassword = async email => {
-		let { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
-			redirectTo: `${process.env.NEXT_PUBLIC_API_URL}/set-password`,
+	const updatePassword = useCallback(async email => {
+		const { error } = await supabase.auth.resetPasswordForEmail(email, {
+			redirectTo: `${
+				process.env.NEXT_PUBLIC_API_URL || window.location.origin
+			}/set-password`,
 		})
-
-		if (error) {
-			return toast.error(error)
-		}
-
+		if (error) return safeToastError(error)
 		toast.success(
 			'Vous allez recevoir un email avec les instructions nécessaires'
 		)
-	}
-
-	const setNewPassword = async password => {
-		const { data, error } = await supabase.auth.update({
-			password: password,
-		})
-
-		if (data) {
-			toast.success('Mot de passe mis à jour avec succès')
-			router.push('/')
-		}
-		if (error) toast.error('Erreur avec le mot de passe')
-	}
-
-	const changeLearningLanguage = async learningLanguage => {
-		if (user) {
-			const { data } = await supabase
-				.from('users_profile')
-				.update({ learning_language: learningLanguage })
-				.eq('id', user.id)
-			const { learning_language } = data[0]
-			setUserLearningLanguage(learning_language)
-			localStorage.setItem('learning_language', learningLanguage)
-		} else {
-			setUserLearningLanguage(learningLanguage)
-			localStorage.setItem('learning_language', learningLanguage)
-		}
-	}
-
-	useEffect(() => {
-		supabase.auth.onAuthStateChange((event, session) => {
-			if (event == 'SIGNED_IN') {
-				const getUserProfile = async () => {
-					const { data: userData } = await supabase
-						.from('users_profile')
-						.select('*')
-						.eq('id', user.id)
-						.single()
-
-					setUserProfile({ ...user, ...userData })
-				}
-
-				const { user } = session
-				setUser(user)
-				getUserProfile()
-			}
-
-			if (event == 'SIGNED_OUT') {
-				setIsUserAdmin(false)
-				setIsUserPremium(false)
-				// dispatch(cleanUserMaterialStatus())
-			}
-		})
 	}, [])
 
-	useEffect(() => {
-		if (userProfile) {
-			setIsUserAdmin(userProfile?.role)
-			setIsUserPremium(userProfile?.is_premium)
-		}
-	}, [userProfile])
+	const setNewPassword = useCallback(
+		async password => {
+			const { error } = await supabase.auth.updateUser({ password })
+			if (error) return safeToastError(error, 'Erreur avec le mot de passe')
+			toast.success('Mot de passe mis à jour avec succès')
+			router.push('/')
+		},
+		[router]
+	)
 
-	useEffect(() => {
-		axios.post('/api/auth', {
-			event: user ? 'SIGNED_IN' : 'SIGNED_OUT',
-			session: supabase.auth.session(),
-		})
+	const changeLearningLanguage = useCallback(
+		async learningLanguage => {
+			try {
+				if (user) {
+					const { data, error } = await supabase
+						.from('users_profile')
+						.update({ learning_language: learningLanguage })
+						.eq('id', user.id)
+						.select() // v2: nécessaire pour lire la ligne modifiée
+					if (error) throw error
 
-		if (user) {
-			setIsUserLoggedIn(true)
-		} else {
-			setIsUserLoggedIn(false)
-		}
-	}, [user])
+					const updated = Array.isArray(data) ? data[0] : data
+					const lang = updated?.learning_language || learningLanguage
+					setUserLearningLanguage(lang)
+					try {
+						localStorage.setItem('learning_language', lang)
+					} catch {}
+				} else {
+					setUserLearningLanguage(learningLanguage)
+					try {
+						localStorage.setItem('learning_language', learningLanguage)
+					} catch {}
+				}
+			} catch (err) {
+				safeToastError(err, 'Erreur lors de la mise à jour de la langue')
+			}
+		},
+		[user]
+	)
 
-	const exposed = {
-		user,
-		isUserAdmin,
-		userProfile,
-		isUserLoggedIn,
-		register,
-		login,
-		loginWithThirdPartyOAuth,
-		logout,
-		updatePassword,
-		setNewPassword,
-		userLearningLanguage,
-		changeLearningLanguage,
-	}
+	// --------------------------------------------------------
+	// Valeur exposée
+	// --------------------------------------------------------
+	const value = useMemo(
+		() => ({
+			user,
+			userProfile,
+			isUserAdmin,
+			isUserPremium,
+			isUserLoggedIn: !!user,
+			isBootstrapping,
+			userLearningLanguage,
 
-	return <UserContext.Provider value={exposed}>{children}</UserContext.Provider>
+			register,
+			login,
+			loginWithThirdPartyOAuth,
+			logout,
+			updatePassword,
+			setNewPassword,
+			changeLearningLanguage,
+		}),
+		[
+			user,
+			userProfile,
+			isUserAdmin,
+			isUserPremium,
+			isBootstrapping,
+			userLearningLanguage,
+			register,
+			login,
+			loginWithThirdPartyOAuth,
+			logout,
+			updatePassword,
+			setNewPassword,
+			changeLearningLanguage,
+		]
+	)
+
+	return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
 
-export const useUserContext = () => useContext(UserContext)
+// Hook
+export const useUserContext = () => {
+	const ctx = useContext(UserContext)
+	if (!ctx) throw new Error('useUserContext must be used within a UserProvider')
+	return ctx
+}
+
 export default UserProvider

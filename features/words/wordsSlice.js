@@ -17,25 +17,35 @@ const initialState = {
 	word_sentence: [],
 }
 
+// ---------------------------------------------
+// TRANSLATE
+// ---------------------------------------------
 export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
-		let { word, sentence, userLearningLanguage } = param
-		const langPair = userLearningLanguage === 'ru' ? 'ru-fr' : 'fr-ru'
-
-		word =
-			userLearningLanguage === 'ru'
-				? word.match(/[\u0430-\u044f\ё]+/gi).join('')
-				: word
-
 		try {
-			const { data } = await axios.get(
-				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072&lang=${langPair}&text=${word}&flags=004`
-			)
-			if (!data.def.length) {
+			let { word, sentence, userLearningLanguage } = param
+			const langPair = userLearningLanguage === 'ru' ? 'ru-fr' : 'fr-ru'
+
+			// Normalisation mot (cyrillique uniquement côté ru)
+			if (userLearningLanguage === 'ru') {
+				// Inclut А-Я а-я Ё ё, avec flag unicode
+				const matches = word.match(/[А-Яа-яЁё]+/gu)
+				word = matches ? matches.join('') : ''
+			}
+
+			const url =
+				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup` +
+				`?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072` +
+				`&lang=${langPair}&text=${encodeURIComponent(word)}&flags=004`
+
+			const { data } = await axios.get(url)
+
+			if (!data?.def?.length) {
+				// Pas de traduction trouvée → on renvoie quand même le mot + phrase
 				return { word, sentence }
 			}
-			// return thunkAPI.rejectWithValue('Aucune traduction trouvée')
+
 			return { word, data, sentence }
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -43,6 +53,9 @@ export const translateWord = createAsyncThunk(
 	}
 )
 
+// ---------------------------------------------
+// INSERT (v2: .select())
+// ---------------------------------------------
 export const addWordToDictionary = createAsyncThunk(
 	'words/addWordsToUserDictionary',
 	async (word, thunkAPI) => {
@@ -54,31 +67,38 @@ export const addWordToDictionary = createAsyncThunk(
 			word_sentence,
 			lang,
 		} = word
+
 		try {
-			const { data, error } = await supabase.from('user_words').insert([
-				{
-					word_ru: originalWord,
-					word_fr: translatedWord,
-					user_id: userId,
-					material_id: materialId,
-					word_sentence: word_sentence,
-				},
-			])
+			const { data, error } = await supabase
+				.from('user_words')
+				.insert([
+					{
+						word_ru: originalWord,
+						word_fr: translatedWord,
+						user_id: userId,
+						material_id: materialId,
+						word_sentence: word_sentence,
+					},
+				])
+				.select('*') // v2: indispensable si on veut les lignes
 
 			if (error) {
-				const errorMessage = error.message.includes('duplicate key value')
-					? 'duplicate_translation'
-					: 'unexpected_error'
-
-				const message = getaddWordsToUserDictionaryMessage(errorMessage, lang)
-
+				// v2 renvoie souvent code '23505' pour doublon
+				const isDuplicate =
+					error?.code === '23505' ||
+					(typeof error?.message === 'string' &&
+						error.message.toLowerCase().includes('duplicate key value'))
+				const key = isDuplicate ? 'duplicate_translation' : 'unexpected_error'
+				const message = getaddWordsToUserDictionaryMessage(key, lang)
 				return thunkAPI.rejectWithValue({ error: message })
 			}
+
 			const message = getaddWordsToUserDictionaryMessage(
 				'success_add_translation',
 				lang
 			)
-			return { success: message, data }
+
+			return { success: message, data: data || [] }
 		} catch (error) {
 			const message = getaddWordsToUserDictionaryMessage(
 				'unexpected_error',
@@ -89,9 +109,11 @@ export const addWordToDictionary = createAsyncThunk(
 	}
 )
 
+// ---------------------------------------------
+// READS
+// ---------------------------------------------
 export const getUserMaterialWords = createAsyncThunk(
 	'words/getUserMaterialWords',
-
 	async (param, thunkAPI) => {
 		const { userId, materialId } = param
 		try {
@@ -101,6 +123,7 @@ export const getUserMaterialWords = createAsyncThunk(
 				.eq('user_id', userId)
 				.eq('material_id', materialId)
 
+			if (error) return thunkAPI.rejectWithValue(error)
 			return data
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -110,7 +133,6 @@ export const getUserMaterialWords = createAsyncThunk(
 
 export const getAllUserWords = createAsyncThunk(
 	'words/getAllUserWords',
-
 	async (userId, thunkAPI) => {
 		try {
 			const { data, error } = await supabase
@@ -118,6 +140,7 @@ export const getAllUserWords = createAsyncThunk(
 				.select('*')
 				.eq('user_id', userId)
 
+			if (error) return thunkAPI.rejectWithValue(error)
 			return data
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -125,31 +148,58 @@ export const getAllUserWords = createAsyncThunk(
 	}
 )
 
+// ---------------------------------------------
+// DELETE ONE (v2: .select('id'))
+// ---------------------------------------------
 export const deleteUserWord = createAsyncThunk(
 	'words/deleteUserWord',
-	async (param, thunkAPI) => {
+	async (id, thunkAPI) => {
 		try {
 			const { data, error } = await supabase
 				.from('user_words')
 				.delete()
-				.match({ id: param })
+				.eq('id', id)
+				.select('id') // v2: sinon data=null
 
-			return data.id
+			if (error) return thunkAPI.rejectWithValue(error)
+
+			const deletedId = Array.isArray(data) ? data[0]?.id : data?.id
+			if (!deletedId) {
+				return thunkAPI.rejectWithValue({
+					error:
+						"Impossible de supprimer ce mot (vérifiez RLS/permissions ou l'existence).",
+				})
+			}
+			return deletedId
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
 	}
 )
+
+// ---------------------------------------------
+// DELETE MANY (v2: .select('id') → array d'ids)
+// ---------------------------------------------
 export const deleteUserWords = createAsyncThunk(
 	'words/deleteUserWords',
-	async (param, thunkAPI) => {
+	async (ids, thunkAPI) => {
 		try {
 			const { data, error } = await supabase
 				.from('user_words')
 				.delete()
-				.in('id', param)
+				.in('id', ids)
+				.select('id') // v2: sinon data=null
 
-			return data.id
+			if (error) return thunkAPI.rejectWithValue(error)
+
+			const deletedIds = Array.isArray(data) ? data.map(r => r.id) : []
+			if (deletedIds.length === 0) {
+				return thunkAPI.rejectWithValue({
+					error:
+						'Aucune ligne supprimée (vérifiez RLS/permissions ou les identifiants).',
+				})
+			}
+			return deletedIds
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
 		}
@@ -169,6 +219,7 @@ const wordsSlice = createSlice({
 	},
 	extraReducers: builder => {
 		builder
+			// TRANSLATE
 			.addCase(translateWord.pending, state => {
 				state.translation_loading = true
 			})
@@ -181,17 +232,8 @@ const wordsSlice = createSlice({
 					const wordInfos = payload.data.def[0]
 					const inf = wordInfos.text || null
 
-					if (wordInfos.asp === 'несов') {
-						asp = 'imperfectif'
-					} else {
-						asp = 'perfectif'
-					}
-
-					if (wordInfos.pos === 'verb') {
-						form = 'infinitif'
-					} else {
-						form = 'nominatif'
-					}
+					asp = wordInfos.asp === 'несов' ? 'imperfectif' : 'perfectif'
+					form = wordInfos.pos === 'verb' ? 'infinitif' : 'nominatif'
 
 					const definitions = wordInfos.tr.map(def => def.text).splice(0, 5)
 
@@ -206,44 +248,62 @@ const wordsSlice = createSlice({
 			})
 			.addCase(translateWord.rejected, (state, { payload }) => {
 				state.translation_loading = false
-				state.translation_error = payload
+				state.translation_error =
+					payload?.message || 'Erreur lors de la traduction'
 			})
+
+			// ADD
 			.addCase(addWordToDictionary.fulfilled, (state, { payload }) => {
-				state.user_words = [...state.user_words, ...payload.data]
-				state.user_material_words = state.user_material_words = [
-					...state.user_material_words,
-					...payload.data,
-				]
-				const successMessage = payload.success
-				toast.success(successMessage)
+				const rows = payload.data || []
+				state.user_words = [...state.user_words, ...rows]
+				state.user_material_words = [...state.user_material_words, ...rows]
+				toast.success(payload.success)
 			})
 			.addCase(addWordToDictionary.rejected, (_, action) => {
 				const errorMessage = action.payload?.error || 'Erreur inconnue'
 				toast.error(errorMessage)
 			})
+
+			// READS
 			.addCase(getAllUserWords.fulfilled, (state, { payload }) => {
-				state.user_words = payload
+				state.user_words = payload || []
 				state.user_words_loading = false
 			})
 			.addCase(getUserMaterialWords.fulfilled, (state, { payload }) => {
-				state.user_material_words = payload
+				state.user_material_words = payload || []
 			})
+
+			// DELETE ONE
 			.addCase(deleteUserWord.pending, state => {
 				state.user_material_words_pending = true
 			})
-			.addCase(deleteUserWord.fulfilled, (state, { payload }) => {
+			.addCase(deleteUserWord.fulfilled, (state, { payload: deletedId }) => {
 				state.user_material_words = state.user_material_words.filter(
-					word => word.id !== payload
+					w => w.id !== deletedId
 				)
-				state.user_words = state.user_words.filter(word => word.id !== payload)
+				state.user_words = state.user_words.filter(w => w.id !== deletedId)
 				state.user_material_words_pending = false
 			})
+			.addCase(deleteUserWord.rejected, (state, action) => {
+				state.user_material_words_pending = false
+				if (action.payload?.error) toast.error(action.payload.error)
+			})
+
+			// DELETE MANY
 			.addCase(deleteUserWords.pending, state => {
 				state.user_words_pending = true
 			})
-			.addCase(deleteUserWords.fulfilled, (state, { payload }) => {
-				state.user_words = state.user_words.filter(word => word.id !== payload)
+			.addCase(deleteUserWords.fulfilled, (state, { payload: deletedIds }) => {
+				const remove = new Set(deletedIds)
+				state.user_words = state.user_words.filter(w => !remove.has(w.id))
+				state.user_material_words = state.user_material_words.filter(
+					w => !remove.has(w.id)
+				)
 				state.user_words_pending = false
+			})
+			.addCase(deleteUserWords.rejected, (state, action) => {
+				state.user_words_pending = false
+				if (action.payload?.error) toast.error(action.payload.error)
 			})
 	},
 })
