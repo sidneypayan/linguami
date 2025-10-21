@@ -23,6 +23,7 @@ const UserMaterials = () => {
 	const router = useRouter()
 	const { user_materials } = useSelector(store => store.materials)
 	const { userLearningLanguage, user, isUserLoggedIn } = useUserContext()
+	const userId = user?.id
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
@@ -66,9 +67,7 @@ const UserMaterials = () => {
 		}
 
 		if (user && user_materials.length === 0) {
-			dispatch(
-				getUserMaterials({ userId: user.id, lang: userLearningLanguage })
-			)
+			dispatch(getUserMaterials({ userId: userId, lang: userLearningLanguage }))
 		}
 	}, [
 		dispatch,
@@ -76,7 +75,7 @@ const UserMaterials = () => {
 		userLearningLanguage,
 		user_materials.length,
 		user,
-		user.id,
+		userId,
 		router,
 	])
 
