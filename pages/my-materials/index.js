@@ -65,7 +65,7 @@ const UserMaterials = () => {
 			return
 		}
 
-		if (user_materials.length === 0) {
+		if (user && user_materials.length === 0) {
 			dispatch(
 				getUserMaterials({ userId: user.id, lang: userLearningLanguage })
 			)
@@ -75,6 +75,7 @@ const UserMaterials = () => {
 		isUserLoggedIn,
 		userLearningLanguage,
 		user_materials.length,
+		user,
 		user.id,
 		router,
 	])
