@@ -1,7 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
-import jwtDecode from 'jwt-decode'
-import { supabase } from '../../lib/supabase'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '../../features/materials/materialsSlice'
 import SectionCard from '../../components/SectionCard'
@@ -18,11 +17,12 @@ import { Box } from '@mui/system'
 import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
-const UserMaterials = user => {
+const UserMaterials = () => {
 	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
+	const router = useRouter()
 	const { user_materials } = useSelector(store => store.materials)
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, user, isUserLoggedIn } = useUserContext()
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
 	const [displayMaterials, setDisplayMaterials] = useState(false)
@@ -60,12 +60,27 @@ const UserMaterials = user => {
 	}
 
 	useEffect(() => {
-		setFilteredUserMaterials(user_materials)
-	}, [user_materials])
+		if (!isUserLoggedIn) {
+			router.push('/')
+			return
+		}
+
+		if (user_materials.length === 0) {
+			dispatch(getUserMaterials({ userId: user.id, lang: userLearningLanguage ))
+		}
+	}, [
+		dispatch,
+		isUserLoggedIn,
+		userLearningLanguage,
+		user_materials.length,
+		router,
+	])
 
 	useEffect(() => {
-		dispatch(getUserMaterials(userLearningLanguage))
-	}, [dispatch, userLearningLanguage])
+		if (user_materials.length > 0) {
+			setFilteredUserMaterials(user_materials)
+		}
+	}, [user_materials])
 
 	return (
 		<>
@@ -165,29 +180,6 @@ const UserMaterials = user => {
 			</Container>
 		</>
 	)
-}
-
-export const getServerSideProps = async ({ req }) => {
-	if (req.cookies['sb-access-token']) {
-		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
-
-		const { data: user, error } = await supabase
-			.from('users_profile')
-			.select('*')
-			.eq('id', decodedToken.sub)
-			.single()
-
-		return {
-			props: user,
-		}
-	}
-
-	return {
-		redirect: {
-			destination: '/',
-			permanent: false,
-		},
-	}
 }
 
 export default UserMaterials

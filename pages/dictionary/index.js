@@ -1,9 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
-import jwtDecode from 'jwt-decode'
-import { supabase } from '../../lib/supabase'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import {
 	getAllUserWords,
 	deleteUserWord,
@@ -20,7 +19,6 @@ import {
 	TableContainer,
 	TableRow,
 	Typography,
-	Stack,
 } from '@mui/material'
 import { DeleteOutline } from '@mui/icons-material'
 import Image from 'next/image'
@@ -28,6 +26,7 @@ import Image from 'next/image'
 const Dictionary = () => {
 	const { t } = useTranslation('common')
 	const dispatch = useDispatch()
+	const router = useRouter()
 	const { user, isUserLoggedIn } = useUserContext()
 	const userId = user?.id
 	const {
@@ -49,13 +48,19 @@ const Dictionary = () => {
 	}
 
 	useEffect(() => {
-		if (isUserLoggedIn) dispatch(getAllUserWords(userId))
+		if (!isUserLoggedIn) {
+			router.push('/')
+			return
+		}
+
+		dispatch(getAllUserWords(userId))
 	}, [
 		dispatch,
 		isUserLoggedIn,
 		userId,
 		user_words_pending,
 		user_material_words_pending,
+		router,
 	])
 
 	if (user_words_loading) {
@@ -131,29 +136,6 @@ const Dictionary = () => {
 			)}
 		</>
 	)
-}
-
-export const getServerSideProps = async ({ req }) => {
-	if (req.cookies['sb-access-token']) {
-		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
-
-		const { data: user, error } = await supabase
-			.from('users_profile')
-			.select('*')
-			.eq('id', decodedToken.sub)
-			.single()
-
-		return {
-			props: user,
-		}
-	}
-
-	return {
-		redirect: {
-			destination: '/',
-			permanent: false,
-		},
-	}
 }
 
 export default Dictionary

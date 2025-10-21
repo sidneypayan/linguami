@@ -75,11 +75,11 @@ export const getMaterials = createAsyncThunk(
 
 export const getUserMaterials = createAsyncThunk(
 	'materials/getUserMaterials',
-	async (lang, thunkAPI) => {
+	async ({ lang, userId }, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
 			.select('*, materials!inner(title, image, level, section)')
-			.eq('user_id', supabase.auth.user().id)
+			.eq('user_id', userId)
 			.eq('materials.lang', lang)
 
 		if (error) {
