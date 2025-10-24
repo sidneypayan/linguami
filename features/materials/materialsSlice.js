@@ -93,10 +93,14 @@ export const getUserMaterials = createAsyncThunk(
 export const getUserMaterialsStatus = createAsyncThunk(
 	'materials/getUserMaterialsStatus',
 	async (_, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: userMaterialsStatus, error } = await supabase
 			.from('user_materials')
 			.select('material_id, is_being_studied, is_studied')
-			.eq('user_id', supabase.auth.user().id)
+			.eq('user_id', user.id)
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -109,10 +113,14 @@ export const getUserMaterialsStatus = createAsyncThunk(
 export const getUserMaterialStatus = createAsyncThunk(
 	'materials/getUserMaterialStatus',
 	async (param, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: userMaterialStatus, error } = await supabase
 			.from('user_materials')
 			.select('is_being_studied, is_studied')
-			.match({ user_id: supabase.auth.user().id, material_id: param })
+			.match({ user_id: user.id, material_id: param })
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -127,11 +135,15 @@ export const getUserMaterialStatus = createAsyncThunk(
 export const addBeingStudiedMaterial = createAsyncThunk(
 	'materials/addBeingStudiedMaterial',
 	async (param, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: material, error } = await supabase
 			.from('user_materials')
 			.insert([
 				{
-					user_id: supabase.auth.user().id,
+					user_id: user.id,
 					material_id: param,
 				},
 			])
@@ -141,27 +153,34 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 export const removeBeingStudiedMaterial = createAsyncThunk(
 	'materials/removeBeingStudiedMaterial',
 	async (param, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: material, error } = await supabase
 			.from('user_materials')
 			.delete()
-			.match({ user_id: supabase.auth.user().id, material_id: param })
+			.match({ user_id: user.id, material_id: param })
 	}
 )
 
 export const addMaterialToStudied = createAsyncThunk(
 	'materials/addMaterialToStudied',
 	async (id, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
 		const { data: doMaterialExists, error } = await supabase
 			.from('user_materials')
 			.select('material_id')
-			.match({ user_id: supabase.auth.user().id, material_id: id })
+			.match({ user_id: user.id, material_id: id })
 
 		if (doMaterialExists.length < 1) {
 			const { data: material, error } = await supabase
 				.from('user_materials')
 				.insert([
 					{
-						user_id: supabase.auth.user().id,
+						user_id: user.id,
 						material_id: id,
 						is_being_studied: false,
 						is_studied: true,
@@ -171,7 +190,7 @@ export const addMaterialToStudied = createAsyncThunk(
 			const { error } = await supabase
 				.from('user_materials')
 				.update({ is_being_studied: false, is_studied: true })
-				.match({ user_id: supabase.auth.user().id, material_id: id })
+				.match({ user_id: user.id, material_id: id })
 		}
 	}
 )

@@ -27,8 +27,6 @@ const UserProvider = ({ children }) => {
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 	const [isBootstrapping, setIsBootstrapping] = useState(true)
 
-	console.log('user:', user)
-
 	// ---- Helpers
 	const safeToastError = (err, fallback = 'Une erreur est survenue') => {
 		const message = (typeof err === 'string' ? err : err?.message) || fallback
