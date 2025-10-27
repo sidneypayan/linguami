@@ -1,5 +1,4 @@
 import { supabase } from '../../lib/supabase'
-import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Container, Stack } from '@mui/material'
@@ -11,6 +10,7 @@ import {
 } from '../../features/content/contentSlice'
 import { useRouter } from 'next/router'
 import { materialData, postData } from '../../utils/constants'
+import { createServerClient } from '@supabase/ssr'
 
 const CreateMaterial = () => {
 	const [formData, setFormData] = useState(materialData)
@@ -54,33 +54,19 @@ const CreateMaterial = () => {
 		})
 	}
 
-	// const submitContent = e => {
-	// 	e.preventDefault()
-	// 	if (!isEditingContent && contentType !== 'posts') {
-	// 		formData.body = formData.body.replace(/(\r\n|\n|\r)/gm, '<br>')
-	// 		formData.body_accents = formData.body_accents.replace(
-	// 			/(\r\n|\n|\r)/gm,
-	// 			'<br>'
-	// 		)
-	// 		return dispatch(createContent({ content: formData, contentType, files }))
-	// 	}
-
-	// 	if (!isEditingContent && contentType === 'posts')
-	// 		return dispatch(createContent({ content: formData, contentType }))
-
-	// 	if (isEditingContent)
-	// 		return dispatch(updateContent({ content: formData, contentType }))
-	// 	router.back()
-	// }
-
 	const submitContent = async e => {
 		e.preventDefault()
 
 		try {
-			const cleanedFormData = {
-				...formData,
-				body: formData.body.replace(/(\r\n|\n|\r)/gm, '<br>'),
-				body_accents: formData.body_accents.replace(/(\r\n|\n|\r)/gm, '<br>'),
+			let cleanedFormData = { ...formData }
+
+			// Pour les materials (pas les posts), toujours convertir les retours à la ligne en <br>
+			if (contentType !== 'posts') {
+				cleanedFormData = {
+					...formData,
+					body: formData.body.replace(/(\r\n|\n|\r)/gm, '<br>'),
+					body_accents: formData.body_accents.replace(/(\r\n|\n|\r)/gm, '<br>'),
+				}
 			}
 
 			if (!isEditingContent && contentType !== 'posts') {
@@ -93,21 +79,32 @@ const CreateMaterial = () => {
 				).unwrap()
 			} else if (isEditingContent) {
 				await dispatch(
-					updateContent({ content: formData, contentType })
+					updateContent({ content: cleanedFormData, contentType })
 				).unwrap()
 			}
 
 			router.back()
 		} catch (err) {
-			console.error('Erreur lors de l’envoi du contenu :', err)
+			console.error('Erreur lors de l envoi du contenu')
 		}
 	}
 
 	useEffect(() => {
 		if (Object.keys(editingContent).length > 0) {
-			setFormData(editingContent)
+			// Convertir les <br> en retours à la ligne pour l'édition
+			const formattedContent = {
+				...editingContent,
+			}
+
+			if (contentType !== 'posts' && editingContent.body) {
+				formattedContent.body = editingContent.body.replace(/<br>/g, '\n')
+				formattedContent.body_accents =
+					editingContent.body_accents?.replace(/<br>/g, '\n') || ''
+			}
+
+			setFormData(formattedContent)
 		}
-	}, [editingContent])
+	}, [editingContent, contentType])
 
 	return (
 		<Container sx={{ margin: '5rem auto' }}>
@@ -138,25 +135,49 @@ const CreateMaterial = () => {
 	)
 }
 
-export const getServerSideProps = async ({ req }) => {
-	if (req.cookies['sb-access-token']) {
-		const decodedToken = jwtDecode(req.cookies['sb-access-token'])
-
-		const { data: user, error } = await supabase
-			.from('users_profile')
-			.select('*')
-			.eq('id', decodedToken.sub)
-			.single()
-
-		if (user.role !== 'admin') {
-			return {
-				redirect: {
-					destination: '/',
-					permanent: false,
+export const getServerSideProps = async ({ req, res }) => {
+	// Créer un client Supabase pour le serveur
+	const supabase = createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+		{
+			cookies: {
+				get(name) {
+					return req.cookies[name]
 				},
-			}
+				set(name, value, options) {
+					res.setHeader('Set-Cookie', `${name}=${value}; Path=/; ${options}`)
+				},
+				remove(name, options) {
+					res.setHeader('Set-Cookie', `${name}=; Path=/; Max-Age=0`)
+				},
+			},
 		}
-	} else {
+	)
+
+	// Récupérer l'utilisateur connecté
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser()
+
+	if (!user || authError) {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		}
+	}
+
+	// Récupérer le profil utilisateur
+	const { data: userProfile, error } = await supabase
+		.from('users_profile')
+		.select('*')
+		.eq('id', user.id)
+		.single()
+
+	if (error || userProfile?.role !== 'admin') {
 		return {
 			redirect: {
 				destination: '/',
@@ -166,7 +187,7 @@ export const getServerSideProps = async ({ req }) => {
 	}
 
 	return {
-		props: { user: 'user' },
+		props: { user: userProfile },
 	}
 }
 

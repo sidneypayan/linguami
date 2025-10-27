@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import jwtDecode from 'jwt-decode'
-import { supabase } from '../../lib/supabase'
+import { createServerClient } from '@supabase/ssr'
 import { sectionsForAdmin } from '../../utils/constants'
 import {
 	Box,
@@ -23,7 +22,6 @@ const Admin = ({
 			</Typography>
 
 			{materialsCountByLang.map(({ lang, counts }) => {
-				// Récupérer les musiques et livres pour cette langue
 				const music = musicCountByLang.find(m => m.lang === lang)
 				const books = booksCountByLang.find(b => b.lang === lang)
 
@@ -96,9 +94,45 @@ const Admin = ({
 	)
 }
 
-export const getServerSideProps = async ({ req }) => {
-	const token = req.cookies['sb-access-token']
-	if (!token) {
+export const getServerSideProps = async ({ req, res }) => {
+	// Créer un client Supabase pour le serveur
+	const supabase = createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+		{
+			cookies: {
+				get(name) {
+					return req.cookies[name]
+				},
+				set(name, value, options) {
+					const cookieOptions = []
+					if (options?.maxAge) cookieOptions.push(`Max-Age=${options.maxAge}`)
+					if (options?.path) cookieOptions.push(`Path=${options.path}`)
+					if (options?.domain) cookieOptions.push(`Domain=${options.domain}`)
+					if (options?.secure) cookieOptions.push('Secure')
+					if (options?.httpOnly) cookieOptions.push('HttpOnly')
+					if (options?.sameSite)
+						cookieOptions.push(`SameSite=${options.sameSite}`)
+
+					const cookieString = `${name}=${value}${
+						cookieOptions.length ? '; ' + cookieOptions.join('; ') : ''
+					}`
+					res.setHeader('Set-Cookie', cookieString)
+				},
+				remove(name, options) {
+					res.setHeader('Set-Cookie', `${name}=; Path=/; Max-Age=0`)
+				},
+			},
+		}
+	)
+
+	// Récupérer l'utilisateur connecté
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser()
+
+	if (!user || authError) {
 		return {
 			redirect: {
 				destination: '/',
@@ -107,14 +141,14 @@ export const getServerSideProps = async ({ req }) => {
 		}
 	}
 
-	const decodedToken = jwtDecode(token)
-	const { data: user, error } = await supabase
+	// Récupérer le profil utilisateur
+	const { data: userProfile, error: userError } = await supabase
 		.from('users_profile')
 		.select('*')
-		.eq('id', decodedToken.sub)
+		.eq('id', user.id)
 		.single()
 
-	if (error || user.role !== 'admin') {
+	if (userError || userProfile?.role !== 'admin') {
 		return {
 			redirect: {
 				destination: '/',

@@ -99,13 +99,16 @@ const LanguageMenu = () => {
 					{t('learn')}
 				</Typography>
 
-				<Image
-					alt={userLearningLanguage}
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
-					width={25}
-					height={25}
-				/>
+				{userLearningLanguage && (
+					<Image
+						alt={userLearningLanguage}
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
+						width={25}
+						height={25}
+					/>
+				)}
 			</Button>
+
 			<StyledMenu
 				id='demo-customized-menu'
 				MenuListProps={{
