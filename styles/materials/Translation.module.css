@@ -1,11 +1,19 @@
 .container {
 	width: 350px;
-	z-index: 1;
-	position: absolute;
+	max-width: calc(100vw - 20px);
+	z-index: 1000;
+	position: fixed;
 	background-color: var(--white);
 	font-size: 15px;
 	box-shadow: 1px 1px 2px #999;
 	border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+	.container {
+		width: calc(100vw - 40px);
+		max-width: 350px;
+	}
 }
 
 .registerContainer {

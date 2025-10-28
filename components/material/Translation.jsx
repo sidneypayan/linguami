@@ -27,10 +27,67 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	const [personalTranslation, setPersonalTranslation] = useState('')
 	const { isUserLoggedIn } = useUserContext()
 
-	const position = {
-		left: coordinates.x + 'px',
-		top: coordinates.y + 'px',
+	// Calculer la position intelligemment pour éviter le débordement
+	const getPosition = () => {
+		// Vérifier si nous sommes côté client
+		if (typeof window === 'undefined') {
+			return {
+				left: coordinates.x + 'px',
+				top: coordinates.y + 'px',
+			}
+		}
+
+		const viewportWidth = window.innerWidth
+		const viewportHeight = window.innerHeight
+		const padding = 10 // Marge de sécurité
+
+		// Calculer la largeur du conteneur selon la taille d'écran
+		const containerWidth =
+			viewportWidth <= 600 ? Math.min(viewportWidth - 40, 350) : 350
+		const containerHeight = 300 // Hauteur approximative
+		const offset = 10 // Décalage depuis le point de clic
+
+		// Position de départ : légèrement en dessous et à droite du mot cliqué
+		let left = coordinates.x
+		let top = coordinates.y + offset
+
+		// Ajuster horizontalement
+		// Si déborde à droite, positionner à gauche du point de clic
+		if (left + containerWidth > viewportWidth - padding) {
+			left = coordinates.x - containerWidth
+			// Si déborde aussi à gauche, centrer autant que possible
+			if (left < padding) {
+				left = Math.max(padding, (viewportWidth - containerWidth) / 2)
+			}
+		}
+
+		// S'assurer qu'on ne dépasse pas à gauche
+		if (left < padding) {
+			left = padding
+		}
+
+		// Ajuster verticalement
+		// Si déborde en bas, positionner au-dessus du point de clic
+		if (top + containerHeight > viewportHeight - padding) {
+			top = coordinates.y - containerHeight - offset
+			// Si déborde aussi en haut, ajuster pour être visible
+			if (top < padding) {
+				top = Math.max(padding, viewportHeight - containerHeight - padding)
+			}
+		}
+
+		// S'assurer qu'on ne dépasse pas en haut
+		if (top < padding) {
+			top = padding
+		}
+
+		return {
+			left: left + 'px',
+			top: top + 'px',
+		}
 	}
+
+	const position = getPosition()
 
 	useEffect(() => {
 		const checkIfClickedOutside = e => {

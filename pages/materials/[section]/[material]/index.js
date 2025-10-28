@@ -144,15 +144,11 @@ const Material = ({ material: single_material }) => {
 	}
 
 	const getCoordinates = e => {
-		const xCoordinate =
-			window.innerWidth < 768
-				? e.pageX - e.pageX / 2
-				: window.innerWidth < 1024
-				? e.pageX - e.pageX / 3
-				: e.pageX - 100
+		// Utiliser les coordonnées du viewport (clientX/clientY)
+		// car le composant Translation utilise position: fixed
 		setCoordinates({
-			x: xCoordinate,
-			y: e.pageY - 50,
+			x: e.clientX,
+			y: e.clientY,
 		})
 	}
 	return (
