@@ -34,11 +34,24 @@ const Hero = () => {
 					},
 				}}>
 				<Box maxWidth={825}>
-					<Typography color='#fff' variant='h2' component='h1' mb={4}>
+					<Typography
+						color='#fff'
+						variant='h2'
+						component='h1'
+						mb={4}
+						sx={{
+							fontSize: { xs: '2rem', md: '3.75rem' },
+						}}>
 						<span style={{ fontWeight: '400' }}>{t('hero')}</span> <br />
 						{t('title')}
 					</Typography>
-					<Typography mb={4} variant='h5' color='#fff'>
+					<Typography
+						mb={4}
+						variant='h5'
+						color='#fff'
+						sx={{
+							fontSize: { xs: '1.125rem', md: '1.5rem' },
+						}}>
 						{t('subtitle')}
 					</Typography>
 

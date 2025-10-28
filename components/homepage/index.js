@@ -15,14 +15,17 @@ import {
 
 import { Stack } from '@mui/system'
 
-const StyledGridItem = styled(Grid)({
+const StyledGridItem = styled(Grid)(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: '1rem',
 	textAlign: 'center',
 	marginBottom: '2rem',
-})
+	[theme.breakpoints.down('sm')]: {
+		marginBottom: '1rem',
+	},
+}))
 
 const Homepage = () => {
 	const { t } = useTranslation('home')
@@ -70,18 +73,51 @@ const Homepage = () => {
 	return (
 		<>
 			<Hero />
-			<Container width={1440} sx={{ margin: '5rem auto' }}>
-				<Typography variant='h3' align='center'>
+			<Container
+				width={1440}
+				sx={{
+					margin: { xs: '3rem auto', md: '5rem auto' },
+					padding: { xs: '0 1rem', md: '0 1.5rem' },
+				}}>
+				<Typography
+					variant='h3'
+					align='center'
+					sx={{
+						fontSize: { xs: '2rem', md: '3rem' },
+					}}>
 					{t('multimedia')}
 				</Typography>
 
 				<div className='hr-custom'></div>
 
-				<Grid container justifyContent='space-between' m='4rem auto'>
+				<Grid
+					container
+					justifyContent='space-between'
+					sx={{
+						margin: { xs: '2rem auto', md: '4rem auto' },
+					}}>
 					{multimedia.map((icon, index) => (
 						<StyledGridItem key={index} item xs={6} sm={4} lg={2}>
-							<Image src={icon.img} alt='video' width={75} height={75} />
-							<Typography variant='h5'>{icon.title}</Typography>
+							<Box
+								sx={{
+									width: { xs: 60, md: 75 },
+									height: { xs: 60, md: 75 },
+									position: 'relative',
+								}}>
+								<Image
+									src={icon.img}
+									alt='video'
+									fill
+									style={{ objectFit: 'contain' }}
+								/>
+							</Box>
+							<Typography
+								variant='h5'
+								sx={{
+									fontSize: { xs: '1.25rem', md: '1.5rem' },
+								}}>
+								{icon.title}
+							</Typography>
 							<Typography variant='subtitle' color='primaryGrey'>
 								{icon.subtitle}
 							</Typography>
@@ -124,14 +160,14 @@ const Homepage = () => {
 					sx={{
 						width: '1000px',
 						maxWidth: '100%',
-						flexDirection: 'row',
+						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: '4rem',
+						padding: { xs: '2rem', md: '4rem' },
 						borderRadius: '3px',
 						gap: '1.5rem',
 						margin: '0 auto',
-						marginTop: '5rem',
+						marginTop: { xs: '3rem', md: '5rem' },
 					}}>
 					<Box
 						width='50%'
@@ -152,7 +188,12 @@ const Homepage = () => {
 					</Box>
 
 					<Stack gap='1rem'>
-						<Typography variant='h4' align='center'>
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontSize: { xs: '1.75rem', md: '2.125rem' },
+							}}>
 							{t('translator')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
@@ -179,17 +220,22 @@ const Homepage = () => {
 					sx={{
 						width: '1000px',
 						maxWidth: '100%',
-						flexDirection: 'row',
+						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: '4rem',
+						padding: { xs: '2rem', md: '4rem' },
 						borderRadius: '3px',
 						gap: '1.5rem',
 						margin: '0 auto',
-						marginTop: '5rem',
+						marginTop: { xs: '3rem', md: '5rem' },
 					}}>
 					<Stack gap='1rem'>
-						<Typography variant='h4' align='center'>
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontSize: { xs: '1.75rem', md: '2.125rem' },
+							}}>
 							{t('dictionary')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
@@ -233,14 +279,14 @@ const Homepage = () => {
 					sx={{
 						width: '1000px',
 						maxWidth: '100%',
-						flexDirection: 'row',
+						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: '4rem',
+						padding: { xs: '2rem', md: '4rem' },
 						borderRadius: '3px',
 						gap: '1.5rem',
 						margin: '0 auto',
-						marginTop: '5rem',
+						marginTop: { xs: '3rem', md: '5rem' },
 					}}>
 					<Box
 						width='50%'
@@ -261,7 +307,12 @@ const Homepage = () => {
 					</Box>
 
 					<Stack gap='1rem'>
-						<Typography variant='h4' align='center'>
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontSize: { xs: '1.75rem', md: '2.125rem' },
+							}}>
 							{t('flashcards')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
@@ -288,17 +339,22 @@ const Homepage = () => {
 					sx={{
 						width: '1000px',
 						maxWidth: '100%',
-						flexDirection: 'row',
+						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: '4rem',
+						padding: { xs: '2rem', md: '4rem' },
 						borderRadius: '3px',
 						gap: '1.5rem',
 						margin: '0 auto',
-						marginTop: '5rem',
+						marginTop: { xs: '3rem', md: '5rem' },
 					}}>
 					<Stack gap='1rem'>
-						<Typography variant='h4' align='center'>
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontSize: { xs: '1.75rem', md: '2.125rem' },
+							}}>
 							{t('teacher')}
 						</Typography>
 						<Typography variant='subtitle' color='primaryGrey' align='center'>
