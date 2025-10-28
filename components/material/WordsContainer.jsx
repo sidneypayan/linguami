@@ -1,3 +1,4 @@
+import React from 'react'
 import useTranslation from 'next-translate/useTranslation'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -178,4 +179,5 @@ const WordsContainer = () => {
 	)
 }
 
-export default WordsContainer
+// Mémoïser le composant pour éviter re-renders
+export default React.memo(WordsContainer)

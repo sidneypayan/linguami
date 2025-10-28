@@ -1,3 +1,4 @@
+import React from 'react'
 import MaterialsCard from './MaterialsCard'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
@@ -28,4 +29,5 @@ const MaterialsCarousel = ({ materials }) => {
 	)
 }
 
-export default MaterialsCarousel
+// Mémoïser le composant pour éviter re-renders du carousel
+export default React.memo(MaterialsCarousel)

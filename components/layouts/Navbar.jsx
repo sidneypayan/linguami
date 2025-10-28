@@ -1,5 +1,5 @@
+import React, { useState } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
 import { useUserContext } from '../../context/user.js'
 import { useRouter } from 'next/router'
 import UserMenu from './UserMenu'
@@ -185,4 +185,5 @@ const Navbar = props => {
 	)
 }
 
-export default Navbar
+// Mémoïser la navbar (composant statique)
+export default React.memo(Navbar)

@@ -1,6 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const Hero = () => {
 	const { t, lang } = useTranslation('home')
@@ -63,12 +64,18 @@ const Hero = () => {
 							xs: 'none',
 							md: 'block',
 						},
-					}}
-					component='img'
-					width={250}
-					height={250}
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
-				/>
+						position: 'relative',
+						width: 250,
+						height: 250,
+					}}>
+					<Image
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
+						alt='Linguami wizard mascot'
+						fill
+						style={{ objectFit: 'contain' }}
+						priority
+					/>
+				</Box>
 			</Stack>
 
 			<div className='wave'>

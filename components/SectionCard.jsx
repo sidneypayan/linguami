@@ -1,3 +1,4 @@
+import React from 'react'
 import { sections } from '../data/sections'
 import { useDispatch } from 'react-redux'
 import { config } from '@fortawesome/fontawesome-svg-core'
@@ -171,4 +172,5 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	)
 }
 
-export default SectionCard
+// Mémoïser le composant pour éviter re-renders dans les listes
+export default React.memo(SectionCard)

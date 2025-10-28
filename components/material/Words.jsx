@@ -1,3 +1,4 @@
+import React from 'react'
 import styles from '../../styles/materials/Material.module.css'
 import { useDispatch } from 'react-redux'
 import {
@@ -5,7 +6,7 @@ import {
 	toggleTranslationContainer,
 	cleanTranslation,
 } from '../../features/words/wordsSlice'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
 import { useUserContext } from '../../context/user'
 
@@ -16,7 +17,8 @@ const Words = ({ content }) => {
 	const [regexSentences, setRegexSentences] = useState('')
 	const dispatch = useDispatch()
 
-	const clean = DOMPurify.sanitize(content)
+	// Mémoïser le sanitize pour éviter recalcul à chaque render
+	const clean = useMemo(() => DOMPurify.sanitize(content), [content])
 
 	useEffect(() => {
 		if (userLearningLanguage === 'fr') {
@@ -93,4 +95,5 @@ const Words = ({ content }) => {
 	return wrapSentences(clean)
 }
 
-export default Words
+// Mémoïser le composant pour éviter re-renders inutiles
+export default React.memo(Words)

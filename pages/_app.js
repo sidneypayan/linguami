@@ -10,27 +10,29 @@ import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material'
 import { purple, grey } from '@mui/material/colors'
 import Script from 'next/script'
 
-function MyApp({ Component, pageProps }) {
-	let myTheme = createTheme({
-		palette: {
-			clrPrimary1: '#432874',
-			clrPrimary2: '#432879',
-			clrPrimary3: '#4f2a93',
-			clrPrimary4: '#992F7B',
-			clrBtn1: '#4f2a93',
-			clrBtn2: '#0056BB',
-			clrGrey1: grey[800],
-			clrGrey2: grey[700],
-			clrGrey3: grey[600],
-			clrGrey4: grey[500],
-			clrCardBg: '#f5f5f5',
-		},
-		typography: {
-			fontFamily: ['Open Sans'],
-		},
-	})
+// Créer le thème en dehors du composant pour éviter la recréation à chaque render
+const baseTheme = createTheme({
+	palette: {
+		clrPrimary1: '#432874',
+		clrPrimary2: '#432879',
+		clrPrimary3: '#4f2a93',
+		clrPrimary4: '#992F7B',
+		clrBtn1: '#4f2a93',
+		clrBtn2: '#0056BB',
+		clrGrey1: grey[800],
+		clrGrey2: grey[700],
+		clrGrey3: grey[600],
+		clrGrey4: grey[500],
+		clrCardBg: '#f5f5f5',
+	},
+	typography: {
+		fontFamily: ['Open Sans'],
+	},
+})
 
-	myTheme = responsiveFontSizes(myTheme)
+const myTheme = responsiveFontSizes(baseTheme)
+
+function MyApp({ Component, pageProps }) {
 
 	return (
 		<>

@@ -10,6 +10,7 @@ import {
 	getUserMaterialsStatus,
 	filterMaterials,
 } from '../../../features/materials/materialsSlice'
+import { selectMaterialsData } from '../../../features/materials/materialsSelectors'
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -25,16 +26,19 @@ const Section = () => {
 	const { section } = router.query
 
 	const dispatch = useDispatch()
+	// Utiliser le sélecteur mémoïsé pour optimiser les performances
 	const {
 		materials_loading,
-		books_loading,
 		filtered_materials,
-		user_materials_status,
 		level,
 		sliceStart,
 		sliceEnd,
 		numOfPages,
-	} = useSelector(store => store.materials)
+	} = useSelector(selectMaterialsData)
+
+	// Sélecteurs supplémentaires (non inclus dans selectMaterialsData)
+	const books_loading = useSelector(state => state.materials.books_loading)
+	const user_materials_status = useSelector(state => state.materials.user_materials_status)
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
