@@ -15,7 +15,7 @@ const initialState = {
 export const createContent = createAsyncThunk(
 	'content/createContent',
 	async ({ content, contentType, files }, thunkAPI) => {
-		const { error } = await supabase.from(contentType).insert(content)
+		const { error } = await supabase.from(contentType).insert(content).select()
 
 		if (files) {
 			const uploadFiles = async (file, fileName, fileType) => {
@@ -60,6 +60,7 @@ export const updateContent = createAsyncThunk(
 			.from(contentType)
 			.update(content)
 			.eq('id', content.id)
+			.select()
 
 		if (error) return thunkAPI.rejectWithValue(error.message)
 	}

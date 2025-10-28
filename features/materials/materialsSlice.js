@@ -147,6 +147,7 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 					material_id: param,
 				},
 			])
+			.select()
 	}
 )
 
@@ -161,6 +162,7 @@ export const removeBeingStudiedMaterial = createAsyncThunk(
 			.from('user_materials')
 			.delete()
 			.match({ user_id: user.id, material_id: param })
+			.select()
 	}
 )
 
@@ -186,11 +188,13 @@ export const addMaterialToStudied = createAsyncThunk(
 						is_studied: true,
 					},
 				])
+				.select()
 		} else {
 			const { error } = await supabase
 				.from('user_materials')
 				.update({ is_being_studied: false, is_studied: true })
 				.match({ user_id: user.id, material_id: id })
+				.select()
 		}
 	}
 )

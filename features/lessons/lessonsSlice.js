@@ -36,26 +36,32 @@ export const getLessons = createAsyncThunk(
 export const addLessonToStudied = createAsyncThunk(
 	'lessons/addLessonToStudied',
 	async (id, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: doLessonExists, error } = await supabase
 			.from('user_lessons')
 			.select('lesson_id')
-			.match({ user_id: supabase.auth.user().id, lesson_id: id })
+			.match({ user_id: user.id, lesson_id: id })
 
 		if (doLessonExists.length < 1) {
 			const { data: lesson, error } = await supabase
 				.from('user_lessons')
 				.insert([
 					{
-						user_id: supabase.auth.user().id,
+						user_id: user.id,
 						lesson_id: id,
 						is_studied: true,
 					},
 				])
+				.select()
 		} else {
 			const { error } = await supabase
-				.from('user_materials')
+				.from('user_lessons')
 				.update({ is_studied: true })
-				.match({ user_id: supabase.auth.user().id, lesson_id: id })
+				.match({ user_id: user.id, lesson_id: id })
+				.select()
 		}
 	}
 )
@@ -63,10 +69,14 @@ export const addLessonToStudied = createAsyncThunk(
 export const getUserLessonsStatus = createAsyncThunk(
 	'lessons/getUserLessonsStatus',
 	async (_, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: userLessonsStatus, error } = await supabase
 			.from('user_lessons')
 			.select('lesson_id, is_studied')
-			.eq('user_id', supabase.auth.user().id)
+			.eq('user_id', user.id)
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -79,10 +89,14 @@ export const getUserLessonsStatus = createAsyncThunk(
 export const getUserLessonStatus = createAsyncThunk(
 	'lessons/getUserLessonStatus',
 	async (param, thunkAPI) => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser()
+
 		const { data: userLessonStatus, error } = await supabase
 			.from('user_lessons')
 			.select('is_studied')
-			.match({ user_id: supabase.auth.user().id, lesson_id: param })
+			.match({ user_id: user.id, lesson_id: param })
 
 		if (error) {
 			return thunkAPI.rejectWithValue(error)
