@@ -132,7 +132,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							{material.title}
 						</Typography>
 
-						<Box sx={{ display: 'flex', gap: 1 }}>
+						<Box sx={{ display: 'flex', flexDirection: 'column' }}>
 							<Typography
 								variant='subtitle1'
 								component='div'
@@ -147,7 +147,12 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							</Typography>
 						</Box>
 					</Box>
-					<Box sx={{ justifySelf: 'end', color: 'clrGrey2' }}>
+					<Box
+						sx={{
+							justifySelf: 'end',
+							color: 'clrGrey2',
+							display: { xs: 'none', md: 'block' },
+						}}>
 						<FontAwesomeIcon
 							icon={changeIconRegardingSection(material.section)}
 							size='2xl'

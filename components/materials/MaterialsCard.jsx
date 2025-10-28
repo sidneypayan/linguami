@@ -5,11 +5,15 @@ import { Box, Typography } from '@mui/material'
 const MaterialsCard = ({ material }) => {
 	return (
 		<Link href={`/materials/${material.section}`}>
-			<Box>
+			<Box sx={{ width: '100%' }}>
 				<Box
-					maxWidth={230}
-					height={180}
-					sx={{ position: 'relative', cursor: 'pointer' }}>
+					sx={{
+						position: 'relative',
+						cursor: 'pointer',
+						width: '100%',
+						maxWidth: 230,
+						height: 180
+					}}>
 					<Image
 						style={{ borderRadius: '3px', objectFit: 'cover' }}
 						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${material.img}`}

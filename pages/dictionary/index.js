@@ -114,7 +114,12 @@ const Dictionary = () => {
 												{word.word_fr}
 											</Typography>
 										</TableCell>
-										<TableCell>{word.word_sentence}</TableCell>
+										<TableCell
+											sx={{
+												display: { xs: 'none', md: 'table-cell' },
+											}}>
+											{word.word_sentence}
+										</TableCell>
 										<TableCell>
 											<IconButton
 												onClick={() => dispatch(deleteUserWord(word.id))}>
