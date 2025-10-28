@@ -3,6 +3,7 @@ import axios from 'axios'
 import { supabase } from '../../lib/supabase'
 import { toast } from 'react-toastify'
 import { getaddWordsToUserDictionaryMessage } from '../../utils/helpers'
+import { calculateNextReview, initializeCard, getDueCards } from '../../utils/spacedRepetition'
 
 const initialState = {
 	user_words: [],
@@ -78,6 +79,17 @@ export const addWordToDictionary = createAsyncThunk(
 						user_id: userId,
 						material_id: materialId,
 						word_sentence: word_sentence,
+						// Initialize SRS fields for new words
+						card_state: 'new',
+						ease_factor: 2.5,
+						interval: 0,
+						learning_step: null,
+						next_review_date: null,
+						last_review_date: null,
+						reviews_count: 0,
+						lapses: 0,
+						created_at: new Date().toISOString(),
+						updated_at: new Date().toISOString(),
 					},
 				])
 				.select('*') // v2: indispensable si on veut les lignes
@@ -206,6 +218,78 @@ export const deleteUserWords = createAsyncThunk(
 	}
 )
 
+// ---------------------------------------------
+// UPDATE WORD REVIEW (SRS)
+// ---------------------------------------------
+export const updateWordReview = createAsyncThunk(
+	'words/updateWordReview',
+	async ({ wordId, buttonType, currentCard }, thunkAPI) => {
+		try {
+			// Calculate next review using SRS algorithm
+			const updatedCard = calculateNextReview(currentCard, buttonType)
+
+			// Extract only the fields we need to update
+			const fieldsToUpdate = {
+				card_state: updatedCard.card_state,
+				ease_factor: updatedCard.ease_factor,
+				interval: updatedCard.interval,
+				learning_step: updatedCard.learning_step,
+				next_review_date: updatedCard.next_review_date,
+				last_review_date: updatedCard.last_review_date,
+				reviews_count: updatedCard.reviews_count,
+				lapses: updatedCard.lapses,
+				updated_at: new Date().toISOString(), // Add updated_at timestamp
+			}
+
+			const { data, error } = await supabase
+				.from('user_words')
+				.update(fieldsToUpdate)
+				.eq('id', wordId)
+				.select('*')
+
+			if (error) return thunkAPI.rejectWithValue(error)
+
+			return data[0]
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+// ---------------------------------------------
+// INITIALIZE SRS FIELDS FOR EXISTING WORDS
+// ---------------------------------------------
+export const initializeWordSRS = createAsyncThunk(
+	'words/initializeWordSRS',
+	async (wordId, thunkAPI) => {
+		try {
+			const fieldsToUpdate = {
+				card_state: 'new',
+				ease_factor: 2.5,
+				interval: 0,
+				learning_step: null,
+				next_review_date: null,
+				last_review_date: null,
+				reviews_count: 0,
+				lapses: 0,
+				updated_at: new Date().toISOString(),
+			}
+
+			const { data, error } = await supabase
+				.from('user_words')
+				.update(fieldsToUpdate)
+				.eq('id', wordId)
+				.select('*')
+
+			if (error) return thunkAPI.rejectWithValue(error)
+
+			return data[0]
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
 const wordsSlice = createSlice({
 	name: 'words',
 	initialState,
@@ -304,6 +388,28 @@ const wordsSlice = createSlice({
 			.addCase(deleteUserWords.rejected, (state, action) => {
 				state.user_words_pending = false
 				if (action.payload?.error) toast.error(action.payload.error)
+			})
+
+			// UPDATE REVIEW
+			.addCase(updateWordReview.fulfilled, (state, { payload }) => {
+				// Update the word in both arrays
+				const updateWord = (word) => word.id === payload.id ? payload : word
+				state.user_words = state.user_words.map(updateWord)
+				state.user_material_words = state.user_material_words.map(updateWord)
+			})
+			.addCase(updateWordReview.rejected, (_, action) => {
+				toast.error('Erreur lors de la mise à jour de la révision')
+				console.error(action.payload)
+			})
+
+			// INITIALIZE SRS
+			.addCase(initializeWordSRS.fulfilled, (state, { payload }) => {
+				const updateWord = (word) => word.id === payload.id ? payload : word
+				state.user_words = state.user_words.map(updateWord)
+				state.user_material_words = state.user_material_words.map(updateWord)
+			})
+			.addCase(initializeWordSRS.rejected, (_, action) => {
+				console.error('Erreur lors de l\'initialisation SRS:', action.payload)
 			})
 	},
 })

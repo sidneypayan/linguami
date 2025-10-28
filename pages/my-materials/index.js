@@ -22,7 +22,7 @@ const UserMaterials = () => {
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user_materials } = useSelector(store => store.materials)
-	const { userLearningLanguage, user, isUserLoggedIn } = useUserContext()
+	const { userLearningLanguage, user, isUserLoggedIn, isBootstrapping } = useUserContext()
 	const userId = user?.id
 
 	const [filteredUserMaterials, setFilteredUserMaterials] = useState([])
@@ -61,6 +61,9 @@ const UserMaterials = () => {
 	}
 
 	useEffect(() => {
+		// Attendre que le bootstrap soit terminé avant de rediriger
+		if (isBootstrapping) return
+
 		if (!isUserLoggedIn) {
 			router.push('/')
 			return
@@ -72,6 +75,7 @@ const UserMaterials = () => {
 	}, [
 		dispatch,
 		isUserLoggedIn,
+		isBootstrapping,
 		userLearningLanguage,
 		user_materials.length,
 		user,

@@ -8,16 +8,56 @@
 	align-items: center;
 }
 
+.header {
+	margin-top: 4rem;
+	text-align: center;
+	width: 100%;
+	max-width: 800px;
+}
+
 .flashcardsTitle {
-	margin-top: 5rem;
+	margin-bottom: 1rem;
 	text-align: center;
 	line-height: 2.5rem;
 	font-weight: 600;
 }
 
+.progressInfo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.cardsRemaining {
+	font-size: 1.1rem;
+	color: var(--navColor);
+	font-weight: 500;
+}
+
+.newBadge,
+.relearningBadge {
+	padding: 0.25rem 0.75rem;
+	border-radius: 12px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: white;
+}
+
+.newBadge {
+	background-color: #2196f3;
+}
+
+.relearningBadge {
+	background-color: #ff8c00;
+}
+
 .wordsContainer {
-	margin-top: 20vh;
+	margin-top: 15vh;
 	text-align: center;
+	max-width: 900px;
+	padding: 0 2rem;
 }
 
 .wordsContainer p {
@@ -32,50 +72,147 @@
 	justify-self: center;
 	font-size: 3rem;
 	font-weight: 600;
-	margin-bottom: 3rem;
+	margin-bottom: 2rem;
 	line-height: 2.75rem;
 }
 
 .originalWord {
 	color: var(--navColor);
 }
+
 .translatedWord {
-	color: #aaa;
+	color: #46a049;
+	margin-bottom: 3rem;
+}
+
+.contextSentence {
+	font-size: 1.1rem;
+	color: #666;
+	margin-top: -1rem;
+	margin-bottom: 2rem;
+	font-style: italic;
 }
 
 .btnsContainer {
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
 	gap: 1rem;
+	flex-wrap: wrap;
+	margin-top: 2rem;
 }
 
 .btnsContainer button {
-	padding: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 1rem 1.5rem;
 	border: none;
-	font-size: 0.95rem;
-	color: var(--white);
+	border-radius: 8px;
+	font-size: 1rem;
+	color: white;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 120px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.guessedBtn {
-	border-radius: 3px;
-	font-weight: 500;
+.btnsContainer button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btnsContainer button:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btnLabel {
+	font-weight: 600;
+	font-size: 1.1rem;
+}
+
+.btnInterval {
+	font-size: 0.9rem;
+	opacity: 0.9;
+}
+
+/* Anki-style button colors */
+.againBtn {
+	background-color: #dc3545;
+}
+
+.againBtn:hover {
+	background-color: #c82333;
+}
+
+.hardBtn {
+	background-color: #ff8c00;
+}
+
+.hardBtn:hover {
+	background-color: #e67e00;
+}
+
+.goodBtn {
 	background-color: #46a049;
 }
-.notguessedBtn {
-	border-radius: 3px;
-	font-weight: 500;
-	background-color: #dc3545;
+
+.goodBtn:hover {
+	background-color: #3d8b40;
+}
+
+.easyBtn {
+	background-color: #2196f3;
+}
+
+.easyBtn:hover {
+	background-color: #1976d2;
 }
 
 .showAnswerBtn {
 	display: block;
 	margin: 0 auto;
-	border: none;
-	padding: 0.75rem;
-	color: var(--secondaryBtnColor);
-	font-weight: 500;
+	border: 2px solid #5b7c99;
+	padding: 1rem 2rem;
+	color: #5b7c99;
+	background-color: white;
+	border-radius: 8px;
+	font-weight: 600;
+	font-size: 1.1rem;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.showAnswerBtn:hover {
+	background-color: #5b7c99;
+	color: white;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Stats and completion screen */
+.statsContainer {
+	margin-bottom: 2rem;
+}
+
+.statsText {
+	font-size: 1.8rem;
+	color: var(--navColor);
+	font-weight: 600;
+	margin-bottom: 1.5rem;
+}
+
+.sessionStats {
+	margin-top: 1.5rem;
+}
+
+.sessionStats p {
+	font-size: 1.2rem;
+	color: #666;
+	margin: 0.5rem 0;
 }
 
 .congratsContainer {
@@ -88,10 +225,64 @@
 	top: 2rem;
 	right: 7rem;
 	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.closeIcon:hover {
+	color: #666;
 }
 
 @media (max-width: 1023px) {
 	.closeIcon {
 		right: 3rem;
+	}
+
+	.header {
+		margin-top: 3rem;
+	}
+
+	.wordsContainer {
+		margin-top: 10vh;
+		padding: 0 1rem;
+	}
+
+	.originalWord,
+	.translatedWord {
+		font-size: 2.5rem;
+	}
+
+	.btnsContainer {
+		gap: 0.75rem;
+	}
+
+	.btnsContainer button {
+		min-width: 100px;
+		padding: 0.75rem 1rem;
+		font-size: 0.9rem;
+	}
+
+	.btnLabel {
+		font-size: 1rem;
+	}
+
+	.btnInterval {
+		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 640px) {
+	.originalWord,
+	.translatedWord {
+		font-size: 2rem;
+	}
+
+	.btnsContainer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.btnsContainer button {
+		width: 100%;
+		min-width: unset;
 	}
 }

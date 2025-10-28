@@ -27,7 +27,7 @@ const Dictionary = () => {
 	const { t } = useTranslation('common')
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserLoggedIn } = useUserContext()
+	const { user, isUserLoggedIn, isBootstrapping } = useUserContext()
 	const userId = user?.id
 	const {
 		user_words,
@@ -48,6 +48,9 @@ const Dictionary = () => {
 	}
 
 	useEffect(() => {
+		// Attendre que le bootstrap soit terminé avant de rediriger
+		if (isBootstrapping) return
+
 		if (!isUserLoggedIn) {
 			router.push('/')
 			return
@@ -57,6 +60,7 @@ const Dictionary = () => {
 	}, [
 		dispatch,
 		isUserLoggedIn,
+		isBootstrapping,
 		userId,
 		user_words_pending,
 		user_material_words_pending,
