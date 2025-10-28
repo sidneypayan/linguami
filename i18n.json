@@ -9,6 +9,7 @@
 		"/materials/[section]": ["materials", "section"],
 		"/materials/[section]/[material]": ["register", "materials", "words"],
 		"/my-materials": ["materials"],
+		"/dictionary": ["common", "words"],
 		"/login": ["register"],
 		"/register": ["register"],
 		"/confirm-signup": ["register"],

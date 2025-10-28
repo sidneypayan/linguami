@@ -9,6 +9,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import { updateWordReview, initializeWordSRS, suspendCard } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
+import useTranslation from 'next-translate/useTranslation'
+import { toast } from 'react-toastify'
 import {
 	getDueCards,
 	getButtonIntervals,
@@ -17,6 +19,7 @@ import {
 } from '../../utils/spacedRepetition'
 
 const FlashCards = () => {
+	const { t } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const { user_material_words, user_words } = useSelector(store => store.words)
@@ -68,6 +71,10 @@ const FlashCards = () => {
 	useEffect(() => {
 		if (sessionInitialized) return // Don't reinitialize during session
 
+		// Wait for words to be loaded (check if we're still loading)
+		// If wordsArray is undefined or null, we're still loading
+		if (!wordsArray) return
+
 		// Initialize any cards that don't have SRS fields
 		// Create deep copies to avoid reference issues
 		const initializedCards = wordsArray.map(card => {
@@ -84,7 +91,8 @@ const FlashCards = () => {
 					next_review_date: null,
 					last_review_date: null,
 					reviews_count: 0,
-					lapses: 0
+					lapses: 0,
+					is_suspended: false
 				}
 			}
 			// Create a copy to avoid Redux reference issues
@@ -94,9 +102,12 @@ const FlashCards = () => {
 		// Filter for due cards and limit according to user preference
 		const dueCards = getDueCards(initializedCards)
 		const limitedCards = dueCards.slice(0, cardsLimit)
+
+		// Always mark as initialized after first attempt, even if no cards
+		setSessionInitialized(true)
+
 		if (limitedCards.length > 0) {
 			setSessionCards(limitedCards)
-			setSessionInitialized(true) // Mark as initialized
 		}
 	}, [wordsArray, dispatch, sessionInitialized, cardsLimit])
 
@@ -106,23 +117,13 @@ const FlashCards = () => {
 	// Determine which words to show based on reversed mode
 	const frontWord = isReversed ? currentCard?.word_fr : currentCard?.word_ru
 	const backWord = isReversed ? currentCard?.word_ru : currentCard?.word_fr
-	const frontLanguage = isReversed ? 'russe' : 'français'
+	const titleKey = isReversed ? 'flashcards_title_fr_ru' : 'flashcards_title_ru_fr'
 
 	// Get button intervals for current card
 	const buttonIntervals = useMemo(() => {
 		if (!currentCard) return null
 
-		// Debug: log current card state
-		console.log('🎴 Current card:', {
-			id: currentCard.id,
-			word: currentCard.word_ru,
-			state: currentCard.card_state,
-			interval: currentCard.interval,
-			learning_step: currentCard.learning_step
-		})
-
 		const intervals = getButtonIntervals(currentCard)
-		console.log('⏱️ Button intervals:', intervals)
 
 		return intervals
 	}, [currentCard])
@@ -137,6 +138,12 @@ const FlashCards = () => {
 			buttonType,
 			currentCard
 		}))
+
+		// Check for errors
+		if (result.error) {
+			toast.error(t('review_error'))
+			return
+		}
 
 		// Get the updated card from the result
 		const updatedCard = result.payload
@@ -185,12 +192,21 @@ const FlashCards = () => {
 		if (!currentCard) return
 
 		// Confirm with user
-		if (!window.confirm('Êtes-vous sûr de vouloir suspendre cette carte ? Elle n\'apparaîtra plus dans vos révisions.')) {
+		if (!window.confirm(t('suspend_confirm'))) {
 			return
 		}
 
 		// Dispatch suspend action
-		await dispatch(suspendCard(currentCard.id))
+		const result = await dispatch(suspendCard(currentCard.id))
+
+		// Check for errors
+		if (result.error) {
+			toast.error(t('suspend_error'))
+			return
+		}
+
+		// Show success message
+		toast.success(t('card_suspended'))
 
 		// Remove card from session
 		setSessionCards(prevCards => prevCards.slice(1))
@@ -215,17 +231,17 @@ const FlashCards = () => {
 					icon={faXmark}
 					size='2xl'
 				/>
-				<h3 className={styles.flashcardsTitle}>Bravo !</h3>
+				<h3 className={styles.flashcardsTitle}>{t('session_congrats')}</h3>
 				<div className={styles.wordsContainer}>
 					<div className={styles.statsContainer}>
 						<p className={styles.statsText}>
-							Vous avez terminé la révision !
+							{t('session_complete')}
 						</p>
 						{reviewedCount > 0 && (
 							<div className={styles.sessionStats}>
-								<p><strong>{reviewedCount}</strong> carte{reviewedCount > 1 ? 's' : ''} révisée{reviewedCount > 1 ? 's' : ''}</p>
+								<p><strong>{reviewedCount}</strong> {reviewedCount > 1 ? t('cards_reviewed_plural') : t('cards_reviewed')}</p>
 								{sessionDuration > 0 && (
-									<p><strong>{sessionDuration}</strong> minute{sessionDuration > 1 ? 's' : ''}</p>
+									<p><strong>{sessionDuration}</strong> {sessionDuration > 1 ? t('session_duration_plural') : t('session_duration')}</p>
 								)}
 							</div>
 						)}
@@ -237,18 +253,86 @@ const FlashCards = () => {
 							setSessionInitialized(false) // Reset for next session
 						}}
 						className='mainBtn'>
-						Fermer
+						{t('close_btn')}
 					</button>
 				</div>
 			</div>
 		)
 	}
 
-	// If no current card, show loading
+	// If not initialized yet, show loading
+	if (!sessionInitialized) {
+		return (
+			<div className={styles.container}>
+				<FontAwesomeIcon
+					onClick={() => {
+						dispatch(toggleFlashcardsContainer(false))
+						setSessionInitialized(false)
+					}}
+					className={styles.closeIcon}
+					icon={faXmark}
+					size='2xl'
+				/>
+				<div className={styles.wordsContainer}>
+					<p className={styles.statsText}>{t('loading')}</p>
+				</div>
+			</div>
+		)
+	}
+
+	// If no words at all in the array
+	if (!wordsArray || wordsArray.length === 0) {
+		return (
+			<div className={styles.container}>
+				<FontAwesomeIcon
+					onClick={() => {
+						dispatch(toggleFlashcardsContainer(false))
+						setSessionInitialized(false)
+					}}
+					className={styles.closeIcon}
+					icon={faXmark}
+					size='2xl'
+				/>
+				<div className={styles.wordsContainer}>
+					<p className={styles.statsText}>{t('no_words_in_dictionary')}</p>
+					<p>{t('add_words_to_review')}</p>
+					<button
+						onClick={() => {
+							dispatch(toggleFlashcardsContainer(false))
+							setSessionInitialized(false)
+						}}
+						className='mainBtn'>
+						{t('close_btn')}
+					</button>
+				</div>
+			</div>
+		)
+	}
+
+	// If no current card (no cards due)
 	if (!currentCard) {
 		return (
 			<div className={styles.container}>
-				<p>Chargement...</p>
+				<FontAwesomeIcon
+					onClick={() => {
+						dispatch(toggleFlashcardsContainer(false))
+						setSessionInitialized(false)
+					}}
+					className={styles.closeIcon}
+					icon={faXmark}
+					size='2xl'
+				/>
+				<div className={styles.wordsContainer}>
+					<p className={styles.statsText}>{t('no_cards_due')}</p>
+					<button
+						onClick={() => {
+							dispatch(toggleFlashcardsContainer(false))
+							setSessionInitialized(false)
+						}}
+						className='mainBtn'>
+						{t('close_btn')}
+					</button>
+				</div>
 			</div>
 		)
 	}
@@ -268,41 +352,41 @@ const FlashCards = () => {
 			{/* Header with stats */}
 			<div className={styles.header}>
 				<h3 className={styles.flashcardsTitle}>
-					Essayez de vous souvenir de la traduction en {frontLanguage}
+					{t(titleKey)}
 				</h3>
 				<div className={styles.progressInfo}>
 					<span className={styles.cardsRemaining}>
-						{sessionCards.length} carte{sessionCards.length > 1 ? 's' : ''} à réviser
+						{sessionCards.length} {sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
 						{cardsLimit < 9999 && (
-							<span className={styles.limitIndicator}> (limite: {cardsLimit})</span>
+							<span className={styles.limitIndicator}> ({t('limit_indicator')}: {cardsLimit})</span>
 						)}
 					</span>
 					{currentCard.card_state === CARD_STATES.NEW && (
-						<span className={styles.newBadge}>Nouveau</span>
+						<span className={styles.newBadge}>{t('new_badge')}</span>
 					)}
 					{currentCard.card_state === CARD_STATES.RELEARNING && (
-						<span className={styles.relearningBadge}>Réapprentissage</span>
+						<span className={styles.relearningBadge}>{t('relearning_badge')}</span>
 					)}
 				</div>
 				<div className={styles.controlsContainer}>
 					<button
 						className={styles.reverseBtn}
 						onClick={toggleReversed}
-						title="Inverser l'ordre des langues">
-						⇄ {isReversed ? 'FR → RU' : 'RU → FR'}
+						title={t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}>
+						⇄ {t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}
 					</button>
 					<button
 						className={styles.settingsBtn}
 						onClick={() => setShowSettings(!showSettings)}
-						title="Paramètres">
-						⚙️ Paramètres
+						title={t('settings_btn')}>
+						⚙️ {t('settings_btn')}
 					</button>
 				</div>
 
 				{/* Settings panel */}
 				{showSettings && (
 					<div className={styles.settingsPanel}>
-						<h4 className={styles.settingsPanelTitle}>Nombre de cartes à réviser</h4>
+						<h4 className={styles.settingsPanelTitle}>{t('settings_title')}</h4>
 						<div className={styles.limitOptions}>
 							{[10, 20, 30, 50, 100].map(limit => (
 								<button
@@ -321,11 +405,11 @@ const FlashCards = () => {
 									updateCardsLimit(9999)
 									setShowSettings(false)
 								}}>
-								Toutes
+								{t('settings_all')}
 							</button>
 						</div>
 						<p className={styles.settingsNote}>
-							Note : Les paramètres prennent effet à la prochaine session
+							{t('settings_note')}
 						</p>
 					</div>
 				)}
@@ -356,8 +440,8 @@ const FlashCards = () => {
 							<button
 								className={styles.againBtn}
 								onClick={() => handleReview(BUTTON_TYPES.AGAIN)}
-								title="Carte complètement oubliée">
-								<span className={styles.btnLabel}>Encore</span>
+								title={t('again_btn')}>
+								<span className={styles.btnLabel}>{t('again_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.again || '<1min'}
 								</span>
@@ -366,8 +450,8 @@ const FlashCards = () => {
 							<button
 								className={styles.hardBtn}
 								onClick={() => handleReview(BUTTON_TYPES.HARD)}
-								title="Correct mais avec beaucoup d'effort">
-								<span className={styles.btnLabel}>Difficile</span>
+								title={t('hard_btn')}>
+								<span className={styles.btnLabel}>{t('hard_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.hard || '6min'}
 								</span>
@@ -376,8 +460,8 @@ const FlashCards = () => {
 							<button
 								className={styles.goodBtn}
 								onClick={() => handleReview(BUTTON_TYPES.GOOD)}
-								title="Correct avec un effort normal">
-								<span className={styles.btnLabel}>Bien</span>
+								title={t('good_btn')}>
+								<span className={styles.btnLabel}>{t('good_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.good || '10min'}
 								</span>
@@ -386,8 +470,8 @@ const FlashCards = () => {
 							<button
 								className={styles.easyBtn}
 								onClick={() => handleReview(BUTTON_TYPES.EASY)}
-								title="Correct instantanément, très facile">
-								<span className={styles.btnLabel}>Facile</span>
+								title={t('easy_btn')}>
+								<span className={styles.btnLabel}>{t('easy_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.easy || '4j'}
 								</span>
@@ -398,15 +482,15 @@ const FlashCards = () => {
 						<button
 							className={styles.suspendBtn}
 							onClick={handleSuspend}
-							title="Ne plus réviser cette carte">
-							🚫 Ne plus réviser
+							title={t('suspend_btn')}>
+							🚫 {t('suspend_btn')}
 						</button>
 					</>
 				) : (
 					<button
 						className={styles.showAnswerBtn}
 						onClick={() => setShowAnswer(true)}>
-						Montrer la réponse
+						{t('show_answer')}
 					</button>
 				)}
 			</div>

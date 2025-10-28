@@ -25,6 +25,7 @@ import Image from 'next/image'
 
 const Dictionary = () => {
 	const { t } = useTranslation('common')
+	const { t: tWords } = useTranslation('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user, isUserLoggedIn, isBootstrapping } = useUserContext()
@@ -96,7 +97,7 @@ const Dictionary = () => {
 						}}
 						variant='contained'
 						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
-						Réviser les mots
+						{tWords('repeatwords')}
 					</Button>
 					<TableContainer>
 						<Table>

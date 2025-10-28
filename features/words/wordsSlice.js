@@ -424,7 +424,7 @@ const wordsSlice = createSlice({
 				state.user_material_words = state.user_material_words.map(updateWord)
 			})
 			.addCase(updateWordReview.rejected, (_, action) => {
-				toast.error('Erreur lors de la mise à jour de la révision')
+				// Error toast will be shown by the component
 				console.error(action.payload)
 			})
 
@@ -443,10 +443,10 @@ const wordsSlice = createSlice({
 				const updateWord = (word) => word.id === payload.id ? payload : word
 				state.user_words = state.user_words.map(updateWord)
 				state.user_material_words = state.user_material_words.map(updateWord)
-				toast.success('Carte suspendue - elle n\'apparaîtra plus dans les révisions')
+				// Success toast will be shown by the component
 			})
 			.addCase(suspendCard.rejected, (_, action) => {
-				toast.error('Erreur lors de la suspension de la carte')
+				// Error toast will be shown by the component
 				console.error(action.payload)
 			})
 	},
