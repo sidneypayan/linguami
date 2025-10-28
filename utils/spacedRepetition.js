@@ -426,6 +426,11 @@ export function getButtonIntervals(card) {
  * @returns {boolean} True if card is due
  */
 export function isCardDue(card) {
+  // Suspended cards are never due
+  if (card.is_suspended) {
+    return false
+  }
+
   // New cards are always due
   if (!card.card_state || card.card_state === CARD_STATES.NEW) {
     return true

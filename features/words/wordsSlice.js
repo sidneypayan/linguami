@@ -88,6 +88,7 @@ export const addWordToDictionary = createAsyncThunk(
 						last_review_date: null,
 						reviews_count: 0,
 						lapses: 0,
+						is_suspended: false,
 						created_at: new Date().toISOString(),
 						updated_at: new Date().toISOString(),
 					},
@@ -290,6 +291,31 @@ export const initializeWordSRS = createAsyncThunk(
 	}
 )
 
+// ---------------------------------------------
+// SUSPEND CARD (exclude from reviews)
+// ---------------------------------------------
+export const suspendCard = createAsyncThunk(
+	'words/suspendCard',
+	async (wordId, thunkAPI) => {
+		try {
+			const { data, error } = await supabase
+				.from('user_words')
+				.update({
+					is_suspended: true,
+					updated_at: new Date().toISOString()
+				})
+				.eq('id', wordId)
+				.select('*')
+
+			if (error) return thunkAPI.rejectWithValue(error)
+
+			return data[0]
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
 const wordsSlice = createSlice({
 	name: 'words',
 	initialState,
@@ -410,6 +436,18 @@ const wordsSlice = createSlice({
 			})
 			.addCase(initializeWordSRS.rejected, (_, action) => {
 				console.error('Erreur lors de l\'initialisation SRS:', action.payload)
+			})
+
+			// SUSPEND CARD
+			.addCase(suspendCard.fulfilled, (state, { payload }) => {
+				const updateWord = (word) => word.id === payload.id ? payload : word
+				state.user_words = state.user_words.map(updateWord)
+				state.user_material_words = state.user_material_words.map(updateWord)
+				toast.success('Carte suspendue - elle n\'apparaîtra plus dans les révisions')
+			})
+			.addCase(suspendCard.rejected, (_, action) => {
+				toast.error('Erreur lors de la suspension de la carte')
+				console.error(action.payload)
 			})
 	},
 })

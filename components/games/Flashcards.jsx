@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import styles from '../../styles/FlashCards.module.css'
 import { useState, useEffect, useMemo } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
-import { updateWordReview, initializeWordSRS } from '../../features/words/wordsSlice'
+import { updateWordReview, initializeWordSRS, suspendCard } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import {
 	getDueCards,
@@ -25,10 +25,44 @@ const FlashCards = () => {
 	const [sessionStartTime] = useState(Date.now())
 	const [sessionCards, setSessionCards] = useState([])
 	const [sessionInitialized, setSessionInitialized] = useState(false)
+	const [isReversed, setIsReversed] = useState(() => {
+		// Charger la préférence depuis localStorage
+		if (typeof window !== 'undefined') {
+			const saved = localStorage.getItem('flashcards_reversed')
+			return saved === 'true'
+		}
+		return false
+	})
+	const [cardsLimit, setCardsLimit] = useState(() => {
+		// Charger la limite depuis localStorage
+		if (typeof window !== 'undefined') {
+			const saved = localStorage.getItem('flashcards_limit')
+			return saved ? parseInt(saved, 10) : 20 // Par défaut 20 cartes
+		}
+		return 20
+	})
+	const [showSettings, setShowSettings] = useState(false)
 
 	// Get appropriate word array based on current page
 	const wordsArray =
 		router.pathname === '/dictionary' ? user_words : user_material_words
+
+	// Toggle reversed mode and save to localStorage
+	const toggleReversed = () => {
+		const newValue = !isReversed
+		setIsReversed(newValue)
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('flashcards_reversed', newValue.toString())
+		}
+	}
+
+	// Update cards limit and save to localStorage
+	const updateCardsLimit = (newLimit) => {
+		setCardsLimit(newLimit)
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('flashcards_limit', newLimit.toString())
+		}
+	}
 
 	// Initialize session cards ONLY on first mount
 	useEffect(() => {
@@ -57,16 +91,22 @@ const FlashCards = () => {
 			return { ...card }
 		})
 
-		// Filter for due cards and set as session cards
+		// Filter for due cards and limit according to user preference
 		const dueCards = getDueCards(initializedCards)
-		if (dueCards.length > 0) {
-			setSessionCards(dueCards)
+		const limitedCards = dueCards.slice(0, cardsLimit)
+		if (limitedCards.length > 0) {
+			setSessionCards(limitedCards)
 			setSessionInitialized(true) // Mark as initialized
 		}
-	}, [wordsArray, dispatch, sessionInitialized])
+	}, [wordsArray, dispatch, sessionInitialized, cardsLimit])
 
 	// Get current card (first in session queue)
 	const currentCard = sessionCards[0]
+
+	// Determine which words to show based on reversed mode
+	const frontWord = isReversed ? currentCard?.word_fr : currentCard?.word_ru
+	const backWord = isReversed ? currentCard?.word_ru : currentCard?.word_fr
+	const frontLanguage = isReversed ? 'russe' : 'français'
 
 	// Get button intervals for current card
 	const buttonIntervals = useMemo(() => {
@@ -137,6 +177,23 @@ const FlashCards = () => {
 			}
 		})
 
+		setShowAnswer(false)
+	}
+
+	// Handle card suspension
+	const handleSuspend = async () => {
+		if (!currentCard) return
+
+		// Confirm with user
+		if (!window.confirm('Êtes-vous sûr de vouloir suspendre cette carte ? Elle n\'apparaîtra plus dans vos révisions.')) {
+			return
+		}
+
+		// Dispatch suspend action
+		await dispatch(suspendCard(currentCard.id))
+
+		// Remove card from session
+		setSessionCards(prevCards => prevCards.slice(1))
 		setShowAnswer(false)
 	}
 
@@ -211,11 +268,14 @@ const FlashCards = () => {
 			{/* Header with stats */}
 			<div className={styles.header}>
 				<h3 className={styles.flashcardsTitle}>
-					Essayez de vous souvenir de la traduction en français
+					Essayez de vous souvenir de la traduction en {frontLanguage}
 				</h3>
 				<div className={styles.progressInfo}>
 					<span className={styles.cardsRemaining}>
 						{sessionCards.length} carte{sessionCards.length > 1 ? 's' : ''} à réviser
+						{cardsLimit < 9999 && (
+							<span className={styles.limitIndicator}> (limite: {cardsLimit})</span>
+						)}
 					</span>
 					{currentCard.card_state === CARD_STATES.NEW && (
 						<span className={styles.newBadge}>Nouveau</span>
@@ -224,12 +284,57 @@ const FlashCards = () => {
 						<span className={styles.relearningBadge}>Réapprentissage</span>
 					)}
 				</div>
+				<div className={styles.controlsContainer}>
+					<button
+						className={styles.reverseBtn}
+						onClick={toggleReversed}
+						title="Inverser l'ordre des langues">
+						⇄ {isReversed ? 'FR → RU' : 'RU → FR'}
+					</button>
+					<button
+						className={styles.settingsBtn}
+						onClick={() => setShowSettings(!showSettings)}
+						title="Paramètres">
+						⚙️ Paramètres
+					</button>
+				</div>
+
+				{/* Settings panel */}
+				{showSettings && (
+					<div className={styles.settingsPanel}>
+						<h4 className={styles.settingsPanelTitle}>Nombre de cartes à réviser</h4>
+						<div className={styles.limitOptions}>
+							{[10, 20, 30, 50, 100].map(limit => (
+								<button
+									key={limit}
+									className={`${styles.limitOption} ${cardsLimit === limit ? styles.limitOptionActive : ''}`}
+									onClick={() => {
+										updateCardsLimit(limit)
+										setShowSettings(false)
+									}}>
+									{limit}
+								</button>
+							))}
+							<button
+								className={`${styles.limitOption} ${cardsLimit === 9999 ? styles.limitOptionActive : ''}`}
+								onClick={() => {
+									updateCardsLimit(9999)
+									setShowSettings(false)
+								}}>
+								Toutes
+							</button>
+						</div>
+						<p className={styles.settingsNote}>
+							Note : Les paramètres prennent effet à la prochaine session
+						</p>
+					</div>
+				)}
 			</div>
 
 			<div className={styles.wordsContainer}>
-				{/* Russian word */}
+				{/* Front of card (language being tested) */}
 				<div className={styles.originalWord}>
-					{currentCard.word_ru}
+					{frontWord}
 				</div>
 
 				{/* Show context sentence if available */}
@@ -241,9 +346,9 @@ const FlashCards = () => {
 
 				{showAnswer ? (
 					<>
-						{/* French translation */}
+						{/* Back of card (answer) */}
 						<div className={styles.translatedWord}>
-							{currentCard.word_fr}
+							{backWord}
 						</div>
 
 						{/* 4 Anki-style buttons */}
@@ -288,6 +393,14 @@ const FlashCards = () => {
 								</span>
 							</button>
 						</div>
+
+						{/* Suspend button */}
+						<button
+							className={styles.suspendBtn}
+							onClick={handleSuspend}
+							title="Ne plus réviser cette carte">
+							🚫 Ne plus réviser
+						</button>
 					</>
 				) : (
 					<button

@@ -36,6 +36,12 @@
 	font-weight: 500;
 }
 
+.limitIndicator {
+	font-size: 0.9rem;
+	color: #888;
+	font-weight: 400;
+}
+
 .newBadge,
 .relearningBadge {
 	padding: 0.25rem 0.75rem;
@@ -51,6 +57,107 @@
 
 .relearningBadge {
 	background-color: #ff8c00;
+}
+
+.controlsContainer {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 1rem;
+	flex-wrap: wrap;
+}
+
+.reverseBtn,
+.settingsBtn {
+	padding: 0.5rem 1rem;
+	background-color: #f0f0f0;
+	border: 2px solid #5b7c99;
+	border-radius: 8px;
+	color: #5b7c99;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.reverseBtn:hover,
+.settingsBtn:hover {
+	background-color: #5b7c99;
+	color: white;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.reverseBtn:active,
+.settingsBtn:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settingsPanel {
+	margin-top: 1.5rem;
+	padding: 1.5rem;
+	background-color: #f9f9f9;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.settingsPanelTitle {
+	margin: 0 0 1rem 0;
+	font-size: 1.1rem;
+	color: var(--navColor);
+	font-weight: 600;
+}
+
+.limitOptions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	justify-content: center;
+	margin-bottom: 1rem;
+}
+
+.limitOption {
+	padding: 0.6rem 1.2rem;
+	background-color: white;
+	border: 2px solid #ddd;
+	border-radius: 8px;
+	color: #666;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 60px;
+}
+
+.limitOption:hover {
+	border-color: #5b7c99;
+	color: #5b7c99;
+	transform: translateY(-2px);
+	box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.limitOptionActive {
+	background-color: #5b7c99;
+	border-color: #5b7c99;
+	color: white;
+}
+
+.limitOptionActive:hover {
+	background-color: #4a6a85;
+	border-color: #4a6a85;
+}
+
+.settingsNote {
+	font-size: 0.85rem;
+	color: #888;
+	font-style: italic;
+	margin: 0;
+	text-align: center;
 }
 
 .wordsContainer {
@@ -193,6 +300,29 @@
 	box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+.suspendBtn {
+	display: block;
+	margin: 2rem auto 0;
+	padding: 0.6rem 1.5rem;
+	background-color: #f8f8f8;
+	border: 2px solid #ccc;
+	border-radius: 8px;
+	color: #666;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.suspendBtn:hover {
+	background-color: #ff6b6b;
+	border-color: #ff6b6b;
+	color: white;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
 /* Stats and completion screen */
 .statsContainer {
 	margin-bottom: 2rem;
@@ -267,6 +397,22 @@
 
 	.btnInterval {
 		font-size: 0.8rem;
+	}
+
+	.settingsPanel {
+		padding: 1rem;
+		margin-top: 1rem;
+	}
+
+	.controlsContainer {
+		flex-direction: row;
+		gap: 0.75rem;
+	}
+
+	.reverseBtn,
+	.settingsBtn {
+		font-size: 0.85rem;
+		padding: 0.4rem 0.8rem;
 	}
 }
 
