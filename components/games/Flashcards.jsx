@@ -65,6 +65,35 @@ const FlashCards = () => {
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('flashcards_limit', newLimit.toString())
 		}
+
+		// Réappliquer la limite à la session en cours
+		if (wordsArray && wordsArray.length > 0) {
+			// Initialiser les cartes avec les valeurs SRS si nécessaires
+			const initializedCards = wordsArray.map(card => {
+				if (!card.card_state) {
+					return {
+						...card,
+						card_state: CARD_STATES.NEW,
+						ease_factor: 2.5,
+						interval: 0,
+						learning_step: null,
+						next_review_date: null,
+						last_review_date: null,
+						reviews_count: 0,
+						lapses: 0,
+						is_suspended: false
+					}
+				}
+				return { ...card }
+			})
+
+			// Filtrer les cartes dues et appliquer la nouvelle limite
+			const dueCards = getDueCards(initializedCards)
+			const limitedCards = dueCards.slice(0, newLimit)
+
+			// Mettre à jour la session avec les nouvelles cartes
+			setSessionCards(limitedCards)
+		}
 	}
 
 	// Initialize session cards ONLY on first mount
@@ -117,7 +146,6 @@ const FlashCards = () => {
 	// Determine which words to show based on reversed mode
 	const frontWord = isReversed ? currentCard?.word_fr : currentCard?.word_ru
 	const backWord = isReversed ? currentCard?.word_ru : currentCard?.word_fr
-	const titleKey = isReversed ? 'flashcards_title_fr_ru' : 'flashcards_title_ru_fr'
 
 	// Get button intervals for current card
 	const buttonIntervals = useMemo(() => {
@@ -351,9 +379,6 @@ const FlashCards = () => {
 
 			{/* Header with stats */}
 			<div className={styles.header}>
-				<h3 className={styles.flashcardsTitle}>
-					{t(titleKey)}
-				</h3>
 				<div className={styles.progressInfo}>
 					<span className={styles.cardsRemaining}>
 						{sessionCards.length} {sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
@@ -408,9 +433,6 @@ const FlashCards = () => {
 								{t('settings_all')}
 							</button>
 						</div>
-						<p className={styles.settingsNote}>
-							{t('settings_note')}
-						</p>
 					</div>
 				)}
 			</div>
