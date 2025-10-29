@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { AutoStories } from '@mui/icons-material'
+import {
+	AutoStoriesRounded,
+	CheckCircleRounded,
+	ScheduleRounded,
+	CloseRounded,
+	MenuBookRounded,
+} from '@mui/icons-material'
 import { getBookChapters } from '../../features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -13,23 +19,20 @@ import {
 	ListItemButton,
 	ListItemText,
 	Typography,
-	ListItemIcon,
+	IconButton,
+	Divider,
+	Chip,
 } from '@mui/material'
 import {
 	getUserMaterialsStatus,
 	getUserMaterialStatus,
 } from '../../features/materials/materialsSlice'
 
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import { tertiaryButton } from '../../utils/buttonStyles'
-
 const BookMenu = ({ bookId }) => {
 	const { chapters, user_materials_status } = useSelector(
 		store => store.materials
 	)
 
-	console.log(user_materials_status)
 	const router = useRouter()
 	const { section, material } = router.query
 
@@ -69,47 +72,171 @@ const BookMenu = ({ bookId }) => {
 
 	const list = (
 		<Box
-			width={350}
-			role='presentation'
-			onClick={toggleDrawer(false)}
-			onKeyDown={toggleDrawer(false)}>
-			<List>
-				{chapters.map((chapter, index) => (
-					<ListItem key={chapter.id} disablePadding>
-						<ListItemButton href={`/materials/books/${chapter.id}`}>
-							<ListItemText
-								primary={
-									<Typography
-										variant='subtitle1'
-										sx={{
-											color: '#4a5568',
-											fontWeight: 600,
-											'&:hover': {
-												color: '#667eea',
-											},
-										}}>
-										{chapter.title}
-									</Typography>
-								}
-							/>
-							{typeof checkIfUserMaterialIsInMaterials(chapter.id) !==
-								'undefined' &&
-								checkIfUserMaterialIsInMaterials(chapter.id)
-									.is_being_studied && (
-									<ListItemIcon sx={{ minWidth: 30 }}>
-										<AccessTimeIcon sx={{ color: '#1c991cb3' }} />
-									</ListItemIcon>
-								)}
-							{typeof checkIfUserMaterialIsInMaterials(chapter.id) !==
-								'undefined' &&
-								checkIfUserMaterialIsInMaterials(chapter.id).is_studied && (
-									<ListItemIcon sx={{ minWidth: 30 }}>
-										<CheckCircleIcon sx={{ color: '#1c991cb3' }} />
-									</ListItemIcon>
-								)}
-						</ListItemButton>
-					</ListItem>
-				))}
+			sx={{
+				width: { xs: '100vw', sm: 400 },
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				backgroundColor: '#fafafa',
+			}}
+			role='presentation'>
+			{/* Header */}
+			<Box
+				sx={{
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					color: 'white',
+					padding: 3,
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+				}}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+					<MenuBookRounded sx={{ fontSize: '2rem' }} />
+					<Box>
+						<Typography variant='h5' sx={{ fontWeight: 700, mb: 0.5 }}>
+							Chapitres
+						</Typography>
+						<Typography variant='body2' sx={{ opacity: 0.9 }}>
+							{chapters.length} chapitre{chapters.length > 1 ? 's' : ''}
+						</Typography>
+					</Box>
+				</Box>
+				<IconButton
+					onClick={toggleDrawer(false)}
+					sx={{
+						color: 'white',
+						'&:hover': {
+							backgroundColor: 'rgba(255, 255, 255, 0.1)',
+							transform: 'rotate(90deg)',
+						},
+						transition: 'all 0.3s ease',
+					}}>
+					<CloseRounded />
+				</IconButton>
+			</Box>
+
+			<Divider />
+
+			{/* Chapters List */}
+			<List
+				sx={{
+					flex: 1,
+					overflow: 'auto',
+					padding: 2,
+				}}>
+				{chapters.map((chapter, index) => {
+					const status = checkIfUserMaterialIsInMaterials(chapter.id)
+					const isBeingStudied = status?.is_being_studied
+					const isStudied = status?.is_studied
+					const isCurrentChapter = material == chapter.id
+
+					return (
+						<ListItem
+							key={chapter.id}
+							disablePadding
+							sx={{ marginBottom: 1 }}>
+							<ListItemButton
+								href={`/materials/books/${chapter.id}`}
+								onClick={toggleDrawer(false)}
+								sx={{
+									borderRadius: 2,
+									padding: 2,
+									backgroundColor: isCurrentChapter
+										? 'rgba(102, 126, 234, 0.1)'
+										: 'white',
+									border: isCurrentChapter
+										? '2px solid #667eea'
+										: '1px solid rgba(0, 0, 0, 0.08)',
+									transition: 'all 0.2s ease',
+									'&:hover': {
+										backgroundColor: 'rgba(102, 126, 234, 0.08)',
+										transform: 'translateX(4px)',
+										boxShadow: '0 2px 8px rgba(102, 126, 234, 0.15)',
+									},
+									'&:active': {
+										transform: 'scale(0.98)',
+									},
+								}}>
+								{/* Chapter Number */}
+								<Box
+									sx={{
+										minWidth: 40,
+										height: 40,
+										borderRadius: '50%',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										background: isCurrentChapter
+											? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+											: 'rgba(102, 126, 234, 0.1)',
+										color: isCurrentChapter ? 'white' : '#667eea',
+										fontWeight: 700,
+										fontSize: '1rem',
+										marginRight: 2,
+										flexShrink: 0,
+									}}>
+									{index + 1}
+								</Box>
+
+								<ListItemText
+									primary={
+										<Typography
+											variant='subtitle1'
+											sx={{
+												color: isCurrentChapter ? '#667eea' : '#2d3748',
+												fontWeight: 600,
+												fontSize: '1rem',
+												lineHeight: 1.4,
+											}}>
+											{chapter.title}
+										</Typography>
+									}
+								/>
+
+								{/* Status Badges */}
+								<Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
+									{isBeingStudied && (
+										<Chip
+											icon={<ScheduleRounded />}
+											label='En cours'
+											size='small'
+											sx={{
+												background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+												color: 'white',
+												fontWeight: 600,
+												fontSize: '0.7rem',
+												height: 24,
+												'& .MuiChip-icon': {
+													color: 'white',
+													fontSize: '0.9rem',
+												},
+											}}
+										/>
+									)}
+									{isStudied && (
+										<Chip
+											icon={<CheckCircleRounded />}
+											label='Terminé'
+											size='small'
+											sx={{
+												background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+												color: 'white',
+												fontWeight: 600,
+												fontSize: '0.7rem',
+												height: 24,
+												'& .MuiChip-icon': {
+													color: 'white',
+													fontSize: '0.9rem',
+												},
+											}}
+										/>
+									)}
+								</Box>
+							</ListItemButton>
+						</ListItem>
+					)
+				})}
 			</List>
 		</Box>
 	)
@@ -117,17 +244,39 @@ const BookMenu = ({ bookId }) => {
 	return (
 		<>
 			<Button
-				sx={{
-					...tertiaryButton,
-					marginBottom: '2rem',
-					marginLeft: '1rem',
-				}}
 				variant='contained'
-				endIcon={<AutoStories />}
-				onClick={toggleDrawer(true)}>
-				Afficher les chapitres
+				startIcon={<AutoStoriesRounded />}
+				onClick={toggleDrawer(true)}
+				sx={{
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					color: 'white',
+					fontWeight: 600,
+					fontSize: { xs: '0.9rem', sm: '1rem' },
+					padding: '0.75rem 1.5rem',
+					borderRadius: 3,
+					textTransform: 'none',
+					transition: 'all 0.3s ease',
+					boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+					'&:hover': {
+						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+						transform: 'translateY(-2px)',
+						boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+					},
+					'&:active': {
+						transform: 'scale(0.98)',
+					},
+				}}>
+				Chapitres du livre
 			</Button>
-			<Drawer anchor='left' open={drawerState} onClose={toggleDrawer(false)}>
+			<Drawer
+				anchor='left'
+				open={drawerState}
+				onClose={toggleDrawer(false)}
+				sx={{
+					'& .MuiDrawer-paper': {
+						boxShadow: '8px 0 32px rgba(0, 0, 0, 0.1)',
+					},
+				}}>
 				{list}
 			</Drawer>
 		</>

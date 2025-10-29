@@ -49,30 +49,35 @@ const Homepage = () => {
 			title: t('video'),
 			subtitle: t('videosubtitle'),
 			subtitleMobile: t('videosubtitleMobile'),
+			link: '/materials#videos',
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio.png`,
 			title: t('audio'),
 			subtitle: t('audiosubtitle'),
 			subtitleMobile: t('audiosubtitleMobile'),
+			link: '/materials#audio',
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text.png`,
 			title: t('text'),
 			subtitle: t('textsubtitle'),
 			subtitleMobile: t('textsubtitleMobile'),
+			link: '/materials#texts',
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`,
 			title: t('dictionary'),
 			subtitle: t('dictionarysubtitle'),
 			subtitleMobile: t('dictionarysubtitleMobile'),
+			link: '/dictionary',
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`,
 			title: t('flashcards'),
 			subtitle: t('flashcardssubtitle'),
 			subtitleMobile: t('flashcardssubtitleMobile'),
+			link: '/dictionary',
 		},
 	]
 
@@ -128,78 +133,79 @@ const Homepage = () => {
 								display: 'flex',
 								justifyContent: 'center',
 							}}>
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									gap: 2,
-									textAlign: 'center',
-									p: { xs: 2.5, md: 3 },
-									height: '100%',
-									width: '100%',
-									maxWidth: { xs: '100%', sm: '280px' },
-									minHeight: { xs: '260px', sm: '280px' },
-									borderRadius: 4,
-									background: 'rgba(255, 255, 255, 0.8)',
-									border: '1px solid rgba(102, 126, 234, 0.1)',
-									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-									transition: 'all 0.3s ease',
-									cursor: 'pointer',
-									'&:hover': {
-										transform: 'translateY(-8px)',
-										boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-										background: 'white',
-										borderColor: 'rgba(102, 126, 234, 0.3)',
-									},
-								}}>
+							<Link href={icon.link} style={{ textDecoration: 'none', width: '100%', maxWidth: '280px' }}>
 								<Box
 									sx={{
-										width: { xs: 60, md: 70 },
-										height: { xs: 60, md: 70 },
-										position: 'relative',
 										display: 'flex',
+										flexDirection: 'column',
 										alignItems: 'center',
-										justifyContent: 'center',
-										borderRadius: 3,
-										background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
-										p: 2,
+										gap: 2,
+										textAlign: 'center',
+										p: { xs: 2.5, md: 3 },
+										height: '100%',
+										width: '100%',
+										minHeight: { xs: '260px', sm: '280px' },
+										borderRadius: 4,
+										background: 'rgba(255, 255, 255, 0.8)',
+										border: '1px solid rgba(102, 126, 234, 0.1)',
+										boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+										transition: 'all 0.3s ease',
+										cursor: 'pointer',
+										'&:hover': {
+											transform: 'translateY(-8px)',
+											boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+											background: 'white',
+											borderColor: 'rgba(102, 126, 234, 0.3)',
+										},
 									}}>
-									<Image
-										src={icon.img}
-										alt={icon.title}
-										fill
-										style={{ objectFit: 'contain', padding: '12px' }}
-									/>
-								</Box>
-								<Box>
-									<Typography
-										variant='h6'
+									<Box
 										sx={{
-											fontSize: { xs: '1rem', md: '1.125rem' },
-											fontWeight: 700,
-											color: '#667eea',
-											mb: 0.5,
+											width: { xs: 60, md: 70 },
+											height: { xs: 60, md: 70 },
+											position: 'relative',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											borderRadius: 3,
+											background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
+											p: 2,
 										}}>
-										{icon.title}
-									</Typography>
-									<Typography
-										variant='body2'
-										sx={{
-											color: '#718096',
-											fontWeight: 500,
-											fontSize: { xs: '0.875rem', md: '0.95rem' },
-											lineHeight: 1.5,
-										}}>
-										<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
-											{icon.subtitleMobile}
-										</Box>
-										<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-											{icon.subtitle}
-										</Box>
-									</Typography>
+										<Image
+											src={icon.img}
+											alt={icon.title}
+											fill
+											style={{ objectFit: 'contain', padding: '12px' }}
+										/>
+									</Box>
+									<Box>
+										<Typography
+											variant='h6'
+											sx={{
+												fontSize: { xs: '1rem', md: '1.125rem' },
+												fontWeight: 700,
+												color: '#667eea',
+												mb: 0.5,
+											}}>
+											{icon.title}
+										</Typography>
+										<Typography
+											variant='body2'
+											sx={{
+												color: '#718096',
+												fontWeight: 500,
+												fontSize: { xs: '0.875rem', md: '0.95rem' },
+												lineHeight: 1.5,
+											}}>
+											<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+												{icon.subtitleMobile}
+											</Box>
+											<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+												{icon.subtitle}
+											</Box>
+										</Typography>
+									</Box>
 								</Box>
-							</Box>
+							</Link>
 						</Grid>
 					))}
 				</Grid>

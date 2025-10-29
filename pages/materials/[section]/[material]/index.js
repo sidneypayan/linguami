@@ -17,6 +17,7 @@ import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
+import VideoPlayer from '../../../../components/material/VideoPlayer'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 
@@ -35,10 +36,24 @@ import {
 	IconButton,
 	Stack,
 	Typography,
+	Paper,
 } from '@mui/material'
-import { ArrowBack, MenuBook, Close } from '@mui/icons-material'
+import {
+	ArrowBack,
+	MenuBook,
+	Close,
+	PlayArrowRounded,
+	PauseRounded,
+	VisibilityRounded,
+	CheckCircleRounded,
+} from '@mui/icons-material'
 import Head from 'next/head'
-import { primaryButton, warningButton, tertiaryButton, successButton } from '../../../../utils/buttonStyles'
+import {
+	primaryButton,
+	warningButton,
+	tertiaryButton,
+	successButton,
+} from '../../../../utils/buttonStyles'
 
 const Material = ({ material: single_material, activitiesCount }) => {
 	const { t } = useTranslation('materials')
@@ -100,24 +115,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 	const displayVideo = section => {
 		if (sections.music.includes(section) || sections.video.includes(section)) {
-			return (
-				<Box
-					maxWidth='100%'
-					width={450}
-					sx={{
-						margin: '0 auto',
-						marginBottom: '5rem',
-						position: 'sticky',
-						top: '70px',
-						textAlign: 'center',
-						zIndex: '2',
-					}}>
-					<iframe
-						style={{ height: '250px', width: '450px', maxWidth: '100%' }}
-						src={single_material.video}
-						allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'></iframe>
-				</Box>
-			)
+			return <VideoPlayer videoUrl={single_material.video} />
 		}
 	}
 
@@ -211,169 +209,333 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						<Typography
 							variant='h1'
 							sx={{
+								position: 'relative',
+								zIndex: 100,
 								typography: { xs: 'h4', sm: 'h3' },
 								width: '750px',
 								maxWidth: '100%',
-								margin: { xs: '1.5rem auto', sm: '2rem auto' },
+								margin: { xs: '1.5rem auto 0.5rem', sm: '2rem auto 0.75rem' },
 								px: { xs: 1, sm: 0 },
+								backgroundColor: 'white',
+								py: 2,
 							}}
-							align='center'
-							mb={{ xs: 3, sm: 5 }}>
+							align='center'>
 							{single_material.title}
 						</Typography>
 
 						{getImageRegardingSection(section)}
 						{displayVideo(section)}
 
-						<Container maxWidth='md'>
+						<Container
+							maxWidth='md'
+							sx={{
+								marginTop: (sections.music.includes(section) || sections.video.includes(section))
+									? { xs: '14rem', sm: '16rem', md: '18rem' }
+									: { xs: '2rem', sm: '3rem', md: '4rem' },
+							}}>
 							<Translation
 								coordinates={coordinates}
 								materialId={single_material.id}
 								userId={user && user.id}
 							/>
 
-							{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
-							afficher le bouton proposant de l'ajouter aux matériels en cours
-							d'étude */}
+							{/* Action buttons */}
+							<Box
+								sx={{
+									position: 'relative',
+									zIndex: 100,
+									display: 'flex',
+									flexWrap: 'wrap',
+									gap: 2,
+									marginBottom: '3rem',
+									marginTop: '2rem',
+									backgroundColor: 'white',
+									padding: '1rem',
+									borderRadius: 3,
+									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+								}}>
+								{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
+								afficher le bouton proposant de l'ajouter aux matériels en cours
+								d'étude */}
+								{!is_being_studied && !is_studied && isUserLoggedIn && (
+									<Button
+										variant='contained'
+										startIcon={<PlayArrowRounded />}
+										onClick={async () => {
+											await dispatch(
+												addBeingStudiedMaterial(single_material.id)
+											)
+											dispatch(getUserMaterialStatus(single_material.id))
+											dispatch(getUserMaterialsStatus())
+										}}
+										sx={{
+											background:
+												'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '0.9rem', sm: '1rem' },
+											padding: '0.75rem 1.5rem',
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.3s ease',
+											boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+											'&:hover': {
+												background:
+													'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+												transform: 'translateY(-2px)',
+												boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										{t('startstudying')}
+									</Button>
+								)}
 
-							{!is_being_studied && !is_studied && isUserLoggedIn && (
-								<Button
-									sx={{
-										...primaryButton,
-										marginBottom: '2rem',
-										marginRight: '1rem',
-									}}
-									variant='contained'
-									onClick={async () => {
-										await dispatch(addBeingStudiedMaterial(single_material.id))
-										dispatch(getUserMaterialStatus(single_material.id))
-										dispatch(getUserMaterialsStatus())
-									}}
-									type='button'
-									id='show-accents'>
-									{t('startstudying')}
-								</Button>
-							)}
+								{is_being_studied && isUserLoggedIn && (
+									<Button
+										variant='contained'
+										startIcon={<PauseRounded />}
+										onClick={async () => {
+											await dispatch(
+												removeBeingStudiedMaterial(single_material.id)
+											)
+											dispatch(getUserMaterialStatus(single_material.id))
+											dispatch(getUserMaterialsStatus())
+										}}
+										sx={{
+											background:
+												'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '0.9rem', sm: '1rem' },
+											padding: '0.75rem 1.5rem',
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.3s ease',
+											boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)',
+											'&:hover': {
+												background:
+													'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+												transform: 'translateY(-2px)',
+												boxShadow: '0 6px 20px rgba(245, 158, 11, 0.4)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										{t('stopstudying')}
+									</Button>
+								)}
 
-							{is_being_studied && isUserLoggedIn && (
-								<Button
-									sx={{
-										...warningButton,
-										marginBottom: '2rem',
-										marginRight: '1rem',
-									}}
-									variant='contained'
-									onClick={async () => {
-										await dispatch(
-											removeBeingStudiedMaterial(single_material.id)
-										)
-										dispatch(getUserMaterialStatus(single_material.id))
-										dispatch(getUserMaterialsStatus())
-									}}
-									type='button'
-									id='show-accents'>
-									{t('stopstudying')}
-								</Button>
-							)}
+								{/* Si la langue russe est sélectionné, montrer le bouton permettant d'afficher les accents */}
+								{userLearningLanguage === 'ru' && (
+									<Button
+										variant='contained'
+										startIcon={<VisibilityRounded />}
+										onClick={() => setShowAccents(!showAccents)}
+										sx={{
+											background: showAccents
+												? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+												: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '0.9rem', sm: '1rem' },
+											padding: '0.75rem 1.5rem',
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.3s ease',
+											boxShadow: showAccents
+												? '0 4px 15px rgba(16, 185, 129, 0.3)'
+												: '0 4px 15px rgba(100, 116, 139, 0.3)',
+											'&:hover': {
+												background: showAccents
+													? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
+													: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+												transform: 'translateY(-2px)',
+												boxShadow: showAccents
+													? '0 6px 20px rgba(16, 185, 129, 0.4)'
+													: '0 6px 20px rgba(100, 116, 139, 0.4)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										{t('showaccents')}
+									</Button>
+								)}
 
-							{/* Si la langue russe est sélectionné, montrer le bouton permettant d'afficher les accents */}
-							{userLearningLanguage === 'ru' && (
-								<Button
-									sx={{
-										...tertiaryButton,
-										marginBottom: '2rem',
-										marginRight: '1rem'
-									}}
-									variant='contained'
-									onClick={() => setShowAccents(!showAccents)}
-									type='button'
-									id='show-accents'>
-									{t('showaccents')}
-								</Button>
-							)}
+								{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
+								{isUserAdmin && (
+									<Button
+										variant='outlined'
+										onClick={handleEditContent}
+										sx={{
+											borderColor: '#667eea',
+											color: '#667eea',
+											fontWeight: 600,
+											fontSize: { xs: '0.9rem', sm: '1rem' },
+											padding: '0.75rem 1.5rem',
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.3s ease',
+											borderWidth: '2px',
+											'&:hover': {
+												borderColor: '#667eea',
+												borderWidth: '2px',
+												background: 'rgba(102, 126, 234, 0.1)',
+												transform: 'translateY(-2px)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										Edit material
+									</Button>
+								)}
+							</Box>
 
 							{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
-
 							{section === 'books' && (
-								<BookMenu bookId={single_material.book_id} />
-							)}
-
-							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
-							{isUserAdmin && (
-								<Button
+								<Box
 									sx={{
-										...tertiaryButton,
-										marginBottom: '2rem'
-									}}
-									variant='contained'
-									onClick={handleEditContent}
-									type='button'
-									id='show-accents'>
-									Edit material
-								</Button>
+										position: 'relative',
+										zIndex: 100,
+										marginBottom: '2rem',
+										backgroundColor: 'white',
+										padding: '1rem',
+										borderRadius: 3,
+										boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+									}}>
+									<BookMenu bookId={single_material.book_id} />
+								</Box>
 							)}
 
 							{/* Afficher le texte avec ou sans accents en fonction de l'état de showAccents */}
-							{showAccents ? (
-								<Typography
-									color='clrGrey2'
-									sx={{ fontSize: '1.1rem' }}
-									variant='subtitle1'
-									onClick={e => getCoordinates(e)}>
-									<Words
-										content={single_material.body_accents}
-										materialId={single_material.id}
-									/>
-								</Typography>
-							) : (
-								<Typography
-									color='clrGrey2'
-									sx={{ fontSize: '1.1rem' }}
-									variant='subtitle1'
-									onClick={e => getCoordinates(e)}>
-									<Words
-										content={single_material.body}
-										materialId={single_material.id}
-									/>
-								</Typography>
-							)}
-
-							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
-							<br />
+							<Paper
+								elevation={0}
+								sx={{
+									position: 'relative',
+									zIndex: 100,
+									padding: { xs: 3, sm: 4 },
+									marginBottom: '3rem',
+									backgroundColor: 'white',
+									borderRadius: 3,
+									border: '1px solid rgba(0, 0, 0, 0.08)',
+									boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+								}}>
+								{showAccents ? (
+									<Typography
+										sx={{
+											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
+											lineHeight: 2,
+											letterSpacing: '0.01em',
+											color: '#1a202c',
+											cursor: 'pointer',
+											fontWeight: 400,
+											'& span': {
+												transition: 'background-color 0.2s ease',
+											},
+											'& p': {
+												marginBottom: '1.5rem',
+											},
+										}}
+										variant='body1'
+										onClick={e => getCoordinates(e)}>
+										<Words
+											content={single_material.body_accents}
+											materialId={single_material.id}
+										/>
+									</Typography>
+								) : (
+									<Typography
+										sx={{
+											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
+											lineHeight: 2,
+											letterSpacing: '0.01em',
+											color: '#1a202c',
+											cursor: 'pointer',
+											fontWeight: 400,
+											'& span': {
+												transition: 'background-color 0.2s ease',
+											},
+											'& p': {
+												marginBottom: '1.5rem',
+											},
+										}}
+										variant='body1'
+										onClick={e => getCoordinates(e)}>
+										<Words
+											content={single_material.body}
+											materialId={single_material.id}
+										/>
+									</Typography>
+								)}
+							</Paper>
 
 							{displayh5pActivities()}
 
+							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
 							{!is_studied && (
-								<Button
-									variant='contained'
-									size='large'
+								<Box
 									sx={{
-										...successButton,
-										display: 'block',
-										margin: '0 auto',
-										marginTop: '2rem',
-									}}
-									onClick={async () => {
-										await dispatch(addMaterialToStudied(single_material.id))
-										dispatch(getUserMaterialStatus(single_material.id))
-										dispatch(getUserMaterialsStatus())
-									}}
-									type='button'
-									id='checkMaterial'>
-									{t('lessonlearnt')} <i className='fas fa-check'></i>
-								</Button>
+										position: 'relative',
+										zIndex: 100,
+										display: 'flex',
+										justifyContent: 'center',
+										marginTop: '3rem',
+										marginBottom: '3rem',
+										backgroundColor: 'white',
+										padding: '1rem',
+										borderRadius: 3,
+									}}>
+									<Button
+										variant='contained'
+										size='large'
+										startIcon={<CheckCircleRounded />}
+										onClick={async () => {
+											await dispatch(addMaterialToStudied(single_material.id))
+											dispatch(getUserMaterialStatus(single_material.id))
+											dispatch(getUserMaterialsStatus())
+										}}
+										sx={{
+											background:
+												'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '1rem', sm: '1.1rem' },
+											padding: { xs: '1rem 2rem', sm: '1.2rem 3rem' },
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.3s ease',
+											boxShadow: '0 6px 24px rgba(16, 185, 129, 0.3)',
+											'&:hover': {
+												background:
+													'linear-gradient(135deg, #059669 0%, #047857 100%)',
+												transform: 'translateY(-3px)',
+												boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										{t('lessonlearnt')}
+									</Button>
+								</Box>
 							)}
-						</Container>
 
-						<Box
-							sx={{
-								position: 'sticky',
-								bottom: 0,
-								boxShadow: '0px -10px 15px -5px rgba(0,0,0,0.1)',
-								marginTop: '4rem',
-							}}>
-							{displayAudioPlayer(section, single_material.audio)}
-						</Box>
+							<Box
+								sx={{
+									position: 'sticky',
+									bottom: '1.5rem',
+									zIndex: 500,
+									marginTop: '3rem',
+									marginBottom: '3rem',
+								}}>
+								{displayAudioPlayer(section, single_material.audio)}
+							</Box>
+						</Container>
 					</Container>
 
 					{/* Floating button for mobile */}
@@ -436,7 +598,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									position: 'fixed',
 									bottom: '6rem',
 									right: '1rem',
-									background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+									background:
+										'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
 									color: 'white',
 									width: '56px',
 									height: '56px',
@@ -444,7 +607,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									zIndex: 1200,
 									transition: 'all 0.3s ease',
 									'&:hover': {
-										background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+										background:
+											'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
 										transform: 'scale(1.1) rotate(90deg)',
 										boxShadow: '0 6px 20px rgba(245, 87, 108, 0.7)',
 									},

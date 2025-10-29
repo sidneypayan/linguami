@@ -264,15 +264,27 @@ const materialsSlice = createSlice({
 		filterMaterialsByStatus: (state, { payload }) => {
 			const { section, status, userMaterialsStatus } = payload
 
-			// Récupérer les IDs des matériaux avec le statut demandé
-			const materialIdsWithStatus = userMaterialsStatus
-				.filter(userMaterial => userMaterial[status])
-				.map(userMaterial => userMaterial.material_id)
+			if (status === 'not_studied') {
+				// Pour les non étudiés, récupérer les IDs de tous les matériaux qui ont un statut (étudié ou en cours)
+				const materialIdsWithAnyStatus = userMaterialsStatus
+					.filter(userMaterial => userMaterial.is_being_studied || userMaterial.is_studied)
+					.map(userMaterial => userMaterial.material_id)
 
-			// Filtrer les matériaux par section et statut
-			state.filtered_materials = state.materials.filter(
-				item => item.section === section && materialIdsWithStatus.includes(item.id)
-			)
+				// Filtrer les matériaux par section et exclure ceux qui ont un statut
+				state.filtered_materials = state.materials.filter(
+					item => item.section === section && !materialIdsWithAnyStatus.includes(item.id)
+				)
+			} else {
+				// Récupérer les IDs des matériaux avec le statut demandé
+				const materialIdsWithStatus = userMaterialsStatus
+					.filter(userMaterial => userMaterial[status])
+					.map(userMaterial => userMaterial.material_id)
+
+				// Filtrer les matériaux par section et statut
+				state.filtered_materials = state.materials.filter(
+					item => item.section === section && materialIdsWithStatus.includes(item.id)
+				)
+			}
 			resetPagination(state)
 		},
 		showAllMaterials: state => {
