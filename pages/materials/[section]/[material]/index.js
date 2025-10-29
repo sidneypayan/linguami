@@ -35,7 +35,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
-import { ArrowBack } from '@mui/icons-material'
+import { ArrowBack, MenuBook, Close } from '@mui/icons-material'
 import Head from 'next/head'
 
 const Material = ({ material: single_material }) => {
@@ -47,6 +47,7 @@ const Material = ({ material: single_material }) => {
 	const { material, section } = router.query
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
+	const [showWordsContainer, setShowWordsContainer] = useState(false)
 
 	const { user_material_status } = useSelector(store => store.materials)
 	const { activities } = useSelector(store => store.activities)
@@ -336,10 +337,34 @@ const Material = ({ material: single_material }) => {
 							{displayAudioPlayer(section, single_material.audio)}
 						</Box>
 					</Container>
+
+					{/* Floating button for mobile */}
+					<IconButton
+						sx={{
+							display: { xs: 'flex', md: 'none' },
+							position: 'fixed',
+							right: '1rem',
+							top: '50%',
+							transform: 'translateY(-50%)',
+							backgroundColor: 'clrPrimary1',
+							color: 'white',
+							width: '56px',
+							height: '56px',
+							boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+							zIndex: 1000,
+							'&:hover': {
+								backgroundColor: 'clrPrimary2',
+							},
+						}}
+						onClick={() => setShowWordsContainer(true)}>
+						<MenuBook />
+					</IconButton>
+
+					{/* Desktop WordsContainer */}
 					<Container
 						sx={{
+							display: { xs: 'none', md: 'block' },
 							maxWidth: {
-								xs: '100%',
 								md: '35%',
 								lg: '25%',
 							},
@@ -348,6 +373,37 @@ const Material = ({ material: single_material }) => {
 						}}>
 						<WordsContainer />
 					</Container>
+
+					{/* Mobile fullscreen WordsContainer */}
+					{showWordsContainer && (
+						<Box
+							sx={{
+								display: { xs: 'flex', md: 'none' },
+								position: 'fixed',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								backgroundColor: '#fafafa',
+								zIndex: 1100,
+								flexDirection: 'column',
+								overflowY: 'auto',
+								paddingTop: '4rem',
+								paddingX: '1rem',
+							}}>
+							<IconButton
+								sx={{
+									position: 'absolute',
+									top: '1rem',
+									right: '1rem',
+									color: 'clrBtn2',
+								}}
+								onClick={() => setShowWordsContainer(false)}>
+								<Close fontSize='large' />
+							</IconButton>
+							<WordsContainer />
+						</Box>
+					)}
 				</Stack>
 			</>
 		)

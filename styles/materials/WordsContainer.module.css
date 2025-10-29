@@ -66,3 +66,37 @@
 	box-shadow: 0px 2px 3px var(--primaryBtnColor),
 		0px 2px 3px var(--primaryBtnColor);
 }
+
+.practiceBtn {
+	padding: 1rem 2.5rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border: none;
+	border-radius: 12px;
+	color: white;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+	display: block;
+	margin: 0 auto 2rem;
+}
+
+.practiceBtn:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.practiceBtn:active {
+	transform: translateY(-1px);
+	box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+	.practiceBtn {
+		padding: 0.9rem 2rem;
+		font-size: 1rem;
+		width: 100%;
+		max-width: 280px;
+	}
+}

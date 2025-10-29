@@ -81,9 +81,11 @@ const WordsContainer = () => {
 		<>
 			{isUserLoggedIn && user_material_words ? (
 				<>
-					<Typography variant='h5' align='center'>
-						{t('vocabulary')}
-					</Typography>
+					<button
+						className={styles.practiceBtn}
+						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
+						{t('repeatwords')}
+					</button>
 					<List sx={{ margin: '2rem auto' }}>
 						{user_material_words.map((words, index) => (
 							<ListItem
@@ -107,17 +109,6 @@ const WordsContainer = () => {
 							</ListItem>
 						))}
 					</List>
-					<Button
-						variant='contained'
-						size='large'
-						sx={{
-							display: 'block',
-							margin: '2rem auto',
-							backgroundColor: 'clrPrimary1',
-						}}
-						onClick={() => dispatch(toggleFlashcardsContainer(true))}>
-						{t('repeatwords')}
-					</Button>
 				</>
 			) : (
 				<>
