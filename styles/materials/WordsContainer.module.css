@@ -21,23 +21,9 @@
 	color: #337ab7;
 }
 
-.row {
-	width: 100%;
-	justify-content: center;
-	display: flex;
-	gap: 0.5rem;
-	align-items: center;
-}
-
 .originalWord {
 	color: #2582e7;
 	font-weight: 600;
-}
-
-.trashIcon {
-	visibility: hidden;
-	cursor: pointer;
-	margin-left: auto;
 }
 
 .flashcardsBtn {

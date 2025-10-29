@@ -1,10 +1,5 @@
 import React from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
 import styles from '../../styles/materials/WordsContainer.module.css'
@@ -17,13 +12,14 @@ import { useEffect } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import {
 	Button,
+	IconButton,
 	List,
 	ListItem,
 	ListItemIcon,
 	ListItemText,
 	Typography,
 } from '@mui/material'
-import { ThumbUpOffAlt } from '@mui/icons-material'
+import { ThumbUpOffAlt, DeleteOutline } from '@mui/icons-material'
 import Link from 'next/link'
 
 const WordsContainer = () => {
@@ -40,31 +36,6 @@ const WordsContainer = () => {
 
 	const handleDelete = id => {
 		dispatch(deleteUserWord(id))
-	}
-
-	const showTrash = e => {
-		if (e.target.classList.contains('row')) {
-			e.target.lastElementChild.style.visibility = 'visible'
-		}
-		if (e.target.classList.contains('originalWord')) {
-			e.target.nextElementSibling.nextElementSibling.style.visibility =
-				'visible'
-		}
-		if (e.target.classList.contains('translatedWord')) {
-			e.target.nextElementSibling.style.visibility = 'visible'
-		}
-	}
-
-	const hideTrash = e => {
-		if (e.target.classList.contains('row')) {
-			e.target.lastElementChild.style.visibility = 'hidden'
-		}
-		if (e.target.classList.contains('originalWord')) {
-			e.target.nextElementSibling.nextElementSibling.style.visibility = 'hidden'
-		}
-		if (e.target.classList.contains('translatedWord')) {
-			e.target.nextElementSibling.style.visibility = 'hidden'
-		}
 	}
 
 	useEffect(() => {
@@ -90,22 +61,28 @@ const WordsContainer = () => {
 						{user_material_words.map((words, index) => (
 							<ListItem
 								key={index}
-								className={`${styles.row} row`}
-								onMouseEnter={showTrash}
-								onMouseLeave={hideTrash}>
-								{' '}
-								<span className={`${styles.originalWord} originalWord`}>
-									{words.word_ru}
-								</span>{' '}
-								-{' '}
-								<span className={`${styles.translatedWord} translatedWord`}>
-									{words.word_fr}
-								</span>
-								<FontAwesomeIcon
-									className={styles.trashIcon}
-									icon={faTrashAlt}
-									onClick={() => handleDelete(words.id)}
-								/>
+								sx={{
+									width: '100%',
+									justifyContent: 'center',
+									display: 'flex',
+									gap: '0.5rem',
+									alignItems: 'center',
+								}}>
+								<span className={styles.originalWord}>{words.word_ru}</span> -{' '}
+								<span>{words.word_fr}</span>
+								<IconButton
+									sx={{
+										marginLeft: 'auto',
+										// Toujours visible sur mobile, visible au hover sur desktop
+										opacity: { xs: 1, md: 0 },
+										'&:hover': {
+											opacity: 1,
+										},
+										transition: 'opacity 0.3s ease',
+									}}
+									onClick={() => handleDelete(words.id)}>
+									<DeleteOutline />
+								</IconButton>
 							</ListItem>
 						))}
 					</List>

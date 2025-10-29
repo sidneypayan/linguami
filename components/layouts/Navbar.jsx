@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import useTranslation from 'next-translate/useTranslation'
 import { useUserContext } from '../../context/user.js'
 import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
 import UserMenu from './UserMenu'
 import {
 	AppBar,
@@ -36,8 +37,9 @@ const Navbar = props => {
 	const { t, lang } = useTranslation('common')
 	const { user, userProfile, isUserLoggedIn } = useUserContext()
 	const router = useRouter()
+	const { lessons, lessons_loading } = useSelector(store => store.lessons)
 
-	const navigationLinks = [
+	const allNavigationLinks = [
 		{
 			name: 'Linguami',
 			icon: <Home style={{ fontSize: '1.5rem' }} />,
@@ -57,6 +59,8 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: <MenuBook style={{ fontSize: '1.5rem' }} />,
 			href: '/lessons',
+			// Cacher seulement si chargement terminé ET aucune leçon
+			hideIf: !lessons_loading && lessons.length === 0,
 		},
 		{
 			name: t('blog'),
@@ -64,6 +68,9 @@ const Navbar = props => {
 			href: '/blog',
 		},
 	]
+
+	// Filtrer les liens à ne pas afficher
+	const navigationLinks = allNavigationLinks.filter(link => !link.hideIf)
 
 	const { window } = props
 	const [mobileOpen, setMobileOpen] = useState(false)

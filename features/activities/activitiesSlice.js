@@ -6,6 +6,8 @@ const initialState = {
 	activities_loading: true,
 	activities_pending: false,
 	activities_error: null,
+	activities_count: 0,
+	activities_count_loading: false,
 }
 
 export const getActivities = createAsyncThunk(
@@ -22,6 +24,26 @@ export const getActivities = createAsyncThunk(
 			return data
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
+		}
+	}
+)
+
+export const getActivitiesCount = createAsyncThunk(
+	'activities/getActivitiesCount',
+	async ({ id, type }, thunkAPI) => {
+		try {
+			const response = await fetch(
+				`/api/activities/count?id=${id}&type=${type}`
+			)
+			const data = await response.json()
+
+			if (!response.ok) {
+				return thunkAPI.rejectWithValue(data.error)
+			}
+
+			return data.count
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.message)
 		}
 	}
 )
@@ -43,6 +65,17 @@ const activitiesSlice = createSlice({
 			.addCase(getActivities.rejected, (state, { payload }) => {
 				state.activities_loading = false
 				state.activities_error = payload
+			})
+			.addCase(getActivitiesCount.pending, state => {
+				state.activities_count_loading = true
+			})
+			.addCase(getActivitiesCount.fulfilled, (state, { payload }) => {
+				state.activities_count_loading = false
+				state.activities_count = payload
+			})
+			.addCase(getActivitiesCount.rejected, state => {
+				state.activities_count_loading = false
+				state.activities_count = 0
 			})
 	},
 })

@@ -83,19 +83,27 @@ const Section = () => {
 				<meta name='description' content={t('description')} />
 			</Head>
 
-			<IconButton
-				sx={{
-					position: 'absolute',
-					top: '6rem',
-					left: '5%',
-					color: 'clrBtn2',
-				}}
-				aria-label='back'
-				onClick={() => router.back()}>
-				<ArrowBack fontSize='large' />
-			</IconButton>
-
-			<Container sx={{ margin: '10rem auto' }}>
+			<Container sx={{ marginTop: '6rem', marginBottom: '4rem' }}>
+				<Box sx={{ mb: 3 }}>
+					<IconButton
+						sx={{
+							backgroundColor: 'rgba(255, 255, 255, 0.9)',
+							backdropFilter: 'blur(8px)',
+							boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+							color: 'clrBtn2',
+							transition: 'all 0.3s ease',
+							'&:hover': {
+								backgroundColor: 'clrPrimary1',
+								color: 'white',
+								transform: 'scale(1.1)',
+								boxShadow: '0 4px 12px rgba(67, 40, 116, 0.3)',
+							},
+						}}
+						aria-label='back'
+						onClick={() => router.back()}>
+						<ArrowBack fontSize='medium' />
+					</IconButton>
+				</Box>
 				<LevelBar />
 				<Box
 					sx={{

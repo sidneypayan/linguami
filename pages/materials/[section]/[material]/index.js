@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
+import { supabaseServer } from '../../../../lib/supabase-server'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -38,7 +39,7 @@ import {
 import { ArrowBack, MenuBook, Close } from '@mui/icons-material'
 import Head from 'next/head'
 
-const Material = ({ material: single_material }) => {
+const Material = ({ material: single_material, activitiesCount }) => {
 	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -63,8 +64,10 @@ const Material = ({ material: single_material }) => {
 	useEffect(() => {
 		if (!single_material?.id) return
 
-		dispatch(getActivities({ id: single_material.id, type: 'materials' }))
-	}, [dispatch, single_material])
+		if (isUserLoggedIn) {
+			dispatch(getActivities({ id: single_material.id, type: 'materials' }))
+		}
+	}, [dispatch, single_material, isUserLoggedIn])
 
 	const handleEditContent = () => {
 		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
@@ -118,7 +121,8 @@ const Material = ({ material: single_material }) => {
 	}
 
 	const displayh5pActivities = () => {
-		if (!activities || activities.length === 0) {
+		// Si l'utilisateur n'est pas connecté et qu'il y a des activités en DB
+		if (!isUserLoggedIn && activitiesCount > 0) {
 			return (
 				<Typography
 					variant='subtitle1'
@@ -129,19 +133,25 @@ const Material = ({ material: single_material }) => {
 			)
 		}
 
-		return (
-			<div>
-				{activities.map(activity => {
-					const h5pJsonPath =
-						process.env.NEXT_PUBLIC_SUPABASE_H5P +
-						'materials/' +
-						activity.material_id +
-						activity.h5p_url
+		// Si l'utilisateur est connecté et qu'il y a des activités
+		if (activities && activities.length > 0) {
+			return (
+				<div>
+					{activities.map(activity => {
+						const h5pJsonPath =
+							process.env.NEXT_PUBLIC_SUPABASE_H5P +
+							'materials/' +
+							activity.material_id +
+							activity.h5p_url
 
-					return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
-				})}
-			</div>
-		)
+						return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
+					})}
+				</div>
+			)
+		}
+
+		// Sinon, ne rien afficher
+		return null
 	}
 
 	const getCoordinates = e => {
@@ -161,14 +171,25 @@ const Material = ({ material: single_material }) => {
 				</Head>
 				<IconButton
 					sx={{
-						position: 'absolute',
-						top: '6rem',
-						left: '5%',
+						position: 'fixed',
+						top: '5rem',
+						left: { xs: '1rem', sm: '2rem' },
+						zIndex: 1000,
+						backgroundColor: 'rgba(255, 255, 255, 0.9)',
+						backdropFilter: 'blur(8px)',
+						boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
 						color: 'clrBtn2',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							backgroundColor: 'clrPrimary1',
+							color: 'white',
+							transform: 'scale(1.1)',
+							boxShadow: '0 4px 12px rgba(67, 40, 116, 0.3)',
+						},
 					}}
 					aria-label='back'
 					onClick={() => router.back()}>
-					<ArrowBack fontSize='large' />
+					<ArrowBack fontSize='medium' />
 				</IconButton>
 				<Stack
 					sx={{
@@ -177,7 +198,7 @@ const Material = ({ material: single_material }) => {
 							md: 'row',
 						},
 					}}>
-					<Container disableGutters maxWidth='100%' sx={{ marginTop: '8rem' }}>
+					<Container disableGutters maxWidth='100%' sx={{ marginTop: '6rem' }}>
 						<Typography
 							variant='h1'
 							sx={{
@@ -392,13 +413,21 @@ const Material = ({ material: single_material }) => {
 							}}>
 							<IconButton
 								sx={{
-									position: 'absolute',
-									top: '1rem',
+									position: 'fixed',
+									bottom: '6rem',
 									right: '1rem',
-									color: 'clrBtn2',
+									backgroundColor: 'clrPrimary1',
+									color: 'white',
+									width: '56px',
+									height: '56px',
+									boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+									zIndex: 1200,
+									'&:hover': {
+										backgroundColor: 'clrPrimary2',
+									},
 								}}
 								onClick={() => setShowWordsContainer(false)}>
-								<Close fontSize='large' />
+								<Close />
 							</IconButton>
 							<WordsContainer />
 						</Box>
@@ -416,9 +445,17 @@ export const getStaticProps = async ({ params }) => {
 		.eq('id', params.material)
 		.single()
 
+	// Compter les activités H5P côté serveur avec le client serveur (bypasse RLS)
+	const { count: activitiesCount, error: countError } = await supabaseServer
+		.from('h5p')
+		.select('*', { count: 'exact', head: true })
+		.eq('material_id', params.material)
+		.eq('type', 'materials')
+
 	return {
 		props: {
 			material,
+			activitiesCount: activitiesCount || 0,
 		},
 		revalidate: 60,
 	}

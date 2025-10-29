@@ -69,6 +69,11 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 		return acc
 	}, {})
 
+	// Filtrer les niveaux qui ont au moins une leçon
+	const levelsWithLessons = CECR_LEVELS.filter(
+		level => lessonsByLevel[level].length > 0
+	)
+
 	useEffect(() => {
 		dispatch(getUserLessonsStatus())
 	}, [dispatch])
@@ -88,7 +93,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 			}}
 			component='nav'
 			aria-labelledby='nested-list-subheader'>
-			{CECR_LEVELS.map((level, index) => (
+			{levelsWithLessons.map((level, index) => (
 				<div key={level}>
 					<ListItemButton onClick={() => toggleLevel(level)}>
 						<ListItemIcon>{getLevelIcon(level)}</ListItemIcon>
@@ -133,7 +138,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 							))}
 						</List>
 					</Collapse>
-					{index < CECR_LEVELS.length - 1 && (
+					{index < levelsWithLessons.length - 1 && (
 						<Divider
 							sx={{ borderBottomWidth: index % 2 === 1 ? '2px' : '1px' }}
 						/>
