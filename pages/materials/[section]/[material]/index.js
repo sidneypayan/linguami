@@ -344,7 +344,7 @@ const Material = ({ material: single_material }) => {
 							display: { xs: 'flex', md: 'none' },
 							position: 'fixed',
 							right: '1rem',
-							bottom: '2rem',
+							bottom: '6rem',
 							backgroundColor: 'clrPrimary1',
 							color: 'white',
 							width: '56px',
