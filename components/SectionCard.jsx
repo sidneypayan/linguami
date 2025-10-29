@@ -1,18 +1,14 @@
 import React from 'react'
 import { sections } from '../data/sections'
 import { useDispatch } from 'react-redux'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	faFilm,
-	faMusic,
-	faFileAudio,
-	faCircleCheck,
-} from '@fortawesome/free-solid-svg-icons'
-import { faClock } from '@fortawesome/free-regular-svg-icons'
 import styles from '../styles/sections/SectionCard.module.css'
+import {
+	Movie,
+	MusicNote,
+	Audiotrack,
+	CheckCircle,
+	Schedule,
+} from '@mui/icons-material'
 import { useRouter } from 'next/router'
 import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
 import {
@@ -66,19 +62,16 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	}
 
 	const changeIconRegardingSection = section => {
-		let icon
-
 		if (sections.audio.includes(section)) {
-			icon = faFileAudio
+			return <Audiotrack sx={{ fontSize: '2.5rem' }} />
 		}
 		if (sections.music.includes(section)) {
-			icon = faMusic
+			return <MusicNote sx={{ fontSize: '2.5rem' }} />
 		}
 		if (sections.video.includes(section)) {
-			icon = faFilm
+			return <Movie sx={{ fontSize: '2.5rem' }} />
 		}
-
-		return icon
+		return null
 	}
 
 	const SectionCardContent = () => (
@@ -94,30 +87,54 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 			}}>
 			<Card
 				sx={{
+					position: 'relative',
 					display: 'flex',
 					alignItems: 'center',
 					minHeight: { xs: 140, sm: 135 },
-					boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-					backgroundColor: 'clrCardBg',
-					borderRadius: '8px',
+					boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
+					background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%)',
+					border: '1px solid rgba(102, 126, 234, 0.08)',
+					borderRadius: '12px',
+					overflow: 'hidden',
 					transition: 'all 0.3s ease',
 					'&:hover': {
-						boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
-						transform: 'translateY(-2px)',
+						boxShadow: '0 8px 24px rgba(102, 126, 234, 0.12)',
+						transform: 'translateY(-4px)',
+						borderColor: 'rgba(102, 126, 234, 0.2)',
 					},
 				}}>
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
 					checkIfUserMaterialIsInMaterials.is_being_studied && (
-						<FontAwesomeIcon
-							icon={faClock}
-							className={styles.beingStudiedCard}
+						<Schedule
+							sx={{
+								position: 'absolute',
+								top: '8px',
+								right: '8px',
+								fontSize: '1.8rem',
+								color: '#f59e0b',
+								background: 'rgba(255, 255, 255, 0.95)',
+								borderRadius: '50%',
+								padding: '4px',
+								boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+								zIndex: 1,
+							}}
 						/>
 					)}
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
 					checkIfUserMaterialIsInMaterials.is_studied && (
-						<FontAwesomeIcon
-							icon={faCircleCheck}
-							className={styles.studiedCard}
+						<CheckCircle
+							sx={{
+								position: 'absolute',
+								top: '8px',
+								right: '8px',
+								fontSize: '1.8rem',
+								color: '#22c55e',
+								background: 'rgba(255, 255, 255, 0.95)',
+								borderRadius: '50%',
+								padding: '4px',
+								boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+								zIndex: 1,
+							}}
 						/>
 					)}
 				<CardMedia
@@ -184,13 +201,12 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					<Box
 						sx={{
 							justifySelf: 'end',
-							color: 'clrGrey2',
-							display: { xs: 'none', md: 'block' },
+							color: '#718096',
+							display: { xs: 'none', md: 'flex' },
+							alignItems: 'center',
+							justifyContent: 'center',
 						}}>
-						<FontAwesomeIcon
-							icon={changeIconRegardingSection(material.section)}
-							size='2xl'
-						/>
+						{changeIconRegardingSection(material.section)}
 					</Box>
 				</CardContent>
 				<span className={changeBackgroundColorRegardingLevel(material.level)}>

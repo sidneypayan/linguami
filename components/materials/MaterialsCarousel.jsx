@@ -1,31 +1,152 @@
 import React from 'react'
 import MaterialsCard from './MaterialsCard'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination, EffectCoverflow } from 'swiper'
+import { Box, IconButton } from '@mui/material'
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import 'swiper/css'
 import 'swiper/css/navigation'
-import { Navigation } from 'swiper'
+import 'swiper/css/pagination'
+import 'swiper/css/effect-coverflow'
 
 const MaterialsCarousel = ({ materials }) => {
+	const navigationPrevRef = React.useRef(null)
+	const navigationNextRef = React.useRef(null)
+
 	return (
-		<Swiper
-			spaceBetween={10}
-			slidesPerView={1.5}
-			modules={[Navigation]}
-			navigation
-			breakpoints={{
-				600: {
-					slidesPerView: 3,
-				},
-				950: {
-					slidesPerView: 4,
-				},
-			}}>
-			{materials.map((material, index) => (
-				<SwiperSlide key={index}>
-					<MaterialsCard material={material} />
-				</SwiperSlide>
-			))}
-		</Swiper>
+		<Box sx={{ position: 'relative', px: { xs: 0, sm: 6 }, py: 2 }}>
+			{/* Bouton précédent */}
+			<IconButton
+				ref={navigationPrevRef}
+				sx={{
+					position: 'absolute',
+					left: { xs: '-10px', sm: '-20px' },
+					top: '50%',
+					transform: 'translateY(-50%)',
+					zIndex: 10,
+					width: { xs: '40px', sm: '50px' },
+					height: { xs: '40px', sm: '50px' },
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					color: 'white',
+					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
+					transition: 'all 0.3s ease',
+					'&:hover': {
+						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+						transform: 'translateY(-50%) scale(1.1)',
+						boxShadow: '0 6px 25px rgba(102, 126, 234, 0.6)',
+					},
+					'&:active': {
+						transform: 'translateY(-50%) scale(0.95)',
+					},
+					'&.swiper-button-disabled': {
+						opacity: 0.3,
+						cursor: 'not-allowed',
+					},
+				}}>
+				<ChevronLeft sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
+			</IconButton>
+
+			{/* Bouton suivant */}
+			<IconButton
+				ref={navigationNextRef}
+				sx={{
+					position: 'absolute',
+					right: { xs: '-10px', sm: '-20px' },
+					top: '50%',
+					transform: 'translateY(-50%)',
+					zIndex: 10,
+					width: { xs: '40px', sm: '50px' },
+					height: { xs: '40px', sm: '50px' },
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					color: 'white',
+					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
+					transition: 'all 0.3s ease',
+					'&:hover': {
+						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+						transform: 'translateY(-50%) scale(1.1)',
+						boxShadow: '0 6px 25px rgba(102, 126, 234, 0.6)',
+					},
+					'&:active': {
+						transform: 'translateY(-50%) scale(0.95)',
+					},
+					'&.swiper-button-disabled': {
+						opacity: 0.3,
+						cursor: 'not-allowed',
+					},
+				}}>
+				<ChevronRight sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
+			</IconButton>
+
+			<Swiper
+				spaceBetween={20}
+				slidesPerView={1.5}
+				modules={[Navigation, Pagination, EffectCoverflow]}
+				speed={600}
+				effect='slide'
+				grabCursor={true}
+				centeredSlides={false}
+				onBeforeInit={(swiper) => {
+					swiper.params.navigation.prevEl = navigationPrevRef.current
+					swiper.params.navigation.nextEl = navigationNextRef.current
+				}}
+				pagination={{
+					clickable: true,
+					dynamicBullets: true,
+				}}
+				breakpoints={{
+					600: {
+						slidesPerView: 2.5,
+						spaceBetween: 20,
+					},
+					900: {
+						slidesPerView: 3.5,
+						spaceBetween: 25,
+					},
+					1200: {
+						slidesPerView: 4,
+						spaceBetween: 30,
+					},
+				}}
+				style={{
+					paddingTop: '8px',
+					paddingBottom: '40px',
+				}}>
+				{materials.map((material, index) => (
+					<SwiperSlide
+						key={index}
+						style={{
+							transition: 'all 0.3s ease',
+						}}>
+						<MaterialsCard material={material} />
+					</SwiperSlide>
+				))}
+			</Swiper>
+
+			<style jsx global>{`
+				.swiper {
+					overflow-x: hidden !important;
+					overflow-y: visible !important;
+				}
+				.swiper-wrapper {
+					padding-top: 8px;
+				}
+				.swiper-pagination {
+					bottom: 10px !important;
+				}
+				.swiper-pagination-bullet {
+					width: 10px;
+					height: 10px;
+					background: #667eea;
+					opacity: 0.3;
+					transition: all 0.3s ease;
+				}
+				.swiper-pagination-bullet-active {
+					opacity: 1;
+					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+					transform: scale(1.2);
+				}
+			`}</style>
+		</Box>
 	)
 }
 

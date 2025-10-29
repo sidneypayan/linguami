@@ -49,5 +49,7 @@
 	"manual_add_info": "Ces mots seront ajoutés à votre dictionnaire personnel et disponibles dans les flashcards.",
 	"cancel": "Annuler",
 	"add": "Ajouter",
-	"add_word_btn": "Ajouter un mot manuellement"
+	"add_word_btn": "Ajouter un mot manuellement",
+	"custom_translation": "Autre traduction",
+	"translation": "Traduction"
 }

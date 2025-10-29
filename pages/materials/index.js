@@ -29,40 +29,88 @@ const Material = () => {
 
 			<Box
 				maxWidth='85%'
-				width='1000px'
+				width='1200px'
 				sx={{
 					margin: { xs: '6rem auto 2rem', sm: '8rem auto 3rem', md: '10rem auto' },
-					px: { xs: 2, sm: 0 },
+					px: { xs: 2, sm: 3 },
 				}}>
 				<Typography
-					variant='h5'
-					mb={2}
+					variant='h4'
+					mb={3}
 					mt={2}
 					sx={{
-						fontWeight: '600',
-						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+						fontWeight: 700,
+						fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						backgroundClip: 'text',
+						position: 'relative',
+						display: 'inline-block',
+						'&::after': {
+							content: '""',
+							position: 'absolute',
+							bottom: '-8px',
+							left: 0,
+							width: '60px',
+							height: '4px',
+							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							borderRadius: '2px',
+						},
 					}}>
 					{t('text')}
 				</Typography>
 				<MaterialsCarousel materials={text} />
 				<Typography
-					variant='h5'
-					mb={2}
-					mt={4}
+					variant='h4'
+					mb={3}
+					mt={6}
 					sx={{
-						fontWeight: '600',
-						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+						fontWeight: 700,
+						fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						backgroundClip: 'text',
+						position: 'relative',
+						display: 'inline-block',
+						'&::after': {
+							content: '""',
+							position: 'absolute',
+							bottom: '-8px',
+							left: 0,
+							width: '60px',
+							height: '4px',
+							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							borderRadius: '2px',
+						},
 					}}>
 					{t('video')}
 				</Typography>
 				<MaterialsCarousel materials={video} />
 				<Typography
-					variant='h5'
-					mb={2}
-					mt={4}
+					variant='h4'
+					mb={3}
+					mt={6}
 					sx={{
-						fontWeight: '600',
-						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+						fontWeight: 700,
+						fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						backgroundClip: 'text',
+						position: 'relative',
+						display: 'inline-block',
+						'&::after': {
+							content: '""',
+							position: 'absolute',
+							bottom: '-8px',
+							left: 0,
+							width: '60px',
+							height: '4px',
+							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							borderRadius: '2px',
+						},
 					}}>
 					{t('music')}
 				</Typography>

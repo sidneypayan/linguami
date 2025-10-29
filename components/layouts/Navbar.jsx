@@ -23,7 +23,6 @@ import Link from 'next/link'
 import MenuIcon from '@mui/icons-material/Menu'
 import {
 	Article,
-	HistoryEdu,
 	Home,
 	School,
 	MenuBook,
@@ -64,7 +63,7 @@ const Navbar = props => {
 		},
 		{
 			name: t('blog'),
-			icon: <HistoryEdu style={{ fontSize: '1.5rem' }} />,
+			icon: <Article style={{ fontSize: '1.5rem' }} />,
 			href: '/blog',
 		},
 	]

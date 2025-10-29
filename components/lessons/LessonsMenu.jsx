@@ -41,6 +41,25 @@ const getLevelIcon = level => {
 	}
 }
 
+const getLevelColor = level => {
+	switch (level) {
+		case 'A1':
+			return { bg: '#4ade8015', color: '#22c55e', border: '#4ade80' }
+		case 'A2':
+			return { bg: '#22d3ee15', color: '#0891b2', border: '#22d3ee' }
+		case 'B1':
+			return { bg: '#f59e0b15', color: '#d97706', border: '#f59e0b' }
+		case 'B2':
+			return { bg: '#f97316 15', color: '#ea580c', border: '#f97316' }
+		case 'C1':
+			return { bg: '#f093fb15', color: '#c026d3', border: '#f093fb' }
+		case 'C2':
+			return { bg: '#a855f715', color: '#9333ea', border: '#a855f7' }
+		default:
+			return { bg: '#667eea15', color: '#667eea', border: '#667eea' }
+	}
+}
+
 const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const { t } = useTranslation('lessons')
 	const [openLevels, setOpenLevels] = useState({})
@@ -82,69 +101,116 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 		<List
 			sx={{
 				width: '80%',
-				maxWidth: 360,
-				bgcolor: 'clrCardBg',
+				maxWidth: 380,
+				background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%)',
 				borderRadius: 5,
 				overflow: 'hidden',
 				m: '0 auto',
 				position: { sx: 'static', md: 'sticky' },
-				top: { sx: 0, md: '160px' },
+				top: { sx: 0, md: '120px' },
 				p: 0,
+				boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+				border: '1px solid rgba(102, 126, 234, 0.1)',
 			}}
 			component='nav'
 			aria-labelledby='nested-list-subheader'>
-			{levelsWithLessons.map((level, index) => (
-				<div key={level}>
-					<ListItemButton onClick={() => toggleLevel(level)}>
-						<ListItemIcon>{getLevelIcon(level)}</ListItemIcon>
-						<ListItemText
-							primary={`${t('level')}  ${level}`}
-							primaryTypographyProps={{ fontWeight: 'bold' }}
-						/>
-						{openLevels[level] ? <ExpandLess /> : <ExpandMore />}
-					</ListItemButton>
-					<Collapse in={openLevels[level]} timeout='auto' unmountOnExit>
-						<List component='div' disablePadding>
-							{lessonsByLevel[level].map((lesson, index) => (
-								<ListItemButton
-									key={lesson.slug}
-									sx={{
-										pl: 4,
-										backgroundColor:
-											lessonSlug === lesson.slug ? '#EBEBEB' : 'inherit',
-										borderLeft:
-											lessonSlug === lesson.slug ? '4px solid #1976d2' : 'none',
-									}}
-									onClick={() => {
-										onSelectLesson(lesson.slug)
-										if (isSmallScreen) {
-											setOpenLevels({})
-										}
-									}}>
-									<ListItemText
-										primary={`${index + 1} - ${lesson.titleRu}`}
-										primaryTypographyProps={{
-											fontWeight:
-												lessonSlug === lesson.slug ? 'bold' : 'normal',
+			{levelsWithLessons.map((level, index) => {
+				const levelColors = getLevelColor(level)
+				return (
+					<div key={level}>
+						<ListItemButton
+							onClick={() => toggleLevel(level)}
+							sx={{
+								py: 2,
+								px: 2.5,
+								background: levelColors.bg,
+								borderLeft: `4px solid ${levelColors.border}`,
+								transition: 'all 0.2s ease',
+								'&:hover': {
+									background: levelColors.bg.replace('15', '25'),
+									transform: 'translateX(4px)',
+								},
+							}}>
+							<ListItemIcon
+								sx={{
+									color: levelColors.color,
+									minWidth: 40,
+									fontSize: '1.4rem',
+								}}>
+								{getLevelIcon(level)}
+							</ListItemIcon>
+							<ListItemText
+								primary={`${t('level')} ${level}`}
+								primaryTypographyProps={{
+									fontWeight: 700,
+									fontSize: '1rem',
+									color: levelColors.color,
+								}}
+							/>
+							{openLevels[level] ? (
+								<ExpandLess sx={{ color: levelColors.color }} />
+							) : (
+								<ExpandMore sx={{ color: levelColors.color }} />
+							)}
+						</ListItemButton>
+						<Collapse in={openLevels[level]} timeout='auto' unmountOnExit>
+							<List component='div' disablePadding sx={{ background: '#fafafa' }}>
+								{lessonsByLevel[level].map((lesson, lessonIndex) => (
+									<ListItemButton
+										key={lesson.slug}
+										sx={{
+											pl: 4,
+											pr: 2,
+											py: 1.5,
+											backgroundColor:
+												lessonSlug === lesson.slug
+													? levelColors.bg.replace('15', '30')
+													: 'transparent',
+											borderLeft:
+												lessonSlug === lesson.slug
+													? `4px solid ${levelColors.border}`
+													: '4px solid transparent',
+											transition: 'all 0.2s ease',
+											'&:hover': {
+												backgroundColor: levelColors.bg.replace('15', '20'),
+												pl: 5,
+											},
 										}}
-									/>
+										onClick={() => {
+											onSelectLesson(lesson.slug)
+											if (isSmallScreen) {
+												setOpenLevels({})
+											}
+										}}>
+										<ListItemText
+											primary={`${lessonIndex + 1}. ${lesson.titleRu}`}
+											primaryTypographyProps={{
+												fontWeight: lessonSlug === lesson.slug ? 700 : 500,
+												fontSize: '0.95rem',
+												color: lessonSlug === lesson.slug ? levelColors.color : '#4a5568',
+											}}
+										/>
 
-									{checkIfUserLessonIsStudied(lesson.id) && (
-										<ListItemIcon sx={{ minWidth: 30 }}>
-											<CheckCircleIcon sx={{ color: '#1c991cb3' }} />
-										</ListItemIcon>
-									)}
-								</ListItemButton>
-							))}
-						</List>
-					</Collapse>
-					{index < levelsWithLessons.length - 1 && (
-						<Divider
-							sx={{ borderBottomWidth: index % 2 === 1 ? '2px' : '1px' }}
-						/>
-					)}
-				</div>
-			))}
+										{checkIfUserLessonIsStudied(lesson.id) && (
+											<ListItemIcon sx={{ minWidth: 30 }}>
+												<CheckCircleIcon
+													sx={{
+														color: '#22c55e',
+														fontSize: '1.2rem',
+													}}
+												/>
+											</ListItemIcon>
+										)}
+									</ListItemButton>
+								))}
+							</List>
+						</Collapse>
+						{index < levelsWithLessons.length - 1 && (
+							<Divider sx={{ borderBottomWidth: '1px', borderColor: '#e5e7eb' }} />
+						)}
+					</div>
+				)
+			})}
 		</List>
 	)
 }

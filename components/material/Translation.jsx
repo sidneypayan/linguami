@@ -41,7 +41,52 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	} = useSelector(store => store.words)
 
 	const [personalTranslation, setPersonalTranslation] = useState('')
+	const [translationError, setTranslationError] = useState('')
 	const { isUserLoggedIn } = useUserContext()
+
+	const MAX_TRANSLATION_LENGTH = 100
+
+	const sanitizeInput = (input) => {
+		// Supprimer les caractères potentiellement dangereux
+		return input
+			.replace(/[<>]/g, '') // Empêcher les tags HTML
+			.replace(/[{}]/g, '') // Empêcher les accolades
+			.replace(/javascript:/gi, '') // Empêcher javascript:
+			.replace(/on\w+=/gi, '') // Empêcher les event handlers
+			.trim()
+	}
+
+	const validateTranslation = (value) => {
+		if (value.length > MAX_TRANSLATION_LENGTH) {
+			setTranslationError(`Maximum ${MAX_TRANSLATION_LENGTH} caractères`)
+			return false
+		}
+
+		// Vérifier si ce n'est que des espaces
+		if (value.trim().length === 0 && value.length > 0) {
+			setTranslationError('La traduction ne peut pas être vide')
+			return false
+		}
+
+		// Vérifier les caractères suspects répétés
+		if (/(.)\1{10,}/.test(value)) {
+			setTranslationError('Caractères répétés détectés')
+			return false
+		}
+
+		setTranslationError('')
+		return true
+	}
+
+	const handleTranslationChange = (e) => {
+		const sanitized = sanitizeInput(e.target.value)
+		setPersonalTranslation(sanitized)
+		if (sanitized) {
+			validateTranslation(sanitized)
+		} else {
+			setTranslationError('')
+		}
+	}
 
 	// Calculer la position intelligemment pour éviter le débordement
 	const getPosition = () => {
@@ -120,16 +165,31 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	}, [dispatch, isTranslationOpen])
 
 	const addWord = e => {
+		e.preventDefault()
+
 		const translatedWord = personalTranslation
 			? personalTranslation
 			: e.target.textContent
+
+		// Validation finale avant l'ajout
+		if (personalTranslation && !validateTranslation(personalTranslation)) {
+			return
+		}
+
+		// Sanitiser une dernière fois
+		const sanitizedTranslation = sanitizeInput(translatedWord)
+
+		if (!sanitizedTranslation || sanitizedTranslation.length === 0) {
+			setTranslationError('La traduction ne peut pas être vide')
+			return
+		}
 
 		const originalWord = translation.inf ? translation.inf : translation.word
 
 		dispatch(
 			addWordToDictionary({
 				originalWord,
-				translatedWord,
+				translatedWord: sanitizedTranslation,
 				userId,
 				materialId,
 				word_sentence,
@@ -138,6 +198,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		)
 		dispatch(toggleTranslationContainer(false))
 		setPersonalTranslation('')
+		setTranslationError('')
 	}
 
 	if (!isUserLoggedIn) {
@@ -321,43 +382,68 @@ const Translation = ({ coordinates, materialId, userId }) => {
 										color: '#666',
 										fontWeight: 600,
 									}}>
-									{t('custom_translation') || 'Votre traduction personnalisée'}
+									{t('custom_translation')}
 								</Typography>
-								<Stack direction='row' spacing={1}>
-									<TextField
-										fullWidth
-										size='small'
-										placeholder='votre traduction'
-										value={personalTranslation}
-										onChange={e => setPersonalTranslation(e.target.value)}
-										sx={{
-											'& .MuiOutlinedInput-root': {
-												borderRadius: 2,
-												'& fieldset': {
-													borderColor: '#e0e0e0',
+								<Stack direction='column' spacing={1}>
+									<Stack direction='row' spacing={1}>
+										<TextField
+											fullWidth
+											size='small'
+											placeholder='votre traduction'
+											value={personalTranslation}
+											onChange={handleTranslationChange}
+											error={!!translationError}
+											helperText={translationError}
+											inputProps={{
+												maxLength: MAX_TRANSLATION_LENGTH,
+												autoComplete: 'off',
+												spellCheck: 'true',
+											}}
+											sx={{
+												'& .MuiOutlinedInput-root': {
+													borderRadius: 2,
+													'& fieldset': {
+														borderColor: translationError ? '#f44336' : '#e0e0e0',
+													},
+													'&:hover fieldset': {
+														borderColor: translationError ? '#f44336' : '#667eea',
+													},
+													'&.Mui-focused fieldset': {
+														borderColor: translationError ? '#f44336' : '#667eea',
+														borderWidth: 2,
+													},
 												},
-												'&:hover fieldset': {
-													borderColor: '#667eea',
+												'& .MuiFormHelperText-root': {
+													fontSize: '0.7rem',
+													mt: 0.5,
 												},
-												'&.Mui-focused fieldset': {
-													borderColor: '#667eea',
-													borderWidth: 2,
-												},
-											},
-										}}
-									/>
-									<Button
-										type='submit'
-										disabled={!personalTranslation}
-										variant='contained'
-										sx={{
-											...secondaryButton,
-											minWidth: 'auto',
-											px: 2,
-										}}
-										startIcon={<Add />}>
-										{t('add')}
-									</Button>
+											}}
+										/>
+										<Button
+											type='submit'
+											disabled={!personalTranslation || !!translationError}
+											variant='contained'
+											sx={{
+												...secondaryButton,
+												minWidth: 'auto',
+												px: 2,
+												alignSelf: 'flex-start',
+											}}
+											startIcon={<Add />}>
+											{t('add')}
+										</Button>
+									</Stack>
+									{personalTranslation && (
+										<Typography
+											variant='caption'
+											sx={{
+												color: '#999',
+												fontSize: '0.7rem',
+												textAlign: 'right',
+											}}>
+											{personalTranslation.length}/{MAX_TRANSLATION_LENGTH}
+										</Typography>
+									)}
 								</Stack>
 							</Box>
 						</>

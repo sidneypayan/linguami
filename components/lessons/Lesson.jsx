@@ -163,18 +163,25 @@ const Lesson = ({ lesson }) => {
 						return (
 							<Box
 								sx={{
-									backgroundColor: '#f5f5f5',
-									padding: 2,
-									borderRadius: 1,
-									mb: 2,
+									background: 'linear-gradient(135deg, #667eea08 0%, #764ba208 100%)',
+									padding: 3,
+									borderRadius: 3,
+									mb: 3,
 									mt: 2,
+									border: '2px solid rgba(102, 126, 234, 0.1)',
+									boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
 								}}
 								key={index}>
-								{block.items.map((example, index) => (
+								{block.items.map((example, exampleIndex) => (
 									<Typography
-										key={index}
-										variant='body2'
-										sx={{ fontStyle: 'italic' }}
+										key={exampleIndex}
+										variant='body1'
+										sx={{
+											fontStyle: 'italic',
+											color: '#4a5568',
+											lineHeight: 1.8,
+											mb: exampleIndex < block.items.length - 1 ? 1.5 : 0,
+										}}
 										dangerouslySetInnerHTML={{ __html: example }}></Typography>
 								))}
 							</Box>

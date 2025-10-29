@@ -85,51 +85,100 @@ const Homepage = () => {
 					align='center'
 					sx={{
 						fontSize: { xs: '2rem', md: '3rem' },
+						fontWeight: 800,
+						mb: 1,
 					}}>
 					{t('multimedia')}
 				</Typography>
 
-				<div className='hr-custom'></div>
+				<Typography
+					variant='subtitle1'
+					align='center'
+					sx={{
+						color: '#718096',
+						fontSize: { xs: '1rem', md: '1.125rem' },
+						mb: 5,
+						maxWidth: '600px',
+						mx: 'auto',
+					}}>
+					Découvrez toutes nos ressources pour apprendre efficacement
+				</Typography>
 
 				<Grid
 					container
-					justifyContent='space-between'
+					spacing={3}
+					justifyContent='center'
 					sx={{
 						margin: { xs: '2rem auto', md: '4rem auto' },
 					}}>
 					{multimedia.map((icon, index) => (
-						<StyledGridItem key={index} item xs={6} sm={4} lg={2}>
+						<Grid key={index} item xs={6} sm={4} lg={2.4}>
 							<Box
 								sx={{
-									width: { xs: 60, md: 75 },
-									height: { xs: 60, md: 75 },
-									position: 'relative',
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'center',
+									gap: 2,
+									textAlign: 'center',
+									p: { xs: 2, md: 3 },
+									height: '100%',
+									minHeight: { xs: '240px', sm: '260px' },
+									borderRadius: 4,
+									background: 'rgba(255, 255, 255, 0.8)',
+									border: '1px solid rgba(102, 126, 234, 0.1)',
+									boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+									transition: 'all 0.3s ease',
+									cursor: 'pointer',
+									'&:hover': {
+										transform: 'translateY(-8px)',
+										boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
+										background: 'white',
+										borderColor: 'rgba(102, 126, 234, 0.3)',
+									},
 								}}>
-								<Image
-									src={icon.img}
-									alt='video'
-									fill
-									style={{ objectFit: 'contain' }}
-								/>
+								<Box
+									sx={{
+										width: { xs: 60, md: 70 },
+										height: { xs: 60, md: 70 },
+										position: 'relative',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										borderRadius: 3,
+										background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
+										p: 2,
+									}}>
+									<Image
+										src={icon.img}
+										alt={icon.title}
+										fill
+										style={{ objectFit: 'contain', padding: '12px' }}
+									/>
+								</Box>
+								<Box>
+									<Typography
+										variant='h6'
+										sx={{
+											fontSize: { xs: '1rem', md: '1.125rem' },
+											fontWeight: 700,
+											color: '#667eea',
+											mb: 0.5,
+										}}>
+										{icon.title}
+									</Typography>
+									<Typography
+										variant='body2'
+										sx={{
+											color: '#718096',
+											fontWeight: 500,
+											fontSize: { xs: '0.875rem', md: '0.95rem' },
+											lineHeight: 1.5,
+										}}>
+										{icon.subtitle}
+									</Typography>
+								</Box>
 							</Box>
-							<Typography
-								variant='h5'
-								sx={{
-									fontSize: { xs: '1.25rem', md: '1.5rem' },
-									fontWeight: 600,
-									color: '#667eea',
-								}}>
-								{icon.title}
-							</Typography>
-							<Typography
-								variant='subtitle2'
-								sx={{
-									color: '#718096',
-									fontWeight: 500,
-								}}>
-								{icon.subtitle}
-							</Typography>
-						</StyledGridItem>
+						</Grid>
 					))}
 				</Grid>
 
@@ -170,12 +219,20 @@ const Homepage = () => {
 						maxWidth: '100%',
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
-						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: { xs: '2rem', md: '4rem' },
-						borderRadius: '3px',
-						gap: '1.5rem',
+						alignItems: 'center',
+						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						padding: { xs: '2.5rem', md: '4rem' },
+						borderRadius: 5,
+						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
+						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+						border: '1px solid rgba(102, 126, 234, 0.1)',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
+							transform: 'translateY(-4px)',
+						},
 					}}>
 					<Box
 						width='50%'
@@ -244,12 +301,20 @@ const Homepage = () => {
 						maxWidth: '100%',
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
-						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: { xs: '2rem', md: '4rem' },
-						borderRadius: '3px',
-						gap: '1.5rem',
+						alignItems: 'center',
+						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						padding: { xs: '2.5rem', md: '4rem' },
+						borderRadius: 5,
+						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
+						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+						border: '1px solid rgba(102, 126, 234, 0.1)',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
+							transform: 'translateY(-4px)',
+						},
 					}}>
 					<Stack gap='1rem'>
 						<Typography
@@ -317,12 +382,20 @@ const Homepage = () => {
 						maxWidth: '100%',
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
-						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: { xs: '2rem', md: '4rem' },
-						borderRadius: '3px',
-						gap: '1.5rem',
+						alignItems: 'center',
+						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						padding: { xs: '2.5rem', md: '4rem' },
+						borderRadius: 5,
+						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
+						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+						border: '1px solid rgba(102, 126, 234, 0.1)',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
+							transform: 'translateY(-4px)',
+						},
 					}}>
 					<Box
 						width='50%'
@@ -391,12 +464,20 @@ const Homepage = () => {
 						maxWidth: '100%',
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
-						boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-						padding: { xs: '2rem', md: '4rem' },
-						borderRadius: '3px',
-						gap: '1.5rem',
+						alignItems: 'center',
+						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						padding: { xs: '2.5rem', md: '4rem' },
+						borderRadius: 5,
+						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
+						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+						border: '1px solid rgba(102, 126, 234, 0.1)',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
+							transform: 'translateY(-4px)',
+						},
 					}}>
 					<Stack gap='1rem'>
 						<Typography

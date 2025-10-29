@@ -15,15 +15,26 @@ const Hero = () => {
 					xs: '6rem 0 4rem 0',
 					md: '8rem 0 6rem 0',
 				},
-				backgroundImage:
-					'linear-gradient(to bottom, #432874, #432875, #432876, #432877, #432878, #44287a, #45297d, #46297f, #482984, #4a2a89, #4d2a8e, #4f2a93)',
+				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				overflow: 'hidden',
+				'&::before': {
+					content: '""',
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background:
+						'radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 40%)',
+					pointerEvents: 'none',
+				},
 			}}>
 			<Stack
 				direction='row'
 				width={1440}
 				maxWidth='100%'
 				sx={{
-					padding: '2rem',
+					padding: { xs: '2rem', md: '3rem' },
 					margin: '0 auto',
 					justifyContent: {
 						xs: 'center',
@@ -33,25 +44,61 @@ const Hero = () => {
 						xs: 'center',
 						lg: 'left',
 					},
+					position: 'relative',
+					zIndex: 1,
 				}}>
 				<Box maxWidth={825}>
 					<Typography
-						color='#fff'
 						variant='h2'
 						component='h1'
-						mb={4}
+						mb={3}
 						sx={{
-							fontSize: { xs: '2rem', md: '3.75rem' },
+							fontSize: { xs: '2.2rem', md: '3.75rem' },
+							fontWeight: 800,
+							lineHeight: 1.2,
+							background: 'linear-gradient(135deg, #ffffff, #ffd700, #ff6b9d, #c471ed, #12c2e9, #ffffff)',
+							backgroundSize: '400% 400%',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							animation: 'fadeInUp 0.6s ease-out, gradientShift 8s ease infinite',
+							'@keyframes fadeInUp': {
+								from: {
+									opacity: 0,
+									transform: 'translateY(20px)',
+								},
+								to: {
+									opacity: 1,
+									transform: 'translateY(0)',
+								},
+							},
+							'@keyframes gradientShift': {
+								'0%': {
+									backgroundPosition: '0% 50%',
+								},
+								'50%': {
+									backgroundPosition: '100% 50%',
+								},
+								'100%': {
+									backgroundPosition: '0% 50%',
+								},
+							},
 						}}>
-						<span style={{ fontWeight: '400' }}>{t('hero')}</span> <br />
+						<span style={{ fontWeight: '500' }}>{t('hero')}</span> <br />
 						{t('title')}
 					</Typography>
 					<Typography
-						mb={4}
+						mb={5}
 						variant='h5'
-						color='#fff'
 						sx={{
-							fontSize: { xs: '1.125rem', md: '1.5rem' },
+							fontSize: { xs: '1.2rem', md: '1.6rem' },
+							fontWeight: 500,
+							lineHeight: 1.6,
+							background: 'linear-gradient(135deg, #ffffff 0%, #ffe57f 100%)',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							animation: 'fadeInUp 0.6s ease-out 0.2s both',
 						}}>
 						{t('subtitle')}
 					</Typography>
@@ -62,12 +109,30 @@ const Hero = () => {
 							size='large'
 							variant='contained'
 							sx={{
-								...primaryButton,
+								background: 'rgba(255, 255, 255, 0.95)',
+								color: '#667eea',
+								fontWeight: 700,
+								fontSize: '1.1rem',
+								textTransform: 'none',
+								px: 4,
+								py: 1.5,
+								borderRadius: 3,
+								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
 								display: 'block',
-								margin: '0 auto',
-								minWidth: '180px',
+								margin: { xs: '0 auto', lg: '0' },
+								minWidth: '200px',
+								transition: 'all 0.3s ease',
+								animation: 'fadeInUp 0.6s ease-out 0.4s both',
+								'&:hover': {
+									background: 'white',
+									transform: 'translateY(-4px)',
+									boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
+								},
+								'&:active': {
+									transform: 'translateY(-2px) scale(0.98)',
+								},
 							}}>
-							{t('start')}
+							{t('start')} →
 						</Button>
 					</Link>
 				</Box>
@@ -76,12 +141,33 @@ const Hero = () => {
 					sx={{
 						display: {
 							xs: 'none',
-							md: 'block',
+							lg: 'flex',
 						},
+						alignItems: 'center',
+						justifyContent: 'center',
 						position: 'relative',
-						width: 250,
-						height: 250,
+						width: 280,
+						height: 280,
+						animation: 'float 3s ease-in-out infinite',
+						'@keyframes float': {
+							'0%, 100%': {
+								transform: 'translateY(0px)',
+							},
+							'50%': {
+								transform: 'translateY(-20px)',
+							},
+						},
 					}}>
+					<Box
+						sx={{
+							position: 'absolute',
+							width: '100%',
+							height: '100%',
+							background: 'rgba(255, 255, 255, 0.1)',
+							borderRadius: '50%',
+							filter: 'blur(40px)',
+						}}
+					/>
 					<Image
 						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
 						alt='Linguami wizard mascot'

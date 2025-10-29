@@ -7,7 +7,7 @@ import {
 	Article,
 	MenuBook as Dictionary,
 	School,
-	Person,
+	AccountCircle,
 } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
@@ -158,7 +158,7 @@ const BottomNav = () => {
 				<BottomNavigationAction
 					label='Profil'
 					value='profile'
-					icon={<Person />}
+					icon={<AccountCircle />}
 				/>
 			</BottomNavigation>
 		</Paper>
