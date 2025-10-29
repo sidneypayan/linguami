@@ -10,14 +10,25 @@ import 'swiper/css/pagination'
 import 'swiper/css/effect-coverflow'
 
 const MaterialsCarousel = ({ materials }) => {
-	const navigationPrevRef = React.useRef(null)
-	const navigationNextRef = React.useRef(null)
+	const [swiperInstance, setSwiperInstance] = React.useState(null)
+
+	const handlePrev = () => {
+		if (swiperInstance) {
+			swiperInstance.slidePrev()
+		}
+	}
+
+	const handleNext = () => {
+		if (swiperInstance) {
+			swiperInstance.slideNext()
+		}
+	}
 
 	return (
-		<Box sx={{ position: 'relative', px: { xs: 0, sm: 6 }, py: 2 }}>
+		<Box sx={{ position: 'relative', px: { xs: 0, sm: 6 }, py: 2, overflow: 'visible' }}>
 			{/* Bouton précédent */}
 			<IconButton
-				ref={navigationPrevRef}
+				onClick={handlePrev}
 				sx={{
 					position: 'absolute',
 					left: { xs: '-10px', sm: '-20px' },
@@ -30,6 +41,8 @@ const MaterialsCarousel = ({ materials }) => {
 					color: 'white',
 					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
 					transition: 'all 0.3s ease',
+					touchAction: 'manipulation',
+					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
 						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 						transform: 'translateY(-50%) scale(1.1)',
@@ -38,17 +51,13 @@ const MaterialsCarousel = ({ materials }) => {
 					'&:active': {
 						transform: 'translateY(-50%) scale(0.95)',
 					},
-					'&.swiper-button-disabled': {
-						opacity: 0.3,
-						cursor: 'not-allowed',
-					},
 				}}>
 				<ChevronLeft sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
 			</IconButton>
 
 			{/* Bouton suivant */}
 			<IconButton
-				ref={navigationNextRef}
+				onClick={handleNext}
 				sx={{
 					position: 'absolute',
 					right: { xs: '-10px', sm: '-20px' },
@@ -61,6 +70,8 @@ const MaterialsCarousel = ({ materials }) => {
 					color: 'white',
 					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
 					transition: 'all 0.3s ease',
+					touchAction: 'manipulation',
+					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
 						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 						transform: 'translateY(-50%) scale(1.1)',
@@ -68,10 +79,6 @@ const MaterialsCarousel = ({ materials }) => {
 					},
 					'&:active': {
 						transform: 'translateY(-50%) scale(0.95)',
-					},
-					'&.swiper-button-disabled': {
-						opacity: 0.3,
-						cursor: 'not-allowed',
 					},
 				}}>
 				<ChevronRight sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
@@ -85,10 +92,7 @@ const MaterialsCarousel = ({ materials }) => {
 				effect='slide'
 				grabCursor={true}
 				centeredSlides={false}
-				onBeforeInit={(swiper) => {
-					swiper.params.navigation.prevEl = navigationPrevRef.current
-					swiper.params.navigation.nextEl = navigationNextRef.current
-				}}
+				onSwiper={setSwiperInstance}
 				pagination={{
 					clickable: true,
 					dynamicBullets: true,

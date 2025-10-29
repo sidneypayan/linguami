@@ -94,13 +94,15 @@ const Hero = () => {
 							fontSize: { xs: '1.2rem', md: '1.6rem' },
 							fontWeight: 500,
 							lineHeight: 1.6,
-							background: 'linear-gradient(135deg, #ffffff 0%, #ffe57f 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
+							color: '#ffffff',
 							animation: 'fadeInUp 0.6s ease-out 0.2s both',
 						}}>
-						{t('subtitle')}
+						<Box component='span' sx={{ display: { xs: 'inline', md: 'none' } }}>
+							{t('subtitleMobile')}
+						</Box>
+						<Box component='span' sx={{ display: { xs: 'none', md: 'inline' } }}>
+							{t('subtitle')}
+						</Box>
 					</Typography>
 
 					<Link href={`/materials`}>

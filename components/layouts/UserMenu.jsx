@@ -10,7 +10,12 @@ import {
 	Menu,
 	MenuItem,
 } from '@mui/material'
-import { Article, Logout, MenuBook, AccountCircle } from '@mui/icons-material'
+import {
+	BookmarksRounded,
+	LogoutRounded,
+	SpellcheckRounded,
+	PersonRounded,
+} from '@mui/icons-material'
 import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
 import { cleanUserMaterialStatus } from '../../features/materials/materialsSlice.js'
@@ -122,13 +127,13 @@ const UserMenu = () => {
 						transition: 'all 0.2s ease',
 						'&:hover': {
 							background: 'rgba(255, 255, 255, 0.25)',
-							transform: 'translateY(-2px)',
+							transform: 'translateY(-2px) scale(1.05)',
 						},
 					}}
 					aria-controls={open ? 'account-menu' : undefined}
 					aria-haspopup='true'
 					aria-expanded={open ? 'true' : undefined}>
-					<AccountCircle sx={{ color: '#fff', fontSize: '2rem' }} />
+					<PersonRounded sx={{ color: '#fff', fontSize: '2rem' }} />
 				</IconButton>
 			</Box>
 			<StyledMenu
@@ -140,7 +145,7 @@ const UserMenu = () => {
 				<Link href='/dictionary'>
 					<MenuItem>
 						<ListItemIcon>
-							<MenuBook />
+							<SpellcheckRounded />
 						</ListItemIcon>
 						{t('mydictionary')}
 					</MenuItem>
@@ -148,7 +153,7 @@ const UserMenu = () => {
 				<Link href='/my-materials'>
 					<MenuItem>
 						<ListItemIcon>
-							<Article />
+							<BookmarksRounded />
 						</ListItemIcon>
 						{t('mymaterials')}
 					</MenuItem>
@@ -161,7 +166,7 @@ const UserMenu = () => {
 						dispatch(cleanUserMaterialStatus())
 					}}>
 					<ListItemIcon>
-						<Logout />
+						<LogoutRounded />
 					</ListItemIcon>
 					{t('logout')}
 				</MenuItem>

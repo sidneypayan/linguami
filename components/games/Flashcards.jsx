@@ -1,8 +1,3 @@
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import styles from '../../styles/FlashCards.module.css'
 import { useState, useEffect, useMemo } from 'react'
@@ -17,6 +12,19 @@ import {
 	BUTTON_TYPES,
 	CARD_STATES
 } from '../../utils/spacedRepetition'
+import {
+	CloseRounded,
+	SwapHorizRounded,
+	SettingsRounded,
+	PauseCircleRounded,
+	CelebrationRounded,
+	CheckCircleRounded,
+	ThumbDownRounded,
+	ThumbUpRounded,
+	SentimentSatisfiedAltRounded,
+	SentimentVeryDissatisfiedRounded,
+} from '@mui/icons-material'
+import { IconButton } from '@mui/material'
 
 const FlashCards = () => {
 	const { t } = useTranslation('words')
@@ -286,16 +294,30 @@ const FlashCards = () => {
 
 		return (
 			<div className={styles.container}>
-				<FontAwesomeIcon
+				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					icon={faXmark}
-					size='2xl'
-				/>
-				<h3 className={styles.flashcardsTitle}>{t('session_congrats')}</h3>
+					sx={{
+						position: 'absolute',
+						top: '1rem',
+						right: '1rem',
+						color: '#667eea',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							background: 'rgba(102, 126, 234, 0.1)',
+							transform: 'rotate(90deg) scale(1.1)',
+						},
+					}}>
+					<CloseRounded sx={{ fontSize: '2rem' }} />
+				</IconButton>
+				<h3 className={styles.flashcardsTitle}>
+					<CelebrationRounded sx={{ fontSize: '2.5rem', mb: 1, color: '#667eea' }} />
+					<br />
+					{t('session_congrats')}
+				</h3>
 				<div className={styles.wordsContainer}>
 					<div className={styles.statsContainer}>
 						<p className={styles.statsText}>
@@ -328,15 +350,25 @@ const FlashCards = () => {
 	if (!sessionInitialized) {
 		return (
 			<div className={styles.container}>
-				<FontAwesomeIcon
+				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					icon={faXmark}
-					size='2xl'
-				/>
+					sx={{
+						position: 'absolute',
+						top: '1rem',
+						right: '1rem',
+						color: '#667eea',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							background: 'rgba(102, 126, 234, 0.1)',
+							transform: 'rotate(90deg) scale(1.1)',
+						},
+					}}>
+					<CloseRounded sx={{ fontSize: '2rem' }} />
+				</IconButton>
 				<div className={styles.wordsContainer}>
 					<p className={styles.statsText}>{t('loading')}</p>
 				</div>
@@ -348,15 +380,25 @@ const FlashCards = () => {
 	if (!wordsArray || wordsArray.length === 0) {
 		return (
 			<div className={styles.container}>
-				<FontAwesomeIcon
+				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					icon={faXmark}
-					size='2xl'
-				/>
+					sx={{
+						position: 'absolute',
+						top: '1rem',
+						right: '1rem',
+						color: '#667eea',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							background: 'rgba(102, 126, 234, 0.1)',
+							transform: 'rotate(90deg) scale(1.1)',
+						},
+					}}>
+					<CloseRounded sx={{ fontSize: '2rem' }} />
+				</IconButton>
 				<div className={styles.wordsContainer}>
 					<p className={styles.statsText}>{t('no_words_in_dictionary')}</p>
 					<p>{t('add_words_to_review')}</p>
@@ -377,15 +419,25 @@ const FlashCards = () => {
 	if (!currentCard) {
 		return (
 			<div className={styles.container}>
-				<FontAwesomeIcon
+				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					icon={faXmark}
-					size='2xl'
-				/>
+					sx={{
+						position: 'absolute',
+						top: '1rem',
+						right: '1rem',
+						color: '#667eea',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							background: 'rgba(102, 126, 234, 0.1)',
+							transform: 'rotate(90deg) scale(1.1)',
+						},
+					}}>
+					<CloseRounded sx={{ fontSize: '2rem' }} />
+				</IconButton>
 				<div className={styles.wordsContainer}>
 					<p className={styles.statsText}>{t('no_cards_due')}</p>
 
@@ -439,15 +491,25 @@ const FlashCards = () => {
 
 	return (
 		<div className={styles.container}>
-			<FontAwesomeIcon
+			<IconButton
 				onClick={() => {
 					dispatch(toggleFlashcardsContainer(false))
 					setSessionInitialized(false)
 				}}
 				className={styles.closeIcon}
-				icon={faXmark}
-				size='2xl'
-			/>
+				sx={{
+					position: 'absolute',
+					top: '1rem',
+					right: '1rem',
+					color: '#667eea',
+					transition: 'all 0.2s ease',
+					'&:hover': {
+						background: 'rgba(102, 126, 234, 0.1)',
+						transform: 'rotate(90deg) scale(1.1)',
+					},
+				}}>
+				<CloseRounded sx={{ fontSize: '2rem' }} />
+			</IconButton>
 
 			{/* Header with stats */}
 			<div className={styles.header}>
@@ -470,13 +532,15 @@ const FlashCards = () => {
 						className={styles.reverseBtn}
 						onClick={toggleReversed}
 						title={t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}>
-						⇄ {t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}
+						<SwapHorizRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
+						{t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}
 					</button>
 					<button
 						className={styles.settingsBtn}
 						onClick={() => setShowSettings(!showSettings)}
 						title={t('settings_btn')}>
-						⚙️ {t('settings_btn')}
+						<SettingsRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
+						{t('settings_btn')}
 					</button>
 				</div>
 
@@ -535,6 +599,7 @@ const FlashCards = () => {
 								className={styles.againBtn}
 								onClick={() => handleReview(BUTTON_TYPES.AGAIN)}
 								title={t('again_btn')}>
+								<SentimentVeryDissatisfiedRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('again_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.again || '<1min'}
@@ -545,6 +610,7 @@ const FlashCards = () => {
 								className={styles.hardBtn}
 								onClick={() => handleReview(BUTTON_TYPES.HARD)}
 								title={t('hard_btn')}>
+								<ThumbDownRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('hard_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.hard || '6min'}
@@ -555,6 +621,7 @@ const FlashCards = () => {
 								className={styles.goodBtn}
 								onClick={() => handleReview(BUTTON_TYPES.GOOD)}
 								title={t('good_btn')}>
+								<ThumbUpRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('good_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.good || '10min'}
@@ -565,6 +632,7 @@ const FlashCards = () => {
 								className={styles.easyBtn}
 								onClick={() => handleReview(BUTTON_TYPES.EASY)}
 								title={t('easy_btn')}>
+								<SentimentSatisfiedAltRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('easy_btn')}</span>
 								<span className={styles.btnInterval}>
 									{buttonIntervals?.easy || '4j'}
@@ -577,7 +645,8 @@ const FlashCards = () => {
 							className={styles.suspendBtn}
 							onClick={handleSuspend}
 							title={t('suspend_btn')}>
-							🚫 {t('suspend_btn')}
+							<PauseCircleRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
+							{t('suspend_btn')}
 						</button>
 					</>
 				) : (

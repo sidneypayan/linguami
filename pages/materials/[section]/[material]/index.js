@@ -179,13 +179,15 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						backgroundColor: 'rgba(255, 255, 255, 0.9)',
 						backdropFilter: 'blur(8px)',
 						boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-						color: 'clrBtn2',
 						transition: 'all 0.3s ease',
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						color: 'white',
 						'&:hover': {
-							backgroundColor: 'clrPrimary1',
-							color: 'white',
 							transform: 'scale(1.1)',
-							boxShadow: '0 4px 12px rgba(67, 40, 116, 0.3)',
+							boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+						},
+						'&:active': {
+							transform: 'scale(0.95)',
 						},
 					}}
 					aria-label='back'

@@ -261,6 +261,20 @@ const materialsSlice = createSlice({
 			)
 			resetPagination(state)
 		},
+		filterMaterialsByStatus: (state, { payload }) => {
+			const { section, status, userMaterialsStatus } = payload
+
+			// Récupérer les IDs des matériaux avec le statut demandé
+			const materialIdsWithStatus = userMaterialsStatus
+				.filter(userMaterial => userMaterial[status])
+				.map(userMaterial => userMaterial.material_id)
+
+			// Filtrer les matériaux par section et statut
+			state.filtered_materials = state.materials.filter(
+				item => item.section === section && materialIdsWithStatus.includes(item.id)
+			)
+			resetPagination(state)
+		},
 		showAllMaterials: state => {
 			state.filtered_materials = state.materials
 			resetPagination(state)
@@ -395,6 +409,7 @@ export default materialsSlice.reducer
 
 export const {
 	filterMaterials,
+	filterMaterialsByStatus,
 	showAllMaterials,
 	searchMaterial,
 	changePage,

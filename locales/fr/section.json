@@ -3,5 +3,7 @@
 	"beginner": "Débutant",
 	"intermediate": "Intermédiaire",
 	"advanced": "Avancé",
-	"showall": "Montrer tout"
+	"showall": "Montrer tout",
+	"studied": "Étudiés",
+	"being_studied": "À l'étude"
 }

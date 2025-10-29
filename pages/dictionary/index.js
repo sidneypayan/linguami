@@ -28,7 +28,7 @@ import {
 	ToggleButtonGroup,
 	ToggleButton,
 } from '@mui/material'
-import { DeleteOutline, Add, School, ChevronLeft, ChevronRight } from '@mui/icons-material'
+import { HighlightOffRounded, AddCircleRounded, School, ChevronLeft, ChevronRight } from '@mui/icons-material'
 import Image from 'next/image'
 import AddWordModal from '../../components/dictionary/AddWordModal'
 
@@ -171,7 +171,7 @@ const Dictionary = () => {
 						<Button
 							variant='contained'
 							size='large'
-							startIcon={<Add />}
+							startIcon={<AddCircleRounded />}
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
 								flex: 1,
@@ -344,7 +344,7 @@ const Dictionary = () => {
 														transform: 'scale(0.95)',
 													},
 												}}>
-												<DeleteOutline sx={{ fontSize: { xs: '1.3rem', sm: '1.5rem' } }} />
+												<HighlightOffRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.7rem' } }} />
 											</IconButton>
 										</TableCell>
 									</TableRow>
@@ -459,7 +459,7 @@ const Dictionary = () => {
 						<Button
 							variant='contained'
 							size='large'
-							startIcon={<Add />}
+							startIcon={<AddCircleRounded />}
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
 								flex: 1,

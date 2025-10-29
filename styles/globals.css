@@ -254,15 +254,15 @@ img {
 }
 
 .beginner {
-	background-color: rgb(139, 199, 29);
+	background-color: #10b981; /* Vert émeraude - Facile */
 }
 
 .intermediate {
-	background-color: rgb(201, 117, 6);
+	background-color: #f59e0b; /* Orange ambré - Moyen */
 }
 
 .advanced {
-	background-color: rgb(207, 9, 9);
+	background-color: #ef4444; /* Rouge - Difficile */
 }
 
 .loader {

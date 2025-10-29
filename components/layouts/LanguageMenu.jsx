@@ -3,7 +3,7 @@ import { styled, alpha } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { ExpandMoreRounded, TranslateRounded, CheckCircleRounded } from '@mui/icons-material'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
@@ -43,14 +43,20 @@ const StyledMenu = styled(props => (
 			fontSize: '0.95rem',
 			fontWeight: 500,
 			transition: 'all 0.2s ease',
+			display: 'flex',
+			alignItems: 'center',
+			gap: '12px',
 			'& .MuiSvgIcon-root': {
-				fontSize: 18,
-				color: theme.palette.text.secondary,
-				marginRight: theme.spacing(1.5),
+				fontSize: 20,
+				color: '#667eea',
+				transition: 'transform 0.2s ease',
 			},
 			'&:hover': {
 				backgroundColor: alpha(theme.palette.primary.main, 0.08),
 				transform: 'translateX(4px)',
+				'& .MuiSvgIcon-root': {
+					transform: 'scale(1.1)',
+				},
 			},
 			'&:active': {
 				backgroundColor: alpha(
@@ -105,7 +111,16 @@ const LanguageMenu = () => {
 				variant='contained'
 				disableElevation
 				onClick={handleClick}
-				endIcon={<KeyboardArrowDownIcon />}
+				startIcon={<TranslateRounded sx={{ fontSize: '1.3rem' }} />}
+				endIcon={
+					<ExpandMoreRounded
+						sx={{
+							fontSize: '1.3rem',
+							transition: 'transform 0.3s ease',
+							transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+						}}
+					/>
+				}
 				sx={{
 					display: { xs: 'none', sm: 'flex' },
 					background: 'rgba(255, 255, 255, 0.15)',
@@ -113,26 +128,46 @@ const LanguageMenu = () => {
 					color: 'white',
 					fontWeight: 600,
 					textTransform: 'none',
-					px: 2,
-					borderRadius: 2,
+					px: 2.5,
+					py: 0.75,
+					borderRadius: 2.5,
 					border: '1px solid rgba(255, 255, 255, 0.2)',
-					transition: 'all 0.2s ease',
+					transition: 'all 0.3s ease',
+					gap: 1,
 					'&:hover': {
 						background: 'rgba(255, 255, 255, 0.25)',
-						transform: 'translateY(-2px)',
+						transform: 'translateY(-2px) scale(1.02)',
+						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+					},
+					'&:active': {
+						transform: 'scale(0.98)',
 					},
 				}}>
-				<Typography variant='body2' sx={{ marginRight: '.5rem', fontWeight: 600 }}>
+				<Typography variant='body2' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
 					{t('learn')}
 				</Typography>
 
 				{userLearningLanguage && (
-					<Image
-						alt={userLearningLanguage}
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
-						width={25}
-						height={25}
-					/>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							width: 26,
+							height: 26,
+							borderRadius: '50%',
+							overflow: 'hidden',
+							border: '2px solid rgba(255, 255, 255, 0.3)',
+							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+						}}>
+						<Image
+							alt={userLearningLanguage}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
+							width={26}
+							height={26}
+							style={{ objectFit: 'cover' }}
+						/>
+					</Box>
 				)}
 			</Button>
 
@@ -145,29 +180,57 @@ const LanguageMenu = () => {
 				onClick={handleClick}
 				sx={{
 					display: { xs: 'flex', sm: 'none' },
-					width: '40px',
-					height: '40px',
+					width: '44px',
+					height: '44px',
 					background: 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					border: '1px solid rgba(255, 255, 255, 0.2)',
-					transition: 'all 0.2s ease',
+					transition: 'all 0.3s ease',
+					position: 'relative',
 					'&:hover': {
 						background: 'rgba(255, 255, 255, 0.25)',
-						transform: 'scale(1.05)',
+						transform: 'scale(1.08)',
+						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
 					},
 					'&:active': {
 						transform: 'scale(0.95)',
 					},
 				}}>
 				{userLearningLanguage && (
-					<Image
-						alt={userLearningLanguage}
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
-						width={24}
-						height={24}
-						style={{ borderRadius: '50%' }}
-					/>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							width: 28,
+							height: 28,
+							borderRadius: '50%',
+							overflow: 'hidden',
+							border: '2px solid rgba(255, 255, 255, 0.4)',
+							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+						}}>
+						<Image
+							alt={userLearningLanguage}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
+							width={28}
+							height={28}
+							style={{ objectFit: 'cover' }}
+						/>
+					</Box>
 				)}
+				<TranslateRounded
+					sx={{
+						position: 'absolute',
+						bottom: -2,
+						right: -2,
+						fontSize: '0.9rem',
+						color: 'white',
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						borderRadius: '50%',
+						padding: '2px',
+						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+					}}
+				/>
 			</IconButton>
 
 			<StyledMenu
@@ -178,23 +241,77 @@ const LanguageMenu = () => {
 				anchorEl={anchorEl}
 				open={open}
 				onClose={handleClose}>
-				{languages.map(language => (
-					<MenuItem
-						key={language.lang}
-						onClick={() => handleLanguageChange(language.lang)}
-						disableRipple>
-						<Image
-							style={{ margin: 0 }}
-							alt={language.name}
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${language.href}`}
-							width={25}
-							height={25}
-						/>
-						<Typography sx={{ marginLeft: '.5rem', fontWeight: '500' }}>
-							{language.name}
-						</Typography>
-					</MenuItem>
-				))}
+				{languages.map(language => {
+					const isSelected = userLearningLanguage === language.lang
+					return (
+						<MenuItem
+							key={language.lang}
+							onClick={() => handleLanguageChange(language.lang)}
+							disableRipple
+							sx={{
+								backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
+								position: 'relative',
+								'&:hover': {
+									backgroundColor: isSelected
+										? 'rgba(102, 126, 234, 0.12)'
+										: 'rgba(102, 126, 234, 0.08)',
+								},
+							}}>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: 32,
+									height: 32,
+									borderRadius: '50%',
+									overflow: 'hidden',
+									border: isSelected
+										? '2px solid #667eea'
+										: '2px solid rgba(0, 0, 0, 0.1)',
+									boxShadow: isSelected
+										? '0 2px 8px rgba(102, 126, 234, 0.3)'
+										: '0 1px 3px rgba(0, 0, 0, 0.1)',
+									transition: 'all 0.2s ease',
+								}}>
+								<Image
+									alt={language.name}
+									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${language.href}`}
+									width={32}
+									height={32}
+									style={{ objectFit: 'cover' }}
+								/>
+							</Box>
+							<Typography
+								sx={{
+									fontWeight: isSelected ? 600 : 500,
+									color: isSelected ? '#667eea' : '#2d3748',
+									flex: 1,
+								}}>
+								{language.name}
+							</Typography>
+							{isSelected && (
+								<CheckCircleRounded
+									sx={{
+										fontSize: '1.2rem',
+										color: '#667eea',
+										animation: 'checkAppear 0.3s ease',
+										'@keyframes checkAppear': {
+											'0%': {
+												opacity: 0,
+												transform: 'scale(0.5)',
+											},
+											'100%': {
+												opacity: 1,
+												transform: 'scale(1)',
+											},
+										},
+									}}
+								/>
+							)}
+						</MenuItem>
+					)
+				})}
 			</StyledMenu>
 		</Box>
 	)

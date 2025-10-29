@@ -48,26 +48,31 @@ const Homepage = () => {
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video.png`,
 			title: t('video'),
 			subtitle: t('videosubtitle'),
+			subtitleMobile: t('videosubtitleMobile'),
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio.png`,
 			title: t('audio'),
 			subtitle: t('audiosubtitle'),
+			subtitleMobile: t('audiosubtitleMobile'),
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text.png`,
 			title: t('text'),
 			subtitle: t('textsubtitle'),
+			subtitleMobile: t('textsubtitleMobile'),
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`,
 			title: t('dictionary'),
 			subtitle: t('dictionarysubtitle'),
+			subtitleMobile: t('dictionarysubtitleMobile'),
 		},
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`,
 			title: t('flashcards'),
 			subtitle: t('flashcardssubtitle'),
+			subtitleMobile: t('flashcardssubtitleMobile'),
 		},
 	]
 
@@ -78,7 +83,7 @@ const Homepage = () => {
 				width={1440}
 				sx={{
 					margin: { xs: '3rem auto', md: '5rem auto' },
-					padding: { xs: '0 1rem', md: '0 1.5rem' },
+					padding: { xs: '0 0.75rem', md: '0 1.5rem' },
 				}}>
 				<Typography
 					variant='h3'
@@ -106,13 +111,23 @@ const Homepage = () => {
 
 				<Grid
 					container
-					spacing={3}
+					spacing={{ xs: 2, sm: 3 }}
 					justifyContent='center'
 					sx={{
 						margin: { xs: '2rem auto', md: '4rem auto' },
+						maxWidth: { xs: '100%', sm: '100%' },
 					}}>
 					{multimedia.map((icon, index) => (
-						<Grid key={index} item xs={6} sm={4} lg={2.4}>
+						<Grid
+							key={index}
+							item
+							xs={6}
+							sm={4}
+							lg={2.4}
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+							}}>
 							<Box
 								sx={{
 									display: 'flex',
@@ -120,9 +135,11 @@ const Homepage = () => {
 									alignItems: 'center',
 									gap: 2,
 									textAlign: 'center',
-									p: { xs: 2, md: 3 },
+									p: { xs: 2.5, md: 3 },
 									height: '100%',
-									minHeight: { xs: '240px', sm: '260px' },
+									width: '100%',
+									maxWidth: { xs: '100%', sm: '280px' },
+									minHeight: { xs: '260px', sm: '280px' },
 									borderRadius: 4,
 									background: 'rgba(255, 255, 255, 0.8)',
 									border: '1px solid rgba(102, 126, 234, 0.1)',
@@ -174,7 +191,12 @@ const Homepage = () => {
 											fontSize: { xs: '0.875rem', md: '0.95rem' },
 											lineHeight: 1.5,
 										}}>
-										{icon.subtitle}
+										<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											{icon.subtitleMobile}
+										</Box>
+										<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+											{icon.subtitle}
+										</Box>
 									</Typography>
 								</Box>
 							</Box>

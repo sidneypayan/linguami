@@ -89,8 +89,8 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				sx={{
 					position: 'relative',
 					display: 'flex',
-					alignItems: 'center',
-					minHeight: { xs: 140, sm: 135 },
+					alignItems: 'stretch',
+					height: { xs: 140, sm: 160 },
 					boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
 					background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%)',
 					border: '1px solid rgba(102, 126, 234, 0.08)',
@@ -140,10 +140,13 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				<CardMedia
 					component='img'
 					sx={{
-						maxWidth: { xs: 120, sm: 135 },
-						height: { xs: 120, sm: 135 },
-						minWidth: { xs: 120, sm: 135 },
+						width: { xs: 140, sm: 160 },
+						minWidth: { xs: 140, sm: 160 },
+						maxWidth: { xs: 140, sm: 160 },
+						height: '100%',
 						margin: 0,
+						objectFit: 'cover',
+						flexShrink: 0,
 					}}
 					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
 					alt={material.title}
@@ -221,7 +224,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 			<SectionCardContent />
 		</button>
 	) : (
-		<Link href={`${material.section}/${material.id}`}>
+		<Link href={`/materials/${material.section}/${material.id}`}>
 			<SectionCardContent />
 		</Link>
 	)

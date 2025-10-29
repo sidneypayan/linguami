@@ -5,7 +5,8 @@ import { sortPostsByDate } from '../../utils/helpers'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { Container } from '@mui/material'
+import { Container, Typography, Box } from '@mui/material'
+import { RssFeedRounded } from '@mui/icons-material'
 
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
@@ -17,15 +18,77 @@ const Blog = ({ posts }) => {
 				<meta name='description' content={t('description')} />
 			</Head>
 			<Container
+				maxWidth='lg'
 				sx={{
-					margin: {
-						xs: '5rem auto',
-						md: '10rem auto',
-					},
+					marginTop: { xs: '5rem', md: '8rem' },
+					marginBottom: { xs: '3rem', md: '6rem' },
+					px: { xs: 2, sm: 3, md: 4 },
 				}}>
-				{posts.map((post, index) => (
-					<BlogCard key={index} post={post} />
-				))}
+				{/* Header Section */}
+				<Box
+					sx={{
+						textAlign: 'center',
+						marginBottom: { xs: '3rem', md: '5rem' },
+					}}>
+					<Box
+						sx={{
+							display: 'inline-flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							gap: 1.5,
+							marginBottom: 2,
+							padding: '0.75rem 1.5rem',
+							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+							borderRadius: 3,
+							border: '2px solid rgba(102, 126, 234, 0.2)',
+						}}>
+						<RssFeedRounded
+							sx={{
+								fontSize: '2rem',
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}
+						/>
+						<Typography
+							variant='h3'
+							sx={{
+								fontWeight: 700,
+								fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}>
+							{t('pagetitle')}
+						</Typography>
+					</Box>
+					<Typography
+						variant='h6'
+						sx={{
+							color: '#718096',
+							fontWeight: 500,
+							fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
+							maxWidth: '700px',
+							margin: '0 auto',
+							lineHeight: 1.6,
+						}}>
+						{t('description')}
+					</Typography>
+				</Box>
+
+				{/* Blog Posts */}
+				<Box
+					sx={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: { xs: 3, sm: 4, md: 5 },
+					}}>
+					{posts.map((post, index) => (
+						<BlogCard key={index} post={post} />
+					))}
+				</Box>
 			</Container>
 		</>
 	)

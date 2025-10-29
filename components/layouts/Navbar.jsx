@@ -22,10 +22,11 @@ import Link from 'next/link'
 
 import MenuIcon from '@mui/icons-material/Menu'
 import {
-	Article,
-	Home,
-	School,
-	MenuBook,
+	HomeRounded,
+	AutoStoriesRounded,
+	PersonSearchRounded,
+	LocalLibraryRounded,
+	RssFeedRounded,
 } from '@mui/icons-material'
 
 import LanguageMenu from './LanguageMenu.jsx'
@@ -41,29 +42,29 @@ const Navbar = props => {
 	const allNavigationLinks = [
 		{
 			name: 'Linguami',
-			icon: <Home style={{ fontSize: '1.5rem' }} />,
+			icon: <HomeRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/',
 		},
 		{
 			name: t('material'),
-			icon: <Article style={{ fontSize: '1.5rem' }} />,
+			icon: <AutoStoriesRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/materials',
 		},
 		{
 			name: t('teacher'),
-			icon: <School style={{ fontSize: '1.5rem' }} />,
+			icon: <PersonSearchRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/teacher',
 		},
 		{
 			name: t('lessons'),
-			icon: <MenuBook style={{ fontSize: '1.5rem' }} />,
+			icon: <LocalLibraryRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/lessons',
 			// Cacher seulement si chargement terminé ET aucune leçon
 			hideIf: !lessons_loading && lessons.length === 0,
 		},
 		{
 			name: t('blog'),
-			icon: <Article style={{ fontSize: '1.5rem' }} />,
+			icon: <RssFeedRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/blog',
 		},
 	]
@@ -96,7 +97,7 @@ const Navbar = props => {
 					gap: 1.5,
 					borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
 				}}>
-				<Home sx={{ fontSize: '2rem', color: 'white' }} />
+				<HomeRounded sx={{ fontSize: '2rem', color: 'white' }} />
 				<Box
 					sx={{
 						fontWeight: 800,
@@ -224,7 +225,7 @@ const Navbar = props => {
 										transform: 'scale(1.05)',
 									},
 								}}>
-								<Home sx={{ fontSize: { xs: '1.5rem', sm: '1.8rem' }, color: 'white' }} />
+								<HomeRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.8rem' }, color: 'white' }} />
 								<Box
 									sx={{
 										fontWeight: 800,
@@ -243,6 +244,7 @@ const Navbar = props => {
 						{navigationLinks.slice(1).map(link => (
 							<Link key={link.name} href={`${link.href}`}>
 								<Button
+									startIcon={link.icon}
 									sx={{
 										color: '#fff',
 										fontWeight: 600,
@@ -251,9 +253,19 @@ const Navbar = props => {
 										px: 2,
 										borderRadius: 2,
 										transition: 'all 0.2s ease',
+										'& .MuiButton-startIcon': {
+											marginRight: '6px',
+										},
+										'& .MuiSvgIcon-root': {
+											fontSize: '1.2rem',
+											transition: 'transform 0.2s ease',
+										},
 										'&:hover': {
 											backgroundColor: 'rgba(255, 255, 255, 0.15)',
 											transform: 'translateY(-2px)',
+											'& .MuiSvgIcon-root': {
+												transform: 'scale(1.15)',
+											},
 										},
 									}}>
 									{link.name}

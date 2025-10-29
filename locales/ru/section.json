@@ -3,5 +3,7 @@
 	"beginner": "Начинающий",
 	"intermediate": "Средний",
 	"advanced": "Продвинутый",
-	"showall": "Показать всё"
+	"showall": "Показать всё",
+	"studied": "Изученные",
+	"being_studied": "В процессе"
 }

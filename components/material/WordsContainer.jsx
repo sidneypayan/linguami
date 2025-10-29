@@ -19,7 +19,7 @@ import {
 	ListItemText,
 	Typography,
 } from '@mui/material'
-import { ThumbUpOffAlt, DeleteOutline } from '@mui/icons-material'
+import { FavoriteBorderRounded, HighlightOffRounded } from '@mui/icons-material'
 import Link from 'next/link'
 import { primaryButton } from '../../utils/buttonStyles'
 
@@ -82,7 +82,7 @@ const WordsContainer = () => {
 										transition: 'opacity 0.3s ease',
 									}}
 									onClick={() => handleDelete(words.id)}>
-									<DeleteOutline />
+									<HighlightOffRounded />
 								</IconButton>
 							</ListItem>
 						))}
@@ -104,27 +104,27 @@ const WordsContainer = () => {
 					<List sx={{ margin: '2rem auto' }}>
 						<ListItem disablePadding>
 							<ListItemIcon>
-								<ThumbUpOffAlt />
+								<FavoriteBorderRounded sx={{ color: '#667eea' }} />
 							</ListItemIcon>
 							<ListItemText primary={t('translatewords')} />
 						</ListItem>
 
 						<ListItem disablePadding>
 							<ListItemIcon>
-								<ThumbUpOffAlt />
+								<FavoriteBorderRounded sx={{ color: '#667eea' }} />
 							</ListItemIcon>
 							<ListItemText primary={t('savewords')} />
 						</ListItem>
 						<ListItem disablePadding>
 							<ListItemIcon>
-								<ThumbUpOffAlt />
+								<FavoriteBorderRounded sx={{ color: '#667eea' }} />
 							</ListItemIcon>
 							<ListItemText primary={t('flashcards')} />
 						</ListItem>
 
 						<ListItem disablePadding>
 							<ListItemIcon>
-								<ThumbUpOffAlt />
+								<FavoriteBorderRounded sx={{ color: '#667eea' }} />
 							</ListItemIcon>
 							<ListItemText primary={t('supportus')} />
 						</ListItem>
