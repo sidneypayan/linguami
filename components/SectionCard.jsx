@@ -86,14 +86,25 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 			sx={{
 				maxWidth: '500px',
 				margin: '0 auto',
+				borderRadius: '8px',
+				transition: 'all 0.2s ease',
+				'&:active': {
+					transform: 'scale(0.98)',
+				},
 			}}>
 			<Card
 				sx={{
 					display: 'flex',
 					alignItems: 'center',
-					height: 135,
-					boxShadow: 'none',
+					minHeight: { xs: 140, sm: 135 },
+					boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
 					backgroundColor: 'clrCardBg',
+					borderRadius: '8px',
+					transition: 'all 0.3s ease',
+					'&:hover': {
+						boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+						transform: 'translateY(-2px)',
+					},
 				}}>
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
 					checkIfUserMaterialIsInMaterials.is_being_studied && (
@@ -111,7 +122,12 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					)}
 				<CardMedia
 					component='img'
-					sx={{ maxWidth: 135, height: 135, margin: 0 }}
+					sx={{
+						maxWidth: { xs: 120, sm: 135 },
+						height: { xs: 120, sm: 135 },
+						minWidth: { xs: 120, sm: 135 },
+						margin: 0,
+					}}
 					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
 					alt={material.title}
 				/>
@@ -122,6 +138,8 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						display: 'flex',
 						justifyContent: 'space-between',
 						alignItems: 'center',
+						py: { xs: 2, sm: 2 },
+						px: { xs: 1.5, sm: 2 },
 					}}>
 					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography
@@ -129,11 +147,13 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							variant='h6'
 							sx={{
 								lineHeight: '1.5rem',
+								fontSize: { xs: '0.95rem', sm: '1.125rem' },
 								fontWeight: 700,
 								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
+								mb: 0.5,
 							}}>
 							{material.title}
 						</Typography>
@@ -145,7 +165,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								sx={{
 									fontWeight: 600,
 									color: '#718096',
-									fontSize: '0.875rem',
+									fontSize: { xs: '0.8rem', sm: '0.875rem' },
 								}}>
 								{material.section}
 							</Typography>
@@ -155,7 +175,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								sx={{
 									fontWeight: 600,
 									color: '#667eea',
-									fontSize: '0.875rem',
+									fontSize: { xs: '0.8rem', sm: '0.875rem' },
 								}}>
 								{material.level}
 							</Typography>

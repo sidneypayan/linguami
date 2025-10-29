@@ -72,10 +72,15 @@ const LevelBar = () => {
 									edge='end'
 									sx={{
 										color: '#667eea',
+										width: { xs: '44px', sm: '40px' },
+										height: { xs: '44px', sm: '40px' },
 										transition: 'all 0.2s ease',
 										'&:hover': {
 											transform: 'scale(1.1)',
 											color: '#764ba2',
+										},
+										'&:active': {
+											transform: 'scale(0.95)',
 										},
 									}}>
 									<Search />
@@ -121,9 +126,9 @@ const LevelBar = () => {
 							onClick={() => handleLevelClick(level.label, level.key)}
 							sx={{
 								fontWeight: 600,
-								fontSize: '0.95rem',
-								px: 1,
-								height: '40px',
+								fontSize: { xs: '0.9rem', sm: '0.95rem' },
+								px: { xs: 1.5, sm: 1 },
+								height: { xs: '44px', sm: '40px' },
 								borderRadius: 3,
 								cursor: 'pointer',
 								border: '2px solid',
@@ -144,6 +149,9 @@ const LevelBar = () => {
 									borderColor: level.color,
 									background: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
 								},
+								'&:active': {
+									transform: 'scale(0.97)',
+								},
 							}}
 						/>
 					</Tooltip>
@@ -154,6 +162,8 @@ const LevelBar = () => {
 					<IconButton
 						onClick={handleClear}
 						sx={{
+							width: { xs: '44px', sm: '40px' },
+							height: { xs: '44px', sm: '40px' },
 							backgroundColor: 'rgba(255, 255, 255, 0.9)',
 							boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
 							border: '2px solid transparent',
@@ -163,6 +173,9 @@ const LevelBar = () => {
 								color: 'white',
 								transform: 'rotate(180deg) translateY(-3px)',
 								boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+							},
+							'&:active': {
+								transform: 'rotate(180deg) scale(0.95)',
 							},
 						}}>
 						<Refresh />

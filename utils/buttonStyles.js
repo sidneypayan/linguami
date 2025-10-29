@@ -10,6 +10,8 @@ const baseButtonStyles = {
 	borderRadius: 2,
 	transition: 'all 0.3s ease',
 	fontSize: '1rem',
+	minHeight: '48px',
+	px: { xs: 2.5, sm: 3 },
 }
 
 // Bouton principal - Gradient violet (actions principales)
@@ -21,6 +23,9 @@ export const primaryButton = {
 		transform: 'translateY(-2px)',
 		boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
 		background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+	},
+	'&:active': {
+		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
 		background: '#ccc',
@@ -38,6 +43,9 @@ export const secondaryButton = {
 		boxShadow: '0 6px 20px rgba(245, 87, 108, 0.6)',
 		background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
 	},
+	'&:active': {
+		transform: 'scale(0.98)',
+	},
 	'&.Mui-disabled': {
 		background: '#ccc',
 		color: 'white',
@@ -53,6 +61,9 @@ export const tertiaryButton = {
 		transform: 'translateY(-2px)',
 		boxShadow: '0 6px 20px rgba(79, 172, 254, 0.6)',
 		background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+	},
+	'&:active': {
+		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
 		background: '#ccc',
@@ -70,6 +81,9 @@ export const successButton = {
 		boxShadow: '0 6px 20px rgba(67, 233, 123, 0.6)',
 		background: 'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)',
 	},
+	'&:active': {
+		transform: 'scale(0.98)',
+	},
 	'&.Mui-disabled': {
 		background: '#ccc',
 		color: 'white',
@@ -85,6 +99,9 @@ export const warningButton = {
 		transform: 'translateY(-2px)',
 		boxShadow: '0 6px 20px rgba(250, 112, 154, 0.6)',
 		background: 'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
+	},
+	'&:active': {
+		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
 		background: '#ccc',

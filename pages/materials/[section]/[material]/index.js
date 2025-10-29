@@ -195,21 +195,28 @@ const Material = ({ material: single_material, activitiesCount }) => {
 				<Stack
 					sx={{
 						flexDirection: {
-							sx: 'column',
+							xs: 'column',
 							md: 'row',
 						},
 					}}>
-					<Container disableGutters maxWidth='100%' sx={{ marginTop: '6rem' }}>
+					<Container
+						disableGutters
+						maxWidth='100%'
+						sx={{
+							marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
+							px: { xs: 2, sm: 3, md: 0 },
+						}}>
 						<Typography
 							variant='h1'
 							sx={{
 								typography: { xs: 'h4', sm: 'h3' },
 								width: '750px',
 								maxWidth: '100%',
-								margin: '2rem auto',
+								margin: { xs: '1.5rem auto', sm: '2rem auto' },
+								px: { xs: 1, sm: 0 },
 							}}
 							align='center'
-							mb={5}>
+							mb={{ xs: 3, sm: 5 }}>
 							{single_material.title}
 						</Typography>
 
@@ -374,14 +381,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							position: 'fixed',
 							right: '1rem',
 							bottom: '6rem',
-							backgroundColor: 'clrPrimary1',
+							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 							color: 'white',
 							width: '56px',
 							height: '56px',
-							boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+							boxShadow: '0 4px 15px rgba(102, 126, 234, 0.5)',
 							zIndex: 1000,
+							transition: 'all 0.3s ease',
 							'&:hover': {
-								backgroundColor: 'clrPrimary2',
+								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+								transform: 'scale(1.1)',
+								boxShadow: '0 6px 20px rgba(102, 126, 234, 0.7)',
 							},
 						}}
 						onClick={() => setShowWordsContainer(true)}>
@@ -424,14 +434,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									position: 'fixed',
 									bottom: '6rem',
 									right: '1rem',
-									backgroundColor: 'clrPrimary1',
+									background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
 									color: 'white',
 									width: '56px',
 									height: '56px',
-									boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+									boxShadow: '0 4px 15px rgba(245, 87, 108, 0.5)',
 									zIndex: 1200,
+									transition: 'all 0.3s ease',
 									'&:hover': {
-										backgroundColor: 'clrPrimary2',
+										background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+										transform: 'scale(1.1) rotate(90deg)',
+										boxShadow: '0 6px 20px rgba(245, 87, 108, 0.7)',
 									},
 								}}
 								onClick={() => setShowWordsContainer(false)}>

@@ -204,12 +204,14 @@ const Navbar = props => {
 						<MenuIcon />
 					</IconButton>
 
-					{/* Logo/Brand - visible sur desktop */}
+					{/* Logo/Brand - centré sur mobile, à gauche sur desktop */}
 					<Box
 						sx={{
-							display: { xs: 'none', sm: 'flex' },
+							display: 'flex',
 							alignItems: 'center',
-							mr: 3,
+							mr: { xs: 0, sm: 3 },
+							flex: { xs: 1, sm: 0 },
+							justifyContent: { xs: 'center', sm: 'flex-start' },
 						}}>
 						<Link href='/'>
 							<Box
@@ -223,11 +225,11 @@ const Navbar = props => {
 										transform: 'scale(1.05)',
 									},
 								}}>
-								<Home sx={{ fontSize: '1.8rem', color: 'white' }} />
+								<Home sx={{ fontSize: { xs: '1.5rem', sm: '1.8rem' }, color: 'white' }} />
 								<Box
 									sx={{
 										fontWeight: 800,
-										fontSize: '1.3rem',
+										fontSize: { xs: '1.2rem', sm: '1.3rem' },
 										color: 'white',
 										letterSpacing: '-0.5px',
 									}}>

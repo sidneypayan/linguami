@@ -119,16 +119,23 @@ const Dictionary = () => {
 			</Head>
 
 			{user_words.length > 0 ? (
-				<Container sx={{ marginTop: '6rem', marginBottom: '4rem' }} maxWidth='lg'>
+				<Container
+					sx={{
+						marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
+						marginBottom: { xs: '2rem', sm: '3rem', md: '4rem' },
+						px: { xs: 1, sm: 2, md: 3 },
+					}}
+					maxWidth='lg'>
 					<Box
 						sx={{
 							display: 'flex',
-							flexDirection: { xs: 'column', sm: 'row' },
-							gap: 3,
+							flexDirection: 'row',
+							gap: { xs: 2, sm: 3 },
 							justifyContent: 'center',
 							alignItems: 'stretch',
-							margin: '3rem auto',
+							margin: { xs: '2rem auto', sm: '3rem auto' },
 							maxWidth: '600px',
+							px: { xs: 2, sm: 0 },
 						}}>
 						<Button
 							variant='contained'
@@ -137,10 +144,10 @@ const Dictionary = () => {
 							onClick={() => dispatch(toggleFlashcardsContainer(true))}
 							sx={{
 								flex: 1,
-								minHeight: '56px',
+								minHeight: { xs: '54px', sm: '56px' },
 								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 								boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-								fontSize: '1rem',
+								fontSize: { xs: '0.95rem', sm: '1rem' },
 								fontWeight: 600,
 								textTransform: 'none',
 								borderRadius: 2,
@@ -150,8 +157,16 @@ const Dictionary = () => {
 									boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
 									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 								},
+								'&:active': {
+									transform: 'scale(0.98)',
+								},
 							}}>
-							{tWords('repeatwords')}
+							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+								{tWords('repeatwords')}
+							</Box>
+							<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+								Réviser
+							</Box>
 						</Button>
 						<Button
 							variant='contained'
@@ -160,10 +175,10 @@ const Dictionary = () => {
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
 								flex: 1,
-								minHeight: '56px',
+								minHeight: { xs: '54px', sm: '56px' },
 								background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
 								boxShadow: '0 4px 15px rgba(245, 87, 108, 0.4)',
-								fontSize: '1rem',
+								fontSize: { xs: '0.95rem', sm: '1rem' },
 								fontWeight: 600,
 								textTransform: 'none',
 								borderRadius: 2,
@@ -173,8 +188,16 @@ const Dictionary = () => {
 									boxShadow: '0 6px 20px rgba(245, 87, 108, 0.6)',
 									background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
 								},
+								'&:active': {
+									transform: 'scale(0.98)',
+								},
 							}}>
-							{tWords('add_word_btn')}
+							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+								{tWords('add_word_btn')}
+							</Box>
+							<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+								Ajouter
+							</Box>
 						</Button>
 					</Box>
 
@@ -209,12 +232,13 @@ const Dictionary = () => {
 									size='small'
 									sx={{
 										'& .MuiToggleButton-root': {
-											px: 2,
-											py: 0.5,
+											px: { xs: 1.5, sm: 2 },
+											py: { xs: 0.75, sm: 0.5 },
+											minHeight: { xs: '40px', sm: '36px' },
 											border: '2px solid #e0e0e0',
 											borderRadius: 2,
 											fontWeight: 600,
-											fontSize: '0.875rem',
+											fontSize: { xs: '0.8rem', sm: '0.875rem' },
 											color: '#4a5568',
 											transition: 'all 0.2s ease',
 											'&.Mui-selected': {
@@ -228,6 +252,9 @@ const Dictionary = () => {
 											'&:hover': {
 												backgroundColor: 'rgba(102, 126, 234, 0.1)',
 												borderColor: '#667eea',
+											},
+											'&:active': {
+												transform: 'scale(0.97)',
 											},
 										},
 									}}>
@@ -260,11 +287,15 @@ const Dictionary = () => {
 											},
 											transition: 'background-color 0.2s ease',
 										}}>
-										<TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
+										<TableCell
+											sx={{
+												borderBottom: '1px solid #e0e0e0',
+												py: { xs: 2, sm: 1.5 },
+											}}>
 											<Typography
 												sx={{
 													fontWeight: 700,
-													fontSize: '1.1rem',
+													fontSize: { xs: '1rem', sm: '1.1rem' },
 													background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 													WebkitBackgroundClip: 'text',
 													WebkitTextFillColor: 'transparent',
@@ -293,18 +324,27 @@ const Dictionary = () => {
 											}}>
 											{word.word_sentence}
 										</TableCell>
-										<TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
+										<TableCell
+											sx={{
+												borderBottom: '1px solid #e0e0e0',
+												py: { xs: 2, sm: 1.5 },
+											}}>
 											<IconButton
 												onClick={() => dispatch(deleteUserWord(word.id))}
 												sx={{
 													color: '#f5576c',
+													width: { xs: '44px', sm: '40px' },
+													height: { xs: '44px', sm: '40px' },
 													transition: 'all 0.2s ease',
 													'&:hover': {
 														backgroundColor: 'rgba(245, 87, 108, 0.1)',
 														transform: 'scale(1.1)',
 													},
+													'&:active': {
+														transform: 'scale(0.95)',
+													},
 												}}>
-												<DeleteOutline />
+												<DeleteOutline sx={{ fontSize: { xs: '1.3rem', sm: '1.5rem' } }} />
 											</IconButton>
 										</TableCell>
 									</TableRow>

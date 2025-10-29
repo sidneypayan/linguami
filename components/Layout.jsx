@@ -1,10 +1,12 @@
 import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
+import BottomNav from './layouts/BottomNav'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { getLessons } from '../features/lessons/lessonsSlice'
 import FlashCards from './games/Flashcards'
+import { Box } from '@mui/material'
 
 const Layout = ({ children }) => {
 	const dispatch = useDispatch()
@@ -22,11 +24,24 @@ const Layout = ({ children }) => {
 	return isFlashcardsOpen ? (
 		<FlashCards />
 	) : (
-		<>
+		<Box
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				minHeight: '100vh',
+			}}>
 			<Navbar />
-			{children}
+			<Box
+				component='main'
+				sx={{
+					flex: 1,
+					pb: { xs: '90px', sm: 0 }, // Padding bottom pour la bottom nav sur mobile
+				}}>
+				{children}
+			</Box>
 			<Footer />
-		</>
+			<BottomNav />
+		</Box>
 	)
 }
 

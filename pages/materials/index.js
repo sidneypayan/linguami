@@ -27,16 +27,43 @@ const Material = () => {
 				<meta name='description' content={t('description')} />
 			</Head>
 
-			<Box maxWidth='85%' width='1000px' sx={{ margin: '10rem auto' }}>
-				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
+			<Box
+				maxWidth='85%'
+				width='1000px'
+				sx={{
+					margin: { xs: '6rem auto 2rem', sm: '8rem auto 3rem', md: '10rem auto' },
+					px: { xs: 2, sm: 0 },
+				}}>
+				<Typography
+					variant='h5'
+					mb={2}
+					mt={2}
+					sx={{
+						fontWeight: '600',
+						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+					}}>
 					{t('text')}
 				</Typography>
 				<MaterialsCarousel materials={text} />
-				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
+				<Typography
+					variant='h5'
+					mb={2}
+					mt={4}
+					sx={{
+						fontWeight: '600',
+						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+					}}>
 					{t('video')}
 				</Typography>
 				<MaterialsCarousel materials={video} />
-				<Typography variant='h5' mb={1} mt={2} sx={{ fontWeight: '500' }}>
+				<Typography
+					variant='h5'
+					mb={2}
+					mt={4}
+					sx={{
+						fontWeight: '600',
+						fontSize: { xs: '1.25rem', sm: '1.5rem' },
+					}}>
 					{t('music')}
 				</Typography>
 				<MaterialsCarousel materials={music} />

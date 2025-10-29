@@ -223,10 +223,15 @@ const Homepage = () => {
 							size='large'
 							sx={{
 								...primaryButton,
-								minWidth: '200px',
+								minWidth: { xs: '160px', sm: '200px' },
+								minHeight: '48px',
 								display: 'block',
 								margin: '0 auto',
 								marginTop: '1rem',
+								fontSize: { xs: '0.9rem', sm: '1rem' },
+								'&:active': {
+									transform: 'scale(0.97)',
+								},
 							}}>
 							{t('show')}
 						</Button>
@@ -274,10 +279,15 @@ const Homepage = () => {
 							size='large'
 							sx={{
 								...primaryButton,
-								width: '200px',
+								minWidth: { xs: '160px', sm: '200px' },
+								minHeight: '48px',
 								display: 'block',
 								margin: '0 auto',
 								marginTop: '1rem',
+								fontSize: { xs: '0.9rem', sm: '1rem' },
+								'&:active': {
+									transform: 'scale(0.97)',
+								},
 							}}>
 							{t('show')}
 						</Button>
@@ -360,10 +370,15 @@ const Homepage = () => {
 							size='large'
 							sx={{
 								...primaryButton,
-								width: '200px',
+								minWidth: { xs: '160px', sm: '200px' },
+								minHeight: '48px',
 								display: 'block',
 								margin: '0 auto',
 								marginTop: '1rem',
+								fontSize: { xs: '0.9rem', sm: '1rem' },
+								'&:active': {
+									transform: 'scale(0.97)',
+								},
 							}}>
 							{t('show')}
 						</Button>
@@ -410,10 +425,15 @@ const Homepage = () => {
 								size='large'
 								sx={{
 									...primaryButton,
-									width: '200px',
+									minWidth: { xs: '160px', sm: '200px' },
+									minHeight: '48px',
 									display: 'block',
 									margin: '0 auto',
 									marginTop: '1rem',
+									fontSize: { xs: '0.9rem', sm: '1rem' },
+									'&:active': {
+										transform: 'scale(0.97)',
+									},
 								}}>
 								{t('start')}
 							</Button>

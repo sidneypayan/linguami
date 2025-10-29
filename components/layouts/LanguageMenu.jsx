@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, IconButton } from '@mui/material'
 import { useUserContext } from '../../context/user.js'
 
 const StyledMenu = styled(props => (
@@ -96,6 +96,7 @@ const LanguageMenu = () => {
 
 	return (
 		<Box>
+			{/* Version desktop - bouton complet */}
 			<Button
 				id='demo-customized-button'
 				aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -106,6 +107,7 @@ const LanguageMenu = () => {
 				onClick={handleClick}
 				endIcon={<KeyboardArrowDownIcon />}
 				sx={{
+					display: { xs: 'none', sm: 'flex' },
 					background: 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					color: 'white',
@@ -133,6 +135,40 @@ const LanguageMenu = () => {
 					/>
 				)}
 			</Button>
+
+			{/* Version mobile - IconButton compact avec drapeau */}
+			<IconButton
+				id='demo-customized-button-mobile'
+				aria-controls={open ? 'demo-customized-menu' : undefined}
+				aria-haspopup='true'
+				aria-expanded={open ? 'true' : undefined}
+				onClick={handleClick}
+				sx={{
+					display: { xs: 'flex', sm: 'none' },
+					width: '40px',
+					height: '40px',
+					background: 'rgba(255, 255, 255, 0.15)',
+					backdropFilter: 'blur(10px)',
+					border: '1px solid rgba(255, 255, 255, 0.2)',
+					transition: 'all 0.2s ease',
+					'&:hover': {
+						background: 'rgba(255, 255, 255, 0.25)',
+						transform: 'scale(1.05)',
+					},
+					'&:active': {
+						transform: 'scale(0.95)',
+					},
+				}}>
+				{userLearningLanguage && (
+					<Image
+						alt={userLearningLanguage}
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
+						width={24}
+						height={24}
+						style={{ borderRadius: '50%' }}
+					/>
+				)}
+			</IconButton>
 
 			<StyledMenu
 				id='demo-customized-menu'
