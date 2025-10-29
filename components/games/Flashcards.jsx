@@ -45,6 +45,8 @@ const FlashCards = () => {
 		return 20
 	})
 	const [showSettings, setShowSettings] = useState(false)
+	const [showPracticeOptions, setShowPracticeOptions] = useState(false)
+	const [practiceCount, setPracticeCount] = useState(20)
 
 	// Get appropriate word array based on current page
 	const wordsArray =
@@ -93,6 +95,40 @@ const FlashCards = () => {
 
 			// Mettre à jour la session avec les nouvelles cartes
 			setSessionCards(limitedCards)
+		}
+	}
+
+	// Start a random practice session
+	const startRandomPractice = () => {
+		if (wordsArray && wordsArray.length > 0) {
+			// Initialize cards with SRS values if needed
+			const initializedCards = wordsArray.map(card => {
+				if (!card.card_state) {
+					return {
+						...card,
+						card_state: CARD_STATES.NEW,
+						ease_factor: 2.5,
+						interval: 0,
+						learning_step: null,
+						next_review_date: null,
+						last_review_date: null,
+						reviews_count: 0,
+						lapses: 0,
+						is_suspended: false
+					}
+				}
+				return { ...card }
+			})
+
+			// Filter out suspended cards
+			const activeCards = initializedCards.filter(card => !card.is_suspended)
+
+			// Shuffle and take the requested number
+			const shuffled = [...activeCards].sort(() => Math.random() - 0.5)
+			const selectedCards = shuffled.slice(0, Math.min(practiceCount, shuffled.length))
+
+			setSessionCards(selectedCards)
+			setShowPracticeOptions(false)
 		}
 	}
 
@@ -280,7 +316,7 @@ const FlashCards = () => {
 							setReviewedCount(0)
 							setSessionInitialized(false) // Reset for next session
 						}}
-						className='mainBtn'>
+						className={styles.closeBtn}>
 						{t('close_btn')}
 					</button>
 				</div>
@@ -329,7 +365,7 @@ const FlashCards = () => {
 							dispatch(toggleFlashcardsContainer(false))
 							setSessionInitialized(false)
 						}}
-						className='mainBtn'>
+						className={styles.closeBtn}>
 						{t('close_btn')}
 					</button>
 				</div>
@@ -352,14 +388,50 @@ const FlashCards = () => {
 				/>
 				<div className={styles.wordsContainer}>
 					<p className={styles.statsText}>{t('no_cards_due')}</p>
-					<button
-						onClick={() => {
-							dispatch(toggleFlashcardsContainer(false))
-							setSessionInitialized(false)
-						}}
-						className='mainBtn'>
-						{t('close_btn')}
-					</button>
+
+					{!showPracticeOptions ? (
+						<div className={styles.buttonsGroup}>
+							<button
+								onClick={() => setShowPracticeOptions(true)}
+								className={styles.practiceBtn}>
+								{t('practice_anyway')}
+							</button>
+							<button
+								onClick={() => {
+									dispatch(toggleFlashcardsContainer(false))
+									setSessionInitialized(false)
+								}}
+								className={styles.closeBtn}>
+								{t('close_btn')}
+							</button>
+						</div>
+					) : (
+						<>
+							<p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>{t('choose_cards_count')}</p>
+							<div className={styles.limitOptions} style={{ marginBottom: '1.5rem' }}>
+								{[10, 20, 30, 50].map(count => (
+									<button
+										key={count}
+										className={`${styles.limitOption} ${practiceCount === count ? styles.limitOptionActive : ''}`}
+										onClick={() => setPracticeCount(count)}>
+										{count}
+									</button>
+								))}
+							</div>
+							<div className={styles.buttonsGroup}>
+								<button
+									onClick={startRandomPractice}
+									className={styles.practiceBtn}>
+									{t('start_practice')}
+								</button>
+								<button
+									onClick={() => setShowPracticeOptions(false)}
+									className={styles.closeBtn}>
+									{t('close_btn')}
+								</button>
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		)

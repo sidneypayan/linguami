@@ -323,6 +323,62 @@
 	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
+/* Modern practice buttons */
+.practiceBtn {
+	padding: 1rem 2.5rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border: none;
+	border-radius: 12px;
+	color: white;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.practiceBtn:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.practiceBtn:active {
+	transform: translateY(-1px);
+	box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+.closeBtn {
+	padding: 1rem 2.5rem;
+	background-color: #f8f9fa;
+	border: 2px solid #e9ecef;
+	border-radius: 12px;
+	color: #495057;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.closeBtn:hover {
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.closeBtn:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.buttonsGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	align-items: center;
+}
+
 /* Stats and completion screen */
 .statsContainer {
 	margin-bottom: 2rem;
@@ -366,13 +422,12 @@
 	.closeIcon {
 		right: 3rem;
 	}
-
 	.header {
 		margin-top: 2rem;
 	}
 
 	.wordsContainer {
-		margin-top: 5vh;
+		margin-top: 15vh;
 		padding: 0 1rem;
 	}
 
@@ -431,7 +486,7 @@
 	}
 
 	.progressInfo {
-		margin-top: 0.5rem;
+		margin-top: 3rem;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
@@ -454,5 +509,25 @@
 	.wordsContainer p {
 		font-size: 1.2rem;
 		line-height: 1.8rem;
+	}
+
+	.practiceBtn {
+		padding: 0.9rem 2rem;
+		font-size: 1rem;
+	}
+
+	.closeBtn {
+		padding: 0.9rem 2rem;
+		font-size: 1rem;
+	}
+
+	.buttonsGroup {
+		gap: 1.2rem;
+		width: 100%;
+	}
+
+	.buttonsGroup button {
+		width: 100%;
+		max-width: 280px;
 	}
 }
