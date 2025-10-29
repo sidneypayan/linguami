@@ -41,5 +41,13 @@
 	"add_words_to_review": "Ajoutez des mots à votre dictionnaire pour commencer à réviser.",
 	"card_suspended": "Carte suspendue - elle n'apparaîtra plus dans les révisions",
 	"review_error": "Erreur lors de la mise à jour de la révision",
-	"suspend_error": "Erreur lors de la suspension de la carte"
+	"suspend_error": "Erreur lors de la suspension de la carte",
+	"addword": "Ajouter un mot",
+	"word_in_learning_language": "Mot en {{lang}}",
+	"word_in_browser_language": "Traduction en {{lang}}",
+	"example": "Exemple",
+	"manual_add_info": "Ces mots seront ajoutés à votre dictionnaire personnel et disponibles dans les flashcards.",
+	"cancel": "Annuler",
+	"add": "Ajouter",
+	"add_word_btn": "Ajouter un mot manuellement"
 }

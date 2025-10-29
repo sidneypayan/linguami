@@ -38,6 +38,7 @@ import {
 } from '@mui/material'
 import { ArrowBack, MenuBook, Close } from '@mui/icons-material'
 import Head from 'next/head'
+import { primaryButton, warningButton, tertiaryButton, successButton } from '../../../../utils/buttonStyles'
 
 const Material = ({ material: single_material, activitiesCount }) => {
 	const { t } = useTranslation('materials')
@@ -229,9 +230,9 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							{!is_being_studied && !is_studied && isUserLoggedIn && (
 								<Button
 									sx={{
+										...primaryButton,
 										marginBottom: '2rem',
 										marginRight: '1rem',
-										backgroundColor: 'clrPrimary1',
 									}}
 									variant='contained'
 									onClick={async () => {
@@ -248,9 +249,9 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							{is_being_studied && isUserLoggedIn && (
 								<Button
 									sx={{
+										...warningButton,
 										marginBottom: '2rem',
 										marginRight: '1rem',
-										backgroundColor: 'clrPrimary1',
 									}}
 									variant='contained'
 									onClick={async () => {
@@ -269,7 +270,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							{/* Si la langue russe est sélectionné, montrer le bouton permettant d'afficher les accents */}
 							{userLearningLanguage === 'ru' && (
 								<Button
-									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+									sx={{
+										...tertiaryButton,
+										marginBottom: '2rem',
+										marginRight: '1rem'
+									}}
 									variant='contained'
 									onClick={() => setShowAccents(!showAccents)}
 									type='button'
@@ -287,12 +292,14 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
 							{isUserAdmin && (
 								<Button
-									sx={{ marginBottom: '2rem', backgroundColor: 'clrPrimary1' }}
+									sx={{
+										...tertiaryButton,
+										marginBottom: '2rem'
+									}}
 									variant='contained'
 									onClick={handleEditContent}
 									type='button'
-									id='show-accents'
-									style={{ marginLeft: '1rem' }}>
+									id='show-accents'>
 									Edit material
 								</Button>
 							)}
@@ -329,9 +336,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 							{!is_studied && (
 								<Button
-									variant='outlined'
+									variant='contained'
 									size='large'
 									sx={{
+										...successButton,
 										display: 'block',
 										margin: '0 auto',
 										marginTop: '2rem',

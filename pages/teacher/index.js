@@ -10,6 +10,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material'
+import { primaryButton, secondaryButton } from '../../utils/buttonStyles'
 
 const Teacher = () => {
 	const { t, lang } = useTranslation('teacher')
@@ -47,16 +48,16 @@ const Teacher = () => {
 					sx={{ fontWeight: '600' }}>
 					{t('contact')}
 				</Typography>
-				<Stack direction='row' gap={1} m={2} sx={{ fontSize: '1.5rem' }}>
+				<Stack direction='row' gap={2} m={2} sx={{ fontSize: '1.5rem' }}>
 					<Button
-						sx={{ backgroundColor: 'clrPrimary3' }}
+						sx={primaryButton}
 						href={t('skype')}
 						variant='contained'
 						startIcon={<FaSkype />}>
 						Skype
 					</Button>
 					<Button
-						sx={{ backgroundColor: 'clrPrimary3' }}
+						sx={secondaryButton}
 						href={t('mail')}
 						variant='contained'
 						startIcon={<FaEnvelope />}>

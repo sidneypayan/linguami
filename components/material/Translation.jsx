@@ -1,5 +1,4 @@
 import useTranslation from 'next-translate/useTranslation'
-import styles from '../../styles/materials/Translation.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRef, useEffect, useState } from 'react'
 import {
@@ -9,6 +8,23 @@ import {
 } from '../../features/words/wordsSlice'
 import Link from 'next/link'
 import { useUserContext } from '../../context/user'
+import {
+	Box,
+	Paper,
+	Typography,
+	List,
+	ListItem,
+	ListItemButton,
+	TextField,
+	Button,
+	Divider,
+	Chip,
+	Fade,
+	IconButton,
+	Stack,
+} from '@mui/material'
+import { Add, Close, Translate } from '@mui/icons-material'
+import { primaryButton, secondaryButton } from '../../utils/buttonStyles'
 
 const Translation = ({ coordinates, materialId, userId }) => {
 	const { t, lang } = useTranslation('words')
@@ -127,14 +143,47 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	if (!isUserLoggedIn) {
 		return (
 			isTranslationOpen && (
-				<div style={position} ref={ref} className={styles.container}>
-					<div className={styles.registerContainer}>
-						{t('registertotranslate')}
-					</div>
-					<Link href='/signin'>
-						<button className={styles.btn}>{t('noaccount')}</button>
-					</Link>
-				</div>
+				<Fade in={isTranslationOpen}>
+					<Paper
+						ref={ref}
+						elevation={8}
+						sx={{
+							position: 'fixed',
+							...position,
+							width: { xs: 'calc(100vw - 40px)', sm: '350px' },
+							maxWidth: '350px',
+							borderRadius: 4,
+							overflow: 'hidden',
+							background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
+							boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+							zIndex: 1300,
+						}}>
+						<Box
+							sx={{
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								p: 2,
+								display: 'flex',
+								alignItems: 'center',
+								gap: 1,
+							}}>
+							<Translate sx={{ color: 'white' }} />
+							<Typography variant='subtitle1' sx={{ color: 'white', fontWeight: 700 }}>
+								{t('registertotranslate')}
+							</Typography>
+						</Box>
+						<Box sx={{ p: 3, textAlign: 'center' }}>
+							<Link href='/signin'>
+								<Button
+									variant='contained'
+									fullWidth
+									size='large'
+									sx={primaryButton}>
+									{t('noaccount')}
+								</Button>
+							</Link>
+						</Box>
+					</Paper>
+				</Fade>
 			)
 		)
 	}
@@ -142,47 +191,179 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	return (
 		isTranslationOpen &&
 		!translation_loading && (
-			<div style={position} ref={ref} className={styles.container}>
-				{translation_error ? (
-					<>
-						<div className={styles.inf}>
-							<span>{translation.word}</span>
-						</div>
-						<ul className={styles.traductionsContainer}>
-							<li className={styles.errMsg}>{translation_error}</li>
-						</ul>
-					</>
-				) : (
-					<>
-						<div className={styles.inf}>
-							<span>{translation.form}</span> - <span>{translation.inf}</span>
-						</div>
-						<ul className={styles.traductionsContainer}>
-							{translation.definitions?.map((definition, index) => (
-								<li
-									className={styles.translatedWord}
-									key={index}
-									onClick={addWord}>
-									{definition}
-								</li>
-							))}
-						</ul>
-					</>
-				)}
+			<Fade in={isTranslationOpen}>
+				<Paper
+					ref={ref}
+					elevation={8}
+					sx={{
+						position: 'fixed',
+						...position,
+						width: { xs: 'calc(100vw - 40px)', sm: '380px' },
+						maxWidth: '380px',
+						maxHeight: '500px',
+						borderRadius: 4,
+						overflow: 'hidden',
+						overflowX: 'hidden',
+						background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
+						boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+						zIndex: 1300,
+						display: 'flex',
+						flexDirection: 'column',
+					}}>
+					{/* Header */}
+					<Box
+						sx={{
+							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							p: 2,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+							<Translate sx={{ color: 'white' }} />
+							<Typography variant='subtitle1' sx={{ color: 'white', fontWeight: 700 }}>
+								{t('translation')}
+							</Typography>
+						</Box>
+						<IconButton
+							size='small'
+							onClick={() => {
+								dispatch(toggleTranslationContainer(false))
+								dispatch(cleanTranslation())
+							}}
+							sx={{
+								color: 'white',
+								'&:hover': {
+									backgroundColor: 'rgba(255, 255, 255, 0.2)',
+								},
+							}}>
+							<Close />
+						</IconButton>
+					</Box>
 
-				<form onSubmit={addWord}>
-					<input
-						className={styles.input}
-						type='text'
-						placeholder='votre traduction'
-						value={personalTranslation}
-						onChange={e => setPersonalTranslation(e.target.value)}
-					/>
-					<button disabled={!personalTranslation} className={styles.btn}>
-						Ajouter
-					</button>
-				</form>
-			</div>
+					{translation_error ? (
+						<Box sx={{ p: 3 }}>
+							<Typography variant='h6' sx={{ fontWeight: 600, mb: 2 }}>
+								{translation.word}
+							</Typography>
+							<Typography color='error' variant='body2'>
+								{translation_error}
+							</Typography>
+						</Box>
+					) : (
+						<>
+							{/* Word info */}
+							<Box sx={{ p: 2, backgroundColor: 'rgba(102, 126, 234, 0.08)' }}>
+								<Stack direction='row' spacing={1} alignItems='center' flexWrap='wrap'>
+									<Chip
+										label={translation.form}
+										size='small'
+										sx={{
+											fontWeight: 600,
+											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+											color: 'white',
+										}}
+									/>
+									<Typography variant='body2' sx={{ color: '#666' }}>
+										→
+									</Typography>
+									<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
+										{translation.inf}
+									</Typography>
+								</Stack>
+							</Box>
+
+							<Divider />
+
+							{/* Translations list */}
+							<Box sx={{ flex: 1, overflow: 'auto', overflowX: 'hidden', maxHeight: '250px' }}>
+								<List sx={{ py: 0 }}>
+									{translation.definitions?.map((definition, index) => (
+										<ListItem key={index} disablePadding>
+											<ListItemButton
+												onClick={addWord}
+												sx={{
+													py: 1.5,
+													px: 2,
+													pl: 1.5,
+													transition: 'all 0.2s ease',
+													borderLeft: '3px solid transparent',
+													'&:hover': {
+														backgroundColor: 'rgba(102, 126, 234, 0.08)',
+														borderLeftColor: '#667eea',
+														pl: 2.5,
+													},
+												}}>
+												<Typography variant='body2' sx={{ fontWeight: 500 }}>
+													{definition}
+												</Typography>
+											</ListItemButton>
+										</ListItem>
+									))}
+								</List>
+							</Box>
+
+							<Divider />
+
+							{/* Custom translation form */}
+							<Box
+								component='form'
+								onSubmit={addWord}
+								sx={{
+									p: 2,
+									backgroundColor: 'white',
+								}}>
+								<Typography
+									variant='caption'
+									sx={{
+										display: 'block',
+										mb: 1,
+										color: '#666',
+										fontWeight: 600,
+									}}>
+									{t('custom_translation') || 'Votre traduction personnalisée'}
+								</Typography>
+								<Stack direction='row' spacing={1}>
+									<TextField
+										fullWidth
+										size='small'
+										placeholder='votre traduction'
+										value={personalTranslation}
+										onChange={e => setPersonalTranslation(e.target.value)}
+										sx={{
+											'& .MuiOutlinedInput-root': {
+												borderRadius: 2,
+												'& fieldset': {
+													borderColor: '#e0e0e0',
+												},
+												'&:hover fieldset': {
+													borderColor: '#667eea',
+												},
+												'&.Mui-focused fieldset': {
+													borderColor: '#667eea',
+													borderWidth: 2,
+												},
+											},
+										}}
+									/>
+									<Button
+										type='submit'
+										disabled={!personalTranslation}
+										variant='contained'
+										sx={{
+											...secondaryButton,
+											minWidth: 'auto',
+											px: 2,
+										}}
+										startIcon={<Add />}>
+										{t('add')}
+									</Button>
+								</Stack>
+							</Box>
+						</>
+					)}
+				</Paper>
+			</Fade>
 		)
 	)
 }

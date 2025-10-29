@@ -82,32 +82,90 @@ const Navbar = props => {
 	const drawer = (
 		<Box
 			onClick={handleDrawerToggle}
-			sx={{ textAlign: 'center', bgcolor: 'clrPrimary1', height: '100vh' }}>
-			<List sx={{ color: '#fff' }}>
+			sx={{
+				height: '100vh',
+				background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+				display: 'flex',
+				flexDirection: 'column',
+			}}>
+			{/* Header du drawer */}
+			<Box
+				sx={{
+					p: 3,
+					display: 'flex',
+					alignItems: 'center',
+					gap: 1.5,
+					borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+				}}>
+				<Home sx={{ fontSize: '2rem', color: 'white' }} />
+				<Box
+					sx={{
+						fontWeight: 800,
+						fontSize: '1.5rem',
+						color: 'white',
+						letterSpacing: '-0.5px',
+					}}>
+					Linguami
+				</Box>
+			</Box>
+
+			{/* Navigation */}
+			<List sx={{ color: '#fff', px: 2, py: 3 }}>
 				{navigationLinks.map(link => (
-					<ListItem key={link.name} disablePadding>
-						<Link href={`${link.href}`}>
-							<ListItemButton>
-								<ListItemIcon sx={{ color: '#fff' }}>{link.icon}</ListItemIcon>
-								<ListItemText primary={link.name} />
+					<ListItem key={link.name} disablePadding sx={{ mb: 1 }}>
+						<Link href={`${link.href}`} style={{ width: '100%' }}>
+							<ListItemButton
+								sx={{
+									borderRadius: 2,
+									transition: 'all 0.2s ease',
+									'&:hover': {
+										backgroundColor: 'rgba(255, 255, 255, 0.15)',
+										transform: 'translateX(8px)',
+									},
+								}}>
+								<ListItemIcon sx={{ color: '#fff', minWidth: 40 }}>
+									{link.icon}
+								</ListItemIcon>
+								<ListItemText
+									primary={link.name}
+									primaryTypographyProps={{
+										fontWeight: 600,
+										fontSize: '1rem',
+									}}
+								/>
 							</ListItemButton>
 						</Link>
 					</ListItem>
 				))}
 			</List>
 
+			{/* Bouton Sign in pour mobile */}
 			{!isUserLoggedIn && (
-				<Box sx={{ bgcolor: 'clrPrimary1', height: '100vh' }}>
+				<Box sx={{ px: 3, pb: 3, mt: 'auto' }}>
 					<Link href={`/signin`}>
-						<Button variant='contained' sx={{ bgcolor: 'purple' }}>
+						<Button
+							variant='contained'
+							fullWidth
+							sx={{
+								background: 'rgba(255, 255, 255, 0.2)',
+								backdropFilter: 'blur(10px)',
+								color: 'white',
+								fontWeight: 600,
+								textTransform: 'none',
+								py: 1.5,
+								borderRadius: 2,
+								border: '2px solid rgba(255, 255, 255, 0.3)',
+								fontSize: '1rem',
+								transition: 'all 0.2s ease',
+								'&:hover': {
+									background: 'rgba(255, 255, 255, 0.3)',
+									transform: 'translateY(-2px)',
+									boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+								},
+							}}>
 							{t('signin')}
 						</Button>
 					</Link>
-					{/* <Link href={`/signup`}>
-						<Button variant='contained' sx={{ bgcolor: 'purple' }}>
-							{t('register')}
-						</Button>
-					</Link> */}
 				</Box>
 			)}
 		</Box>
@@ -123,49 +181,124 @@ const Navbar = props => {
 			}}>
 			<AppBar
 				component='nav'
+				elevation={0}
 				sx={{
-					bgcolor: 'clrPrimary1',
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					backdropFilter: 'blur(10px)',
+					boxShadow: '0 4px 30px rgba(102, 126, 234, 0.3)',
 				}}>
-				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
+					{/* Menu mobile */}
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'
 						edge='start'
 						onClick={handleDrawerToggle}
-						sx={{ mr: 2, display: { sm: 'none' } }}>
+						sx={{
+							mr: 2,
+							display: { sm: 'none' },
+							'&:hover': {
+								backgroundColor: 'rgba(255, 255, 255, 0.15)',
+							},
+						}}>
 						<MenuIcon />
 					</IconButton>
 
-					<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-						{navigationLinks.map(link => (
+					{/* Logo/Brand - visible sur desktop */}
+					<Box
+						sx={{
+							display: { xs: 'none', sm: 'flex' },
+							alignItems: 'center',
+							mr: 3,
+						}}>
+						<Link href='/'>
+							<Box
+								sx={{
+									cursor: 'pointer',
+									display: 'flex',
+									alignItems: 'center',
+									gap: 1,
+									transition: 'transform 0.2s ease',
+									'&:hover': {
+										transform: 'scale(1.05)',
+									},
+								}}>
+								<Home sx={{ fontSize: '1.8rem', color: 'white' }} />
+								<Box
+									sx={{
+										fontWeight: 800,
+										fontSize: '1.3rem',
+										color: 'white',
+										letterSpacing: '-0.5px',
+									}}>
+									Linguami
+								</Box>
+							</Box>
+						</Link>
+					</Box>
+
+					{/* Navigation Links */}
+					<Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1, flex: 1 }}>
+						{navigationLinks.slice(1).map(link => (
 							<Link key={link.name} href={`${link.href}`}>
-								<Button sx={{ color: '#fff' }}>{link.name}</Button>
+								<Button
+									sx={{
+										color: '#fff',
+										fontWeight: 600,
+										textTransform: 'none',
+										fontSize: '0.95rem',
+										px: 2,
+										borderRadius: 2,
+										transition: 'all 0.2s ease',
+										'&:hover': {
+											backgroundColor: 'rgba(255, 255, 255, 0.15)',
+											transform: 'translateY(-2px)',
+										},
+									}}>
+									{link.name}
+								</Button>
 							</Link>
 						))}
 					</Box>
 
-					{!router.query.material && !router.query.slug && <LanguageMenu />}
+					{/* Right side */}
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+						{!router.query.material && !router.query.slug && <LanguageMenu />}
 
-					{isUserLoggedIn ? (
-						<UserMenu />
-					) : (
-						<Box
-							sx={{
-								display: { xs: 'none', sm: 'flex' },
-								gap: '1rem',
-							}}>
-							<Link href={`/signin`}>
-								<Button variant='contained' sx={{ bgcolor: 'purple' }}>
-									{t('signin')}
-								</Button>
-							</Link>
-							{/* <Link href={`/signup`}>
-								<Button variant='contained' sx={{ bgcolor: 'purple' }}>
-									{t('register')}
-								</Button>
-							</Link> */}
-						</Box>
-					)}
+						{isUserLoggedIn ? (
+							<UserMenu />
+						) : (
+							<Box
+								sx={{
+									display: { xs: 'none', sm: 'flex' },
+									gap: 1.5,
+								}}>
+								<Link href={`/signin`}>
+									<Button
+										variant='contained'
+										sx={{
+											background: 'rgba(255, 255, 255, 0.2)',
+											backdropFilter: 'blur(10px)',
+											color: 'white',
+											fontWeight: 600,
+											textTransform: 'none',
+											px: 3,
+											borderRadius: 2,
+											boxShadow: 'none',
+											border: '1px solid rgba(255, 255, 255, 0.3)',
+											transition: 'all 0.2s ease',
+											'&:hover': {
+												background: 'rgba(255, 255, 255, 0.3)',
+												transform: 'translateY(-2px)',
+												boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+											},
+										}}>
+										{t('signin')}
+									</Button>
+								</Link>
+							</Box>
+						)}
+					</Box>
 				</Toolbar>
 			</AppBar>
 
@@ -183,6 +316,12 @@ const Navbar = props => {
 						'& .MuiDrawer-paper': {
 							boxSizing: 'border-box',
 							width: drawerWidth,
+							borderRight: 'none',
+							boxShadow: '4px 0 30px rgba(102, 126, 234, 0.3)',
+						},
+						'& .MuiBackdrop-root': {
+							backgroundColor: 'rgba(0, 0, 0, 0.6)',
+							backdropFilter: 'blur(4px)',
 						},
 					}}>
 					{drawer}

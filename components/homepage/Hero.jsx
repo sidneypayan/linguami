@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import Link from 'next/link'
 import Image from 'next/image'
+import { primaryButton } from '../../utils/buttonStyles'
 
 const Hero = () => {
 	const { t, lang } = useTranslation('home')
@@ -59,13 +60,13 @@ const Hero = () => {
 						<Button
 							align='center'
 							size='large'
+							variant='contained'
 							sx={{
-								backgroundColor: 'clrPrimary4',
+								...primaryButton,
 								display: 'block',
 								margin: '0 auto',
-								width: '150px',
-							}}
-							variant='contained'>
+								minWidth: '180px',
+							}}>
 							{t('start')}
 						</Button>
 					</Link>

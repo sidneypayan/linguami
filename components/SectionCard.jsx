@@ -127,22 +127,36 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						<Typography
 							component='div'
 							variant='h6'
-							color='clrPrimary1'
-							sx={{ lineHeight: '1.5rem' }}>
+							sx={{
+								lineHeight: '1.5rem',
+								fontWeight: 700,
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}>
 							{material.title}
 						</Typography>
 
-						<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						<Box sx={{ display: 'flex', flexDirection: 'column', mt: 0.5 }}>
 							<Typography
-								variant='subtitle1'
+								variant='subtitle2'
 								component='div'
-								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								sx={{
+									fontWeight: 600,
+									color: '#718096',
+									fontSize: '0.875rem',
+								}}>
 								{material.section}
 							</Typography>
 							<Typography
-								variant='subtitle1'
+								variant='subtitle2'
 								component='div'
-								sx={{ fontWeight: '500', color: 'clrGrey2' }}>
+								sx={{
+									fontWeight: 600,
+									color: '#667eea',
+									fontSize: '0.875rem',
+								}}>
 								{material.level}
 							</Typography>
 						</Box>

@@ -24,9 +24,69 @@ const baseTheme = createTheme({
 		clrGrey3: grey[600],
 		clrGrey4: grey[500],
 		clrCardBg: '#f5f5f5',
+		primary: {
+			main: '#667eea',
+			dark: '#764ba2',
+			light: '#8b9ff5',
+		},
+		secondary: {
+			main: '#f093fb',
+			dark: '#f5576c',
+		},
 	},
 	typography: {
 		fontFamily: ['Open Sans'],
+		h1: {
+			fontWeight: 800,
+			color: '#2d3748',
+			letterSpacing: '-0.5px',
+		},
+		h2: {
+			fontWeight: 700,
+			color: '#2d3748',
+			letterSpacing: '-0.5px',
+		},
+		h3: {
+			fontWeight: 700,
+			color: '#4a5568',
+			letterSpacing: '-0.3px',
+		},
+		h4: {
+			fontWeight: 600,
+			color: '#4a5568',
+		},
+		h5: {
+			fontWeight: 600,
+			color: '#667eea',
+		},
+		h6: {
+			fontWeight: 600,
+			color: '#718096',
+		},
+		subtitle1: {
+			color: '#4a5568',
+		},
+		subtitle2: {
+			color: '#718096',
+		},
+	},
+	components: {
+		MuiTypography: {
+			styleOverrides: {
+				h1: {
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					WebkitBackgroundClip: 'text',
+					WebkitTextFillColor: 'transparent',
+					backgroundClip: 'text',
+				},
+				h2: {
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					WebkitBackgroundClip: 'text',
+					WebkitTextFillColor: 'transparent',
+					backgroundClip: 'text',
+				},
+			},
+		},
 	},
 })
 

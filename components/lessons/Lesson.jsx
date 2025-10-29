@@ -13,6 +13,7 @@ import {
 	getUserLessonStatus,
 } from '../../features/lessons/lessonsSlice'
 import { useUserContext } from '../../context/user'
+import { successButton } from '../../utils/buttonStyles'
 
 const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
 	ssr: false,
@@ -187,9 +188,10 @@ const Lesson = ({ lesson }) => {
 
 			{!isLessonStudied && (
 				<Button
-					variant='outlined'
+					variant='contained'
 					size='large'
 					sx={{
+						...successButton,
 						display: 'block',
 						margin: '0 auto',
 						marginTop: '2rem',

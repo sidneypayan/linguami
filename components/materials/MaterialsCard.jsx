@@ -25,7 +25,16 @@ const MaterialsCard = ({ material }) => {
 					/>
 				</Box>
 
-				<Typography mt={0.5} variant='subtitle1' sx={{ fontWeight: '600' }}>
+				<Typography
+					mt={0.5}
+					variant='subtitle1'
+					sx={{
+						fontWeight: 700,
+						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						backgroundClip: 'text',
+					}}>
 					{material.title}
 				</Typography>
 			</Box>

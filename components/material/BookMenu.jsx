@@ -22,6 +22,7 @@ import {
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import { tertiaryButton } from '../../utils/buttonStyles'
 
 const BookMenu = ({ bookId }) => {
 	const { chapters, user_materials_status } = useSelector(
@@ -78,7 +79,15 @@ const BookMenu = ({ bookId }) => {
 						<ListItemButton href={`/materials/books/${chapter.id}`}>
 							<ListItemText
 								primary={
-									<Typography color='primaryGrey' variant='subtitle1'>
+									<Typography
+										variant='subtitle1'
+										sx={{
+											color: '#4a5568',
+											fontWeight: 600,
+											'&:hover': {
+												color: '#667eea',
+											},
+										}}>
 										{chapter.title}
 									</Typography>
 								}
@@ -109,10 +118,9 @@ const BookMenu = ({ bookId }) => {
 		<>
 			<Button
 				sx={{
+					...tertiaryButton,
 					marginBottom: '2rem',
 					marginLeft: '1rem',
-					backgroundColor: 'clrPrimary1',
-					color: '#fff',
 				}}
 				variant='contained'
 				endIcon={<AutoStories />}

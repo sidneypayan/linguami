@@ -21,6 +21,7 @@ import {
 } from '@mui/material'
 import { ThumbUpOffAlt, DeleteOutline } from '@mui/icons-material'
 import Link from 'next/link'
+import { primaryButton } from '../../utils/buttonStyles'
 
 const WordsContainer = () => {
 	const { t } = useTranslation('words')
@@ -132,10 +133,10 @@ const WordsContainer = () => {
 						<Button
 							variant='contained'
 							sx={{
+								...primaryButton,
 								display: 'block',
 								margin: '2rem auto',
 								width: '250px',
-								backgroundColor: 'clrPrimary1',
 							}}
 							size='large'>
 							{t('noaccount')}

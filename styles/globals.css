@@ -115,32 +115,56 @@ h3,
 h4,
 h5,
 h6 {
-	color: #4f2a93;
-	font-weight: 400;
+	font-weight: 700;
 	margin: 2rem auto;
 }
 
 h1 {
 	font-size: 3.052rem;
 	line-height: 3rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	font-weight: 800;
+	letter-spacing: -0.5px;
 }
 
 h2 {
 	font-size: 2.441rem;
 	line-height: 3rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	font-weight: 700;
+	letter-spacing: -0.5px;
 }
 
 h3 {
 	font-size: 1.953rem;
 	line-height: 2.5rem;
+	color: #4a5568;
+	font-weight: 700;
+	letter-spacing: -0.3px;
 }
 
 h4 {
 	font-size: 1.563rem;
+	color: #4a5568;
+	font-weight: 600;
 }
 
 h5 {
 	font-size: 1.25rem;
+	color: #667eea;
+	font-weight: 600;
+}
+
+h6 {
+	font-size: 1rem;
+	color: #718096;
+	font-weight: 600;
 }
 
 p {
@@ -313,7 +337,11 @@ p > a:hover {
 }
 
 .title {
-	color: #394149;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	font-weight: 700;
 }
 
 .headline {

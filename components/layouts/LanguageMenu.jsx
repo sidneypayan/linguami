@@ -24,9 +24,9 @@ const StyledMenu = styled(props => (
 	/>
 ))(({ theme }) => ({
 	'& .MuiPaper-root': {
-		borderRadius: 6,
+		borderRadius: 12,
 		marginTop: theme.spacing(1),
-		minWidth: 100,
+		minWidth: 180,
 		color:
 			theme.palette.mode === 'light'
 				? 'rgb(55, 65, 81)'
@@ -34,13 +34,23 @@ const StyledMenu = styled(props => (
 		boxShadow:
 			'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
 		'& .MuiMenu-list': {
-			padding: '4px 0',
+			padding: '8px',
 		},
 		'& .MuiMenuItem-root': {
+			borderRadius: '8px',
+			padding: '10px 12px',
+			margin: '4px 0',
+			fontSize: '0.95rem',
+			fontWeight: 500,
+			transition: 'all 0.2s ease',
 			'& .MuiSvgIcon-root': {
 				fontSize: 18,
 				color: theme.palette.text.secondary,
 				marginRight: theme.spacing(1.5),
+			},
+			'&:hover': {
+				backgroundColor: alpha(theme.palette.primary.main, 0.08),
+				transform: 'translateX(4px)',
 			},
 			'&:active': {
 				backgroundColor: alpha(
@@ -85,7 +95,7 @@ const LanguageMenu = () => {
 	}
 
 	return (
-		<Box sx={{ marginLeft: 'auto', marginRight: 5 }}>
+		<Box>
 			<Button
 				id='demo-customized-button'
 				aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -94,8 +104,23 @@ const LanguageMenu = () => {
 				variant='contained'
 				disableElevation
 				onClick={handleClick}
-				endIcon={<KeyboardArrowDownIcon />}>
-				<Typography variant='body1' sx={{ marginRight: '.5rem' }}>
+				endIcon={<KeyboardArrowDownIcon />}
+				sx={{
+					background: 'rgba(255, 255, 255, 0.15)',
+					backdropFilter: 'blur(10px)',
+					color: 'white',
+					fontWeight: 600,
+					textTransform: 'none',
+					px: 2,
+					borderRadius: 2,
+					border: '1px solid rgba(255, 255, 255, 0.2)',
+					transition: 'all 0.2s ease',
+					'&:hover': {
+						background: 'rgba(255, 255, 255, 0.25)',
+						transform: 'translateY(-2px)',
+					},
+				}}>
+				<Typography variant='body2' sx={{ marginRight: '.5rem', fontWeight: 600 }}>
 					{t('learn')}
 				</Typography>
 

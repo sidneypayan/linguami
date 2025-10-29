@@ -1,26 +1,14 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import styles from '../../styles/Pagination.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../features/materials/materialsSlice'
-import { useEffect, useState } from 'react'
+import { Box, IconButton, Button, Stack } from '@mui/material'
+import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 const Pagination = () => {
-	const { numOfPages, page, totalMaterials, materialsPerPage } = useSelector(
-		store => store.materials
-	)
+	const { numOfPages, page } = useSelector(store => store.materials)
 	const dispatch = useDispatch()
-
-	const [sliceStart, setSliceStart] = useState(0)
-	const [sliceEnd, setSliceEnd] = useState(0)
-
-	const pages = Array.from({ length: numOfPages }, (_, index) => {
-		return index + 1
-	})
 
 	const nextPage = () => {
 		let newPage = page + 1
-
 		if (newPage > numOfPages) {
 			newPage = 1
 		}
@@ -29,77 +17,171 @@ const Pagination = () => {
 
 	const prevPage = () => {
 		let newPage = page - 1
-
 		if (newPage < 1) {
 			newPage = numOfPages
 		}
 		dispatch(changePage(newPage))
 	}
 
-	useEffect(() => {
-		if (page === 1) {
-			setSliceStart(page)
-			setSliceEnd(page + 1)
-		}
-		if (page === 2) {
-			setSliceStart(page - 1)
-			setSliceEnd(page + 1)
-		}
-		if (page > 2) {
-			setSliceStart(page - 2)
-			setSliceEnd(page + 1)
+	// Générer les numéros de page à afficher
+	const getPageNumbers = () => {
+		const pages = []
+		const maxVisible = 5 // Nombre maximum de pages visibles
+
+		if (numOfPages <= maxVisible) {
+			// Si peu de pages, afficher toutes
+			for (let i = 1; i <= numOfPages; i++) {
+				pages.push(i)
+			}
+		} else {
+			// Toujours afficher la première page
+			pages.push(1)
+
+			// Calculer la plage autour de la page actuelle
+			let start = Math.max(2, page - 1)
+			let end = Math.min(numOfPages - 1, page + 1)
+
+			// Ajuster si on est au début
+			if (page <= 3) {
+				end = 4
+			}
+
+			// Ajuster si on est à la fin
+			if (page >= numOfPages - 2) {
+				start = numOfPages - 3
+			}
+
+			// Ajouter "..." si nécessaire
+			if (start > 2) {
+				pages.push('...')
+			}
+
+			// Ajouter les pages du milieu
+			for (let i = start; i <= end; i++) {
+				pages.push(i)
+			}
+
+			// Ajouter "..." si nécessaire
+			if (end < numOfPages - 1) {
+				pages.push('...')
+			}
+
+			// Toujours afficher la dernière page
+			pages.push(numOfPages)
 		}
 
-		if (numOfPages == 2) {
-			setSliceStart(numOfPages)
-			return
-		}
+		return pages
+	}
 
-		if (numOfPages - page == 2) {
-			setSliceEnd(page + 1)
-		}
-
-		if (numOfPages - page == 1) {
-			setSliceEnd(page)
-		}
-
-		if (numOfPages === page) {
-			setSliceStart(page - 2)
-			setSliceEnd(page - 1)
-		}
-	}, [numOfPages, page])
+	const pageNumbers = getPageNumbers()
 
 	return (
-		<div className={styles.container}>
-			<button onClick={prevPage} className={styles.arrowBtn}>
-				<FontAwesomeIcon icon={faArrowLeft} />
-			</button>
+		<Box
+			sx={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				mt: 5,
+				mb: 3,
+			}}>
+			<Stack direction='row' spacing={1} alignItems='center'>
+				{/* Bouton précédent */}
+				<IconButton
+					onClick={prevPage}
+					disabled={page === 1}
+					sx={{
+						backgroundColor: 'rgba(255, 255, 255, 0.9)',
+						border: '2px solid #e0e0e0',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							backgroundColor: '#667eea',
+							borderColor: '#667eea',
+							color: 'white',
+							transform: 'translateX(-2px)',
+						},
+						'&:disabled': {
+							backgroundColor: '#f5f5f5',
+							borderColor: '#e0e0e0',
+							opacity: 0.5,
+						},
+					}}>
+					<ChevronLeft />
+				</IconButton>
 
-			<button
-				className={page === 1 ? styles.pageBtnActive : undefined}
-				onClick={() => dispatch(changePage(1))}>
-				1
-			</button>
+				{/* Numéros de page */}
+				{pageNumbers.map((pageNumber, index) => {
+					if (pageNumber === '...') {
+						return (
+							<Box
+								key={`dots-${index}`}
+								sx={{
+									px: 1,
+									color: '#718096',
+									fontWeight: 600,
+								}}>
+								...
+							</Box>
+						)
+					}
 
-			{pages.slice(sliceStart, sliceEnd).map(pageNumber => (
-				<button
-					key={pageNumber}
-					className={page === pageNumber ? styles.pageBtnActive : undefined}
-					onClick={() => dispatch(changePage(pageNumber))}>
-					{pageNumber}
-				</button>
-			))}
+					return (
+						<Button
+							key={pageNumber}
+							onClick={() => dispatch(changePage(pageNumber))}
+							variant={page === pageNumber ? 'contained' : 'outlined'}
+							sx={{
+								minWidth: '40px',
+								height: '40px',
+								borderRadius: 2,
+								fontWeight: 600,
+								fontSize: '0.95rem',
+								border: '2px solid',
+								borderColor: page === pageNumber ? '#667eea' : '#e0e0e0',
+								background:
+									page === pageNumber
+										? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+										: 'rgba(255, 255, 255, 0.9)',
+								color: page === pageNumber ? 'white' : '#4a5568',
+								transition: 'all 0.2s ease',
+								'&:hover': {
+									borderColor: '#667eea',
+									backgroundColor:
+										page === pageNumber
+											? 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
+											: 'rgba(102, 126, 234, 0.1)',
+									transform: 'translateY(-2px)',
+									boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+								},
+							}}>
+							{pageNumber}
+						</Button>
+					)
+				})}
 
-			<button
-				className={page === numOfPages ? styles.pageBtnActive : undefined}
-				onClick={() => dispatch(changePage(numOfPages))}>
-				{numOfPages}
-			</button>
-
-			<button onClick={nextPage} className={styles.arrowBtn}>
-				<FontAwesomeIcon icon={faArrowRight} />
-			</button>
-		</div>
+				{/* Bouton suivant */}
+				<IconButton
+					onClick={nextPage}
+					disabled={page === numOfPages}
+					sx={{
+						backgroundColor: 'rgba(255, 255, 255, 0.9)',
+						border: '2px solid #e0e0e0',
+						transition: 'all 0.2s ease',
+						'&:hover': {
+							backgroundColor: '#667eea',
+							borderColor: '#667eea',
+							color: 'white',
+							transform: 'translateX(2px)',
+						},
+						'&:disabled': {
+							backgroundColor: '#f5f5f5',
+							borderColor: '#e0e0e0',
+							opacity: 0.5,
+						},
+					}}>
+					<ChevronRight />
+				</IconButton>
+			</Stack>
+		</Box>
 	)
 }
 

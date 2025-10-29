@@ -13,6 +13,7 @@ import {
 	InputAdornment,
 } from '@mui/material'
 import Link from 'next/link'
+import { primaryButton, oauthButton, textButton } from '../utils/buttonStyles'
 
 const initialState = {
 	email: '',
@@ -64,7 +65,13 @@ const Signin = () => {
 					<Button
 						variant='outlined'
 						fullWidth
-						sx={{ padding: '0.75rem 1rem' }}
+						sx={{
+							...oauthButton,
+							padding: '0.75rem 1rem',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
 						onClick={() => loginWithThirdPartyOAuth('facebook')}>
 						<Image
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.png`}
@@ -75,7 +82,13 @@ const Signin = () => {
 					<Button
 						variant='outlined'
 						fullWidth
-						sx={{ padding: '0.75rem 1rem' }}
+						sx={{
+							...oauthButton,
+							padding: '0.75rem 1rem',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
 						onClick={() => loginWithThirdPartyOAuth('google')}>
 						<Image
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/google.png`}
@@ -113,7 +126,11 @@ const Signin = () => {
 								formState === 'signin' ? (
 									<InputAdornment position='end'>
 										<Link href='/update-password'>
-											<Button sx={{ textDecoration: 'underline' }}>
+											<Button sx={{
+												...textButton,
+												textDecoration: 'underline',
+												fontSize: '0.875rem',
+											}}>
 												{t('forgot')}
 											</Button>
 										</Link>
@@ -122,7 +139,12 @@ const Signin = () => {
 						}}
 					/>
 
-					<Button fullWidth type='submit' variant='contained' size='large'>
+					<Button
+						fullWidth
+						type='submit'
+						variant='contained'
+						size='large'
+						sx={primaryButton}>
 						{formState === 'signin' ? t('signinBtn') : t('noaccount')}
 					</Button>
 
@@ -131,7 +153,7 @@ const Signin = () => {
 							setFormState(formState === 'signin' ? 'signup' : 'signin')
 						}
 						sx={{
-							fontWeight: 'bold',
+							...textButton,
 							textDecoration: 'underline',
 						}}
 						size='medium'>

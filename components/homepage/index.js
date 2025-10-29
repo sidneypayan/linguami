@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 
 import { Stack } from '@mui/system'
+import { primaryButton } from '../../utils/buttonStyles'
 
 const StyledGridItem = styled(Grid)(({ theme }) => ({
 	display: 'flex',
@@ -115,10 +116,17 @@ const Homepage = () => {
 								variant='h5'
 								sx={{
 									fontSize: { xs: '1.25rem', md: '1.5rem' },
+									fontWeight: 600,
+									color: '#667eea',
 								}}>
 								{icon.title}
 							</Typography>
-							<Typography variant='subtitle' color='primaryGrey'>
+							<Typography
+								variant='subtitle2'
+								sx={{
+									color: '#718096',
+									fontWeight: 500,
+								}}>
 								{icon.subtitle}
 							</Typography>
 						</StyledGridItem>
@@ -193,10 +201,19 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
+								fontWeight: 600,
+								color: '#4a5568',
 							}}>
 							{t('translator')}
 						</Typography>
-						<Typography variant='subtitle' color='primaryGrey' align='center'>
+						<Typography
+							variant='subtitle1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontWeight: 500,
+								lineHeight: 1.7,
+							}}>
 							{t('translatorsubtitle')}
 						</Typography>
 
@@ -205,10 +222,10 @@ const Homepage = () => {
 							variant='contained'
 							size='large'
 							sx={{
-								width: '200px',
+								...primaryButton,
+								minWidth: '200px',
 								display: 'block',
 								margin: '0 auto',
-								bgcolor: 'clrBtn1',
 								marginTop: '1rem',
 							}}>
 							{t('show')}
@@ -235,10 +252,19 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
+								fontWeight: 600,
+								color: '#4a5568',
 							}}>
 							{t('dictionary')}
 						</Typography>
-						<Typography variant='subtitle' color='primaryGrey' align='center'>
+						<Typography
+							variant='subtitle1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontWeight: 500,
+								lineHeight: 1.7,
+							}}>
 							{t('giftranslatorsubtitle')}
 						</Typography>
 
@@ -247,11 +273,11 @@ const Homepage = () => {
 							variant='contained'
 							size='large'
 							sx={{
+								...primaryButton,
 								width: '200px',
 								display: 'block',
 								margin: '0 auto',
 								marginTop: '1rem',
-								bgcolor: 'clrBtn1',
 							}}>
 							{t('show')}
 						</Button>
@@ -312,10 +338,19 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
+								fontWeight: 600,
+								color: '#4a5568',
 							}}>
 							{t('flashcards')}
 						</Typography>
-						<Typography variant='subtitle' color='primaryGrey' align='center'>
+						<Typography
+							variant='subtitle1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontWeight: 500,
+								lineHeight: 1.7,
+							}}>
 							{t('gifflashcardssubtitle')}
 						</Typography>
 
@@ -324,10 +359,10 @@ const Homepage = () => {
 							variant='contained'
 							size='large'
 							sx={{
+								...primaryButton,
 								width: '200px',
 								display: 'block',
 								margin: '0 auto',
-								bgcolor: 'clrBtn1',
 								marginTop: '1rem',
 							}}>
 							{t('show')}
@@ -354,10 +389,19 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
+								fontWeight: 600,
+								color: '#4a5568',
 							}}>
 							{t('teacher')}
 						</Typography>
-						<Typography variant='subtitle' color='primaryGrey' align='center'>
+						<Typography
+							variant='subtitle1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontWeight: 500,
+								lineHeight: 1.7,
+							}}>
 							{t('teachersubtitle')}
 						</Typography>
 						<Link href='/teacher'>
@@ -365,11 +409,11 @@ const Homepage = () => {
 								variant='contained'
 								size='large'
 								sx={{
+									...primaryButton,
 									width: '200px',
 									display: 'block',
 									margin: '0 auto',
 									marginTop: '1rem',
-									bgcolor: 'clrBtn1',
 								}}>
 								{t('start')}
 							</Button>
