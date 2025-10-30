@@ -69,5 +69,7 @@
 	"server_error": "Erreur lors de la connexion au serveur",
 	"no_words_yet_title": "Aucun mot ajouté pour ce matériel",
 	"no_words_yet_description": "Cliquez sur les mots du texte ci-dessus, puis sur leur traduction pour les ajouter à votre vocabulaire personnel.",
-	"no_words_yet_tip": "Les mots ajoutés apparaîtront ici et seront disponibles dans vos flashcards pour révision !"
+	"no_words_yet_tip": "Les mots ajoutés apparaîtront ici et seront disponibles dans vos flashcards pour révision !",
+	"level_up": "Niveau supérieur !",
+	"days_streak": "jours d'affilée !"
 }

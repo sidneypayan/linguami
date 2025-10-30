@@ -19,6 +19,7 @@
 		"/update-password": ["register"],
 		"/teacher": ["teacher"],
 		"/lessons": ["lessons"],
+		"/statistics": ["stats"],
 		"/admin": ["common", "admin"],
 		"/admin/create": ["common", "admin"]
 	}

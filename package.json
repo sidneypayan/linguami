@@ -39,6 +39,7 @@
 		"react-quill": "^2.0.0",
 		"react-redux": "^8.0.2",
 		"react-toastify": "^9.0.8",
+		"recharts": "^3.3.0",
 		"stripe": "^11.5.0",
 		"swiper": "^8.4.5"
 	},

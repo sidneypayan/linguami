@@ -15,6 +15,7 @@ import {
 	LogoutRounded,
 	SpellcheckRounded,
 	PersonRounded,
+	BarChartRounded,
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
@@ -156,6 +157,14 @@ const UserMenu = () => {
 							<BookmarksRounded />
 						</ListItemIcon>
 						{t('mymaterials')}
+					</MenuItem>
+				</Link>
+				<Link href='/statistics'>
+					<MenuItem>
+						<ListItemIcon>
+							<BarChartRounded />
+						</ListItemIcon>
+						{t('statistics')}
 					</MenuItem>
 				</Link>
 				<Divider />

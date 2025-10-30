@@ -69,5 +69,7 @@
 	"server_error": "Server connection error",
 	"no_words_yet_title": "No words added for this material",
 	"no_words_yet_description": "Click on words in the text above, then on their translation to add them to your personal vocabulary.",
-	"no_words_yet_tip": "Added words will appear here and be available in your flashcards for review!"
+	"no_words_yet_tip": "Added words will appear here and be available in your flashcards for review!",
+	"level_up": "Level up!",
+	"days_streak": "days in a row!"
 }

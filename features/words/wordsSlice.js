@@ -419,6 +419,19 @@ const wordsSlice = createSlice({
 				state.user_words = [...state.user_words, ...rows]
 				state.user_material_words = [...state.user_material_words, ...rows]
 				toast.success(payload.success)
+
+				// Add XP for each word added
+				rows.forEach(word => {
+					fetch('/api/xp/add', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							actionType: 'word_added',
+							sourceId: word.id?.toString() || '',
+							description: 'Added word to dictionary'
+						})
+					}).catch(err => console.error('Error adding XP:', err))
+				})
 			})
 			.addCase(addWordToDictionary.rejected, (_, action) => {
 				const errorMessage = action.payload?.error || 'Erreur inconnue'

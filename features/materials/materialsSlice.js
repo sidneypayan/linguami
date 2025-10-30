@@ -528,6 +528,17 @@ const materialsSlice = createSlice({
 				if (payload.fullMaterial) {
 					state.user_materials.push(payload.fullMaterial)
 				}
+
+				// Add XP for starting a material
+				fetch('/api/xp/add', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						actionType: 'material_started',
+						sourceId: payload.material_id.toString(),
+						description: 'Started new material'
+					})
+				}).catch(err => console.error('Error adding XP:', err))
 			})
 			.addCase(removeBeingStudiedMaterial.fulfilled, (state, { payload }) => {
 				toast.success(getToastMessage('materialRemovedFromStudying'))
@@ -568,6 +579,17 @@ const materialsSlice = createSlice({
 					// Ajouter le nouveau matériel
 					state.user_materials.push(payload.fullMaterial)
 				}
+
+				// Add XP for completing a material
+				fetch('/api/xp/add', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						actionType: 'material_completed',
+						sourceId: payload.material_id.toString(),
+						description: 'Completed material'
+					})
+				}).catch(err => console.error('Error adding XP:', err))
 			})
 			.addCase(getBookChapters.pending, state => {
 				state.chapters_loading = true
