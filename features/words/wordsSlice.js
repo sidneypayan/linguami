@@ -25,8 +25,12 @@ export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
 		try {
-			let { word, sentence, userLearningLanguage } = param
-			const langPair = userLearningLanguage === 'ru' ? 'ru-fr' : 'fr-ru'
+			let { word, sentence, userLearningLanguage, locale = 'fr' } = param
+
+			// Déterminer la paire de langues : source-cible
+			// Source = langue du matériel (userLearningLanguage)
+			// Cible = langue de l'interface (locale)
+			const langPair = `${userLearningLanguage}-${locale}`
 
 			// Normalisation mot (cyrillique uniquement côté ru)
 			if (userLearningLanguage === 'ru') {
@@ -67,35 +71,81 @@ export const addWordToDictionary = createAsyncThunk(
 			materialId,
 			word_sentence,
 			lang,
+			userLearningLanguage,
+			locale,
 		} = word
+
+		console.log('📝 addWordToDictionary called with:', {
+			originalWord,
+			translatedWord,
+			userLearningLanguage,
+			locale,
+			userId,
+			materialId
+		})
+
+		// Déterminer dans quelles colonnes insérer les mots selon les langues
+		const wordData = {
+			word_ru: null,
+			word_fr: null,
+			word_en: null,
+		}
+
+		// La langue source (du matériel) détermine où va l'originalWord
+		if (userLearningLanguage === 'ru') {
+			wordData.word_ru = originalWord
+		} else if (userLearningLanguage === 'fr') {
+			wordData.word_fr = originalWord
+		} else if (userLearningLanguage === 'en') {
+			wordData.word_en = originalWord
+		}
+
+		// La langue cible (de l'interface) détermine où va la translatedWord
+		if (locale === 'ru') {
+			wordData.word_ru = translatedWord
+		} else if (locale === 'fr') {
+			wordData.word_fr = translatedWord
+		} else if (locale === 'en') {
+			wordData.word_en = translatedWord
+		}
+
+		console.log('📝 wordData to insert:', wordData)
+
+		const insertData = {
+			...wordData,
+			user_id: userId,
+			material_id: materialId,
+			word_sentence: word_sentence,
+			// Initialize SRS fields for new words
+			card_state: 'new',
+			ease_factor: 2.5,
+			interval: 0,
+			learning_step: null,
+			next_review_date: null,
+			last_review_date: null,
+			reviews_count: 0,
+			lapses: 0,
+			is_suspended: false,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+		}
+
+		console.log('📝 Full insert data:', insertData)
 
 		try {
 			const { data, error } = await supabase
 				.from('user_words')
-				.insert([
-					{
-						word_ru: originalWord,
-						word_fr: translatedWord,
-						user_id: userId,
-						material_id: materialId,
-						word_sentence: word_sentence,
-						// Initialize SRS fields for new words
-						card_state: 'new',
-						ease_factor: 2.5,
-						interval: 0,
-						learning_step: null,
-						next_review_date: null,
-						last_review_date: null,
-						reviews_count: 0,
-						lapses: 0,
-						is_suspended: false,
-						created_at: new Date().toISOString(),
-						updated_at: new Date().toISOString(),
-					},
-				])
+				.insert([insertData])
 				.select('*') // v2: indispensable si on veut les lignes
 
 			if (error) {
+				console.error('❌ Supabase insert error:', error)
+				console.error('❌ Error details:', {
+					code: error?.code,
+					message: error?.message,
+					details: error?.details,
+					hint: error?.hint
+				})
 				// v2 renvoie souvent code '23505' pour doublon
 				const isDuplicate =
 					error?.code === '23505' ||
@@ -113,6 +163,7 @@ export const addWordToDictionary = createAsyncThunk(
 
 			return { success: message, data: data || [] }
 		} catch (error) {
+			console.error('❌ Catch block error:', error)
 			const message = getaddWordsToUserDictionaryMessage(
 				'unexpected_error',
 				lang

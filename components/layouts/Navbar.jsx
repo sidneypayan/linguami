@@ -30,6 +30,7 @@ import {
 } from '@mui/icons-material'
 
 import LanguageMenu from './LanguageMenu.jsx'
+import InterfaceLanguageMenu from './InterfaceLanguageMenu.jsx'
 
 const drawerWidth = '80%'
 
@@ -240,9 +241,17 @@ const Navbar = props => {
 				})}
 			</List>
 
+			{/* Language selectors pour mobile */}
+			<Box sx={{ px: 3, pb: 2, mt: 'auto', position: 'relative', zIndex: 1 }}>
+				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
+					<InterfaceLanguageMenu variant="full" onClose={handleDrawerToggle} />
+					<LanguageMenu variant="full" onClose={handleDrawerToggle} />
+				</Box>
+			</Box>
+
 			{/* Bouton Sign in pour mobile */}
 			{!isUserLoggedIn && (
-				<Box sx={{ px: 3, pb: 4, mt: 'auto', position: 'relative', zIndex: 1 }}>
+				<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1 }}>
 					<Link href={`/signin`}>
 						<Button
 							variant='contained'
@@ -390,8 +399,14 @@ const Navbar = props => {
 					</Box>
 
 					{/* Right side */}
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-						{!router.query.material && !router.query.slug && <LanguageMenu />}
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+						{/* Language buttons - only show when not in material/blog detail */}
+						{!router.query.material && !router.query.slug && (
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+								<InterfaceLanguageMenu />
+								<LanguageMenu />
+							</Box>
+						)}
 
 						{isUserLoggedIn ? (
 							<UserMenu />

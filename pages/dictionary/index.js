@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '../../context/user'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import {
 	getAllUserWords,
@@ -38,11 +38,11 @@ import AddWordModal from '../../components/dictionary/AddWordModal'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
 const Dictionary = () => {
-	const { t } = useTranslation('common')
+	const { t, lang } = useTranslation('common')
 	const { t: tWords } = useTranslation('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user, isUserLoggedIn, isBootstrapping } = useUserContext()
+	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
 	const userId = user?.id
 	const {
 		user_words,
@@ -72,18 +72,51 @@ const Dictionary = () => {
 
 	const handleWordsPerPageChange = (event, newValue) => {
 		if (newValue !== null) {
-			setWordsPerPage(newValue === 'all' ? user_words.length : newValue)
+			setWordsPerPage(newValue === 'all' ? filteredUserWords.length : newValue)
 			setCurrentPage(1)
 		}
+	}
+
+	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
+	const filteredUserWords = useMemo(() => {
+		if (!user_words || !userLearningLanguage || !lang) return []
+
+		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
+		if (userLearningLanguage === lang) return []
+
+		const filtered = user_words.filter(word => {
+			const sourceWord = word[`word_${userLearningLanguage}`]
+			const translation = word[`word_${lang}`]
+
+			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
+			return sourceWord && translation
+		})
+
+		// Trier par date de création, du plus récent au plus ancien
+		return filtered.sort((a, b) => {
+			const dateA = new Date(a.created_at)
+			const dateB = new Date(b.created_at)
+			return dateB - dateA // Ordre décroissant (plus récent d'abord)
+		})
+	}, [user_words, userLearningLanguage, lang])
+
+	// Fonction pour obtenir le mot source et la traduction selon les langues
+	const getWordDisplay = (word) => {
+		// Mot source : dans la langue qu'ils apprennent (userLearningLanguage)
+		const sourceWord = word[`word_${userLearningLanguage}`]
+		// Traduction : dans la langue de l'interface (lang)
+		const translation = word[`word_${lang}`]
+
+		return { sourceWord, translation }
 	}
 
 	// Calculer les mots à afficher
 	const indexOfLastWord = currentPage * wordsPerPage
 	const indexOfFirstWord = indexOfLastWord - wordsPerPage
-	const currentWords = wordsPerPage === user_words.length
-		? user_words
-		: user_words.slice(indexOfFirstWord, indexOfLastWord)
-	const totalPages = Math.ceil(user_words.length / wordsPerPage)
+	const currentWords = wordsPerPage === filteredUserWords.length
+		? filteredUserWords
+		: filteredUserWords.slice(indexOfFirstWord, indexOfLastWord)
+	const totalPages = Math.ceil(filteredUserWords.length / wordsPerPage)
 
 	useEffect(() => {
 		// Attendre que le bootstrap soit terminé avant de rediriger
@@ -131,7 +164,7 @@ const Dictionary = () => {
 				noindex={true}  // Page privée, ne pas indexer
 			/>
 
-			{user_words.length > 0 ? (
+			{filteredUserWords.length > 0 ? (
 				<Container
 					sx={{
 						marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
@@ -241,7 +274,7 @@ const Dictionary = () => {
 									{tWords('words_per_page')}
 								</Typography>
 								<ToggleButtonGroup
-									value={wordsPerPage === user_words.length ? 'all' : wordsPerPage}
+									value={wordsPerPage === filteredUserWords.length ? 'all' : wordsPerPage}
 									exclusive
 									onChange={handleWordsPerPageChange}
 									size='small'
@@ -282,8 +315,8 @@ const Dictionary = () => {
 								</ToggleButtonGroup>
 							</Box>
 							<Chip
-								label={`${user_words.length} ${
-									user_words.length > 1 ? tWords('words_total_plural') : tWords('words_total')
+								label={`${filteredUserWords.length} ${
+									filteredUserWords.length > 1 ? tWords('words_total_plural') : tWords('words_total')
 								}`}
 								sx={{
 									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -300,7 +333,9 @@ const Dictionary = () => {
 
 					{/* Liste des mots */}
 					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						{currentWords.map((word, index) => (
+						{currentWords.map((word, index) => {
+							const { sourceWord, translation } = getWordDisplay(word)
+							return (
 							<Card
 								key={index}
 								sx={{
@@ -335,7 +370,7 @@ const Dictionary = () => {
 												flexWrap: 'wrap',
 											}}>
 											<Chip
-												label={word.word_ru}
+												label={sourceWord || '—'}
 												sx={{
 													fontWeight: 700,
 													fontSize: { xs: '0.9375rem', sm: '1rem' },
@@ -360,7 +395,7 @@ const Dictionary = () => {
 													color: '#4a5568',
 													fontWeight: 600,
 												}}>
-												{word.word_fr}
+												{translation || '—'}
 											</Typography>
 										</Box>
 										{word.word_sentence && (
@@ -392,11 +427,11 @@ const Dictionary = () => {
 									</IconButton>
 								</Box>
 							</Card>
-						))}
+						)})}
 					</Box>
 
 					{/* Pagination */}
-					{wordsPerPage < user_words.length && (
+					{wordsPerPage < filteredUserWords.length && (
 						<Box
 							sx={{
 								display: 'flex',

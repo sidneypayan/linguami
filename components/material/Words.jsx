@@ -10,7 +10,7 @@ import { useState, useEffect, useMemo } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
 import { useUserContext } from '../../context/user'
 
-const Words = ({ content }) => {
+const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage } = useUserContext()
 	const [regexAll, setRegexAll] = useState('')
 	const [regexWords, setRegexWords] = useState('')
@@ -87,7 +87,7 @@ const Words = ({ content }) => {
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		dispatch(translateWord({ word, sentence, userLearningLanguage }))
+		dispatch(translateWord({ word, sentence, userLearningLanguage, locale }))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
 	}

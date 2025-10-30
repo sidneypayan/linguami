@@ -42,7 +42,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 
 	const [personalTranslation, setPersonalTranslation] = useState('')
 	const [translationError, setTranslationError] = useState('')
-	const { isUserLoggedIn } = useUserContext()
+	const { isUserLoggedIn, userLearningLanguage } = useUserContext()
 
 	const MAX_TRANSLATION_LENGTH = 100
 
@@ -195,6 +195,8 @@ const Translation = ({ coordinates, materialId, userId }) => {
 				materialId,
 				word_sentence,
 				lang,
+				userLearningLanguage,
+				locale: lang,
 			})
 		)
 		dispatch(toggleTranslationContainer(false))

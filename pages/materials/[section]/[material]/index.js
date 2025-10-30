@@ -473,6 +473,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										<Words
 											content={single_material.body_accents}
 											materialId={single_material.id}
+											locale={lang}
 										/>
 									</Typography>
 								) : (
@@ -497,6 +498,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										<Words
 											content={single_material.body}
 											materialId={single_material.id}
+											locale={lang}
 										/>
 									</Typography>
 								)}

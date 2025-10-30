@@ -6,6 +6,7 @@ import { updateWordReview, initializeWordSRS, suspendCard } from '../../features
 import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
 import { toast } from 'react-toastify'
+import { useUserContext } from '../../context/user'
 import {
 	getDueCards,
 	getButtonIntervals,
@@ -27,9 +28,10 @@ import {
 import { IconButton } from '@mui/material'
 
 const FlashCards = () => {
-	const { t } = useTranslation('words')
+	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
+	const { userLearningLanguage } = useUserContext()
 	const { user_material_words, user_words } = useSelector(store => store.words)
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [reviewedCount, setReviewedCount] = useState(0)
@@ -57,8 +59,22 @@ const FlashCards = () => {
 	const [practiceCount, setPracticeCount] = useState(20)
 
 	// Get appropriate word array based on current page
-	const wordsArray =
+	const baseWordsArray =
 		router.pathname === '/dictionary' ? user_words : user_material_words
+
+	// Filter to only show words that have both source and translation in current context
+	const wordsArray = useMemo(() => {
+		if (!baseWordsArray || !userLearningLanguage || !lang) return []
+
+		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
+		if (userLearningLanguage === lang) return []
+
+		return baseWordsArray.filter(word => {
+			const sourceWord = word[`word_${userLearningLanguage}`]
+			const translation = word[`word_${lang}`]
+			return sourceWord && translation
+		})
+	}, [baseWordsArray, userLearningLanguage, lang])
 
 	// Toggle reversed mode and save to localStorage
 	const toggleReversed = () => {
@@ -187,9 +203,11 @@ const FlashCards = () => {
 	// Get current card (first in session queue)
 	const currentCard = sessionCards[0]
 
-	// Determine which words to show based on reversed mode
-	const frontWord = isReversed ? currentCard?.word_fr : currentCard?.word_ru
-	const backWord = isReversed ? currentCard?.word_ru : currentCard?.word_fr
+	// Determine which words to show based on languages and reversed mode
+	const sourceWord = currentCard?.[`word_${userLearningLanguage}`]
+	const translationWord = currentCard?.[`word_${lang}`]
+	const frontWord = isReversed ? translationWord : sourceWord
+	const backWord = isReversed ? sourceWord : translationWord
 
 	// Get button intervals for current card
 	const buttonIntervals = useMemo(() => {

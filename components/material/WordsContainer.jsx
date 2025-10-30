@@ -7,7 +7,7 @@ import {
 	deleteUserWord,
 } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import {
 	Box,
@@ -28,10 +28,10 @@ import {
 import Link from 'next/link'
 
 const WordsContainer = () => {
-	const { t } = useTranslation('words')
+	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { user, isUserLoggedIn } = useUserContext()
+	const { user, isUserLoggedIn, userLearningLanguage } = useUserContext()
 	const { user_material_words, user_material_words_pending } = useSelector(
 		store => store.words
 	)
@@ -41,6 +41,32 @@ const WordsContainer = () => {
 
 	const handleDelete = id => {
 		dispatch(deleteUserWord(id))
+	}
+
+	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
+	const filteredWords = useMemo(() => {
+		if (!user_material_words || !userLearningLanguage || !lang) return []
+
+		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
+		if (userLearningLanguage === lang) return []
+
+		return user_material_words.filter(word => {
+			const sourceWord = word[`word_${userLearningLanguage}`]
+			const translation = word[`word_${lang}`]
+
+			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
+			return sourceWord && translation
+		})
+	}, [user_material_words, userLearningLanguage, lang])
+
+	// Fonction pour obtenir le mot source et la traduction selon les langues
+	const getWordDisplay = (word) => {
+		// Mot source : dans la langue qu'ils apprennent (userLearningLanguage)
+		const sourceWord = word[`word_${userLearningLanguage}`]
+		// Traduction : dans la langue de l'interface (lang)
+		const translation = word[`word_${lang}`]
+
+		return { sourceWord, translation }
 	}
 
 	useEffect(() => {
@@ -55,7 +81,7 @@ const WordsContainer = () => {
 
 	return (
 		<Box>
-			{isUserLoggedIn && user_material_words && user_material_words.length > 0 ? (
+			{isUserLoggedIn && filteredWords && filteredWords.length > 0 ? (
 				<Box>
 					{/* Bouton de révision */}
 					<Button
@@ -88,7 +114,9 @@ const WordsContainer = () => {
 
 					{/* Liste des mots */}
 					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-						{user_material_words.map((words, index) => (
+						{filteredWords.map((words, index) => {
+							const { sourceWord, translation } = getWordDisplay(words)
+							return (
 							<Card
 								key={index}
 								sx={{
@@ -119,7 +147,7 @@ const WordsContainer = () => {
 										flexWrap: 'wrap',
 									}}>
 									<Chip
-										label={words.word_ru}
+										label={sourceWord || '—'}
 										sx={{
 											fontWeight: 700,
 											fontSize: { xs: '0.9375rem', sm: '1rem' },
@@ -143,7 +171,7 @@ const WordsContainer = () => {
 											color: '#4a5568',
 											fontWeight: 500,
 										}}>
-										{words.word_fr}
+										{translation || '—'}
 									</Typography>
 								</Box>
 
@@ -162,10 +190,10 @@ const WordsContainer = () => {
 									<DeleteRounded />
 								</IconButton>
 							</Card>
-						))}
+						)})}
 					</Box>
 				</Box>
-			) : isUserLoggedIn && user_material_words && user_material_words.length === 0 ? (
+			) : isUserLoggedIn ? (
 				<Card
 					sx={{
 						p: { xs: 3, sm: 4, md: 5 },

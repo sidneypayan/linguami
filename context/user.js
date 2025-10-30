@@ -77,16 +77,31 @@ const UserProvider = ({ children }) => {
 								profile.learning_language
 							)
 						} catch {}
+					} else {
+						// Si pas de langue d'apprentissage définie, en définir une différente de la locale
+						const currentLocale = router?.locale || 'fr'
+						const defaultLearningLang = currentLocale === 'ru' ? 'fr' : 'ru'
+						setUserLearningLanguage(defaultLearningLang)
+						try {
+							localStorage.setItem('learning_language', defaultLearningLang)
+						} catch {}
+						// Sauvegarder dans le profil
+						try {
+							await supabase
+								.from('users_profile')
+								.update({ learning_language: defaultLearningLang })
+								.eq('id', signedUser.id)
+						} catch {}
 					}
 				} else {
-					// Pas de ligne dans users_profile : on garde le user “Auth”
+					// Pas de ligne dans users_profile : on garde le user "Auth"
 					setUserProfile(signedUser)
 				}
 			} catch (err) {
 				safeToastError(err, toastMessages.profileLoadError())
 			}
 		},
-		[fetchUserProfile]
+		[fetchUserProfile, router]
 	)
 
 	// --------------------------------------------------------
@@ -103,11 +118,18 @@ const UserProvider = ({ children }) => {
 				} else {
 					// invité : init langue depuis localStorage ou fallback basé sur locale
 					try {
+						const currentLocale = router?.locale || 'fr'
 						const stored = localStorage.getItem('learning_language')
-						const fallback = router?.locale === 'ru' ? 'fr' : 'ru'
-						const lang = stored || fallback
+						const fallback = currentLocale === 'ru' ? 'fr' : 'ru'
+
+						// Si la langue stockée est la même que la locale, utiliser le fallback
+						let lang = stored
+						if (!stored || stored === currentLocale) {
+							lang = fallback
+						}
+
 						setUserLearningLanguage(lang)
-						if (!stored) localStorage.setItem('learning_language', lang)
+						localStorage.setItem('learning_language', lang)
 					} catch {}
 				}
 			} finally {
@@ -123,7 +145,23 @@ const UserProvider = ({ children }) => {
 	}, [])
 
 	// --------------------------------------------------------
-	// Listener d’auth (UI uniquement — aucune redirection ici)
+	// Vérifier que la langue d'apprentissage est toujours différente de la locale
+	// --------------------------------------------------------
+	useEffect(() => {
+		if (!router?.locale || !userLearningLanguage || isBootstrapping) return
+
+		// Si la langue d'apprentissage est la même que la locale, la changer
+		if (userLearningLanguage === router.locale) {
+			const newLearningLang = router.locale === 'ru' ? 'fr' : 'ru'
+			setUserLearningLanguage(newLearningLang)
+			try {
+				localStorage.setItem('learning_language', newLearningLang)
+			} catch {}
+		}
+	}, [router?.locale, userLearningLanguage, isBootstrapping])
+
+	// --------------------------------------------------------
+	// Listener d'auth (UI uniquement — aucune redirection ici)
 	// --------------------------------------------------------
 	useEffect(() => {
 		const { data: { subscription } = {} } = supabase.auth.onAuthStateChange(
@@ -166,11 +204,24 @@ const UserProvider = ({ children }) => {
 	// --------------------------------------------------------
 	const register = useCallback(
 		async ({ email, password }) => {
+			// S'assurer que la langue d'apprentissage est différente de la locale
+			const currentLocale = router?.locale || 'fr'
+			let learningLang = userLearningLanguage
+
+			// Si pas de langue d'apprentissage ou si elle est identique à la locale, en définir une différente
+			if (!learningLang || learningLang === currentLocale) {
+				learningLang = currentLocale === 'ru' ? 'fr' : 'ru'
+				setUserLearningLanguage(learningLang)
+				try {
+					localStorage.setItem('learning_language', learningLang)
+				} catch {}
+			}
+
 			const { error } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
-					data: { learning_language: userLearningLanguage },
+					data: { learning_language: learningLang },
 					// callback après confirmation (doit être whitelisted)
 					emailRedirectTo: `${
 						process.env.NEXT_PUBLIC_API_URL || window.location.origin
@@ -183,7 +234,7 @@ const UserProvider = ({ children }) => {
 			// Redirection douce, optionnelle
 			setTimeout(() => router.push('/'), 1200)
 		},
-		[router, userLearningLanguage]
+		[router, userLearningLanguage, setUserLearningLanguage]
 	)
 
 	const login = useCallback(

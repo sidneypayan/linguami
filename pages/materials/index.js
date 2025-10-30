@@ -19,19 +19,21 @@ const Material = () => {
 		// Si userLearningLanguage existe, on l'utilise, sinon on se base sur lang
 		const learningLang = userLearningLanguage || (lang === 'ru' ? 'fr' : 'ru')
 
+		let selectedMaterials = []
 		if (learningLang === 'ru') {
-			setMaterials(materials_ru) // Apprendre le russe
+			selectedMaterials = materials_ru // Apprendre le russe
 		} else if (learningLang === 'fr') {
-			setMaterials(materials_fr) // Apprendre le français
+			selectedMaterials = materials_fr // Apprendre le français
 		} else {
 			// Par défaut ou si les deux langues
-			setMaterials([...materials_ru, ...materials_fr])
+			selectedMaterials = [...materials_ru, ...materials_fr]
 		}
 
-		setText(materials.filter(material => material.category === 'text & audio'))
-		setVideo(materials.filter(material => material.category === 'video'))
-		setMusic(materials.filter(material => material.category === 'music'))
-	}, [userLearningLanguage, lang, materials])
+		setMaterials(selectedMaterials)
+		setText(selectedMaterials.filter(material => material.category === 'text & audio'))
+		setVideo(selectedMaterials.filter(material => material.category === 'video'))
+		setMusic(selectedMaterials.filter(material => material.category === 'music'))
+	}, [userLearningLanguage, lang])
 
 	// Mots-clés SEO par langue
 	const keywordsByLang = {

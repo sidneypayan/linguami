@@ -3,10 +3,11 @@ import { styled, alpha } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { ExpandMoreRounded, TranslateRounded, CheckCircleRounded } from '@mui/icons-material'
+import { ExpandMoreRounded, LanguageRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
-import { useUserContext } from '../../context/user.js'
+import { useRouter } from 'next/router'
+import { useUserContext } from '../../context/user'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (
@@ -37,10 +38,10 @@ const EnglishFlag = ({ size = 32 }) => (
 		<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
 		<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="white" strokeWidth="8.5"/>
 		<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="#C8102E" strokeWidth="5.3"/>
-		<clipPath id="circle-clip-learn">
+		<clipPath id="circle-clip">
 			<circle cx="16" cy="16" r="16"/>
 		</clipPath>
-		<g clipPath="url(#circle-clip-learn)">
+		<g clipPath="url(#circle-clip)">
 			<rect width="32" height="32" fill="#012169"/>
 			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="white" strokeWidth="5.3"/>
 			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
@@ -109,12 +110,12 @@ const StyledMenu = styled(props => (
 	},
 }))
 
-const LanguageMenu = ({ variant = 'auto', onClose }) => {
+const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const { t, lang } = useTranslation('common')
+	const router = useRouter()
 	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
 
-	// Uniquement français et russe pour l'apprentissage (pas d'anglais car pas de contenu)
-	const allLanguages = [
+	const languages = [
 		{
 			lang: 'fr',
 			name: t('french'),
@@ -123,13 +124,11 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 			lang: 'ru',
 			name: t('russian'),
 		},
+		{
+			lang: 'en',
+			name: t('english'),
+		},
 	]
-
-	// Ne montrer que les langues différentes de la langue d'interface
-	const languages = allLanguages.filter(language => language.lang !== lang)
-
-	// Si une seule langue disponible, on affiche juste le drapeau sans menu
-	const isSingleLanguage = languages.length === 1
 
 	// Helper pour obtenir le drapeau selon la langue
 	const getFlag = (langCode, size = 32) => {
@@ -143,14 +142,6 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const open = Boolean(anchorEl)
 
 	const handleClick = event => {
-		// Si une seule langue disponible, changer directement sans ouvrir le menu
-		if (isSingleLanguage) {
-			changeLearningLanguage(languages[0].lang)
-			if (onClose) {
-				setTimeout(() => onClose(), 100)
-			}
-			return
-		}
 		setAnchorEl(event.currentTarget)
 	}
 
@@ -158,9 +149,33 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		setAnchorEl(null)
 	}
 
-	const handleLanguageChange = lang => {
+	const handleLanguageChange = async newLocale => {
 		setAnchorEl(null)
-		changeLearningLanguage(lang)
+
+		// Vérifier si la nouvelle langue d'interface est la même que la langue d'apprentissage
+		// Si oui, changer automatiquement la langue d'apprentissage
+		if (newLocale === userLearningLanguage) {
+			// Déterminer quelle langue alternative choisir
+			let newLearningLang
+			if (newLocale === 'fr') {
+				newLearningLang = 'ru' // Si on passe en français, apprendre le russe
+			} else if (newLocale === 'ru') {
+				newLearningLang = 'fr' // Si on passe en russe, apprendre le français
+			} else if (newLocale === 'en') {
+				// Si on passe en anglais, par défaut apprendre le russe
+				newLearningLang = 'ru'
+			}
+
+			// Changer la langue d'apprentissage avant de changer la locale
+			// Attendre que la mise à jour soit complète avant de changer de locale
+			if (newLearningLang) {
+				await changeLearningLanguage(newLearningLang)
+			}
+		}
+
+		// Changer la locale de Next.js
+		router.push(router.asPath, router.asPath, { locale: newLocale })
+
 		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
 			setTimeout(() => onClose(), 100)
@@ -171,27 +186,25 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		<Box>
 			{/* Version desktop - bouton complet */}
 			<Button
-				id='demo-customized-button'
-				aria-controls={open ? 'demo-customized-menu' : undefined}
+				id='interface-lang-button'
+				aria-controls={open ? 'interface-lang-menu' : undefined}
 				aria-haspopup='true'
 				aria-expanded={open ? 'true' : undefined}
 				variant='contained'
 				disableElevation
 				onClick={handleClick}
-				startIcon={<TranslateRounded sx={{ fontSize: '1.3rem' }} />}
+				startIcon={<LanguageRounded sx={{ fontSize: '1.3rem' }} />}
 				endIcon={
-					!isSingleLanguage ? (
-						<ExpandMoreRounded
-							sx={{
-								fontSize: '1.3rem',
-								transition: 'transform 0.3s ease',
-								transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-							}}
-						/>
-					) : null
+					<ExpandMoreRounded
+						sx={{
+							fontSize: '1.3rem',
+							transition: 'transform 0.3s ease',
+							transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+						}}
+					/>
 				}
 				sx={{
-					display: variant === 'full' ? 'flex' : { xs: 'none', sm: 'flex' },
+					display: variant === 'full' ? 'flex' : { xs: 'none', md: 'flex' },
 					background: 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					color: 'white',
@@ -215,10 +228,10 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					},
 				}}>
 				<Typography variant='body2' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-					{t('learn')}
+					{t('speak')}
 				</Typography>
 
-				{userLearningLanguage && (
+				{lang && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -231,20 +244,20 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 							border: '2px solid rgba(255, 255, 255, 0.3)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
 						}}>
-						{getFlag(userLearningLanguage, 26)}
+						{getFlag(lang, 26)}
 					</Box>
 				)}
 			</Button>
 
-			{/* Version mobile - IconButton compact avec drapeau */}
+			{/* Version mobile/tablette - IconButton compact avec drapeau */}
 			<IconButton
-				id='demo-customized-button-mobile'
-				aria-controls={open ? 'demo-customized-menu' : undefined}
+				id='interface-lang-button-mobile'
+				aria-controls={open ? 'interface-lang-menu' : undefined}
 				aria-haspopup='true'
 				aria-expanded={open ? 'true' : undefined}
 				onClick={handleClick}
 				sx={{
-					display: variant === 'full' ? 'none' : { xs: 'flex', sm: 'none' },
+					display: variant === 'full' ? 'none' : { xs: 'flex', md: 'none' },
 					width: '44px',
 					height: '44px',
 					background: 'rgba(255, 255, 255, 0.15)',
@@ -261,7 +274,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 						transform: 'scale(0.95)',
 					},
 				}}>
-				{userLearningLanguage && (
+				{lang && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -274,10 +287,10 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 							border: '2px solid rgba(255, 255, 255, 0.4)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
 						}}>
-						{getFlag(userLearningLanguage, 28)}
+						{getFlag(lang, 28)}
 					</Box>
 				)}
-				<TranslateRounded
+				<LanguageRounded
 					sx={{
 						position: 'absolute',
 						bottom: -2,
@@ -292,85 +305,82 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 				/>
 			</IconButton>
 
-			{/* Menu uniquement si plusieurs langues disponibles */}
-			{!isSingleLanguage && (
-				<StyledMenu
-					id='demo-customized-menu'
-					MenuListProps={{
-						'aria-labelledby': 'demo-customized-button',
-					}}
-					anchorEl={anchorEl}
-					open={open}
-					onClose={handleClose}>
-					{languages.map(language => {
-						const isSelected = userLearningLanguage === language.lang
-						return (
-							<MenuItem
-								key={language.lang}
-								onClick={() => handleLanguageChange(language.lang)}
-								disableRipple
+			<StyledMenu
+				id='interface-lang-menu'
+				MenuListProps={{
+					'aria-labelledby': 'interface-lang-button',
+				}}
+				anchorEl={anchorEl}
+				open={open}
+				onClose={handleClose}>
+				{languages.map(language => {
+					const isSelected = lang === language.lang
+					return (
+						<MenuItem
+							key={language.lang}
+							onClick={() => handleLanguageChange(language.lang)}
+							disableRipple
+							sx={{
+								backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
+								position: 'relative',
+								'&:hover': {
+									backgroundColor: isSelected
+										? 'rgba(102, 126, 234, 0.12)'
+										: 'rgba(102, 126, 234, 0.08)',
+								},
+							}}>
+							<Box
 								sx={{
-									backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
-									position: 'relative',
-									'&:hover': {
-										backgroundColor: isSelected
-											? 'rgba(102, 126, 234, 0.12)'
-											: 'rgba(102, 126, 234, 0.08)',
-									},
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: 32,
+									height: 32,
+									borderRadius: '50%',
+									overflow: 'hidden',
+									border: isSelected
+										? '2px solid #667eea'
+										: '2px solid rgba(0, 0, 0, 0.1)',
+									boxShadow: isSelected
+										? '0 2px 8px rgba(102, 126, 234, 0.3)'
+										: '0 1px 3px rgba(0, 0, 0, 0.1)',
+									transition: 'all 0.2s ease',
 								}}>
-								<Box
+								{getFlag(language.lang, 32)}
+							</Box>
+							<Typography
+								sx={{
+									fontWeight: isSelected ? 600 : 500,
+									color: isSelected ? '#667eea' : '#2d3748',
+									flex: 1,
+								}}>
+								{language.name}
+							</Typography>
+							{isSelected && (
+								<CheckCircleRounded
 									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										width: 32,
-										height: 32,
-										borderRadius: '50%',
-										overflow: 'hidden',
-										border: isSelected
-											? '2px solid #667eea'
-											: '2px solid rgba(0, 0, 0, 0.1)',
-										boxShadow: isSelected
-											? '0 2px 8px rgba(102, 126, 234, 0.3)'
-											: '0 1px 3px rgba(0, 0, 0, 0.1)',
-										transition: 'all 0.2s ease',
-									}}>
-									{getFlag(language.lang, 32)}
-								</Box>
-								<Typography
-									sx={{
-										fontWeight: isSelected ? 600 : 500,
-										color: isSelected ? '#667eea' : '#2d3748',
-										flex: 1,
-									}}>
-									{language.name}
-								</Typography>
-								{isSelected && (
-									<CheckCircleRounded
-										sx={{
-											fontSize: '1.2rem',
-											color: '#667eea',
-											animation: 'checkAppear 0.3s ease',
-											'@keyframes checkAppear': {
-												'0%': {
-													opacity: 0,
-													transform: 'scale(0.5)',
-												},
-												'100%': {
-													opacity: 1,
-													transform: 'scale(1)',
-												},
+										fontSize: '1.2rem',
+										color: '#667eea',
+										animation: 'checkAppear 0.3s ease',
+										'@keyframes checkAppear': {
+											'0%': {
+												opacity: 0,
+												transform: 'scale(0.5)',
 											},
-										}}
-									/>
-								)}
-							</MenuItem>
-						)
-					})}
-				</StyledMenu>
-			)}
+											'100%': {
+												opacity: 1,
+												transform: 'scale(1)',
+											},
+										},
+									}}
+								/>
+							)}
+						</MenuItem>
+					)
+				})}
+			</StyledMenu>
 		</Box>
 	)
 }
 
-export default LanguageMenu
+export default InterfaceLanguageMenu
