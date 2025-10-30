@@ -364,7 +364,7 @@ const Dictionary = () => {
 													lineHeight: 1.6,
 													pl: { xs: 0, sm: 1 },
 												}}>
-												"{word.word_sentence}"
+												&ldquo;{word.word_sentence}&rdquo;
 											</Typography>
 										)}
 									</Box>
