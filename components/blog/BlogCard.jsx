@@ -152,7 +152,7 @@ const BlogCard = ({ post }) => {
 									transform: 'scale(0.98)',
 								},
 							}}>
-							Lire l'article
+							Lire l&apos;article
 						</Button>
 					</Box>
 				</CardContent>

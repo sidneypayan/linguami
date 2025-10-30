@@ -126,7 +126,7 @@ const UserMaterials = () => {
 								maxWidth: '600px',
 								mx: 'auto',
 							}}>
-							Suivez votre progression et accédez à vos matériaux d'apprentissage
+							Suivez votre progression et accédez à vos matériaux d&apos;apprentissage
 						</Typography>
 
 						<Stack
