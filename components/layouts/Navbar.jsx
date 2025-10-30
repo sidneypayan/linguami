@@ -20,13 +20,13 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 
-import MenuIcon from '@mui/icons-material/Menu'
 import {
 	HomeRounded,
 	AutoStoriesRounded,
 	PersonSearchRounded,
 	LocalLibraryRounded,
 	RssFeedRounded,
+	DensityMediumRounded,
 } from '@mui/icons-material'
 
 import LanguageMenu from './LanguageMenu.jsx'
@@ -79,6 +79,11 @@ const Navbar = props => {
 		setMobileOpen(!mobileOpen)
 	}
 
+	const isActivePath = (href) => {
+		if (href === '/') return router.pathname === '/'
+		return router.pathname.startsWith(href)
+	}
+
 	const drawer = (
 		<Box
 			onClick={handleDrawerToggle}
@@ -87,80 +92,178 @@ const Navbar = props => {
 				background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
 				display: 'flex',
 				flexDirection: 'column',
+				position: 'relative',
+				overflow: 'hidden',
+				'&::before': {
+					content: '""',
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background: 'radial-gradient(circle at top right, rgba(255,255,255,0.15) 0%, transparent 50%)',
+					pointerEvents: 'none',
+				},
+				'&::after': {
+					content: '""',
+					position: 'absolute',
+					bottom: 0,
+					left: 0,
+					right: 0,
+					height: '200px',
+					background: 'radial-gradient(circle at bottom left, rgba(0,0,0,0.2) 0%, transparent 70%)',
+					pointerEvents: 'none',
+				},
 			}}>
 			{/* Header du drawer */}
 			<Box
 				sx={{
 					p: 3,
+					pb: 2.5,
 					display: 'flex',
 					alignItems: 'center',
-					gap: 1.5,
-					borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+					gap: 2,
+					borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+					position: 'relative',
+					zIndex: 1,
 				}}>
-				<HomeRounded sx={{ fontSize: '2rem', color: 'white' }} />
 				<Box
 					sx={{
-						fontWeight: 800,
-						fontSize: '1.5rem',
-						color: 'white',
-						letterSpacing: '-0.5px',
+						width: 48,
+						height: 48,
+						borderRadius: 3,
+						background: 'rgba(255, 255, 255, 0.2)',
+						backdropFilter: 'blur(10px)',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
 					}}>
-					Linguami
+					<HomeRounded sx={{ fontSize: '1.75rem', color: 'white' }} />
+				</Box>
+				<Box>
+					<Box
+						sx={{
+							fontWeight: 800,
+							fontSize: '1.5rem',
+							color: 'white',
+							letterSpacing: '-0.5px',
+							lineHeight: 1.2,
+						}}>
+						Linguami
+					</Box>
+					<Box
+						sx={{
+							fontSize: '0.75rem',
+							color: 'rgba(255, 255, 255, 0.8)',
+							fontWeight: 500,
+							mt: 0.25,
+						}}>
+						Apprentissage des langues
+					</Box>
 				</Box>
 			</Box>
 
 			{/* Navigation */}
-			<List sx={{ color: '#fff', px: 2, py: 3 }}>
-				{navigationLinks.map(link => (
-					<ListItem key={link.name} disablePadding sx={{ mb: 1 }}>
-						<Link href={`${link.href}`} style={{ width: '100%' }}>
-							<ListItemButton
-								sx={{
-									borderRadius: 2,
-									transition: 'all 0.2s ease',
-									'&:hover': {
-										backgroundColor: 'rgba(255, 255, 255, 0.15)',
-										transform: 'translateX(8px)',
+			<List sx={{ color: '#fff', px: 2.5, py: 4, position: 'relative', zIndex: 1, flex: 1 }}>
+				{navigationLinks.map((link, index) => {
+					const isActive = isActivePath(link.href)
+					return (
+						<ListItem
+							key={link.name}
+							disablePadding
+							sx={{
+								mb: 1.5,
+								animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
+								'@keyframes slideIn': {
+									'0%': {
+										opacity: 0,
+										transform: 'translateX(-20px)',
 									},
-								}}>
-								<ListItemIcon sx={{ color: '#fff', minWidth: 40 }}>
-									{link.icon}
-								</ListItemIcon>
-								<ListItemText
-									primary={link.name}
-									primaryTypographyProps={{
-										fontWeight: 600,
-										fontSize: '1rem',
-									}}
-								/>
-							</ListItemButton>
-						</Link>
-					</ListItem>
-				))}
+									'100%': {
+										opacity: 1,
+										transform: 'translateX(0)',
+									},
+								},
+							}}>
+							<Link href={`${link.href}`} style={{ width: '100%' }}>
+								<ListItemButton
+									sx={{
+										borderRadius: 3,
+										py: 1.5,
+										px: 2,
+										backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+										backdropFilter: isActive ? 'blur(10px)' : 'none',
+										boxShadow: isActive ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
+										border: isActive ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											backgroundColor: 'rgba(255, 255, 255, 0.15)',
+											transform: 'translateX(8px)',
+											boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+										},
+									}}>
+									<ListItemIcon
+										sx={{
+											color: '#fff',
+											minWidth: 44,
+											'& .MuiSvgIcon-root': {
+												fontSize: '1.5rem',
+												filter: isActive ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'none',
+											},
+										}}>
+										{link.icon}
+									</ListItemIcon>
+									<ListItemText
+										primary={link.name}
+										primaryTypographyProps={{
+											fontWeight: isActive ? 700 : 600,
+											fontSize: '1.0625rem',
+											letterSpacing: '-0.2px',
+										}}
+									/>
+									{isActive && (
+										<Box
+											sx={{
+												width: 6,
+												height: 6,
+												borderRadius: '50%',
+												backgroundColor: 'white',
+												boxShadow: '0 0 10px rgba(255,255,255,0.8)',
+											}}
+										/>
+									)}
+								</ListItemButton>
+							</Link>
+						</ListItem>
+					)
+				})}
 			</List>
 
 			{/* Bouton Sign in pour mobile */}
 			{!isUserLoggedIn && (
-				<Box sx={{ px: 3, pb: 3, mt: 'auto' }}>
+				<Box sx={{ px: 3, pb: 4, mt: 'auto', position: 'relative', zIndex: 1 }}>
 					<Link href={`/signin`}>
 						<Button
 							variant='contained'
 							fullWidth
 							sx={{
-								background: 'rgba(255, 255, 255, 0.2)',
-								backdropFilter: 'blur(10px)',
-								color: 'white',
-								fontWeight: 600,
+								background: 'white',
+								color: '#667eea',
+								fontWeight: 700,
 								textTransform: 'none',
-								py: 1.5,
-								borderRadius: 2,
-								border: '2px solid rgba(255, 255, 255, 0.3)',
-								fontSize: '1rem',
-								transition: 'all 0.2s ease',
+								py: 1.75,
+								borderRadius: 3,
+								fontSize: '1.0625rem',
+								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+								transition: 'all 0.3s ease',
 								'&:hover': {
-									background: 'rgba(255, 255, 255, 0.3)',
-									transform: 'translateY(-2px)',
-									boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+									background: 'white',
+									transform: 'translateY(-3px)',
+									boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
+								},
+								'&:active': {
+									transform: 'translateY(-1px)',
 								},
 							}}>
 							{t('signin')}
@@ -197,11 +300,23 @@ const Navbar = props => {
 						sx={{
 							mr: 2,
 							display: { sm: 'none' },
+							width: 44,
+							height: 44,
+							borderRadius: 2,
+							background: 'rgba(255, 255, 255, 0.15)',
+							backdropFilter: 'blur(10px)',
+							border: '1px solid rgba(255, 255, 255, 0.2)',
+							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
-								backgroundColor: 'rgba(255, 255, 255, 0.15)',
+								background: 'rgba(255, 255, 255, 0.25)',
+								transform: 'scale(1.05)',
+								boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+							},
+							'&:active': {
+								transform: 'scale(0.95)',
 							},
 						}}>
-						<MenuIcon />
+						<DensityMediumRounded sx={{ fontSize: '1.5rem' }} />
 					</IconButton>
 
 					{/* Logo/Brand - centré sur mobile, à gauche sur desktop */}

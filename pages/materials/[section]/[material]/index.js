@@ -56,7 +56,7 @@ import {
 } from '../../../../utils/buttonStyles'
 
 const Material = ({ material: single_material, activitiesCount }) => {
-	const { t } = useTranslation('materials')
+	const { t, lang } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } =
@@ -115,7 +115,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 	const displayVideo = section => {
 		if (sections.music.includes(section) || sections.video.includes(section)) {
-			return <VideoPlayer videoUrl={single_material.video} />
+			return (
+				<Box
+					sx={{
+						position: 'sticky',
+						top: { xs: '5rem', md: '5.5rem' },
+						zIndex: 1000,
+						marginBottom: '0.5rem',
+					}}>
+					<VideoPlayer videoUrl={single_material.video} />
+				</Box>
+			)
 		}
 	}
 
@@ -198,13 +208,21 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							xs: 'column',
 							md: 'row',
 						},
+						justifyContent: 'center',
+						alignItems: 'flex-start',
+						gap: { md: 2, lg: 4 },
+						px: { md: 2, lg: 3 },
+						maxWidth: '1600px',
+						mx: 'auto',
+						width: '100%',
 					}}>
-					<Container
-						disableGutters
-						maxWidth='100%'
+					<Box
 						sx={{
 							marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
-							px: { xs: 2, sm: 3, md: 0 },
+							px: { xs: 2, sm: 3 },
+							flex: 1,
+							minWidth: 0,
+							maxWidth: '100%',
 						}}>
 						<Typography
 							variant='h1'
@@ -226,12 +244,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						{getImageRegardingSection(section)}
 						{displayVideo(section)}
 
-						<Container
-							maxWidth='md'
+						<Box
 							sx={{
-								marginTop: (sections.music.includes(section) || sections.video.includes(section))
-									? { xs: '14rem', sm: '16rem', md: '18rem' }
-									: { xs: '2rem', sm: '3rem', md: '4rem' },
+								marginTop: { xs: '1rem', sm: '1.5rem' },
+								px: { xs: 0, sm: 1 },
 							}}>
 							<Translation
 								coordinates={coordinates}
@@ -274,7 +290,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: '0.75rem 1.5rem',
+											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
 											borderRadius: 3,
 											textTransform: 'none',
 											transition: 'all 0.3s ease',
@@ -289,7 +305,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										{t('startstudying')}
+										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+											{t('startstudying')}
+										</Box>
+										<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											{lang === 'fr' ? 'Commencer à étudier' : 'Начать изучение'}
+										</Box>
 									</Button>
 								)}
 
@@ -310,7 +331,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: '0.75rem 1.5rem',
+											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
 											borderRadius: 3,
 											textTransform: 'none',
 											transition: 'all 0.3s ease',
@@ -325,7 +346,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										{t('stopstudying')}
+										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+											{t('stopstudying')}
+										</Box>
+										<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											{lang === 'fr' ? 'Ne plus étudier' : 'Отказаться от изучения'}
+										</Box>
 									</Button>
 								)}
 
@@ -342,7 +368,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: '0.75rem 1.5rem',
+											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
 											borderRadius: 3,
 											textTransform: 'none',
 											transition: 'all 0.3s ease',
@@ -376,7 +402,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 											color: '#667eea',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: '0.75rem 1.5rem',
+											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
 											borderRadius: 3,
 											textTransform: 'none',
 											transition: 'all 0.3s ease',
@@ -429,8 +455,9 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Typography
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-											lineHeight: 2,
+											lineHeight: 1.5,
 											letterSpacing: '0.01em',
+											wordSpacing: '-0.05em',
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
@@ -452,8 +479,9 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Typography
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-											lineHeight: 2,
+											lineHeight: 1.5,
 											letterSpacing: '0.01em',
+											wordSpacing: '-0.05em',
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
@@ -528,15 +556,15 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							<Box
 								sx={{
 									position: 'sticky',
-									bottom: '1.5rem',
+									bottom: { xs: '5.5rem', md: '1.5rem' },
 									zIndex: 500,
 									marginTop: '3rem',
 									marginBottom: '3rem',
 								}}>
 								{displayAudioPlayer(section, single_material.audio)}
 							</Box>
-						</Container>
-					</Container>
+						</Box>
+					</Box>
 
 					{/* Floating button for mobile */}
 					<IconButton
@@ -544,7 +572,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							display: { xs: 'flex', md: 'none' },
 							position: 'fixed',
 							right: '1rem',
-							bottom: '6rem',
+							bottom: '12.5rem',
 							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 							color: 'white',
 							width: '56px',
@@ -563,18 +591,39 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					</IconButton>
 
 					{/* Desktop WordsContainer */}
-					<Container
+					<Box
 						sx={{
 							display: { xs: 'none', md: 'block' },
-							maxWidth: {
-								md: '35%',
-								lg: '25%',
+							width: {
+								md: '360px',
+								lg: '420px',
 							},
-							bgcolor: '#fafafa',
-							paddingTop: '8rem',
+							flexShrink: 0,
+							bgcolor: 'white',
+							position: 'sticky',
+							top: 80,
+							alignSelf: 'flex-start',
+							maxHeight: 'calc(100vh - 100px)',
+							overflowY: 'auto',
+							pt: 2,
+							px: 3,
+							'&::-webkit-scrollbar': {
+								width: '8px',
+							},
+							'&::-webkit-scrollbar-track': {
+								background: 'rgba(102, 126, 234, 0.05)',
+								borderRadius: '4px',
+							},
+							'&::-webkit-scrollbar-thumb': {
+								background: 'rgba(102, 126, 234, 0.3)',
+								borderRadius: '4px',
+								'&:hover': {
+									background: 'rgba(102, 126, 234, 0.5)',
+								},
+							},
 						}}>
 						<WordsContainer />
-					</Container>
+					</Box>
 
 					{/* Mobile fullscreen WordsContainer */}
 					{showWordsContainer && (
@@ -586,7 +635,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								left: 0,
 								right: 0,
 								bottom: 0,
-								backgroundColor: '#fafafa',
+								backgroundColor: 'white',
 								zIndex: 1100,
 								flexDirection: 'column',
 								overflowY: 'auto',
@@ -596,7 +645,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							<IconButton
 								sx={{
 									position: 'fixed',
-									bottom: '6rem',
+									bottom: '12.5rem',
 									right: '1rem',
 									background:
 										'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',

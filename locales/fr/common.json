@@ -16,5 +16,18 @@
 	"contact": "Nous contacter",
 	"start": "Commencer",
 	"nowords": "Vous n'avez pas encore de mots dans votre dictionnaire. Choisissez un materiel à étudier, cliquez sur un mot du texte puis sur sa traduction afin de l'ajouter à votre dictionnaire.",
-	"allrights": "Tous droits réservés"
+	"allrights": "Tous droits réservés",
+	"404Title": "Oups ! Page introuvable",
+	"404Description": "La page que vous recherchez est introuvable",
+	"backToHome": "Retour à l'accueil",
+	"profileLoadError": "Impossible de charger le profil utilisateur",
+	"confirmationEmailSent": "Nous vous avons envoyé un mail de confirmation",
+	"invalidCredentials": "Vos identifiants sont erronés",
+	"emailNotConfirmed": "Nous vous avons envoyé un mail d'inscription",
+	"loginSuccess": "Vous êtes bien connecté",
+	"passwordResetEmailSent": "Vous allez recevoir un email avec les instructions nécessaires",
+	"passwordUpdateSuccess": "Mot de passe mis à jour avec succès",
+	"passwordUpdateError": "Erreur avec le mot de passe",
+	"languageUpdateError": "Erreur lors de la mise à jour de la langue",
+	"genericError": "Une erreur est survenue"
 }

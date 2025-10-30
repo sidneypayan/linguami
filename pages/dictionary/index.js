@@ -15,10 +15,6 @@ import {
 	Button,
 	Container,
 	IconButton,
-	Table,
-	TableCell,
-	TableContainer,
-	TableRow,
 	Typography,
 	Stack,
 	Chip,
@@ -27,8 +23,17 @@ import {
 	PaginationItem,
 	ToggleButtonGroup,
 	ToggleButton,
+	Card,
 } from '@mui/material'
-import { HighlightOffRounded, AddCircleRounded, School, ChevronLeft, ChevronRight } from '@mui/icons-material'
+import {
+	DeleteRounded,
+	AddCircleRounded,
+	FlashOnRounded,
+	ChevronLeft,
+	ChevronRight,
+	AutoStoriesRounded,
+	BookmarkAddRounded,
+} from '@mui/icons-material'
 import Image from 'next/image'
 import AddWordModal from '../../components/dictionary/AddWordModal'
 
@@ -140,25 +145,25 @@ const Dictionary = () => {
 						<Button
 							variant='contained'
 							size='large'
-							startIcon={<School />}
+							startIcon={<FlashOnRounded />}
 							onClick={() => dispatch(toggleFlashcardsContainer(true))}
 							sx={{
 								flex: 1,
-								minHeight: { xs: '54px', sm: '56px' },
+								py: 2,
+								borderRadius: 3,
 								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-								fontSize: { xs: '0.95rem', sm: '1rem' },
-								fontWeight: 600,
+								fontWeight: 700,
+								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								textTransform: 'none',
-								borderRadius: 2,
+								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
 								transition: 'all 0.3s ease',
 								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
 									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+									transform: 'translateY(-2px)',
+									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
 								},
 								'&:active': {
-									transform: 'scale(0.98)',
+									transform: 'translateY(0)',
 								},
 							}}>
 							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
@@ -175,21 +180,21 @@ const Dictionary = () => {
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
 								flex: 1,
-								minHeight: { xs: '54px', sm: '56px' },
-								background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-								boxShadow: '0 4px 15px rgba(245, 87, 108, 0.4)',
-								fontSize: { xs: '0.95rem', sm: '1rem' },
-								fontWeight: 600,
+								py: 2,
+								borderRadius: 3,
+								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+								fontWeight: 700,
+								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								textTransform: 'none',
-								borderRadius: 2,
+								boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
 								transition: 'all 0.3s ease',
 								'&:hover': {
+									background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
 									transform: 'translateY(-2px)',
-									boxShadow: '0 6px 20px rgba(245, 87, 108, 0.6)',
-									background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+									boxShadow: '0 12px 32px rgba(16, 185, 129, 0.5)',
 								},
 								'&:active': {
-									transform: 'scale(0.98)',
+									transform: 'translateY(0)',
 								},
 							}}>
 							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
@@ -205,11 +210,12 @@ const Dictionary = () => {
 					<Paper
 						elevation={0}
 						sx={{
-							p: 2,
-							mb: 3,
-							backgroundColor: 'rgba(102, 126, 234, 0.05)',
-							borderRadius: 3,
-							border: '2px solid rgba(102, 126, 234, 0.1)',
+							p: { xs: 2.5, sm: 3 },
+							mb: 4,
+							background: 'white',
+							borderRadius: 4,
+							border: '1px solid rgba(102, 126, 234, 0.15)',
+							boxShadow: '0 4px 16px rgba(102, 126, 234, 0.08)',
 						}}>
 						<Stack
 							direction={{ xs: 'column', sm: 'row' }}
@@ -220,10 +226,11 @@ const Dictionary = () => {
 								<Typography
 									variant='body2'
 									sx={{
-										fontWeight: 600,
+										fontWeight: 700,
 										color: '#4a5568',
+										fontSize: '0.9375rem',
 									}}>
-									Afficher par page :
+									{tWords('words_per_page')}
 								</Typography>
 								<ToggleButtonGroup
 									value={wordsPerPage === user_words.length ? 'all' : wordsPerPage}
@@ -233,24 +240,26 @@ const Dictionary = () => {
 									sx={{
 										'& .MuiToggleButton-root': {
 											px: { xs: 1.5, sm: 2 },
-											py: { xs: 0.75, sm: 0.5 },
-											minHeight: { xs: '40px', sm: '36px' },
-											border: '2px solid #e0e0e0',
+											py: { xs: 0.75, sm: 0.75 },
+											minHeight: { xs: '40px', sm: '40px' },
+											border: '1px solid rgba(102, 126, 234, 0.2)',
 											borderRadius: 2,
-											fontWeight: 600,
-											fontSize: { xs: '0.8rem', sm: '0.875rem' },
-											color: '#4a5568',
-											transition: 'all 0.2s ease',
+											fontWeight: 700,
+											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+											color: '#718096',
+											transition: 'all 0.3s ease',
 											'&.Mui-selected': {
 												background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 												color: 'white',
 												borderColor: '#667eea',
+												boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
 												'&:hover': {
 													background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+													boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
 												},
 											},
 											'&:hover': {
-												backgroundColor: 'rgba(102, 126, 234, 0.1)',
+												backgroundColor: 'rgba(102, 126, 234, 0.08)',
 												borderColor: '#667eea',
 											},
 											'&:active': {
@@ -261,97 +270,122 @@ const Dictionary = () => {
 									<ToggleButton value={20}>20</ToggleButton>
 									<ToggleButton value={50}>50</ToggleButton>
 									<ToggleButton value={100}>100</ToggleButton>
-									<ToggleButton value='all'>Tous</ToggleButton>
+									<ToggleButton value='all'>{tWords('all')}</ToggleButton>
 								</ToggleButtonGroup>
 							</Box>
 							<Chip
-								label={`${user_words.length} mot${user_words.length > 1 ? 's' : ''} au total`}
+								label={`${user_words.length} ${
+									user_words.length > 1 ? tWords('words_total_plural') : tWords('words_total')
+								}`}
 								sx={{
 									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 									color: 'white',
-									fontWeight: 600,
-									px: 1,
+									fontWeight: 700,
+									fontSize: '0.9375rem',
+									px: 2,
+									py: 2.5,
+									boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
 								}}
 							/>
 						</Stack>
 					</Paper>
 
-					<TableContainer>
-						<Table>
-							{currentWords.map((word, index) => (
-								<tbody key={index}>
-									<TableRow
-										sx={{
-											'&:hover': {
-												backgroundColor: 'rgba(102, 126, 234, 0.05)',
-											},
-											transition: 'background-color 0.2s ease',
-										}}>
-										<TableCell
+					{/* Liste des mots */}
+					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+						{currentWords.map((word, index) => (
+							<Card
+								key={index}
+								sx={{
+									p: { xs: 2, sm: 2.5 },
+									borderRadius: 3,
+									background: 'white',
+									border: '1px solid rgba(102, 126, 234, 0.1)',
+									boxShadow: '0 2px 8px rgba(102, 126, 234, 0.08)',
+									transition: 'all 0.3s ease',
+									'&:hover': {
+										transform: 'translateY(-2px)',
+										boxShadow: '0 8px 24px rgba(102, 126, 234, 0.15)',
+										'& .delete-btn': {
+											opacity: 1,
+										},
+									},
+								}}>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										gap: 2,
+									}}>
+									<Box sx={{ flex: 1, minWidth: 0 }}>
+										<Box
 											sx={{
-												borderBottom: '1px solid #e0e0e0',
-												py: { xs: 2, sm: 1.5 },
+												display: 'flex',
+												alignItems: 'center',
+												gap: 2,
+												mb: word.word_sentence ? 1.5 : 0,
+												flexWrap: 'wrap',
 											}}>
-											<Typography
+											<Chip
+												label={word.word_ru}
 												sx={{
 													fontWeight: 700,
-													fontSize: { xs: '1rem', sm: '1.1rem' },
-													background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-													WebkitBackgroundClip: 'text',
-													WebkitTextFillColor: 'transparent',
-													backgroundClip: 'text',
-													mb: 0.5,
+													fontSize: { xs: '0.9375rem', sm: '1rem' },
+													background:
+														'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+													color: '#667eea',
+													border: '1px solid rgba(102, 126, 234, 0.2)',
+													px: 1.5,
 												}}
-												variant='subtitle1'>
-												{word.word_ru}
-											</Typography>
+											/>
 											<Typography
-												variant='subtitle1'
 												sx={{
+													fontSize: { xs: '0.875rem', sm: '1rem' },
 													color: '#718096',
 													fontWeight: 500,
-													fontSize: '0.95rem',
+												}}>
+												→
+											</Typography>
+											<Typography
+												sx={{
+													fontSize: { xs: '0.9375rem', sm: '1rem' },
+													color: '#4a5568',
+													fontWeight: 600,
 												}}>
 												{word.word_fr}
 											</Typography>
-										</TableCell>
-										<TableCell
-											sx={{
-												display: { xs: 'none', md: 'table-cell' },
-												borderBottom: '1px solid #e0e0e0',
-												color: '#4a5568',
-												fontStyle: 'italic',
-											}}>
-											{word.word_sentence}
-										</TableCell>
-										<TableCell
-											sx={{
-												borderBottom: '1px solid #e0e0e0',
-												py: { xs: 2, sm: 1.5 },
-											}}>
-											<IconButton
-												onClick={() => dispatch(deleteUserWord(word.id))}
+										</Box>
+										{word.word_sentence && (
+											<Typography
 												sx={{
-													color: '#f5576c',
-													width: { xs: '44px', sm: '40px' },
-													height: { xs: '44px', sm: '40px' },
-													transition: 'all 0.2s ease',
-													'&:hover': {
-														backgroundColor: 'rgba(245, 87, 108, 0.1)',
-														transform: 'scale(1.1)',
-													},
-													'&:active': {
-														transform: 'scale(0.95)',
-													},
+													fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+													color: '#718096',
+													fontStyle: 'italic',
+													lineHeight: 1.6,
+													pl: { xs: 0, sm: 1 },
 												}}>
-												<HighlightOffRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.7rem' } }} />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								</tbody>
-							))}
-						</Table>
-					</TableContainer>
+												"{word.word_sentence}"
+											</Typography>
+										)}
+									</Box>
+									<IconButton
+										className='delete-btn'
+										onClick={() => dispatch(deleteUserWord(word.id))}
+										sx={{
+											opacity: { xs: 1, md: 0 },
+											transition: 'all 0.3s ease',
+											color: '#ef4444',
+											'&:hover': {
+												background: 'rgba(239, 68, 68, 0.1)',
+												transform: 'scale(1.1)',
+											},
+										}}>
+										<DeleteRounded />
+									</IconButton>
+								</Box>
+							</Card>
+						))}
+					</Box>
 
 					{/* Pagination */}
 					{wordsPerPage < user_words.length && (
@@ -359,42 +393,46 @@ const Dictionary = () => {
 							sx={{
 								display: 'flex',
 								justifyContent: 'center',
-								mt: 4,
+								mt: 5,
 							}}>
 							<MuiPagination
 								count={totalPages}
 								page={currentPage}
 								onChange={handlePageChange}
+								size='large'
 								renderItem={(item) => (
 									<PaginationItem
 										slots={{ previous: ChevronLeft, next: ChevronRight }}
 										{...item}
 										sx={{
-											fontWeight: 600,
-											fontSize: '0.95rem',
-											border: '2px solid',
-											borderColor: item.selected ? '#667eea' : '#e0e0e0',
+											fontWeight: 700,
+											fontSize: '1rem',
+											border: '1px solid',
+											borderColor: item.selected ? '#667eea' : 'rgba(102, 126, 234, 0.2)',
 											background: item.selected
 												? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-												: 'rgba(255, 255, 255, 0.9)',
+												: 'white',
 											color: item.selected ? 'white' : '#4a5568',
 											borderRadius: 2,
-											minWidth: '40px',
-											height: '40px',
+											minWidth: '44px',
+											height: '44px',
 											mx: 0.5,
-											transition: 'all 0.2s ease',
+											transition: 'all 0.3s ease',
+											boxShadow: item.selected
+												? '0 4px 12px rgba(102, 126, 234, 0.3)'
+												: '0 2px 6px rgba(102, 126, 234, 0.08)',
 											'&:hover': {
 												borderColor: '#667eea',
-												backgroundColor: item.selected
+												background: item.selected
 													? 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
-													: 'rgba(102, 126, 234, 0.1)',
+													: 'rgba(102, 126, 234, 0.08)',
 												transform: 'translateY(-2px)',
-												boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+												boxShadow: '0 6px 16px rgba(102, 126, 234, 0.25)',
 											},
 											'&.Mui-disabled': {
 												backgroundColor: '#f5f5f5',
-												borderColor: '#e0e0e0',
-												opacity: 0.5,
+												borderColor: 'rgba(102, 126, 234, 0.1)',
+												opacity: 0.4,
 											},
 										}}
 									/>
@@ -403,6 +441,7 @@ const Dictionary = () => {
 									'& .MuiPagination-ul': {
 										flexWrap: 'wrap',
 										justifyContent: 'center',
+										gap: 0.5,
 									},
 								}}
 							/>
@@ -417,69 +456,162 @@ const Dictionary = () => {
 			) : (
 				<Container
 					maxWidth='md'
-					sx={{ textAlign: 'center', marginTop: '6rem', marginBottom: '4rem' }}>
-					<Typography variant='h5' mb={2} sx={{ fontWeight: 600, color: 'text.primary' }}>
-						{t('nowords')}
-					</Typography>
-					<Typography variant='body1' mb={5} sx={{ color: 'text.secondary' }}>
-						Commencez à construire votre dictionnaire personnel
-					</Typography>
-					<Box
+					sx={{
+						marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
+						marginBottom: { xs: '2rem', sm: '3rem', md: '4rem' },
+					}}>
+					<Card
 						sx={{
-							display: 'flex',
-							flexDirection: { xs: 'column', sm: 'row' },
-							gap: 3,
-							justifyContent: 'center',
-							maxWidth: '500px',
-							margin: '0 auto',
+							p: { xs: 3, sm: 4, md: 5 },
+							borderRadius: 4,
+							boxShadow: '0 8px 32px rgba(102, 126, 234, 0.12)',
+							border: '1px solid rgba(102, 126, 234, 0.1)',
+							background: 'white',
 						}}>
-						<Link href='/materials' style={{ flex: 1 }}>
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontWeight: 800,
+								mb: 1,
+								fontSize: { xs: '1.5rem', sm: '1.75rem' },
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}>
+							{tWords('dictionary_empty_title')}
+						</Typography>
+						<Typography
+							variant='body1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontSize: { xs: '0.9375rem', sm: '1rem' },
+								mb: 4,
+								fontWeight: 500,
+							}}>
+							{t('nowords')}
+						</Typography>
+
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: 2.5,
+								mb: 4,
+							}}>
+							{[
+								{ icon: AutoStoriesRounded, text: tWords('feature_translate_materials') },
+								{ icon: BookmarkAddRounded, text: tWords('feature_save_words') },
+								{ icon: FlashOnRounded, text: tWords('feature_flashcards') },
+								{ icon: AddCircleRounded, text: tWords('feature_add_manually') },
+							].map((item, index) => (
+								<Box
+									key={index}
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										gap: 2,
+										p: 2,
+										borderRadius: 2,
+										background:
+											'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+										border: '1px solid rgba(102, 126, 234, 0.1)',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											transform: 'translateX(8px)',
+											background:
+												'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+											border: '1px solid rgba(102, 126, 234, 0.2)',
+										},
+									}}>
+									<Box
+										sx={{
+											width: 44,
+											height: 44,
+											borderRadius: 2,
+											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+										}}>
+										<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
+									</Box>
+									<Typography
+										sx={{
+											fontSize: { xs: '0.9375rem', sm: '1rem' },
+											color: '#4a5568',
+											fontWeight: 600,
+										}}>
+										{item.text}
+									</Typography>
+								</Box>
+							))}
+						</Box>
+
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: { xs: 'column', sm: 'row' },
+								gap: 2,
+								justifyContent: 'center',
+							}}>
+							<Link href='/materials' style={{ flex: 1, textDecoration: 'none' }}>
+								<Button
+									variant='contained'
+									size='large'
+									fullWidth
+									sx={{
+										py: 2,
+										borderRadius: 3,
+										background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+										fontWeight: 700,
+										fontSize: '1.0625rem',
+										textTransform: 'none',
+										boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+											transform: 'translateY(-2px)',
+											boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
+										},
+										'&:active': {
+											transform: 'translateY(0)',
+										},
+									}}>
+									{t('start')}
+								</Button>
+							</Link>
 							<Button
 								variant='contained'
 								size='large'
-								fullWidth
+								startIcon={<AddCircleRounded />}
+								onClick={() => setIsAddWordModalOpen(true)}
 								sx={{
-									minHeight: '56px',
-									background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-									boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
-									fontSize: '1rem',
-									fontWeight: 600,
+									flex: 1,
+									py: 2,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+									fontWeight: 700,
+									fontSize: '1.0625rem',
 									textTransform: 'none',
-									borderRadius: 2,
+									boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
 									transition: 'all 0.3s ease',
 									'&:hover': {
+										background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
 										transform: 'translateY(-2px)',
-										boxShadow: '0 6px 20px rgba(79, 172, 254, 0.6)',
-										background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+										boxShadow: '0 12px 32px rgba(16, 185, 129, 0.5)',
+									},
+									'&:active': {
+										transform: 'translateY(0)',
 									},
 								}}>
-								{t('start')}
+								{tWords('add_word_btn')}
 							</Button>
-						</Link>
-						<Button
-							variant='contained'
-							size='large'
-							startIcon={<AddCircleRounded />}
-							onClick={() => setIsAddWordModalOpen(true)}
-							sx={{
-								flex: 1,
-								minHeight: '56px',
-								background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-								boxShadow: '0 4px 15px rgba(245, 87, 108, 0.4)',
-								fontSize: '1rem',
-								fontWeight: 600,
-								textTransform: 'none',
-								borderRadius: 2,
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: '0 6px 20px rgba(245, 87, 108, 0.6)',
-									background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
-								},
-							}}>
-							{tWords('add_word_btn')}
-						</Button>
-					</Box>
+						</Box>
+					</Card>
 					<AddWordModal
 						open={isAddWordModalOpen}
 						onClose={() => setIsAddWordModalOpen(false)}

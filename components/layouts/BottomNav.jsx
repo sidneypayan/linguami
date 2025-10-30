@@ -3,19 +3,21 @@ import { useSelector } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
 import { Paper, BottomNavigation, BottomNavigationAction, Badge } from '@mui/material'
 import {
-	Home,
-	Article,
-	MenuBook as Dictionary,
-	School,
-	AccountCircle,
+	HomeRounded,
+	AutoStoriesRounded,
+	BookmarksRounded,
+	SchoolRounded,
 } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
 const BottomNav = () => {
 	const router = useRouter()
 	const { t } = useTranslation('common')
-	const { isUserLoggedIn } = useUserContext()
+	const { isUserLoggedIn, userLearningLanguage } = useUserContext()
 	const { user_words } = useSelector(store => store.words)
+
+	// Vérifier si des cours sont disponibles pour la langue choisie
+	const hasLessons = userLearningLanguage === 'fr'
 
 	// Déterminer la valeur active basée sur le pathname
 	const getActiveValue = () => {
@@ -24,7 +26,6 @@ const BottomNav = () => {
 		if (path.startsWith('/materials')) return 'materials'
 		if (path.startsWith('/dictionary')) return 'dictionary'
 		if (path.startsWith('/lessons') || path.startsWith('/teacher')) return 'lessons'
-		if (path.startsWith('/signin') || path.startsWith('/my-materials')) return 'profile'
 		return 'home'
 	}
 
@@ -46,13 +47,6 @@ const BottomNav = () => {
 			case 'lessons':
 				router.push('/lessons')
 				break
-			case 'profile':
-				if (isUserLoggedIn) {
-					router.push('/my-materials')
-				} else {
-					router.push('/signin')
-				}
-				break
 			default:
 				break
 		}
@@ -68,64 +62,78 @@ const BottomNav = () => {
 				display: { xs: 'block', sm: 'none' },
 				zIndex: 1100,
 				borderRadius: 0,
-				boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.1)',
-				borderTop: '1px solid rgba(102, 126, 234, 0.1)',
+				boxShadow: '0 -4px 24px rgba(102, 126, 234, 0.15)',
+				borderTop: '1px solid rgba(102, 126, 234, 0.15)',
+				backdropFilter: 'blur(10px)',
+				background: 'rgba(255, 255, 255, 0.95)',
 			}}
-			elevation={3}>
+			elevation={0}>
 			<BottomNavigation
 				value={getActiveValue()}
 				onChange={handleNavigation}
 				showLabels
 				sx={{
-					height: '70px',
-					background: 'white',
+					height: '72px',
+					background: 'transparent',
 					'& .MuiBottomNavigationAction-root': {
 						minWidth: 'auto',
-						padding: '6px 12px 8px',
-						transition: 'all 0.3s ease',
+						padding: '8px 12px 10px',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						borderRadius: 2,
+						mx: 0.5,
 						'&.Mui-selected': {
-							color: '#667eea',
+							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
 							'& .MuiBottomNavigationAction-label': {
 								fontSize: '0.75rem',
-								fontWeight: 700,
-								transform: 'translateY(2px)',
+								fontWeight: 800,
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+								letterSpacing: '0.3px',
 							},
 							'& .MuiSvgIcon-root': {
-								transform: 'scale(1.2)',
-								filter: 'drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3))',
+								transform: 'scale(1.15) translateY(-2px)',
+								filter: 'drop-shadow(0 3px 6px rgba(102, 126, 234, 0.35))',
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							},
 						},
 						'&:not(.Mui-selected)': {
-							color: '#718096',
+							color: '#9ca3af',
 							'& .MuiBottomNavigationAction-label': {
-								fontSize: '0.7rem',
-								fontWeight: 500,
+								fontSize: '0.6875rem',
+								fontWeight: 600,
+								color: '#9ca3af',
 							},
-						},
-						'&:active': {
-							transform: 'scale(0.95)',
+							'&:active': {
+								background: 'rgba(102, 126, 234, 0.05)',
+							},
 						},
 					},
 					'& .MuiBottomNavigationAction-label': {
-						transition: 'all 0.3s ease',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						marginTop: '4px',
 					},
 					'& .MuiSvgIcon-root': {
-						fontSize: '1.5rem',
-						transition: 'all 0.3s ease',
+						fontSize: '1.625rem',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 					},
 				}}>
 				<BottomNavigationAction
-					label='Accueil'
+					label={router.locale === 'fr' ? 'Accueil' : 'Главная'}
 					value='home'
-					icon={<Home />}
+					icon={<HomeRounded />}
 				/>
 				<BottomNavigationAction
-					label='Matériels'
+					label={t('material')}
 					value='materials'
-					icon={<Article />}
+					icon={<AutoStoriesRounded />}
 				/>
 				<BottomNavigationAction
-					label='Dico'
+					label={router.locale === 'fr' ? 'Dico' : 'Слова'}
 					value='dictionary'
 					icon={
 						isUserLoggedIn && user_words.length > 0 ? (
@@ -134,32 +142,32 @@ const BottomNav = () => {
 								max={99}
 								sx={{
 									'& .MuiBadge-badge': {
-										background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+										background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
 										color: 'white',
-										fontWeight: 700,
-										fontSize: '0.65rem',
-										height: '18px',
-										minWidth: '18px',
-										padding: '0 4px',
+										fontWeight: 800,
+										fontSize: '0.625rem',
+										height: '20px',
+										minWidth: '20px',
+										padding: '0 5px',
+										borderRadius: '10px',
+										boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)',
+										border: '2px solid white',
 									},
 								}}>
-								<Dictionary />
+								<BookmarksRounded />
 							</Badge>
 						) : (
-							<Dictionary />
+							<BookmarksRounded />
 						)
 					}
 				/>
-				<BottomNavigationAction
-					label='Cours'
-					value='lessons'
-					icon={<School />}
-				/>
-				<BottomNavigationAction
-					label='Profil'
-					value='profile'
-					icon={<AccountCircle />}
-				/>
+				{hasLessons && (
+					<BottomNavigationAction
+						label={t('lessons')}
+						value='lessons'
+						icon={<SchoolRounded />}
+					/>
+				)}
 			</BottomNavigation>
 		</Paper>
 	)

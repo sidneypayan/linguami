@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
 	Box,
 	IconButton,
@@ -16,12 +16,48 @@ import {
 
 const VideoPlayer = ({ videoUrl }) => {
 	const [viewMode, setViewMode] = useState('normal') // 'minimized', 'normal', 'theater'
+	const [userSelectedMode, setUserSelectedMode] = useState(null) // Track if user manually selected a mode
+	const [lastScrollY, setLastScrollY] = useState(0)
 
 	const handleViewModeChange = (event, newMode) => {
 		if (newMode !== null) {
 			setViewMode(newMode)
+			setUserSelectedMode(newMode) // User made a manual selection
 		}
 	}
+
+	useEffect(() => {
+		const handleScroll = () => {
+			const currentScrollY = window.scrollY
+
+			// Only auto-minimize if user hasn't manually selected a mode
+			if (userSelectedMode === null) {
+				// If scrolling down past 200px, minimize the video
+				if (currentScrollY > 200 && viewMode === 'normal') {
+					setViewMode('minimized')
+				}
+				// If scrolling back to top (less than 100px), return to normal
+				else if (currentScrollY < 100 && viewMode === 'minimized') {
+					setViewMode('normal')
+				}
+			}
+
+			setLastScrollY(currentScrollY)
+		}
+
+		window.addEventListener('scroll', handleScroll, { passive: true })
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll)
+		}
+	}, [viewMode, userSelectedMode])
+
+	// Reset user selection when they choose normal mode while at top
+	useEffect(() => {
+		if (userSelectedMode === 'normal' && window.scrollY < 100) {
+			setUserSelectedMode(null) // Allow auto-minimize again
+		}
+	}, [userSelectedMode, viewMode])
 
 	const getVideoContainerStyles = () => {
 		const baseStyles = {
@@ -33,47 +69,44 @@ const VideoPlayer = ({ videoUrl }) => {
 				return {
 					...baseStyles,
 					zIndex: 1000,
-					position: 'fixed',
+					position: 'sticky',
 					top: { xs: '5rem', md: '5.5rem' },
-					right: { xs: '1rem', md: '2rem' },
-					width: { xs: '160px', sm: '240px' },
-					height: { xs: '90px', sm: '135px' },
+					width: { xs: '200px', sm: '280px' },
+					height: { xs: '112px', sm: '157px' },
 					boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
 					borderRadius: 3,
 					overflow: 'hidden',
 					border: '2px solid rgba(102, 126, 234, 0.3)',
+					marginLeft: 'auto',
+					marginRight: { xs: '1rem', sm: '2rem' },
 				}
 			case 'theater':
 				return {
 					...baseStyles,
-					zIndex: 1001,
-					position: 'fixed',
-					top: { xs: '8.5rem', md: '9rem' },
-					left: '50%',
-					transform: 'translateX(-50%)',
+					zIndex: 100,
+					position: 'relative',
 					width: '100%',
-					maxWidth: { xs: 'calc(100% - 2rem)', sm: '90%', md: '1400px' },
+					maxWidth: { xs: '100%', sm: '90%', md: '1400px' },
 					height: { xs: '250px', sm: '400px', md: '600px' },
 					boxShadow: '0 12px 48px rgba(102, 126, 234, 0.2)',
 					borderRadius: 4,
 					overflow: 'hidden',
 					border: '3px solid rgba(102, 126, 234, 0.2)',
+					margin: '0 auto',
 				}
 			default: // normal
 				return {
 					...baseStyles,
-					zIndex: 1001,
-					position: 'fixed',
-					top: { xs: '8.5rem', md: '9rem' },
-					left: '50%',
-					transform: 'translateX(-50%)',
+					zIndex: 100,
+					position: 'relative',
 					width: { xs: '100%', sm: '500px' },
-					maxWidth: { xs: 'calc(100% - 2rem)', sm: '500px' },
+					maxWidth: { xs: '100%', sm: '500px' },
 					height: { xs: '220px', sm: '280px' },
 					boxShadow: '0 8px 32px rgba(102, 126, 234, 0.15)',
 					borderRadius: 3,
 					overflow: 'hidden',
 					border: '2px solid rgba(102, 126, 234, 0.2)',
+					margin: '0 auto',
 				}
 		}
 	}

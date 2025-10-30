@@ -35,11 +35,12 @@ const AddWordModal = ({ open, onClose }) => {
 
 	// Déterminer les noms de langues à afficher
 	const getLearningLanguageName = () => {
-		return userLearningLanguage === 'ru' ? 'Russe' : 'Français'
+		return userLearningLanguage === 'ru' ? t('language_ru') : t('language_fr')
 	}
 
 	const getBrowserLanguageName = () => {
-		return lang === 'fr' ? 'Français' : lang === 'ru' ? 'Russe' : 'Anglais'
+		if (lang === 'fr') return t('language_fr')
+		return t('language_ru')
 	}
 
 	const handleSubmit = async e => {
@@ -66,7 +67,7 @@ const AddWordModal = ({ open, onClose }) => {
 			} = await supabase.auth.getSession()
 
 			if (!session) {
-				toast.error('Session expirée. Veuillez vous reconnecter.')
+				toast.error(t('session_expired'))
 				setIsSubmitting(false)
 				return
 			}
@@ -93,14 +94,14 @@ const AddWordModal = ({ open, onClose }) => {
 				}
 				const errorMsg = result.details
 					? `${result.error}: ${result.details}`
-					: result.error || "Erreur lors de l'ajout du mot"
+					: result.error || t('word_add_error')
 				toast.error(errorMsg)
 				setIsSubmitting(false)
 				return
 			}
 
 			// Succès
-			toast.success(result.message || 'Mot ajouté avec succès')
+			toast.success(result.message || t('word_add_success'))
 
 			// Recharger la liste des mots
 			dispatch(getAllUserWords(user.id))
@@ -112,7 +113,7 @@ const AddWordModal = ({ open, onClose }) => {
 			onClose()
 		} catch (error) {
 			console.error('Erreur:', error)
-			toast.error('Erreur lors de la connexion au serveur')
+			toast.error(t('server_error'))
 		} finally {
 			setIsSubmitting(false)
 		}
@@ -268,7 +269,7 @@ const AddWordModal = ({ open, onClose }) => {
 										setErrors({ ...errors, browserLangWord: null })
 									}
 								}}
-								placeholder={`${t('example')}: ${lang === 'fr' ? 'bonjour' : 'hello'}`}
+								placeholder={`${t('example')}: ${lang === 'fr' ? 'bonjour' : 'привет'}`}
 								variant='outlined'
 								required
 								error={!!errors.browserLangWord}

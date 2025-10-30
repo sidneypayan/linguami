@@ -64,19 +64,22 @@ const Lessons = () => {
 			</Head>
 			<Stack
 				direction={{ xs: 'column', md: 'row' }}
+				spacing={{ xs: 0, md: 4 }}
 				sx={{
 					width: {
 						xs: '100%',
-						lg: '80%',
+						lg: '85%',
+						xl: '80%',
 					},
 					margin: 'auto',
+					px: { xs: 0, md: 2 },
 					mt: {
 						xs: '6rem',
-						md: '10rem',
+						md: '8rem',
 					},
 					mb: {
 						xs: '6rem',
-						md: '10rem',
+						md: '8rem',
 					},
 					alignItems: 'flex-start',
 				}}>

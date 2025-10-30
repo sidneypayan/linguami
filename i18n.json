@@ -5,7 +5,7 @@
 		"*": ["common"],
 		"/": ["home"],
 		"/blog": ["blog"],
-		"/materials": ["materials", "h5p"],
+		"/materials": ["materials"],
 		"/materials/[section]": ["materials", "section"],
 		"/materials/[section]/[material]": ["register", "materials", "words"],
 		"/my-materials": ["materials"],

@@ -116,7 +116,18 @@ function MyApp({ Component, pageProps }) {
 						<Layout>
 							<Component {...pageProps} />
 						</Layout>
-						<ToastContainer position='top-center' autoClose={2000} />
+						<ToastContainer
+							position='top-center'
+							autoClose={3000}
+							hideProgressBar={false}
+							newestOnTop
+							closeOnClick
+							rtl={false}
+							pauseOnFocusLoss
+							draggable
+							pauseOnHover
+							theme='light'
+						/>
 					</Provider>
 				</UserProvider>
 			</ThemeProvider>

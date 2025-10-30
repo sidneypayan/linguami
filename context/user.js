@@ -10,6 +10,7 @@ import {
 import { supabase } from '../lib/supabase' // client navigateur (@supabase/ssr)
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
+import { createToastMessages } from '../utils/toastMessages'
 
 // --------------------------------------------------------
 // Contexte
@@ -27,8 +28,14 @@ const UserProvider = ({ children }) => {
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 	const [isBootstrapping, setIsBootstrapping] = useState(true)
 
+	// ---- Toast messages avec la bonne locale
+	const toastMessages = useMemo(
+		() => createToastMessages(router.locale),
+		[router.locale]
+	)
+
 	// ---- Helpers
-	const safeToastError = (err, fallback = 'Une erreur est survenue') => {
+	const safeToastError = (err, fallback = toastMessages.genericError()) => {
 		const message = (typeof err === 'string' ? err : err?.message) || fallback
 		toast.error(message)
 	}
@@ -76,7 +83,7 @@ const UserProvider = ({ children }) => {
 					setUserProfile(signedUser)
 				}
 			} catch (err) {
-				safeToastError(err, 'Impossible de charger le profil utilisateur')
+				safeToastError(err, toastMessages.profileLoadError())
 			}
 		},
 		[fetchUserProfile]
@@ -172,7 +179,7 @@ const UserProvider = ({ children }) => {
 			})
 			if (error) return safeToastError(error)
 
-			toast.success('Nous vous avons envoyé un mail de confirmation')
+			toast.success(toastMessages.confirmationEmailSent())
 			// Redirection douce, optionnelle
 			setTimeout(() => router.push('/'), 1200)
 		},
@@ -187,16 +194,16 @@ const UserProvider = ({ children }) => {
 			})
 			if (error) {
 				if (error.message === 'Invalid login credentials') {
-					return toast.error('Vos identifiants sont erronés')
+					return toast.error(toastMessages.invalidCredentials())
 				}
 				if (error.message === 'Email not confirmed') {
-					return toast.error("Nous vous avons envoyé un mail d'inscription")
+					return toast.error(toastMessages.emailNotConfirmed())
 				}
 				return safeToastError(error)
 			}
 
 			// 👉 Rediriger UNIQUEMENT ici (vrai login) — pas dans le listener
-			toast.success('Vous êtes bien connecté')
+			toast.success(toastMessages.loginSuccess())
 			router.push('/')
 		},
 		[router]
@@ -226,16 +233,14 @@ const UserProvider = ({ children }) => {
 			}/set-password`,
 		})
 		if (error) return safeToastError(error)
-		toast.success(
-			'Vous allez recevoir un email avec les instructions nécessaires'
-		)
+		toast.success(toastMessages.passwordResetEmailSent())
 	}, [])
 
 	const setNewPassword = useCallback(
 		async password => {
 			const { error } = await supabase.auth.updateUser({ password })
-			if (error) return safeToastError(error, 'Erreur avec le mot de passe')
-			toast.success('Mot de passe mis à jour avec succès')
+			if (error) return safeToastError(error, toastMessages.passwordUpdateError())
+			toast.success(toastMessages.passwordUpdateSuccess())
 			router.push('/')
 		},
 		[router]
@@ -265,7 +270,7 @@ const UserProvider = ({ children }) => {
 					} catch {}
 				}
 			} catch (err) {
-				safeToastError(err, 'Erreur lors de la mise à jour de la langue')
+				safeToastError(err, toastMessages.languageUpdateError())
 			}
 		},
 		[user]

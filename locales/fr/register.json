@@ -8,8 +8,22 @@
 	"noaccount": "Créer un compte",
 	"signinBtn": "Connection",
 	"signinTitle": "Se connecter",
+	"signinSubtitle": "Bienvenue ! Connectez-vous pour continuer",
+	"signupSubtitle": "Créez votre compte pour commencer",
 	"forgot": "Oublié ?",
 	"confirmSignUp": "Cliquez afin de confirmer votre inscription",
 	"updatePassword": "Choisissez un nouveau mot de passe",
-	"confirm": "Valider"
+	"updatePasswordTitle": "Réinitialisation du mot de passe",
+	"updatePasswordSubtitle": "Entrez votre email pour recevoir un lien de réinitialisation",
+	"sendRequest": "Envoyer une demande",
+	"backToSignin": "Retour à la connexion",
+	"newPasswordSubtitle": "Choisissez un nouveau mot de passe sécurisé",
+	"invalidLinkMessage": "Ce lien ne permet plus de modifier le mot de passe. Relancez la procédure « Mot de passe oublié ».",
+	"confirm": "Valider",
+	"fillAllFields": "Veuillez renseigner tous les champs",
+	"passwordMinLength": "Veuillez saisir un mot de passe d'au moins 6 caractères",
+	"passwordMinLength8": "Veuillez saisir un mot de passe d'au moins 8 caractères",
+	"invalidLink": "Lien invalide ou expiré. Merci de relancer la procédure depuis « Mot de passe oublié ».",
+	"sessionRecoveryMissing": "Session de récupération absente — recommencez depuis l'email.",
+	"enterPassword": "Veuillez saisir un mot de passe"
 }
