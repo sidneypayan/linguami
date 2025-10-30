@@ -57,7 +57,7 @@ const Footer = () => {
 								lineHeight: 1.7,
 								mx: { xs: 'auto', md: 0 },
 							}}>
-							Apprendre les langues de manière immersive et amusante
+							{t('footerDescription')}
 						</Typography>
 					</Box>
 
@@ -70,7 +70,7 @@ const Footer = () => {
 								mb: 2,
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
-							Liens utiles
+							{t('usefulLinks')}
 						</Typography>
 						<Stack spacing={1.5}>
 							<Link
@@ -130,7 +130,7 @@ const Footer = () => {
 								mb: 2,
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
-							Suivez-nous
+							{t('followUs')}
 						</Typography>
 						<Stack direction='row' spacing={1} justifyContent='center'>
 							<Link href='https://www.facebook.com/linguami/' target='_blank'>

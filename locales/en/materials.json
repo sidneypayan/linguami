@@ -41,5 +41,13 @@
 	"stopstudying": "Stop studying this material",
 	"showaccents": "Show accents",
 	"lessonlearnt": "I finished this lesson",
-	"h5p": "You need to create an account to enjoy all the interactive activities of this lesson"
+	"h5p": "You need to create an account to enjoy all the interactive activities of this lesson",
+	"myMaterialsTitle": "My Materials",
+	"myMaterialsSubtitle": "Track your progress and access your learning materials",
+	"allMaterials": "All materials",
+	"material": "material",
+	"materials": "materials",
+	"inTotal": "in total",
+	"noMaterialsFound": "No materials found",
+	"noMaterialsInCategory": "You don't have any materials in this category yet"
 }

@@ -6,5 +6,13 @@
 	"showall": "Показать всё",
 	"studied": "Изученные",
 	"being_studied": "В процессе",
-	"not_studied": "Не изученные"
+	"not_studied": "Не изученные",
+	"searchTooltip": "Поиск материала",
+	"beginnerTooltip": "Для хорошего старта!",
+	"intermediateTooltip": "Вы прогрессируете!",
+	"advancedTooltip": "Большой вызов!",
+	"beingStudiedTooltip": "В процессе изучения",
+	"studiedTooltip": "Отлично, вы освоили это!",
+	"notStudiedTooltip": "Предстоит открыть!",
+	"showallTooltip": "Сбросить фильтры"
 }

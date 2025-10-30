@@ -4,10 +4,29 @@ import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { ExpandMoreRounded, TranslateRounded, CheckCircleRounded } from '@mui/icons-material'
-import Image from 'next/image'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useUserContext } from '../../context/user.js'
+
+// Composant drapeau français
+const FrenchFlag = ({ size = 32 }) => (
+	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
+		<circle cx="16" cy="16" r="16" fill="#ED2939"/>
+		<path d="M 16 0 A 16 16 0 0 0 16 32 L 16 0" fill="#002395"/>
+		<path d="M 16 0 L 16 32 A 16 16 0 0 0 16 0" fill="#ED2939"/>
+		<rect x="10.67" width="10.67" height="32" fill="white"/>
+	</svg>
+)
+
+// Composant drapeau russe
+const RussianFlag = ({ size = 32 }) => (
+	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
+		<circle cx="16" cy="16" r="16" fill="#0039A6"/>
+		<rect width="32" height="10.67" fill="white"/>
+		<rect y="10.67" width="32" height="10.67" fill="#0039A6"/>
+		<rect y="21.33" width="32" height="10.67" fill="#D52B1E"/>
+	</svg>
+)
 
 const StyledMenu = styled(props => (
 	<Menu
@@ -76,14 +95,20 @@ const LanguageMenu = () => {
 		{
 			lang: 'fr',
 			name: t('french'),
-			href: 'fr.png',
 		},
 		{
 			lang: 'ru',
 			name: t('russian'),
-			href: 'ru.png',
 		},
 	]
+
+	// Helper pour obtenir le drapeau selon la langue
+	const getFlag = (langCode, size = 32) => {
+		if (langCode === 'fr') return <FrenchFlag size={size} />
+		if (langCode === 'ru') return <RussianFlag size={size} />
+		return null
+	}
+
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
 
@@ -160,13 +185,7 @@ const LanguageMenu = () => {
 							border: '2px solid rgba(255, 255, 255, 0.3)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
 						}}>
-						<Image
-							alt={userLearningLanguage}
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
-							width={26}
-							height={26}
-							style={{ objectFit: 'cover' }}
-						/>
+						{getFlag(userLearningLanguage, 26)}
 					</Box>
 				)}
 			</Button>
@@ -209,13 +228,7 @@ const LanguageMenu = () => {
 							border: '2px solid rgba(255, 255, 255, 0.4)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
 						}}>
-						<Image
-							alt={userLearningLanguage}
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${userLearningLanguage}.png`}
-							width={28}
-							height={28}
-							style={{ objectFit: 'cover' }}
-						/>
+						{getFlag(userLearningLanguage, 28)}
 					</Box>
 				)}
 				<TranslateRounded
@@ -274,13 +287,7 @@ const LanguageMenu = () => {
 										: '0 1px 3px rgba(0, 0, 0, 0.1)',
 									transition: 'all 0.2s ease',
 								}}>
-								<Image
-									alt={language.name}
-									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${language.href}`}
-									width={32}
-									height={32}
-									style={{ objectFit: 'cover' }}
-								/>
+								{getFlag(language.lang, 32)}
 							</Box>
 							<Typography
 								sx={{

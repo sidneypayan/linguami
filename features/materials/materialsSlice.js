@@ -24,6 +24,15 @@ const initialState = {
 	user_material_status: [],
 	user_material_status_loading: false,
 	user_material_status_error: null,
+	userMaterialsNeedRefresh: false,
+	// Critères de filtrage actifs
+	activeFilters: {
+		section: null,
+		level: null,
+		status: null,
+		search: '',
+		userMaterialsStatus: [],
+	},
 	level: 'all',
 	search: '',
 	totalMaterials: 0,
@@ -149,6 +158,27 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 				},
 			])
 			.select()
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		// Fetch the full material data to add to user_materials
+		const { data: fullMaterial, error: fetchError } = await supabase
+			.from('user_materials')
+			.select('*, materials!inner(title, image, level, section)')
+			.eq('user_id', user.id)
+			.eq('material_id', param)
+			.single()
+
+		if (fetchError) {
+			return thunkAPI.rejectWithValue(fetchError)
+		}
+
+		return {
+			material_id: param,
+			fullMaterial: mergeUserMaterial([fullMaterial])[0]
+		}
 	}
 )
 
@@ -164,6 +194,12 @@ export const removeBeingStudiedMaterial = createAsyncThunk(
 			.delete()
 			.match({ user_id: user.id, material_id: param })
 			.select()
+
+		if (error) {
+			return thunkAPI.rejectWithValue(error)
+		}
+
+		return { material_id: param }
 	}
 )
 
@@ -178,6 +214,8 @@ export const addMaterialToStudied = createAsyncThunk(
 			.select('material_id')
 			.match({ user_id: user.id, material_id: id })
 
+		let isNewMaterial = false
+
 		if (doMaterialExists.length < 1) {
 			const { data: material, error } = await supabase
 				.from('user_materials')
@@ -190,13 +228,41 @@ export const addMaterialToStudied = createAsyncThunk(
 					},
 				])
 				.select()
+
+			if (error) {
+				return thunkAPI.rejectWithValue(error)
+			}
+			isNewMaterial = true
 		} else {
 			const { error } = await supabase
 				.from('user_materials')
 				.update({ is_being_studied: false, is_studied: true })
 				.match({ user_id: user.id, material_id: id })
 				.select()
+
+			if (error) {
+				return thunkAPI.rejectWithValue(error)
+			}
 		}
+
+		// Si c'est un nouveau matériel, récupérer les données complètes
+		let fullMaterial = null
+		if (isNewMaterial) {
+			const { data: materialData, error: fetchError } = await supabase
+				.from('user_materials')
+				.select('*, materials!inner(title, image, level, section)')
+				.eq('user_id', user.id)
+				.eq('material_id', id)
+				.single()
+
+			if (fetchError) {
+				return thunkAPI.rejectWithValue(fetchError)
+			}
+
+			fullMaterial = mergeUserMaterial([materialData])[0]
+		}
+
+		return { material_id: id, fullMaterial, isNewMaterial }
 	}
 )
 
@@ -249,6 +315,82 @@ const resetPagination = state => {
 	state.page = 1
 }
 
+// Fonction qui applique tous les filtres actifs en combinaison
+const applyFilters = state => {
+	const { section, level, status, search, userMaterialsStatus } = state.activeFilters
+
+	console.log('📊 applyFilters called with activeFilters:', {
+		section,
+		level,
+		status,
+		search,
+		userMaterialsStatusCount: userMaterialsStatus.length
+	})
+
+	// Choisir la bonne source de données selon la section
+	// Note: state.materials et state.books contiennent déjà seulement les items de leur section respective
+	// car ils sont filtrés lors de la récupération depuis la DB
+	let sourceData = state.activeFilters.section === 'books' ? state.books : state.materials
+	console.log('📊 Source data count:', sourceData.length)
+
+	// Si aucun filtre n'est actif, on retourne toutes les données
+	// Note: level === 'all' ou level === null signifie "pas de filtre de niveau"
+	const hasActiveFilters = (level && level !== 'all') || status || search
+	console.log('📊 Has active filters:', hasActiveFilters, '(level:', level, ', status:', status, ', search:', search, ')')
+
+	if (!hasActiveFilters) {
+		console.log('📊 No active filters, returning all source data')
+		state.filtered_materials = sourceData
+		state.totalMaterials = sourceData.length
+		state.numOfPages = Math.ceil(sourceData.length / state.materialsPerPage)
+		resetPagination(state)
+		return
+	}
+
+	let filtered = [...sourceData]
+
+	// On ne filtre PAS par section ici car sourceData contient déjà seulement les items de la section actuelle
+
+	// Filtre par niveau
+	if (level && level !== 'all') {
+		filtered = filtered.filter(item => item.level === level)
+		console.log('📊 After level filter:', filtered.length, 'items')
+	}
+
+	// Filtre par statut
+	if (status) {
+		if (status === 'not_studied') {
+			// Pour les non étudiés, exclure ceux qui ont un statut
+			const materialIdsWithAnyStatus = userMaterialsStatus
+				.filter(userMaterial => userMaterial.is_being_studied || userMaterial.is_studied)
+				.map(userMaterial => userMaterial.material_id)
+			filtered = filtered.filter(item => !materialIdsWithAnyStatus.includes(item.id))
+		} else {
+			// Récupérer les IDs des matériaux avec le statut demandé
+			const materialIdsWithStatus = userMaterialsStatus
+				.filter(userMaterial => userMaterial[status])
+				.map(userMaterial => userMaterial.material_id)
+			filtered = filtered.filter(item => materialIdsWithStatus.includes(item.id))
+		}
+		console.log('📊 After status filter:', filtered.length, 'items')
+	}
+
+	// Filtre par recherche
+	if (search) {
+		console.log('📊 Applying search filter for:', search)
+		console.log('📊 Sample titles before search:', filtered.slice(0, 3).map(item => item.title))
+		filtered = filtered.filter(item =>
+			item.title.toLowerCase().includes(search.toLowerCase())
+		)
+		console.log('📊 After search filter:', filtered.length, 'items')
+		console.log('📊 Filtered titles:', filtered.map(item => item.title))
+	}
+
+	console.log('📊 Final filtered_materials count:', filtered.length)
+	state.filtered_materials = filtered
+	resetPagination(state)
+}
+
 const materialsSlice = createSlice({
 	name: 'materials',
 	initialState,
@@ -256,48 +398,36 @@ const materialsSlice = createSlice({
 		filterMaterials: (state, { payload }) => {
 			const { section, level } = payload
 			state.level = level
-
-			state.filtered_materials = state.materials.filter(
-				item => item.section === section && item.level === level
-			)
-			resetPagination(state)
+			state.activeFilters.section = section
+			state.activeFilters.level = level
+			applyFilters(state)
 		},
 		filterMaterialsByStatus: (state, { payload }) => {
 			const { section, status, userMaterialsStatus } = payload
-
-			if (status === 'not_studied') {
-				// Pour les non étudiés, récupérer les IDs de tous les matériaux qui ont un statut (étudié ou en cours)
-				const materialIdsWithAnyStatus = userMaterialsStatus
-					.filter(userMaterial => userMaterial.is_being_studied || userMaterial.is_studied)
-					.map(userMaterial => userMaterial.material_id)
-
-				// Filtrer les matériaux par section et exclure ceux qui ont un statut
-				state.filtered_materials = state.materials.filter(
-					item => item.section === section && !materialIdsWithAnyStatus.includes(item.id)
-				)
-			} else {
-				// Récupérer les IDs des matériaux avec le statut demandé
-				const materialIdsWithStatus = userMaterialsStatus
-					.filter(userMaterial => userMaterial[status])
-					.map(userMaterial => userMaterial.material_id)
-
-				// Filtrer les matériaux par section et statut
-				state.filtered_materials = state.materials.filter(
-					item => item.section === section && materialIdsWithStatus.includes(item.id)
-				)
-			}
-			resetPagination(state)
+			state.activeFilters.section = section
+			state.activeFilters.status = status
+			state.activeFilters.userMaterialsStatus = userMaterialsStatus
+			applyFilters(state)
 		},
 		showAllMaterials: state => {
-			state.filtered_materials = state.materials
-			resetPagination(state)
+			// Réinitialiser tous les filtres sauf la section
+			const currentSection = state.activeFilters.section
+			state.activeFilters = {
+				section: currentSection,
+				level: null,
+				status: null,
+				search: '',
+				userMaterialsStatus: state.activeFilters.userMaterialsStatus,
+			}
+			state.level = 'all'
+			applyFilters(state)
 		},
 		searchMaterial: (state, { payload }) => {
-			state.filtered_materials = state.materials.filter(item =>
-				item.title.toLowerCase().includes(payload.toLowerCase())
-			)
-
-			resetPagination(state)
+			console.log('🔍 searchMaterial reducer called with:', payload)
+			console.log('🔍 Current activeFilters before search:', state.activeFilters)
+			state.activeFilters.search = payload
+			state.search = payload
+			applyFilters(state)
 		},
 		changePage: (state, { payload }) => {
 			state.page = payload
@@ -310,18 +440,23 @@ const materialsSlice = createSlice({
 	},
 	extraReducers: builder => {
 		builder
-			.addCase(getMaterials.pending, state => {
+			.addCase(getMaterials.pending, (state, { meta }) => {
 				state.materials_loading = true
 				state.materials_error = null
+				// Définir la section immédiatement pour que les filtres fonctionnent
+				if (meta?.arg?.section) {
+					state.activeFilters.section = meta.arg.section
+				}
 			})
-			.addCase(getMaterials.fulfilled, (state, { payload }) => {
+			.addCase(getMaterials.fulfilled, (state, { payload, meta }) => {
 				state.materials_loading = false
 				state.materials = payload
-				state.filtered_materials = payload
-				state.totalMaterials = state.filtered_materials.length
-				state.numOfPages = Math.ceil(
-					state.totalMaterials / state.materialsPerPage
-				)
+				// Conserver la section dans activeFilters pour que les recherches fonctionnent correctement
+				if (meta?.arg?.section) {
+					state.activeFilters.section = meta.arg.section
+				}
+				// Appliquer les filtres actifs (recherche, niveau, statut) aux nouvelles données
+				applyFilters(state)
 			})
 			.addCase(getMaterials.rejected, (state, { payload }) => {
 				state.materials_loading = false
@@ -331,14 +466,13 @@ const materialsSlice = createSlice({
 				state.books_loading = true
 				state.books_error = null
 			})
-			.addCase(getBooks.fulfilled, (state, { payload }) => {
+			.addCase(getBooks.fulfilled, (state, { payload, meta }) => {
 				state.books_loading = false
 				state.books = payload
-				state.filtered_materials = payload
-				state.totalMaterials = state.filtered_materials.length
-				state.numOfPages = Math.ceil(
-					state.totalMaterials / state.materialsPerPage
-				)
+				// Pour books, la section est 'books'
+				state.activeFilters.section = 'books'
+				// Appliquer les filtres actifs aux nouvelles données
+				applyFilters(state)
 			})
 			.addCase(getBooks.rejected, (state, { payload }) => {
 				state.books_loading = false
@@ -363,6 +497,8 @@ const materialsSlice = createSlice({
 			.addCase(getUserMaterialsStatus.fulfilled, (state, { payload }) => {
 				state.user_materials_status = payload
 				state.user_materials_status_loading = false
+			// Mettre à jour les filtres actifs pour que les filtres de statut fonctionnent
+				state.activeFilters.userMaterialsStatus = payload
 			})
 			.addCase(getUserMaterialsStatus.rejected, (state, { payload }) => {
 				state.user_materials_status_loading = false
@@ -380,14 +516,58 @@ const materialsSlice = createSlice({
 				state.user_material_status_loading = false
 				state.user_material_status_error = payload
 			})
-			.addCase(addBeingStudiedMaterial.fulfilled, () => {
+			.addCase(addBeingStudiedMaterial.fulfilled, (state, { payload }) => {
 				toast.success(getToastMessage('materialAddedToStudying'))
+				// Mettre à jour user_materials_status
+				state.user_materials_status.push({
+					material_id: payload.material_id,
+					is_being_studied: true,
+					is_studied: false,
+				})
+				// Ajouter le matériel complet à user_materials
+				if (payload.fullMaterial) {
+					state.user_materials.push(payload.fullMaterial)
+				}
 			})
-			.addCase(removeBeingStudiedMaterial.fulfilled, () => {
+			.addCase(removeBeingStudiedMaterial.fulfilled, (state, { payload }) => {
 				toast.success(getToastMessage('materialRemovedFromStudying'))
+				// Retirer de user_materials_status
+				state.user_materials_status = state.user_materials_status.filter(
+					m => m.material_id !== payload.material_id
+				)
+				// Retirer de user_materials
+				state.user_materials = state.user_materials.filter(
+					m => m.id !== payload.material_id
+				)
 			})
-			.addCase(addMaterialToStudied.fulfilled, () => {
+			.addCase(addMaterialToStudied.fulfilled, (state, { payload }) => {
 				toast.success(getToastMessage('congratsProgress'))
+				// Trouver et mettre à jour dans user_materials_status
+				const statusIndex = state.user_materials_status.findIndex(
+					m => m.material_id === payload.material_id
+				)
+				if (statusIndex !== -1) {
+					state.user_materials_status[statusIndex].is_being_studied = false
+					state.user_materials_status[statusIndex].is_studied = true
+				} else {
+					// Ajouter si n'existe pas
+					state.user_materials_status.push({
+						material_id: payload.material_id,
+						is_being_studied: false,
+						is_studied: true,
+					})
+				}
+				// Mettre à jour dans user_materials
+				const materialIndex = state.user_materials.findIndex(
+					m => m.id === payload.material_id
+				)
+				if (materialIndex !== -1) {
+					state.user_materials[materialIndex].is_being_studied = false
+					state.user_materials[materialIndex].is_studied = true
+				} else if (payload.fullMaterial) {
+					// Ajouter le nouveau matériel
+					state.user_materials.push(payload.fullMaterial)
+				}
 			})
 			.addCase(getBookChapters.pending, state => {
 				state.chapters_loading = true

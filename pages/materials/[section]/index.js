@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
-import Image from 'next/image'
 import SectionCard from '../../../components/SectionCard'
+import MaterialsTable from '../../../components/MaterialsTable'
 import LevelBar from '../../../components/layouts/LevelBar'
 import Pagination from '../../../components/layouts/Pagination'
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,18 +12,20 @@ import {
 } from '../../../features/materials/materialsSlice'
 import { selectMaterialsData } from '../../../features/materials/materialsSelectors'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 import SEO from '../../../components/SEO'
 import { useUserContext } from '../../../context/user'
+import LoadingSpinner from '../../../components/LoadingSpinner'
 
 const Section = () => {
 	const { t, lang } = useTranslation('materials')
 	const { userLearningLanguage } = useUserContext()
 	const router = useRouter()
 	const { section } = router.query
+	const [viewMode, setViewMode] = useState('card')
 
 	const dispatch = useDispatch()
 	// Utiliser le sélecteur mémoïsé pour optimiser les performances
@@ -39,6 +41,10 @@ const Section = () => {
 	// Sélecteurs supplémentaires (non inclus dans selectMaterialsData)
 	const books_loading = useSelector(state => state.materials.books_loading)
 	const user_materials_status = useSelector(state => state.materials.user_materials_status)
+
+	const handleViewChange = (view) => {
+		setViewMode(view)
+	}
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		const matchingMaterials = user_materials_status.find(
@@ -65,15 +71,7 @@ const Section = () => {
 	}, [section, level, dispatch])
 
 	if (materials_loading && books_loading) {
-		return (
-			<div className='loader'>
-				<Image
-					src='/img/loader.gif'
-					width={200}
-					height={200}
-					alt='loader'></Image>
-			</div>
-		)
+		return <LoadingSpinner />
 	}
 
 	// Mots-clés SEO par section et langue
@@ -135,30 +133,42 @@ const Section = () => {
 						<ArrowBack fontSize='medium' />
 					</IconButton>
 				</Box>
-				<LevelBar />
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: {
-							sx: '1fr',
-							md: 'repeat(2, 1fr)',
-						},
-						rowGap: 3,
-						columnGap: 8,
-					}}>
-					{filtered_materials?.length > 0 &&
-						filtered_materials
-							.slice(sliceStart, sliceEnd)
-							.map(material => (
-								<SectionCard
-									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-										material.id
-									)}
-									key={material.id}
-									material={material}
-								/>
-							))}
-				</Box>
+				<LevelBar
+					onViewChange={handleViewChange}
+					currentView={viewMode}
+				/>
+
+				{viewMode === 'card' ? (
+					<Box
+						sx={{
+							display: 'grid',
+							gridTemplateColumns: {
+								sx: '1fr',
+								md: 'repeat(2, 1fr)',
+							},
+							rowGap: 3,
+							columnGap: 8,
+						}}>
+						{filtered_materials?.length > 0 &&
+							filtered_materials
+								.slice(sliceStart, sliceEnd)
+								.map(material => (
+									<SectionCard
+										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+											material.id
+										)}
+										key={material.id}
+										material={material}
+									/>
+								))}
+					</Box>
+				) : (
+					<MaterialsTable
+						materials={filtered_materials?.slice(sliceStart, sliceEnd) || []}
+						checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
+					/>
+				)}
+
 				{numOfPages > 1 && <Pagination />}
 			</Container>
 		</>

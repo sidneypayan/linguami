@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { Search, Refresh } from '@mui/icons-material'
+import { Search, Refresh, GridView, ViewList } from '@mui/icons-material'
 import {
 	filterMaterials,
 	showAllMaterials,
@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { searchMaterial } from '../../features/materials/materialsSlice'
 import { Box, TextField, IconButton, Chip, Stack, Tooltip, InputAdornment } from '@mui/material'
 
-const LevelBar = () => {
+const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = false }) => {
 	const { t } = useTranslation('section')
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -23,7 +23,17 @@ const LevelBar = () => {
 
 	const handleSubmit = e => {
 		e.preventDefault()
+		console.log('🔍 LevelBar handleSubmit - search term:', search)
+		console.log('🔍 LevelBar handleSubmit - current section:', section)
 		dispatch(searchMaterial(search))
+	}
+
+	const handleSearchChange = e => {
+		const value = e.target.value
+		setSearch(value)
+		console.log('🔍 LevelBar handleSearchChange - search term:', value)
+		// Recherche dynamique au fur et à mesure de la saisie
+		dispatch(searchMaterial(value))
 	}
 
 	const handleClear = () => {
@@ -46,71 +56,54 @@ const LevelBar = () => {
 	}
 
 	const levels = [
-		{ label: 'A1/A2', key: 'débutant', tooltip: `🌱 ${t('beginner')} - Pour bien démarrer !`, color: '#10b981' }, // Vert émeraude - Facile
-		{ label: 'B1/B2', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - Vous progressez !`, color: '#f59e0b' }, // Orange ambré - Moyen
-		{ label: 'C1/C2', key: 'avancé', tooltip: `⭐ ${t('advanced')} - Le grand défi !`, color: '#ef4444' }, // Rouge - Difficile
+		{ label: 'A1/A2', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
+		{ label: 'B1/B2', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
+		{ label: 'C1/C2', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
 	]
 
 	const statuses = [
-		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - En cours d&apos;apprentissage`, color: '#3b82f6' }, // Bleu - En cours
-		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - Bravo, c&apos;est maîtrisé !`, color: '#8b5cf6' }, // Violet - Terminé
-		{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - À découvrir !`, color: '#64748b' }, // Gris - Non étudié
+		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#3b82f6' }, // Bleu - En cours
+		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - ${t('studiedTooltip')}`, color: '#8b5cf6' }, // Violet - Terminé
+		{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - ${t('notStudiedTooltip')}`, color: '#64748b' }, // Gris - Non étudié
 	]
 
 	return (
 		<Box
 			sx={{
 				display: 'flex',
-				flexDirection: { xs: 'column', md: 'row' },
-				gap: 3,
+				flexDirection: 'column',
+				gap: 2,
 				mb: 4,
-				alignItems: { xs: 'stretch', md: 'center' },
-				justifyContent: 'space-between',
 			}}>
-			{/* Search bar */}
+			{/* Search bar and view toggle */}
 			<Box
-				component='form'
-				onSubmit={handleSubmit}
 				sx={{
-					flex: 1,
-					maxWidth: { xs: '100%', md: '400px' },
+					display: 'flex',
+					gap: 1.5,
+					alignItems: 'center',
 				}}>
-				<TextField
-					fullWidth
-					size='small'
-					placeholder={t('search')}
-					value={search}
-					onChange={e => setSearch(e.target.value)}
-					InputProps={{
-						endAdornment: (
-							<InputAdornment position='end'>
-								<Tooltip
-									title='🔍 Rechercher un matériau'
-									arrow
-									placement='top'
-									componentsProps={{
-										tooltip: {
-											sx: {
-												bgcolor: '#667eea',
-												color: 'white',
-												fontSize: '0.875rem',
-												fontWeight: 600,
-												padding: '8px 16px',
-												borderRadius: 2,
-												boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
-												'& .MuiTooltip-arrow': {
-													color: '#667eea',
-												},
-											},
-										},
-									}}>
+				<Box
+					component='form'
+					onSubmit={handleSubmit}
+					sx={{
+						flex: 1,
+					}}>
+					<TextField
+						fullWidth
+						size='small'
+						placeholder={t('search')}
+						value={search}
+						onChange={handleSearchChange}
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position='end'>
 									<IconButton
 										type='submit'
 										edge='end'
 										sx={{
 											color: '#667eea',
-											width: { xs: '44px', sm: '40px' },
-											height: { xs: '44px', sm: '40px' },
+											width: { xs: '36px', sm: '40px' },
+											height: { xs: '36px', sm: '40px' },
 											transition: 'all 0.2s ease',
 											'&:hover': {
 												transform: 'scale(1.1)',
@@ -120,42 +113,84 @@ const LevelBar = () => {
 												transform: 'scale(0.95)',
 											},
 										}}>
-										<Search />
+										<Search sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
 									</IconButton>
-								</Tooltip>
-							</InputAdornment>
-						),
-					}}
+								</InputAdornment>
+							),
+						}}
+						sx={{
+							'& .MuiOutlinedInput-root': {
+								borderRadius: 3,
+								backgroundColor: 'white',
+								transition: 'all 0.2s ease',
+								'& fieldset': {
+									borderColor: '#e0e0e0',
+									borderWidth: 2,
+								},
+								'&:hover fieldset': {
+									borderColor: '#667eea',
+								},
+								'&.Mui-focused fieldset': {
+									borderColor: '#667eea',
+									borderWidth: 2,
+								},
+							},
+						}}
+					/>
+				</Box>
+
+				{/* View toggle buttons - always visible */}
+				<Box
 					sx={{
-						'& .MuiOutlinedInput-root': {
-							borderRadius: 3,
-							backgroundColor: 'white',
+						display: 'flex',
+						gap: 0.5,
+						backgroundColor: 'rgba(255, 255, 255, 0.9)',
+						borderRadius: 2,
+						padding: '3px',
+						boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+						border: '2px solid rgba(102, 126, 234, 0.1)',
+						flexShrink: 0,
+					}}>
+					<IconButton
+						onClick={() => onViewChange('card')}
+						sx={{
+							width: { xs: '34px', sm: '36px' },
+							height: { xs: '34px', sm: '36px' },
+							backgroundColor: currentView === 'card' ? '#667eea' : 'transparent',
+							color: currentView === 'card' ? 'white' : '#667eea',
 							transition: 'all 0.2s ease',
-							'& fieldset': {
-								borderColor: '#e0e0e0',
-								borderWidth: 2,
+							'&:hover': {
+								backgroundColor: currentView === 'card' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
 							},
-							'&:hover fieldset': {
-								borderColor: '#667eea',
+						}}>
+						<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
+					</IconButton>
+					<IconButton
+						onClick={() => onViewChange('list')}
+						sx={{
+							width: { xs: '34px', sm: '36px' },
+							height: { xs: '34px', sm: '36px' },
+							backgroundColor: currentView === 'list' ? '#667eea' : 'transparent',
+							color: currentView === 'list' ? 'white' : '#667eea',
+							transition: 'all 0.2s ease',
+							'&:hover': {
+								backgroundColor: currentView === 'list' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
 							},
-							'&.Mui-focused fieldset': {
-								borderColor: '#667eea',
-								borderWidth: 2,
-							},
-						},
-					}}
-				/>
+						}}>
+						<ViewList sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
+					</IconButton>
+				</Box>
 			</Box>
 
 			{/* Level filters and Status filters */}
 			<Stack
 				direction='row'
-				spacing={1.5}
+				spacing={{ xs: 0.75, sm: 1.5 }}
 				sx={{
 					alignItems: 'center',
-					justifyContent: { xs: 'center', md: 'flex-end' },
+					justifyContent: { xs: 'flex-start', md: 'flex-end' },
 					flexWrap: 'wrap',
-					gap: 1.5,
+					gap: { xs: 0.75, sm: 1.5 },
 				}}>
 				{levels.map(level => (
 					<Tooltip
@@ -184,10 +219,11 @@ const LevelBar = () => {
 							onClick={() => handleLevelClick(level.label, level.key)}
 							sx={{
 								fontWeight: 600,
-								fontSize: { xs: '0.9rem', sm: '0.95rem' },
-								px: { xs: 1.5, sm: 1 },
-								height: { xs: '44px', sm: '40px' },
-								borderRadius: 3,
+								fontSize: { xs: '0.75rem', sm: '0.95rem' },
+								px: { xs: 0.5, sm: 1 },
+								height: { xs: '32px', sm: '40px' },
+								minWidth: { xs: '50px', sm: 'auto' },
+								borderRadius: 2,
 								cursor: 'pointer',
 								border: '2px solid',
 								borderColor: selectedLevel === level.label ? '#667eea' : 'transparent',
@@ -201,9 +237,12 @@ const LevelBar = () => {
 										? '0 4px 15px rgba(102, 126, 234, 0.2)'
 										: '0 2px 8px rgba(0,0,0,0.08)',
 								transition: 'all 0.3s ease',
+								'& .MuiChip-label': {
+									px: { xs: 0.5, sm: 1 },
+								},
 								'&:hover': {
-									transform: 'translateY(-3px)',
-									boxShadow: `0 6px 20px ${level.color}60`,
+									transform: 'translateY(-2px)',
+									boxShadow: `0 4px 16px ${level.color}60`,
 									borderColor: level.color,
 									background: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
 									color: level.color,
@@ -243,10 +282,10 @@ const LevelBar = () => {
 							onClick={() => handleStatusClick(status.label, status.key)}
 							sx={{
 								fontWeight: 600,
-								fontSize: { xs: '0.9rem', sm: '0.95rem' },
-								px: { xs: 1.5, sm: 1 },
-								height: { xs: '44px', sm: '40px' },
-								borderRadius: 3,
+								fontSize: { xs: '0.7rem', sm: '0.95rem' },
+								px: { xs: 0.5, sm: 1 },
+								height: { xs: '32px', sm: '40px' },
+								borderRadius: 2,
 								cursor: 'pointer',
 								border: '2px solid',
 								borderColor: selectedStatus === status.label ? '#667eea' : 'transparent',
@@ -260,9 +299,12 @@ const LevelBar = () => {
 										? '0 4px 15px rgba(102, 126, 234, 0.2)'
 										: '0 2px 8px rgba(0,0,0,0.08)',
 								transition: 'all 0.3s ease',
+								'& .MuiChip-label': {
+									px: { xs: 0.5, sm: 1 },
+								},
 								'&:hover': {
-									transform: 'translateY(-3px)',
-									boxShadow: `0 6px 20px ${status.color}60`,
+									transform: 'translateY(-2px)',
+									boxShadow: `0 4px 16px ${status.color}60`,
 									borderColor: status.color,
 									background: `linear-gradient(135deg, ${status.color}30, ${status.color}50)`,
 									color: status.color,
@@ -277,7 +319,7 @@ const LevelBar = () => {
 
 				{/* Reset button */}
 				<Tooltip
-					title={`🔄 ${t('showall')} - Réinitialiser les filtres`}
+					title={`🔄 ${t('showall')} - ${t('showallTooltip')}`}
 					arrow
 					placement='top'
 					componentsProps={{
@@ -299,8 +341,8 @@ const LevelBar = () => {
 					<IconButton
 						onClick={handleClear}
 						sx={{
-							width: { xs: '44px', sm: '40px' },
-							height: { xs: '44px', sm: '40px' },
+							width: { xs: '32px', sm: '40px' },
+							height: { xs: '32px', sm: '40px' },
 							backgroundColor: 'rgba(255, 255, 255, 0.9)',
 							boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
 							border: '2px solid transparent',
@@ -308,14 +350,14 @@ const LevelBar = () => {
 							'&:hover': {
 								backgroundColor: '#667eea',
 								color: 'white',
-								transform: 'rotate(180deg) translateY(-3px)',
-								boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+								transform: 'rotate(180deg) translateY(-2px)',
+								boxShadow: '0 4px 16px rgba(102, 126, 234, 0.4)',
 							},
 							'&:active': {
 								transform: 'rotate(180deg) scale(0.95)',
 							},
 						}}>
-						<Refresh />
+						<Refresh sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }} />
 					</IconButton>
 				</Tooltip>
 			</Stack>

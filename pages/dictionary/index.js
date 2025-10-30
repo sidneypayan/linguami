@@ -34,8 +34,8 @@ import {
 	AutoStoriesRounded,
 	BookmarkAddRounded,
 } from '@mui/icons-material'
-import Image from 'next/image'
 import AddWordModal from '../../components/dictionary/AddWordModal'
+import LoadingSpinner from '../../components/LoadingSpinner'
 
 const Dictionary = () => {
 	const { t } = useTranslation('common')
@@ -106,15 +106,7 @@ const Dictionary = () => {
 	])
 
 	if (user_words_loading) {
-		return (
-			<div className='loader'>
-				<Image
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/loader.gif`}
-					width={200}
-					height={200}
-					alt='loader'></Image>
-			</div>
-		)
+		return <LoadingSpinner />
 	}
 
 	// Descriptions par langue pour la page

@@ -6,5 +6,13 @@
 	"showall": "Montrer tout",
 	"studied": "Étudiés",
 	"being_studied": "À l'étude",
-	"not_studied": "Non étudiés"
+	"not_studied": "Non étudiés",
+	"searchTooltip": "Rechercher un matériau",
+	"beginnerTooltip": "Pour bien démarrer !",
+	"intermediateTooltip": "Vous progressez !",
+	"advancedTooltip": "Le grand défi !",
+	"beingStudiedTooltip": "En cours d'apprentissage",
+	"studiedTooltip": "Bravo, c'est maîtrisé !",
+	"notStudiedTooltip": "À découvrir !",
+	"showallTooltip": "Réinitialiser les filtres"
 }

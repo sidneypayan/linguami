@@ -1,0 +1,18 @@
+{
+	"search": "Search...",
+	"beginner": "Beginner",
+	"intermediate": "Intermediate",
+	"advanced": "Advanced",
+	"showall": "Show all",
+	"studied": "Studied",
+	"being_studied": "Being studied",
+	"not_studied": "Not studied",
+	"searchTooltip": "Search for a material",
+	"beginnerTooltip": "For a great start!",
+	"intermediateTooltip": "You're making progress!",
+	"advancedTooltip": "The ultimate challenge!",
+	"beingStudiedTooltip": "Currently learning",
+	"studiedTooltip": "Well done, you've mastered it!",
+	"notStudiedTooltip": "To discover!",
+	"showallTooltip": "Reset filters"
+}
