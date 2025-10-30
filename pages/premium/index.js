@@ -160,19 +160,19 @@ const Premium = () => {
 						<ListItemIcon>
 							<CheckCircle sx={{ color: '#1e6091' }} />
 						</ListItemIcon>
-						<ListItemText primary="Consacrer plus de temps au développement d'activités intéractives pour apprendre les mots ou pour tester vos connaissances" />
+						<ListItemText primary="Consacrer plus de temps au développement d&apos;activités intéractives pour apprendre les mots ou pour tester vos connaissances" />
 					</ListItem>
 					<ListItem disablePadding>
 						<ListItemIcon>
 							<CheckCircle sx={{ color: '#1e6091' }} />
 						</ListItemIcon>
-						<ListItemText primary="Financer une partie des coûts d'hébergement du site et de l'utilisation de services payants comme le traducteur, le serveur etc" />
+						<ListItemText primary="Financer une partie des coûts d&apos;hébergement du site et de l&apos;utilisation de services payants comme le traducteur, le serveur etc" />
 					</ListItem>
 					<ListItem disablePadding>
 						<ListItemIcon>
 							<CheckCircle sx={{ color: '#1e6091' }} />
 						</ListItemIcon>
-						<ListItemText primary="Nous réjouir de voir que vous appréciez notre travail et qu'il vous est utile." />
+						<ListItemText primary="Nous réjouir de voir que vous appréciez notre travail et qu&apos;il vous est utile." />
 					</ListItem>
 				</List>
 			</Card>

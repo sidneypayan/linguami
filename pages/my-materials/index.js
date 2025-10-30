@@ -608,7 +608,7 @@ const UserMaterials = () => {
 									sx={{
 										color: '#a0aec0',
 									}}>
-									Vous n'avez pas encore de matériaux dans cette catégorie
+									Vous n&apos;avez pas encore de matériaux dans cette catégorie
 								</Typography>
 							</Box>
 						) : (

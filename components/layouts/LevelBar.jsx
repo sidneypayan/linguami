@@ -52,8 +52,8 @@ const LevelBar = () => {
 	]
 
 	const statuses = [
-		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - En cours d'apprentissage`, color: '#3b82f6' }, // Bleu - En cours
-		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - Bravo, c'est maîtrisé !`, color: '#8b5cf6' }, // Violet - Terminé
+		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - En cours d&apos;apprentissage`, color: '#3b82f6' }, // Bleu - En cours
+		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - Bravo, c&apos;est maîtrisé !`, color: '#8b5cf6' }, // Violet - Terminé
 		{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - À découvrir !`, color: '#64748b' }, // Gris - Non étudié
 	]
 
