@@ -18,6 +18,8 @@
 		"/signin": ["register"],
 		"/update-password": ["register"],
 		"/teacher": ["teacher"],
-		"/lessons": ["lessons"]
+		"/lessons": ["lessons"],
+		"/admin": ["common", "admin"],
+		"/admin/create": ["common", "admin"]
 	}
 }

@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 
-const FormRow = ({ handleChange, label, value, name, multiline = false }) => {
+const FormRow = ({ handleChange, label, value, name, multiline = false, rows = 4, placeholder, type = 'text', fullWidth = true }) => {
 	return (
 		<TextField
 			label={label}
@@ -8,9 +8,12 @@ const FormRow = ({ handleChange, label, value, name, multiline = false }) => {
 			value={value}
 			onChange={handleChange}
 			name={name}
+			type={type}
+			placeholder={placeholder}
+			fullWidth={fullWidth}
 			sx={{ backgroundColor: 'white' }}
 			multiline={multiline}
-			rows={20}
+			rows={multiline ? rows : undefined}
 		/>
 	)
 }

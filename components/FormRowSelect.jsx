@@ -1,6 +1,6 @@
 import { MenuItem, TextField } from '@mui/material'
 
-const FormRowSelect = ({ handleChange, label, value, name, list }) => {
+const FormRowSelect = ({ handleChange, label, value, name, list, fullWidth = true }) => {
 	return (
 		<TextField
 			select
@@ -8,6 +8,7 @@ const FormRowSelect = ({ handleChange, label, value, name, list }) => {
 			value={value}
 			onChange={handleChange}
 			name={name}
+			fullWidth={fullWidth}
 			sx={{ backgroundColor: 'white' }}>
 			{list.map(value => (
 				<MenuItem key={value} value={value}>

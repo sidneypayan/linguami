@@ -6,7 +6,7 @@ import {
 	HomeRounded,
 	AutoStoriesRounded,
 	BookmarksRounded,
-	SchoolRounded,
+	LocalLibraryRounded,
 } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
@@ -165,7 +165,7 @@ const BottomNav = () => {
 					<BottomNavigationAction
 						label={t('lessons')}
 						value='lessons'
-						icon={<SchoolRounded />}
+						icon={<LocalLibraryRounded />}
 					/>
 				)}
 			</BottomNavigation>

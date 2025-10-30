@@ -1,96 +1,493 @@
 import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import { sectionsForAdmin } from '../../utils/constants'
+import { useState } from 'react'
 import {
 	Box,
-	Button,
-	Card,
-	CardContent,
 	Container,
 	Typography,
+	Tabs,
+	Tab,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Paper,
+	Button,
+	Chip,
+	Stack,
+	Avatar,
+	IconButton,
+	Tooltip,
+	alpha,
 } from '@mui/material'
+import {
+	Add,
+	Edit,
+	Visibility,
+	TrendingUp,
+	Language,
+	LibraryBooks,
+	MusicNote,
+	MenuBook,
+} from '@mui/icons-material'
+import useTranslation from 'next-translate/useTranslation'
 
 const Admin = ({
 	materialsCountByLang,
 	musicCountByLang,
 	booksCountByLang,
 }) => {
+	const { t } = useTranslation('admin')
+	const [selectedLang, setSelectedLang] = useState('fr')
+
+	const getLanguageInfo = (lang) => {
+		const info = {
+			fr: { name: 'Français', color: '#3B82F6', flag: '🇫🇷' },
+			ru: { name: 'Русский', color: '#EF4444', flag: '🇷🇺' },
+			en: { name: 'English', color: '#10B981', flag: '🇬🇧' },
+		}
+		return info[lang] || info.fr
+	}
+
+	const currentLangData = materialsCountByLang.find(m => m.lang === selectedLang)
+	const currentMusic = musicCountByLang.find(m => m.lang === selectedLang)
+	const currentBooks = booksCountByLang.find(b => b.lang === selectedLang)
+
+	// Calculate totals
+	const totalMaterials = currentLangData?.counts.reduce((acc, { count }) => acc + count, 0) || 0
+	const totalMusic = currentMusic?.count || 0
+	const totalBooks = currentBooks?.count || 0
+	const grandTotal = totalMaterials + totalMusic + totalBooks
+
+	// Prepare table data
+	const tableData = [
+		...(currentLangData?.counts.filter(({ count }) => count > 0).map(({ section, count }) => ({
+			type: 'material',
+			section,
+			count,
+			icon: <LibraryBooks />,
+		})) || []),
+		{
+			type: 'music',
+			section: t('music'),
+			count: totalMusic,
+			icon: <MusicNote />,
+		},
+		{
+			type: 'books',
+			section: t('books'),
+			count: totalBooks,
+			icon: <MenuBook />,
+		},
+	].filter(item => item.count > 0)
+
 	return (
-		<Container sx={{ margin: '5rem auto' }}>
-			<Typography mt={3} mb={3} variant='h3'>
-				Sections
-			</Typography>
-
-			{materialsCountByLang.map(({ lang, counts }) => {
-				const music = musicCountByLang.find(m => m.lang === lang)
-				const books = booksCountByLang.find(b => b.lang === lang)
-
-				return (
-					<Box key={lang} sx={{ marginBottom: '4rem' }}>
-						<Typography variant='h4' mb={2}>
-							Langue : {lang}
-						</Typography>
-
-						<Box
-							gap={2}
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: 'repeat(5, 1fr)',
-							}}>
-							{counts
-								.filter(({ count }) => count > 0)
-								.map(({ section, count }, index) => (
-									<Card key={`${lang}-${section}-${index}`}>
-										<CardContent sx={{ textAlign: 'center' }}>
-											<Link
-												href={`/materials/${section}?lang=${lang}`}
-												passHref>
-												<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-													{section}
-												</Typography>
-											</Link>
-											<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-												{count}
-											</Typography>
-										</CardContent>
-									</Card>
-								))}
-
-							<Card>
-								<CardContent sx={{ textAlign: 'center' }}>
-									<Link href={`/materials/music?lang=${lang}`} passHref>
-										<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-											Musics
-										</Typography>
-									</Link>
-									<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-										{music?.count ?? 0}
-									</Typography>
-								</CardContent>
-							</Card>
-
-							<Card>
-								<CardContent sx={{ textAlign: 'center' }}>
-									<Link href={`/materials/books?lang=${lang}`} passHref>
-										<Typography sx={{ cursor: 'pointer' }} variant='h5'>
-											Books
-										</Typography>
-									</Link>
-									<Typography variant='h4' sx={{ marginTop: '1rem' }}>
-										{books?.count ?? 0}
-									</Typography>
-								</CardContent>
-							</Card>
+		<Box
+			sx={{
+				minHeight: '100vh',
+				bgcolor: '#F8FAFC',
+			}}>
+			{/* Top Bar */}
+			<Box
+				sx={{
+					bgcolor: 'white',
+					borderBottom: '1px solid',
+					borderColor: 'divider',
+					position: 'sticky',
+					top: 0,
+					zIndex: 1100,
+					boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+				}}>
+				<Container maxWidth="xl">
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							py: 2,
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: 'white',
+									fontWeight: 800,
+									fontSize: '1.5rem',
+								}}>
+								L
+							</Box>
+							<Box>
+								<Typography
+									variant='h5'
+									sx={{
+										fontWeight: 700,
+										color: '#1E293B',
+										letterSpacing: '-0.5px',
+									}}>
+									{t('adminDashboard')}
+								</Typography>
+								<Typography
+									variant='body2'
+									sx={{
+										color: '#64748B',
+									}}>
+									{t('manageContent')}
+								</Typography>
+							</Box>
 						</Box>
+
+						<Link href='/admin/create' passHref style={{ textDecoration: 'none' }}>
+							<Button
+								variant='contained'
+								startIcon={<Add />}
+								sx={{
+									bgcolor: '#667eea',
+									color: 'white',
+									px: 3,
+									py: 1.2,
+									borderRadius: 2,
+									textTransform: 'none',
+									fontWeight: 600,
+									boxShadow: 'none',
+									'&:hover': {
+										bgcolor: '#5568d3',
+										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+									},
+								}}>
+								{t('newContent')}
+							</Button>
+						</Link>
 					</Box>
-				)
-			})}
-			<Link href='/admin/create'>
-				<Button variant='contained' sx={{ marginTop: '2rem' }}>
-					Create content
-				</Button>
-			</Link>
-		</Container>
+				</Container>
+			</Box>
+
+			<Container maxWidth="xl" sx={{ py: 4 }}>
+				{/* Stats Cards */}
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: {
+							xs: '1fr',
+							sm: 'repeat(2, 1fr)',
+							md: 'repeat(4, 1fr)',
+						},
+						gap: 3,
+						mb: 4,
+					}}>
+					<Paper
+						elevation={0}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: '1px solid',
+							borderColor: 'divider',
+							background: 'white',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#667eea', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#667eea',
+								}}>
+								<TrendingUp />
+							</Box>
+							<Box>
+								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{grandTotal}
+								</Typography>
+							</Box>
+						</Box>
+						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
+							{t('totalContent')}
+						</Typography>
+					</Paper>
+
+					<Paper
+						elevation={0}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: '1px solid',
+							borderColor: 'divider',
+							background: 'white',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#3B82F6', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#3B82F6',
+								}}>
+								<LibraryBooks />
+							</Box>
+							<Box>
+								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{totalMaterials}
+								</Typography>
+							</Box>
+						</Box>
+						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
+							{t('materials')}
+						</Typography>
+					</Paper>
+
+					<Paper
+						elevation={0}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: '1px solid',
+							borderColor: 'divider',
+							background: 'white',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#10B981', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#10B981',
+								}}>
+								<MusicNote />
+							</Box>
+							<Box>
+								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{totalMusic}
+								</Typography>
+							</Box>
+						</Box>
+						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
+							{t('music')}
+						</Typography>
+					</Paper>
+
+					<Paper
+						elevation={0}
+						sx={{
+							p: 3,
+							borderRadius: 3,
+							border: '1px solid',
+							borderColor: 'divider',
+							background: 'white',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#F59E0B', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#F59E0B',
+								}}>
+								<MenuBook />
+							</Box>
+							<Box>
+								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{totalBooks}
+								</Typography>
+							</Box>
+						</Box>
+						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
+							{t('books')}
+						</Typography>
+					</Paper>
+				</Box>
+
+				{/* Language Tabs */}
+				<Paper
+					elevation={0}
+					sx={{
+						borderRadius: 3,
+						border: '1px solid',
+						borderColor: 'divider',
+						overflow: 'hidden',
+					}}>
+					<Box
+						sx={{
+							borderBottom: '1px solid',
+							borderColor: 'divider',
+							px: 3,
+							py: 2,
+							bgcolor: 'white',
+						}}>
+						<Tabs
+							value={selectedLang}
+							onChange={(e, newValue) => setSelectedLang(newValue)}
+							sx={{
+								'& .MuiTab-root': {
+									textTransform: 'none',
+									fontWeight: 600,
+									fontSize: '1rem',
+									minHeight: 48,
+									px: 3,
+									color: '#64748B',
+									'&.Mui-selected': {
+										color: '#667eea',
+									},
+								},
+								'& .MuiTabs-indicator': {
+									backgroundColor: '#667eea',
+									height: 3,
+									borderRadius: '3px 3px 0 0',
+								},
+							}}>
+							{materialsCountByLang.map(({ lang }) => {
+								const langInfo = getLanguageInfo(lang)
+								return (
+									<Tab
+										key={lang}
+										value={lang}
+										label={
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+												<span style={{ fontSize: '1.2rem' }}>{langInfo.flag}</span>
+												<span>{langInfo.name}</span>
+											</Box>
+										}
+									/>
+								)
+							})}
+						</Tabs>
+					</Box>
+
+					{/* Content Table */}
+					<TableContainer>
+						<Table>
+							<TableHead>
+								<TableRow
+									sx={{
+										bgcolor: '#F8FAFC',
+										'& th': {
+											fontWeight: 700,
+											color: '#475569',
+											fontSize: '0.875rem',
+											textTransform: 'uppercase',
+											letterSpacing: '0.5px',
+											py: 2,
+										},
+									}}>
+									<TableCell>{t('type')}</TableCell>
+									<TableCell>{t('section')}</TableCell>
+									<TableCell align='center'>{t('content')}</TableCell>
+									<TableCell align='right'>{t('actions')}</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{tableData.length === 0 ? (
+									<TableRow>
+										<TableCell colSpan={4} align='center' sx={{ py: 8 }}>
+											<Typography variant='body1' color='text.secondary'>
+												{t('noContentAvailable')}
+											</Typography>
+										</TableCell>
+									</TableRow>
+								) : (
+									tableData.map((item, index) => (
+										<TableRow
+											key={`${item.type}-${item.section}-${index}`}
+											sx={{
+												'&:hover': {
+													bgcolor: '#F8FAFC',
+												},
+												'& td': {
+													py: 2.5,
+													borderBottom: '1px solid',
+													borderColor: 'divider',
+												},
+											}}>
+											<TableCell>
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+													<Box
+														sx={{
+															width: 40,
+															height: 40,
+															borderRadius: 2,
+															bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.1),
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'center',
+															color: getLanguageInfo(selectedLang).color,
+														}}>
+														{item.icon}
+													</Box>
+												</Box>
+											</TableCell>
+											<TableCell>
+												<Typography
+													sx={{
+														fontWeight: 600,
+														color: '#1E293B',
+														textTransform: 'capitalize',
+													}}>
+													{item.section}
+												</Typography>
+											</TableCell>
+											<TableCell align='center'>
+												<Chip
+													label={item.count}
+													sx={{
+														bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.1),
+														color: getLanguageInfo(selectedLang).color,
+														fontWeight: 700,
+														fontSize: '0.875rem',
+														minWidth: 48,
+													}}
+												/>
+											</TableCell>
+											<TableCell align='right'>
+												<Stack direction='row' spacing={1} justifyContent='flex-end'>
+													<Tooltip title={t('view')}>
+														<IconButton
+															size='small'
+															component={Link}
+															href={`/materials/${item.section}?lang=${selectedLang}`}
+															sx={{
+																color: '#64748B',
+																'&:hover': {
+																	bgcolor: alpha('#667eea', 0.1),
+																	color: '#667eea',
+																},
+															}}>
+															<Visibility fontSize='small' />
+														</IconButton>
+													</Tooltip>
+												</Stack>
+											</TableCell>
+										</TableRow>
+									))
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Paper>
+			</Container>
+		</Box>
 	)
 }
 

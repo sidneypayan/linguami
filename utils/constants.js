@@ -246,7 +246,7 @@ export const materials_fr = [
 export const lang = ['ru', 'fr']
 export const level = ['débutant', 'intermédiaire', 'avancé']
 export const postData = {
-	lang: 'ru',
+	lang: '',
 	title: '',
 	img: '',
 	body: '',
@@ -254,7 +254,7 @@ export const postData = {
 }
 
 export const materialData = {
-	lang: 'ru',
+	lang: '',
 	section: '',
 	book_id: '',
 	chapter_number: '',
@@ -267,6 +267,33 @@ export const materialData = {
 	body_accents: '',
 }
 
+// Sections avec audio (text & audio)
+export const audioSections = [
+	'dialogues',
+	'culture',
+	'legends',
+	'slices-of-life',
+	'beautiful-places',
+	'podcasts',
+	'short-stories',
+	'book-chapters',
+]
+
+// Sections avec vidéo
+export const videoSections = [
+	'movie-trailers',
+	'movie-clips',
+	'cartoons',
+	'eralash',
+	'galileo',
+	'various-materials',
+	'rock',
+	'pop',
+	'folk',
+	'variety',
+	'kids',
+]
+
 export const sectionsForAdmin = [
 	'dialogues',
 	'culture',
@@ -275,10 +302,16 @@ export const sectionsForAdmin = [
 	'beautiful-places',
 	'podcasts',
 	'short-stories',
+	'book-chapters',
 	'movie-trailers',
 	'movie-clips',
 	'cartoons',
 	'eralash',
 	'galileo',
 	'various-materials',
+	'rock',
+	'pop',
+	'folk',
+	'variety',
+	'kids',
 ]

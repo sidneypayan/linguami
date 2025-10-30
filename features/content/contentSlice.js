@@ -2,41 +2,65 @@ import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 import { getToastMessage } from '../../utils/toastMessages'
+import { sanitizeObject, sanitizeFilename, validateFileType } from '../../utils/sanitize'
 
 const initialState = {
 	editingContent: {},
 	contentType: 'materials',
 	isEditingContent: false,
-	create_content_loading: true,
+	create_content_loading: false,
 	create_content_error: null,
-	edit_content_loading: true,
+	edit_content_loading: false,
 	edit_content_error: null,
 }
 
 export const createContent = createAsyncThunk(
 	'content/createContent',
 	async ({ content, contentType, files }, thunkAPI) => {
-		const { error } = await supabase.from(contentType).insert(content).select()
+		try {
+			// Sanitize le contenu avant de l'insérer
+			const sanitizedContent = sanitizeObject(content, {
+				urlFields: ['video', 'img', 'audio', 'image'],
+				numberFields: ['level', 'book_id', 'chapter_number'],
+				filenameFields: ['image', 'audio'],
+			})
 
-		if (files) {
-			const uploadFiles = async (file, fileName, fileType) => {
-				const { data, error } = await supabase.storage
-					.from('linguami')
-					.upload(`${fileType}/${fileName}`, file, {
-						cacheControl: '3600',
-						upsert: false,
-					})
+			const { error } = await supabase.from(contentType).insert(sanitizedContent).select()
 
-				if (error) console.log(error)
+			if (error) return thunkAPI.rejectWithValue(error.message)
+
+			if (files && files.length > 0) {
+				const uploadFiles = async (file, fileName, fileType) => {
+					// Valider le type de fichier
+					if (!validateFileType(fileName, [fileType])) {
+						throw new Error(`Type de fichier non autorisé pour ${fileName}`)
+					}
+
+					// Sanitize le nom de fichier
+					const safeName = sanitizeFilename(fileName)
+
+					const { data, error } = await supabase.storage
+						.from('linguami')
+						.upload(`${fileType}/${safeName}`, file, {
+							cacheControl: '3600',
+							upsert: false,
+						})
+
+					if (error) {
+						console.error(`Erreur upload ${safeName}:`, error)
+						throw error
+					}
+
+					return data
+				}
+
+				await Promise.all(
+					files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
+				)
 			}
-
-			// files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
-
-			await Promise.all(
-				files.map(file => uploadFiles(file.file, file.fileName, file.fileType))
-			)
+		} catch (err) {
+			return thunkAPI.rejectWithValue(err.message || 'Erreur lors de la création du contenu')
 		}
-		if (error) return thunkAPI.rejectWithValue(error.message)
 	}
 )
 
@@ -57,13 +81,24 @@ export const editContent = createAsyncThunk(
 export const updateContent = createAsyncThunk(
 	'content/updateContent',
 	async ({ content, contentType }, thunkAPI) => {
-		const { error } = await supabase
-			.from(contentType)
-			.update(content)
-			.eq('id', content.id)
-			.select()
+		try {
+			// Sanitize le contenu avant de le mettre à jour
+			const sanitizedContent = sanitizeObject(content, {
+				urlFields: ['video', 'img', 'audio', 'image'],
+				numberFields: ['level', 'book_id', 'chapter_number'],
+				filenameFields: ['image', 'audio'],
+			})
 
-		if (error) return thunkAPI.rejectWithValue(error.message)
+			const { error } = await supabase
+				.from(contentType)
+				.update(sanitizedContent)
+				.eq('id', content.id)
+				.select()
+
+			if (error) return thunkAPI.rejectWithValue(error.message)
+		} catch (err) {
+			return thunkAPI.rejectWithValue(err.message || 'Erreur lors de la mise à jour du contenu')
+		}
 	}
 )
 

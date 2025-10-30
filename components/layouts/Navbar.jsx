@@ -27,6 +27,7 @@ import {
 	LocalLibraryRounded,
 	RssFeedRounded,
 	DensityMediumRounded,
+	AdminPanelSettings,
 } from '@mui/icons-material'
 
 import LanguageMenu from './LanguageMenu.jsx'
@@ -36,7 +37,7 @@ const drawerWidth = '80%'
 
 const Navbar = props => {
 	const { t, lang } = useTranslation('common')
-	const { user, userProfile, isUserLoggedIn } = useUserContext()
+	const { user, userProfile, isUserLoggedIn, isUserAdmin } = useUserContext()
 	const router = useRouter()
 	const { lessons, lessons_loading } = useSelector(store => store.lessons)
 
@@ -239,6 +240,77 @@ const Navbar = props => {
 						</ListItem>
 					)
 				})}
+
+				{/* Admin button for mobile - only for admin users */}
+				{isUserAdmin && (
+					<ListItem
+						disablePadding
+						sx={{
+							mb: 1.5,
+							animation: `slideIn 0.3s ease-out ${navigationLinks.length * 0.05}s both`,
+							'@keyframes slideIn': {
+								'0%': {
+									opacity: 0,
+									transform: 'translateX(-20px)',
+								},
+								'100%': {
+									opacity: 1,
+									transform: 'translateX(0)',
+								},
+							},
+						}}>
+						<Link href="/admin" style={{ width: '100%' }}>
+							<ListItemButton
+								sx={{
+									borderRadius: 3,
+									py: 1.5,
+									px: 2,
+									backgroundColor: isActivePath('/admin') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+									backdropFilter: isActivePath('/admin') ? 'blur(10px)' : 'none',
+									boxShadow: isActivePath('/admin') ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
+									border: isActivePath('/admin') ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid rgba(255, 200, 100, 0.3)',
+									background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 140, 0, 0.15) 100%)',
+									transition: 'all 0.3s ease',
+									'&:hover': {
+										backgroundColor: 'rgba(255, 215, 0, 0.25)',
+										transform: 'translateX(8px)',
+										boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)',
+									},
+								}}>
+								<ListItemIcon
+									sx={{
+										color: '#fff',
+										minWidth: 44,
+										'& .MuiSvgIcon-root': {
+											fontSize: '1.5rem',
+											filter: isActivePath('/admin') ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'drop-shadow(0 2px 4px rgba(255,215,0,0.3))',
+										},
+									}}>
+									<AdminPanelSettings />
+								</ListItemIcon>
+								<ListItemText
+									primary="Admin"
+									primaryTypographyProps={{
+										fontWeight: isActivePath('/admin') ? 700 : 600,
+										fontSize: '1.0625rem',
+										letterSpacing: '-0.2px',
+									}}
+								/>
+								{isActivePath('/admin') && (
+									<Box
+										sx={{
+											width: 6,
+											height: 6,
+											borderRadius: '50%',
+											backgroundColor: 'white',
+											boxShadow: '0 0 10px rgba(255,255,255,0.8)',
+										}}
+									/>
+								)}
+							</ListItemButton>
+						</Link>
+					</ListItem>
+				)}
 			</List>
 
 			{/* Language selectors pour mobile */}
@@ -400,6 +472,43 @@ const Navbar = props => {
 
 					{/* Right side */}
 					<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+						{/* Admin button - only for admin users */}
+						{isUserAdmin && (
+							<Link href="/admin">
+								<Button
+									startIcon={<AdminPanelSettings />}
+									sx={{
+										color: '#fff',
+										fontWeight: 600,
+										textTransform: 'none',
+										fontSize: '0.95rem',
+										px: 2,
+										borderRadius: 2,
+										background: 'rgba(255, 255, 255, 0.15)',
+										border: '1px solid rgba(255, 255, 255, 0.2)',
+										transition: 'all 0.2s ease',
+										display: { xs: 'none', sm: 'flex' },
+										'& .MuiButton-startIcon': {
+											marginRight: '6px',
+										},
+										'& .MuiSvgIcon-root': {
+											fontSize: '1.2rem',
+											transition: 'transform 0.2s ease',
+										},
+										'&:hover': {
+											backgroundColor: 'rgba(255, 255, 255, 0.25)',
+											transform: 'translateY(-2px)',
+											boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+											'& .MuiSvgIcon-root': {
+												transform: 'scale(1.15)',
+											},
+										},
+									}}>
+									Admin
+								</Button>
+							</Link>
+						)}
+
 						{/* Language buttons - only show when not in material/blog detail */}
 						{!router.query.material && !router.query.slug && (
 							<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
