@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Page d'accueil - FR -->
+  <url>
+    <loc>https://www.linguami.com/</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.linguami.com/" />
+  </url>
+
+  <!-- Page d'accueil - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.linguami.com/" />
+  </url>
+
+  <!-- Page d'accueil - EN -->
+  <url>
+    <loc>https://www.linguami.com/en</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.linguami.com/" />
+  </url>
+
+  <!-- Matériels - FR -->
+  <url>
+    <loc>https://www.linguami.com/materials</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials" />
+  </url>
+
+  <!-- Matériels - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials" />
+  </url>
+
+  <!-- Matériels - EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials" />
+  </url>
+
+  <!-- Sections de matériels - Music FR -->
+  <url>
+    <loc>https://www.linguami.com/materials/music</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/music" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/music" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/music" />
+  </url>
+
+  <!-- Sections de matériels - Music RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials/music</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/music" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/music" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/music" />
+  </url>
+
+  <!-- Sections de matériels - Music EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials/music</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/music" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/music" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/music" />
+  </url>
+
+  <!-- Sections de matériels - Video FR -->
+  <url>
+    <loc>https://www.linguami.com/materials/video</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/video" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/video" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/video" />
+  </url>
+
+  <!-- Sections de matériels - Video RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials/video</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/video" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/video" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/video" />
+  </url>
+
+  <!-- Sections de matériels - Video EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials/video</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/video" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/video" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/video" />
+  </url>
+
+  <!-- Sections de matériels - Audio FR -->
+  <url>
+    <loc>https://www.linguami.com/materials/audio</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/audio" />
+  </url>
+
+  <!-- Sections de matériels - Audio RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials/audio</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/audio" />
+  </url>
+
+  <!-- Sections de matériels - Audio EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials/audio</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/audio" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/audio" />
+  </url>
+
+  <!-- Sections de matériels - Text FR -->
+  <url>
+    <loc>https://www.linguami.com/materials/text</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/text" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/text" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/text" />
+  </url>
+
+  <!-- Sections de matériels - Text RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials/text</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/text" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/text" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/text" />
+  </url>
+
+  <!-- Sections de matériels - Text EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials/text</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/text" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/text" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/text" />
+  </url>
+
+  <!-- Sections de matériels - Place FR -->
+  <url>
+    <loc>https://www.linguami.com/materials/place</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/place" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/place" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/place" />
+  </url>
+
+  <!-- Sections de matériels - Place RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/materials/place</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/place" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/place" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/place" />
+  </url>
+
+  <!-- Sections de matériels - Place EN -->
+  <url>
+    <loc>https://www.linguami.com/en/materials/place</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/materials/place" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/materials/place" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/materials/place" />
+  </url>
+
+  <!-- Leçons - FR -->
+  <url>
+    <loc>https://www.linguami.com/lessons</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/lessons" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/lessons" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/lessons" />
+  </url>
+
+  <!-- Leçons - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/lessons</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/lessons" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/lessons" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/lessons" />
+  </url>
+
+  <!-- Leçons - EN -->
+  <url>
+    <loc>https://www.linguami.com/en/lessons</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/lessons" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/lessons" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/lessons" />
+  </url>
+
+  <!-- Premium - FR -->
+  <url>
+    <loc>https://www.linguami.com/premium</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/premium" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/premium" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/premium" />
+  </url>
+
+  <!-- Premium - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/premium</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/premium" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/premium" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/premium" />
+  </url>
+
+  <!-- Premium - EN -->
+  <url>
+    <loc>https://www.linguami.com/en/premium</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/premium" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/premium" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/premium" />
+  </url>
+
+  <!-- Professeur - FR -->
+  <url>
+    <loc>https://www.linguami.com/teacher</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/teacher" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/teacher" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/teacher" />
+  </url>
+
+  <!-- Professeur - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/teacher</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/teacher" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/teacher" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/teacher" />
+  </url>
+
+  <!-- Professeur - EN -->
+  <url>
+    <loc>https://www.linguami.com/en/teacher</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/teacher" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/teacher" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/teacher" />
+  </url>
+
+  <!-- Blog - FR -->
+  <url>
+    <loc>https://www.linguami.com/blog</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/blog" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/blog" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/blog" />
+  </url>
+
+  <!-- Blog - RU -->
+  <url>
+    <loc>https://www.linguami.com/ru/blog</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/blog" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/blog" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/blog" />
+  </url>
+
+  <!-- Blog - EN -->
+  <url>
+    <loc>https://www.linguami.com/en/blog</loc>
+    <lastmod>2025-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.linguami.com/blog" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.linguami.com/ru/blog" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.linguami.com/en/blog" />
+  </url>
+
+</urlset>

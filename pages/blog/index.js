@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import BlogCard from '../../components/blog/BlogCard'
-import Head from 'next/head'
+import SEO from '../../components/SEO'
 import { sortPostsByDate } from '../../utils/helpers'
 import fs from 'fs'
 import path from 'path'
@@ -11,12 +11,43 @@ import { RssFeedRounded } from '@mui/icons-material'
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
 
+	// Mots-clés SEO par langue
+	const keywordsByLang = {
+		fr: 'blog russe, culture russe, langue russe, articles russe, histoire russe, apprendre russe',
+		ru: 'блог французский, французская культура, французский язык, статьи о французском, история Франции',
+		en: 'russian blog, russian culture, russian language, french blog, french culture, language learning blog'
+	}
+
+	// JSON-LD pour Blog
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'Blog',
+		name: `${t('pagetitle')} | Linguami`,
+		description: t('description'),
+		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog`,
+		inLanguage: lang === 'fr' ? 'fr-FR' : lang === 'ru' ? 'ru-RU' : 'en-US',
+		blogPost: posts.slice(0, 5).map((post, index) => ({
+			'@type': 'BlogPosting',
+			headline: post.frontmatter.title,
+			datePublished: post.frontmatter.date,
+			image: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${post.frontmatter.img}`,
+			url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog/${post.slug}`,
+			author: {
+				'@type': 'Organization',
+				name: 'Linguami'
+			}
+		}))
+	}
+
 	return (
 		<>
-			<Head>
-				<title>{`${t('pagetitle')} | Linguami`}</title>
-				<meta name='description' content={t('description')} />
-			</Head>
+			<SEO
+				title={`${t('pagetitle')} | Linguami`}
+				description={t('description')}
+				path='/blog'
+				keywords={keywordsByLang[lang]}
+				jsonLd={jsonLd}
+			/>
 			<Container
 				maxWidth='lg'
 				sx={{

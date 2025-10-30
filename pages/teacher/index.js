@@ -1,6 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { FaSkype, FaEnvelope } from 'react-icons/fa'
-import Head from 'next/head'
+import SEO from '../../components/SEO'
+import { useUserContext } from '../../context/user'
 import {
 	Box,
 	Button,
@@ -15,17 +16,78 @@ import { FormatQuote } from '@mui/icons-material'
 
 const Teacher = () => {
 	const { t, lang } = useTranslation('teacher')
-	const img =
-		lang === 'ru'
-			? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/sidney.jpg`
-			: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/natacha.jpg`
+	const { userLearningLanguage } = useUserContext()
+
+	// Déterminer la langue d'apprentissage (fallback sur lang si pas défini)
+	const learningLang = userLearningLanguage || (lang === 'ru' ? 'fr' : 'ru')
+
+	// Si l'utilisateur apprend le russe → Natacha, si français → Sidney
+	const isLearningRussian = learningLang === 'ru'
+	const teacherName = isLearningRussian ? 'Natacha' : 'Sidney'
+	const img = isLearningRussian
+		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/natacha.jpg`
+		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/sidney.jpg`
+
+	// Mots-clés SEO basés sur la langue d'apprentissage et la langue d'interface
+	const getKeywords = () => {
+		if (isLearningRussian) {
+			// Apprend le russe → Natacha (professeure de russe)
+			if (lang === 'ru') return 'преподаватель русского, частные уроки русского, учить русский с носителем, уроки русского онлайн'
+			if (lang === 'en') return 'russian teacher, private russian lessons, learn russian with native speaker, online russian lessons, russian skype lessons'
+			return 'professeur russe, cours particuliers russe, apprendre russe avec professeur natif, leçons russe en ligne, cours russe skype'
+		} else {
+			// Apprend le français → Sidney (professeur de français)
+			if (lang === 'ru') return 'преподаватель французского, частные уроки французского, учить французский с носителем, уроки французского онлайн'
+			if (lang === 'en') return 'french teacher, private french lessons, learn french with native speaker, online french lessons, french skype lessons'
+			return 'professeur français, cours particuliers français, apprendre français avec professeur natif, leçons français en ligne'
+		}
+	}
+
+	// Job title basé sur la langue d'apprentissage et la langue d'interface
+	const getJobTitle = () => {
+		if (isLearningRussian) {
+			if (lang === 'ru') return 'Сертифицированный преподаватель русского'
+			if (lang === 'en') return 'Certified Russian Teacher'
+			return 'Professeure de russe certifiée'
+		} else {
+			if (lang === 'ru') return 'Сертифицированный преподаватель французского'
+			if (lang === 'en') return 'Certified French Teacher'
+			return 'Professeur de français certifié'
+		}
+	}
+
+	// JSON-LD pour Person/Teacher
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'Person',
+		name: teacherName,
+		jobTitle: getJobTitle(),
+		description: t('description'),
+		image: img,
+		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/teacher`,
+		knowsLanguage: [
+			{ '@type': 'Language', name: 'Russian', alternateName: 'ru' },
+			{ '@type': 'Language', name: 'French', alternateName: 'fr' },
+			{ '@type': 'Language', name: 'English', alternateName: 'en' }
+		],
+		teachesLanguage: isLearningRussian ? 'Russian' : 'French',
+		affiliation: {
+			'@type': 'Organization',
+			name: 'Linguami',
+			url: 'https://www.linguami.com'
+		}
+	}
 
 	return (
 		<>
-			<Head>
-				<title>{`${t('pagetitle')} | Linguami`}</title>
-				<meta name='description' content={t('description')} />
-			</Head>
+			<SEO
+				title={`${t('pagetitle')} | Linguami`}
+				description={t('description')}
+				path='/teacher'
+				image={img}
+				keywords={getKeywords()}
+				jsonLd={jsonLd}
+			/>
 
 			{/* Hero Section */}
 			<Box
@@ -120,11 +182,10 @@ const Teacher = () => {
 							textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
 							px: 2,
 						}}>
-						{t('title')}
+						{t(isLearningRussian ? 'titleRussian' : 'titleFrench')}
 					</Typography>
 
-					{/* Sous-titre pour français */}
-					{lang === 'fr' && (
+					{/* Sous-titre */}
 						<Typography
 							variant='h6'
 							align='center'
@@ -136,10 +197,8 @@ const Teacher = () => {
 								px: 2,
 								lineHeight: 1.6,
 							}}>
-							Professeure de l&apos;Alliance française <br /> diplômée de
-							l&apos;université de Moscou
+							{t(isLearningRussian ? 'subtitleRussian' : 'subtitleFrench')}
 						</Typography>
-					)}
 
 					{/* Label contact */}
 					<Typography
@@ -150,7 +209,7 @@ const Teacher = () => {
 							mb: 3,
 							fontSize: { xs: '1rem', sm: '1.125rem' },
 						}}>
-						{t('contact')}
+						{t(isLearningRussian ? 'contactRussian' : 'contactFrench')}
 					</Typography>
 
 					{/* Boutons de contact */}
@@ -162,7 +221,7 @@ const Teacher = () => {
 							px: { xs: 2, sm: 0 },
 						}}>
 						<Button
-							href={t('skype')}
+							href={t(isLearningRussian ? 'skypeRussian' : 'skypeFrench')}
 							variant='contained'
 							startIcon={<FaSkype />}
 							sx={{
@@ -187,7 +246,7 @@ const Teacher = () => {
 							Skype
 						</Button>
 						<Button
-							href={t('mail')}
+							href={t(isLearningRussian ? 'mailRussian' : 'mailFrench')}
 							variant='outlined'
 							startIcon={<FaEnvelope />}
 							sx={{
@@ -234,7 +293,7 @@ const Teacher = () => {
 						textAlign: 'center',
 						mb: 6,
 					}}>
-					{t('text')}
+					{t(isLearningRussian ? 'textRussian' : 'textFrench')}
 				</Typography>
 
 				{/* Section des avis */}
@@ -252,7 +311,7 @@ const Teacher = () => {
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
 							}}>
-							L&apos;avis des élèves
+							{t('reviewsTitle')}
 						</Typography>
 						<Typography
 							variant='subtitle1'
@@ -261,7 +320,7 @@ const Teacher = () => {
 								color: '#718096',
 								mb: 5,
 							}}>
-							Témoignages de nos apprenants
+							{t('reviewsSubtitle')}
 						</Typography>
 
 						<Stack

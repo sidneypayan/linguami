@@ -8,7 +8,9 @@ import { store } from '../features/store'
 import { Provider } from 'react-redux'
 import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material'
 import { purple, grey } from '@mui/material/colors'
-import Script from 'next/script'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import * as gtm from '../lib/gtm'
 
 // Créer le thème en dehors du composant pour éviter la recréation à chaque render
 const baseTheme = createTheme({
@@ -93,23 +95,28 @@ const baseTheme = createTheme({
 const myTheme = responsiveFontSizes(baseTheme)
 
 function MyApp({ Component, pageProps }) {
+	const router = useRouter()
+
+	// Tracking des changements de page pour GTM/GA
+	useEffect(() => {
+		// Envoyer le pageview initial
+		gtm.pageview(router.asPath, router.locale)
+
+		// Écouter les changements de route
+		const handleRouteChange = (url) => {
+			gtm.pageview(url, router.locale)
+		}
+
+		router.events.on('routeChangeComplete', handleRouteChange)
+
+		// Nettoyage
+		return () => {
+			router.events.off('routeChangeComplete', handleRouteChange)
+		}
+	}, [router.asPath, router.events, router.locale])
 
 	return (
 		<>
-			<Script
-				id='gtm-script'
-				strategy='afterInteractive'
-				dangerouslySetInnerHTML={{
-					__html: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');
-          `,
-				}}
-			/>
-
 			<ThemeProvider theme={myTheme}>
 				<UserProvider>
 					<Provider store={store}>

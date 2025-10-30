@@ -1,12 +1,20 @@
 import Link from 'next/link'
 import useTranslation from 'next-translate/useTranslation'
+import SEO from '../components/SEO'
 import { Box, Container, Typography, Button } from '@mui/material'
 import { HomeRounded, SearchOffRounded, ErrorOutlineRounded } from '@mui/icons-material'
 
 export default function Custom404() {
-	const { t } = useTranslation('common')
+	const { t, lang } = useTranslation('common')
 
 	return (
+		<>
+			<SEO
+				title={`${t('404Title')} | Linguami`}
+				description={t('404Description')}
+				path='/404'
+				noindex={true}  // Page d'erreur, ne pas indexer
+			/>
 		<Box
 			sx={{
 				minHeight: '100vh',
@@ -209,5 +217,6 @@ export default function Custom404() {
 				</Box>
 			</Container>
 		</Box>
+		</>
 	)
 }

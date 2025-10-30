@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
 import LessonsMenu from '../../components/lessons/LessonsMenu'
 import Lesson from '../../components/lessons/Lesson'
-import Head from 'next/head'
+import SEO from '../../components/SEO'
 import { Stack } from '@mui/material'
 import {
 	getLessons,
@@ -56,12 +56,39 @@ const Lessons = () => {
 		}
 	}, [dispatch, selectedLesson])
 
+	// Mots-clés SEO par langue
+	const keywordsByLang = {
+		fr: 'leçons russe, cours russe, exercices russe, grammaire russe, apprendre russe en ligne, leçons interactives',
+		ru: 'уроки французского, курсы французского, упражнения французский, грамматика французского, учить французский онлайн',
+		en: 'russian lessons, french lessons, language courses, interactive lessons, learn russian online, learn french online'
+	}
+
+	// JSON-LD pour Course
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'Course',
+		name: `${t('pagetitle')} | Linguami`,
+		description: t('description'),
+		provider: {
+			'@type': 'Organization',
+			name: 'Linguami',
+			url: 'https://www.linguami.com'
+		},
+		courseMode: 'online',
+		inLanguage: lang === 'fr' ? ['ru-RU', 'fr-FR'] : lang === 'ru' ? ['fr-FR', 'ru-RU'] : ['ru-RU', 'fr-FR', 'en-US'],
+		educationalLevel: 'Beginner to Advanced',
+		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/lessons`
+	}
+
 	return (
 		<>
-			<Head>
-				<title>{`${t('pagetitle')} | Linguami`}</title>
-				<meta name='description' content={t('description')} />
-			</Head>
+			<SEO
+				title={`${t('pagetitle')} | Linguami`}
+				description={t('description')}
+				path='/lessons'
+				keywords={keywordsByLang[lang]}
+				jsonLd={jsonLd}
+			/>
 			<Stack
 				direction={{ xs: 'column', md: 'row' }}
 				spacing={{ xs: 0, md: 4 }}

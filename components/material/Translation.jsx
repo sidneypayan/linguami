@@ -100,16 +100,17 @@ const Translation = ({ coordinates, materialId, userId }) => {
 
 		const viewportWidth = window.innerWidth
 		const viewportHeight = window.innerHeight
-		const padding = 10 // Marge de sécurité
+		const padding = 20 // Marge de sécurité
+		const isMobile = viewportWidth <= 600
 
 		// Calculer la largeur du conteneur selon la taille d'écran
 		const containerWidth =
-			viewportWidth <= 600 ? Math.min(viewportWidth - 40, 350) : 350
-		const containerHeight = 300 // Hauteur approximative
-		const offset = 10 // Décalage depuis le point de clic
+			isMobile ? Math.min(viewportWidth - 40, 350) : 380
+		const containerHeight = 500 // Hauteur maximale du conteneur (correspond au maxHeight du Paper)
+		const offset = isMobile ? 25 : 2 // Plus d'espace sur mobile pour être sous le mot
 
-		// Position de départ : légèrement en dessous et à droite du mot cliqué
-		let left = coordinates.x
+		// Position de départ : très proche du mot cliqué
+		let left = isMobile ? 20 : coordinates.x - 10 // Sur mobile, centrer horizontalement
 		let top = coordinates.y + offset
 
 		// Ajuster horizontalement

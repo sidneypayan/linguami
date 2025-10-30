@@ -11,10 +11,51 @@ import {
 	Divider,
 	Button,
 } from '@mui/material'
-
+import useTranslation from 'next-translate/useTranslation'
+import SEO from '../../components/SEO'
 import { CheckCircle } from '@mui/icons-material'
 
 const Premium = () => {
+	const { t, lang } = useTranslation('premium')
+
+	// Mots-clés SEO par langue
+	const keywordsByLang = {
+		fr: 'premium linguami, abonnement linguami, dictionnaire illimité, flashcards, traduction russe, apprendre russe premium',
+		ru: 'премиум linguami, подписка linguami, неограниченный словарь, флэш-карты, перевод французский',
+		en: 'linguami premium, premium subscription, unlimited dictionary, flashcards, language learning premium, russian french premium'
+	}
+
+	// JSON-LD pour Product/Offer
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'Product',
+		name: 'Linguami Premium',
+		description: t('description'),
+		brand: {
+			'@type': 'Brand',
+			name: 'Linguami'
+		},
+		offers: [
+			{
+				'@type': 'Offer',
+				name: '1 Month Premium',
+				price: '6.00',
+				priceCurrency: 'EUR',
+				availability: 'https://schema.org/InStock',
+				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/premium`,
+				priceValidUntil: '2026-12-31'
+			},
+			{
+				'@type': 'Offer',
+				name: '3 Months Premium',
+				price: '15.00',
+				priceCurrency: 'EUR',
+				availability: 'https://schema.org/InStock',
+				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/premium`,
+				priceValidUntil: '2026-12-31'
+			}
+		]
+	}
 	const StyledCard = styled(Card)({
 		padding: '1rem',
 		maxWidth: '350px',
@@ -23,6 +64,14 @@ const Premium = () => {
 	})
 
 	return (
+		<>
+			<SEO
+				title={`${t('pagetitle')} | Linguami`}
+				description={t('description')}
+				path='/premium'
+				keywords={keywordsByLang[lang]}
+				jsonLd={jsonLd}
+			/>
 		<Container sx={{ margin: '5rem auto', maxWidth: '100%', width: '800px' }}>
 			<Typography variant='h3' component='h1' textAlign='center' mb={5}>
 				Nos offres premium
@@ -177,6 +226,7 @@ const Premium = () => {
 				</List>
 			</Card>
 		</Container>
+		</>
 	)
 }
 

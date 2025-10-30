@@ -1,31 +1,82 @@
 import useTranslation from 'next-translate/useTranslation'
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
 import { materials_ru, materials_fr } from '../../utils/constants'
-import Head from 'next/head'
+import SEO from '../../components/SEO'
 import { Box, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { useUserContext } from '../../context/user'
 
 const Material = () => {
 	const { t, lang } = useTranslation('materials')
+	const { userLearningLanguage } = useUserContext()
 	const [materials, setMaterials] = useState([])
 	const [text, setText] = useState([])
 	const [video, setVideo] = useState([])
 	const [music, setMusic] = useState([])
 
 	useEffect(() => {
-		if (lang === 'fr') setMaterials(materials_ru)
-		if (lang === 'ru') setMaterials(materials_fr)
+		// Détermine quelle langue l'utilisateur apprend
+		// Si userLearningLanguage existe, on l'utilise, sinon on se base sur lang
+		const learningLang = userLearningLanguage || (lang === 'ru' ? 'fr' : 'ru')
+
+		if (learningLang === 'ru') {
+			setMaterials(materials_ru) // Apprendre le russe
+		} else if (learningLang === 'fr') {
+			setMaterials(materials_fr) // Apprendre le français
+		} else {
+			// Par défaut ou si les deux langues
+			setMaterials([...materials_ru, ...materials_fr])
+		}
+
 		setText(materials.filter(material => material.category === 'text & audio'))
 		setVideo(materials.filter(material => material.category === 'video'))
 		setMusic(materials.filter(material => material.category === 'music'))
-	}, [lang, materials])
+	}, [userLearningLanguage, lang, materials])
+
+	// Mots-clés SEO par langue
+	const keywordsByLang = {
+		fr: 'matériel russe, apprendre russe, vidéos russes, textes russes, audio russe, dialogues russes, chansons russes, cours russe',
+		ru: 'материалы французский, изучение французского, французские видео, французские тексты, французское аудио, французские диалоги',
+		en: 'russian materials, learn russian, russian videos, french materials, learn french, language learning materials, russian audio, french audio'
+	}
+
+	// JSON-LD pour ItemList (liste de matériaux)
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'ItemList',
+		name: lang === 'fr' ? 'Matériel pédagogique' : lang === 'ru' ? 'Учебные материалы' : 'Learning Materials',
+		description: t('description'),
+		itemListElement: [
+			{
+				'@type': 'ListItem',
+				position: 1,
+				name: t('text'),
+				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#texts`
+			},
+			{
+				'@type': 'ListItem',
+				position: 2,
+				name: t('video'),
+				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#videos`
+			},
+			{
+				'@type': 'ListItem',
+				position: 3,
+				name: t('music'),
+				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#audio`
+			}
+		]
+	}
 
 	return (
 		<>
-			<Head>
-				<title>{`${t('pagetitle')} | Linguami`}</title>
-				<meta name='description' content={t('description')} />
-			</Head>
+			<SEO
+				title={`${t('pagetitle')} | Linguami`}
+				description={t('description')}
+				path='/materials'
+				keywords={keywordsByLang[lang]}
+				jsonLd={jsonLd}
+			/>
 
 			<Box
 				maxWidth='85%'

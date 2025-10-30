@@ -2,6 +2,7 @@ import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 import { mergeUserMaterial } from '../../utils/helpers'
+import { getToastMessage } from '../../utils/toastMessages'
 
 const initialState = {
 	materials: [],
@@ -380,15 +381,13 @@ const materialsSlice = createSlice({
 				state.user_material_status_error = payload
 			})
 			.addCase(addBeingStudiedMaterial.fulfilled, () => {
-				toast.success("Matériel ajouté à vos matériels en cours d'étude")
+				toast.success(getToastMessage('materialAddedToStudying'))
 			})
 			.addCase(removeBeingStudiedMaterial.fulfilled, () => {
-				toast.success("Matériel retiré de vos matériels en cours d'étude")
+				toast.success(getToastMessage('materialRemovedFromStudying'))
 			})
 			.addCase(addMaterialToStudied.fulfilled, () => {
-				toast.success(
-					'Bravo, un pas de plus vers la maîtrise de la langue russe !'
-				)
+				toast.success(getToastMessage('congratsProgress'))
 			})
 			.addCase(getBookChapters.pending, state => {
 				state.chapters_loading = true

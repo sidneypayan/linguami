@@ -9,7 +9,7 @@ import {
 } from '../../features/words/wordsSlice'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import Link from 'next/link'
-import Head from 'next/head'
+import SEO from '../../components/SEO'
 import {
 	Box,
 	Button,
@@ -117,11 +117,27 @@ const Dictionary = () => {
 		)
 	}
 
+	// Descriptions par langue pour la page
+	const descriptions = {
+		fr: 'Votre dictionnaire personnel avec tous vos mots sauvegardés. Révisez votre vocabulaire avec les flashcards et suivez votre progression.',
+		ru: 'Ваш личный словарь со всеми сохраненными словами. Повторяйте словарный запас с помощью флеш-карт и отслеживайте свой прогресс.',
+		en: 'Your personal dictionary with all your saved words. Review your vocabulary with flashcards and track your progress.'
+	}
+
+	const titles = {
+		fr: 'Mon Dictionnaire Personnel',
+		ru: 'Мой Личный Словарь',
+		en: 'My Personal Dictionary'
+	}
+
 	return (
 		<>
-			<Head>
-				<title>Linguami | Dictionnaire personnel</title>
-			</Head>
+			<SEO
+				title={`${titles[router.locale] || titles.fr} | Linguami`}
+				description={descriptions[router.locale] || descriptions.fr}
+				path='/dictionary'
+				noindex={true}  // Page privée, ne pas indexer
+			/>
 
 			{user_words.length > 0 ? (
 				<Container

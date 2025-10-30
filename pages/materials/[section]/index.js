@@ -16,11 +16,11 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
-import Head from 'next/head'
+import SEO from '../../../components/SEO'
 import { useUserContext } from '../../../context/user'
 
 const Section = () => {
-	const { t } = useTranslation('materials')
+	const { t, lang } = useTranslation('materials')
 	const { userLearningLanguage } = useUserContext()
 	const router = useRouter()
 	const { section } = router.query
@@ -76,12 +76,41 @@ const Section = () => {
 		)
 	}
 
+	// Mots-clés SEO par section et langue
+	const getSectionKeywords = () => {
+		const sectionName = t(section || 'materials')
+		if (lang === 'fr') {
+			return `${sectionName} russe, matériel ${sectionName}, apprendre russe avec ${sectionName}`
+		} else if (lang === 'ru') {
+			return `${sectionName} французский, материалы ${sectionName}, учить французский`
+		} else {
+			return `${sectionName} russian, ${sectionName} french, language learning ${sectionName}`
+		}
+	}
+
+	// JSON-LD pour CollectionPage
+	const jsonLd = section ? {
+		'@context': 'https://schema.org',
+		'@type': 'CollectionPage',
+		name: `${t(section)} | ${t('pagetitle')}`,
+		description: t('description'),
+		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials/${section}`,
+		inLanguage: lang === 'fr' ? 'fr-FR' : lang === 'ru' ? 'ru-RU' : 'en-US',
+		about: {
+			'@type': 'Thing',
+			name: t(section)
+		}
+	} : null
+
 	return (
 		<>
-			<Head>
-				<title>{`${t('pagetitle')} | Linguami`}</title>
-				<meta name='description' content={t('description')} />
-			</Head>
+			<SEO
+				title={`${t(section || 'pagetitle')} | Linguami`}
+				description={t('description')}
+				path={`/materials/${section || ''}`}
+				keywords={getSectionKeywords()}
+				jsonLd={jsonLd}
+			/>
 
 			<Container sx={{ marginTop: '6rem', marginBottom: '4rem' }}>
 				<Box sx={{ mb: 3 }}>

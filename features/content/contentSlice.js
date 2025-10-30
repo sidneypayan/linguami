@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
+import { getToastMessage } from '../../utils/toastMessages'
 
 const initialState = {
 	editingContent: {},
@@ -81,7 +82,7 @@ const contentSlice = createSlice({
 				state.create_content_error = null
 			})
 			.addCase(createContent.fulfilled, state => {
-				toast.success('POST SUCCESS !')
+				toast.success(getToastMessage('contentPostSuccess'))
 				state.create_content_loading = false
 				state.create_content_error = null
 			})
@@ -108,7 +109,7 @@ const contentSlice = createSlice({
 			.addCase(updateContent.fulfilled, state => {
 				state.isEditingContent = false
 				state.editingContent = {}
-				toast.success('EDIT SUCCESS !')
+				toast.success(getToastMessage('contentEditSuccess'))
 			})
 			.addCase(updateContent.rejected, (_, { payload }) => {
 				state.edit_content_loading = true

@@ -1,20 +1,57 @@
-import Head from 'next/head'
+import SEO from '../../components/SEO'
 import Image from 'next/image'
 import Link from 'next/link'
 import matter from 'gray-matter'
 import { marked } from 'marked'
 import fs from 'fs'
 import path from 'path'
+import useTranslation from 'next-translate/useTranslation'
 import { Box, Container, Typography, IconButton, Chip } from '@mui/material'
 import { ArrowBack, CalendarTodayRounded } from '@mui/icons-material'
 
-const Post = ({ frontmatter: { title, date, img }, slug, content }) => {
+const Post = ({ frontmatter: { title, date, img, description }, slug, content }) => {
+	const { lang } = useTranslation()
+
+	// Générer une description si elle n'existe pas dans le frontmatter
+	const pageDescription = description || `${title} - Article publié le ${date} sur le blog Linguami`
+
+	// JSON-LD pour l'article de blog
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		headline: title,
+		datePublished: date,
+		image: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${img}`,
+		author: {
+			'@type': 'Organization',
+			name: 'Linguami',
+			url: 'https://www.linguami.com'
+		},
+		publisher: {
+			'@type': 'Organization',
+			name: 'Linguami',
+			logo: {
+				'@type': 'ImageObject',
+				url: 'https://www.linguami.com/logo.png'
+			}
+		},
+		mainEntityOfPage: {
+			'@type': 'WebPage',
+			'@id': `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog/${slug}`
+		},
+		description: pageDescription,
+		inLanguage: lang === 'fr' ? 'fr-FR' : lang === 'ru' ? 'ru-RU' : 'en-US'
+	}
+
 	return (
 		<>
-			<Head>
-				<title>{title} | Linguami Blog</title>
-				{/* <meta name='description' content={description} /> */}
-			</Head>
+			<SEO
+				title={`${title} | Linguami Blog`}
+				description={pageDescription}
+				path={`/blog/${slug}`}
+				image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${img}`}
+				jsonLd={jsonLd}
+			/>
 
 			{/* Hero Section with Image */}
 			<Box

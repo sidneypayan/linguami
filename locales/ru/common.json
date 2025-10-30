@@ -29,5 +29,12 @@
 	"passwordUpdateSuccess": "Пароль успешно обновлён",
 	"passwordUpdateError": "Ошибка с паролем",
 	"languageUpdateError": "Ошибка при обновлении языка",
-	"genericError": "Произошла ошибка"
+	"genericError": "Произошла ошибка",
+	"contentPostSuccess": "Контент успешно опубликован!",
+	"contentEditSuccess": "Контент успешно обновлён!",
+	"materialAddedToStudying": "Материал добавлен в изучаемые материалы",
+	"materialRemovedFromStudying": "Материал удалён из изучаемых материалов",
+	"congratsProgress": "Поздравляем, ещё один шаг к освоению языка!",
+	"congratsProgressRussian": "Поздравляем, ещё один шаг к освоению русского языка!",
+	"congratsProgressFrench": "Поздравляем, ещё один шаг к освоению французского языка!"
 }

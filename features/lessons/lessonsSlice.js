@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { supabase } from '../../lib/supabase'
 import { toast } from 'react-toastify'
+import { getToastMessage } from '../../utils/toastMessages'
 
 const initialState = {
 	lessons: [],
@@ -154,9 +155,7 @@ const lessonsSlice = createSlice({
 				state.user_lesson_status_error = payload
 			})
 			.addCase(addLessonToStudied.fulfilled, () => {
-				toast.success(
-					'Bravo, un pas de plus vers la maîtrise de la langue russe !'
-				)
+				toast.success(getToastMessage('congratsProgress'))
 			})
 	},
 })

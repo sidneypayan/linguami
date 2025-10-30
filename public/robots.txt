@@ -1,0 +1,59 @@
+# robots.txt pour Linguami
+# Site d'apprentissage multilingue (français, russe, anglais)
+
+# Configuration pour tous les robots (Google, Yandex, Bing, etc.)
+User-agent: *
+Allow: /
+Allow: /fr/
+Allow: /ru/
+Allow: /en/
+
+# Pages à ne pas indexer
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /my-materials
+
+# Pages de connexion/inscription (pas utiles pour le SEO)
+Disallow: /signin
+Disallow: /login
+Disallow: /register
+Disallow: /confirm-signup
+Disallow: /set-password
+Disallow: /set-password-signin
+Disallow: /update-password
+
+# Configuration spécifique pour Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Configuration spécifique pour Yandex (moteur de recherche russe)
+User-agent: Yandex
+Allow: /
+Crawl-delay: 0
+# Yandex doit pouvoir accéder aux images et styles
+Allow: /images/
+Allow: /styles/
+
+# Configuration pour Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Empêcher les bots malveillants
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap principal
+Sitemap: https://www.linguami.com/sitemap.xml
+
+# Host (important pour Yandex)
+Host: https://www.linguami.com

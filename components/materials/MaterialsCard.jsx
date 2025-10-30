@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import useTranslation from 'next-translate/useTranslation'
 import { Box, Typography } from '@mui/material'
 
 const MaterialsCard = ({ material }) => {
+	const { t } = useTranslation('materials')
+
 	return (
 		<Link href={`/materials/${material.section}`}>
 			<Box
@@ -52,7 +55,7 @@ const MaterialsCard = ({ material }) => {
 						WebkitTextFillColor: 'transparent',
 						backgroundClip: 'text',
 					}}>
-					{material.title}
+					{t(material.section)}
 				</Typography>
 			</Box>
 		</Link>
