@@ -53,7 +53,7 @@ const AskPassword = () => {
 			mounted = false
 			subscription?.unsubscribe?.()
 		}
-	}, [])
+	}, [t])
 
 	const handleSubmit = async e => {
 		e.preventDefault()
