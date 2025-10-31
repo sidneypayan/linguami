@@ -31,5 +31,13 @@
 	"milestoneReached": "Milestone reached!",
 	"gold": "Gold",
 	"goldEarned": "Total Earned",
-	"totalGoldCollected": "Total gold collected"
+	"totalGoldCollected": "Total gold collected",
+	"badges": "Badges",
+	"badgesDescription": "Unlock badges by reaching your goals",
+	"levelBadges": "Level Badges",
+	"streakBadges": "Streak Badges",
+	"wordsAddedBadges": "Words Added Badges",
+	"wordsReviewedBadges": "Words Reviewed Badges",
+	"materialsFinishedBadges": "Materials Finished Badges",
+	"badgesCompleted": "completed"
 }

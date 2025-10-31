@@ -31,5 +31,13 @@
 	"milestoneReached": "Цель достигнута!",
 	"gold": "Золото",
 	"goldEarned": "Всего Заработано",
-	"totalGoldCollected": "Всего золота собрано"
+	"totalGoldCollected": "Всего золота собрано",
+	"badges": "Значки",
+	"badgesDescription": "Разблокируйте значки, достигая своих целей",
+	"levelBadges": "Значки уровня",
+	"streakBadges": "Значки серии",
+	"wordsAddedBadges": "Значки добавленных слов",
+	"wordsReviewedBadges": "Значки повторенных слов",
+	"materialsFinishedBadges": "Значки завершенных материалов",
+	"badgesCompleted": "завершено"
 }

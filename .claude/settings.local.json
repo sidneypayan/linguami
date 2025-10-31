@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(npm run build:*)",
-      "Bash(npx next lint:*)"
+      "Bash(npx next lint:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

@@ -31,5 +31,13 @@
 	"milestoneReached": "Objectif atteint !",
 	"gold": "Or",
 	"goldEarned": "Total Gagné",
-	"totalGoldCollected": "Total d'or ramassé"
+	"totalGoldCollected": "Total d'or ramassé",
+	"badges": "Badges",
+	"badgesDescription": "Débloquez des badges en atteignant vos objectifs",
+	"levelBadges": "Badges de niveau",
+	"streakBadges": "Badges de série",
+	"wordsAddedBadges": "Badges de mots ajoutés",
+	"wordsReviewedBadges": "Badges de mots révisés",
+	"materialsFinishedBadges": "Badges de matériaux terminés",
+	"badgesCompleted": "complété"
 }
