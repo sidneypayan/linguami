@@ -110,7 +110,7 @@ const Hero = () => {
 								fontWeight: 600,
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
-							Plateforme d'apprentissage interactive
+							Plateforme d&apos;apprentissage interactive
 						</Typography>
 					</Box>
 
