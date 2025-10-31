@@ -2,7 +2,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import {
 	Box,
 	Button,
@@ -12,8 +12,14 @@ import {
 	Container,
 	InputAdornment,
 	CircularProgress,
+	LinearProgress,
 } from '@mui/material'
-import { HomeRounded, LockRounded } from '@mui/icons-material'
+import {
+	HomeRounded,
+	LockRounded,
+	CheckCircleRounded,
+	CancelRounded,
+} from '@mui/icons-material'
 import { useUserContext } from '../context/user'
 import { supabase } from '../lib/supabase' // ⬅️ important
 
@@ -26,6 +32,26 @@ const AskPassword = () => {
 	// const [confirm, setConfirm] = useState('') // optionnel
 	const [canUpdate, setCanUpdate] = useState(false)
 	const [loading, setLoading] = useState(true)
+
+	// Validation du mot de passe
+	const passwordValidation = useMemo(() => {
+		return {
+			minLength: password.length >= 8,
+			hasUpperCase: /[A-Z]/.test(password),
+			hasNumber: /[0-9]/.test(password),
+			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+		}
+	}, [password])
+
+	const passwordStrength = useMemo(() => {
+		const checks = Object.values(passwordValidation)
+		const passed = checks.filter(Boolean).length
+		return (passed / checks.length) * 100
+	}, [passwordValidation])
+
+	const isPasswordValid = useMemo(() => {
+		return Object.values(passwordValidation).every(Boolean)
+	}, [passwordValidation])
 
 	useEffect(() => {
 		let mounted = true
@@ -65,8 +91,8 @@ const AskPassword = () => {
 			toast.error(t('enterPassword'))
 			return
 		}
-		if (password.length < 8) {
-			toast.error(t('passwordMinLength8'))
+		if (!isPasswordValid) {
+			toast.error(t('passwordRequirements'))
 			return
 		}
 		// if (password !== confirm) { toast.error('Les mots de passe ne correspondent pas'); return }
@@ -202,6 +228,72 @@ const AskPassword = () => {
 								},
 							}}
 						/>
+
+						{/* Password strength indicator */}
+						{password && (
+							<Box sx={{ mt: -1, mb: 1 }}>
+								<LinearProgress
+									variant='determinate'
+									value={passwordStrength}
+									sx={{
+										height: 6,
+										borderRadius: 3,
+										backgroundColor: '#E5E7EB',
+										'& .MuiLinearProgress-bar': {
+											borderRadius: 3,
+											backgroundColor:
+												passwordStrength < 50
+													? '#EF4444'
+													: passwordStrength < 75
+													? '#F59E0B'
+													: '#10B981',
+										},
+									}}
+								/>
+								<Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.minLength ? (
+											<CheckCircleRounded sx={{ fontSize: '1rem', color: '#10B981' }} />
+										) : (
+											<CancelRounded sx={{ fontSize: '1rem', color: '#EF4444' }} />
+										)}
+										<Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordMinLength')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasUpperCase ? (
+											<CheckCircleRounded sx={{ fontSize: '1rem', color: '#10B981' }} />
+										) : (
+											<CancelRounded sx={{ fontSize: '1rem', color: '#EF4444' }} />
+										)}
+										<Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordUpperCase')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasNumber ? (
+											<CheckCircleRounded sx={{ fontSize: '1rem', color: '#10B981' }} />
+										) : (
+											<CancelRounded sx={{ fontSize: '1rem', color: '#EF4444' }} />
+										)}
+										<Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordNumber')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasSpecialChar ? (
+											<CheckCircleRounded sx={{ fontSize: '1rem', color: '#10B981' }} />
+										) : (
+											<CancelRounded sx={{ fontSize: '1rem', color: '#EF4444' }} />
+										)}
+										<Typography variant='body2' sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordSpecialChar')}
+										</Typography>
+									</Box>
+								</Box>
+							</Box>
+						)}
 
 						<Button
 							fullWidth

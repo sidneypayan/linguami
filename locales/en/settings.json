@@ -1,0 +1,23 @@
+{
+	"pageTitle": "Settings",
+	"title": "Account Settings",
+	"subtitle": "Manage your personal information and preferences",
+	"personalInfo": "Personal Information",
+	"languagePreferences": "Language Preferences",
+	"avatarSettings": "Avatar",
+	"username": "Username",
+	"email": "Email address",
+	"dateOfBirth": "Date of birth",
+	"languageLevel": "Language level",
+	"avatar": "Avatar",
+	"chooseAvatar": "Choose your avatar",
+	"avatarUpdated": "Avatar updated successfully",
+	"beginner": "Beginner",
+	"intermediate": "Intermediate",
+	"advanced": "Advanced",
+	"save": "Save",
+	"cancel": "Cancel",
+	"edit": "Edit",
+	"updateSuccess": "Profile updated successfully",
+	"updateError": "Error updating profile"
+}

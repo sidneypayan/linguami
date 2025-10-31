@@ -90,19 +90,39 @@ const Pagination = () => {
 					onClick={prevPage}
 					disabled={page === 1}
 					sx={{
-						backgroundColor: 'rgba(255, 255, 255, 0.9)',
-						border: '2px solid #e0e0e0',
-						transition: 'all 0.2s ease',
+						width: '44px',
+						height: '44px',
+						backgroundColor: 'white',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						borderRadius: 2,
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						position: 'relative',
+						overflow: 'hidden',
+						boxShadow: '0 2px 6px rgba(139, 92, 246, 0.08)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							backgroundColor: '#667eea',
-							borderColor: '#667eea',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+							borderColor: 'rgba(139, 92, 246, 0.8)',
 							color: 'white',
-							transform: 'translateX(-2px)',
+							transform: 'translateX(-3px) scale(1.05)',
+							boxShadow: '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 						'&:disabled': {
 							backgroundColor: '#f5f5f5',
-							borderColor: '#e0e0e0',
-							opacity: 0.5,
+							borderColor: 'rgba(139, 92, 246, 0.1)',
+							opacity: 0.4,
 						},
 					}}>
 					<ChevronLeft />
@@ -130,27 +150,45 @@ const Pagination = () => {
 							onClick={() => dispatch(changePage(pageNumber))}
 							variant={page === pageNumber ? 'contained' : 'outlined'}
 							sx={{
-								minWidth: '40px',
-								height: '40px',
+								minWidth: '44px',
+								height: '44px',
 								borderRadius: 2,
-								fontWeight: 600,
-								fontSize: '0.95rem',
-								border: '2px solid',
-								borderColor: page === pageNumber ? '#667eea' : '#e0e0e0',
-								background:
-									page === pageNumber
-										? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-										: 'rgba(255, 255, 255, 0.9)',
+								fontWeight: 700,
+								fontSize: '1rem',
+								border: '1px solid',
+								borderColor: page === pageNumber ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
+								background: page === pageNumber
+									? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
+									: 'white',
 								color: page === pageNumber ? 'white' : '#4a5568',
-								transition: 'all 0.2s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								boxShadow: page === pageNumber
+									? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)'
+									: '0 2px 6px rgba(139, 92, 246, 0.08)',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
-									borderColor: '#667eea',
-									backgroundColor:
-										page === pageNumber
-											? 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
-											: 'rgba(102, 126, 234, 0.1)',
-									transform: 'translateY(-2px)',
-									boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+									borderColor: 'rgba(139, 92, 246, 0.8)',
+									background: page === pageNumber
+										? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
+										: 'rgba(139, 92, 246, 0.08)',
+									transform: 'translateY(-2px) scale(1.05)',
+									boxShadow: page === pageNumber
+										? '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)'
+										: '0 4px 12px rgba(139, 92, 246, 0.25)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 							}}>
 							{pageNumber}
@@ -163,19 +201,39 @@ const Pagination = () => {
 					onClick={nextPage}
 					disabled={page === numOfPages}
 					sx={{
-						backgroundColor: 'rgba(255, 255, 255, 0.9)',
-						border: '2px solid #e0e0e0',
-						transition: 'all 0.2s ease',
+						width: '44px',
+						height: '44px',
+						backgroundColor: 'white',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						borderRadius: 2,
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						position: 'relative',
+						overflow: 'hidden',
+						boxShadow: '0 2px 6px rgba(139, 92, 246, 0.08)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							backgroundColor: '#667eea',
-							borderColor: '#667eea',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+							borderColor: 'rgba(139, 92, 246, 0.8)',
 							color: 'white',
-							transform: 'translateX(2px)',
+							transform: 'translateX(3px) scale(1.05)',
+							boxShadow: '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 						'&:disabled': {
 							backgroundColor: '#f5f5f5',
-							borderColor: '#e0e0e0',
-							opacity: 0.5,
+							borderColor: 'rgba(139, 92, 246, 0.1)',
+							opacity: 0.4,
 						},
 					}}>
 					<ChevronRight />

@@ -119,7 +119,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 				<Box
 					sx={{
 						position: 'sticky',
-						top: { xs: '5rem', md: '5.5rem' },
+						top: { xs: '5.5rem', sm: '6rem', md: '6.5rem' },
 						zIndex: 1000,
 						marginBottom: '0.5rem',
 					}}>
@@ -178,30 +178,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					<title>{`${single_material.title} | Linguami`}</title>
 					<meta name='description' content={single_material.title} />
 				</Head>
-				<IconButton
-					sx={{
-						position: 'fixed',
-						top: '5rem',
-						left: { xs: '1rem', sm: '2rem' },
-						zIndex: 1000,
-						backgroundColor: 'rgba(255, 255, 255, 0.9)',
-						backdropFilter: 'blur(8px)',
-						boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-						transition: 'all 0.3s ease',
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						color: 'white',
-						'&:hover': {
-							transform: 'scale(1.1)',
-							boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
-						},
-						'&:active': {
-							transform: 'scale(0.95)',
-						},
-					}}
-					aria-label='back'
-					onClick={() => router.back()}>
-					<ArrowBack fontSize='medium' />
-				</IconButton>
 				<Stack
 					sx={{
 						flexDirection: {
@@ -218,12 +194,34 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					}}>
 					<Box
 						sx={{
-							marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
+							marginTop: { xs: '6rem', sm: '6.5rem', md: '7rem' },
 							px: { xs: 2, sm: 3 },
 							flex: 1,
 							minWidth: 0,
 							maxWidth: '100%',
 						}}>
+						<Box sx={{ mb: 3 }}>
+							<IconButton
+								sx={{
+									backgroundColor: 'rgba(255, 255, 255, 0.9)',
+									backdropFilter: 'blur(8px)',
+									boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+									transition: 'all 0.3s ease',
+									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+									color: 'white',
+									'&:hover': {
+										transform: 'scale(1.1)',
+										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+									},
+									'&:active': {
+										transform: 'scale(0.95)',
+									},
+								}}
+								aria-label='back'
+								onClick={() => router.back()}>
+								<ArrowBack fontSize='medium' />
+							</IconButton>
+						</Box>
 						<Typography
 							variant='h1'
 							sx={{
@@ -355,42 +353,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									</Button>
 								)}
 
-								{/* Si la langue russe est sélectionné, montrer le bouton permettant d'afficher les accents */}
-								{userLearningLanguage === 'ru' && (
-									<Button
-										variant='contained'
-										startIcon={<VisibilityRounded />}
-										onClick={() => setShowAccents(!showAccents)}
-										sx={{
-											background: showAccents
-												? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-												: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
-											color: 'white',
-											fontWeight: 600,
-											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
-											borderRadius: 3,
-											textTransform: 'none',
-											transition: 'all 0.3s ease',
-											boxShadow: showAccents
-												? '0 4px 15px rgba(16, 185, 129, 0.3)'
-												: '0 4px 15px rgba(100, 116, 139, 0.3)',
-											'&:hover': {
-												background: showAccents
-													? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
-													: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
-												transform: 'translateY(-2px)',
-												boxShadow: showAccents
-													? '0 6px 20px rgba(16, 185, 129, 0.4)'
-													: '0 6px 20px rgba(100, 116, 139, 0.4)',
-											},
-											'&:active': {
-												transform: 'scale(0.98)',
-											},
-										}}>
-										{t('showaccents')}
-									</Button>
-								)}
+								{/* Bouton "Montrer les accents" caché */}
 
 								{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
 								{isUserAdmin && (
@@ -603,9 +566,9 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							flexShrink: 0,
 							bgcolor: 'white',
 							position: 'sticky',
-							top: 80,
+							top: { md: 112, lg: 120 },
 							alignSelf: 'flex-start',
-							maxHeight: 'calc(100vh - 100px)',
+							maxHeight: 'calc(100vh - 130px)',
 							overflowY: 'auto',
 							pt: 2,
 							px: 3,
@@ -641,7 +604,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								zIndex: 1100,
 								flexDirection: 'column',
 								overflowY: 'auto',
-								paddingTop: '4rem',
+								paddingTop: { xs: '6rem', sm: '6.5rem' },
 								paddingX: '1rem',
 							}}>
 							<IconButton

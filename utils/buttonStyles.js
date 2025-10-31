@@ -5,50 +5,82 @@
 
 // Styles de base communs à tous les boutons
 const baseButtonStyles = {
-	fontWeight: 600,
+	fontWeight: 700,
 	textTransform: 'none',
-	borderRadius: 2,
-	transition: 'all 0.3s ease',
+	borderRadius: 3,
+	transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 	fontSize: '1rem',
 	minHeight: '48px',
 	px: { xs: 2.5, sm: 3 },
+	position: 'relative',
+	overflow: 'hidden',
 }
 
-// Bouton principal - Gradient violet (actions principales)
+// Bouton principal - Gaming gradient violet/cyan (actions principales)
 export const primaryButton = {
 	...baseButtonStyles,
-	background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-	boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+	background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+	border: '1px solid rgba(139, 92, 246, 0.4)',
+	boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
+	'&::before': {
+		content: '""',
+		position: 'absolute',
+		top: 0,
+		left: '-100%',
+		width: '100%',
+		height: '100%',
+		background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+		transition: 'left 0.5s ease',
+	},
 	'&:hover': {
-		transform: 'translateY(-2px)',
-		boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
-		background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+		transform: 'translateY(-3px) scale(1.02)',
+		boxShadow: '0 6px 25px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
+		background: 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)',
+		'&::before': {
+			left: '100%',
+		},
 	},
 	'&:active': {
 		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
-		background: '#ccc',
-		color: 'white',
+		background: 'rgba(100, 116, 139, 0.5)',
+		color: 'rgba(255, 255, 255, 0.5)',
+		border: '1px solid rgba(100, 116, 139, 0.3)',
 	},
 }
 
-// Bouton secondaire - Gradient rose (actions importantes)
+// Bouton secondaire - Gaming gradient cyan/violet inversé (actions importantes)
 export const secondaryButton = {
 	...baseButtonStyles,
-	background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-	boxShadow: '0 4px 15px rgba(245, 87, 108, 0.4)',
+	background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.9) 0%, rgba(139, 92, 246, 0.8) 100%)',
+	border: '1px solid rgba(6, 182, 212, 0.4)',
+	boxShadow: '0 4px 15px rgba(6, 182, 212, 0.4), 0 0 20px rgba(139, 92, 246, 0.2)',
+	'&::before': {
+		content: '""',
+		position: 'absolute',
+		top: 0,
+		left: '-100%',
+		width: '100%',
+		height: '100%',
+		background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+		transition: 'left 0.5s ease',
+	},
 	'&:hover': {
-		transform: 'translateY(-2px)',
-		boxShadow: '0 6px 20px rgba(245, 87, 108, 0.6)',
-		background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+		transform: 'translateY(-3px) scale(1.02)',
+		boxShadow: '0 6px 25px rgba(6, 182, 212, 0.6), 0 0 30px rgba(139, 92, 246, 0.4)',
+		background: 'linear-gradient(135deg, rgba(6, 182, 212, 1) 0%, rgba(139, 92, 246, 0.9) 100%)',
+		'&::before': {
+			left: '100%',
+		},
 	},
 	'&:active': {
 		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
-		background: '#ccc',
-		color: 'white',
+		background: 'rgba(100, 116, 139, 0.5)',
+		color: 'rgba(255, 255, 255, 0.5)',
+		border: '1px solid rgba(100, 116, 139, 0.3)',
 	},
 }
 
@@ -71,22 +103,37 @@ export const tertiaryButton = {
 	},
 }
 
-// Bouton succès - Gradient vert
+// Bouton succès - Gaming gradient vert émeraude
 export const successButton = {
 	...baseButtonStyles,
-	background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-	boxShadow: '0 4px 15px rgba(67, 233, 123, 0.4)',
+	background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.8) 100%)',
+	border: '1px solid rgba(16, 185, 129, 0.4)',
+	boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4), 0 0 20px rgba(5, 150, 105, 0.2)',
+	'&::before': {
+		content: '""',
+		position: 'absolute',
+		top: 0,
+		left: '-100%',
+		width: '100%',
+		height: '100%',
+		background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+		transition: 'left 0.5s ease',
+	},
 	'&:hover': {
-		transform: 'translateY(-2px)',
-		boxShadow: '0 6px 20px rgba(67, 233, 123, 0.6)',
-		background: 'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)',
+		transform: 'translateY(-3px) scale(1.02)',
+		boxShadow: '0 6px 25px rgba(16, 185, 129, 0.6), 0 0 30px rgba(5, 150, 105, 0.4)',
+		background: 'linear-gradient(135deg, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 0.9) 100%)',
+		'&::before': {
+			left: '100%',
+		},
 	},
 	'&:active': {
 		transform: 'scale(0.98)',
 	},
 	'&.Mui-disabled': {
-		background: '#ccc',
-		color: 'white',
+		background: 'rgba(100, 116, 139, 0.5)',
+		color: 'rgba(255, 255, 255, 0.5)',
+		border: '1px solid rgba(100, 116, 139, 0.3)',
 	},
 }
 
@@ -109,33 +156,37 @@ export const warningButton = {
 	},
 }
 
-// Bouton outlined - Pour actions secondaires
+// Bouton outlined - Gaming style pour actions secondaires
 export const outlinedButton = {
 	...baseButtonStyles,
+	background: 'transparent',
 	borderWidth: 2,
-	borderColor: '#667eea',
-	color: '#667eea',
+	borderColor: 'rgba(139, 92, 246, 0.6)',
+	color: '#8b5cf6',
 	'&:hover': {
 		borderWidth: 2,
-		borderColor: '#764ba2',
-		backgroundColor: 'rgba(102, 126, 234, 0.08)',
+		borderColor: 'rgba(139, 92, 246, 0.9)',
+		backgroundColor: 'rgba(139, 92, 246, 0.15)',
 		transform: 'translateY(-2px)',
-		boxShadow: '0 4px 12px rgba(102, 126, 234, 0.2)',
+		boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.2)',
+		color: '#a78bfa',
 	},
 }
 
-// Bouton outlined secondaire
+// Bouton outlined secondaire - Gaming style cyan
 export const outlinedSecondaryButton = {
 	...baseButtonStyles,
+	background: 'transparent',
 	borderWidth: 2,
-	borderColor: '#f093fb',
-	color: '#f093fb',
+	borderColor: 'rgba(6, 182, 212, 0.6)',
+	color: '#06b6d4',
 	'&:hover': {
 		borderWidth: 2,
-		borderColor: '#f5576c',
-		backgroundColor: 'rgba(240, 147, 251, 0.08)',
+		borderColor: 'rgba(6, 182, 212, 0.9)',
+		backgroundColor: 'rgba(6, 182, 212, 0.15)',
 		transform: 'translateY(-2px)',
-		boxShadow: '0 4px 12px rgba(240, 147, 251, 0.2)',
+		boxShadow: '0 4px 15px rgba(6, 182, 212, 0.3), 0 0 20px rgba(6, 182, 212, 0.2)',
+		color: '#67e8f9',
 	},
 }
 
@@ -194,15 +245,29 @@ export const oauthButton = {
 	},
 }
 
-// Bouton de suppression - Rouge
+// Bouton de suppression - Gaming gradient rouge
 export const deleteButton = {
 	...baseButtonStyles,
-	background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
-	boxShadow: '0 4px 15px rgba(255, 107, 107, 0.4)',
+	background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(185, 28, 28, 0.8) 100%)',
+	border: '1px solid rgba(239, 68, 68, 0.4)',
+	boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4), 0 0 20px rgba(185, 28, 28, 0.2)',
+	'&::before': {
+		content: '""',
+		position: 'absolute',
+		top: 0,
+		left: '-100%',
+		width: '100%',
+		height: '100%',
+		background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+		transition: 'left 0.5s ease',
+	},
 	'&:hover': {
-		transform: 'translateY(-2px)',
-		boxShadow: '0 6px 20px rgba(255, 107, 107, 0.6)',
-		background: 'linear-gradient(135deg, #ee5a6f 0%, #ff6b6b 100%)',
+		transform: 'translateY(-3px) scale(1.02)',
+		boxShadow: '0 6px 25px rgba(239, 68, 68, 0.6), 0 0 30px rgba(185, 28, 28, 0.4)',
+		background: 'linear-gradient(135deg, rgba(239, 68, 68, 1) 0%, rgba(185, 28, 28, 0.9) 100%)',
+		'&::before': {
+			left: '100%',
+		},
 	},
 }
 

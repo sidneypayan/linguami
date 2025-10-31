@@ -146,16 +146,31 @@ const Homepage = () => {
 										width: '100%',
 										minHeight: { xs: '260px', sm: '280px' },
 										borderRadius: 4,
-										background: 'rgba(255, 255, 255, 0.8)',
-										border: '1px solid rgba(102, 126, 234, 0.1)',
-										boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-										transition: 'all 0.3s ease',
+										background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.2)',
+										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										cursor: 'pointer',
+										position: 'relative',
+										overflow: 'hidden',
+										'&::before': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: '-100%',
+											width: '100%',
+											height: '100%',
+											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+											transition: 'left 0.5s ease',
+										},
 										'&:hover': {
-											transform: 'translateY(-8px)',
-											boxShadow: '0 8px 30px rgba(102, 126, 234, 0.15)',
-											background: 'white',
-											borderColor: 'rgba(102, 126, 234, 0.3)',
+											transform: 'translateY(-8px) scale(1.02)',
+											boxShadow: '0 8px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+											background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 1) 100%)',
+											borderColor: 'rgba(139, 92, 246, 0.5)',
+											'&::before': {
+												left: '100%',
+											},
 										},
 									}}>
 									<Box
@@ -167,7 +182,9 @@ const Homepage = () => {
 											alignItems: 'center',
 											justifyContent: 'center',
 											borderRadius: 3,
-											background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+											border: '1px solid rgba(139, 92, 246, 0.4)',
+											boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
 											p: 2,
 										}}>
 										<Image
@@ -183,7 +200,10 @@ const Homepage = () => {
 											sx={{
 												fontSize: { xs: '1rem', md: '1.125rem' },
 												fontWeight: 700,
-												color: '#667eea',
+												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+												WebkitBackgroundClip: 'text',
+												WebkitTextFillColor: 'transparent',
+												backgroundClip: 'text',
 												mb: 0.5,
 											}}>
 											{icon.title}
@@ -191,7 +211,7 @@ const Homepage = () => {
 										<Typography
 											variant='body2'
 											sx={{
-												color: '#718096',
+												color: 'rgba(255, 255, 255, 0.8)',
 												fontWeight: 500,
 												fontSize: { xs: '0.875rem', md: '0.95rem' },
 												lineHeight: 1.5,
@@ -248,18 +268,33 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						transition: 'all 0.3s ease',
+						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.3)',
+						position: 'relative',
+						overflow: 'hidden',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
-							transform: 'translateY(-4px)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							transform: 'translateY(-4px) scale(1.01)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 					}}>
 					<Box
@@ -270,6 +305,8 @@ const Homepage = () => {
 								xs: 'none',
 								sm: 'block',
 							},
+							position: 'relative',
+							zIndex: 1,
 						}}>
 						<Box
 							component='img'
@@ -280,14 +317,17 @@ const Homepage = () => {
 						/>
 					</Box>
 
-					<Stack gap='1rem'>
+					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
 						<Typography
 							variant='h4'
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
 								fontWeight: 600,
-								color: '#4a5568',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							}}>
 							{t('translator')}
 						</Typography>
@@ -295,7 +335,7 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: 'rgba(255, 255, 255, 0.85)',
 								fontWeight: 500,
 								lineHeight: 1.7,
 							}}>
@@ -330,28 +370,46 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						transition: 'all 0.3s ease',
+						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.3)',
+						position: 'relative',
+						overflow: 'hidden',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
-							transform: 'translateY(-4px)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							transform: 'translateY(-4px) scale(1.01)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 					}}>
-					<Stack gap='1rem'>
+					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
 						<Typography
 							variant='h4'
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
 								fontWeight: 600,
-								color: '#4a5568',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							}}>
 							{t('dictionary')}
 						</Typography>
@@ -359,7 +417,7 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: 'rgba(255, 255, 255, 0.85)',
 								fontWeight: 500,
 								lineHeight: 1.7,
 							}}>
@@ -393,6 +451,8 @@ const Homepage = () => {
 								xs: 'none',
 								sm: 'block',
 							},
+							position: 'relative',
+							zIndex: 1,
 						}}>
 						<Box
 							component='img'
@@ -411,18 +471,33 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						transition: 'all 0.3s ease',
+						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.3)',
+						position: 'relative',
+						overflow: 'hidden',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
-							transform: 'translateY(-4px)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							transform: 'translateY(-4px) scale(1.01)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 					}}>
 					<Box
@@ -433,6 +508,8 @@ const Homepage = () => {
 								xs: 'none',
 								sm: 'block',
 							},
+							position: 'relative',
+							zIndex: 1,
 						}}>
 						<Box
 							component='img'
@@ -443,14 +520,17 @@ const Homepage = () => {
 						/>
 					</Box>
 
-					<Stack gap='1rem'>
+					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
 						<Typography
 							variant='h4'
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
 								fontWeight: 600,
-								color: '#4a5568',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							}}>
 							{t('flashcards')}
 						</Typography>
@@ -458,7 +538,7 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: 'rgba(255, 255, 255, 0.85)',
 								fontWeight: 500,
 								lineHeight: 1.7,
 							}}>
@@ -493,28 +573,46 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						transition: 'all 0.3s ease',
+						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.3)',
+						position: 'relative',
+						overflow: 'hidden',
+						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: '-100%',
+							width: '100%',
+							height: '100%',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							transition: 'left 0.5s ease',
+						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(102, 126, 234, 0.15)',
-							transform: 'translateY(-4px)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							transform: 'translateY(-4px) scale(1.01)',
+							'&::before': {
+								left: '100%',
+							},
 						},
 					}}>
-					<Stack gap='1rem'>
+					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
 						<Typography
 							variant='h4'
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
 								fontWeight: 600,
-								color: '#4a5568',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							}}>
 							{t('teacher')}
 						</Typography>
@@ -522,7 +620,7 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: 'rgba(255, 255, 255, 0.85)',
 								fontWeight: 500,
 								lineHeight: 1.7,
 							}}>
@@ -556,6 +654,8 @@ const Homepage = () => {
 								xs: 'none',
 								sm: 'block',
 							},
+							position: 'relative',
+							zIndex: 1,
 						}}>
 						<Box
 							component='img'

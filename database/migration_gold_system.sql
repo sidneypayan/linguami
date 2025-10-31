@@ -15,28 +15,36 @@ WHERE total_gold IS NULL;
 ALTER TABLE public.xp_rewards_config
 ADD COLUMN IF NOT EXISTS gold_amount INTEGER DEFAULT 0;
 
--- Set gold amounts for existing actions (much rarer than XP - approximately 1/50th to 1/100th of XP value)
--- Flashcards give very little gold (need consistent effort)
+-- Set gold amounts for existing actions (50-100x plus rare que l'XP)
+-- Philosophie : L'or récompense les accomplissements significatifs, pas les actions répétitives
+
+-- Flashcards (actions répétitives - peu ou pas d'or)
 UPDATE public.xp_rewards_config SET gold_amount = 0 WHERE action_type = 'flashcard_again';
 UPDATE public.xp_rewards_config SET gold_amount = 0 WHERE action_type = 'flashcard_hard';
-UPDATE public.xp_rewards_config SET gold_amount = 1 WHERE action_type = 'flashcard_good';
-UPDATE public.xp_rewards_config SET gold_amount = 1 WHERE action_type = 'flashcard_easy';
+UPDATE public.xp_rewards_config SET gold_amount = 0 WHERE action_type = 'flashcard_good';
+UPDATE public.xp_rewards_config SET gold_amount = 0 WHERE action_type = 'flashcard_easy';
+UPDATE public.xp_rewards_config SET gold_amount = 5 WHERE action_type = 'perfect_session';
 
--- Small rewards for daily actions
-UPDATE public.xp_rewards_config SET gold_amount = 2 WHERE action_type = 'word_added';
-UPDATE public.xp_rewards_config SET gold_amount = 2 WHERE action_type = 'daily_login';
+-- Matériaux (accomplissements)
+UPDATE public.xp_rewards_config SET gold_amount = 1 WHERE action_type = 'material_started';
+UPDATE public.xp_rewards_config SET gold_amount = 5 WHERE action_type = 'material_completed';
 
--- Medium rewards for starting activities
-UPDATE public.xp_rewards_config SET gold_amount = 5 WHERE action_type = 'material_started';
-UPDATE public.xp_rewards_config SET gold_amount = 5 WHERE action_type = 'h5p_completed_again';
+-- Activités H5P
+UPDATE public.xp_rewards_config SET gold_amount = 2 WHERE action_type = 'h5p_activity_completed';
 
--- Significant rewards for major accomplishments
-UPDATE public.xp_rewards_config SET gold_amount = 10 WHERE action_type = 'perfect_flashcard_session';
-UPDATE public.xp_rewards_config SET gold_amount = 10 WHERE action_type = 'study_session_completed';
-UPDATE public.xp_rewards_config SET gold_amount = 15 WHERE action_type = 'h5p_completed_first_time';
+-- Vocabulaire (action simple)
+UPDATE public.xp_rewards_config SET gold_amount = 0 WHERE action_type = 'word_added';
 
--- Large reward for completing a full material
-UPDATE public.xp_rewards_config SET gold_amount = 25 WHERE action_type = 'material_completed';
+-- Engagement quotidien
+UPDATE public.xp_rewards_config SET gold_amount = 1 WHERE action_type = 'daily_login';
+UPDATE public.xp_rewards_config SET gold_amount = 2 WHERE action_type = 'daily_goal_achieved';
+UPDATE public.xp_rewards_config SET gold_amount = 5 WHERE action_type = 'weekly_goal_achieved';
+UPDATE public.xp_rewards_config SET gold_amount = 15 WHERE action_type = 'monthly_goal_achieved';
+
+-- Streaks (meilleurs ratios pour récompenser l'engagement régulier)
+UPDATE public.xp_rewards_config SET gold_amount = 3 WHERE action_type = 'streak_3_days';
+UPDATE public.xp_rewards_config SET gold_amount = 8 WHERE action_type = 'streak_7_days';
+UPDATE public.xp_rewards_config SET gold_amount = 30 WHERE action_type = 'streak_30_days';
 
 -- Update xp_transactions to track gold earned
 ALTER TABLE public.xp_transactions

@@ -27,6 +27,7 @@ const UserProvider = ({ children }) => {
 	const [isUserPremium, setIsUserPremium] = useState(false)
 	const [userLearningLanguage, setUserLearningLanguage] = useState(null)
 	const [isBootstrapping, setIsBootstrapping] = useState(true)
+	const [hasShownLoginToast, setHasShownLoginToast] = useState(false)
 
 	// ---- Toast messages avec la bonne locale
 	const toastMessages = useMemo(
@@ -41,13 +42,29 @@ const UserProvider = ({ children }) => {
 	}
 
 	const fetchUserProfile = useCallback(async userId => {
+		// Récupérer le profil utilisateur
 		const { data, error } = await supabase
 			.from('users_profile')
 			.select('*')
 			.eq('id', userId)
 			.maybeSingle() // 0 ou 1 row → pas d'erreur 406 si absent
 		if (error) throw error
-		return data
+
+		// Récupérer les données XP
+		const { data: xpData, error: xpError } = await supabase
+			.from('user_xp_profile')
+			.select('total_xp, current_level, daily_streak, total_gold')
+			.eq('user_id', userId)
+			.maybeSingle()
+
+		// Fusionner les données
+		return {
+			...data,
+			xp: xpData?.total_xp || 0,
+			level: xpData?.current_level || 1,
+			streak: xpData?.daily_streak || 0,
+			gold: xpData?.total_gold || 0,
+		}
 	}, [])
 
 	const hydrateFromSession = useCallback(
@@ -203,25 +220,31 @@ const UserProvider = ({ children }) => {
 	// Actions Auth (v2)
 	// --------------------------------------------------------
 	const register = useCallback(
-		async ({ email, password }) => {
-			// S'assurer que la langue d'apprentissage est différente de la locale
-			const currentLocale = router?.locale || 'fr'
-			let learningLang = userLearningLanguage
+		async ({ email, password, username, spokenLanguage, learningLanguage, languageLevel, selectedAvatar }) => {
+			// Utiliser la langue d'apprentissage du formulaire si fournie
+			const learningLang = learningLanguage || (() => {
+				const currentLocale = router?.locale || 'fr'
+				let lang = userLearningLanguage
+				if (!lang || lang === currentLocale) {
+					lang = currentLocale === 'ru' ? 'fr' : 'ru'
+				}
+				return lang
+			})()
 
-			// Si pas de langue d'apprentissage ou si elle est identique à la locale, en définir une différente
-			if (!learningLang || learningLang === currentLocale) {
-				learningLang = currentLocale === 'ru' ? 'fr' : 'ru'
-				setUserLearningLanguage(learningLang)
-				try {
-					localStorage.setItem('learning_language', learningLang)
-				} catch {}
-			}
+			setUserLearningLanguage(learningLang)
+			try {
+				localStorage.setItem('learning_language', learningLang)
+			} catch {}
 
-			const { error } = await supabase.auth.signUp({
+			// Sign up avec auth metadata
+			const { data, error } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
-					data: { learning_language: learningLang },
+					data: {
+						learning_language: learningLang,
+						username: username || null,
+					},
 					// callback après confirmation (doit être whitelisted)
 					emailRedirectTo: `${
 						process.env.NEXT_PUBLIC_API_URL || window.location.origin
@@ -229,6 +252,41 @@ const UserProvider = ({ children }) => {
 				},
 			})
 			if (error) return safeToastError(error)
+
+			// Si l'utilisateur a été créé, créer ou mettre à jour son profil
+			if (data?.user) {
+				try {
+					const profileData = {
+						id: data.user.id,
+						email: email,
+						name: username || email.split('@')[0],
+						learning_language: learningLang,
+						role: 'user',
+						is_premium: false,
+						avatar_id: selectedAvatar || 'avatar1', // Stocker l'ID de l'avatar
+					}
+
+					// Ajouter les champs supplémentaires s'ils sont fournis
+					if (spokenLanguage) {
+						profileData.spoken_language = spokenLanguage
+					}
+					if (languageLevel) {
+						profileData.language_level = languageLevel
+					}
+
+					// Insérer ou mettre à jour le profil
+					const { error: profileError } = await supabase
+						.from('users_profile')
+						.upsert(profileData, { onConflict: 'id' })
+
+					if (profileError) {
+						console.error('Error creating user profile:', profileError)
+						// Ne pas bloquer l'inscription si le profil échoue
+					}
+				} catch (err) {
+					console.error('Error creating user profile:', err)
+				}
+			}
 
 			toast.success(toastMessages.confirmationEmailSent())
 			// Redirection douce, optionnelle
@@ -253,11 +311,16 @@ const UserProvider = ({ children }) => {
 				return safeToastError(error)
 			}
 
-			// 👉 Rediriger UNIQUEMENT ici (vrai login) — pas dans le listener
-			toast.success(toastMessages.loginSuccess())
+			// 👉 Afficher le toast seulement si pas déjà affiché
+			if (!hasShownLoginToast) {
+				toast.success(toastMessages.loginSuccess())
+				setHasShownLoginToast(true)
+				// Reset le flag après 2 secondes
+				setTimeout(() => setHasShownLoginToast(false), 2000)
+			}
 			router.push('/')
 		},
-		[router]
+		[router, hasShownLoginToast]
 	)
 
 	const loginWithThirdPartyOAuth = useCallback(async provider => {
@@ -327,6 +390,62 @@ const UserProvider = ({ children }) => {
 		[user]
 	)
 
+	const updateUserProfile = useCallback(
+		async (updateData) => {
+			if (!user) {
+				throw new Error('User not logged in')
+			}
+
+			try {
+				// Vérifier si le pseudo est déjà pris par un autre utilisateur
+				if (updateData.name && updateData.name !== userProfile?.name) {
+					const { data: existingUser, error: checkError } = await supabase
+						.from('users_profile')
+						.select('id')
+						.eq('name', updateData.name)
+						.neq('id', user.id)
+						.maybeSingle()
+
+					if (checkError && checkError.code !== 'PGRST116') {
+						throw checkError
+					}
+
+					if (existingUser) {
+						throw new Error('Ce pseudo est déjà utilisé par un autre utilisateur')
+					}
+				}
+
+				// Mettre à jour le profil
+				const { data, error } = await supabase
+					.from('users_profile')
+					.update(updateData)
+					.eq('id', user.id)
+					.select()
+
+				if (error) throw error
+
+				// Mettre à jour le profil local
+				const updated = Array.isArray(data) ? data[0] : data
+				if (updated) {
+					setUserProfile(updated)
+
+					// Mettre à jour la langue d'apprentissage si elle a changé
+					if (updateData.learning_language) {
+						setUserLearningLanguage(updateData.learning_language)
+						try {
+							localStorage.setItem('learning_language', updateData.learning_language)
+						} catch {}
+					}
+				}
+
+				return updated
+			} catch (err) {
+				throw err
+			}
+		},
+		[user, userProfile]
+	)
+
 	// --------------------------------------------------------
 	// Valeur exposée
 	// --------------------------------------------------------
@@ -347,6 +466,7 @@ const UserProvider = ({ children }) => {
 			updatePassword,
 			setNewPassword,
 			changeLearningLanguage,
+			updateUserProfile,
 		}),
 		[
 			user,
@@ -362,6 +482,7 @@ const UserProvider = ({ children }) => {
 			updatePassword,
 			setNewPassword,
 			changeLearningLanguage,
+			updateUserProfile,
 		]
 	)
 

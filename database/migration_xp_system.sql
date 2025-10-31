@@ -67,47 +67,47 @@ CREATE POLICY "Anyone can view xp rewards config"
   ON public.xp_rewards_config FOR SELECT
   USING (true);
 
--- Insertion des valeurs par défaut
+-- Insertion des valeurs par défaut (gains d'XP réduits de 5x)
 INSERT INTO public.xp_rewards_config (action_type, xp_amount, description) VALUES
   -- Flashcards / Révision
-  ('flashcard_again', 2, 'XP pour avoir révisé une carte (Again)'),
-  ('flashcard_hard', 5, 'XP pour une carte difficile (Hard)'),
-  ('flashcard_good', 10, 'XP pour une bonne réponse (Good)'),
-  ('flashcard_easy', 15, 'XP pour une réponse facile (Easy)'),
-  ('card_graduated', 25, 'Bonus quand une carte passe en mode REVIEW'),
-  ('perfect_session', 100, 'Bonus : toutes les cartes réussies en Good/Easy'),
-  ('session_20_cards', 30, 'Bonus pour avoir complété 20 cartes'),
-  ('session_50_cards', 80, 'Bonus pour avoir complété 50 cartes'),
+  ('flashcard_again', 0, 'XP pour avoir révisé une carte (Again) - Pas de récompense'),
+  ('flashcard_hard', 1, 'XP pour une carte difficile (Hard)'),
+  ('flashcard_good', 2, 'XP pour une bonne réponse (Good)'),
+  ('flashcard_easy', 3, 'XP pour une réponse facile (Easy)'),
+  ('card_graduated', 5, 'Bonus quand une carte passe en mode REVIEW'),
+  ('perfect_session', 20, 'Bonus : toutes les cartes réussies en Good/Easy'),
+  ('session_20_cards', 0, 'Bonus pour avoir complété 20 cartes - Pas de récompense XP'),
+  ('session_50_cards', 0, 'Bonus pour avoir complété 50 cartes - Pas de récompense XP'),
 
   -- Matériaux
-  ('material_started', 10, 'XP gagné pour avoir commencé un nouveau matériel'),
-  ('material_completed', 50, 'XP gagné pour avoir terminé un matériel'),
-  ('book_chapter_read', 25, 'Lire un chapitre de livre'),
-  ('book_completed', 150, 'Terminer tous les chapitres d''un livre'),
+  ('material_started', 2, 'XP gagné pour avoir commencé un nouveau matériel'),
+  ('material_completed', 10, 'XP gagné pour avoir terminé un matériel'),
+  ('book_chapter_read', 5, 'Lire un chapitre de livre'),
+  ('book_completed', 30, 'Terminer tous les chapitres d''un livre'),
 
   -- Activités H5P
-  ('h5p_activity_completed', 20, 'XP gagné pour chaque activité H5P complétée'),
+  ('h5p_activity_completed', 4, 'XP gagné pour chaque activité H5P complétée'),
 
   -- Vocabulaire
-  ('word_added', 3, 'Ajouter un nouveau mot au dictionnaire'),
-  ('mastered_100_words', 200, 'Avoir 100 mots en mode REVIEW'),
-  ('mastered_500_words', 500, 'Avoir 500 mots en mode REVIEW'),
+  ('word_added', 1, 'Ajouter un nouveau mot au dictionnaire'),
+  ('mastered_100_words', 40, 'Avoir 100 mots en mode REVIEW'),
+  ('mastered_500_words', 100, 'Avoir 500 mots en mode REVIEW'),
 
   -- Engagement quotidien
-  ('daily_login', 10, 'XP gagné pour la première connexion du jour'),
-  ('daily_goal_achieved', 50, 'Atteindre l''objectif quotidien'),
-  ('weekly_goal_achieved', 150, 'Atteindre l''objectif hebdomadaire'),
-  ('monthly_goal_achieved', 500, 'Atteindre l''objectif mensuel'),
+  ('daily_login', 2, 'XP gagné pour la première connexion du jour'),
+  ('daily_goal_achieved', 10, 'Bonus pour avoir atteint l''objectif quotidien (50% de l''objectif)'),
+  ('weekly_goal_achieved', 30, 'Bonus pour avoir atteint l''objectif hebdomadaire (20% de l''objectif)'),
+  ('monthly_goal_achieved', 100, 'Bonus pour avoir atteint l''objectif mensuel (17% de l''objectif)'),
 
-  -- Streaks
-  ('streak_3_days', 30, 'Série de 3 jours consécutifs'),
-  ('streak_7_days', 50, 'Série de 7 jours consécutifs'),
-  ('streak_30_days', 200, 'Série de 30 jours consécutifs'),
+  -- Streaks (bonus pour engagement régulier)
+  ('streak_3_days', 10, 'Bonus pour 3 jours d''engagement consécutif'),
+  ('streak_7_days', 25, 'Bonus pour 7 jours d''engagement consécutif (1 semaine)'),
+  ('streak_30_days', 100, 'Bonus pour 30 jours d''engagement consécutif (1 mois complet)'),
 
   -- Progression
-  ('level_up', 150, 'Passer au niveau supérieur'),
-  ('first_material_per_section', 40, 'Premier matériau complété dans une section'),
-  ('all_sections_tried', 200, 'Avoir essayé au moins un matériau de chaque section')
+  ('level_up', 30, 'Passer au niveau supérieur'),
+  ('first_material_per_section', 8, 'Premier matériau complété dans une section'),
+  ('all_sections_tried', 40, 'Avoir essayé au moins un matériau de chaque section')
 ON CONFLICT (action_type) DO NOTHING;
 
 -- ==========================================

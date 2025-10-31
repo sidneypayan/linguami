@@ -370,54 +370,71 @@ export default function Goals() {
 
 Les récompenses XP sont configurables dans la table `xp_rewards_config`.
 
+**Note importante** : Les gains d'XP ont été réduits de 5x pour encourager un apprentissage progressif et régulier.
+
+### Philosophie du système XP
+
+Le système XP récompense **l'apprentissage actif et l'engagement régulier** :
+- ✅ **Récompensé** : Actions d'apprentissage (réviser, terminer des matériaux), objectifs atteints, engagement régulier (streaks)
+- ❌ **Non récompensé** : Actions passives, milestones de session sans effort réel (20 cartes, 50 cartes)
+- 💡 **Les bonus** : Les streaks et objectifs donnent des bonus représentant ~15-20% de l'effort total investi
+
 ### Actions disponibles
 
 #### Flashcards
 | Action | XP | Description |
 |--------|-------|-------------|
-| `flashcard_again` | 2 | Carte revue (Again) |
-| `flashcard_hard` | 5 | Carte difficile (Hard) |
-| `flashcard_good` | 10 | Bonne réponse (Good) |
-| `flashcard_easy` | 15 | Réponse facile (Easy) |
-| `card_graduated` | 25 | Carte passe en REVIEW |
-| `perfect_session` | 100 | Session parfaite |
-| `session_20_cards` | 30 | 20 cartes complétées |
-| `session_50_cards` | 80 | 50 cartes complétées |
+| `flashcard_again` | 0 | ⚠️ Carte revue (Again) - Pas de récompense |
+| `flashcard_hard` | 1 | Carte difficile (Hard) |
+| `flashcard_good` | 2 | Bonne réponse (Good) |
+| `flashcard_easy` | 3 | Réponse facile (Easy) |
+| `card_graduated` | 5 | Carte passe en REVIEW |
+| `perfect_session` | 20 | Session parfaite |
+| `session_20_cards` | 0 | ⚠️ 20 cartes complétées - Pas de récompense |
+| `session_50_cards` | 0 | ⚠️ 50 cartes complétées - Pas de récompense |
+
+**Règles spéciales** :
+- Le bouton "Encore" (Again) ne donne pas d'XP pour encourager une meilleure mémorisation
+- Les milestones de session (20, 50 cartes) ne donnent pas d'XP - l'XP vient des cartes individuelles
 
 #### Matériaux
 | Action | XP | Description |
 |--------|-------|-------------|
-| `material_started` | 10 | Matériau commencé |
-| `material_completed` | 50 | Matériau terminé |
-| `book_chapter_read` | 25 | Chapitre de livre lu |
-| `book_completed` | 150 | Livre complet terminé |
+| `material_started` | 2 | Matériau commencé |
+| `material_completed` | 10 | Matériau terminé |
+| `book_chapter_read` | 5 | Chapitre de livre lu |
+| `book_completed` | 30 | Livre complet terminé |
 
 #### Activités H5P
 | Action | XP | Description |
 |--------|-------|-------------|
-| `h5p_activity_completed` | 20 | Activité H5P complétée |
+| `h5p_activity_completed` | 4 | Activité H5P complétée |
 
 #### Vocabulaire
 | Action | XP | Description |
 |--------|-------|-------------|
-| `word_added` | 3 | Mot ajouté au dictionnaire |
-| `mastered_100_words` | 200 | 100 mots maîtrisés |
-| `mastered_500_words` | 500 | 500 mots maîtrisés |
+| `word_added` | 1 | Mot ajouté au dictionnaire |
+| `mastered_100_words` | 40 | 100 mots maîtrisés |
+| `mastered_500_words` | 100 | 500 mots maîtrisés |
 
 #### Engagement
-| Action | XP | Description |
-|--------|-------|-------------|
-| `daily_login` | 10 | Première connexion du jour |
-| `daily_goal_achieved` | 50 | Objectif quotidien atteint |
-| `weekly_goal_achieved` | 150 | Objectif hebdomadaire atteint |
-| `monthly_goal_achieved` | 500 | Objectif mensuel atteint |
+| Action | XP | Description | Effort |
+|--------|-------|-------------|--------|
+| `daily_login` | 2 | Première connexion du jour | - |
+| `daily_goal_achieved` | 10 | 🎯 Objectif quotidien atteint | ~10 min (50% bonus) |
+| `weekly_goal_achieved` | 30 | 🎯 Objectif hebdomadaire atteint | ~1h30 (20% bonus) |
+| `monthly_goal_achieved` | 100 | 🎯 Objectif mensuel atteint | ~6-8h (17% bonus) |
+
+**Note** : Les bonus d'objectifs représentent 15-50% de l'XP nécessaire pour les atteindre. Ils récompensent la constance et l'atteinte de buts fixés.
 
 #### Streaks
-| Action | XP | Description |
-|--------|-------|-------------|
-| `streak_3_days` | 30 | 3 jours consécutifs |
-| `streak_7_days` | 50 | 7 jours consécutifs |
-| `streak_30_days` | 200 | 30 jours consécutifs |
+| Action | XP | Description | Effort total |
+|--------|-------|-------------|--------------|
+| `streak_3_days` | 10 | 🔥 3 jours d'engagement consécutif | ~60 XP sur 3j (15% bonus) |
+| `streak_7_days` | 25 | 🔥 7 jours d'engagement consécutif | ~140 XP sur 7j (18% bonus) |
+| `streak_30_days` | 100 | 🔥 30 jours d'engagement consécutif | ~600 XP sur 30j (17% bonus) |
+
+**Note** : Les streaks récompensent l'engagement régulier dans le temps. Un utilisateur qui maintient un streak de 30 jours a investi des heures d'apprentissage et mérite une récompense significative.
 
 ### Modifier les valeurs XP
 

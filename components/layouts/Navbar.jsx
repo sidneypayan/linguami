@@ -91,7 +91,7 @@ const Navbar = props => {
 			onClick={handleDrawerToggle}
 			sx={{
 				height: '100vh',
-				background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+				background: 'linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%)',
 				display: 'flex',
 				flexDirection: 'column',
 				position: 'relative',
@@ -103,7 +103,7 @@ const Navbar = props => {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					background: 'radial-gradient(circle at top right, rgba(255,255,255,0.15) 0%, transparent 50%)',
+					background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.2) 0%, transparent 50%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
 					pointerEvents: 'none',
 				},
 				'&::after': {
@@ -113,7 +113,7 @@ const Navbar = props => {
 					left: 0,
 					right: 0,
 					height: '200px',
-					background: 'radial-gradient(circle at bottom left, rgba(0,0,0,0.2) 0%, transparent 70%)',
+					background: 'radial-gradient(circle at bottom left, rgba(0,0,0,0.3) 0%, transparent 70%)',
 					pointerEvents: 'none',
 				},
 			}}>
@@ -329,19 +329,20 @@ const Navbar = props => {
 							variant='contained'
 							fullWidth
 							sx={{
-								background: 'white',
-								color: '#667eea',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								color: 'white',
 								fontWeight: 700,
 								textTransform: 'none',
 								py: 1.75,
 								borderRadius: 3,
 								fontSize: '1.0625rem',
-								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+								boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
 								transition: 'all 0.3s ease',
 								'&:hover': {
-									background: 'white',
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
 									transform: 'translateY(-3px)',
-									boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
+									boxShadow: '0 12px 32px rgba(139, 92, 246, 0.6), 0 0 20px rgba(6, 182, 212, 0.3)',
 								},
 								'&:active': {
 									transform: 'translateY(-1px)',
@@ -367,11 +368,23 @@ const Navbar = props => {
 				component='nav'
 				elevation={0}
 				sx={{
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					background: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1e1b4b 100%)',
 					backdropFilter: 'blur(10px)',
-					boxShadow: '0 4px 30px rgba(102, 126, 234, 0.3)',
+					boxShadow: '0 4px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
+					borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
+					position: 'relative',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
+						pointerEvents: 'none',
+					},
 				}}>
-				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 1 }}>
+				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 2, position: 'relative', zIndex: 1, minHeight: { xs: 70, sm: 80 } }}>
 					{/* Menu mobile */}
 					<IconButton
 						color='inherit'
@@ -381,23 +394,41 @@ const Navbar = props => {
 						sx={{
 							mr: 2,
 							display: { sm: 'none' },
-							width: 44,
-							height: 44,
+							width: 50,
+							height: 50,
 							borderRadius: 2,
-							background: 'rgba(255, 255, 255, 0.15)',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 							backdropFilter: 'blur(10px)',
-							border: '1px solid rgba(255, 255, 255, 0.2)',
+							border: '1px solid rgba(139, 92, 246, 0.4)',
+							boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
 							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+							position: 'relative',
+							overflow: 'hidden',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: '-50%',
+								left: '-50%',
+								width: '200%',
+								height: '200%',
+								background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+								transform: 'translate(-100%, -100%)',
+								transition: 'transform 0.5s ease',
+							},
 							'&:hover': {
-								background: 'rgba(255, 255, 255, 0.25)',
-								transform: 'scale(1.05)',
-								boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.3) 100%)',
+								transform: 'scale(1.1) rotate(5deg)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)',
+								border: '1px solid rgba(139, 92, 246, 0.6)',
+								'&::before': {
+									transform: 'translate(0, 0)',
+								},
 							},
 							'&:active': {
 								transform: 'scale(0.95)',
 							},
 						}}>
-						<DensityMediumRounded sx={{ fontSize: '1.5rem' }} />
+						<DensityMediumRounded sx={{ fontSize: '1.6rem', filter: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' }} />
 					</IconButton>
 
 					{/* Logo/Brand - centré sur mobile, à gauche sur desktop */}
@@ -415,17 +446,35 @@ const Navbar = props => {
 									cursor: 'pointer',
 									display: 'flex',
 									alignItems: 'center',
-									gap: 1,
-									transition: 'transform 0.2s ease',
+									px: 2,
+									py: 1,
+									borderRadius: 2,
+									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									position: 'relative',
+									overflow: 'hidden',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: '-100%',
+										width: '100%',
+										height: '100%',
+										background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+										transition: 'left 0.6s ease',
+									},
 									'&:hover': {
-										transform: 'scale(1.05)',
+										transform: 'scale(1.05) translateY(-2px)',
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.25) 100%)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), 0 0 25px rgba(6, 182, 212, 0.3)',
+										'&::before': {
+											left: '100%',
+										},
 									},
 								}}>
-								<HomeRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.8rem' }, color: 'white' }} />
 								<Box
 									sx={{
 										fontWeight: 800,
-										fontSize: { xs: '1.2rem', sm: '1.3rem' },
+										fontSize: { xs: '1.3rem', sm: '1.5rem' },
 										color: 'white',
 										letterSpacing: '-0.5px',
 									}}>
@@ -436,38 +485,71 @@ const Navbar = props => {
 					</Box>
 
 					{/* Navigation Links */}
-					<Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1, flex: 1 }}>
-						{navigationLinks.slice(1).map(link => (
-							<Link key={link.name} href={`${link.href}`}>
-								<Button
-									startIcon={link.icon}
-									sx={{
-										color: '#fff',
-										fontWeight: 600,
-										textTransform: 'none',
-										fontSize: '0.95rem',
-										px: 2,
-										borderRadius: 2,
-										transition: 'all 0.2s ease',
-										'& .MuiButton-startIcon': {
-											marginRight: '6px',
-										},
-										'& .MuiSvgIcon-root': {
-											fontSize: '1.2rem',
-											transition: 'transform 0.2s ease',
-										},
-										'&:hover': {
-											backgroundColor: 'rgba(255, 255, 255, 0.15)',
-											transform: 'translateY(-2px)',
-											'& .MuiSvgIcon-root': {
-												transform: 'scale(1.15)',
+					<Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1.5, flex: 1 }}>
+						{navigationLinks.slice(1).map((link, index) => {
+							const isActive = isActivePath(link.href)
+							return (
+								<Link key={link.name} href={`${link.href}`}>
+									<Button
+										startIcon={link.icon}
+										sx={{
+											color: '#fff',
+											fontWeight: 600,
+											textTransform: 'none',
+											fontSize: '0.95rem',
+											px: 2.5,
+											py: 1,
+											borderRadius: 2,
+											background: isActive
+												? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)'
+												: 'rgba(255, 255, 255, 0.05)',
+											border: isActive
+												? '1px solid rgba(139, 92, 246, 0.5)'
+												: '1px solid rgba(255, 255, 255, 0.1)',
+											boxShadow: isActive ? '0 0 15px rgba(139, 92, 246, 0.3)' : 'none',
+											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+											position: 'relative',
+											overflow: 'hidden',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: '-100%',
+												width: '100%',
+												height: '100%',
+												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+												transition: 'left 0.5s ease',
 											},
-										},
-									}}>
-									{link.name}
-								</Button>
-							</Link>
-						))}
+											'& .MuiButton-startIcon': {
+												marginRight: '8px',
+											},
+											'& .MuiSvgIcon-root': {
+												fontSize: '1.3rem',
+												transition: 'all 0.3s ease',
+												filter: isActive ? 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' : 'none',
+											},
+											'&:hover': {
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(6, 182, 212, 0.3) 100%)',
+												border: '1px solid rgba(139, 92, 246, 0.6)',
+												transform: 'translateY(-3px)',
+												boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
+												'& .MuiSvgIcon-root': {
+													transform: 'scale(1.2) rotate(-5deg)',
+													filter: 'drop-shadow(0 0 6px rgba(139, 92, 246, 0.9))',
+												},
+												'&::before': {
+													left: '100%',
+												},
+											},
+											'&:active': {
+												transform: 'translateY(-1px)',
+											},
+										}}>
+										{link.name}
+									</Button>
+								</Link>
+							)
+						})}
 					</Box>
 
 					{/* Right side */}
@@ -479,29 +561,52 @@ const Navbar = props => {
 									startIcon={<AdminPanelSettings />}
 									sx={{
 										color: '#fff',
-										fontWeight: 600,
+										fontWeight: 700,
 										textTransform: 'none',
 										fontSize: '0.95rem',
-										px: 2,
+										px: 2.5,
+										py: 1,
 										borderRadius: 2,
-										background: 'rgba(255, 255, 255, 0.15)',
-										border: '1px solid rgba(255, 255, 255, 0.2)',
-										transition: 'all 0.2s ease',
+										background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.25) 100%)',
+										border: '1px solid rgba(255, 215, 0, 0.4)',
+										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										display: { xs: 'none', sm: 'flex' },
+										boxShadow: '0 0 15px rgba(255, 215, 0, 0.3)',
+										position: 'relative',
+										overflow: 'hidden',
+										'&::before': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: '-100%',
+											width: '100%',
+											height: '100%',
+											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+											transition: 'left 0.5s ease',
+										},
 										'& .MuiButton-startIcon': {
-											marginRight: '6px',
+											marginRight: '8px',
 										},
 										'& .MuiSvgIcon-root': {
-											fontSize: '1.2rem',
-											transition: 'transform 0.2s ease',
+											fontSize: '1.3rem',
+											transition: 'all 0.3s ease',
+											filter: 'drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))',
 										},
 										'&:hover': {
-											backgroundColor: 'rgba(255, 255, 255, 0.25)',
-											transform: 'translateY(-2px)',
-											boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+											background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.4) 0%, rgba(255, 140, 0, 0.4) 100%)',
+											transform: 'translateY(-3px) scale(1.05)',
+											boxShadow: '0 4px 25px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4)',
+											border: '1px solid rgba(255, 215, 0, 0.6)',
 											'& .MuiSvgIcon-root': {
-												transform: 'scale(1.15)',
+												transform: 'scale(1.2) rotate(10deg)',
+												filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 1))',
 											},
+											'&::before': {
+												left: '100%',
+											},
+										},
+										'&:active': {
+											transform: 'translateY(-1px) scale(1.02)',
 										},
 									}}>
 									Admin
@@ -529,20 +634,55 @@ const Navbar = props => {
 									<Button
 										variant='contained'
 										sx={{
-											background: 'rgba(255, 255, 255, 0.2)',
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%)',
 											backdropFilter: 'blur(10px)',
 											color: 'white',
-											fontWeight: 600,
+											fontWeight: 700,
 											textTransform: 'none',
-											px: 3,
+											px: 3.5,
+											py: 1,
 											borderRadius: 2,
-											boxShadow: 'none',
-											border: '1px solid rgba(255, 255, 255, 0.3)',
-											transition: 'all 0.2s ease',
+											boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)',
+											border: '1px solid rgba(139, 92, 246, 0.5)',
+											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+											position: 'relative',
+											overflow: 'hidden',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: '-100%',
+												width: '100%',
+												height: '100%',
+												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+												transition: 'left 0.5s ease',
+											},
+											'&::after': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												right: 0,
+												bottom: 0,
+												borderRadius: 2,
+												background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)',
+												opacity: 0,
+												transition: 'opacity 0.3s ease',
+											},
 											'&:hover': {
-												background: 'rgba(255, 255, 255, 0.3)',
-												transform: 'translateY(-2px)',
-												boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%)',
+												transform: 'translateY(-3px) scale(1.05)',
+												boxShadow: '0 6px 30px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
+												border: '1px solid rgba(139, 92, 246, 0.8)',
+												'&::before': {
+													left: '100%',
+												},
+												'&::after': {
+													opacity: 1,
+												},
+											},
+											'&:active': {
+												transform: 'translateY(-1px) scale(1.02)',
 											},
 										}}>
 										{t('signin')}
@@ -569,10 +709,10 @@ const Navbar = props => {
 							boxSizing: 'border-box',
 							width: drawerWidth,
 							borderRight: 'none',
-							boxShadow: '4px 0 30px rgba(102, 126, 234, 0.3)',
+							boxShadow: '4px 0 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
 						},
 						'& .MuiBackdrop-root': {
-							backgroundColor: 'rgba(0, 0, 0, 0.6)',
+							backgroundColor: 'rgba(0, 0, 0, 0.7)',
 							backdropFilter: 'blur(4px)',
 						},
 					}}>

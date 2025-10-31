@@ -241,43 +241,45 @@ const FlashCards = () => {
 		// Update stats
 		setReviewedCount(prev => prev + 1)
 
-		// Add XP for the review
-		try {
-			const xpResponse = await fetch('/api/xp/add', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					actionType: `flashcard_${buttonType}`,
-					sourceId: currentCard.id.toString(),
-					description: `Reviewed: ${frontWord}`
+		// Add XP for the review (except for "again" button)
+		if (buttonType !== BUTTON_TYPES.AGAIN) {
+			try {
+				const xpResponse = await fetch('/api/xp/add', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						actionType: `flashcard_${buttonType}`,
+						sourceId: currentCard.id.toString(),
+						description: `Reviewed: ${frontWord}`
+					})
 				})
-			})
 
-			if (xpResponse.ok) {
-				const xpData = await xpResponse.json()
+				if (xpResponse.ok) {
+					const xpData = await xpResponse.json()
 
-				// Show level up notification
-				if (xpData.leveledUp) {
-					toast.success(`🎉 ${t('level_up')} ${xpData.currentLevel}!`, {
-						position: 'top-center',
-						autoClose: 3000
-					})
+					// Show level up notification
+					if (xpData.leveledUp) {
+						toast.success(`🎉 ${t('level_up')} ${xpData.currentLevel}!`, {
+							position: 'top-center',
+							autoClose: 3000
+						})
+					}
+
+					// Check for streak achievements
+					if (xpData.achievements && xpData.achievements.length > 0) {
+						xpData.achievements.forEach(achievement => {
+							if (achievement.type.includes('streak')) {
+								toast.success(`🔥 ${achievement.streak} ${t('days_streak')}!`, {
+									position: 'top-center'
+								})
+							}
+						})
+					}
 				}
-
-				// Check for streak achievements
-				if (xpData.achievements && xpData.achievements.length > 0) {
-					xpData.achievements.forEach(achievement => {
-						if (achievement.type.includes('streak')) {
-							toast.success(`🔥 ${achievement.streak} ${t('days_streak')}!`, {
-								position: 'top-center'
-							})
-						}
-					})
-				}
+			} catch (error) {
+				// Silent fail - don't block user flow for XP errors
+				console.error('Error adding XP:', error)
 			}
-		} catch (error) {
-			// Silent fail - don't block user flow for XP errors
-			console.error('Error adding XP:', error)
 		}
 
 		// Determine if card should stay in session or be removed

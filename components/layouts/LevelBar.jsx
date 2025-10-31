@@ -101,13 +101,33 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 										type='submit'
 										edge='end'
 										sx={{
-											color: '#667eea',
 											width: { xs: '36px', sm: '40px' },
 											height: { xs: '36px', sm: '40px' },
-											transition: 'all 0.2s ease',
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+											color: 'white',
+											border: '1px solid rgba(139, 92, 246, 0.4)',
+											borderRadius: 2,
+											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+											position: 'relative',
+											overflow: 'hidden',
+											boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3), 0 0 12px rgba(6, 182, 212, 0.2)',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: '-100%',
+												width: '100%',
+												height: '100%',
+												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+												transition: 'left 0.5s ease',
+											},
 											'&:hover': {
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)',
 												transform: 'scale(1.1)',
-												color: '#764ba2',
+												boxShadow: '0 4px 16px rgba(139, 92, 246, 0.5), 0 0 20px rgba(6, 182, 212, 0.3)',
+												'&::before': {
+													left: '100%',
+												},
 											},
 											'&:active': {
 												transform: 'scale(0.95)',
@@ -122,17 +142,19 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 							'& .MuiOutlinedInput-root': {
 								borderRadius: 3,
 								backgroundColor: 'white',
-								transition: 'all 0.2s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 								'& fieldset': {
-									borderColor: '#e0e0e0',
-									borderWidth: 2,
+									borderColor: 'rgba(139, 92, 246, 0.2)',
+									borderWidth: 1,
 								},
 								'&:hover fieldset': {
-									borderColor: '#667eea',
+									borderColor: 'rgba(139, 92, 246, 0.5)',
+									boxShadow: '0 2px 8px rgba(139, 92, 246, 0.1)',
 								},
 								'&.Mui-focused fieldset': {
-									borderColor: '#667eea',
+									borderColor: 'rgba(139, 92, 246, 0.8)',
 									borderWidth: 2,
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15), 0 0 16px rgba(6, 182, 212, 0.1)',
 								},
 							},
 						}}
@@ -147,8 +169,8 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 						backgroundColor: 'rgba(255, 255, 255, 0.9)',
 						borderRadius: 2,
 						padding: '3px',
-						boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-						border: '2px solid rgba(102, 126, 234, 0.1)',
+						boxShadow: '0 2px 8px rgba(139, 92, 246, 0.08)',
+						border: '1px solid rgba(139, 92, 246, 0.15)',
 						flexShrink: 0,
 					}}>
 					<IconButton
@@ -156,11 +178,34 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 						sx={{
 							width: { xs: '34px', sm: '36px' },
 							height: { xs: '34px', sm: '36px' },
-							backgroundColor: currentView === 'card' ? '#667eea' : 'transparent',
+							background: currentView === 'card'
+								? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
+								: 'transparent',
 							color: currentView === 'card' ? 'white' : '#667eea',
-							transition: 'all 0.2s ease',
+							borderRadius: 1.5,
+							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+							position: 'relative',
+							overflow: 'hidden',
+							boxShadow: currentView === 'card' ? '0 2px 8px rgba(139, 92, 246, 0.3), 0 0 12px rgba(6, 182, 212, 0.2)' : 'none',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: '-100%',
+								width: '100%',
+								height: '100%',
+								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+								transition: 'left 0.5s ease',
+							},
 							'&:hover': {
-								backgroundColor: currentView === 'card' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
+								background: currentView === 'card'
+									? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
+									: 'rgba(139, 92, 246, 0.08)',
+								transform: 'scale(1.05)',
+								boxShadow: currentView === 'card' ? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 16px rgba(6, 182, 212, 0.3)' : 'none',
+								'&::before': {
+									left: '100%',
+								},
 							},
 						}}>
 						<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
@@ -170,11 +215,34 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 						sx={{
 							width: { xs: '34px', sm: '36px' },
 							height: { xs: '34px', sm: '36px' },
-							backgroundColor: currentView === 'list' ? '#667eea' : 'transparent',
+							background: currentView === 'list'
+								? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
+								: 'transparent',
 							color: currentView === 'list' ? 'white' : '#667eea',
-							transition: 'all 0.2s ease',
+							borderRadius: 1.5,
+							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+							position: 'relative',
+							overflow: 'hidden',
+							boxShadow: currentView === 'list' ? '0 2px 8px rgba(139, 92, 246, 0.3), 0 0 12px rgba(6, 182, 212, 0.2)' : 'none',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: '-100%',
+								width: '100%',
+								height: '100%',
+								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+								transition: 'left 0.5s ease',
+							},
 							'&:hover': {
-								backgroundColor: currentView === 'list' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
+								background: currentView === 'list'
+									? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
+									: 'rgba(139, 92, 246, 0.08)',
+								transform: 'scale(1.05)',
+								boxShadow: currentView === 'list' ? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 16px rgba(6, 182, 212, 0.3)' : 'none',
+								'&::before': {
+									left: '100%',
+								},
 							},
 						}}>
 						<ViewList sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
@@ -218,34 +286,53 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 							label={level.label}
 							onClick={() => handleLevelClick(level.label, level.key)}
 							sx={{
-								fontWeight: 600,
+								fontWeight: 700,
 								fontSize: { xs: '0.75rem', sm: '0.95rem' },
 								px: { xs: 0.5, sm: 1 },
 								height: { xs: '32px', sm: '40px' },
 								minWidth: { xs: '50px', sm: 'auto' },
 								borderRadius: 2,
 								cursor: 'pointer',
-								border: '2px solid',
-								borderColor: selectedLevel === level.label ? '#667eea' : 'transparent',
-								background:
-									selectedLevel === level.label
-										? 'rgba(102, 126, 234, 0.1)'
-										: 'rgba(255, 255, 255, 0.9)',
-								color: selectedLevel === level.label ? '#667eea' : '#666',
-								boxShadow:
-									selectedLevel === level.label
-										? '0 4px 15px rgba(102, 126, 234, 0.2)'
-										: '0 2px 8px rgba(0,0,0,0.08)',
-								transition: 'all 0.3s ease',
+								border: '1px solid',
+								borderColor: selectedLevel === level.label ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
+								background: selectedLevel === level.label
+									? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
+									: 'white',
+								color: selectedLevel === level.label ? 'white' : '#666',
+								boxShadow: selectedLevel === level.label
+									? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)'
+									: '0 2px 6px rgba(139, 92, 246, 0.08)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
 								'& .MuiChip-label': {
 									px: { xs: 0.5, sm: 1 },
+									position: 'relative',
+									zIndex: 1,
+								},
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
 								},
 								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: `0 4px 16px ${level.color}60`,
-									borderColor: level.color,
-									background: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
-									color: level.color,
+									transform: 'translateY(-2px) scale(1.05)',
+									borderColor: selectedLevel === level.label ? 'rgba(139, 92, 246, 0.8)' : level.color,
+									background: selectedLevel === level.label
+										? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
+										: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
+									color: selectedLevel === level.label ? 'white' : level.color,
+									boxShadow: selectedLevel === level.label
+										? '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)'
+										: `0 4px 16px ${level.color}60`,
+									'&::before': {
+										left: '100%',
+									},
 								},
 								'&:active': {
 									transform: 'scale(0.97)',
@@ -281,33 +368,52 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 							label={status.label}
 							onClick={() => handleStatusClick(status.label, status.key)}
 							sx={{
-								fontWeight: 600,
+								fontWeight: 700,
 								fontSize: { xs: '0.7rem', sm: '0.95rem' },
 								px: { xs: 0.5, sm: 1 },
 								height: { xs: '32px', sm: '40px' },
 								borderRadius: 2,
 								cursor: 'pointer',
-								border: '2px solid',
-								borderColor: selectedStatus === status.label ? '#667eea' : 'transparent',
-								background:
-									selectedStatus === status.label
-										? 'rgba(102, 126, 234, 0.1)'
-										: 'rgba(255, 255, 255, 0.9)',
-								color: selectedStatus === status.label ? '#667eea' : '#666',
-								boxShadow:
-									selectedStatus === status.label
-										? '0 4px 15px rgba(102, 126, 234, 0.2)'
-										: '0 2px 8px rgba(0,0,0,0.08)',
-								transition: 'all 0.3s ease',
+								border: '1px solid',
+								borderColor: selectedStatus === status.label ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
+								background: selectedStatus === status.label
+									? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
+									: 'white',
+								color: selectedStatus === status.label ? 'white' : '#666',
+								boxShadow: selectedStatus === status.label
+									? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)'
+									: '0 2px 6px rgba(139, 92, 246, 0.08)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
 								'& .MuiChip-label': {
 									px: { xs: 0.5, sm: 1 },
+									position: 'relative',
+									zIndex: 1,
+								},
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
 								},
 								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: `0 4px 16px ${status.color}60`,
-									borderColor: status.color,
-									background: `linear-gradient(135deg, ${status.color}30, ${status.color}50)`,
-									color: status.color,
+									transform: 'translateY(-2px) scale(1.05)',
+									borderColor: selectedStatus === status.label ? 'rgba(139, 92, 246, 0.8)' : status.color,
+									background: selectedStatus === status.label
+										? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
+										: `linear-gradient(135deg, ${status.color}30, ${status.color}50)`,
+									color: selectedStatus === status.label ? 'white' : status.color,
+									boxShadow: selectedStatus === status.label
+										? '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)'
+										: `0 4px 16px ${status.color}60`,
+									'&::before': {
+										left: '100%',
+									},
 								},
 								'&:active': {
 									transform: 'scale(0.97)',
@@ -343,18 +449,36 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 						sx={{
 							width: { xs: '32px', sm: '40px' },
 							height: { xs: '32px', sm: '40px' },
-							backgroundColor: 'rgba(255, 255, 255, 0.9)',
-							boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-							border: '2px solid transparent',
-							transition: 'all 0.3s ease',
+							backgroundColor: 'white',
+							boxShadow: '0 2px 8px rgba(139, 92, 246, 0.08)',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
+							borderRadius: 2,
+							color: '#667eea',
+							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+							position: 'relative',
+							overflow: 'hidden',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: '-100%',
+								width: '100%',
+								height: '100%',
+								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+								transition: 'left 0.5s ease',
+							},
 							'&:hover': {
-								backgroundColor: '#667eea',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
 								color: 'white',
-								transform: 'rotate(180deg) translateY(-2px)',
-								boxShadow: '0 4px 16px rgba(102, 126, 234, 0.4)',
+								borderColor: 'rgba(139, 92, 246, 0.8)',
+								transform: 'translateY(-2px) scale(1.05)',
+								boxShadow: '0 4px 16px rgba(139, 92, 246, 0.5), 0 0 20px rgba(6, 182, 212, 0.3)',
+								'&::before': {
+									left: '100%',
+								},
 							},
 							'&:active': {
-								transform: 'rotate(180deg) scale(0.95)',
+								transform: 'scale(0.95)',
 							},
 						}}>
 						<Refresh sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }} />

@@ -1,8 +1,10 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
 import { useUserContext } from '../context/user'
+import { supabase } from '../lib/supabase'
+import { AVATARS } from '../utils/avatars'
 import {
 	Box,
 	Divider,
@@ -13,13 +15,32 @@ import {
 	InputAdornment,
 	Card,
 	Container,
+	MenuItem,
+	Select,
+	FormControl,
+	InputLabel,
+	LinearProgress,
+	Avatar,
 } from '@mui/material'
-import { HomeRounded, EmailRounded, LockRounded } from '@mui/icons-material'
+import {
+	HomeRounded,
+	EmailRounded,
+	LockRounded,
+	PersonRounded,
+	LanguageRounded,
+	CheckCircleRounded,
+	CancelRounded,
+} from '@mui/icons-material'
 import Link from 'next/link'
 
 const initialState = {
 	email: '',
 	password: '',
+	username: '',
+	spokenLanguage: '',
+	learningLanguage: '',
+	languageLevel: '',
+	selectedAvatar: 'avatar1', // Avatar par défaut
 }
 
 const Signin = () => {
@@ -29,25 +50,109 @@ const Signin = () => {
 
 	const { login, register, loginWithThirdPartyOAuth } = useUserContext()
 
+	// Validation du mot de passe
+	const passwordValidation = useMemo(() => {
+		const { password } = values
+		return {
+			minLength: password.length >= 8,
+			hasUpperCase: /[A-Z]/.test(password),
+			hasNumber: /[0-9]/.test(password),
+			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+		}
+	}, [values.password])
+
+	const passwordStrength = useMemo(() => {
+		const checks = Object.values(passwordValidation)
+		const passed = checks.filter(Boolean).length
+		return (passed / checks.length) * 100
+	}, [passwordValidation])
+
+	const isPasswordValid = useMemo(() => {
+		return Object.values(passwordValidation).every(Boolean)
+	}, [passwordValidation])
+
 	const handleChange = e => {
 		const name = e.target.name
-		const value = e.target.value
+		let value = e.target.value
+
+		// Sécurisation: nettoyer les caractères dangereux sauf pour le password
+		if (name !== 'password' && name !== 'email') {
+			value = value.replace(/[<>]/g, '') // Empêcher les tags HTML
+		}
 
 		setValues({ ...values, [name]: value })
 	}
 
-	const handleSubmit = e => {
+	const handleAvatarSelect = avatarId => {
+		setValues({
+			...values,
+			selectedAvatar: avatarId,
+		})
+	}
+
+	const handleSubmit = async e => {
 		e.preventDefault()
 
-		const { email, password } = values
+		const {
+			email,
+			password,
+			username,
+			spokenLanguage,
+			learningLanguage,
+			languageLevel,
+		} = values
 
 		if (!email || !password) {
 			toast.error(t('fillAllFields'))
+			return
 		}
 
 		if (formState === 'signup') {
-			if (password && password.length < 6) {
-				toast.error(t('passwordMinLength'))
+			// Validation des champs obligatoires pour l'inscription
+			if (!username || !spokenLanguage || !learningLanguage || !languageLevel) {
+				toast.error(t('fillAllFields'))
+				return
+			}
+
+			// Validation du pseudo
+			if (username.length < 3) {
+				toast.error(t('usernameMinLength'))
+				return
+			}
+
+			// Validation du mot de passe
+			if (!isPasswordValid) {
+				toast.error(t('passwordRequirements'))
+				return
+			}
+
+			// Empêcher l'apprentissage de la même langue que celle parlée
+			if (spokenLanguage === learningLanguage) {
+				toast.error(t('cannotLearnSameLanguage'))
+				return
+			}
+
+			// Vérifier l'unicité du pseudo
+			try {
+				const { data: existingUser, error: checkError } = await supabase
+					.from('users_profile')
+					.select('id')
+					.eq('name', username)
+					.maybeSingle()
+
+				if (checkError && checkError.code !== 'PGRST116') {
+					console.error('Error checking username:', checkError)
+					toast.error(t('errorCheckingUsername'))
+					return
+				}
+
+				if (existingUser) {
+					toast.error(t('usernameAlreadyTaken'))
+					return
+				}
+			} catch (err) {
+				console.error('Error checking username:', err)
+				toast.error(t('errorCheckingUsername'))
 				return
 			}
 
@@ -75,7 +180,8 @@ const Signin = () => {
 					right: '-10%',
 					width: '60%',
 					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 70%)',
+					background:
+						'radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 70%)',
 					pointerEvents: 'none',
 					filter: 'blur(40px)',
 				},
@@ -86,7 +192,8 @@ const Signin = () => {
 					left: '-10%',
 					width: '60%',
 					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.15) 30%, transparent 70%)',
+					background:
+						'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.15) 30%, transparent 70%)',
 					pointerEvents: 'none',
 					filter: 'blur(40px)',
 				},
@@ -145,9 +252,7 @@ const Signin = () => {
 							color: '#718096',
 							mb: 4,
 						}}>
-						{formState === 'signin'
-							? t('signinSubtitle')
-							: t('signupSubtitle')}
+						{formState === 'signin' ? t('signinSubtitle') : t('signupSubtitle')}
 					</Typography>
 
 					{/* Boutons OAuth */}
@@ -215,7 +320,155 @@ const Signin = () => {
 					</Divider>
 
 					{/* Formulaire */}
-					<Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+					<Box
+						component='form'
+						onSubmit={handleSubmit}
+						sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+						{/* Pseudo - uniquement en mode inscription */}
+						{formState === 'signup' && (
+							<>
+								<TextField
+									fullWidth
+									onChange={handleChange}
+									type='text'
+									label={t('username')}
+									name='username'
+									value={values.username}
+									autoComplete='username'
+									id='username'
+									required
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position='start'>
+												<PersonRounded sx={{ color: '#718096' }} />
+											</InputAdornment>
+										),
+									}}
+									helperText={t('usernameHelper')}
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}
+								/>
+
+								{/* Sélection d'avatar - uniquement en mode inscription */}
+								<Box>
+									<Typography
+										variant='body2'
+										sx={{
+											color: '#64748B',
+											textAlign: 'center',
+											mb: 2,
+											fontWeight: 600,
+										}}>
+										{t('chooseAvatar')}
+									</Typography>
+
+									<Box
+										sx={{
+											display: 'grid',
+											gridTemplateColumns: 'repeat(3, 1fr)',
+											gap: 2,
+											p: 2,
+											borderRadius: 2,
+											background: 'rgba(102, 126, 234, 0.02)',
+											border: '1px solid #e5e7eb',
+										}}>
+										{AVATARS.map(avatar => {
+											const isSelected = values.selectedAvatar === avatar.id
+											return (
+												<Box
+													key={avatar.id}
+													onClick={() => handleAvatarSelect(avatar.id)}
+													sx={{
+														cursor: 'pointer',
+														display: 'flex',
+														flexDirection: 'column',
+														alignItems: 'center',
+														gap: 1,
+														transition: 'all 0.2s ease',
+														'&:hover': {
+															transform: 'scale(1.05)',
+														},
+													}}>
+													<Box sx={{ position: 'relative' }}>
+														<Avatar
+															src={avatar.url}
+															alt={avatar.name}
+															sx={{
+																width: { xs: 70, sm: 80 },
+																height: { xs: 70, sm: 80 },
+																border: isSelected
+																	? '3px solid #667eea'
+																	: '2px solid transparent',
+																boxShadow: isSelected
+																	? '0 0 0 3px rgba(102, 126, 234, 0.2)'
+																	: 'none',
+																transition: 'all 0.2s ease',
+															}}
+														/>
+														{isSelected && (
+															<Box
+																sx={{
+																	position: 'absolute',
+																	top: -4,
+																	right: -4,
+																	width: 20,
+																	height: 20,
+																	borderRadius: '50%',
+																	bgcolor: '#667eea',
+																	display: 'flex',
+																	alignItems: 'center',
+																	justifyContent: 'center',
+																	boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+																}}>
+																<CheckCircleRounded
+																	sx={{
+																		fontSize: '1rem',
+																		color: 'white',
+																	}}
+																/>
+															</Box>
+														)}
+													</Box>
+													<Typography
+														variant='caption'
+														sx={{
+															fontSize: '0.75rem',
+															color: isSelected ? '#667eea' : '#64748B',
+															fontWeight: isSelected ? 600 : 400,
+															textAlign: 'center',
+															transition: 'all 0.2s ease',
+														}}>
+														{avatar.name}
+													</Typography>
+												</Box>
+											)
+										})}
+									</Box>
+
+									<Typography
+										variant='caption'
+										sx={{
+											color: '#94A3B8',
+											textAlign: 'center',
+											display: 'block',
+											mt: 1,
+										}}>
+										{t('avatarHelper')}
+									</Typography>
+								</Box>
+							</>
+						)}
+
 						<TextField
 							fullWidth
 							onChange={handleChange}
@@ -225,6 +478,7 @@ const Signin = () => {
 							value={values.email}
 							autoComplete='email'
 							id='email'
+							required
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position='start'>
@@ -264,7 +518,9 @@ const Signin = () => {
 								endAdornment:
 									formState === 'signin' ? (
 										<InputAdornment position='end'>
-											<Link href='/update-password' style={{ textDecoration: 'none' }}>
+											<Link
+												href='/update-password'
+												style={{ textDecoration: 'none' }}>
 												<Button
 													sx={{
 														color: '#667eea',
@@ -298,6 +554,211 @@ const Signin = () => {
 							}}
 						/>
 
+						{/* Password strength indicator - only in signup mode */}
+						{formState === 'signup' && values.password && (
+							<Box sx={{ mt: -1, mb: 1 }}>
+								<LinearProgress
+									variant='determinate'
+									value={passwordStrength}
+									sx={{
+										height: 6,
+										borderRadius: 3,
+										backgroundColor: '#E5E7EB',
+										'& .MuiLinearProgress-bar': {
+											borderRadius: 3,
+											backgroundColor:
+												passwordStrength < 50
+													? '#EF4444'
+													: passwordStrength < 75
+													? '#F59E0B'
+													: '#10B981',
+										},
+									}}
+								/>
+								<Box
+									sx={{
+										mt: 1,
+										display: 'flex',
+										flexDirection: 'column',
+										gap: 0.5,
+									}}>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.minLength ? (
+											<CheckCircleRounded
+												sx={{ fontSize: '1rem', color: '#10B981' }}
+											/>
+										) : (
+											<CancelRounded
+												sx={{ fontSize: '1rem', color: '#EF4444' }}
+											/>
+										)}
+										<Typography
+											variant='body2'
+											sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordMinLength')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasUpperCase ? (
+											<CheckCircleRounded
+												sx={{ fontSize: '1rem', color: '#10B981' }}
+											/>
+										) : (
+											<CancelRounded
+												sx={{ fontSize: '1rem', color: '#EF4444' }}
+											/>
+										)}
+										<Typography
+											variant='body2'
+											sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordUpperCase')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasNumber ? (
+											<CheckCircleRounded
+												sx={{ fontSize: '1rem', color: '#10B981' }}
+											/>
+										) : (
+											<CancelRounded
+												sx={{ fontSize: '1rem', color: '#EF4444' }}
+											/>
+										)}
+										<Typography
+											variant='body2'
+											sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordNumber')}
+										</Typography>
+									</Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										{passwordValidation.hasSpecialChar ? (
+											<CheckCircleRounded
+												sx={{ fontSize: '1rem', color: '#10B981' }}
+											/>
+										) : (
+											<CancelRounded
+												sx={{ fontSize: '1rem', color: '#EF4444' }}
+											/>
+										)}
+										<Typography
+											variant='body2'
+											sx={{ fontSize: '0.75rem', color: '#64748B' }}>
+											{t('passwordSpecialChar')}
+										</Typography>
+									</Box>
+								</Box>
+							</Box>
+						)}
+
+						{/* Language selection fields - only in signup mode */}
+						{formState === 'signup' && (
+							<>
+								<FormControl
+									fullWidth
+									required
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}>
+									<InputLabel id='spoken-language-label'>
+										{t('spokenLanguage')}
+									</InputLabel>
+									<Select
+										labelId='spoken-language-label'
+										id='spokenLanguage'
+										name='spokenLanguage'
+										value={values.spokenLanguage}
+										label={t('spokenLanguage')}
+										onChange={handleChange}
+										startAdornment={
+											<InputAdornment position='start'>
+												<LanguageRounded sx={{ color: '#718096', ml: 1 }} />
+											</InputAdornment>
+										}>
+										<MenuItem value='english'>{t('english')}</MenuItem>
+										<MenuItem value='french'>{t('french')}</MenuItem>
+										<MenuItem value='russian'>{t('russian')}</MenuItem>
+									</Select>
+								</FormControl>
+
+								<FormControl
+									fullWidth
+									required
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}>
+									<InputLabel id='learning-language-label'>
+										{t('learningLanguage')}
+									</InputLabel>
+									<Select
+										labelId='learning-language-label'
+										id='learningLanguage'
+										name='learningLanguage'
+										value={values.learningLanguage}
+										label={t('learningLanguage')}
+										onChange={handleChange}
+										startAdornment={
+											<InputAdornment position='start'>
+												<LanguageRounded sx={{ color: '#718096', ml: 1 }} />
+											</InputAdornment>
+										}>
+										<MenuItem value='french'>{t('french')}</MenuItem>
+										<MenuItem value='russian'>{t('russian')}</MenuItem>
+									</Select>
+								</FormControl>
+
+								<FormControl
+									fullWidth
+									required
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}>
+									<InputLabel id='language-level-label'>
+										{t('languageLevel')}
+									</InputLabel>
+									<Select
+										labelId='language-level-label'
+										id='languageLevel'
+										name='languageLevel'
+										value={values.languageLevel}
+										label={t('languageLevel')}
+										onChange={handleChange}>
+										<MenuItem value='beginner'>{t('beginner')}</MenuItem>
+										<MenuItem value='intermediate'>
+											{t('intermediate')}
+										</MenuItem>
+										<MenuItem value='advanced'>{t('advanced')}</MenuItem>
+									</Select>
+								</FormControl>
+							</>
+						)}
+
 						<Button
 							fullWidth
 							type='submit'
@@ -313,7 +774,8 @@ const Signin = () => {
 								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
 								transition: 'all 0.3s ease',
 								'&:hover': {
-									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+									background:
+										'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 									transform: 'translateY(-2px)',
 									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
 								},

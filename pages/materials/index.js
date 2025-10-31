@@ -84,7 +84,7 @@ const Material = () => {
 				maxWidth='85%'
 				width='1200px'
 				sx={{
-					margin: { xs: '6rem auto 2rem', sm: '8rem auto 3rem', md: '10rem auto' },
+					margin: { xs: '7rem auto 2rem', sm: '8.5rem auto 3rem', md: '10.5rem auto' },
 					px: { xs: 2, sm: 3 },
 				}}>
 				{/* Section Textes et Audio */}

@@ -1,0 +1,23 @@
+{
+	"pageTitle": "Paramètres",
+	"title": "Paramètres du compte",
+	"subtitle": "Gérez vos informations personnelles et préférences",
+	"personalInfo": "Informations personnelles",
+	"languagePreferences": "Préférences linguistiques",
+	"avatarSettings": "Avatar",
+	"username": "Pseudo",
+	"email": "Adresse email",
+	"dateOfBirth": "Date de naissance",
+	"languageLevel": "Niveau de langue",
+	"avatar": "Avatar",
+	"chooseAvatar": "Choisissez votre avatar",
+	"avatarUpdated": "Avatar mis à jour avec succès",
+	"beginner": "Débutant",
+	"intermediate": "Intermédiaire",
+	"advanced": "Avancé",
+	"save": "Sauvegarder",
+	"cancel": "Annuler",
+	"edit": "Modifier",
+	"updateSuccess": "Profil mis à jour avec succès",
+	"updateError": "Erreur lors de la mise à jour du profil"
+}

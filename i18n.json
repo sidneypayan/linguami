@@ -20,6 +20,7 @@
 		"/teacher": ["teacher"],
 		"/lessons": ["lessons"],
 		"/statistics": ["stats"],
+		"/settings": ["settings"],
 		"/admin": ["common", "admin"],
 		"/admin/create": ["common", "admin"]
 	}

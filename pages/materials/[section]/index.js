@@ -110,7 +110,7 @@ const Section = () => {
 				jsonLd={jsonLd}
 			/>
 
-			<Container sx={{ marginTop: '6rem', marginBottom: '4rem' }}>
+			<Container sx={{ marginTop: { xs: '6.5rem', sm: '7rem', md: '7.5rem' }, marginBottom: '4rem' }}>
 				<Box sx={{ mb: 3 }}>
 					<IconButton
 						sx={{
