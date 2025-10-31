@@ -85,9 +85,13 @@ const LeaderboardPage = () => {
 			case 0:
 				return leaderboardData.topXp
 			case 1:
-				return leaderboardData.topStreak
+				return leaderboardData.topWeekly || []
 			case 2:
+				return leaderboardData.topMonthly || []
+			case 3:
 				return leaderboardData.topGold
+			case 4:
+				return leaderboardData.topStreak
 			default:
 				return []
 		}
@@ -98,9 +102,13 @@ const LeaderboardPage = () => {
 			case 0:
 				return `${entry.value.toLocaleString()} XP`
 			case 1:
-				return `${entry.value} jours`
+				return `${entry.value.toLocaleString()} XP`
 			case 2:
+				return `${entry.value.toLocaleString()} XP`
+			case 3:
 				return `${entry.value.toLocaleString()} 💰`
+			case 4:
+				return `${entry.value} jours`
 			default:
 				return entry.value
 		}
@@ -112,9 +120,13 @@ const LeaderboardPage = () => {
 			case 0:
 				return leaderboardData.userRanks.xp
 			case 1:
-				return leaderboardData.userRanks.streak
+				return leaderboardData.userRanks.weekly
 			case 2:
+				return leaderboardData.userRanks.monthly
+			case 3:
 				return leaderboardData.userRanks.gold
+			case 4:
+				return leaderboardData.userRanks.streak
 			default:
 				return null
 		}
@@ -181,7 +193,7 @@ const LeaderboardPage = () => {
 				</Box>
 
 				{/* User Rank Card */}
-				{userRank && leaderboardData?.userStats && (
+				{leaderboardData?.userStats && (
 					<Paper
 						elevation={0}
 						sx={{
@@ -204,9 +216,17 @@ const LeaderboardPage = () => {
 								<Typography variant="body2" sx={{ color: '#64748B', fontWeight: 600, mb: 0.5 }}>
 									Votre classement
 								</Typography>
-								<Typography variant="h4" sx={{ fontWeight: 800, color: '#667eea' }}>
-									{getRankIcon(userRank)}
-								</Typography>
+								{userRank ? (
+									<Typography variant="h4" sx={{ fontWeight: 800, color: '#667eea' }}>
+										{getRankIcon(userRank)}
+									</Typography>
+								) : (
+									<Typography variant="h5" sx={{ fontWeight: 700, color: '#94A3B8', fontStyle: 'italic' }}>
+										{tabValue === 1 && 'Pas encore d\'XP cette semaine'}
+										{tabValue === 2 && 'Pas encore d\'XP ce mois'}
+										{(tabValue === 0 || tabValue === 3 || tabValue === 4) && 'Non classé'}
+									</Typography>
+								)}
 							</Box>
 							<Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
 								<Box>
@@ -255,7 +275,8 @@ const LeaderboardPage = () => {
 						<Tabs
 							value={tabValue}
 							onChange={handleTabChange}
-							variant={isMobile ? 'fullWidth' : 'standard'}
+							variant={isMobile ? 'scrollable' : 'standard'}
+							scrollButtons={isMobile ? 'auto' : false}
 							centered={!isMobile}
 							sx={{
 								'& .MuiTab-root': {
@@ -265,7 +286,12 @@ const LeaderboardPage = () => {
 									py: 2,
 								},
 								'& .MuiTabs-indicator': {
-									backgroundColor: tabValue === 0 ? '#3B82F6' : tabValue === 1 ? '#10B981' : '#F59E0B',
+									backgroundColor:
+										tabValue === 0 ? '#3B82F6' :
+										tabValue === 1 ? '#8B5CF6' :
+										tabValue === 2 ? '#EC4899' :
+										tabValue === 3 ? '#F59E0B' :
+										'#10B981',
 									height: 3,
 								},
 							}}>
@@ -280,22 +306,42 @@ const LeaderboardPage = () => {
 								}}
 							/>
 							<Tab
-								icon={<FaFire style={{ fontSize: '1.25rem', color: tabValue === 1 ? '#10B981' : 'inherit' }} />}
+								icon={<WaterDrop sx={{ color: tabValue === 1 ? '#8B5CF6' : 'inherit' }} />}
 								iconPosition="start"
-								label={isMobile ? 'Streak' : 'Streak'}
+								label={isMobile ? 'Hebdo' : 'Hebdomadaire'}
 								sx={{
 									'&.Mui-selected': {
-										color: '#10B981 !important',
+										color: '#8B5CF6 !important',
 									},
 								}}
 							/>
 							<Tab
-								icon={<FaCoins style={{ fontSize: '1.25rem', color: tabValue === 2 ? '#F59E0B' : 'inherit' }} />}
+								icon={<WaterDrop sx={{ color: tabValue === 2 ? '#EC4899' : 'inherit' }} />}
+								iconPosition="start"
+								label={isMobile ? 'Mensuel' : 'Mensuel'}
+								sx={{
+									'&.Mui-selected': {
+										color: '#EC4899 !important',
+									},
+								}}
+							/>
+							<Tab
+								icon={<FaCoins style={{ fontSize: '1.25rem', color: tabValue === 3 ? '#F59E0B' : 'inherit' }} />}
 								iconPosition="start"
 								label={isMobile ? 'Gold' : 'Gold'}
 								sx={{
 									'&.Mui-selected': {
 										color: '#F59E0B !important',
+									},
+								}}
+							/>
+							<Tab
+								icon={<FaFire style={{ fontSize: '1.25rem', color: tabValue === 4 ? '#10B981' : 'inherit' }} />}
+								iconPosition="start"
+								label={isMobile ? 'Streak' : 'Streak'}
+								sx={{
+									'&.Mui-selected': {
+										color: '#10B981 !important',
 									},
 								}}
 							/>
@@ -325,30 +371,81 @@ const LeaderboardPage = () => {
 										align="right"
 										sx={{
 											fontWeight: 700,
-											color: tabValue === 0 ? '#1E40AF' : tabValue === 1 ? '#15803D' : '#D97706',
+											color:
+												tabValue === 0 ? '#1E40AF' :
+												tabValue === 1 ? '#7C3AED' :
+												tabValue === 2 ? '#DB2777' :
+												tabValue === 3 ? '#D97706' :
+												'#15803D',
 											width: { xs: 120, md: 150 }
 										}}>
 										{tabValue === 0 && 'XP'}
-										{tabValue === 1 && 'Jours'}
-										{tabValue === 2 && 'Gold'}
+										{tabValue === 1 && 'XP Hebdo'}
+										{tabValue === 2 && 'XP Mensuel'}
+										{tabValue === 3 && 'Gold'}
+										{tabValue === 4 && 'Jours'}
 									</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{tabData.map((entry) => (
-									<TableRow
-										key={entry.userId}
-										sx={{
-											background: entry.isCurrentUser
-												? alpha('#667eea', 0.08)
-												: 'transparent',
-											'&:hover': {
+								{tabData.map((entry) => {
+									// Définir les couleurs et styles pour le top 3
+									const getTopThreeStyle = (rank) => {
+										if (rank === 1) {
+											return {
+												background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 235, 150, 0.05) 50%, rgba(255, 215, 0, 0.08) 100%)',
+												borderLeft: '4px solid #FFD700',
+												'&:hover': {
+													background: 'linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 235, 150, 0.1) 50%, rgba(255, 215, 0, 0.15) 100%)',
+												},
+											}
+										}
+										if (rank === 2) {
+											return {
+												background: 'linear-gradient(90deg, rgba(192, 192, 192, 0.08) 0%, rgba(220, 220, 220, 0.05) 50%, rgba(192, 192, 192, 0.08) 100%)',
+												borderLeft: '4px solid #C0C0C0',
+												'&:hover': {
+													background: 'linear-gradient(90deg, rgba(192, 192, 192, 0.15) 0%, rgba(220, 220, 220, 0.1) 50%, rgba(192, 192, 192, 0.15) 100%)',
+												},
+											}
+										}
+										if (rank === 3) {
+											return {
+												background: 'linear-gradient(90deg, rgba(205, 127, 50, 0.08) 0%, rgba(222, 184, 135, 0.05) 50%, rgba(205, 127, 50, 0.08) 100%)',
+												borderLeft: '4px solid #CD7F32',
+												'&:hover': {
+													background: 'linear-gradient(90deg, rgba(205, 127, 50, 0.15) 0%, rgba(222, 184, 135, 0.1) 50%, rgba(205, 127, 50, 0.15) 100%)',
+												},
+											}
+										}
+										return {}
+									}
+
+									const topThreeStyle = getTopThreeStyle(entry.rank)
+									const isTopThree = entry.rank <= 3
+
+									return (
+										<TableRow
+											key={entry.userId}
+											sx={{
 												background: entry.isCurrentUser
-													? alpha('#667eea', 0.12)
-													: alpha('#F8FAFC', 1),
-											},
-											transition: 'all 0.2s ease',
-										}}>
+													? alpha('#667eea', 0.08)
+													: isTopThree
+													? topThreeStyle.background
+													: 'transparent',
+												borderLeft: isTopThree ? topThreeStyle.borderLeft : 'none',
+												'&:hover': entry.isCurrentUser
+													? {
+															background: alpha('#667eea', 0.12),
+													  }
+													: isTopThree
+													? topThreeStyle['&:hover']
+													: {
+															background: alpha('#F8FAFC', 1),
+													  },
+												transition: 'all 0.2s ease',
+												position: 'relative',
+											}}>
 										<TableCell>
 											<Box
 												sx={{
@@ -362,6 +459,16 @@ const LeaderboardPage = () => {
 														fontWeight: 800,
 														color: getRankColor(entry.rank),
 														fontSize: { xs: '1.1rem', md: '1.3rem' },
+														filter: isTopThree ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'none',
+														animation: entry.rank === 1 ? 'pulse 2s ease-in-out infinite' : 'none',
+														'@keyframes pulse': {
+															'0%, 100%': {
+																transform: 'scale(1)',
+															},
+															'50%': {
+																transform: 'scale(1.1)',
+															},
+														},
 													}}>
 													{getRankIcon(entry.rank)}
 												</Typography>
@@ -378,9 +485,10 @@ const LeaderboardPage = () => {
 													src={getAvatarUrl(entry.avatarId || entry.avatar_id)}
 													alt={entry.username}
 													sx={{
-														width: { xs: 36, md: 44 },
-														height: { xs: 36, md: 44 },
-														border: `2px solid ${getAvatarBorderColor(entry.avatarId || entry.avatar_id)}`,
+														width: { xs: 48, md: 56 },
+														height: { xs: 48, md: 56 },
+														border: `3px solid ${getAvatarBorderColor(entry.avatarId || entry.avatar_id)}`,
+														boxShadow: isTopThree ? '0 4px 12px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
 													}}>
 													{entry.username.charAt(0).toUpperCase()}
 												</Avatar>
@@ -428,14 +536,20 @@ const LeaderboardPage = () => {
 												variant="h6"
 												sx={{
 													fontWeight: 800,
-													color: tabValue === 0 ? '#1E40AF' : tabValue === 1 ? '#15803D' : '#D97706',
+													color:
+														tabValue === 0 ? '#1E40AF' :
+														tabValue === 1 ? '#7C3AED' :
+														tabValue === 2 ? '#DB2777' :
+														tabValue === 3 ? '#D97706' :
+														'#15803D',
 													fontSize: { xs: '1rem', md: '1.2rem' },
 												}}>
 												{getValueLabel(entry)}
 											</Typography>
 										</TableCell>
 									</TableRow>
-								))}
+								)
+							})}
 							</TableBody>
 						</Table>
 					</TableContainer>

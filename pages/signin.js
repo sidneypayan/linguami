@@ -47,6 +47,7 @@ const Signin = () => {
 	const { t } = useTranslation('register')
 	const [values, setValues] = useState(initialState)
 	const [formState, setFormState] = useState('signin')
+	const [showAvatars, setShowAvatars] = useState(false)
 
 	const { login, register, loginWithThirdPartyOAuth } = useUserContext()
 
@@ -269,13 +270,28 @@ const Signin = () => {
 								color: '#4a5568',
 								textTransform: 'none',
 								fontWeight: 600,
-								transition: 'all 0.2s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
 									borderColor: '#667eea',
 									borderWidth: 2,
 									background: 'rgba(102, 126, 234, 0.05)',
 									transform: 'translateY(-2px)',
 									boxShadow: '0 4px 12px rgba(102, 126, 234, 0.2)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 							}}>
 							<Image
@@ -297,13 +313,28 @@ const Signin = () => {
 								color: '#4a5568',
 								textTransform: 'none',
 								fontWeight: 600,
-								transition: 'all 0.2s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
 									borderColor: '#667eea',
 									borderWidth: 2,
 									background: 'rgba(102, 126, 234, 0.05)',
 									transform: 'translateY(-2px)',
 									boxShadow: '0 4px 12px rgba(102, 126, 234, 0.2)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 							}}>
 							<Image
@@ -365,95 +396,176 @@ const Signin = () => {
 										variant='body2'
 										sx={{
 											color: '#64748B',
-											textAlign: 'center',
-											mb: 2,
+											mb: 1,
 											fontWeight: 600,
 										}}>
 										{t('chooseAvatar')}
 									</Typography>
 
-									<Box
+									{/* Bouton pour ouvrir/fermer la sélection d'avatars */}
+									<Button
+										fullWidth
+										onClick={() => setShowAvatars(!showAvatars)}
 										sx={{
-											display: 'grid',
-											gridTemplateColumns: 'repeat(3, 1fr)',
-											gap: 2,
-											p: 2,
+											py: 2,
 											borderRadius: 2,
+											border: '2px solid #e5e7eb',
 											background: 'rgba(102, 126, 234, 0.02)',
-											border: '1px solid #e5e7eb',
+											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+											display: 'flex',
+											alignItems: 'center',
+											gap: 2,
+											justifyContent: 'flex-start',
+											textTransform: 'none',
+											position: 'relative',
+											overflow: 'hidden',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: '-100%',
+												width: '100%',
+												height: '100%',
+												background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent)',
+												transition: 'left 0.5s ease',
+											},
+											'&:hover': {
+												borderColor: '#667eea',
+												background: 'rgba(102, 126, 234, 0.05)',
+												'&::before': {
+													left: '100%',
+												},
+											},
 										}}>
-										{AVATARS.map(avatar => {
-											const isSelected = values.selectedAvatar === avatar.id
-											return (
-												<Box
-													key={avatar.id}
-													onClick={() => handleAvatarSelect(avatar.id)}
-													sx={{
-														cursor: 'pointer',
-														display: 'flex',
-														flexDirection: 'column',
-														alignItems: 'center',
-														gap: 1,
-														transition: 'all 0.2s ease',
-														'&:hover': {
-															transform: 'scale(1.05)',
-														},
-													}}>
-													<Box sx={{ position: 'relative' }}>
-														<Avatar
-															src={avatar.url}
-															alt={avatar.name}
-															sx={{
-																width: { xs: 70, sm: 80 },
-																height: { xs: 70, sm: 80 },
-																border: isSelected
-																	? '3px solid #667eea'
-																	: '2px solid transparent',
-																boxShadow: isSelected
-																	? '0 0 0 3px rgba(102, 126, 234, 0.2)'
-																	: 'none',
-																transition: 'all 0.2s ease',
-															}}
-														/>
-														{isSelected && (
-															<Box
-																sx={{
-																	position: 'absolute',
-																	top: -4,
-																	right: -4,
-																	width: 20,
-																	height: 20,
-																	borderRadius: '50%',
-																	bgcolor: '#667eea',
-																	display: 'flex',
-																	alignItems: 'center',
-																	justifyContent: 'center',
-																	boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-																}}>
-																<CheckCircleRounded
-																	sx={{
-																		fontSize: '1rem',
-																		color: 'white',
-																	}}
-																/>
-															</Box>
-														)}
-													</Box>
-													<Typography
-														variant='caption'
+										<Avatar
+											src={AVATARS.find(a => a.id === values.selectedAvatar)?.url}
+											alt='Avatar sélectionné'
+											sx={{
+												width: 50,
+												height: 50,
+												border: '2px solid #667eea',
+												boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+											}}
+										/>
+										<Box sx={{ flex: 1, textAlign: 'left' }}>
+											<Typography
+												sx={{
+													fontWeight: 600,
+													color: '#2d3748',
+													fontSize: '0.95rem',
+												}}>
+												{AVATARS.find(a => a.id === values.selectedAvatar)?.name}
+											</Typography>
+											<Typography
+												sx={{
+													fontSize: '0.8rem',
+													color: '#718096',
+												}}>
+												{showAvatars ? t('hideAvatars') || 'Masquer les avatars' : t('clickToChangeAvatar') || 'Cliquer pour changer'}
+											</Typography>
+										</Box>
+									</Button>
+
+									{/* Grille d'avatars - affichée uniquement si showAvatars est true */}
+									{showAvatars && (
+										<Box
+											sx={{
+												mt: 2,
+												display: 'grid',
+												gridTemplateColumns: 'repeat(3, 1fr)',
+												gap: 2,
+												p: 2,
+												borderRadius: 2,
+												background: 'rgba(102, 126, 234, 0.02)',
+												border: '1px solid #e5e7eb',
+												animation: 'fadeIn 0.3s ease',
+												'@keyframes fadeIn': {
+													'0%': {
+														opacity: 0,
+														transform: 'translateY(-10px)',
+													},
+													'100%': {
+														opacity: 1,
+														transform: 'translateY(0)',
+													},
+												},
+											}}>
+											{AVATARS.map(avatar => {
+												const isSelected = values.selectedAvatar === avatar.id
+												return (
+													<Box
+														key={avatar.id}
+														onClick={() => {
+															handleAvatarSelect(avatar.id)
+															setShowAvatars(false)
+														}}
 														sx={{
-															fontSize: '0.75rem',
-															color: isSelected ? '#667eea' : '#64748B',
-															fontWeight: isSelected ? 600 : 400,
-															textAlign: 'center',
+															cursor: 'pointer',
+															display: 'flex',
+															flexDirection: 'column',
+															alignItems: 'center',
+															gap: 1,
 															transition: 'all 0.2s ease',
+															'&:hover': {
+																transform: 'scale(1.05)',
+															},
 														}}>
-														{avatar.name}
-													</Typography>
-												</Box>
-											)
-										})}
-									</Box>
+														<Box sx={{ position: 'relative' }}>
+															<Avatar
+																src={avatar.url}
+																alt={avatar.name}
+																sx={{
+																	width: { xs: 70, sm: 80 },
+																	height: { xs: 70, sm: 80 },
+																	border: isSelected
+																		? '3px solid #667eea'
+																		: '2px solid transparent',
+																	boxShadow: isSelected
+																		? '0 0 0 3px rgba(102, 126, 234, 0.2)'
+																		: 'none',
+																	transition: 'all 0.2s ease',
+																}}
+															/>
+															{isSelected && (
+																<Box
+																	sx={{
+																		position: 'absolute',
+																		top: -4,
+																		right: -4,
+																		width: 20,
+																		height: 20,
+																		borderRadius: '50%',
+																		bgcolor: '#667eea',
+																		display: 'flex',
+																		alignItems: 'center',
+																		justifyContent: 'center',
+																		boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+																	}}>
+																	<CheckCircleRounded
+																		sx={{
+																			fontSize: '1rem',
+																			color: 'white',
+																		}}
+																	/>
+																</Box>
+															)}
+														</Box>
+														<Typography
+															variant='caption'
+															sx={{
+																fontSize: '0.75rem',
+																color: isSelected ? '#667eea' : '#64748B',
+																fontWeight: isSelected ? 600 : 400,
+																textAlign: 'center',
+																transition: 'all 0.2s ease',
+															}}>
+															{avatar.name}
+														</Typography>
+													</Box>
+												)
+											})}
+										</Box>
+									)}
 
 									<Typography
 										variant='caption'
@@ -772,12 +884,27 @@ const Signin = () => {
 								fontSize: '1.0625rem',
 								textTransform: 'none',
 								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-								transition: 'all 0.3s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
 									background:
 										'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 									transform: 'translateY(-2px)',
 									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 								'&:active': {
 									transform: 'translateY(0)',

@@ -179,11 +179,26 @@ const UpdatePassword = () => {
 								fontSize: '1.0625rem',
 								textTransform: 'none',
 								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-								transition: 'all 0.3s ease',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
 									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
 									transform: 'translateY(-2px)',
 									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 								'&:active': {
 									transform: 'translateY(0)',

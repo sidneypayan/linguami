@@ -149,6 +149,42 @@ export default async function handler(req, res) {
 
 		if (updateError) throw updateError
 
+		// 6.5. Mettre à jour le tracking hebdomadaire
+		const { data: weeklyData, error: weeklyError } = await supabase.rpc('update_weekly_xp', {
+			p_user_id: user.id,
+			p_xp_amount: xpAmount,
+		})
+		// Ignorer l'erreur si la fonction n'existe pas encore
+		if (weeklyError) {
+			console.error('❌ Weekly tracking update failed:', {
+				error: weeklyError,
+				message: weeklyError.message,
+				details: weeklyError.details,
+				hint: weeklyError.hint,
+				code: weeklyError.code,
+			})
+		} else {
+			console.log('✅ Weekly tracking updated successfully:', weeklyData)
+		}
+
+		// 6.6. Mettre à jour le tracking mensuel
+		const { data: monthlyData, error: monthlyError } = await supabase.rpc('update_monthly_xp', {
+			p_user_id: user.id,
+			p_xp_amount: xpAmount,
+		})
+		// Ignorer l'erreur si la fonction n'existe pas encore
+		if (monthlyError) {
+			console.error('❌ Monthly tracking update failed:', {
+				error: monthlyError,
+				message: monthlyError.message,
+				details: monthlyError.details,
+				hint: monthlyError.hint,
+				code: monthlyError.code,
+			})
+		} else {
+			console.log('✅ Monthly tracking updated successfully:', monthlyData)
+		}
+
 		// 7. Créer une transaction XP et Gold
 		const { error: transactionError } = await supabase
 			.from('xp_transactions')
