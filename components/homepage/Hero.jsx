@@ -12,10 +12,10 @@ const Hero = () => {
 			sx={{
 				position: 'relative',
 				padding: {
-					xs: '6rem 0 4rem 0',
-					md: '8rem 0 6rem 0',
+					xs: '7rem 0 5rem 0',
+					md: '10rem 0 8rem 0',
 				},
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
 				overflow: 'hidden',
 				'&::before': {
 					content: '""',
@@ -25,8 +25,30 @@ const Hero = () => {
 					right: 0,
 					bottom: 0,
 					background:
-						'radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 40%)',
+						'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
 					pointerEvents: 'none',
+				},
+				'&::after': {
+					content: '""',
+					position: 'absolute',
+					top: '20%',
+					left: '10%',
+					width: '500px',
+					height: '500px',
+					background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+					filter: 'blur(80px)',
+					pointerEvents: 'none',
+					animation: 'pulse 4s ease-in-out infinite',
+				},
+				'@keyframes pulse': {
+					'0%, 100%': {
+						opacity: 0.5,
+						transform: 'scale(1)',
+					},
+					'50%': {
+						opacity: 0.8,
+						transform: 'scale(1.1)',
+					},
 				},
 			}}>
 			<Stack
@@ -48,20 +70,20 @@ const Hero = () => {
 					zIndex: 1,
 				}}>
 				<Box maxWidth={825}>
-					<Typography
-						variant='h2'
-						component='h1'
-						mb={3}
+					{/* Badge */}
+					<Box
 						sx={{
-							fontSize: { xs: '2.2rem', md: '3.75rem' },
-							fontWeight: 800,
-							lineHeight: 1.2,
-							background: 'linear-gradient(135deg, #ffffff, #ffd700, #ff6b9d, #c471ed, #12c2e9, #ffffff)',
-							backgroundSize: '400% 400%',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							animation: 'fadeInUp 0.6s ease-out, gradientShift 8s ease infinite',
+							display: 'inline-flex',
+							alignItems: 'center',
+							gap: 1,
+							px: 3,
+							py: 1,
+							mb: 3,
+							borderRadius: 50,
+							background: 'rgba(139, 92, 246, 0.2)',
+							border: '1px solid rgba(139, 92, 246, 0.3)',
+							backdropFilter: 'blur(10px)',
+							animation: 'fadeInUp 0.6s ease-out',
 							'@keyframes fadeInUp': {
 								from: {
 									opacity: 0,
@@ -72,6 +94,40 @@ const Hero = () => {
 									transform: 'translateY(0)',
 								},
 							},
+						}}>
+						<Box
+							sx={{
+								width: 8,
+								height: 8,
+								borderRadius: '50%',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								boxShadow: '0 0 10px rgba(139, 92, 246, 0.8)',
+							}}
+						/>
+						<Typography
+							sx={{
+								fontSize: '0.9rem',
+								fontWeight: 600,
+								color: 'rgba(255, 255, 255, 0.95)',
+							}}>
+							Plateforme d'apprentissage interactive
+						</Typography>
+					</Box>
+
+					<Typography
+						variant='h2'
+						component='h1'
+						mb={3}
+						sx={{
+							fontSize: { xs: '2.5rem', sm: '3rem', md: '4rem' },
+							fontWeight: 800,
+							lineHeight: 1.15,
+							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+							backgroundSize: '200% 200%',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							animation: 'fadeInUp 0.6s ease-out 0.1s both, gradientShift 8s ease infinite',
 							'@keyframes gradientShift': {
 								'0%': {
 									backgroundPosition: '0% 50%',
@@ -84,17 +140,20 @@ const Hero = () => {
 								},
 							},
 						}}>
-						<span style={{ fontWeight: '500' }}>{t('hero')}</span> <br />
+						<Box component='span' sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
+							{t('hero')}
+						</Box>
 						{t('title')}
 					</Typography>
+
 					<Typography
 						mb={5}
 						variant='h5'
 						sx={{
-							fontSize: { xs: '1.2rem', md: '1.6rem' },
+							fontSize: { xs: '1.125rem', md: '1.5rem' },
 							fontWeight: 500,
-							lineHeight: 1.6,
-							color: '#ffffff',
+							lineHeight: 1.7,
+							color: 'rgba(255, 255, 255, 0.85)',
 							animation: 'fadeInUp 0.6s ease-out 0.2s both',
 						}}>
 						<Box component='span' sx={{ display: { xs: 'inline', md: 'none' } }}>
@@ -111,27 +170,43 @@ const Hero = () => {
 							size='large'
 							variant='contained'
 							sx={{
-								background: 'rgba(255, 255, 255, 0.95)',
-								color: '#667eea',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								color: 'white',
 								fontWeight: 700,
-								fontSize: '1.1rem',
+								fontSize: { xs: '1rem', md: '1.125rem' },
 								textTransform: 'none',
-								px: 4,
-								py: 1.5,
+								px: { xs: 4, md: 5 },
+								py: { xs: 1.75, md: 2 },
 								borderRadius: 3,
-								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+								boxShadow: '0 8px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+								border: '1px solid rgba(139, 92, 246, 0.5)',
 								display: 'block',
 								margin: { xs: '0 auto', lg: '0' },
-								minWidth: '200px',
-								transition: 'all 0.3s ease',
+								minWidth: { xs: '200px', md: '220px' },
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 								animation: 'fadeInUp 0.6s ease-out 0.4s both',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
 								'&:hover': {
-									background: 'white',
-									transform: 'translateY(-4px)',
-									boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									transform: 'translateY(-4px) scale(1.02)',
+									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
+									'&::before': {
+										left: '100%',
+									},
 								},
 								'&:active': {
-									transform: 'translateY(-2px) scale(0.98)',
+									transform: 'translateY(-2px) scale(1)',
 								},
 							}}>
 							{t('start')} →
@@ -148,8 +223,8 @@ const Hero = () => {
 						alignItems: 'center',
 						justifyContent: 'center',
 						position: 'relative',
-						width: 280,
-						height: 280,
+						width: 320,
+						height: 320,
 						animation: 'float 3s ease-in-out infinite',
 						'@keyframes float': {
 							'0%, 100%': {
@@ -160,21 +235,56 @@ const Hero = () => {
 							},
 						},
 					}}>
+					{/* Cercles de fond animés */}
+					<Box
+						sx={{
+							position: 'absolute',
+							width: '120%',
+							height: '120%',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+							borderRadius: '50%',
+							filter: 'blur(60px)',
+							animation: 'pulse 3s ease-in-out infinite',
+							'@keyframes pulse': {
+								'0%, 100%': {
+									opacity: 0.5,
+									transform: 'scale(1)',
+								},
+								'50%': {
+									opacity: 0.8,
+									transform: 'scale(1.1)',
+								},
+							},
+						}}
+					/>
 					<Box
 						sx={{
 							position: 'absolute',
 							width: '100%',
 							height: '100%',
-							background: 'rgba(255, 255, 255, 0.1)',
 							borderRadius: '50%',
-							filter: 'blur(40px)',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+							border: '2px solid rgba(139, 92, 246, 0.3)',
+							boxShadow: '0 0 40px rgba(139, 92, 246, 0.4), inset 0 0 40px rgba(6, 182, 212, 0.2)',
+							animation: 'rotate 20s linear infinite',
+							'@keyframes rotate': {
+								'0%': {
+									transform: 'rotate(0deg)',
+								},
+								'100%': {
+									transform: 'rotate(360deg)',
+								},
+							},
 						}}
 					/>
 					<Image
 						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
 						alt='Linguami wizard mascot'
 						fill
-						style={{ objectFit: 'contain' }}
+						style={{
+							objectFit: 'contain',
+							filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
+						}}
 						priority
 					/>
 				</Box>

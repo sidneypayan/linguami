@@ -96,7 +96,12 @@ const Homepage = () => {
 					sx={{
 						fontSize: { xs: '2rem', md: '3rem' },
 						fontWeight: 800,
-						mb: 1,
+						mb: 2,
+						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+						backgroundSize: '200% 200%',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						backgroundClip: 'text',
 					}}>
 					{t('multimedia')}
 				</Typography>
@@ -105,11 +110,12 @@ const Homepage = () => {
 					variant='subtitle1'
 					align='center'
 					sx={{
-						color: '#718096',
+						color: '#64748b',
 						fontSize: { xs: '1rem', md: '1.125rem' },
-						mb: 5,
+						mb: 6,
 						maxWidth: '600px',
 						mx: 'auto',
+						fontWeight: 500,
 					}}>
 					Découvrez toutes nos ressources pour apprendre efficacement
 				</Typography>
@@ -146,9 +152,9 @@ const Homepage = () => {
 										width: '100%',
 										minHeight: { xs: '260px', sm: '280px' },
 										borderRadius: 4,
-										background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.3)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.2)',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.2)',
+										boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										cursor: 'pointer',
 										position: 'relative',
@@ -160,14 +166,13 @@ const Homepage = () => {
 											left: '-100%',
 											width: '100%',
 											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
 											transition: 'left 0.5s ease',
 										},
 										'&:hover': {
 											transform: 'translateY(-8px) scale(1.02)',
-											boxShadow: '0 8px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
-											background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 1) 100%)',
-											borderColor: 'rgba(139, 92, 246, 0.5)',
+											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
+											borderColor: 'rgba(139, 92, 246, 0.4)',
 											'&::before': {
 												left: '100%',
 											},
@@ -182,10 +187,11 @@ const Homepage = () => {
 											alignItems: 'center',
 											justifyContent: 'center',
 											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											border: '1px solid rgba(139, 92, 246, 0.4)',
-											boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+											border: '1px solid rgba(139, 92, 246, 0.25)',
+											boxShadow: '0 0 15px rgba(139, 92, 246, 0.2)',
 											p: 2,
+											transition: 'all 0.3s ease',
 										}}>
 										<Image
 											src={icon.img}
@@ -200,10 +206,7 @@ const Homepage = () => {
 											sx={{
 												fontSize: { xs: '1rem', md: '1.125rem' },
 												fontWeight: 700,
-												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-												WebkitBackgroundClip: 'text',
-												WebkitTextFillColor: 'transparent',
-												backgroundClip: 'text',
+												color: '#1e1b4b',
 												mb: 0.5,
 											}}>
 											{icon.title}
@@ -211,7 +214,7 @@ const Homepage = () => {
 										<Typography
 											variant='body2'
 											sx={{
-												color: 'rgba(255, 255, 255, 0.8)',
+												color: '#64748b',
 												fontWeight: 500,
 												fontSize: { xs: '0.875rem', md: '0.95rem' },
 												lineHeight: 1.5,
@@ -268,14 +271,14 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.3)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
 						position: 'relative',
 						overflow: 'hidden',
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -286,11 +289,11 @@ const Homepage = () => {
 							left: '-100%',
 							width: '100%',
 							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
 							transition: 'left 0.5s ease',
 						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
 							transform: 'translateY(-4px) scale(1.01)',
 							'&::before': {
 								left: '100%',
@@ -314,6 +317,9 @@ const Homepage = () => {
 							alt='translator'
 							width={175}
 							height={175}
+							sx={{
+								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
+							}}
 						/>
 					</Box>
 
@@ -323,8 +329,8 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 600,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								fontWeight: 700,
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -335,9 +341,10 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: 'rgba(255, 255, 255, 0.85)',
+								color: '#64748b',
 								fontWeight: 500,
 								lineHeight: 1.7,
+								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
 							{t('translatorsubtitle')}
 						</Typography>
@@ -354,8 +361,31 @@ const Homepage = () => {
 								margin: '0 auto',
 								marginTop: '1rem',
 								fontSize: { xs: '0.9rem', sm: '1rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
+								'&:hover': {
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									transform: 'translateY(-4px) scale(1.05)',
+									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
+									'&::before': {
+										left: '100%',
+									},
+								},
 								'&:active': {
-									transform: 'scale(0.97)',
+									transform: 'translateY(-2px) scale(1.02)',
 								},
 							}}>
 							{t('show')}
@@ -370,14 +400,14 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.3)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
 						position: 'relative',
 						overflow: 'hidden',
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -388,11 +418,11 @@ const Homepage = () => {
 							left: '-100%',
 							width: '100%',
 							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
 							transition: 'left 0.5s ease',
 						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
 							transform: 'translateY(-4px) scale(1.01)',
 							'&::before': {
 								left: '100%',
@@ -405,8 +435,8 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 600,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								fontWeight: 700,
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -417,9 +447,10 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: 'rgba(255, 255, 255, 0.85)',
+								color: '#64748b',
 								fontWeight: 500,
 								lineHeight: 1.7,
+								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
 							{t('giftranslatorsubtitle')}
 						</Typography>
@@ -436,8 +467,31 @@ const Homepage = () => {
 								margin: '0 auto',
 								marginTop: '1rem',
 								fontSize: { xs: '0.9rem', sm: '1rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
+								'&:hover': {
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									transform: 'translateY(-4px) scale(1.05)',
+									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
+									'&::before': {
+										left: '100%',
+									},
+								},
 								'&:active': {
-									transform: 'scale(0.97)',
+									transform: 'translateY(-2px) scale(1.02)',
 								},
 							}}>
 							{t('show')}
@@ -460,6 +514,9 @@ const Homepage = () => {
 							alt='dictionary'
 							width={175}
 							height={175}
+							sx={{
+								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
+							}}
 						/>
 					</Box>
 				</Stack>
@@ -471,14 +528,14 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.3)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
 						position: 'relative',
 						overflow: 'hidden',
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -489,11 +546,11 @@ const Homepage = () => {
 							left: '-100%',
 							width: '100%',
 							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
 							transition: 'left 0.5s ease',
 						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
 							transform: 'translateY(-4px) scale(1.01)',
 							'&::before': {
 								left: '100%',
@@ -517,6 +574,9 @@ const Homepage = () => {
 							alt='flashcards'
 							width={175}
 							height={175}
+							sx={{
+								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
+							}}
 						/>
 					</Box>
 
@@ -526,8 +586,8 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 600,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								fontWeight: 700,
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -538,9 +598,10 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: 'rgba(255, 255, 255, 0.85)',
+								color: '#64748b',
 								fontWeight: 500,
 								lineHeight: 1.7,
+								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
 							{t('gifflashcardssubtitle')}
 						</Typography>
@@ -557,8 +618,31 @@ const Homepage = () => {
 								margin: '0 auto',
 								marginTop: '1rem',
 								fontSize: { xs: '0.9rem', sm: '1rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								position: 'relative',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: '-100%',
+									width: '100%',
+									height: '100%',
+									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+									transition: 'left 0.5s ease',
+								},
+								'&:hover': {
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									transform: 'translateY(-4px) scale(1.05)',
+									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
+									'&::before': {
+										left: '100%',
+									},
+								},
 								'&:active': {
-									transform: 'scale(0.97)',
+									transform: 'translateY(-2px) scale(1.02)',
 								},
 							}}>
 							{t('show')}
@@ -573,14 +657,14 @@ const Homepage = () => {
 						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
+						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
 						padding: { xs: '2.5rem', md: '4rem' },
 						borderRadius: 5,
 						gap: '2rem',
 						margin: '0 auto',
 						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.3)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
 						position: 'relative',
 						overflow: 'hidden',
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -591,11 +675,11 @@ const Homepage = () => {
 							left: '-100%',
 							width: '100%',
 							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
 							transition: 'left 0.5s ease',
 						},
 						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
+							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
 							transform: 'translateY(-4px) scale(1.01)',
 							'&::before': {
 								left: '100%',
@@ -608,8 +692,8 @@ const Homepage = () => {
 							align='center'
 							sx={{
 								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 600,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								fontWeight: 700,
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -620,9 +704,10 @@ const Homepage = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: 'rgba(255, 255, 255, 0.85)',
+								color: '#64748b',
 								fontWeight: 500,
 								lineHeight: 1.7,
+								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
 							{t('teachersubtitle')}
 						</Typography>
@@ -638,8 +723,31 @@ const Homepage = () => {
 									margin: '0 auto',
 									marginTop: '1rem',
 									fontSize: { xs: '0.9rem', sm: '1rem' },
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
+									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									position: 'relative',
+									overflow: 'hidden',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: '-100%',
+										width: '100%',
+										height: '100%',
+										background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+										transition: 'left 0.5s ease',
+									},
+									'&:hover': {
+										background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+										transform: 'translateY(-4px) scale(1.05)',
+										boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
+										'&::before': {
+											left: '100%',
+										},
+									},
 									'&:active': {
-										transform: 'scale(0.97)',
+										transform: 'translateY(-2px) scale(1.02)',
 									},
 								}}>
 								{t('start')}
@@ -663,6 +771,9 @@ const Homepage = () => {
 							alt='teacher'
 							width={175}
 							height={175}
+							sx={{
+								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
+							}}
 						/>
 					</Box>
 				</Stack>
