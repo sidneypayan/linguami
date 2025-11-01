@@ -3,7 +3,7 @@ import { styled, alpha } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { ExpandMoreRounded, LanguageRounded, CheckCircleRounded } from '@mui/icons-material'
+import { ExpandMoreRounded, RecordVoiceOverRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -194,7 +194,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 				disableElevation
 				disableRipple
 				onClick={handleClick}
-				startIcon={<LanguageRounded sx={{ fontSize: '1.3rem' }} />}
+				startIcon={<RecordVoiceOverRounded sx={{ fontSize: '1.3rem' }} />}
 				endIcon={
 					<ExpandMoreRounded
 						sx={{
@@ -205,7 +205,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 					/>
 				}
 				sx={{
-					display: variant === 'full' ? 'flex' : { xs: 'none', xl: 'flex' },
+					display: variant === 'full' ? 'flex' : { xs: 'none', lg: 'flex' },
 					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					color: 'white',
@@ -254,7 +254,9 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 				aria-expanded={open ? 'true' : undefined}
 				onClick={handleClick}
 				sx={{
-					display: variant === 'full' ? 'none' : { xs: 'flex', xl: 'none' },
+					display: variant === 'full' ? 'none' : { xs: 'flex', lg: 'none' },
+					width: { xs: 40, sm: 44, lg: 48 },
+					height: { xs: 40, sm: 44, lg: 48 },
 					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -272,8 +274,8 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
-							width: 28,
-							height: 28,
+							width: { xs: 24, sm: 28, lg: 30 },
+							height: { xs: 24, sm: 28, lg: 30 },
 							borderRadius: '50%',
 							overflow: 'hidden',
 							border: '2px solid rgba(255, 255, 255, 0.4)',
@@ -282,7 +284,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						{getFlag(lang, 28)}
 					</Box>
 				)}
-				<LanguageRounded
+				<RecordVoiceOverRounded
 					sx={{
 						position: 'absolute',
 						bottom: -2,

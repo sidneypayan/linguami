@@ -81,79 +81,44 @@ const Material = () => {
 				jsonLd={jsonLd}
 			/>
 
-			{/* Hero Section */}
+			{/* Compact Header */}
 			<Box
 				sx={{
-					position: 'relative',
-					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-					overflow: 'hidden',
-					pt: { xs: '6rem', md: '7rem' },
-					pb: { xs: '5rem', md: '6rem' },
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
+					pt: { xs: '5.5rem', md: '6rem' },
+					pb: 3,
+					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+					bgcolor: '#fafafa',
 				}}>
-				<Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center', pb: { xs: 2, md: 3 } }}>
+				<Container maxWidth='lg'>
 					<Typography
-						variant="h1"
+						variant='h4'
 						sx={{
-							fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
-							fontWeight: 800,
-							mb: { xs: 2.5, md: 3 },
-							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
-							backgroundSize: '200% 200%',
+							fontWeight: 700,
+							fontSize: { xs: '1.75rem', sm: '2rem' },
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 							WebkitBackgroundClip: 'text',
 							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							animation: 'gradientShift 8s ease infinite',
-							'@keyframes gradientShift': {
-								'0%': { backgroundPosition: '0% 50%' },
-								'50%': { backgroundPosition: '100% 50%' },
-								'100%': { backgroundPosition: '0% 50%' },
-							},
+							textAlign: 'center',
+							mb: 1,
 						}}>
 						{t('pagetitle')}
 					</Typography>
 					<Typography
-						variant="h5"
+						variant='body1'
+						align='center'
 						sx={{
-							fontSize: { xs: '1rem', md: '1.25rem' },
-							fontWeight: 500,
-							color: 'rgba(255, 255, 255, 0.85)',
-							maxWidth: '700px',
-							mx: 'auto',
-							lineHeight: 1.7,
-							px: { xs: 2, sm: 0 },
+							color: '#64748b',
+							fontSize: { xs: '0.9375rem', sm: '1rem' },
 						}}>
 						{t('description')}
 					</Typography>
 				</Container>
-
-				{/* Diagonal separator */}
-				<Box
-					sx={{
-						position: 'absolute',
-						bottom: 0,
-						left: 0,
-						right: 0,
-						height: { xs: '60px', md: '80px' },
-						background: '#ffffff',
-						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-					}}
-				/>
 			</Box>
 
 			<Container
 				maxWidth='lg'
 				sx={{
-					py: { xs: 4, md: 6 },
+					py: { xs: 3, md: 4 },
 					px: { xs: 2, sm: 3 },
 				}}>
 				{/* Section Textes et Audio */}

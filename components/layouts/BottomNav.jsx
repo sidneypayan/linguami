@@ -59,7 +59,7 @@ const BottomNav = () => {
 				bottom: 0,
 				left: 0,
 				right: 0,
-				display: { xs: 'block', sm: 'none' },
+				display: { xs: 'block', md: 'none' },
 				zIndex: 1100,
 				borderRadius: 0,
 				boxShadow: '0 -4px 24px rgba(102, 126, 234, 0.15)',

@@ -134,7 +134,8 @@ const UserMenu = () => {
 					display: 'flex',
 					alignItems: 'center',
 					textAlign: 'center',
-					ml: 2,
+					ml: { xs: 0.5, sm: 1, lg: 2 },
+					flexShrink: 0,
 				}}>
 				<IconButton
 					onClick={handleClick}
@@ -145,7 +146,7 @@ const UserMenu = () => {
 							? 'rgba(255, 255, 255, 0.25)'
 							: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 						backdropFilter: 'blur(10px)',
-						border: '2px solid rgba(255, 255, 255, 0.3)',
+						border: { xs: '1.5px solid rgba(255, 255, 255, 0.3)', sm: '2px solid rgba(255, 255, 255, 0.3)' },
 						borderColor: open ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)',
 						transition: 'all 0.3s ease',
 						'&:hover': {
@@ -161,11 +162,11 @@ const UserMenu = () => {
 						src={avatarUrl}
 						alt={username}
 						sx={{
-							width: 48,
-							height: 48,
+							width: { xs: 44, sm: 48, lg: 52 },
+							height: { xs: 44, sm: 48, lg: 52 },
 							border: '2px solid transparent',
 						}}>
-						<PersonRounded />
+						<PersonRounded sx={{ fontSize: { xs: 24, sm: 28 } }} />
 					</Avatar>
 				</IconButton>
 			</Box>

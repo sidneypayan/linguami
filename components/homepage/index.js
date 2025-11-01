@@ -79,7 +79,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
 					alignItems: 'center',
 					gap: { xs: 3, md: 5 },
-					padding: { xs: '2.5rem', md: '3.5rem 4rem' },
+					padding: { xs: '1.5rem 2rem', sm: '2.5rem', md: '3.5rem 4rem' },
 					borderRadius: 5,
 					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
 					backdropFilter: 'blur(20px)',

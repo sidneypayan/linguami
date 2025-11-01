@@ -174,7 +174,7 @@ const AddWordModal = ({ open, onClose }) => {
 			</DialogTitle>
 
 			<form onSubmit={handleSubmit}>
-				<DialogContent sx={{ px: 4, py: 3 }}>
+				<DialogContent sx={{ px: { xs: 2, sm: 3, md: 4 }, py: 3 }}>
 					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 						{/* Champ pour le mot dans la langue d'apprentissage */}
 						<Box>
@@ -318,7 +318,7 @@ const AddWordModal = ({ open, onClose }) => {
 					</Box>
 				</DialogContent>
 
-				<DialogActions sx={{ px: 4, pb: 3, pt: 2, gap: 2 }}>
+				<DialogActions sx={{ px: { xs: 2, sm: 3, md: 4 }, pb: 3, pt: 2, gap: 2 }}>
 					<Button
 						onClick={handleClose}
 						variant='outlined'

@@ -392,7 +392,7 @@ const Navbar = props => {
 				position: 'relative',
 				zIndex: 1,
 				minHeight: { xs: 70, sm: 80 },
-				px: { xs: 2, sm: 3 },
+				px: { xs: 1.5, sm: 2, md: 3 },
 			}}>
 					{/* Menu mobile */}
 					<IconButton
@@ -401,10 +401,11 @@ const Navbar = props => {
 						edge='start'
 						onClick={handleDrawerToggle}
 						sx={{
-							mr: 2,
-							display: { xs: 'flex', xl: 'none' },
-							width: 50,
-							height: 50,
+							ml: { xs: 0.5, sm: 0 },
+							mr: { xs: 1.5, sm: 1.5, lg: 2 },
+							display: { xs: 'flex', lg: 'none' },
+							width: { xs: 44, sm: 48, lg: 50 },
+							height: { xs: 44, sm: 48, lg: 50 },
 							borderRadius: 2,
 							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 							backdropFilter: 'blur(10px)',
@@ -440,12 +441,12 @@ const Navbar = props => {
 						<DensityMediumRounded sx={{ fontSize: '1.6rem', filter: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' }} />
 					</IconButton>
 
-					{/* Logo/Brand - proche du hamburger sur mobile, à gauche sur desktop */}
+					{/* Logo/Brand - caché sur mobile, visible sur tablette et desktop */}
 					<Box
 						sx={{
-							display: 'flex',
+							display: { xs: 'none', sm: 'flex' },
 							alignItems: 'center',
-							mr: { xs: 0, xl: 3 },
+							mr: { xs: 0, lg: 3 },
 							flexShrink: 0,
 						}}>
 						<Link href='/'>
@@ -454,7 +455,7 @@ const Navbar = props => {
 									cursor: 'pointer',
 									display: 'flex',
 									alignItems: 'center',
-									px: 2,
+									px: { xs: 1, sm: 1.5, md: 2 },
 									py: 1,
 									borderRadius: 2,
 									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -494,7 +495,7 @@ const Navbar = props => {
 
 					{/* Navigation Links */}
 					<Box sx={{
-						display: { xs: 'none', xl: 'flex' },
+						display: { xs: 'none', lg: 'flex' },
 						gap: 1.5,
 						flex: 1,
 						justifyContent: 'flex-start',
@@ -570,7 +571,8 @@ const Navbar = props => {
 					<Box sx={{
 						display: 'flex',
 						alignItems: 'center',
-						gap: { xs: 1, xl: 1.5 },
+						gap: { xs: 0.5, sm: 0.75, lg: 1.5 },
+						flexShrink: 0,
 					}}>
 						{/* Admin button - only for admin users */}
 						{isUserAdmin && (
@@ -588,7 +590,7 @@ const Navbar = props => {
 										background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.25) 100%)',
 										border: '1px solid rgba(255, 215, 0, 0.4)',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										display: { xs: 'none', xl: 'flex' },
+										display: { xs: 'none', lg: 'flex' },
 										boxShadow: '0 0 15px rgba(255, 215, 0, 0.3)',
 										position: 'relative',
 										overflow: 'hidden',
@@ -645,7 +647,7 @@ const Navbar = props => {
 						) : (
 							<Box
 								sx={{
-									display: { xs: 'none', xl: 'flex' },
+									display: { xs: 'none', lg: 'flex' },
 									gap: 1.5,
 								}}>
 								<Link href={`/signin`}>
@@ -722,7 +724,7 @@ const Navbar = props => {
 						keepMounted: true, // Better open performance on mobile.
 					}}
 					sx={{
-						display: { xs: 'block', xl: 'none' },
+						display: { xs: 'block', lg: 'none' },
 						'& .MuiDrawer-paper': {
 							boxSizing: 'border-box',
 							width: drawerWidth,

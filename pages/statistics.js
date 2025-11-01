@@ -328,98 +328,47 @@ const StatisticsPage = () => {
 		<>
 			<SEO title={t('pageTitle')} description={t('pageDescription')} />
 
-			{/* Hero Section */}
+			{/* Compact Header */}
 			<Box
 				sx={{
-					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-					pt: { xs: '6rem', md: '7rem' },
-					pb: { xs: '5rem', md: '6rem' },
-					position: 'relative',
-					overflow: 'hidden',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
-					'&::after': {
-						content: '""',
-						position: 'absolute',
-						bottom: 0,
-						left: 0,
-						right: 0,
-						height: '60px',
-						background: '#ffffff',
-						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-					},
+					pt: { xs: '5.5rem', md: '6rem' },
+					pb: 3,
+					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+					bgcolor: '#fafafa',
 				}}>
-				<Container
-					maxWidth='lg'
-					sx={{
-						position: 'relative',
-						zIndex: 1,
-						pb: { xs: 2, md: 3 },
-					}}>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							gap: 2,
-							mb: { xs: 2.5, md: 3 },
-						}}>
+				<Container maxWidth='xl'>
+					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1 }}>
 						<FaChartLine
 							style={{
-								fontSize: '2.5rem',
-								color: '#06b6d4',
-								filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))',
+								fontSize: '2rem',
+								color: '#8b5cf6',
 							}}
 						/>
 						<Typography
-							variant='h1'
+							variant='h4'
 							sx={{
-								fontWeight: 800,
-								fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
-								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+								fontWeight: 700,
+								fontSize: { xs: '1.75rem', sm: '2rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								backgroundSize: '200% 200%',
-								animation: 'gradientShift 8s ease infinite',
-								'@keyframes gradientShift': {
-									'0%, 100%': {
-										backgroundPosition: '0% 50%',
-									},
-									'50%': {
-										backgroundPosition: '100% 50%',
-									},
-								},
 							}}>
 							{t('pageTitle')}
 						</Typography>
 					</Box>
 					<Typography
-						variant='h6'
+						variant='body1'
 						align='center'
 						sx={{
-							color: 'rgba(255, 255, 255, 0.9)',
-							fontWeight: 500,
-							fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-							maxWidth: '800px',
-							mx: 'auto',
-							lineHeight: 1.7,
-							px: { xs: 2, sm: 0 },
+							color: '#64748b',
+							fontSize: { xs: '0.9375rem', sm: '1rem' },
 						}}>
 						{t('pageDescription')}
 					</Typography>
 				</Container>
 			</Box>
 
-			<Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, pb: 8 }}>
+			<Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 }, pb: 8 }}>
 				{/* XP Profile Card - Circular Design */}
 				{xpProfile && (
 					<Paper

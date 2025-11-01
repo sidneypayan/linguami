@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
 				component='main'
 				sx={{
 					flex: 1,
-					pb: { xs: '90px', sm: 0 }, // Padding bottom pour la bottom nav sur mobile
+					pb: { xs: '90px', md: 0 }, // Padding bottom pour la bottom nav sur mobile et tablette
 				}}>
 				{children}
 			</Box>

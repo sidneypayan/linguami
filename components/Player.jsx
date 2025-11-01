@@ -95,22 +95,46 @@ const Player = ({ src }) => {
 				display: 'flex',
 				justifyContent: 'center',
 				width: '100%',
+				my: 3,
 			}}>
 			<Paper
-				elevation={3}
+				elevation={0}
 				sx={{
-					maxWidth: { xs: '100%', sm: '500px', md: '600px' },
+					maxWidth: { xs: '100%', sm: '540px', md: '680px' },
 					width: '100%',
-					background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%)',
-					backdropFilter: 'blur(15px)',
-					padding: { xs: '8px 12px', sm: '8px 16px' },
-					borderRadius: 3,
-					boxShadow: '0 8px 32px rgba(102, 126, 234, 0.25)',
+					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)',
+					backdropFilter: 'blur(10px)',
+					padding: { xs: '14px 16px', sm: '16px 20px' },
+					borderRadius: 4,
+					border: '2px solid rgba(139, 92, 246, 0.2)',
+					boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
 					display: 'flex',
 					alignItems: 'center',
-					gap: { xs: 1, sm: 2 },
+					gap: { xs: 1.5, sm: 2 },
+					position: 'relative',
+					transition: 'all 0.3s ease',
+					'&:hover': {
+						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25)',
+						borderColor: 'rgba(139, 92, 246, 0.35)',
+					},
 				}}>
 				<audio ref={audioRef} src={src} preload='metadata' />
+
+				{/* Icône décorative */}
+				<Box
+					sx={{
+						display: { xs: 'none', sm: 'flex' },
+						alignItems: 'center',
+						justifyContent: 'center',
+						width: 42,
+						height: 42,
+						borderRadius: 2,
+						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						flexShrink: 0,
+					}}>
+					<HeadphonesRounded sx={{ fontSize: '1.4rem', color: '#8b5cf6' }} />
+				</Box>
 
 				{/* Playback Controls */}
 				<Box
@@ -125,37 +149,53 @@ const Player = ({ src }) => {
 							onClick={() => skip(-10)}
 							size='small'
 							sx={{
-								color: 'white',
-								width: { xs: 36, sm: 40 },
-								height: { xs: 36, sm: 40 },
+								color: '#64748b',
+								width: { xs: 38, sm: 42 },
+								height: { xs: 38, sm: 42 },
+								background: 'rgba(139, 92, 246, 0.06)',
+								border: '1px solid rgba(139, 92, 246, 0.15)',
 								'&:hover': {
-									backgroundColor: 'rgba(255, 255, 255, 0.15)',
-									transform: 'scale(1.1)',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+									color: '#8b5cf6',
+									transform: 'scale(1.05)',
+									borderColor: 'rgba(139, 92, 246, 0.3)',
 								},
 								transition: 'all 0.2s ease',
 							}}>
-							<Replay10Rounded sx={{ fontSize: { xs: '1.3rem', sm: '1.4rem' } }} />
+							<Replay10Rounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
 						</IconButton>
 					</Tooltip>
 
 					<IconButton
 						onClick={togglePlay}
 						sx={{
-							backgroundColor: 'white',
-							color: '#667eea',
-							width: { xs: 42, sm: 48 },
-							height: { xs: 42, sm: 48 },
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+							color: 'white',
+							width: { xs: 48, sm: 54 },
+							height: { xs: 48, sm: 54 },
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
 							'&:hover': {
-								backgroundColor: 'rgba(255, 255, 255, 0.95)',
-								transform: 'scale(1.08)',
+								background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+								transform: 'scale(1.05)',
+								boxShadow: '0 6px 28px rgba(139, 92, 246, 0.4)',
 							},
 							transition: 'all 0.2s ease',
-							boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+							...(isPlaying && {
+								animation: 'pulse 2s ease-in-out infinite',
+								'@keyframes pulse': {
+									'0%, 100%': {
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
+									},
+									'50%': {
+										boxShadow: '0 6px 32px rgba(139, 92, 246, 0.5)',
+									},
+								},
+							}),
 						}}>
 						{isPlaying ? (
-							<PauseRounded sx={{ fontSize: { xs: '1.4rem', sm: '1.5rem' } }} />
+							<PauseRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.6rem' } }} />
 						) : (
-							<PlayArrowRounded sx={{ fontSize: { xs: '1.4rem', sm: '1.5rem' } }} />
+							<PlayArrowRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.6rem' } }} />
 						)}
 					</IconButton>
 
@@ -164,16 +204,20 @@ const Player = ({ src }) => {
 							onClick={() => skip(10)}
 							size='small'
 							sx={{
-								color: 'white',
-								width: { xs: 36, sm: 40 },
-								height: { xs: 36, sm: 40 },
+								color: '#64748b',
+								width: { xs: 38, sm: 42 },
+								height: { xs: 38, sm: 42 },
+								background: 'rgba(139, 92, 246, 0.06)',
+								border: '1px solid rgba(139, 92, 246, 0.15)',
 								'&:hover': {
-									backgroundColor: 'rgba(255, 255, 255, 0.15)',
-									transform: 'scale(1.1)',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+									color: '#8b5cf6',
+									transform: 'scale(1.05)',
+									borderColor: 'rgba(139, 92, 246, 0.3)',
 								},
 								transition: 'all 0.2s ease',
 							}}>
-							<Forward10Rounded sx={{ fontSize: { xs: '1.3rem', sm: '1.4rem' } }} />
+							<Forward10Rounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
 						</IconButton>
 					</Tooltip>
 				</Box>
@@ -185,27 +229,30 @@ const Player = ({ src }) => {
 						max={duration || 100}
 						onChange={handleSeek}
 						sx={{
-							color: 'white',
-							height: 3,
+							color: '#8b5cf6',
+							height: 4,
 							padding: 0,
 							'& .MuiSlider-track': {
 								border: 'none',
-								backgroundColor: 'white',
+								background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
 							},
 							'& .MuiSlider-thumb': {
-								height: 10,
-								width: 10,
-								backgroundColor: 'white',
+								height: 14,
+								width: 14,
+								backgroundColor: '#8b5cf6',
+								border: '2px solid white',
+								boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
 								'&:hover, &.Mui-focusVisible': {
-									boxShadow: '0 0 0 5px rgba(255, 255, 255, 0.16)',
+									boxShadow: '0 0 0 6px rgba(139, 92, 246, 0.16)',
 								},
 								'&:active': {
-									height: 12,
-									width: 12,
+									height: 16,
+									width: 16,
 								},
 							},
 							'& .MuiSlider-rail': {
-								backgroundColor: 'rgba(255, 255, 255, 0.3)',
+								backgroundColor: 'rgba(139, 92, 246, 0.15)',
+								height: 4,
 							},
 						}}
 					/>
@@ -213,11 +260,10 @@ const Player = ({ src }) => {
 						sx={{
 							display: 'flex',
 							justifyContent: 'space-between',
-							color: 'white',
-							fontSize: '0.65rem',
-							fontWeight: 500,
-							mt: 0.25,
-							opacity: 0.85,
+							color: '#64748b',
+							fontSize: '0.7rem',
+							fontWeight: 600,
+							mt: 0.5,
 						}}>
 						<Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}>
 							{formatTime(currentTime)}
@@ -240,7 +286,7 @@ const Player = ({ src }) => {
 					onMouseLeave={() => setShowVolumeSlider(false)}>
 					<Box
 						sx={{
-							width: showVolumeSlider ? { xs: 0, sm: 70 } : 0,
+							width: showVolumeSlider ? { xs: 0, sm: 80 } : 0,
 							opacity: showVolumeSlider ? 1 : 0,
 							transition: 'all 0.3s ease',
 							overflow: 'hidden',
@@ -253,20 +299,23 @@ const Player = ({ src }) => {
 							max={1}
 							step={0.01}
 							sx={{
-								color: 'white',
+								color: '#8b5cf6',
 								'& .MuiSlider-track': {
 									border: 'none',
+									background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
 								},
 								'& .MuiSlider-thumb': {
-									width: 10,
-									height: 10,
-									backgroundColor: 'white',
+									width: 12,
+									height: 12,
+									backgroundColor: '#8b5cf6',
+									border: '2px solid white',
+									boxShadow: '0 2px 6px rgba(139, 92, 246, 0.3)',
 									'&:hover, &.Mui-focusVisible': {
-										boxShadow: '0 0 0 6px rgba(255, 255, 255, 0.16)',
+										boxShadow: '0 0 0 6px rgba(139, 92, 246, 0.16)',
 									},
 								},
 								'& .MuiSlider-rail': {
-									backgroundColor: 'rgba(255, 255, 255, 0.3)',
+									backgroundColor: 'rgba(139, 92, 246, 0.15)',
 								},
 							}}
 						/>
@@ -276,19 +325,23 @@ const Player = ({ src }) => {
 							onClick={toggleMute}
 							size='small'
 							sx={{
-								color: 'white',
-								width: { xs: 36, sm: 40 },
-								height: { xs: 36, sm: 40 },
+								color: '#64748b',
+								width: { xs: 38, sm: 42 },
+								height: { xs: 38, sm: 42 },
+								background: 'rgba(139, 92, 246, 0.06)',
+								border: '1px solid rgba(139, 92, 246, 0.15)',
 								'&:hover': {
-									backgroundColor: 'rgba(255, 255, 255, 0.15)',
-									transform: 'scale(1.1)',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+									color: '#8b5cf6',
+									transform: 'scale(1.05)',
+									borderColor: 'rgba(139, 92, 246, 0.3)',
 								},
 								transition: 'all 0.2s ease',
 							}}>
 							{volume > 0 ? (
-								<VolumeUpRounded sx={{ fontSize: { xs: '1.3rem', sm: '1.4rem' } }} />
+								<VolumeUpRounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
 							) : (
-								<VolumeOffRounded sx={{ fontSize: { xs: '1.3rem', sm: '1.4rem' } }} />
+								<VolumeOffRounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
 							)}
 						</IconButton>
 					</Tooltip>

@@ -176,41 +176,47 @@ const LeaderboardPage = () => {
 		<>
 			<SEO title={t('leaderboardTitle')} description={t('leaderboardDescription')} />
 
-			<Container maxWidth="lg" sx={{ mt: { xs: 12, md: 14 }, pb: 8 }}>
-				{/* Header */}
-				<Box
-					sx={{
-						textAlign: 'center',
-						mb: 6,
-					}}>
+			{/* Compact Header */}
+			<Box
+				sx={{
+					pt: { xs: '5.5rem', md: '6rem' },
+					pb: 3,
+					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+					bgcolor: '#fafafa',
+				}}>
+				<Container maxWidth='lg'>
+					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1 }}>
+						<TrophyIcon
+							sx={{
+								fontSize: { xs: '2rem', md: '2.25rem' },
+								color: '#F59E0B',
+							}}
+						/>
+						<Typography
+							variant='h4'
+							sx={{
+								fontWeight: 700,
+								fontSize: { xs: '1.75rem', sm: '2rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+							}}>
+							{t('leaderboard')}
+						</Typography>
+					</Box>
 					<Typography
-						variant="h3"
+						variant='body1'
+						align='center'
 						sx={{
-							fontWeight: 900,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							mb: 2,
-							fontSize: { xs: '2rem', md: '3rem' },
-							display: 'inline-flex',
-							alignItems: 'center',
-							gap: 2,
-						}}>
-						<TrophyIcon sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' }, color: '#F59E0B' }} />
-						{t('leaderboard')}
-					</Typography>
-					<Typography
-						variant="h6"
-						sx={{
-							color: '#64748B',
-							fontWeight: 500,
-							maxWidth: 600,
-							mx: 'auto',
+							color: '#64748b',
+							fontSize: { xs: '0.9375rem', sm: '1rem' },
 						}}>
 						{t('leaderboardDescription')}
 					</Typography>
-				</Box>
+				</Container>
+			</Box>
+
+			<Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 }, pb: 8 }}>
 
 				{/* User Rank Card */}
 				{leaderboardData?.userStats && (

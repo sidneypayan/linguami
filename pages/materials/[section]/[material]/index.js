@@ -203,89 +203,45 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					<meta name='description' content={single_material.title} />
 				</Head>
 
-				{/* Hero Section */}
+				{/* Compact Header */}
 				<Box
 					sx={{
-						position: 'relative',
-						background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-						overflow: 'hidden',
-						pt: { xs: '6rem', md: '7rem' },
-						pb: { xs: '5rem', md: '6rem' },
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-							pointerEvents: 'none',
-						},
+						pt: { xs: '5.5rem', md: '6rem' },
+						pb: 2.5,
+						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+						bgcolor: '#fafafa',
 					}}>
-					<Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, pb: { xs: 2, md: 3 } }}>
-						{/* Back button */}
-						<Box sx={{ mb: 3 }}>
+					<Container maxWidth="lg">
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
 							<IconButton
 								sx={{
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
-									backdropFilter: 'blur(10px)',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
 									border: '1px solid rgba(139, 92, 246, 0.3)',
-									color: 'white',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									color: '#8b5cf6',
+									transition: 'all 0.3s ease',
 									'&:hover': {
-										background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
-										transform: 'scale(1.15)',
-										boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
-										borderColor: 'rgba(139, 92, 246, 0.5)',
-									},
-									'&:active': {
-										transform: 'scale(0.95)',
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+										transform: 'scale(1.05)',
 									},
 								}}
 								aria-label='back'
 								onClick={() => router.back()}>
 								<ArrowBack fontSize='medium' />
 							</IconButton>
+							<Typography
+								variant='h4'
+								sx={{
+									fontWeight: 700,
+									fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									flex: 1,
+								}}>
+								{single_material.title}
+							</Typography>
 						</Box>
-
-						{/* Title */}
-						<Typography
-							variant="h1"
-							sx={{
-								fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' },
-								fontWeight: 800,
-								mb: { xs: 2.5, md: 3 },
-								textAlign: 'center',
-								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
-								backgroundSize: '200% 200%',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								animation: 'gradientShift 8s ease infinite',
-								px: { xs: 2, sm: 0 },
-								'@keyframes gradientShift': {
-									'0%': { backgroundPosition: '0% 50%' },
-									'50%': { backgroundPosition: '100% 50%' },
-									'100%': { backgroundPosition: '0% 50%' },
-								},
-							}}>
-							{single_material.title}
-						</Typography>
 					</Container>
-
-					{/* Diagonal separator */}
-					<Box
-						sx={{
-							position: 'absolute',
-							bottom: 0,
-							left: 0,
-							right: 0,
-							height: { xs: '60px', md: '80px' },
-							background: '#ffffff',
-							clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-						}}
-					/>
 				</Box>
 
 				<Stack

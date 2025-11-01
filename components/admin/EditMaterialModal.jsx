@@ -176,7 +176,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				</IconButton>
 			</DialogTitle>
 
-			<DialogContent sx={{ pt: 4, pb: 4, px: 4 }}>
+			<DialogContent sx={{ pt: 4, pb: 4, px: { xs: 2, sm: 3, md: 4 } }}>
 				{error && (
 					<Alert severity="error" sx={{ mb: 3 }}>
 						{error}

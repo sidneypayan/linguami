@@ -145,11 +145,11 @@ const Settings = () => {
 		const isEditing = editMode[field]
 		const value = formData[field]
 
-		// Déterminer les couleurs selon le type de champ
+		// Déterminer les couleurs selon le type de champ - Dark Fantasy Theme
 		const isLanguageField = field === 'languageLevel'
-		const iconBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.12)' : 'rgba(139, 92, 246, 0.12)'
-		const iconColor = isLanguageField ? '#0891b2' : '#7c3aed'
-		const hoverBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.05)' : 'rgba(139, 92, 246, 0.05)'
+		const iconBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.2)' : 'rgba(139, 92, 246, 0.2)'
+		const iconColor = isLanguageField ? '#06b6d4' : '#8b5cf6'
+		const hoverBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.15)' : 'rgba(139, 92, 246, 0.15)'
 
 		// Traduire les valeurs affichées pour le niveau de langue
 		const getDisplayValue = () => {
@@ -167,13 +167,33 @@ const Settings = () => {
 					alignItems: 'center',
 					py: 2.5,
 					px: 3,
-					borderBottom: `1px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.2)' : 'rgba(139, 92, 246, 0.2)'}`,
+					borderBottom: `1px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.15)' : 'rgba(139, 92, 246, 0.15)'}`,
 					'&:last-child': {
 						borderBottom: 'none',
 					},
-					transition: 'all 0.2s',
+					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+					position: 'relative',
 					'&:hover': {
-						bgcolor: isLanguageField ? 'rgba(6, 182, 212, 0.08)' : 'rgba(139, 92, 246, 0.08)',
+						bgcolor: isLanguageField ? 'rgba(6, 182, 212, 0.1)' : 'rgba(139, 92, 246, 0.1)',
+						'&::before': {
+							opacity: 1,
+						},
+					},
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						left: 0,
+						top: 0,
+						bottom: 0,
+						width: 3,
+						background: isLanguageField
+							? 'linear-gradient(180deg, #06b6d4 0%, #0891b2 100%)'
+							: 'linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%)',
+						opacity: 0,
+						transition: 'opacity 0.3s ease',
+						boxShadow: isLanguageField
+							? '0 0 10px rgba(6, 182, 212, 0.5)'
+							: '0 0 10px rgba(139, 92, 246, 0.5)',
 					},
 				}}>
 				<Box
@@ -181,12 +201,25 @@ const Settings = () => {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						width: 40,
-						height: 40,
+						width: 44,
+						height: 44,
 						borderRadius: '50%',
-						bgcolor: iconBgColor,
+						background: isLanguageField
+							? 'linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(8, 145, 178, 0.25) 100%)'
+							: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.25) 100%)',
+						border: `2px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.3)' : 'rgba(139, 92, 246, 0.3)'}`,
 						color: iconColor,
 						mr: 2,
+						boxShadow: isLanguageField
+							? '0 4px 12px rgba(6, 182, 212, 0.2)'
+							: '0 4px 12px rgba(139, 92, 246, 0.2)',
+						transition: 'all 0.3s ease',
+						'&:hover': {
+							transform: 'scale(1.1) rotate(5deg)',
+							boxShadow: isLanguageField
+								? '0 6px 20px rgba(6, 182, 212, 0.4)'
+								: '0 6px 20px rgba(139, 92, 246, 0.4)',
+						},
 					}}>
 					{icon}
 				</Box>
@@ -195,12 +228,12 @@ const Settings = () => {
 					<Typography
 						variant='body2'
 						sx={{
-							color: 'text.secondary',
-							fontSize: '0.75rem',
-							fontWeight: 500,
+							color: isLanguageField ? '#0891b2' : '#7c3aed',
+							fontSize: '0.7rem',
+							fontWeight: 600,
 							mb: 0.5,
 							textTransform: 'uppercase',
-							letterSpacing: '0.05em',
+							letterSpacing: '0.08em',
 						}}>
 						{label}
 					</Typography>
@@ -213,6 +246,7 @@ const Settings = () => {
 									onChange={handleChange(field)}
 									sx={{
 										fontSize: '0.95rem',
+										color: '#2d3748',
 										'& .MuiOutlinedInput-notchedOutline': {
 											borderColor: iconColor,
 										},
@@ -222,6 +256,7 @@ const Settings = () => {
 										'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
 											borderColor: iconColor,
 											borderWidth: '2px',
+											boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
 										},
 										'& .MuiSvgIcon-root': {
 											color: iconColor,
@@ -244,6 +279,7 @@ const Settings = () => {
 								sx={{
 									'& .MuiOutlinedInput-root': {
 										fontSize: '0.95rem',
+										color: '#2d3748',
 										'& fieldset': {
 											borderColor: iconColor,
 										},
@@ -253,6 +289,7 @@ const Settings = () => {
 										'&.Mui-focused fieldset': {
 											borderColor: iconColor,
 											borderWidth: '2px',
+											boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
 										},
 									},
 								}}
@@ -263,7 +300,7 @@ const Settings = () => {
 							sx={{
 								fontSize: '0.95rem',
 								fontWeight: 600,
-								color: 'text.primary',
+								color: '#2d3748',
 							}}>
 							{getDisplayValue()}
 						</Typography>
@@ -278,11 +315,19 @@ const Settings = () => {
 								onClick={() => handleSave(field)}
 								disabled={loading}
 								sx={{
-									color: iconColor,
-									bgcolor: iconBgColor,
+									color: 'white',
+									background: isLanguageField
+										? 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)'
+										: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+									border: `1px solid ${iconColor}`,
+									boxShadow: isLanguageField
+										? '0 4px 12px rgba(6, 182, 212, 0.3)'
+										: '0 4px 12px rgba(139, 92, 246, 0.3)',
 									'&:hover': {
-										bgcolor: iconBgColor,
-										opacity: 0.8,
+										transform: 'scale(1.1)',
+										boxShadow: isLanguageField
+											? '0 6px 16px rgba(6, 182, 212, 0.5)'
+											: '0 6px 16px rgba(139, 92, 246, 0.5)',
 									},
 								}}>
 								<CheckRounded fontSize='small' />
@@ -292,10 +337,13 @@ const Settings = () => {
 								onClick={() => handleCancel(field)}
 								disabled={loading}
 								sx={{
-									color: '#ef4444',
-									bgcolor: 'rgba(239, 68, 68, 0.1)',
+									color: 'white',
+									background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+									border: '1px solid #ef4444',
+									boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
 									'&:hover': {
-										bgcolor: 'rgba(239, 68, 68, 0.15)',
+										transform: 'scale(1.1)',
+										boxShadow: '0 6px 16px rgba(239, 68, 68, 0.5)',
 									},
 								}}>
 								<CloseRounded fontSize='small' />
@@ -306,11 +354,22 @@ const Settings = () => {
 							size='small'
 							onClick={() => toggleEditMode(field)}
 							sx={{
-								color: iconColor,
-								bgcolor: iconBgColor,
+								color: 'white',
+								background: isLanguageField
+									? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.3) 100%)'
+									: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 100%)',
+								border: `1px solid ${iconColor}`,
+								boxShadow: isLanguageField
+									? '0 4px 12px rgba(6, 182, 212, 0.2)'
+									: '0 4px 12px rgba(139, 92, 246, 0.2)',
 								'&:hover': {
-									bgcolor: iconBgColor,
-									opacity: 0.8,
+									background: isLanguageField
+										? 'linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(8, 145, 178, 0.5) 100%)'
+										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%)',
+									transform: 'scale(1.1) rotate(15deg)',
+									boxShadow: isLanguageField
+										? '0 6px 16px rgba(6, 182, 212, 0.4)'
+										: '0 6px 16px rgba(139, 92, 246, 0.4)',
 								},
 							}}>
 							<EditRounded fontSize='small' />
@@ -588,33 +647,73 @@ const Settings = () => {
 					</Box>
 
 					{/* Sections en grille */}
-					<Grid container spacing={3}>
+					<Grid container spacing={{ xs: 3, md: 4 }}>
 						{/* Section Informations personnelles */}
 						<Grid item xs={12} md={6}>
 							<Paper
+								elevation={0}
 								sx={{
-									borderRadius: 3,
-									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+									borderRadius: 4,
 									overflow: 'hidden',
 									height: '100%',
-									background: '#ffffff',
+									position: 'relative',
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									backdropFilter: 'blur(20px)',
+									border: '2px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.05) inset',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										background: 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)',
+										pointerEvents: 'none',
+										opacity: 0,
+										transition: 'opacity 0.4s ease',
+									},
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 48px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
+										borderColor: 'rgba(139, 92, 246, 0.4)',
+										'&::before': {
+											opacity: 1,
+										},
+									},
 								}}>
 								<Box
 									sx={{
 										px: 3,
-										py: 2,
-										background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-										borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+										py: 2.5,
+										background: 'linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(124, 58, 237, 0.85) 100%)',
+										borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
+										position: 'relative',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											bottom: -1,
+											left: '50%',
+											transform: 'translateX(-50%)',
+											width: '60%',
+											height: 2,
+											background: 'linear-gradient(90deg, transparent 0%, #8b5cf6 50%, transparent 100%)',
+											boxShadow: '0 0 10px rgba(139, 92, 246, 0.6)',
+										},
 									}}>
 									<Typography
 										variant='h6'
 										sx={{
 											fontWeight: 700,
-											color: 'white',
-											fontSize: '0.95rem',
+											background: 'linear-gradient(135deg, #fff 0%, #a78bfa 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											fontSize: '1rem',
 											textTransform: 'uppercase',
-											letterSpacing: '0.08em',
+											letterSpacing: '0.1em',
 											textAlign: 'center',
+											textShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
 										}}>
 										{t('personalInfo')}
 									</Typography>
@@ -628,29 +727,69 @@ const Settings = () => {
 						{/* Section Préférences linguistiques */}
 						<Grid item xs={12} md={6}>
 							<Paper
+								elevation={0}
 								sx={{
-									borderRadius: 3,
-									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+									borderRadius: 4,
 									overflow: 'hidden',
 									height: '100%',
-									background: '#ffffff',
+									position: 'relative',
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									backdropFilter: 'blur(20px)',
+									border: '2px solid rgba(6, 182, 212, 0.2)',
+									boxShadow: '0 8px 32px rgba(6, 182, 212, 0.15), 0 0 0 1px rgba(6, 182, 212, 0.05) inset',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										background: 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%)',
+										pointerEvents: 'none',
+										opacity: 0,
+										transition: 'opacity 0.4s ease',
+									},
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 48px rgba(6, 182, 212, 0.25), 0 0 0 1px rgba(6, 182, 212, 0.3) inset',
+										borderColor: 'rgba(6, 182, 212, 0.4)',
+										'&::before': {
+											opacity: 1,
+										},
+									},
 								}}>
 								<Box
 									sx={{
 										px: 3,
-										py: 2,
-										background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-										borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+										py: 2.5,
+										background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(8, 145, 178, 0.85) 100%)',
+										borderBottom: '1px solid rgba(6, 182, 212, 0.3)',
+										position: 'relative',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											bottom: -1,
+											left: '50%',
+											transform: 'translateX(-50%)',
+											width: '60%',
+											height: 2,
+											background: 'linear-gradient(90deg, transparent 0%, #06b6d4 50%, transparent 100%)',
+											boxShadow: '0 0 10px rgba(6, 182, 212, 0.6)',
+										},
 									}}>
 									<Typography
 										variant='h6'
 										sx={{
 											fontWeight: 700,
-											color: 'white',
-											fontSize: '0.95rem',
+											background: 'linear-gradient(135deg, #fff 0%, #67e8f9 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											fontSize: '1rem',
 											textTransform: 'uppercase',
-											letterSpacing: '0.08em',
+											letterSpacing: '0.1em',
 											textAlign: 'center',
+											textShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
 										}}>
 										{t('languagePreferences')}
 									</Typography>
@@ -685,6 +824,7 @@ const Settings = () => {
 							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.4)',
 							position: 'relative',
 							overflow: 'hidden',
+							m: { xs: 2, sm: 3 },
 							'&::before': {
 								content: '""',
 								position: 'absolute',
@@ -700,9 +840,9 @@ const Settings = () => {
 					}}>
 					<DialogContent
 						sx={{
-							p: 4,
+							p: { xs: 2, sm: 3, md: 4 },
 							background: 'transparent',
-							overflow: 'hidden',
+							overflow: 'auto',
 							'&::-webkit-scrollbar': {
 								display: 'none',
 							},
@@ -712,8 +852,8 @@ const Settings = () => {
 						<Box
 							sx={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(3, 1fr)',
-								gap: 3,
+								gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
+								gap: { xs: 1.5, sm: 2, md: 3 },
 							}}>
 							{AVATARS.map(avatar => {
 								const isSelected = selectedAvatar === avatar.id
@@ -726,8 +866,8 @@ const Settings = () => {
 											display: 'flex',
 											flexDirection: 'column',
 											alignItems: 'center',
-											gap: 1.5,
-											p: 2.5,
+											gap: { xs: 1, sm: 1.5 },
+											p: { xs: 1.5, sm: 2, md: 2.5 },
 											borderRadius: 3,
 											background: isSelected
 												? 'linear-gradient(145deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
@@ -754,8 +894,8 @@ const Settings = () => {
 											<Box
 												sx={{
 													position: 'relative',
-													width: 100,
-													height: 100,
+													width: { xs: 80, sm: 90, md: 100 },
+													height: { xs: 80, sm: 90, md: 100 },
 													borderRadius: '50%',
 													background: isSelected
 														? 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 100%)'
@@ -780,10 +920,10 @@ const Settings = () => {
 												<Box
 													sx={{
 														position: 'absolute',
-														top: -6,
-														right: -6,
-														width: 32,
-														height: 32,
+														top: { xs: -4, sm: -6 },
+														right: { xs: -4, sm: -6 },
+														width: { xs: 24, sm: 28, md: 32 },
+														height: { xs: 24, sm: 28, md: 32 },
 														borderRadius: '50%',
 														background: 'linear-gradient(145deg, #06b6d4 0%, #0891b2 100%)',
 														display: 'flex',
@@ -794,7 +934,7 @@ const Settings = () => {
 													}}>
 													<CheckRounded
 														sx={{
-															fontSize: 20,
+															fontSize: { xs: 16, sm: 18, md: 20 },
 															color: 'white',
 														}}
 													/>
