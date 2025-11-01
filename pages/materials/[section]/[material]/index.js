@@ -612,7 +612,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							alignSelf: 'flex-start',
 							maxHeight: 'calc(100vh - 130px)',
 							overflowY: 'auto',
-							pt: 2,
+							pt: { md: 8, lg: 10 },
 							px: 3,
 							'&::-webkit-scrollbar': {
 								width: '12px',

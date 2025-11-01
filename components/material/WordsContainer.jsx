@@ -122,20 +122,17 @@ const WordsContainer = () => {
 							<Card
 								key={index}
 								sx={{
-									p: 2.5,
+									p: { xs: 2, sm: 2.5 },
 									borderRadius: 4,
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'space-between',
-									gap: 2,
+									gap: { xs: 1.5, sm: 2 },
 									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 									border: '1px solid rgba(139, 92, 246, 0.2)',
 									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									transition: 'opacity 0.2s ease',
 									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
-										borderColor: 'rgba(139, 92, 246, 0.4)',
 										'& .delete-btn': {
 											opacity: 1,
 										},
@@ -145,35 +142,40 @@ const WordsContainer = () => {
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
-										gap: 2,
+										gap: { xs: 1.5, sm: 2 },
 										flex: 1,
-										flexWrap: 'wrap',
+										minWidth: 0,
 									}}>
 									<Chip
 										label={sourceWord || '—'}
 										sx={{
 											fontWeight: 700,
-											fontSize: { xs: '0.9375rem', sm: '1rem' },
+											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
 											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
 											color: '#8b5cf6',
 											border: '1px solid rgba(139, 92, 246, 0.3)',
-											px: 1.5,
+											px: { xs: 1.25, sm: 1.5 },
 											backdropFilter: 'blur(10px)',
+											flexShrink: 0,
 										}}
 									/>
 									<Typography
 										sx={{
-											fontSize: { xs: '0.875rem', sm: '1rem' },
+											fontSize: { xs: '0.8125rem', sm: '0.9375rem' },
 											color: '#718096',
 											fontWeight: 500,
+											flexShrink: 0,
 										}}>
 										→
 									</Typography>
 									<Typography
 										sx={{
-											fontSize: { xs: '0.9375rem', sm: '1rem' },
+											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
 											color: '#4a5568',
 											fontWeight: 500,
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
 										}}>
 										{translation || '—'}
 									</Typography>

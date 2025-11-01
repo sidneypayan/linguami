@@ -130,26 +130,26 @@
 }
 
 .translate {
-	padding: 2px 3px;
+	padding: 3px 5px;
 	cursor: pointer;
-	border-radius: 4px;
-	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	border-radius: 6px;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	position: relative;
 	display: inline-block;
 }
 
 .translate:hover {
-	background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+	background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
 	color: #667eea;
-	transform: translateY(-1px);
-	box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px -4px rgba(102, 126, 234, 0.35);
 	font-weight: 500;
 }
 
 .translate:active {
-	background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%);
-	transform: translateY(0);
-	box-shadow: 0 1px 4px rgba(102, 126, 234, 0.3);
+	background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 3px 12px -2px rgba(102, 126, 234, 0.4);
 }
 
 .text {
