@@ -25,8 +25,8 @@ const Teacher = () => {
 	const isLearningRussian = learningLang === 'ru'
 	const teacherName = isLearningRussian ? 'Natacha' : 'Sidney'
 	const img = isLearningRussian
-		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/natacha.jpg`
-		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/sidney.jpg`
+		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_female.png`
+		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_male.png`
 
 	// Mots-clés SEO basés sur la langue d'apprentissage et la langue d'interface
 	const getKeywords = () => {
@@ -92,9 +92,9 @@ const Teacher = () => {
 			{/* Hero Section */}
 			<Box
 				sx={{
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
 					pt: { xs: 12, sm: 14, md: 16 },
-					pb: { xs: 8, sm: 10, md: 12 },
+					pb: { xs: 10, sm: 12, md: 14 },
 					position: 'relative',
 					overflow: 'hidden',
 					'&::before': {
@@ -104,17 +104,7 @@ const Teacher = () => {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						background: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
-					'&::after': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
 						pointerEvents: 'none',
 					},
 				}}>
@@ -162,8 +152,8 @@ const Teacher = () => {
 							sx={{
 								width: { xs: 200, sm: 240 },
 								height: { xs: 200, sm: 240 },
-								border: '6px solid rgba(255, 255, 255, 0.9)',
-								boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
+								border: '8px solid rgba(255, 255, 255, 0.95)',
+								boxShadow: '0 16px 60px rgba(139, 92, 246, 0.4), 0 0 40px rgba(6, 182, 212, 0.3)',
 								position: 'relative',
 								zIndex: 1,
 							}}
@@ -225,19 +215,21 @@ const Teacher = () => {
 							variant='contained'
 							startIcon={<FaSkype />}
 							sx={{
-								backgroundColor: 'white',
-								color: '#667eea',
+								background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
+								color: '#8b5cf6',
+								border: '2px solid rgba(139, 92, 246, 0.3)',
 								fontWeight: 700,
 								fontSize: { xs: '1rem', sm: '1.125rem' },
-								padding: { xs: '12px 32px', sm: '14px 40px' },
+								padding: { xs: '14px 36px', sm: '16px 44px' },
 								borderRadius: 3,
 								textTransform: 'none',
-								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
-								transition: 'all 0.3s ease',
+								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									backgroundColor: 'white',
+									background: 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.98) 100%)',
 									transform: 'translateY(-4px)',
-									boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
+									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+									borderColor: 'rgba(139, 92, 246, 0.5)',
 								},
 								'&:active': {
 									transform: 'translateY(-2px)',
@@ -250,22 +242,23 @@ const Teacher = () => {
 							variant='outlined'
 							startIcon={<FaEnvelope />}
 							sx={{
-								borderColor: 'white',
-								backgroundColor: 'rgba(255, 255, 255, 0.1)',
+								borderColor: 'rgba(255, 255, 255, 0.8)',
+								backgroundColor: 'rgba(255, 255, 255, 0.15)',
 								backdropFilter: 'blur(10px)',
 								color: 'white',
+								border: '2px solid rgba(255, 255, 255, 0.8)',
 								fontWeight: 700,
 								fontSize: { xs: '1rem', sm: '1.125rem' },
-								padding: { xs: '12px 32px', sm: '14px 40px' },
+								padding: { xs: '14px 36px', sm: '16px 44px' },
 								borderRadius: 3,
-								borderWidth: 2,
 								textTransform: 'none',
-								transition: 'all 0.3s ease',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									backgroundColor: 'rgba(255, 255, 255, 0.2)',
+									backgroundColor: 'rgba(255, 255, 255, 0.25)',
 									borderColor: 'white',
-									borderWidth: 2,
+									borderWidth: '2px',
 									transform: 'translateY(-4px)',
+									boxShadow: '0 8px 32px rgba(255, 255, 255, 0.3)',
 								},
 								'&:active': {
 									transform: 'translateY(-2px)',
@@ -306,7 +299,7 @@ const Teacher = () => {
 								fontWeight: 700,
 								fontSize: { xs: '1.75rem', md: '2rem' },
 								mb: 1,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -335,17 +328,17 @@ const Teacher = () => {
 								{
 									name: 'David',
 									text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
-									color: '#667eea',
+									color: '#8b5cf6',
 								},
 								{
 									name: 'Carole',
 									text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
-									color: '#764ba2',
+									color: '#06b6d4',
 								},
 								{
 									name: 'Daniel',
 									text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
-									color: '#667eea',
+									color: '#8b5cf6',
 								},
 							].map((review, index) => (
 								<Card
@@ -353,16 +346,16 @@ const Teacher = () => {
 									sx={{
 										flex: 1,
 										position: 'relative',
-										borderRadius: 3,
+										borderRadius: 4,
 										overflow: 'visible',
-										backgroundColor: 'white',
-										boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-										border: '1px solid rgba(102, 126, 234, 0.1)',
-										transition: 'all 0.3s ease',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+										border: '1px solid rgba(139, 92, 246, 0.2)',
+										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										'&:hover': {
 											transform: 'translateY(-8px)',
-											boxShadow: '0 12px 32px rgba(102, 126, 234, 0.2)',
-											borderColor: 'rgba(102, 126, 234, 0.3)',
+											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+											borderColor: 'rgba(139, 92, 246, 0.4)',
 										},
 									}}>
 									<Box
@@ -373,11 +366,12 @@ const Teacher = () => {
 											width: 48,
 											height: 48,
 											borderRadius: '50%',
-											background: `linear-gradient(135deg, ${review.color} 0%, ${review.color}dd 100%)`,
+											background: `linear-gradient(135deg, ${review.color} 0%, ${review.color === '#8b5cf6' ? '#06b6d4' : '#8b5cf6'} 100%)`,
 											display: 'flex',
 											alignItems: 'center',
 											justifyContent: 'center',
 											boxShadow: `0 4px 12px ${review.color}40`,
+											border: '2px solid rgba(255, 255, 255, 0.3)',
 										}}>
 										<FormatQuote sx={{ color: 'white', fontSize: 28 }} />
 									</Box>

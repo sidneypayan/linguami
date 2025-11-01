@@ -56,9 +56,9 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 	}
 
 	const levels = [
-		{ label: 'A1/A2', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
-		{ label: 'B1/B2', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
-		{ label: 'C1/C2', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
+		{ label: 'Débutant', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
+		{ label: 'Intermédiaire', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
+		{ label: 'Avancé', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
 	]
 
 	const statuses = [

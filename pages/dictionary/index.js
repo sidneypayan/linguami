@@ -164,11 +164,87 @@ const Dictionary = () => {
 				noindex={true}  // Page privée, ne pas indexer
 			/>
 
+			{/* Hero Section */}
+			<Box
+				sx={{
+					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+					pt: { xs: '6rem', md: '7rem' },
+					pb: { xs: '5rem', md: '6rem' },
+					position: 'relative',
+					overflow: 'hidden',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+						pointerEvents: 'none',
+					},
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						bottom: 0,
+						left: 0,
+						right: 0,
+						height: '60px',
+						background: '#ffffff',
+						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					},
+				}}>
+				<Container
+					maxWidth='lg'
+					sx={{
+						position: 'relative',
+						zIndex: 1,
+						pb: { xs: 2, md: 3 },
+					}}>
+					<Typography
+						variant='h1'
+						align='center'
+						sx={{
+							fontWeight: 800,
+							fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
+							mb: { xs: 2.5, md: 3 },
+							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							backgroundSize: '200% 200%',
+							animation: 'gradientShift 8s ease infinite',
+							'@keyframes gradientShift': {
+								'0%, 100%': {
+									backgroundPosition: '0% 50%',
+								},
+								'50%': {
+									backgroundPosition: '100% 50%',
+								},
+							},
+						}}>
+						{titles[router.locale] || titles.fr}
+					</Typography>
+					<Typography
+						variant='h6'
+						align='center'
+						sx={{
+							color: 'rgba(255, 255, 255, 0.9)',
+							fontWeight: 500,
+							fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+							maxWidth: '800px',
+							mx: 'auto',
+							lineHeight: 1.7,
+							px: { xs: 2, sm: 0 },
+						}}>
+						{descriptions[router.locale] || descriptions.fr}
+					</Typography>
+				</Container>
+			</Box>
+
 			{filteredUserWords.length > 0 ? (
 				<Container
 					sx={{
-						marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
-						marginBottom: { xs: '2rem', sm: '3rem', md: '4rem' },
+						py: { xs: 4, md: 6 },
 						px: { xs: 1, sm: 2, md: 3 },
 					}}
 					maxWidth='lg'>
@@ -190,50 +266,23 @@ const Dictionary = () => {
 							onClick={() => dispatch(toggleFlashcardsContainer(true))}
 							sx={{
 								flex: 1,
-								py: 2,
+								py: 2.5,
 								borderRadius: 3,
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.5)',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
 								fontWeight: 700,
 								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								textTransform: 'none',
-								boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'& .MuiButton-startIcon': {
-									marginRight: '8px',
-								},
-								'& .MuiSvgIcon-root': {
-									fontSize: '1.3rem',
-									transition: 'all 0.3s ease',
-									filter: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))',
-								},
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-									transition: 'left 0.5s ease',
-								},
+								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(6, 182, 212, 0.3) 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.6)',
+									background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
 									transform: 'translateY(-3px)',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-									'& .MuiSvgIcon-root': {
-										transform: 'scale(1.2) rotate(-5deg)',
-										filter: 'drop-shadow(0 0 6px rgba(139, 92, 246, 0.9))',
-									},
-									'&::before': {
-										left: '100%',
-									},
+									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+									borderColor: 'rgba(139, 92, 246, 0.5)',
 								},
 								'&:active': {
-									transform: 'translateY(-1px)',
+									transform: 'translateY(0)',
 								},
 							}}>
 							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
@@ -250,37 +299,23 @@ const Dictionary = () => {
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
 								flex: 1,
-								py: 2,
+								py: 2.5,
 								borderRadius: 3,
-								background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.8) 100%)',
-								border: '1px solid rgba(16, 185, 129, 0.4)',
+								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+								border: '1px solid rgba(16, 185, 129, 0.3)',
 								fontWeight: 700,
 								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								textTransform: 'none',
-								boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4), 0 0 20px rgba(5, 150, 105, 0.2)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
+								boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 0.9) 100%)',
-									transform: 'translateY(-3px) scale(1.02)',
-									boxShadow: '0 12px 32px rgba(16, 185, 129, 0.6), 0 0 30px rgba(5, 150, 105, 0.4)',
-									'&::before': {
-										left: '100%',
-									},
+									background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+									transform: 'translateY(-3px)',
+									boxShadow: '0 12px 40px rgba(16, 185, 129, 0.5)',
+									borderColor: 'rgba(16, 185, 129, 0.5)',
 								},
 								'&:active': {
-									transform: 'scale(0.98)',
+									transform: 'translateY(0)',
 								},
 							}}>
 							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
@@ -298,10 +333,10 @@ const Dictionary = () => {
 						sx={{
 							p: { xs: 2.5, sm: 3 },
 							mb: 4,
-							background: 'white',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 							borderRadius: 4,
-							border: '1px solid rgba(139, 92, 246, 0.15)',
-							boxShadow: '0 4px 16px rgba(139, 92, 246, 0.08)',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 						}}>
 						<Stack
 							direction={{ xs: 'column', sm: 'row' }}
@@ -405,11 +440,11 @@ const Dictionary = () => {
 								key={index}
 								sx={{
 									p: { xs: 2, sm: 2.5 },
-									borderRadius: 3,
-									background: 'white',
-									border: '1px solid rgba(139, 92, 246, 0.1)',
-									boxShadow: '0 2px 8px rgba(139, 92, 246, 0.08)',
-									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									borderRadius: 4,
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									position: 'relative',
 									overflow: 'hidden',
 									'&::before': {
@@ -423,9 +458,9 @@ const Dictionary = () => {
 										transition: 'left 0.5s ease',
 									},
 									'&:hover': {
-										transform: 'translateY(-2px)',
-										boxShadow: '0 8px 24px rgba(139, 92, 246, 0.15)',
-										borderColor: 'rgba(139, 92, 246, 0.3)',
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+										borderColor: 'rgba(139, 92, 246, 0.4)',
 										'&::before': {
 											left: '100%',
 										},
@@ -456,10 +491,11 @@ const Dictionary = () => {
 													fontWeight: 700,
 													fontSize: { xs: '0.9375rem', sm: '1rem' },
 													background:
-														'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
-													color: '#667eea',
-													border: '1px solid rgba(139, 92, 246, 0.2)',
+														'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+													color: '#8b5cf6',
+													border: '1px solid rgba(139, 92, 246, 0.3)',
 													px: 1.5,
+													backdropFilter: 'blur(10px)',
 												}}
 											/>
 											<Typography
@@ -598,16 +634,15 @@ const Dictionary = () => {
 				<Container
 					maxWidth='md'
 					sx={{
-						marginTop: { xs: '5rem', sm: '5.5rem', md: '6rem' },
-						marginBottom: { xs: '2rem', sm: '3rem', md: '4rem' },
+						py: { xs: 4, md: 6 },
 					}}>
 					<Card
 						sx={{
 							p: { xs: 3, sm: 4, md: 5 },
 							borderRadius: 4,
-							boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12)',
-							border: '1px solid rgba(139, 92, 246, 0.1)',
-							background: 'white',
+							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						}}>
 						<Typography
 							variant='h4'
@@ -616,7 +651,7 @@ const Dictionary = () => {
 								fontWeight: 800,
 								mb: 1,
 								fontSize: { xs: '1.5rem', sm: '1.75rem' },
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -726,37 +761,23 @@ const Dictionary = () => {
 									size='large'
 									fullWidth
 									sx={{
-										py: 2,
+										py: 2.5,
 										borderRadius: 3,
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.4)',
+										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
 										fontWeight: 700,
 										fontSize: '1.0625rem',
 										textTransform: 'none',
-										boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-											transition: 'left 0.5s ease',
-										},
+										boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)',
-											transform: 'translateY(-3px) scale(1.02)',
-											boxShadow: '0 12px 32px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
-											'&::before': {
-												left: '100%',
-											},
+											background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+											transform: 'translateY(-3px)',
+											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+											borderColor: 'rgba(139, 92, 246, 0.5)',
 										},
 										'&:active': {
-											transform: 'scale(0.98)',
+											transform: 'translateY(0)',
 										},
 									}}>
 									{t('start')}
@@ -769,37 +790,23 @@ const Dictionary = () => {
 								onClick={() => setIsAddWordModalOpen(true)}
 								sx={{
 									flex: 1,
-									py: 2,
+									py: 2.5,
 									borderRadius: 3,
-									background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.8) 100%)',
-									border: '1px solid rgba(16, 185, 129, 0.4)',
+									background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+									border: '1px solid rgba(16, 185, 129, 0.3)',
 									fontWeight: 700,
 									fontSize: '1.0625rem',
 									textTransform: 'none',
-									boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4), 0 0 20px rgba(5, 150, 105, 0.2)',
-									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-									position: 'relative',
-									overflow: 'hidden',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: '-100%',
-										width: '100%',
-										height: '100%',
-										background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-										transition: 'left 0.5s ease',
-									},
+									boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									'&:hover': {
-										background: 'linear-gradient(135deg, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 0.9) 100%)',
-										transform: 'translateY(-3px) scale(1.02)',
-										boxShadow: '0 12px 32px rgba(16, 185, 129, 0.6), 0 0 30px rgba(5, 150, 105, 0.4)',
-										'&::before': {
-											left: '100%',
-										},
+										background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+										transform: 'translateY(-3px)',
+										boxShadow: '0 12px 40px rgba(16, 185, 129, 0.5)',
+										borderColor: 'rgba(16, 185, 129, 0.5)',
 									},
 									'&:active': {
-										transform: 'scale(0.98)',
+										transform: 'translateY(0)',
 									},
 								}}>
 								{tWords('add_word_btn')}

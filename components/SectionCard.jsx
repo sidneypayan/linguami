@@ -18,9 +18,11 @@ import {
 	CardContent,
 	CardMedia,
 	Typography,
+	Chip,
 } from '@mui/material'
 import Link from 'next/link'
 import { useUserContext } from '../context/user'
+import { getImageUrl } from '../utils/imageUtils'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const dispatch = useDispatch()
@@ -44,21 +46,32 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 		}
 	}
 
-	const changeLevelName = level => {
-		let newLevel
-		if (level === 'débutant') newLevel = 'A1/A2'
-		if (level === 'intermédiaire') newLevel = 'B1/B2'
-		if (level === 'avancé') newLevel = 'C1/C2'
-
-		return newLevel
-	}
-
-	const changeBackgroundColorRegardingLevel = level => {
-		let background
-		if (level === 'débutant') background = `${styles.level} beginner`
-		if (level === 'intermédiaire') background = `${styles.level} intermediate`
-		if (level === 'avancé') background = `${styles.level} advanced`
-		return background
+	const getDifficultyInfo = level => {
+		if (level === 'débutant') {
+			return {
+				label: 'Débutant',
+				bg: 'rgba(16, 185, 129, 0.15)',
+				border: '#10b981',
+				text: '#059669',
+			}
+		}
+		if (level === 'intermédiaire') {
+			return {
+				label: 'Intermédiaire',
+				bg: 'rgba(245, 158, 11, 0.15)',
+				border: '#f59e0b',
+				text: '#d97706',
+			}
+		}
+		if (level === 'avancé') {
+			return {
+				label: 'Avancé',
+				bg: 'rgba(239, 68, 68, 0.15)',
+				border: '#ef4444',
+				text: '#dc2626',
+			}
+		}
+		return { label: level, bg: 'rgba(139, 92, 246, 0.15)', border: '#8b5cf6', text: '#7c3aed' }
 	}
 
 	const changeIconRegardingSection = section => {
@@ -73,6 +86,8 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 		}
 		return null
 	}
+
+	const difficultyInfo = getDifficultyInfo(material.level)
 
 	const SectionCardContent = () => (
 		<CardActionArea
@@ -90,17 +105,35 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					position: 'relative',
 					display: 'flex',
 					alignItems: 'stretch',
-					height: { xs: 140, sm: 160 },
-					boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-					background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%)',
-					border: '1px solid rgba(102, 126, 234, 0.08)',
-					borderRadius: '12px',
+					height: { xs: 160, sm: 180 },
+					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+					border: '1px solid rgba(139, 92, 246, 0.2)',
+					borderRadius: '16px',
 					overflow: 'hidden',
-					transition: 'all 0.3s ease',
+					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
+						opacity: 0,
+						transition: 'opacity 0.3s ease',
+						zIndex: 0,
+					},
 					'&:hover': {
-						boxShadow: '0 8px 24px rgba(102, 126, 234, 0.12)',
-						transform: 'translateY(-4px)',
-						borderColor: 'rgba(102, 126, 234, 0.2)',
+						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
+						transform: 'translateY(-8px) scale(1.01)',
+						borderColor: 'rgba(139, 92, 246, 0.4)',
+						'&::before': {
+							opacity: 1,
+						},
+						'& .section-card-image img': {
+							transform: 'scale(1.1)',
+						},
 					},
 				}}>
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
@@ -108,15 +141,17 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						<Schedule
 							sx={{
 								position: 'absolute',
-								top: '8px',
-								right: '8px',
-								fontSize: '1.8rem',
+								top: '12px',
+								right: '12px',
+								fontSize: '2rem',
 								color: '#f59e0b',
 								background: 'rgba(255, 255, 255, 0.95)',
+								backdropFilter: 'blur(10px)',
 								borderRadius: '50%',
-								padding: '4px',
-								boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-								zIndex: 1,
+								padding: '6px',
+								boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
+								border: '2px solid rgba(245, 158, 11, 0.3)',
+								zIndex: 2,
 							}}
 						/>
 					)}
@@ -125,32 +160,44 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						<CheckCircle
 							sx={{
 								position: 'absolute',
-								top: '8px',
-								right: '8px',
-								fontSize: '1.8rem',
+								top: '12px',
+								right: '12px',
+								fontSize: '2rem',
 								color: '#22c55e',
 								background: 'rgba(255, 255, 255, 0.95)',
+								backdropFilter: 'blur(10px)',
 								borderRadius: '50%',
-								padding: '4px',
-								boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-								zIndex: 1,
+								padding: '6px',
+								boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)',
+								border: '2px solid rgba(34, 197, 94, 0.3)',
+								zIndex: 2,
 							}}
 						/>
 					)}
-				<CardMedia
-					component='img'
+				<Box
+					className="section-card-image"
 					sx={{
 						width: { xs: 140, sm: 160 },
 						minWidth: { xs: 140, sm: 160 },
 						maxWidth: { xs: 140, sm: 160 },
 						height: '100%',
-						margin: 0,
-						objectFit: 'cover',
-						flexShrink: 0,
-					}}
-					image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
-					alt={material.title}
-				/>
+						position: 'relative',
+						overflow: 'hidden',
+					}}>
+					<CardMedia
+						component='img'
+						sx={{
+							width: '100%',
+							height: '100%',
+							margin: 0,
+							objectFit: 'cover',
+							flexShrink: 0,
+							transition: 'transform 0.4s ease',
+						}}
+						image={getImageUrl(material.image)}
+						alt={material.title}
+					/>
+				</Box>
 
 				<CardContent
 					sx={{
@@ -158,8 +205,10 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						display: 'flex',
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						py: { xs: 2, sm: 2 },
-						px: { xs: 1.5, sm: 2 },
+						py: { xs: 2, sm: 2.5 },
+						px: { xs: 1.5, sm: 2.5 },
+						position: 'relative',
+						zIndex: 1,
 					}}>
 					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
 						<Typography
@@ -167,9 +216,9 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							variant='h6'
 							sx={{
 								lineHeight: '1.5rem',
-								fontSize: { xs: '0.95rem', sm: '1.125rem' },
+								fontSize: { xs: '1rem', sm: '1.15rem' },
 								fontWeight: 700,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -178,7 +227,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							{material.title}
 						</Typography>
 
-						<Box sx={{ display: 'flex', flexDirection: 'column', mt: 0.5 }}>
+						<Box sx={{ display: 'flex', flexDirection: 'column', mt: 0.5, gap: 0.25 }}>
 							<Typography
 								variant='subtitle2'
 								component='div'
@@ -193,8 +242,8 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								variant='subtitle2'
 								component='div'
 								sx={{
-									fontWeight: 600,
-									color: '#667eea',
+									fontWeight: 700,
+									color: '#8b5cf6',
 									fontSize: { xs: '0.8rem', sm: '0.875rem' },
 								}}>
 								{material.level}
@@ -204,17 +253,39 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					<Box
 						sx={{
 							justifySelf: 'end',
-							color: '#718096',
+							color: '#8b5cf6',
 							display: { xs: 'none', md: 'flex' },
 							alignItems: 'center',
 							justifyContent: 'center',
+							transition: 'all 0.3s ease',
 						}}>
 						{changeIconRegardingSection(material.section)}
 					</Box>
 				</CardContent>
-				<span className={changeBackgroundColorRegardingLevel(material.level)}>
-					{changeLevelName(material.level)}
-				</span>
+
+				{/* Badge de niveau */}
+				{material.level && (
+					<Chip
+						label={difficultyInfo.label}
+						size="small"
+						sx={{
+							position: 'absolute',
+							top: 12,
+							left: 12,
+							zIndex: 2,
+							background: difficultyInfo.bg,
+							backdropFilter: 'blur(10px)',
+							border: `1px solid ${difficultyInfo.border}`,
+							color: difficultyInfo.text,
+							fontWeight: 700,
+							fontSize: '0.7rem',
+							height: 24,
+							'& .MuiChip-label': {
+								px: 1.5,
+							},
+						}}
+					/>
+				)}
 			</Card>
 		</CardActionArea>
 	)

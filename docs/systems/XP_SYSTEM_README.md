@@ -69,9 +69,12 @@ Profil XP de chaque utilisateur
   total_xp: INTEGER,
   current_level: INTEGER,
   xp_in_current_level: INTEGER,
+  total_gold: INTEGER,           // Ajouté avec le système Gold
   daily_streak: INTEGER,
   longest_streak: INTEGER,
-  last_activity_date: DATE
+  last_activity_date: DATE,
+  created_at: TIMESTAMP,         // Horodatage de création
+  updated_at: TIMESTAMP          // Horodatage de dernière mise à jour
 }
 ```
 
@@ -81,17 +84,19 @@ Configuration des récompenses (modifiable en DB)
 {
   action_type: STRING,
   xp_amount: INTEGER,
+  gold_amount: INTEGER,          // Ajouté avec le système Gold
   description: TEXT,
   is_active: BOOLEAN
 }
 ```
 
 #### `xp_transactions`
-Historique de tous les gains XP
+Historique de tous les gains XP et Gold
 ```sql
 {
   user_id: UUID,
   xp_amount: INTEGER,
+  gold_earned: INTEGER,          // Ajouté avec le système Gold
   source_type: STRING,
   source_id: STRING,
   description: TEXT,

@@ -5,20 +5,16 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '../../features/materials/materialsSlice'
 import SectionCard from '../../components/SectionCard'
 import MaterialsTable from '../../components/MaterialsTable'
+import MaterialsFilterBar from '../../components/MaterialsFilterBar'
 import Head from 'next/head'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import {
 	Box,
 	Container,
 	IconButton,
-	TextField,
-	InputAdornment,
-	Stack,
-	Chip,
-	Tooltip,
 	Typography,
 } from '@mui/material'
-import { ArrowBack, Search, Refresh, GridView, ViewList } from '@mui/icons-material'
+import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 
 const UserMaterials = () => {
@@ -65,8 +61,16 @@ const UserMaterials = () => {
 		return filtered
 	}, [user_materials, searchTerm, selectedLevel, selectedStatus])
 
-	const handleSearchSubmit = e => {
-		e.preventDefault()
+	const handleSearchChange = (value) => {
+		setSearchTerm(value)
+	}
+
+	const handleLevelChange = (level) => {
+		setSelectedLevel(level)
+	}
+
+	const handleStatusChange = (status) => {
+		setSelectedStatus(status)
 	}
 
 	const handleClear = () => {
@@ -75,24 +79,13 @@ const UserMaterials = () => {
 		setSelectedStatus(null)
 	}
 
-	const handleViewChange = view => {
+	const handleViewChange = (view) => {
 		setViewMode(view)
 	}
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		return user_materials.find(material => material.id === id)
 	}
-
-	const levels = [
-		{ label: 'A1/A2', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' },
-		{ label: 'B1/B2', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' },
-		{ label: 'C1/C2', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' },
-	]
-
-	const statuses = [
-		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#3b82f6' },
-		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - ${t('studiedTooltip')}`, color: '#8b5cf6' },
-	]
 
 	useEffect(() => {
 		if (isBootstrapping) return
@@ -125,265 +118,122 @@ const UserMaterials = () => {
 			<Head>
 				<title>Linguami | {t('myMaterialsTitle')}</title>
 			</Head>
-			<Container sx={{ marginTop: '6rem', marginBottom: '4rem' }}>
-				{/* Back button */}
-				<Box sx={{ mb: 3 }}>
-					<IconButton
-						sx={{
-							backgroundColor: 'rgba(255, 255, 255, 0.9)',
-							backdropFilter: 'blur(8px)',
-							boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-							transition: 'all 0.3s ease',
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							color: 'white',
-							'&:hover': {
-								transform: 'scale(1.1)',
-								boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
-							},
-							'&:active': {
-								transform: 'scale(0.95)',
-							},
-						}}
-						aria-label='back'
-						onClick={() => router.back()}>
-						<ArrowBack fontSize='medium' />
-					</IconButton>
-				</Box>
 
-				{/* Title */}
-				<Box sx={{ mb: 4, textAlign: 'center' }}>
-					<Typography
-						variant='h3'
-						sx={{
-							fontSize: { xs: '2rem', md: '2.5rem' },
-							fontWeight: 800,
-							mb: 1,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-						}}>
-						{t('myMaterialsTitle')}
-					</Typography>
-					<Typography
-						variant='subtitle1'
-						sx={{
-							color: '#718096',
-							fontSize: { xs: '1rem', md: '1.125rem' },
-						}}>
-						{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
-					</Typography>
-				</Box>
-
-				{/* Filter bar */}
-				<Box
+			{/* Hero Section */}
+			<Box
+				sx={{
+					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+					pt: { xs: '6rem', md: '7rem' },
+					pb: { xs: '5rem', md: '6rem' },
+					position: 'relative',
+					overflow: 'hidden',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+						pointerEvents: 'none',
+					},
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						bottom: 0,
+						left: 0,
+						right: 0,
+						height: '60px',
+						background: '#ffffff',
+						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					},
+				}}>
+				<Container
+					maxWidth='lg'
 					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 2,
-						mb: 4,
+						position: 'relative',
+						zIndex: 1,
+						pb: { xs: 2, md: 3 },
 					}}>
-					{/* Search bar and view toggle */}
-					<Box
-						sx={{
-							display: 'flex',
-							gap: 1.5,
-							alignItems: 'center',
-						}}>
-						<Box
-							component='form'
-							onSubmit={handleSearchSubmit}
+					{/* Back button */}
+					<Box sx={{ mb: 3 }}>
+						<IconButton
 							sx={{
-								flex: 1,
-							}}>
-							<TextField
-								fullWidth
-								size='small'
-								placeholder={t('search')}
-								value={searchTerm}
-								onChange={e => setSearchTerm(e.target.value)}
-								InputProps={{
-									endAdornment: (
-										<InputAdornment position='end'>
-											<IconButton
-												type='submit'
-												edge='end'
-												sx={{
-													color: '#667eea',
-													width: { xs: '36px', sm: '40px' },
-													height: { xs: '36px', sm: '40px' },
-													'&:hover': {
-														transform: 'scale(1.1)',
-														color: '#764ba2',
-													},
-												}}>
-												<Search sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
-											</IconButton>
-										</InputAdornment>
-									),
-								}}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 3,
-										backgroundColor: 'white',
-										'& fieldset': {
-											borderColor: '#e0e0e0',
-											borderWidth: 2,
-										},
-										'&:hover fieldset': {
-											borderColor: '#667eea',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: '#667eea',
-											borderWidth: 2,
-										},
-									},
-								}}
-							/>
-						</Box>
-
-						{/* View toggle */}
-						<Box
-							sx={{
-								display: 'flex',
-								gap: 0.5,
-								backgroundColor: 'rgba(255, 255, 255, 0.9)',
-								borderRadius: 2,
-								padding: '3px',
-								boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-								border: '2px solid rgba(102, 126, 234, 0.1)',
-								flexShrink: 0,
-							}}>
-							<IconButton
-								onClick={() => handleViewChange('card')}
-								sx={{
-									width: { xs: '34px', sm: '36px' },
-									height: { xs: '34px', sm: '36px' },
-									backgroundColor: viewMode === 'card' ? '#667eea' : 'transparent',
-									color: viewMode === 'card' ? 'white' : '#667eea',
-									transition: 'all 0.2s ease',
-									'&:hover': {
-										backgroundColor: viewMode === 'card' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
-									},
-								}}>
-								<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-							</IconButton>
-							<IconButton
-								onClick={() => handleViewChange('list')}
-								sx={{
-									width: { xs: '34px', sm: '36px' },
-									height: { xs: '34px', sm: '36px' },
-									backgroundColor: viewMode === 'list' ? '#667eea' : 'transparent',
-									color: viewMode === 'list' ? 'white' : '#667eea',
-									transition: 'all 0.2s ease',
-									'&:hover': {
-										backgroundColor: viewMode === 'list' ? '#764ba2' : 'rgba(102, 126, 234, 0.1)',
-									},
-								}}>
-								<ViewList sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-							</IconButton>
-						</Box>
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+								backdropFilter: 'blur(10px)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+								color: 'white',
+								'&:hover': {
+									background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
+									transform: 'scale(1.1)',
+									boxShadow: '0 6px 30px rgba(139, 92, 246, 0.5)',
+								},
+								'&:active': {
+									transform: 'scale(0.95)',
+								},
+							}}
+							aria-label='back'
+							onClick={() => router.back()}>
+							<ArrowBack fontSize='medium' />
+						</IconButton>
 					</Box>
 
-					{/* Filters */}
-					<Stack
-						direction='row'
-						spacing={{ xs: 0.75, sm: 1.5 }}
-						sx={{
-							alignItems: 'center',
-							justifyContent: { xs: 'flex-start', md: 'flex-end' },
-							flexWrap: 'wrap',
-							gap: { xs: 0.75, sm: 1.5 },
-						}}>
-						{/* Level filters */}
-						{levels.map(level => (
-							<Tooltip key={level.label} title={level.tooltip} arrow placement='top'>
-								<Chip
-									label={level.label}
-									onClick={() => setSelectedLevel(selectedLevel === level.key ? null : level.key)}
-									sx={{
-										fontWeight: 600,
-										fontSize: { xs: '0.75rem', sm: '0.95rem' },
-										px: { xs: 0.5, sm: 1 },
-										height: { xs: '32px', sm: '40px' },
-										minWidth: { xs: '50px', sm: 'auto' },
-										borderRadius: 2,
-										cursor: 'pointer',
-										border: '2px solid',
-										borderColor: selectedLevel === level.key ? '#667eea' : 'transparent',
-										background: selectedLevel === level.key ? 'rgba(102, 126, 234, 0.1)' : 'rgba(255, 255, 255, 0.9)',
-										color: selectedLevel === level.key ? '#667eea' : '#666',
-										boxShadow: selectedLevel === level.key ? '0 4px 15px rgba(102, 126, 234, 0.2)' : '0 2px 8px rgba(0,0,0,0.08)',
-										transition: 'all 0.3s ease',
-										'& .MuiChip-label': {
-											px: { xs: 0.5, sm: 1 },
-										},
-										'&:hover': {
-											transform: 'translateY(-2px)',
-											boxShadow: `0 4px 16px ${level.color}60`,
-											borderColor: level.color,
-											background: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
-											color: level.color,
-										},
-									}}
-								/>
-							</Tooltip>
-						))}
-
-						{/* Status filters */}
-						{statuses.map(status => (
-							<Tooltip key={status.label} title={status.tooltip} arrow placement='top'>
-								<Chip
-									label={status.label}
-									onClick={() => setSelectedStatus(selectedStatus === status.key ? null : status.key)}
-									sx={{
-										fontWeight: 600,
-										fontSize: { xs: '0.7rem', sm: '0.95rem' },
-										px: { xs: 0.5, sm: 1 },
-										height: { xs: '32px', sm: '40px' },
-										borderRadius: 2,
-										cursor: 'pointer',
-										border: '2px solid',
-										borderColor: selectedStatus === status.key ? '#667eea' : 'transparent',
-										background: selectedStatus === status.key ? 'rgba(102, 126, 234, 0.1)' : 'rgba(255, 255, 255, 0.9)',
-										color: selectedStatus === status.key ? '#667eea' : '#666',
-										boxShadow: selectedStatus === status.key ? '0 4px 15px rgba(102, 126, 234, 0.2)' : '0 2px 8px rgba(0,0,0,0.08)',
-										transition: 'all 0.3s ease',
-										'& .MuiChip-label': {
-											px: { xs: 0.5, sm: 1 },
-										},
-										'&:hover': {
-											transform: 'translateY(-2px)',
-											boxShadow: `0 4px 16px ${status.color}60`,
-											borderColor: status.color,
-											background: `linear-gradient(135deg, ${status.color}30, ${status.color}50)`,
-											color: status.color,
-										},
-									}}
-								/>
-							</Tooltip>
-						))}
-
-						{/* Reset button */}
-						<Tooltip title={`🔄 ${t('showall')} - ${t('showallTooltip')}`} arrow placement='top'>
-							<IconButton
-								onClick={handleClear}
-								sx={{
-									width: { xs: '32px', sm: '40px' },
-									height: { xs: '32px', sm: '40px' },
-									backgroundColor: 'rgba(255, 255, 255, 0.9)',
-									boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-									'&:hover': {
-										backgroundColor: '#667eea',
-										color: 'white',
-										transform: 'rotate(180deg) translateY(-2px)',
+					{/* Title */}
+					<Box sx={{ textAlign: 'center' }}>
+						<Typography
+							variant='h1'
+							sx={{
+								fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
+								fontWeight: 800,
+								mb: { xs: 2.5, md: 3 },
+								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+								backgroundSize: '200% 200%',
+								animation: 'gradientShift 8s ease infinite',
+								'@keyframes gradientShift': {
+									'0%, 100%': {
+										backgroundPosition: '0% 50%',
 									},
-								}}>
-								<Refresh sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }} />
-							</IconButton>
-						</Tooltip>
-					</Stack>
-				</Box>
+									'50%': {
+										backgroundPosition: '100% 50%',
+									},
+								},
+							}}>
+							{t('myMaterialsTitle')}
+						</Typography>
+						<Typography
+							variant='h6'
+							sx={{
+								color: 'rgba(255, 255, 255, 0.9)',
+								fontWeight: 500,
+								fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+								px: { xs: 2, sm: 0 },
+							}}>
+							{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
+						</Typography>
+					</Box>
+				</Container>
+			</Box>
+
+			<Container sx={{ py: { xs: 4, md: 6 } }}>
+
+				<MaterialsFilterBar
+					onSearchChange={handleSearchChange}
+					onLevelChange={handleLevelChange}
+					onStatusChange={handleStatusChange}
+					onClear={handleClear}
+					onViewChange={handleViewChange}
+					searchValue={searchTerm}
+					selectedLevel={selectedLevel}
+					selectedStatus={selectedStatus}
+					currentView={viewMode}
+					showNotStudiedFilter={false}
+					translationNamespace="materials"
+				/>
 
 				{/* Materials display */}
 				{filteredMaterials.length === 0 ? (

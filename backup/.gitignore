@@ -1,0 +1,57 @@
+# Fichiers de sauvegarde - NE PAS COMMITTER
+# Ces fichiers contiennent des données sensibles de la base de données
+
+# Sauvegardes SQL
+sql/*.sql
+sql/*.sql.gz
+sql/*.sql.tar.gz
+sql/*.dump
+
+# Exports JSON
+exports/backup_*/
+exports/*.json
+exports/*.zip
+exports/*.tar.gz
+
+# Logs
+logs/*.log
+logs/*.txt
+
+# Fichiers temporaires
+*.tmp
+*.temp
+*.bak
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Données sensibles
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Gardez ces fichiers dans Git
+!.gitignore
+!.env.example
+!README.md
+!GUIDE_RESTAURATION.md
+!backup-sql.sh
+!backup-sql.bat
+!backup-json.js
+!backup-auto.sh
+!backup-auto.bat
+!restore-json.js
+
+# Gardez les dossiers vides avec un .gitkeep
+!sql/.gitkeep
+!exports/.gitkeep
+!logs/.gitkeep

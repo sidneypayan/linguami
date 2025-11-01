@@ -17,6 +17,14 @@ export default function Document() {
 				<link rel='manifest' href='/site.webmanifest' />
 				<meta name='theme-color' content='#667eea' />
 
+				{/* Google Fonts - Poppins */}
+				<link rel='preconnect' href='https://fonts.googleapis.com' />
+				<link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
+				<link
+					href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap'
+					rel='stylesheet'
+				/>
+
 				{/* Métadonnées pour les moteurs de recherche */}
 				<meta
 					name='robots'

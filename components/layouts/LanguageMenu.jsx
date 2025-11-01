@@ -177,6 +177,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 				aria-expanded={open ? 'true' : undefined}
 				variant='contained'
 				disableElevation
+				disableRipple
 				onClick={handleClick}
 				startIcon={<TranslateRounded sx={{ fontSize: '1.3rem' }} />}
 				endIcon={
@@ -191,8 +192,8 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					) : null
 				}
 				sx={{
-					display: variant === 'full' ? 'flex' : { xs: 'none', sm: 'flex' },
-					background: 'rgba(255, 255, 255, 0.15)',
+					display: variant === 'full' ? 'flex' : { xs: 'none', xl: 'flex' },
+					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					color: 'white',
 					fontWeight: 600,
@@ -201,17 +202,13 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					py: 0.75,
 					borderRadius: variant === 'full' ? 3 : 2.5,
 					border: '1px solid rgba(255, 255, 255, 0.2)',
-					transition: 'all 0.3s ease',
+					transition: 'background 0.2s ease',
 					gap: 1,
 					width: variant === 'full' ? '100%' : 'auto',
 					justifyContent: variant === 'full' ? 'space-between' : 'center',
 					'&:hover': {
 						background: 'rgba(255, 255, 255, 0.25)',
-						transform: variant === 'full' ? 'translateX(4px)' : 'translateY(-2px) scale(1.02)',
 						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-					},
-					'&:active': {
-						transform: 'scale(0.98)',
 					},
 				}}>
 				<Typography variant='body2' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
@@ -244,21 +241,16 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 				aria-expanded={open ? 'true' : undefined}
 				onClick={handleClick}
 				sx={{
-					display: variant === 'full' ? 'none' : { xs: 'flex', sm: 'none' },
-					width: '44px',
-					height: '44px',
-					background: 'rgba(255, 255, 255, 0.15)',
+					display: variant === 'full' ? 'none' : { xs: 'flex', xl: 'none' },
+					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					border: '1px solid rgba(255, 255, 255, 0.2)',
 					transition: 'all 0.3s ease',
 					position: 'relative',
 					'&:hover': {
 						background: 'rgba(255, 255, 255, 0.25)',
-						transform: 'scale(1.08)',
 						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-					},
-					'&:active': {
-						transform: 'scale(0.95)',
+						transform: 'scale(1.05)',
 					},
 				}}>
 				{userLearningLanguage && (

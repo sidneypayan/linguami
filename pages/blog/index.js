@@ -48,67 +48,104 @@ const Blog = ({ posts }) => {
 				keywords={keywordsByLang[lang]}
 				jsonLd={jsonLd}
 			/>
-			<Container
-				maxWidth='lg'
+
+			{/* Hero Section */}
+			<Box
 				sx={{
-					marginTop: { xs: '5rem', md: '8rem' },
-					marginBottom: { xs: '3rem', md: '6rem' },
-					px: { xs: 2, sm: 3, md: 4 },
+					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+					pt: { xs: '6rem', md: '7rem' },
+					pb: { xs: '5rem', md: '6rem' },
+					position: 'relative',
+					overflow: 'hidden',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+						pointerEvents: 'none',
+					},
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						bottom: 0,
+						left: 0,
+						right: 0,
+						height: '60px',
+						background: '#ffffff',
+						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					},
 				}}>
-				{/* Header Section */}
-				<Box
+				<Container
+					maxWidth='lg'
 					sx={{
-						textAlign: 'center',
-						marginBottom: { xs: '3rem', md: '5rem' },
+						position: 'relative',
+						zIndex: 1,
+						pb: { xs: 2, md: 3 },
 					}}>
 					<Box
 						sx={{
-							display: 'inline-flex',
+							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
-							gap: 1.5,
-							marginBottom: 2,
-							padding: '0.75rem 1.5rem',
-							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-							borderRadius: 3,
-							border: '2px solid rgba(102, 126, 234, 0.2)',
+							gap: 2,
+							mb: { xs: 2.5, md: 3 },
 						}}>
 						<RssFeedRounded
 							sx={{
-								fontSize: '2rem',
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
+								fontSize: { xs: '2.5rem', md: '3rem' },
+								color: '#06b6d4',
+								filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))',
 							}}
 						/>
 						<Typography
-							variant='h3'
+							variant='h1'
 							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								fontWeight: 800,
+								fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
+								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
+								backgroundSize: '200% 200%',
+								animation: 'gradientShift 8s ease infinite',
+								'@keyframes gradientShift': {
+									'0%, 100%': {
+										backgroundPosition: '0% 50%',
+									},
+									'50%': {
+										backgroundPosition: '100% 50%',
+									},
+								},
 							}}>
 							{t('pagetitle')}
 						</Typography>
 					</Box>
 					<Typography
 						variant='h6'
+						align='center'
 						sx={{
-							color: '#718096',
+							color: 'rgba(255, 255, 255, 0.9)',
 							fontWeight: 500,
-							fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
-							maxWidth: '700px',
-							margin: '0 auto',
-							lineHeight: 1.6,
+							fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+							maxWidth: '800px',
+							mx: 'auto',
+							lineHeight: 1.7,
+							px: { xs: 2, sm: 0 },
 						}}>
 						{t('description')}
 					</Typography>
-				</Box>
+				</Container>
+			</Box>
 
+			<Container
+				maxWidth='lg'
+				sx={{
+					py: { xs: 4, md: 6 },
+					px: { xs: 2, sm: 3, md: 4 },
+				}}>
 				{/* Blog Posts */}
 				<Box
 					sx={{

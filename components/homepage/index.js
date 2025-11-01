@@ -11,10 +11,14 @@ import {
 	styled,
 	Typography,
 	Modal,
+	Chip,
+	IconButton,
+	Backdrop,
 } from '@mui/material'
 
 import { Stack } from '@mui/system'
 import { primaryButton } from '../../utils/buttonStyles'
+import { PlayArrow, AutoAwesome, Close } from '@mui/icons-material'
 
 const StyledGridItem = styled(Grid)(({ theme }) => ({
 	display: 'flex',
@@ -28,52 +32,393 @@ const StyledGridItem = styled(Grid)(({ theme }) => ({
 	},
 }))
 
+const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse, marginTop, badge, offsetDirection, buttonText }) => {
+	const getOffset = () => {
+		if (!offsetDirection || offsetDirection === 'center') return {};
+		return {
+			marginLeft: offsetDirection === 'left' ? { xs: 0, md: '0' } : { xs: 0, md: 'auto' },
+			marginRight: offsetDirection === 'right' ? { xs: 0, md: '0' } : { xs: 0, md: 'auto' },
+			transform: {
+				xs: 'translateX(0)',
+				md: offsetDirection === 'left' ? 'translateX(-25px)' : offsetDirection === 'right' ? 'translateX(25px)' : 'translateX(0)'
+			}
+		};
+	};
+
+	return (
+		<Box
+			sx={{
+				width: '1000px',
+				maxWidth: '100%',
+				margin: '0 auto',
+				marginTop: { xs: '3rem', md: marginTop || '5rem' },
+				position: 'relative',
+				...getOffset(),
+				transition: 'transform 0.4s ease',
+			}}>
+			{/* Glow effect background */}
+			<Box
+				sx={{
+					position: 'absolute',
+					top: '50%',
+					left: '50%',
+					transform: 'translate(-50%, -50%)',
+					width: '120%',
+					height: '120%',
+					background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+					filter: 'blur(60px)',
+					pointerEvents: 'none',
+					opacity: 0,
+					transition: 'opacity 0.5s ease',
+				}}
+				className="glow-bg"
+			/>
+
+			<Stack
+				sx={{
+					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
+					alignItems: 'center',
+					gap: { xs: 3, md: 5 },
+					padding: { xs: '2.5rem', md: '3.5rem 4rem' },
+					borderRadius: 5,
+					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
+					backdropFilter: 'blur(20px)',
+					border: '1px solid rgba(139, 92, 246, 0.15)',
+					boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
+					position: 'relative',
+					overflow: 'hidden',
+					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%)',
+						opacity: 0,
+						transition: 'opacity 0.4s ease',
+					},
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						top: '-50%',
+						left: '-50%',
+						width: '200%',
+						height: '200%',
+						background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 50%)',
+						opacity: 0,
+						transition: 'opacity 0.4s ease',
+						pointerEvents: 'none',
+					},
+					'&:hover': {
+						transform: 'translateY(-8px) scale(1.01)',
+						boxShadow: '0 20px 60px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
+						borderColor: 'rgba(139, 92, 246, 0.3)',
+						'&::before': {
+							opacity: 1,
+						},
+						'&::after': {
+							opacity: 1,
+						},
+						'& .glow-bg': {
+							opacity: 1,
+						},
+						'& .feature-badge': {
+							transform: 'scale(1.05)',
+						},
+					},
+				}}>
+				{/* Image Section */}
+				<Box
+					sx={{
+						width: { xs: '100%', md: '45%' },
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						position: 'relative',
+						zIndex: 1,
+					}}>
+					<Box
+						sx={{
+							position: 'relative',
+							width: { xs: 200, md: 240 },
+							height: { xs: 200, md: 240 },
+							animation: 'float 3s ease-in-out infinite',
+							'@keyframes float': {
+								'0%, 100%': {
+									transform: 'translateY(0px)',
+								},
+								'50%': {
+									transform: 'translateY(-10px)',
+								},
+							},
+						}}>
+						{/* Cercle de fond animé blur */}
+						<Box
+							sx={{
+								position: 'absolute',
+								width: '120%',
+								height: '120%',
+								top: '50%',
+								left: '50%',
+								transform: 'translate(-50%, -50%)',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+								borderRadius: '50%',
+								filter: 'blur(60px)',
+								animation: 'pulse 3s ease-in-out infinite',
+								'@keyframes pulse': {
+									'0%, 100%': {
+										opacity: 0.5,
+										transform: 'translate(-50%, -50%) scale(1)',
+									},
+									'50%': {
+										opacity: 0.8,
+										transform: 'translate(-50%, -50%) scale(1.1)',
+									},
+								},
+							}}
+						/>
+
+						{/* Cadre stylisé avec glassmorphism */}
+						<Box
+							sx={{
+								position: 'absolute',
+								width: '100%',
+								height: '100%',
+								borderRadius: '50%',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+								border: '3px solid rgba(255, 255, 255, 0.2)',
+								backdropFilter: 'blur(10px)',
+								boxShadow: `
+									0 0 40px rgba(139, 92, 246, 0.5),
+									inset 0 0 40px rgba(6, 182, 212, 0.2),
+									0 8px 32px rgba(0, 0, 0, 0.2)
+								`,
+								animation: 'rotate 20s linear infinite',
+								'@keyframes rotate': {
+									'0%': {
+										transform: 'rotate(0deg)',
+									},
+									'100%': {
+										transform: 'rotate(360deg)',
+									},
+								},
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									inset: '-3px',
+									borderRadius: '50%',
+									padding: '3px',
+									background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+									WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+									WebkitMaskComposite: 'xor',
+									maskComposite: 'exclude',
+									opacity: 0.6,
+									animation: 'rotateGradient 3s linear infinite',
+								},
+								'@keyframes rotateGradient': {
+									'0%': {
+										transform: 'rotate(0deg)',
+									},
+									'100%': {
+										transform: 'rotate(360deg)',
+									},
+								},
+							}}
+						/>
+
+						{/* Conteneur de l'image avec overflow hidden */}
+						<Box
+							className="feature-image-container"
+							sx={{
+								position: 'relative',
+								width: '90%',
+								height: '90%',
+								top: '50%',
+								left: '50%',
+								transform: 'translate(-50%, -50%)',
+								borderRadius: '50%',
+								overflow: 'hidden',
+								zIndex: 2,
+								transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+							}}>
+							<Box
+								component='img'
+								src={imageSrc}
+								alt={imageAlt}
+								sx={{
+									width: '100%',
+									height: '100%',
+									objectFit: 'cover',
+									filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
+								}}
+							/>
+						</Box>
+					</Box>
+				</Box>
+
+				{/* Content Section */}
+				<Stack
+					gap={2.5}
+					sx={{
+						width: { xs: '100%', md: '55%' },
+						textAlign: { xs: 'center', md: 'left' },
+						position: 'relative',
+						zIndex: 1,
+					}}>
+					{/* Badge */}
+					{badge && (
+						<Chip
+							className="feature-badge"
+							icon={<AutoAwesome sx={{ fontSize: '1rem !important', color: '#8b5cf6 !important' }} />}
+							label={badge}
+							size="small"
+							sx={{
+								alignSelf: { xs: 'center', md: 'flex-start' },
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+								backdropFilter: 'blur(10px)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
+								color: '#8b5cf6',
+								fontWeight: 700,
+								fontSize: '0.75rem',
+								height: 28,
+								transition: 'all 0.3s ease',
+								'& .MuiChip-label': {
+									px: 1.5,
+								},
+							}}
+						/>
+					)}
+
+					{/* Title */}
+					<Typography
+						variant='h3'
+						sx={{
+							fontSize: { xs: '1.875rem', md: '2.5rem' },
+							fontWeight: 800,
+							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+							backgroundSize: '200% 200%',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							lineHeight: 1.2,
+							mb: 0.5,
+						}}>
+						{title}
+					</Typography>
+
+					{/* Subtitle */}
+					<Typography
+						variant='body1'
+						sx={{
+							color: '#64748b',
+							fontWeight: 500,
+							lineHeight: 1.8,
+							fontSize: { xs: '0.95rem', md: '1.05rem' },
+						}}>
+						{subtitle}
+					</Typography>
+
+					{/* Button */}
+					<Button
+						onClick={onShowClick}
+						variant='contained'
+						size='large'
+						startIcon={<PlayArrow />}
+						sx={{
+							alignSelf: { xs: 'center', md: 'flex-start' },
+							minWidth: { xs: '180px', md: '220px' },
+							height: 56,
+							fontSize: { xs: '0.95rem', md: '1.05rem' },
+							fontWeight: 700,
+							textTransform: 'none',
+							borderRadius: 3,
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+							border: '1px solid rgba(139, 92, 246, 0.5)',
+							position: 'relative',
+							overflow: 'hidden',
+							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: '-100%',
+								width: '100%',
+								height: '100%',
+								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+								transition: 'left 0.5s ease',
+							},
+							'&:hover': {
+								background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+								transform: 'translateY(-2px) scale(1.02)',
+								boxShadow: '0 8px 40px rgba(139, 92, 246, 0.6)',
+								border: '1px solid rgba(139, 92, 246, 0.7)',
+								'&::before': {
+									left: '100%',
+								},
+							},
+							'&:active': {
+								transform: 'translateY(0) scale(1)',
+							},
+						}}>
+						{buttonText}
+					</Button>
+				</Stack>
+			</Stack>
+		</Box>
+	)
+}
+
 const Homepage = () => {
 	const { t } = useTranslation('home')
 	const [open, setOpen] = useState(false)
 	const [videoSrc, setVideoSrc] = useState('')
 	const [modalName, setModalName] = useState('')
 
-	const handleOpen = src => {
+	const handleOpen = (src, name = '') => {
 		setVideoSrc(src)
+		setModalName(name)
 		setOpen(true)
 	}
 	const handleClose = () => {
 		setVideoSrc('')
+		setModalName('')
 		setOpen(false)
 	}
 
 	const multimedia = [
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video-mini.png`,
 			title: t('video'),
 			subtitle: t('videosubtitle'),
 			subtitleMobile: t('videosubtitleMobile'),
 			link: '/materials#videos',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio-mini.png`,
 			title: t('audio'),
 			subtitle: t('audiosubtitle'),
 			subtitleMobile: t('audiosubtitleMobile'),
 			link: '/materials#audio',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text-mini.png`,
 			title: t('text'),
 			subtitle: t('textsubtitle'),
 			subtitleMobile: t('textsubtitleMobile'),
 			link: '/materials#texts',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary-mini.png`,
 			title: t('dictionary'),
 			subtitle: t('dictionarysubtitle'),
 			subtitleMobile: t('dictionarysubtitleMobile'),
 			link: '/dictionary',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards-mini.png`,
 			title: t('flashcards'),
 			subtitle: t('flashcardssubtitle'),
 			subtitleMobile: t('flashcardssubtitleMobile'),
@@ -117,7 +462,7 @@ const Homepage = () => {
 						mx: 'auto',
 						fontWeight: 500,
 					}}>
-					Découvrez toutes nos ressources pour apprendre efficacement
+					{t('discoverResources')}
 				</Typography>
 
 				<Grid
@@ -145,17 +490,17 @@ const Homepage = () => {
 										display: 'flex',
 										flexDirection: 'column',
 										alignItems: 'center',
-										gap: 2,
+										gap: 2.5,
 										textAlign: 'center',
-										p: { xs: 2.5, md: 3 },
+										p: { xs: 3, md: 3.5 },
 										height: '100%',
 										width: '100%',
-										minHeight: { xs: '260px', sm: '280px' },
+										minHeight: { xs: '280px', sm: '300px' },
 										borderRadius: 4,
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%)',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)',
 										border: '1px solid rgba(139, 92, 246, 0.2)',
-										boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.12)',
+										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										cursor: 'pointer',
 										position: 'relative',
 										overflow: 'hidden',
@@ -171,33 +516,49 @@ const Homepage = () => {
 										},
 										'&:hover': {
 											transform: 'translateY(-8px) scale(1.02)',
-											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
-											borderColor: 'rgba(139, 92, 246, 0.4)',
+											boxShadow: '0 16px 50px rgba(139, 92, 246, 0.3), 0 0 30px rgba(6, 182, 212, 0.2)',
+											borderColor: 'rgba(139, 92, 246, 0.5)',
 											'&::before': {
 												left: '100%',
+											},
+											'& .icon-container': {
+												transform: 'scale(1.15) rotate(5deg)',
+												boxShadow: '0 8px 30px rgba(139, 92, 246, 0.5), inset 0 0 40px rgba(6, 182, 212, 0.2)',
 											},
 										},
 									}}>
 									<Box
+										className="icon-container"
 										sx={{
-											width: { xs: 60, md: 70 },
-											height: { xs: 60, md: 70 },
+											width: { xs: 90, md: 110 },
+											height: { xs: 90, md: 110 },
 											position: 'relative',
 											display: 'flex',
 											alignItems: 'center',
 											justifyContent: 'center',
 											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-											border: '1px solid rgba(139, 92, 246, 0.25)',
-											boxShadow: '0 0 15px rgba(139, 92, 246, 0.2)',
-											p: 2,
-											transition: 'all 0.3s ease',
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.1) 100%)',
+											border: '3px solid rgba(139, 92, 246, 0.35)',
+											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 0 30px rgba(6, 182, 212, 0.15)',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												inset: '-3px',
+												borderRadius: 3,
+												padding: '3px',
+												background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+												WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+												WebkitMaskComposite: 'xor',
+												maskComposite: 'exclude',
+												opacity: 0.6,
+											},
 										}}>
 										<Image
 											src={icon.img}
 											alt={icon.title}
 											fill
-											style={{ objectFit: 'contain', padding: '12px' }}
+											style={{ objectFit: 'contain', padding: '8px' }}
 										/>
 									</Box>
 									<Box>
@@ -237,546 +598,208 @@ const Homepage = () => {
 					open={open}
 					onClose={handleClose}
 					aria-labelledby='modal-modal-title'
-					aria-describedby='modal-modal-description'>
+					aria-describedby='modal-modal-description'
+					closeAfterTransition
+					slots={{ backdrop: Backdrop }}
+					slotProps={{
+						backdrop: {
+							timeout: 500,
+							sx: {
+								backgroundColor: 'rgba(15, 23, 42, 0.8)',
+								backdropFilter: 'blur(12px)',
+							},
+						},
+					}}>
 					<Box
 						sx={{
 							position: 'absolute',
 							top: '50%',
 							left: '50%',
 							transform: 'translate(-50%, -50%)',
-
 							width: {
-								xs: '95%', // 95% de largeur sur les petits écrans (xs = téléphone)
-								sm: '80%', // 80% sur les écrans moyens
-								md: '65%', // 65% sur les grands écrans
+								xs: '95%',
+								sm: '85%',
+								md: '75%',
+								lg: '65%',
 							},
-
-							bgcolor: 'background.paper',
-							boxShadow: 24,
-							p: 4,
-							borderRadius: '4px',
+							maxWidth: '1100px',
+							outline: 'none',
+							animation: open ? 'modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+							'@keyframes modalFadeIn': {
+								'0%': {
+									opacity: 0,
+									transform: 'translate(-50%, -48%) scale(0.95)',
+								},
+								'100%': {
+									opacity: 1,
+									transform: 'translate(-50%, -50%) scale(1)',
+								},
+							},
 						}}>
-						<video
-							loop
-							autoPlay
-							style={{ width: '100%' }}
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_VIDEO}/${videoSrc}`}></video>
+						{/* Modal Container */}
+						<Box
+							sx={{
+								position: 'relative',
+								background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+								backdropFilter: 'blur(20px)',
+								borderRadius: 5,
+								border: '1px solid rgba(139, 92, 246, 0.2)',
+								boxShadow: '0 20px 80px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
+								overflow: 'hidden',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									right: 0,
+									bottom: 0,
+									background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.08) 0%, transparent 50%)',
+									pointerEvents: 'none',
+									zIndex: 0,
+								},
+							}}>
+							{/* Header */}
+							<Box
+								sx={{
+									position: 'relative',
+									zIndex: 1,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'space-between',
+									p: { xs: 2, md: 3 },
+									borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.03) 100%)',
+								}}>
+								{modalName && (
+									<Typography
+										id='modal-modal-title'
+										variant='h5'
+										sx={{
+											fontWeight: 700,
+											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											backgroundClip: 'text',
+											fontSize: { xs: '1.25rem', md: '1.5rem' },
+										}}>
+										{modalName}
+									</Typography>
+								)}
+								<IconButton
+									onClick={handleClose}
+									sx={{
+										ml: 'auto',
+										width: 42,
+										height: 42,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+											transform: 'rotate(90deg) scale(1.1)',
+											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+										},
+									}}>
+									<Close sx={{ color: '#8b5cf6' }} />
+								</IconButton>
+							</Box>
+
+							{/* Video Container */}
+							<Box
+								sx={{
+									position: 'relative',
+									zIndex: 1,
+									p: { xs: 2, md: 3 },
+								}}>
+								<Box
+									sx={{
+										position: 'relative',
+										borderRadius: 3,
+										overflow: 'hidden',
+										boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+										border: '1px solid rgba(139, 92, 246, 0.2)',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											border: '1px solid rgba(255, 255, 255, 0.3)',
+											borderRadius: 3,
+											pointerEvents: 'none',
+										},
+									}}>
+									<video
+										controls
+										autoPlay
+										loop
+										style={{
+											width: '100%',
+											display: 'block',
+											borderRadius: '12px',
+										}}
+										src={`${process.env.NEXT_PUBLIC_SUPABASE_VIDEO}/${videoSrc}`}
+									/>
+								</Box>
+							</Box>
+						</Box>
 					</Box>
 				</Modal>
 
-				<Stack
-					sx={{
-						width: '1000px',
-						maxWidth: '100%',
-						flexDirection: { xs: 'column', sm: 'row' },
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
-						padding: { xs: '2.5rem', md: '4rem' },
-						borderRadius: 5,
-						gap: '2rem',
-						margin: '0 auto',
-						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						position: 'relative',
-						overflow: 'hidden',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: '-100%',
-							width: '100%',
-							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
-							transition: 'left 0.5s ease',
-						},
-						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
-							transform: 'translateY(-4px) scale(1.01)',
-							'&::before': {
-								left: '100%',
-							},
-						},
-					}}>
-					<Box
-						width='50%'
-						minWidth={175}
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-							position: 'relative',
-							zIndex: 1,
-						}}>
-						<Box
-							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/translator.png`}
-							alt='translator'
-							width={175}
-							height={175}
-							sx={{
-								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
-							}}
-						/>
-					</Box>
+				<FeatureCard
+					title={t('translator')}
+					subtitle={t('translatorsubtitle')}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/translator.png`}
+					imageAlt="translator"
+					onShowClick={() => handleOpen('translator.mp4', t('translator'))}
+					reverse={true}
+					marginTop="5rem"
+					badge={t('badgeEssential')}
+					offsetDirection="center"
+					buttonText={t('viewDemo')}
+				/>
 
-					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{t('translator')}
-						</Typography>
-						<Typography
-							variant='subtitle1'
-							align='center'
-							sx={{
-								color: '#64748b',
-								fontWeight: 500,
-								lineHeight: 1.7,
-								fontSize: { xs: '0.95rem', md: '1rem' },
-							}}>
-							{t('translatorsubtitle')}
-						</Typography>
+				<FeatureCard
+					title={t('dictionary')}
+					subtitle={t('giftranslatorsubtitle')}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`}
+					imageAlt="dictionary"
+					onShowClick={() => handleOpen('dictionary.mp4', t('dictionary'))}
+					reverse={false}
+					marginTop="6rem"
+					badge={t('badgeNew')}
+					offsetDirection="left"
+					buttonText={t('viewDemo')}
+				/>
 
-						<Button
-							onClick={() => handleOpen('translator.mp4')}
-							variant='contained'
-							size='large'
-							sx={{
-								...primaryButton,
-								minWidth: { xs: '160px', sm: '200px' },
-								minHeight: '48px',
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '1rem',
-								fontSize: { xs: '0.9rem', sm: '1rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									transform: 'translateY(-4px) scale(1.05)',
-									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
-									'&::before': {
-										left: '100%',
-									},
-								},
-								'&:active': {
-									transform: 'translateY(-2px) scale(1.02)',
-								},
-							}}>
-							{t('show')}
-						</Button>
-					</Stack>
-				</Stack>
+				<FeatureCard
+					title={t('flashcards')}
+					subtitle={t('gifflashcardssubtitle')}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`}
+					imageAlt="flashcards"
+					onShowClick={() => handleOpen('flashcards.mp4', t('flashcards'))}
+					reverse={true}
+					marginTop="2rem"
+					badge={t('badgePopular')}
+					offsetDirection="right"
+					buttonText={t('viewDemo')}
+				/>
 
-				<Stack
-					sx={{
-						width: '1000px',
-						maxWidth: '100%',
-						flexDirection: { xs: 'column', sm: 'row' },
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
-						padding: { xs: '2.5rem', md: '4rem' },
-						borderRadius: 5,
-						gap: '2rem',
-						margin: '0 auto',
-						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						position: 'relative',
-						overflow: 'hidden',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: '-100%',
-							width: '100%',
-							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
-							transition: 'left 0.5s ease',
-						},
-						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
-							transform: 'translateY(-4px) scale(1.01)',
-							'&::before': {
-								left: '100%',
-							},
-						},
-					}}>
-					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{t('dictionary')}
-						</Typography>
-						<Typography
-							variant='subtitle1'
-							align='center'
-							sx={{
-								color: '#64748b',
-								fontWeight: 500,
-								lineHeight: 1.7,
-								fontSize: { xs: '0.95rem', md: '1rem' },
-							}}>
-							{t('giftranslatorsubtitle')}
-						</Typography>
-
-						<Button
-							onClick={() => handleOpen('dictionary.mp4')}
-							variant='contained'
-							size='large'
-							sx={{
-								...primaryButton,
-								minWidth: { xs: '160px', sm: '200px' },
-								minHeight: '48px',
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '1rem',
-								fontSize: { xs: '0.9rem', sm: '1rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									transform: 'translateY(-4px) scale(1.05)',
-									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
-									'&::before': {
-										left: '100%',
-									},
-								},
-								'&:active': {
-									transform: 'translateY(-2px) scale(1.02)',
-								},
-							}}>
-							{t('show')}
-						</Button>
-					</Stack>
-					<Box
-						width='50%'
-						minWidth={175}
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-							position: 'relative',
-							zIndex: 1,
-						}}>
-						<Box
-							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`}
-							alt='dictionary'
-							width={175}
-							height={175}
-							sx={{
-								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
-							}}
-						/>
-					</Box>
-				</Stack>
-
-				<Stack
-					sx={{
-						width: '1000px',
-						maxWidth: '100%',
-						flexDirection: { xs: 'column', sm: 'row' },
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
-						padding: { xs: '2.5rem', md: '4rem' },
-						borderRadius: 5,
-						gap: '2rem',
-						margin: '0 auto',
-						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						position: 'relative',
-						overflow: 'hidden',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: '-100%',
-							width: '100%',
-							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
-							transition: 'left 0.5s ease',
-						},
-						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
-							transform: 'translateY(-4px) scale(1.01)',
-							'&::before': {
-								left: '100%',
-							},
-						},
-					}}>
-					<Box
-						width='50%'
-						minWidth={175}
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-							position: 'relative',
-							zIndex: 1,
-						}}>
-						<Box
-							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`}
-							alt='flashcards'
-							width={175}
-							height={175}
-							sx={{
-								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
-							}}
-						/>
-					</Box>
-
-					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{t('flashcards')}
-						</Typography>
-						<Typography
-							variant='subtitle1'
-							align='center'
-							sx={{
-								color: '#64748b',
-								fontWeight: 500,
-								lineHeight: 1.7,
-								fontSize: { xs: '0.95rem', md: '1rem' },
-							}}>
-							{t('gifflashcardssubtitle')}
-						</Typography>
-
-						<Button
-							onClick={() => handleOpen('flashcards.mp4')}
-							variant='contained'
-							size='large'
-							sx={{
-								...primaryButton,
-								minWidth: { xs: '160px', sm: '200px' },
-								minHeight: '48px',
-								display: 'block',
-								margin: '0 auto',
-								marginTop: '1rem',
-								fontSize: { xs: '0.9rem', sm: '1rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									transform: 'translateY(-4px) scale(1.05)',
-									boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
-									'&::before': {
-										left: '100%',
-									},
-								},
-								'&:active': {
-									transform: 'translateY(-2px) scale(1.02)',
-								},
-							}}>
-							{t('show')}
-						</Button>
-					</Stack>
-				</Stack>
-
-				<Stack
-					sx={{
-						width: '1000px',
-						maxWidth: '100%',
-						flexDirection: { xs: 'column', sm: 'row' },
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
-						padding: { xs: '2.5rem', md: '4rem' },
-						borderRadius: 5,
-						gap: '2rem',
-						margin: '0 auto',
-						marginTop: { xs: '3rem', md: '5rem' },
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						position: 'relative',
-						overflow: 'hidden',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: '-100%',
-							width: '100%',
-							height: '100%',
-							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent)',
-							transition: 'left 0.5s ease',
-						},
-						'&:hover': {
-							boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25), 0 0 20px rgba(6, 182, 212, 0.15)',
-							transform: 'translateY(-4px) scale(1.01)',
-							'&::before': {
-								left: '100%',
-							},
-						},
-					}}>
-					<Stack gap='1rem' sx={{ position: 'relative', zIndex: 1 }}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{t('teacher')}
-						</Typography>
-						<Typography
-							variant='subtitle1'
-							align='center'
-							sx={{
-								color: '#64748b',
-								fontWeight: 500,
-								lineHeight: 1.7,
-								fontSize: { xs: '0.95rem', md: '1rem' },
-							}}>
-							{t('teachersubtitle')}
-						</Typography>
-						<Link href='/teacher'>
-							<Button
-								variant='contained'
-								size='large'
-								sx={{
-									...primaryButton,
-									minWidth: { xs: '160px', sm: '200px' },
-									minHeight: '48px',
-									display: 'block',
-									margin: '0 auto',
-									marginTop: '1rem',
-									fontSize: { xs: '0.9rem', sm: '1rem' },
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), 0 0 15px rgba(6, 182, 212, 0.2)',
-									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-									position: 'relative',
-									overflow: 'hidden',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: '-100%',
-										width: '100%',
-										height: '100%',
-										background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-										transition: 'left 0.5s ease',
-									},
-									'&:hover': {
-										background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-										transform: 'translateY(-4px) scale(1.05)',
-										boxShadow: '0 8px 40px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
-										'&::before': {
-											left: '100%',
-										},
-									},
-									'&:active': {
-										transform: 'translateY(-2px) scale(1.02)',
-									},
-								}}>
-								{t('start')}
-							</Button>
-						</Link>
-					</Stack>
-					<Box
-						width='50%'
-						minWidth={175}
-						sx={{
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-							position: 'relative',
-							zIndex: 1,
-						}}>
-						<Box
-							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/teacher.png`}
-							alt='teacher'
-							width={175}
-							height={175}
-							sx={{
-								filter: 'drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2))',
-							}}
-						/>
-					</Box>
-				</Stack>
+				<Link href='/teacher' style={{ textDecoration: 'none' }}>
+					<FeatureCard
+						title={t('teacher')}
+						subtitle={t('teachersubtitle')}
+						imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/teacher.png`}
+						imageAlt="teacher"
+						onShowClick={() => {}}
+						reverse={false}
+						marginTop="6rem"
+						badge={t('badgePremium')}
+						offsetDirection="left"
+						buttonText={t('viewDemo')}
+					/>
+				</Link>
 			</Container>
 		</>
 	)

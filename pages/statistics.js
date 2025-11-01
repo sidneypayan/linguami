@@ -138,8 +138,8 @@ const StatisticsPage = () => {
 			title: t('totalWordsInDictionary'),
 			value: stats?.totalWords || 0,
 			icon: <FaBook />,
-			color: '#667eea',
-			gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+			color: '#8b5cf6',
+			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 		},
 		{
 			title: t('wordsAddedToday'),
@@ -250,8 +250,8 @@ const StatisticsPage = () => {
 		levels: {
 			title: t('levelBadges'),
 			icon: <FaStar />,
-			color: '#667eea',
-			gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+			color: '#8b5cf6',
+			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 			badges: [5, 10, 15, 20, 30].map((level, index) => {
 				const IconComponent = levelIcons[index]
 				return {
@@ -328,7 +328,98 @@ const StatisticsPage = () => {
 		<>
 			<SEO title={t('pageTitle')} description={t('pageDescription')} />
 
-			<Container maxWidth="xl" sx={{ mt: { xs: 12, md: 14 }, pb: 8 }}>
+			{/* Hero Section */}
+			<Box
+				sx={{
+					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+					pt: { xs: '6rem', md: '7rem' },
+					pb: { xs: '5rem', md: '6rem' },
+					position: 'relative',
+					overflow: 'hidden',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+						pointerEvents: 'none',
+					},
+					'&::after': {
+						content: '""',
+						position: 'absolute',
+						bottom: 0,
+						left: 0,
+						right: 0,
+						height: '60px',
+						background: '#ffffff',
+						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					},
+				}}>
+				<Container
+					maxWidth='lg'
+					sx={{
+						position: 'relative',
+						zIndex: 1,
+						pb: { xs: 2, md: 3 },
+					}}>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							gap: 2,
+							mb: { xs: 2.5, md: 3 },
+						}}>
+						<FaChartLine
+							style={{
+								fontSize: '2.5rem',
+								color: '#06b6d4',
+								filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))',
+							}}
+						/>
+						<Typography
+							variant='h1'
+							sx={{
+								fontWeight: 800,
+								fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
+								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+								backgroundSize: '200% 200%',
+								animation: 'gradientShift 8s ease infinite',
+								'@keyframes gradientShift': {
+									'0%, 100%': {
+										backgroundPosition: '0% 50%',
+									},
+									'50%': {
+										backgroundPosition: '100% 50%',
+									},
+								},
+							}}>
+							{t('pageTitle')}
+						</Typography>
+					</Box>
+					<Typography
+						variant='h6'
+						align='center'
+						sx={{
+							color: 'rgba(255, 255, 255, 0.9)',
+							fontWeight: 500,
+							fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+							maxWidth: '800px',
+							mx: 'auto',
+							lineHeight: 1.7,
+							px: { xs: 2, sm: 0 },
+						}}>
+						{t('pageDescription')}
+					</Typography>
+				</Container>
+			</Box>
+
+			<Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, pb: 8 }}>
 				{/* XP Profile Card - Circular Design */}
 				{xpProfile && (
 					<Paper
@@ -337,10 +428,11 @@ const StatisticsPage = () => {
 							borderRadius: 4,
 							p: 4,
 							mb: 3,
-							background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							backdropFilter: 'blur(10px)',
 							color: 'white',
-							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-							border: '1px solid rgba(226, 232, 240, 0.8)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
 						}}>
 						<Grid container spacing={4} alignItems="center" justifyContent="center">
 							{/* Circular XP Progress */}

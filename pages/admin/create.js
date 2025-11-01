@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import loadNamespaces from 'next-translate/loadNamespaces'
 import {
 	Box,
 	Container,
@@ -29,6 +30,7 @@ import {
 	Save,
 } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
+import AdminNavbar from '../../components/admin/AdminNavbar'
 
 const CreateMaterial = () => {
 	const { t } = useTranslation('admin')
@@ -206,6 +208,9 @@ const CreateMaterial = () => {
 				minHeight: '100vh',
 				bgcolor: '#FAFBFC',
 			}}>
+			{/* Admin Navbar */}
+			<AdminNavbar activePage="create" />
+
 			{/* Header */}
 			<Box
 				sx={{
@@ -462,7 +467,10 @@ export const getServerSideProps = async ({ req, res }) => {
 	}
 
 	return {
-		props: { user: userProfile },
+		props: {
+			user: userProfile,
+			...(await loadNamespaces({ ...{ req, res }, pathname: '/admin/create', loaderName: 'getServerSideProps' })),
+		},
 	}
 }
 

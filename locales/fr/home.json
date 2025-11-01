@@ -31,5 +31,12 @@
 	"giftranslatortitle": "Dictionnaire personnel",
 	"giftranslatorsubtitle": "Grâce à notre outil de traduction, traduisez n'importe quel mot puis ajoutez le à votre dictionnaire personnel",
 	"gifflashcardssubtitle": "Retenez facilement les mots ajoutés à votre dictionnaire grâce à notre outil de révision",
-	"show": "Montrer"
+	"show": "Montrer",
+	"platformTagline": "Plateforme d'apprentissage interactive",
+	"discoverResources": "Découvrez toutes nos ressources pour apprendre efficacement",
+	"badgeNew": "Nouveau",
+	"badgePopular": "Populaire",
+	"badgePremium": "Premium",
+	"badgeEssential": "Essentiel",
+	"viewDemo": "Voir la démo"
 }

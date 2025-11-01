@@ -58,9 +58,9 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 				sx={{
 					position: 'relative',
 					width: '100%',
-					height: { xs: '300px', sm: '400px', md: '500px' },
+					height: { xs: '400px', sm: '500px', md: '600px' },
 					overflow: 'hidden',
-					marginTop: { xs: '56px', sm: '64px' },
+					pt: { xs: '56px', sm: '64px' },
 					'&::after': {
 						content: '""',
 						position: 'absolute',
@@ -89,20 +89,21 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							top: { xs: 16, sm: 24 },
 							left: { xs: 16, sm: 24 },
 							zIndex: 2,
-							backgroundColor: 'rgba(255, 255, 255, 0.95)',
-							backdropFilter: 'blur(8px)',
-							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-							transition: 'all 0.3s ease',
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+							backdropFilter: 'blur(10px)',
+							border: '1px solid rgba(139, 92, 246, 0.3)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
-								backgroundColor: 'white',
+								background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
 								transform: 'scale(1.05)',
-								boxShadow: '0 6px 25px rgba(102, 126, 234, 0.3)',
+								boxShadow: '0 6px 30px rgba(139, 92, 246, 0.5)',
 							},
 							'&:active': {
 								transform: 'scale(0.95)',
 							},
 						}}>
-						<ArrowBack sx={{ color: '#667eea' }} />
+						<ArrowBack sx={{ color: 'white' }} />
 					</IconButton>
 				</Link>
 
@@ -134,15 +135,16 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 						icon={<CalendarTodayRounded sx={{ fontSize: '1rem' }} />}
 						label={date}
 						sx={{
-							backgroundColor: 'rgba(255, 255, 255, 0.95)',
-							backdropFilter: 'blur(8px)',
-							color: '#667eea',
-							fontWeight: 600,
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+							backdropFilter: 'blur(10px)',
+							color: 'white',
+							border: '1px solid rgba(255, 255, 255, 0.3)',
+							fontWeight: 700,
 							fontSize: '0.95rem',
 							padding: '20px 8px',
-							boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
 							'& .MuiChip-icon': {
-								color: '#667eea',
+								color: 'white',
 							},
 						}}
 					/>
@@ -180,7 +182,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 						'& h1': { fontSize: { xs: '2rem', md: '2.5rem' } },
 						'& h2': {
 							fontSize: { xs: '1.75rem', md: '2rem' },
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 							WebkitBackgroundClip: 'text',
 							WebkitTextFillColor: 'transparent',
 							backgroundClip: 'text',
@@ -196,7 +198,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 								marginBottom: 1.5,
 								color: '#4a5568',
 								'&::marker': {
-									color: '#667eea',
+									color: '#8b5cf6',
 								},
 							},
 						},
@@ -220,8 +222,8 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 
 						// Inline code
 						'& code': {
-							backgroundColor: 'rgba(102, 126, 234, 0.1)',
-							color: '#667eea',
+							backgroundColor: 'rgba(139, 92, 246, 0.1)',
+							color: '#8b5cf6',
 							padding: '3px 8px',
 							borderRadius: 1,
 							fontSize: '0.9em',
@@ -241,7 +243,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 
 						// Citations
 						'& blockquote': {
-							borderLeft: '4px solid #667eea',
+							borderLeft: '4px solid #8b5cf6',
 							paddingLeft: { xs: 2, sm: 3 },
 							paddingRight: { xs: 2, sm: 3 },
 							paddingTop: 2,
@@ -251,7 +253,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							marginBottom: 3,
 							fontStyle: 'italic',
 							color: '#718096',
-							backgroundColor: 'rgba(102, 126, 234, 0.05)',
+							backgroundColor: 'rgba(139, 92, 246, 0.05)',
 							borderRadius: 2,
 							fontSize: '1.05em',
 							'& p': {
@@ -261,21 +263,21 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 
 						// Liens
 						'& a': {
-							color: '#667eea',
+							color: '#8b5cf6',
 							textDecoration: 'none',
 							fontWeight: 600,
-							borderBottom: '2px solid rgba(102, 126, 234, 0.3)',
+							borderBottom: '2px solid rgba(139, 92, 246, 0.3)',
 							transition: 'all 0.2s ease',
 							'&:hover': {
-								borderBottomColor: '#667eea',
-								color: '#764ba2',
+								borderBottomColor: '#8b5cf6',
+								color: '#06b6d4',
 							},
 						},
 
 						// Séparateurs
 						'& hr': {
 							border: 'none',
-							borderTop: '2px solid rgba(102, 126, 234, 0.2)',
+							borderTop: '2px solid rgba(139, 92, 246, 0.2)',
 							marginTop: 5,
 							marginBottom: 5,
 						},
@@ -289,13 +291,13 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							display: 'block',
 							'& th, & td': {
 								padding: { xs: 1, sm: 2 },
-								borderBottom: '1px solid rgba(102, 126, 234, 0.2)',
+								borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
 								textAlign: 'left',
 							},
 							'& th': {
-								backgroundColor: 'rgba(102, 126, 234, 0.1)',
+								backgroundColor: 'rgba(139, 92, 246, 0.1)',
 								fontWeight: 700,
-								color: '#667eea',
+								color: '#8b5cf6',
 							},
 						},
 					}}

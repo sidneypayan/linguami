@@ -27,6 +27,7 @@ import {
 	MenuBook,
 } from '@mui/icons-material'
 import { sections } from '../data/sections'
+import { getImageUrl } from '../utils/imageUtils'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const router = useRouter()
@@ -56,28 +57,28 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 
 	const getIcon = (section) => {
 		if (sections.audio.includes(section)) {
-			return <Audiotrack sx={{ fontSize: '1.5rem', color: '#667eea' }} />
+			return <Audiotrack sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
 		}
 		if (sections.music.includes(section)) {
-			return <MusicNote sx={{ fontSize: '1.5rem', color: '#667eea' }} />
+			return <MusicNote sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
 		}
 		if (sections.video.includes(section)) {
-			return <Movie sx={{ fontSize: '1.5rem', color: '#667eea' }} />
+			return <Movie sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
 		}
-		return <MenuBook sx={{ fontSize: '1.5rem', color: '#667eea' }} />
+		return <MenuBook sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
 	}
 
 	const getLevelColor = (level) => {
 		if (level === 'débutant') return '#10b981'
 		if (level === 'intermédiaire') return '#f59e0b'
 		if (level === 'avancé') return '#ef4444'
-		return '#667eea'
+		return '#8b5cf6'
 	}
 
 	const getLevelLabel = (level) => {
-		if (level === 'débutant') return 'A1/A2'
-		if (level === 'intermédiaire') return 'B1/B2'
-		if (level === 'avancé') return 'C1/C2'
+		if (level === 'débutant') return 'Débutant'
+		if (level === 'intermédiaire') return 'Intermédiaire'
+		if (level === 'avancé') return 'Avancé'
 		return level
 	}
 
@@ -118,15 +119,16 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 						onClick={() => handleRowClick(material)}
 						sx={{
 							p: 2,
-							borderRadius: 3,
+							borderRadius: 4,
 							cursor: 'pointer',
-							border: '1px solid rgba(102, 126, 234, 0.08)',
-							background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%)',
-							transition: 'all 0.3s ease',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
-								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.12)',
-								transform: 'translateY(-2px)',
-								borderColor: 'rgba(102, 126, 234, 0.2)',
+								boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+								transform: 'translateY(-4px)',
+								borderColor: 'rgba(139, 92, 246, 0.4)',
 							},
 							'&:active': {
 								transform: 'scale(0.98)',
@@ -135,7 +137,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 						<Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
 							{/* Image */}
 							<Avatar
-								src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
+								src={getImageUrl(material.image)}
 								alt={material.title}
 								variant="rounded"
 								sx={{
@@ -153,7 +155,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 										sx={{
 											fontSize: '1rem',
 											fontWeight: 700,
-											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',
 											backgroundClip: 'text',
@@ -201,15 +203,15 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 			component={Paper}
 			sx={{
 				borderRadius: 4,
-				boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-				border: '1px solid rgba(102, 126, 234, 0.08)',
+				boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+				border: '1px solid rgba(139, 92, 246, 0.2)',
 				overflow: 'hidden',
 			}}>
 			<Table>
 				<TableHead>
 					<TableRow
 						sx={{
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 						}}>
 						<TableCell
 							sx={{
@@ -271,12 +273,12 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							onClick={() => handleRowClick(material)}
 							sx={{
 								cursor: 'pointer',
-								backgroundColor: index % 2 === 0 ? 'rgba(102, 126, 234, 0.02)' : 'white',
-								transition: 'all 0.2s ease',
+								backgroundColor: index % 2 === 0 ? 'rgba(139, 92, 246, 0.03)' : 'white',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									backgroundColor: 'rgba(102, 126, 234, 0.08)',
-									transform: 'scale(1.01)',
-									boxShadow: '0 4px 12px rgba(102, 126, 234, 0.1)',
+									backgroundColor: 'rgba(139, 92, 246, 0.08)',
+									transform: 'scale(1.005)',
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
 								},
 								'&:active': {
 									transform: 'scale(0.99)',
@@ -285,7 +287,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							{/* Image/Icon Column */}
 							<TableCell sx={{ py: 2 }}>
 								<Avatar
-									src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
+									src={getImageUrl(material.image)}
 									alt={material.title}
 									variant="rounded"
 									sx={{
@@ -304,7 +306,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 										sx={{
 											fontSize: '1rem',
 											fontWeight: 700,
-											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',
 											backgroundClip: 'text',

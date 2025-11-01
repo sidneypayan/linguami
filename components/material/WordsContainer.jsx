@@ -91,19 +91,21 @@ const WordsContainer = () => {
 						startIcon={<FlashOnRounded />}
 						onClick={() => dispatch(toggleFlashcardsContainer(true))}
 						sx={{
-							py: 2,
+							py: 2.5,
 							borderRadius: 3,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+							border: '1px solid rgba(139, 92, 246, 0.3)',
 							fontWeight: 700,
 							fontSize: { xs: '1rem', sm: '1.0625rem' },
 							textTransform: 'none',
-							boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-							transition: 'all 0.3s ease',
+							boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							mb: 3,
 							'&:hover': {
-								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-								transform: 'translateY(-2px)',
-								boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
+								background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+								transform: 'translateY(-3px)',
+								boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+								borderColor: 'rgba(139, 92, 246, 0.5)',
 							},
 							'&:active': {
 								transform: 'translateY(0)',
@@ -120,19 +122,20 @@ const WordsContainer = () => {
 							<Card
 								key={index}
 								sx={{
-									p: 2,
-									borderRadius: 3,
+									p: 2.5,
+									borderRadius: 4,
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'space-between',
 									gap: 2,
-									background: 'white',
-									border: '1px solid rgba(102, 126, 234, 0.1)',
-									boxShadow: '0 2px 8px rgba(102, 126, 234, 0.08)',
-									transition: 'all 0.3s ease',
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									'&:hover': {
-										transform: 'translateY(-2px)',
-										boxShadow: '0 8px 24px rgba(102, 126, 234, 0.15)',
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+										borderColor: 'rgba(139, 92, 246, 0.4)',
 										'& .delete-btn': {
 											opacity: 1,
 										},
@@ -151,10 +154,11 @@ const WordsContainer = () => {
 										sx={{
 											fontWeight: 700,
 											fontSize: { xs: '0.9375rem', sm: '1rem' },
-											background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-											color: '#667eea',
-											border: '1px solid rgba(102, 126, 234, 0.2)',
-											px: 1,
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+											color: '#8b5cf6',
+											border: '1px solid rgba(139, 92, 246, 0.3)',
+											px: 1.5,
+											backdropFilter: 'blur(10px)',
 										}}
 									/>
 									<Typography
@@ -198,9 +202,9 @@ const WordsContainer = () => {
 					sx={{
 						p: { xs: 3, sm: 4, md: 5 },
 						borderRadius: 4,
-						boxShadow: '0 8px 32px rgba(102, 126, 234, 0.12)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						background: 'white',
+						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						mt: { xs: 2, md: 3 },
 					}}>
 					<Box
@@ -215,11 +219,12 @@ const WordsContainer = () => {
 								width: 80,
 								height: 80,
 								borderRadius: 4,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
+								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+								border: '2px solid rgba(255, 255, 255, 0.5)',
 							}}>
 							<BookmarkAddRounded sx={{ fontSize: '2.5rem', color: 'white' }} />
 						</Box>
@@ -230,7 +235,7 @@ const WordsContainer = () => {
 							sx={{
 								fontWeight: 800,
 								fontSize: { xs: '1.5rem', sm: '1.75rem' },
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -256,8 +261,9 @@ const WordsContainer = () => {
 								maxWidth: '400px',
 								p: 3,
 								borderRadius: 3,
-								background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
-								border: '1px solid rgba(102, 126, 234, 0.15)',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
+								border: '1px solid rgba(139, 92, 246, 0.2)',
+								backdropFilter: 'blur(10px)',
 							}}>
 							<Typography
 								sx={{
@@ -277,9 +283,9 @@ const WordsContainer = () => {
 					sx={{
 						p: { xs: 3, sm: 4, md: 5 },
 						borderRadius: 4,
-						boxShadow: '0 8px 32px rgba(102, 126, 234, 0.12)',
-						border: '1px solid rgba(102, 126, 234, 0.1)',
-						background: 'white',
+						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						mt: { xs: 2, md: 5 },
 					}}>
 					<Typography
@@ -289,7 +295,7 @@ const WordsContainer = () => {
 							fontWeight: 800,
 							mb: 1,
 							fontSize: { xs: '1.5rem', sm: '1.75rem' },
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 							WebkitBackgroundClip: 'text',
 							WebkitTextFillColor: 'transparent',
 							backgroundClip: 'text',
@@ -317,27 +323,29 @@ const WordsContainer = () => {
 									display: 'flex',
 									alignItems: 'center',
 									gap: 2,
-									p: 2,
-									borderRadius: 2,
-									background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-									border: '1px solid rgba(102, 126, 234, 0.1)',
-									transition: 'all 0.3s ease',
+									p: 2.5,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.15)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									'&:hover': {
 										transform: 'translateX(8px)',
-										background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-										border: '1px solid rgba(102, 126, 234, 0.2)',
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 									},
 								}}>
 								<Box
 									sx={{
-										width: 44,
-										height: 44,
-										borderRadius: 2,
-										background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+										width: 48,
+										height: 48,
+										borderRadius: 2.5,
+										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'center',
-										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+										boxShadow: '0 4px 16px rgba(139, 92, 246, 0.4)',
+										border: '2px solid rgba(255, 255, 255, 0.3)',
 									}}>
 									<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
 								</Box>
@@ -359,18 +367,20 @@ const WordsContainer = () => {
 							variant='contained'
 							size='large'
 							sx={{
-								py: 2,
+								py: 2.5,
 								borderRadius: 3,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
 								fontWeight: 700,
 								fontSize: '1.0625rem',
 								textTransform: 'none',
-								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-								transition: 'all 0.3s ease',
+								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
-									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-									transform: 'translateY(-2px)',
-									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
+									background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+									transform: 'translateY(-3px)',
+									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+									borderColor: 'rgba(139, 92, 246, 0.5)',
 								},
 								'&:active': {
 									transform: 'translateY(0)',

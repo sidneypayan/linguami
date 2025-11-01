@@ -1,0 +1,122 @@
+import Link from 'next/link'
+import { Box, Container, Typography, Button } from '@mui/material'
+import { Add, People } from '@mui/icons-material'
+import useTranslation from 'next-translate/useTranslation'
+
+const AdminNavbar = ({ activePage = 'dashboard' }) => {
+	const { t } = useTranslation('admin')
+
+	const navButtons = [
+		{
+			id: 'dashboard',
+			label: t('adminDashboard'),
+			href: '/admin',
+			variant: 'text',
+		},
+		{
+			id: 'create',
+			label: t('newContent'),
+			href: '/admin/create',
+			icon: <Add />,
+			variant: 'contained',
+		},
+		{
+			id: 'users',
+			label: t('users'),
+			href: '/admin/users',
+			icon: <People />,
+			variant: 'contained',
+		},
+	]
+
+	return (
+		<Box
+			sx={{
+				bgcolor: 'white',
+				borderBottom: '1px solid',
+				borderColor: 'divider',
+				position: 'sticky',
+				top: 0,
+				zIndex: 1100,
+				boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+			}}>
+			<Container maxWidth="xl">
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						py: 2,
+					}}>
+					{/* Logo and Title */}
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+						<Box
+							sx={{
+								width: 48,
+								height: 48,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								color: 'white',
+								fontWeight: 800,
+								fontSize: '1.5rem',
+							}}>
+							L
+						</Box>
+						<Box>
+							<Typography
+								variant='h5'
+								sx={{
+									fontWeight: 700,
+									color: '#1E293B',
+									letterSpacing: '-0.5px',
+								}}>
+								{t('adminDashboard')}
+							</Typography>
+							<Typography
+								variant='body2'
+								sx={{
+									color: '#64748B',
+								}}>
+								{t('manageContent')}
+							</Typography>
+						</Box>
+					</Box>
+
+					{/* Navigation Buttons */}
+					<Box sx={{ display: 'flex', gap: 2 }}>
+						{navButtons
+							.filter(btn => btn.variant === 'contained')
+							.map(btn => (
+								<Link key={btn.id} href={btn.href} passHref style={{ textDecoration: 'none' }}>
+									<Button
+										variant={btn.variant}
+										startIcon={btn.icon}
+										sx={{
+											bgcolor: activePage === btn.id ? '#5568d3' : '#667eea',
+											color: 'white',
+											px: 3,
+											py: 1.2,
+											borderRadius: 2,
+											textTransform: 'none',
+											fontWeight: 600,
+											boxShadow: activePage === btn.id ? '0 4px 12px rgba(102, 126, 234, 0.4)' : 'none',
+											'&:hover': {
+												bgcolor: '#5568d3',
+												boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+											},
+										}}>
+										{btn.label}
+									</Button>
+								</Link>
+							))}
+					</Box>
+				</Box>
+			</Container>
+		</Box>
+	)
+}
+
+export default AdminNavbar

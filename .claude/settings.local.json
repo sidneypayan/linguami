@@ -7,7 +7,11 @@
       "Bash(npm uninstall:*)",
       "Bash(npm run dev)",
       "Bash(curl:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(node -e:*)",
+      "Bash(/dev/null -i)",
+      "Bash(grep:*)",
+      "Bash(timeout 10 npm run dev)"
     ],
     "deny": [],
     "ask": []

@@ -18,8 +18,10 @@ import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
 import VideoPlayer from '../../../../components/material/VideoPlayer'
+import EditMaterialModal from '../../../../components/admin/EditMaterialModal'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
+import { getImageUrl } from '../../../../utils/imageUtils'
 
 import Player from '../../../../components/Player'
 
@@ -65,11 +67,19 @@ const Material = ({ material: single_material, activitiesCount }) => {
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
+	const [editModalOpen, setEditModalOpen] = useState(false)
+	const [currentMaterial, setCurrentMaterial] = useState(single_material)
 
 	const { user_material_status } = useSelector(store => store.materials)
 	const { activities } = useSelector(store => store.activities)
 
 	const { is_being_studied, is_studied } = user_material_status
+
+	useEffect(() => {
+		if (single_material) {
+			setCurrentMaterial(single_material)
+		}
+	}, [single_material])
 
 	useEffect(() => {
 		if (!single_material?.id) return
@@ -86,8 +96,22 @@ const Material = ({ material: single_material, activitiesCount }) => {
 	}, [dispatch, single_material, isUserLoggedIn])
 
 	const handleEditContent = () => {
-		dispatch(editContent({ id: single_material.id, contentType: 'materials' }))
-		router.push('/admin/create')
+		setEditModalOpen(true)
+	}
+
+	const handleEditSuccess = async () => {
+		// Recharger les données du matériel après la modification
+		const { data, error } = await supabase
+			.from('materials')
+			.select('*')
+			.eq('id', single_material.id)
+			.single()
+
+		if (!error && data) {
+			setCurrentMaterial(data)
+			// Forcer le rafraîchissement de la page pour mettre à jour tous les composants
+			router.replace(router.asPath)
+		}
 	}
 
 	const getImageRegardingSection = section => {
@@ -99,7 +123,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					<CardMedia
 						component='img'
 						sx={{ maxWidth: 600, height: 230, borderRadius: '3px' }}
-						image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/${single_material.image}`}
+						image={getImageUrl(single_material.image)}
 						alt={material.title}
 					/>
 				</Container>
@@ -178,6 +202,92 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					<title>{`${single_material.title} | Linguami`}</title>
 					<meta name='description' content={single_material.title} />
 				</Head>
+
+				{/* Hero Section */}
+				<Box
+					sx={{
+						position: 'relative',
+						background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+						overflow: 'hidden',
+						pt: { xs: '6rem', md: '7rem' },
+						pb: { xs: '5rem', md: '6rem' },
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+							pointerEvents: 'none',
+						},
+					}}>
+					<Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, pb: { xs: 2, md: 3 } }}>
+						{/* Back button */}
+						<Box sx={{ mb: 3 }}>
+							<IconButton
+								sx={{
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+									backdropFilter: 'blur(10px)',
+									border: '1px solid rgba(139, 92, 246, 0.3)',
+									color: 'white',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&:hover': {
+										background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
+										transform: 'scale(1.15)',
+										boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
+										borderColor: 'rgba(139, 92, 246, 0.5)',
+									},
+									'&:active': {
+										transform: 'scale(0.95)',
+									},
+								}}
+								aria-label='back'
+								onClick={() => router.back()}>
+								<ArrowBack fontSize='medium' />
+							</IconButton>
+						</Box>
+
+						{/* Title */}
+						<Typography
+							variant="h1"
+							sx={{
+								fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' },
+								fontWeight: 800,
+								mb: { xs: 2.5, md: 3 },
+								textAlign: 'center',
+								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
+								backgroundSize: '200% 200%',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+								animation: 'gradientShift 8s ease infinite',
+								px: { xs: 2, sm: 0 },
+								'@keyframes gradientShift': {
+									'0%': { backgroundPosition: '0% 50%' },
+									'50%': { backgroundPosition: '100% 50%' },
+									'100%': { backgroundPosition: '0% 50%' },
+								},
+							}}>
+							{single_material.title}
+						</Typography>
+					</Container>
+
+					{/* Diagonal separator */}
+					<Box
+						sx={{
+							position: 'absolute',
+							bottom: 0,
+							left: 0,
+							right: 0,
+							height: { xs: '60px', md: '80px' },
+							background: '#ffffff',
+							clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+						}}
+					/>
+				</Box>
+
 				<Stack
 					sx={{
 						flexDirection: {
@@ -194,50 +304,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					}}>
 					<Box
 						sx={{
-							marginTop: { xs: '6rem', sm: '6.5rem', md: '7rem' },
+							py: { xs: 4, md: 6 },
 							px: { xs: 2, sm: 3 },
 							flex: 1,
 							minWidth: 0,
 							maxWidth: '100%',
 						}}>
-						<Box sx={{ mb: 3 }}>
-							<IconButton
-								sx={{
-									backgroundColor: 'rgba(255, 255, 255, 0.9)',
-									backdropFilter: 'blur(8px)',
-									boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-									transition: 'all 0.3s ease',
-									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-									color: 'white',
-									'&:hover': {
-										transform: 'scale(1.1)',
-										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
-									},
-									'&:active': {
-										transform: 'scale(0.95)',
-									},
-								}}
-								aria-label='back'
-								onClick={() => router.back()}>
-								<ArrowBack fontSize='medium' />
-							</IconButton>
-						</Box>
-						<Typography
-							variant='h1'
-							sx={{
-								position: 'relative',
-								zIndex: 100,
-								typography: { xs: 'h4', sm: 'h3' },
-								width: '750px',
-								maxWidth: '100%',
-								margin: { xs: '1.5rem auto 0.5rem', sm: '2rem auto 0.75rem' },
-								px: { xs: 1, sm: 0 },
-								backgroundColor: 'white',
-								py: 2,
-							}}
-							align='center'>
-							{single_material.title}
-						</Typography>
 
 						{getImageRegardingSection(section)}
 						{displayVideo(section)}
@@ -263,10 +335,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									gap: 2,
 									marginBottom: '3rem',
 									marginTop: '2rem',
-									backgroundColor: 'white',
-									padding: '1rem',
-									borderRadius: 3,
-									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									padding: { xs: '1.5rem', sm: '2rem' },
+									borderRadius: 4,
+									border: '1px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 								}}>
 								{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
 								afficher le bouton proposant de l'ajouter aux matériels en cours
@@ -284,20 +357,22 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										}}
 										sx={{
 											background:
-												'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+												'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
+											padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
 											borderRadius: 3,
 											textTransform: 'none',
-											transition: 'all 0.3s ease',
-											boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											border: '1px solid rgba(139, 92, 246, 0.3)',
+											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
 											'&:hover': {
 												background:
-													'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-												transform: 'translateY(-2px)',
-												boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+													'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+												transform: 'translateY(-3px)',
+												boxShadow: '0 8px 30px rgba(139, 92, 246, 0.5)',
+												borderColor: 'rgba(139, 92, 246, 0.5)',
 											},
 											'&:active': {
 												transform: 'scale(0.98)',
@@ -329,16 +404,18 @@ const Material = ({ material: single_material, activitiesCount }) => {
 											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
+											padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
 											borderRadius: 3,
 											textTransform: 'none',
-											transition: 'all 0.3s ease',
-											boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											border: '1px solid rgba(245, 158, 11, 0.3)',
+											boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)',
 											'&:hover': {
 												background:
 													'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
-												transform: 'translateY(-2px)',
-												boxShadow: '0 6px 20px rgba(245, 158, 11, 0.4)',
+												transform: 'translateY(-3px)',
+												boxShadow: '0 8px 30px rgba(245, 158, 11, 0.5)',
+												borderColor: 'rgba(245, 158, 11, 0.5)',
 											},
 											'&:active': {
 												transform: 'scale(0.98)',
@@ -361,20 +438,21 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										variant='outlined'
 										onClick={handleEditContent}
 										sx={{
-											borderColor: '#667eea',
-											color: '#667eea',
+											borderColor: '#8b5cf6',
+											color: '#8b5cf6',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: { xs: '0.625rem 1.25rem', sm: '0.75rem 1.5rem' },
+											padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
 											borderRadius: 3,
 											textTransform: 'none',
-											transition: 'all 0.3s ease',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 											borderWidth: '2px',
 											'&:hover': {
-												borderColor: '#667eea',
+												borderColor: '#8b5cf6',
 												borderWidth: '2px',
-												background: 'rgba(102, 126, 234, 0.1)',
-												transform: 'translateY(-2px)',
+												background: 'rgba(139, 92, 246, 0.1)',
+												transform: 'translateY(-3px)',
+												boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
 											},
 											'&:active': {
 												transform: 'scale(0.98)',
@@ -392,10 +470,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										position: 'relative',
 										zIndex: 100,
 										marginBottom: '2rem',
-										backgroundColor: 'white',
-										padding: '1rem',
-										borderRadius: 3,
-										boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+										padding: { xs: '1.5rem', sm: '2rem' },
+										borderRadius: 4,
+										border: '1px solid rgba(139, 92, 246, 0.2)',
+										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 									}}>
 									<BookMenu bookId={single_material.book_id} />
 								</Box>
@@ -407,12 +486,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								sx={{
 									position: 'relative',
 									zIndex: 100,
-									padding: { xs: 3, sm: 4 },
+									padding: { xs: 3, sm: 4, md: 5 },
 									marginBottom: '3rem',
-									backgroundColor: 'white',
-									borderRadius: 3,
-									border: '1px solid rgba(0, 0, 0, 0.08)',
-									boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									borderRadius: 4,
+									border: '1px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 								}}>
 								{showAccents ? (
 									<Typography
@@ -477,11 +556,13 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										zIndex: 100,
 										display: 'flex',
 										justifyContent: 'center',
-										marginTop: '3rem',
+										marginTop: '4rem',
 										marginBottom: '3rem',
-										backgroundColor: 'white',
-										padding: '1rem',
-										borderRadius: 3,
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+										padding: { xs: '1.5rem', sm: '2rem' },
+										borderRadius: 4,
+										border: '1px solid rgba(16, 185, 129, 0.2)',
+										boxShadow: '0 4px 20px rgba(16, 185, 129, 0.15)',
 									}}>
 									<Button
 										variant='contained'
@@ -497,17 +578,19 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												'linear-gradient(135deg, #10b981 0%, #059669 100%)',
 											color: 'white',
 											fontWeight: 600,
-											fontSize: { xs: '1rem', sm: '1.1rem' },
-											padding: { xs: '1rem 2rem', sm: '1.2rem 3rem' },
+											fontSize: { xs: '1rem', sm: '1.15rem' },
+											padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
 											borderRadius: 3,
 											textTransform: 'none',
-											transition: 'all 0.3s ease',
-											boxShadow: '0 6px 24px rgba(16, 185, 129, 0.3)',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											border: '1px solid rgba(16, 185, 129, 0.3)',
+											boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
 											'&:hover': {
 												background:
 													'linear-gradient(135deg, #059669 0%, #047857 100%)',
-												transform: 'translateY(-3px)',
-												boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
+												transform: 'translateY(-4px)',
+												boxShadow: '0 10px 40px rgba(16, 185, 129, 0.5)',
+												borderColor: 'rgba(16, 185, 129, 0.5)',
 											},
 											'&:active': {
 												transform: 'scale(0.98)',
@@ -538,17 +621,20 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							position: 'fixed',
 							right: '1rem',
 							bottom: '12.5rem',
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+							backdropFilter: 'blur(10px)',
+							border: '1px solid rgba(139, 92, 246, 0.3)',
 							color: 'white',
 							width: '56px',
 							height: '56px',
-							boxShadow: '0 4px 15px rgba(102, 126, 234, 0.5)',
+							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5)',
 							zIndex: 1000,
-							transition: 'all 0.3s ease',
+							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
-								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-								transform: 'scale(1.1)',
-								boxShadow: '0 6px 20px rgba(102, 126, 234, 0.7)',
+								background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+								transform: 'scale(1.15)',
+								boxShadow: '0 8px 30px rgba(139, 92, 246, 0.7)',
+								borderColor: 'rgba(139, 92, 246, 0.5)',
 							},
 						}}
 						onClick={() => setShowWordsContainer(true)}>
@@ -573,17 +659,21 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							pt: 2,
 							px: 3,
 							'&::-webkit-scrollbar': {
-								width: '8px',
+								width: '12px',
 							},
 							'&::-webkit-scrollbar-track': {
-								background: 'rgba(102, 126, 234, 0.05)',
-								borderRadius: '4px',
+								background: 'linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
+								borderRadius: '6px',
 							},
 							'&::-webkit-scrollbar-thumb': {
-								background: 'rgba(102, 126, 234, 0.3)',
-								borderRadius: '4px',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								borderRadius: '6px',
+								border: '2px solid rgba(255, 255, 255, 0.3)',
+								boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
 								'&:hover': {
-									background: 'rgba(102, 126, 234, 0.5)',
+									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									borderColor: 'rgba(255, 255, 255, 0.5)',
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.5)',
 								},
 							},
 						}}>
@@ -614,17 +704,20 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									right: '1rem',
 									background:
 										'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+									backdropFilter: 'blur(10px)',
+									border: '1px solid rgba(240, 147, 251, 0.3)',
 									color: 'white',
 									width: '56px',
 									height: '56px',
-									boxShadow: '0 4px 15px rgba(245, 87, 108, 0.5)',
+									boxShadow: '0 4px 20px rgba(245, 87, 108, 0.5)',
 									zIndex: 1200,
-									transition: 'all 0.3s ease',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									'&:hover': {
 										background:
 											'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
-										transform: 'scale(1.1) rotate(90deg)',
-										boxShadow: '0 6px 20px rgba(245, 87, 108, 0.7)',
+										transform: 'scale(1.15) rotate(90deg)',
+										boxShadow: '0 8px 30px rgba(245, 87, 108, 0.7)',
+										borderColor: 'rgba(245, 87, 108, 0.5)',
 									},
 								}}
 								onClick={() => setShowWordsContainer(false)}>
@@ -634,6 +727,16 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						</Box>
 					)}
 				</Stack>
+
+				{/* Modal d'édition pour les admins */}
+				{isUserAdmin && (
+					<EditMaterialModal
+						open={editModalOpen}
+						onClose={() => setEditModalOpen(false)}
+						material={currentMaterial}
+						onSuccess={handleEditSuccess}
+					/>
+				)}
 			</>
 		)
 	)

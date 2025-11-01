@@ -37,25 +37,26 @@ const baseTheme = createTheme({
 		},
 	},
 	typography: {
-		fontFamily: ['Open Sans'],
+		fontFamily: ['Poppins', 'Open Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'].join(','),
 		h1: {
 			fontWeight: 800,
 			color: '#2d3748',
-			letterSpacing: '-0.5px',
+			letterSpacing: '-1px',
 		},
 		h2: {
 			fontWeight: 700,
 			color: '#2d3748',
-			letterSpacing: '-0.5px',
+			letterSpacing: '-0.8px',
 		},
 		h3: {
 			fontWeight: 700,
 			color: '#4a5568',
-			letterSpacing: '-0.3px',
+			letterSpacing: '-0.5px',
 		},
 		h4: {
 			fontWeight: 600,
 			color: '#4a5568',
+			letterSpacing: '-0.3px',
 		},
 		h5: {
 			fontWeight: 600,
@@ -67,9 +68,21 @@ const baseTheme = createTheme({
 		},
 		subtitle1: {
 			color: '#4a5568',
+			fontWeight: 500,
 		},
 		subtitle2: {
 			color: '#718096',
+			fontWeight: 500,
+		},
+		body1: {
+			fontWeight: 400,
+		},
+		body2: {
+			fontWeight: 400,
+		},
+		button: {
+			fontWeight: 600,
+			letterSpacing: '0.3px',
 		},
 	},
 	components: {

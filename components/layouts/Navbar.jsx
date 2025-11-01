@@ -289,7 +289,7 @@ const Navbar = props => {
 									<AdminPanelSettings />
 								</ListItemIcon>
 								<ListItemText
-									primary="Admin"
+									primary={t('admin')}
 									primaryTypographyProps={{
 										fontWeight: isActivePath('/admin') ? 700 : 600,
 										fontSize: '1.0625rem',
@@ -384,7 +384,16 @@ const Navbar = props => {
 						pointerEvents: 'none',
 					},
 				}}>
-				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 2, position: 'relative', zIndex: 1, minHeight: { xs: 70, sm: 80 } }}>
+				<Toolbar sx={{
+				display: 'flex',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				py: 2,
+				position: 'relative',
+				zIndex: 1,
+				minHeight: { xs: 70, sm: 80 },
+				px: { xs: 2, sm: 3 },
+			}}>
 					{/* Menu mobile */}
 					<IconButton
 						color='inherit'
@@ -393,7 +402,7 @@ const Navbar = props => {
 						onClick={handleDrawerToggle}
 						sx={{
 							mr: 2,
-							display: { sm: 'none' },
+							display: { xs: 'flex', xl: 'none' },
 							width: 50,
 							height: 50,
 							borderRadius: 2,
@@ -431,14 +440,13 @@ const Navbar = props => {
 						<DensityMediumRounded sx={{ fontSize: '1.6rem', filter: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' }} />
 					</IconButton>
 
-					{/* Logo/Brand - centré sur mobile, à gauche sur desktop */}
+					{/* Logo/Brand - proche du hamburger sur mobile, à gauche sur desktop */}
 					<Box
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							mr: { xs: 0, sm: 3 },
-							flex: { xs: 1, sm: 0 },
-							justifyContent: { xs: 'center', sm: 'flex-start' },
+							mr: { xs: 0, xl: 3 },
+							flexShrink: 0,
 						}}>
 						<Link href='/'>
 							<Box
@@ -485,7 +493,13 @@ const Navbar = props => {
 					</Box>
 
 					{/* Navigation Links */}
-					<Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1.5, flex: 1 }}>
+					<Box sx={{
+						display: { xs: 'none', xl: 'flex' },
+						gap: 1.5,
+						flex: 1,
+						justifyContent: 'flex-start',
+						minWidth: 0,
+					}}>
 						{navigationLinks.slice(1).map((link, index) => {
 							const isActive = isActivePath(link.href)
 							return (
@@ -553,11 +567,15 @@ const Navbar = props => {
 					</Box>
 
 					{/* Right side */}
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+					<Box sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: { xs: 1, xl: 1.5 },
+					}}>
 						{/* Admin button - only for admin users */}
 						{isUserAdmin && (
 							<Link href="/admin">
-								<Button
+									<Button
 									startIcon={<AdminPanelSettings />}
 									sx={{
 										color: '#fff',
@@ -570,7 +588,7 @@ const Navbar = props => {
 										background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.25) 100%)',
 										border: '1px solid rgba(255, 215, 0, 0.4)',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										display: { xs: 'none', sm: 'flex' },
+										display: { xs: 'none', xl: 'flex' },
 										boxShadow: '0 0 15px rgba(255, 215, 0, 0.3)',
 										position: 'relative',
 										overflow: 'hidden',
@@ -609,17 +627,17 @@ const Navbar = props => {
 											transform: 'translateY(-1px) scale(1.02)',
 										},
 									}}>
-									Admin
-								</Button>
+									{t('admin')}
+									</Button>
 							</Link>
 						)}
 
 						{/* Language buttons - only show when not in material/blog detail */}
 						{!router.query.material && !router.query.slug && (
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+							<>
 								<InterfaceLanguageMenu />
 								<LanguageMenu />
-							</Box>
+							</>
 						)}
 
 						{isUserLoggedIn ? (
@@ -627,7 +645,7 @@ const Navbar = props => {
 						) : (
 							<Box
 								sx={{
-									display: { xs: 'none', sm: 'flex' },
+									display: { xs: 'none', xl: 'flex' },
 									gap: 1.5,
 								}}>
 								<Link href={`/signin`}>
@@ -704,7 +722,7 @@ const Navbar = props => {
 						keepMounted: true, // Better open performance on mobile.
 					}}
 					sx={{
-						display: { xs: 'block', sm: 'none' },
+						display: { xs: 'block', xl: 'none' },
 						'& .MuiDrawer-paper': {
 							boxSizing: 'border-box',
 							width: drawerWidth,

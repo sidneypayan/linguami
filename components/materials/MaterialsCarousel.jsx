@@ -37,16 +37,19 @@ const MaterialsCarousel = ({ materials }) => {
 					zIndex: 10,
 					width: { xs: '40px', sm: '50px' },
 					height: { xs: '40px', sm: '50px' },
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+					backdropFilter: 'blur(10px)',
+					border: '1px solid rgba(139, 92, 246, 0.3)',
 					color: 'white',
-					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
-					transition: 'all 0.3s ease',
+					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 					touchAction: 'manipulation',
 					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
-						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-						transform: 'translateY(-50%) scale(1.1)',
-						boxShadow: '0 6px 25px rgba(102, 126, 234, 0.6)',
+						background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
+						transform: 'translateY(-50%) scale(1.15)',
+						boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
+						borderColor: 'rgba(139, 92, 246, 0.5)',
 					},
 					'&:active': {
 						transform: 'translateY(-50%) scale(0.95)',
@@ -66,16 +69,19 @@ const MaterialsCarousel = ({ materials }) => {
 					zIndex: 10,
 					width: { xs: '40px', sm: '50px' },
 					height: { xs: '40px', sm: '50px' },
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
+					backdropFilter: 'blur(10px)',
+					border: '1px solid rgba(139, 92, 246, 0.3)',
 					color: 'white',
-					boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
-					transition: 'all 0.3s ease',
+					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 					touchAction: 'manipulation',
 					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
-						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-						transform: 'translateY(-50%) scale(1.1)',
-						boxShadow: '0 6px 25px rgba(102, 126, 234, 0.6)',
+						background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
+						transform: 'translateY(-50%) scale(1.15)',
+						boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
+						borderColor: 'rgba(139, 92, 246, 0.5)',
 					},
 					'&:active': {
 						transform: 'translateY(-50%) scale(0.95)',
@@ -140,14 +146,17 @@ const MaterialsCarousel = ({ materials }) => {
 				.swiper-pagination-bullet {
 					width: 10px;
 					height: 10px;
-					background: #667eea;
+					background: #8b5cf6;
 					opacity: 0.3;
-					transition: all 0.3s ease;
+					transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+					border: 1px solid rgba(139, 92, 246, 0.4);
 				}
 				.swiper-pagination-bullet-active {
 					opacity: 1;
-					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-					transform: scale(1.2);
+					background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+					transform: scale(1.3);
+					box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+					border-color: rgba(139, 92, 246, 0.6);
 				}
 			`}</style>
 		</Box>

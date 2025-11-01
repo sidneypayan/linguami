@@ -13,11 +13,10 @@ const Footer = () => {
 				background: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1e1b4b 100%)',
 				color: 'white',
 				mt: 'auto',
-				py: { xs: 4, md: 6 },
 				position: 'relative',
 				overflow: 'hidden',
-				borderTop: '1px solid rgba(139, 92, 246, 0.3)',
-				boxShadow: '0 -4px 30px rgba(139, 92, 246, 0.3), 0 0 20px rgba(6, 182, 212, 0.2)',
+				pt: { xs: '80px', md: '100px' },
+				pb: { xs: 4, md: 6 },
 				'&::before': {
 					content: '""',
 					position: 'absolute',
@@ -29,6 +28,30 @@ const Footer = () => {
 					pointerEvents: 'none',
 				},
 			}}>
+			{/* Modern diagonal separator at top */}
+			<Box
+				sx={{
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					right: 0,
+					height: { xs: '60px', md: '80px' },
+					background: '#ffffff',
+					clipPath: 'polygon(0 0, 100% 50%, 100% 0)',
+					zIndex: 0,
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+						clipPath: 'inherit',
+					},
+				}}
+			/>
+
 			<Container maxWidth='lg' sx={{ position: 'relative', zIndex: 1 }}>
 				<Stack
 					direction={{ xs: 'column', md: 'row' }}

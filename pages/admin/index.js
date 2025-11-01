@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
+import loadNamespaces from 'next-translate/loadNamespaces'
 import { sectionsForAdmin } from '../../utils/constants'
 import { useState, useEffect } from 'react'
 import {
@@ -44,6 +45,7 @@ import {
 	OpenInNew,
 } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
+import AdminNavbar from '../../components/admin/AdminNavbar'
 
 const Admin = ({
 	materialsCountByLang,
@@ -208,85 +210,8 @@ const Admin = ({
 				minHeight: '100vh',
 				bgcolor: '#F8FAFC',
 			}}>
-			{/* Top Bar */}
-			<Box
-				sx={{
-					bgcolor: 'white',
-					borderBottom: '1px solid',
-					borderColor: 'divider',
-					position: 'sticky',
-					top: 0,
-					zIndex: 1100,
-					boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-				}}>
-				<Container maxWidth="xl">
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-							py: 2,
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: 'white',
-									fontWeight: 800,
-									fontSize: '1.5rem',
-								}}>
-								L
-							</Box>
-							<Box>
-								<Typography
-									variant='h5'
-									sx={{
-										fontWeight: 700,
-										color: '#1E293B',
-										letterSpacing: '-0.5px',
-									}}>
-									{t('adminDashboard')}
-								</Typography>
-								<Typography
-									variant='body2'
-									sx={{
-										color: '#64748B',
-									}}>
-									{t('manageContent')}
-								</Typography>
-							</Box>
-						</Box>
-
-						<Link href='/admin/create' passHref style={{ textDecoration: 'none' }}>
-							<Button
-								variant='contained'
-								startIcon={<Add />}
-								sx={{
-									bgcolor: '#667eea',
-									color: 'white',
-									px: 3,
-									py: 1.2,
-									borderRadius: 2,
-									textTransform: 'none',
-									fontWeight: 600,
-									boxShadow: 'none',
-									'&:hover': {
-										bgcolor: '#5568d3',
-										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-									},
-								}}>
-								{t('newContent')}
-							</Button>
-						</Link>
-					</Box>
-				</Container>
-			</Box>
+			{/* Admin Navbar */}
+			<AdminNavbar activePage="dashboard" />
 
 			<Container maxWidth="xl" sx={{ py: 4 }}>
 				{/* Stats Cards */}
@@ -1224,6 +1149,7 @@ export const getServerSideProps = async ({ req, res }) => {
 		props: {
 			materialsCountByLang,
 			booksCountByLang,
+			...(await loadNamespaces({ ...{ req, res }, pathname: '/admin', loaderName: 'getServerSideProps' })),
 		},
 	}
 }

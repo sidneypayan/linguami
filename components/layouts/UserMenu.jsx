@@ -50,8 +50,11 @@ const StyledMenu = styled(props => (
 			theme.palette.mode === 'light'
 				? 'rgb(55, 65, 81)'
 				: theme.palette.grey[300],
+		background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+		backdropFilter: 'blur(10px)',
+		border: '1px solid rgba(139, 92, 246, 0.2)',
 		boxShadow:
-			'0 8px 32px rgba(102, 126, 234, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+			'0 8px 32px rgba(139, 92, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)',
 		'& .MuiMenu-list': {
 			padding: '0',
 		},
@@ -61,31 +64,31 @@ const StyledMenu = styled(props => (
 			margin: '4px 8px',
 			fontSize: '0.95rem',
 			fontWeight: 500,
-			transition: 'all 0.2s ease',
+			transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 			'& .MuiListItemIcon-root': {
 				minWidth: 36,
 			},
 			'& .MuiSvgIcon-root': {
 				fontSize: 20,
-				color: theme.palette.primary.main,
-				transition: 'transform 0.2s ease',
+				color: '#8b5cf6',
+				transition: 'transform 0.3s ease',
 			},
 			'&:hover': {
-				backgroundColor: alpha(theme.palette.primary.main, 0.08),
+				background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
 				transform: 'translateX(4px)',
+				borderLeft: '2px solid #8b5cf6',
 				'& .MuiSvgIcon-root': {
 					transform: 'scale(1.1)',
+					color: '#06b6d4',
 				},
 			},
 			'&:active': {
-				backgroundColor: alpha(
-					theme.palette.primary.main,
-					theme.palette.action.selectedOpacity
-				),
+				backgroundColor: 'rgba(139, 92, 246, 0.15)',
 			},
 		},
 		'& .MuiDivider-root': {
 			margin: '8px 0',
+			borderColor: 'rgba(139, 92, 246, 0.2)',
 		},
 		'&:before': {
 			content: '""',
@@ -95,7 +98,8 @@ const StyledMenu = styled(props => (
 			right: 14,
 			width: 10,
 			height: 10,
-			bgcolor: 'background.paper',
+			background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+			border: '1px solid rgba(139, 92, 246, 0.2)',
 			transform: 'translateY(-50%) rotate(45deg)',
 			zIndex: 0,
 		},
@@ -130,21 +134,24 @@ const UserMenu = () => {
 					display: 'flex',
 					alignItems: 'center',
 					textAlign: 'center',
+					ml: 2,
 				}}>
 				<IconButton
 					onClick={handleClick}
 					size='small'
 					sx={{
-						ml: 2,
 						p: 0,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+						background: open
+							? 'rgba(255, 255, 255, 0.25)'
+							: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 						backdropFilter: 'blur(10px)',
 						border: '2px solid rgba(255, 255, 255, 0.3)',
-						transition: 'all 0.2s ease',
+						borderColor: open ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)',
+						transition: 'all 0.3s ease',
 						'&:hover': {
 							background: 'rgba(255, 255, 255, 0.25)',
-							transform: 'translateY(-2px) scale(1.05)',
 							borderColor: 'rgba(255, 255, 255, 0.5)',
+							transform: 'scale(1.05)',
 						},
 					}}
 					aria-controls={open ? 'account-menu' : undefined}

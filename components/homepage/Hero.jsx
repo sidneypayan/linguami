@@ -12,8 +12,8 @@ const Hero = () => {
 			sx={{
 				position: 'relative',
 				padding: {
-					xs: '7rem 0 5rem 0',
-					md: '10rem 0 8rem 0',
+					xs: '4rem 0 2.5rem 0',
+					md: '5.5rem 0 4rem 0',
 				},
 				background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
 				overflow: 'hidden',
@@ -110,7 +110,7 @@ const Hero = () => {
 								fontWeight: 600,
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
-							Plateforme d&apos;apprentissage interactive
+							{t('platformTagline')}
 						</Typography>
 					</Box>
 
@@ -257,6 +257,8 @@ const Hero = () => {
 							},
 						}}
 					/>
+
+					{/* Cadre stylisé avec glassmorphism */}
 					<Box
 						sx={{
 							position: 'absolute',
@@ -264,8 +266,13 @@ const Hero = () => {
 							height: '100%',
 							borderRadius: '50%',
 							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-							border: '2px solid rgba(139, 92, 246, 0.3)',
-							boxShadow: '0 0 40px rgba(139, 92, 246, 0.4), inset 0 0 40px rgba(6, 182, 212, 0.2)',
+							border: '3px solid rgba(255, 255, 255, 0.2)',
+							backdropFilter: 'blur(10px)',
+							boxShadow: `
+								0 0 40px rgba(139, 92, 246, 0.5),
+								inset 0 0 40px rgba(6, 182, 212, 0.2),
+								0 8px 32px rgba(0, 0, 0, 0.2)
+							`,
 							animation: 'rotate 20s linear infinite',
 							'@keyframes rotate': {
 								'0%': {
@@ -275,32 +282,89 @@ const Hero = () => {
 									transform: 'rotate(360deg)',
 								},
 							},
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								inset: '-3px',
+								borderRadius: '50%',
+								padding: '3px',
+								background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+								WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+								WebkitMaskComposite: 'xor',
+								maskComposite: 'exclude',
+								opacity: 0.6,
+								animation: 'rotateGradient 3s linear infinite',
+							},
+							'@keyframes rotateGradient': {
+								'0%': {
+									transform: 'rotate(0deg)',
+								},
+								'100%': {
+									transform: 'rotate(360deg)',
+								},
+							},
 						}}
 					/>
-					<Image
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/wizard.png`}
-						alt='Linguami wizard mascot'
-						fill
-						style={{
-							objectFit: 'contain',
-							filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
-						}}
-						priority
-					/>
+
+					{/* Conteneur de l'image avec overflow hidden */}
+					<Box
+						sx={{
+							position: 'relative',
+							width: '90%',
+							height: '90%',
+							borderRadius: '50%',
+							overflow: 'hidden',
+							zIndex: 2,
+						}}>
+						<Image
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.png`}
+							alt='Linguami hero'
+							fill
+							style={{
+								objectFit: 'cover',
+								filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
+							}}
+							priority
+						/>
+
+						{/* Overlay pour masquer le logo Gemini en bas à droite */}
+						<Box
+							sx={{
+								position: 'absolute',
+								bottom: 0,
+								right: 0,
+								width: '35%',
+								height: '20%',
+								background: 'linear-gradient(135deg, transparent 0%, rgba(15, 23, 42, 0.95) 40%)',
+								zIndex: 3,
+							}}
+						/>
+					</Box>
 				</Box>
 			</Stack>
 
-			<div className='wave'>
-				<svg
-					data-name='Layer 1'
-					xmlns='http://www.w3.org/2000/svg'
-					viewBox='0 0 1200 120'
-					preserveAspectRatio='none'>
-					<path
-						d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z'
-						className='shape-fill'></path>
-				</svg>
-			</div>
+			{/* Modern diagonal separator */}
+			<Box
+				sx={{
+					position: 'absolute',
+					bottom: 0,
+					left: 0,
+					right: 0,
+					height: { xs: '60px', md: '80px' },
+					background: '#ffffff',
+					clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+						clipPath: 'inherit',
+					},
+				}}
+			/>
 		</Box>
 	)
 }

@@ -18,12 +18,12 @@ const BlogCard = ({ post }) => {
 				sx={{
 					display: 'flex',
 					flexDirection: { xs: 'column', md: 'row' },
-					borderRadius: 3,
+					borderRadius: 4,
 					overflow: 'hidden',
-					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-					backgroundColor: '#ffffff',
-					boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-					border: '1px solid rgba(102, 126, 234, 0.1)',
+					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+					border: '1px solid rgba(139, 92, 246, 0.2)',
 					position: 'relative',
 					'&::before': {
 						content: '""',
@@ -32,14 +32,14 @@ const BlogCard = ({ post }) => {
 						left: '-100%',
 						width: '100%',
 						height: '100%',
-						background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent)',
+						background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
 						transition: 'left 0.5s ease',
 						pointerEvents: 'none',
 					},
 					'&:hover': {
 						transform: 'translateY(-8px)',
-						boxShadow: '0 12px 40px rgba(102, 126, 234, 0.25)',
-						borderColor: 'rgba(102, 126, 234, 0.4)',
+						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+						borderColor: 'rgba(139, 92, 246, 0.4)',
 						'&::before': {
 							left: '100%',
 						},
@@ -47,9 +47,9 @@ const BlogCard = ({ post }) => {
 							transform: 'scale(1.05)',
 						},
 						'& .read-more-btn': {
-							background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+							background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
 							transform: 'translateX(8px)',
-							boxShadow: '0 6px 25px rgba(102, 126, 234, 0.4)',
+							boxShadow: '0 6px 25px rgba(139, 92, 246, 0.4)',
 							'& .arrow-icon': {
 								transform: 'translateX(4px)',
 							},
@@ -102,13 +102,14 @@ const BlogCard = ({ post }) => {
 							icon={<CalendarTodayRounded sx={{ fontSize: '0.9rem' }} />}
 							label={post.frontmatter.date}
 							sx={{
-								background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-								border: '1px solid rgba(102, 126, 234, 0.2)',
-								color: '#667eea',
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
+								color: '#8b5cf6',
 								fontWeight: 600,
 								fontSize: '0.875rem',
+								backdropFilter: 'blur(10px)',
 								'& .MuiChip-icon': {
-									color: '#667eea',
+									color: '#8b5cf6',
 								},
 							}}
 						/>
@@ -124,7 +125,7 @@ const BlogCard = ({ post }) => {
 							color: '#2d3748',
 							transition: 'color 0.2s ease',
 							'&:hover': {
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
 								backgroundClip: 'text',
@@ -158,15 +159,16 @@ const BlogCard = ({ post }) => {
 								/>
 							}
 							sx={{
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								color: 'white',
-								fontWeight: 600,
+								fontWeight: 700,
 								fontSize: { xs: '0.9rem', sm: '1rem' },
 								padding: '0.75rem 2rem',
 								borderRadius: 3,
 								textTransform: 'none',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+								border: '1px solid rgba(139, 92, 246, 0.3)',
 								position: 'relative',
 								overflow: 'hidden',
 								'&::before': {

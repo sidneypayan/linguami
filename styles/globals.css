@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+/* Open Sans remplacé par Poppins (chargé via _documents.js) */
+/* @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap'); */
 
 :root {
 	--white: #fff;
@@ -11,6 +12,42 @@
 	--secondaryTextColor: #777;
 	--primaryBtnColor: #184e77;
 	--blueColor: #2582e7;
+}
+
+/* ===== Scrollbar Styling ===== */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+	width: 20px;
+	height: 20px;
+}
+
+::-webkit-scrollbar-track {
+	background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+	border-radius: 10px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+	transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: linear-gradient(135deg, #7c3aed 0%, #0891b2 100%);
+	border-color: rgba(255, 255, 255, 0.5);
+	box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: linear-gradient(135deg, #6d28d9 0%, #0e7490 100%);
+}
+
+/* For Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #8b5cf6 rgba(139, 92, 246, 0.1);
 }
 
 *,
@@ -101,7 +138,7 @@ body {
 	/* font-family: 'Roboto', sans-serif; */
 	/* font-family: 'Montserrat', sans-serif; */
 	position: relative;
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Poppins', sans-serif;
 	/* background-color: var(--backgroundColor); */
 	background-color: #fff;
 	color: var(--primaryTextColor);
@@ -366,7 +403,7 @@ p > a:hover {
 	backdrop-filter: blur(10px);
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	margin-bottom: 16px;
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Poppins', sans-serif;
 	font-weight: 600;
 	font-size: 0.9375rem;
 	min-height: 64px;
