@@ -521,45 +521,113 @@ const Homepage = () => {
 											'&::before': {
 												left: '100%',
 											},
+											'& .outer-frame': {
+												transform: 'translate(-3px, -3px) rotate(-2deg)',
+											},
 											'& .icon-container': {
-												transform: 'scale(1.15) rotate(5deg)',
-												boxShadow: '0 8px 30px rgba(139, 92, 246, 0.5), inset 0 0 40px rgba(6, 182, 212, 0.2)',
+												transform: 'translate(-47%, -47%) rotate(2deg)',
 											},
 										},
 									}}>
 									<Box
-										className="icon-container"
 										sx={{
+											position: 'relative',
 											width: { xs: 90, md: 110 },
 											height: { xs: 90, md: 110 },
-											position: 'relative',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.1) 100%)',
-											border: '3px solid rgba(139, 92, 246, 0.35)',
-											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 0 30px rgba(6, 182, 212, 0.15)',
-											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												inset: '-3px',
-												borderRadius: 3,
-												padding: '3px',
-												background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
-												WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-												WebkitMaskComposite: 'xor',
-												maskComposite: 'exclude',
-												opacity: 0.6,
-											},
 										}}>
-										<Image
-											src={icon.img}
-											alt={icon.title}
-											fill
-											style={{ objectFit: 'contain', padding: '8px' }}
+										{/* Cercle de fond animé blur */}
+										<Box
+											sx={{
+												position: 'absolute',
+												width: '120%',
+												height: '120%',
+												top: '50%',
+												left: '50%',
+												transform: 'translate(-50%, -50%)',
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+												borderRadius: 4,
+												filter: 'blur(40px)',
+												animation: 'pulse 3s ease-in-out infinite',
+												'@keyframes pulse': {
+													'0%, 100%': {
+														opacity: 0.5,
+														transform: 'translate(-50%, -50%) scale(1)',
+													},
+													'50%': {
+														opacity: 0.8,
+														transform: 'translate(-50%, -50%) scale(1.1)',
+													},
+												},
+											}}
 										/>
+
+										{/* Cadre stylisé avec glassmorphism */}
+										<Box
+											className="outer-frame"
+											sx={{
+												position: 'absolute',
+												width: '100%',
+												height: '100%',
+												borderRadius: 3,
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+												border: '3px solid rgba(255, 255, 255, 0.2)',
+												backdropFilter: 'blur(10px)',
+												boxShadow: `
+													0 0 30px rgba(139, 92, 246, 0.5),
+													inset 0 0 30px rgba(6, 182, 212, 0.2),
+													0 6px 24px rgba(0, 0, 0, 0.2)
+												`,
+												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+												'&::before': {
+													content: '""',
+													position: 'absolute',
+													inset: '-3px',
+													borderRadius: 3,
+													padding: '3px',
+													background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+													WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+													WebkitMaskComposite: 'xor',
+													maskComposite: 'exclude',
+													opacity: 0.6,
+												},
+											}}
+										/>
+
+										{/* Conteneur de l'image avec overflow hidden */}
+										<Box
+											className="icon-container"
+											sx={{
+												position: 'relative',
+												width: '90%',
+												height: '90%',
+												top: '50%',
+												left: '50%',
+												transform: 'translate(-50%, -50%)',
+												borderRadius: 2.5,
+												overflow: 'hidden',
+												zIndex: 2,
+												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											}}>
+											<Image
+												src={icon.img}
+												alt={icon.title}
+												fill
+												style={{ objectFit: 'cover' }}
+											/>
+
+											{/* Overlay pour masquer le logo Gemini en bas à droite */}
+											<Box
+												sx={{
+													position: 'absolute',
+													bottom: 0,
+													right: 0,
+													width: '40%',
+													height: '25%',
+													background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.15) 40%)',
+													zIndex: 3,
+												}}
+											/>
+										</Box>
 									</Box>
 									<Box>
 										<Typography
