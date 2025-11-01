@@ -122,6 +122,7 @@ const UserMaterials = () => {
 			{/* Header Section - App Style */}
 			<Box
 				sx={{
+					display: { xs: 'none', lg: 'block' },
 					pt: { xs: '5.5rem', md: '6rem' },
 					pb: 2.5,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
@@ -170,7 +171,7 @@ const UserMaterials = () => {
 				</Container>
 			</Box>
 
-			<Container sx={{ py: { xs: 3, md: 4 } }}>
+			<Container sx={{ pt: { xs: '5.5rem', lg: 3 }, pb: { xs: 3, md: 4 } }}>
 
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}

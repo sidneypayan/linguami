@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { Search, Refresh, GridView, ViewList } from '@mui/icons-material'
-import { Box, TextField, IconButton, Chip, Stack, Tooltip, InputAdornment } from '@mui/material'
+import { Search, Refresh, GridView, ViewList, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, AutoStories, Book } from '@mui/icons-material'
+import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment } from '@mui/material'
 
 /**
  * Composant réutilisable pour la barre de recherche et filtres des matériaux
@@ -30,23 +31,25 @@ const MaterialsFilterBar = ({
 	translationNamespace = 'materials'
 }) => {
 	const { t } = useTranslation(translationNamespace)
+	const [showFilters, setShowFilters] = useState(false)
 
 	const handleSearchSubmit = (e) => {
 		e.preventDefault()
 	}
 
+	const activeFiltersCount = (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
+
 	const levels = [
-		{ label: 'Débutant', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' },
-		{ label: 'Intermédiaire', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' },
-		{ label: 'Avancé', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' },
+		{ label: t('beginner'), key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981', icon: SignalCellular1Bar },
+		{ label: t('intermediate'), key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b', icon: SignalCellular2Bar },
+		{ label: t('advanced'), key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444', icon: SignalCellular3Bar },
 	]
 
 	const statuses = [
-		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#3b82f6' },
-		{ label: t('studied'), key: 'is_studied', tooltip: `✨ ${t('studied')} - ${t('studiedTooltip')}`, color: '#8b5cf6' },
 		...(showNotStudiedFilter ? [
-			{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - ${t('notStudiedTooltip')}`, color: '#64748b' }
-		] : [])
+			{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - ${t('notStudiedTooltip')}`, color: '#64748b', icon: Book }
+		] : []),
+		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#3b82f6', icon: AutoStories },
 	]
 
 	return (
@@ -56,18 +59,19 @@ const MaterialsFilterBar = ({
 				flexDirection: 'column',
 				gap: 2,
 				mb: 4,
-				p: 3,
-				borderRadius: 4,
-				background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-				border: '1px solid rgba(139, 92, 246, 0.2)',
-				boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+				p: { xs: 2, md: 3 },
+				borderRadius: { xs: 0, md: 4 },
+				background: { xs: 'transparent', md: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+				border: { xs: 'none', md: '1px solid rgba(139, 92, 246, 0.2)' },
+				boxShadow: { xs: 'none', md: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 			}}>
-			{/* Search bar and view toggle */}
+			{/* Première ligne : Search bar et view toggle */}
 			<Box
 				sx={{
 					display: 'flex',
 					gap: 1.5,
 					alignItems: 'center',
+					justifyContent: 'space-between',
 				}}>
 				<Box
 					component='form'
@@ -164,108 +168,156 @@ const MaterialsFilterBar = ({
 				</Box>
 			</Box>
 
-			{/* Filters */}
-			<Stack
-				direction='row'
-				spacing={{ xs: 0.75, sm: 1.5 }}
+			{/* Deuxième ligne : Filtres de niveau et statut */}
+			<Box
 				sx={{
+					display: 'flex',
+					gap: { xs: 1, sm: 1.5 },
 					alignItems: 'center',
-					justifyContent: { xs: 'flex-start', md: 'flex-end' },
 					flexWrap: 'wrap',
-					gap: { xs: 0.75, sm: 1.5 },
 				}}>
 				{/* Level filters */}
-				{levels.map(level => (
-					<Tooltip key={level.label} title={level.tooltip} arrow placement='top'>
-						<Chip
-							label={level.label}
-							onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
-							sx={{
-								fontWeight: 600,
-								fontSize: { xs: '0.75rem', sm: '0.95rem' },
-								px: { xs: 0.5, sm: 1 },
-								height: { xs: '32px', sm: '40px' },
-								minWidth: { xs: '50px', sm: 'auto' },
-								borderRadius: 2,
-								cursor: 'pointer',
-								border: '2px solid',
-								borderColor: selectedLevel === level.key ? '#8b5cf6' : 'rgba(139, 92, 246, 0.2)',
-								background: selectedLevel === level.key ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)' : 'rgba(255, 255, 255, 0.9)',
-								color: selectedLevel === level.key ? '#8b5cf6' : '#666',
-								boxShadow: selectedLevel === level.key ? '0 4px 15px rgba(139, 92, 246, 0.2)' : '0 2px 8px rgba(139, 92, 246, 0.08)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								'& .MuiChip-label': {
-									px: { xs: 0.5, sm: 1 },
-								},
-								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: `0 4px 16px ${level.color}60`,
-									borderColor: level.color,
-									background: `linear-gradient(135deg, ${level.color}30, ${level.color}50)`,
-									color: level.color,
-								},
-							}}
-						/>
-					</Tooltip>
-				))}
+				{levels.map(level => {
+					const LevelIcon = level.icon
+					const isSelected = selectedLevel === level.key
+					return (
+						<Tooltip key={level.label} title={level.tooltip} arrow placement='top'>
+							<Chip
+								icon={<LevelIcon sx={{ fontSize: '1.1rem', color: level.color }} />}
+								label={level.label}
+								onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
+								sx={{
+									fontWeight: 600,
+									fontSize: { xs: '0.85rem', sm: '0.95rem' },
+									px: { xs: 0.5, sm: 1.5 },
+									height: { xs: '36px', sm: '42px' },
+									borderRadius: 3,
+									cursor: 'pointer',
+									border: '2px solid',
+									borderColor: isSelected ? level.color : `${level.color}60`,
+									background: isSelected
+										? `linear-gradient(135deg, ${level.color}20, ${level.color}30)`
+										: 'rgba(255, 255, 255, 0.9)',
+									color: isSelected ? level.color : '#666',
+									boxShadow: isSelected
+										? `0 4px 15px ${level.color}40`
+										: `0 2px 8px ${level.color}20`,
+									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									'& .MuiChip-icon': {
+										marginLeft: '8px',
+										marginRight: '-4px',
+										color: level.color,
+									},
+									'& .MuiChip-label': {
+										display: { xs: 'none', sm: 'block' },
+										px: 1,
+									},
+									// Mobile : icône seulement
+									minWidth: { xs: '40px', sm: 'auto' },
+									'@media (max-width: 600px)': {
+										'& .MuiChip-icon': {
+											margin: 0,
+										},
+									},
+									'&:hover': {
+										transform: 'translateY(-2px) scale(1.05)',
+										boxShadow: `0 6px 20px ${level.color}50`,
+										borderColor: level.color,
+										background: `linear-gradient(135deg, ${level.color}30, ${level.color}40)`,
+										color: level.color,
+										'& .MuiChip-icon': {
+											color: level.color,
+										},
+									},
+								}}
+							/>
+						</Tooltip>
+					)
+				})}
 
 				{/* Status filters */}
-				{statuses.map(status => (
-					<Tooltip key={status.label} title={status.tooltip} arrow placement='top'>
-						<Chip
-							label={status.label}
-							onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
-							sx={{
-								fontWeight: 600,
-								fontSize: { xs: '0.7rem', sm: '0.95rem' },
-								px: { xs: 0.5, sm: 1 },
-								height: { xs: '32px', sm: '40px' },
-								borderRadius: 2,
-								cursor: 'pointer',
-								border: '2px solid',
-								borderColor: selectedStatus === status.key ? '#8b5cf6' : 'rgba(139, 92, 246, 0.2)',
-								background: selectedStatus === status.key ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)' : 'rgba(255, 255, 255, 0.9)',
-								color: selectedStatus === status.key ? '#8b5cf6' : '#666',
-								boxShadow: selectedStatus === status.key ? '0 4px 15px rgba(139, 92, 246, 0.2)' : '0 2px 8px rgba(139, 92, 246, 0.08)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								'& .MuiChip-label': {
-									px: { xs: 0.5, sm: 1 },
-								},
-								'&:hover': {
-									transform: 'translateY(-2px)',
-									boxShadow: `0 4px 16px ${status.color}60`,
-									borderColor: status.color,
-									background: `linear-gradient(135deg, ${status.color}30, ${status.color}50)`,
-									color: status.color,
-								},
-							}}
-						/>
-					</Tooltip>
-				))}
+				{statuses.map(status => {
+					const StatusIcon = status.icon
+					const isSelected = selectedStatus === status.key
+					return (
+						<Tooltip key={status.label} title={status.tooltip} arrow placement='top'>
+							<Chip
+								icon={<StatusIcon sx={{ fontSize: '1.1rem', color: status.color }} />}
+								label={status.label}
+								onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
+								sx={{
+									fontWeight: 600,
+									fontSize: { xs: '0.85rem', sm: '0.95rem' },
+									px: { xs: 0.5, sm: 1.5 },
+									height: { xs: '36px', sm: '42px' },
+									borderRadius: 3,
+									cursor: 'pointer',
+									border: '2px solid',
+									borderColor: isSelected ? status.color : `${status.color}60`,
+									background: isSelected
+										? `linear-gradient(135deg, ${status.color}20, ${status.color}30)`
+										: 'rgba(255, 255, 255, 0.9)',
+									color: isSelected ? status.color : '#666',
+									boxShadow: isSelected
+										? `0 4px 15px ${status.color}40`
+										: `0 2px 8px ${status.color}20`,
+									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									'& .MuiChip-icon': {
+										marginLeft: '8px',
+										marginRight: '-4px',
+										color: status.color,
+									},
+									'& .MuiChip-label': {
+										display: { xs: 'none', sm: 'block' },
+										px: 1,
+									},
+									// Mobile : icône seulement
+									minWidth: { xs: '40px', sm: 'auto' },
+									'@media (max-width: 600px)': {
+										'& .MuiChip-icon': {
+											margin: 0,
+										},
+									},
+									'&:hover': {
+										transform: 'translateY(-2px) scale(1.05)',
+										boxShadow: `0 6px 20px ${status.color}50`,
+										borderColor: status.color,
+										background: `linear-gradient(135deg, ${status.color}30, ${status.color}40)`,
+										color: status.color,
+										'& .MuiChip-icon': {
+											color: status.color,
+										},
+									},
+								}}
+							/>
+						</Tooltip>
+					)
+				})}
 
 				{/* Reset button */}
 				<Tooltip title={`🔄 ${t('showall')} - ${t('showallTooltip')}`} arrow placement='top'>
 					<IconButton
 						onClick={onClear}
 						sx={{
-							width: { xs: '32px', sm: '40px' },
-							height: { xs: '32px', sm: '40px' },
+							width: { xs: '36px', sm: '42px' },
+							height: { xs: '36px', sm: '42px' },
 							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							border: '1px solid rgba(139, 92, 246, 0.2)',
+							border: '2px solid rgba(139, 92, 246, 0.2)',
 							boxShadow: '0 2px 8px rgba(139, 92, 246, 0.15)',
 							color: '#8b5cf6',
 							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
 								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								color: 'white',
-								transform: 'rotate(180deg) translateY(-2px)',
+								transform: 'rotate(180deg) scale(1.1)',
 								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+								borderColor: 'transparent',
 							},
 						}}>
-						<Refresh sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' } }} />
+						<Refresh sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
 					</IconButton>
 				</Tooltip>
-			</Stack>
+			</Box>
 		</Box>
 	)
 }

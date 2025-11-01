@@ -1,16 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import MaterialsCard from './MaterialsCard'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination, EffectCoverflow } from 'swiper'
+import { Pagination, EffectCoverflow, Navigation } from 'swiper'
 import { Box, IconButton } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import 'swiper/css'
-import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/effect-coverflow'
+import 'swiper/css/navigation'
 
 const MaterialsCarousel = ({ materials }) => {
-	const [swiperInstance, setSwiperInstance] = React.useState(null)
+	const [swiperInstance, setSwiperInstance] = useState(null)
 
 	const handlePrev = () => {
 		if (swiperInstance) {
@@ -25,80 +25,66 @@ const MaterialsCarousel = ({ materials }) => {
 	}
 
 	return (
-		<Box sx={{ position: 'relative', px: { xs: 0, sm: 6 }, py: 2, overflow: 'visible' }}>
-			{/* Bouton précédent */}
+		<Box sx={{ position: 'relative', px: { xs: 0, sm: 2 }, py: 2, overflow: 'visible' }}>
+			{/* Previous button - desktop only */}
 			<IconButton
 				onClick={handlePrev}
 				sx={{
+					display: { xs: 'none', lg: 'flex' },
 					position: 'absolute',
-					left: { xs: '-10px', sm: '-20px' },
+					left: { lg: '-20px', xl: '-30px' },
 					top: '50%',
 					transform: 'translateY(-50%)',
 					zIndex: 10,
-					width: { xs: '40px', sm: '50px' },
-					height: { xs: '40px', sm: '50px' },
-					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
-					backdropFilter: 'blur(10px)',
-					border: '1px solid rgba(139, 92, 246, 0.3)',
+					width: { lg: '50px', xl: '60px' },
+					height: { lg: '50px', xl: '60px' },
+					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 					color: 'white',
 					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
 					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-					touchAction: 'manipulation',
-					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
-						background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
-						transform: 'translateY(-50%) scale(1.15)',
-						boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
-						borderColor: 'rgba(139, 92, 246, 0.5)',
-					},
-					'&:active': {
-						transform: 'translateY(-50%) scale(0.95)',
+						background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+						transform: 'translateY(-50%) scale(1.1)',
+						boxShadow: '0 6px 25px rgba(139, 92, 246, 0.6)',
 					},
 				}}>
-				<ChevronLeft sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
+				<ChevronLeft sx={{ fontSize: { lg: '1.8rem', xl: '2rem' } }} />
 			</IconButton>
 
-			{/* Bouton suivant */}
+			{/* Next button - desktop only */}
 			<IconButton
 				onClick={handleNext}
 				sx={{
+					display: { xs: 'none', lg: 'flex' },
 					position: 'absolute',
-					right: { xs: '-10px', sm: '-20px' },
+					right: { lg: '-20px', xl: '-30px' },
 					top: '50%',
 					transform: 'translateY(-50%)',
 					zIndex: 10,
-					width: { xs: '40px', sm: '50px' },
-					height: { xs: '40px', sm: '50px' },
-					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
-					backdropFilter: 'blur(10px)',
-					border: '1px solid rgba(139, 92, 246, 0.3)',
+					width: { lg: '50px', xl: '60px' },
+					height: { lg: '50px', xl: '60px' },
+					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 					color: 'white',
 					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
 					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-					touchAction: 'manipulation',
-					WebkitTapHighlightColor: 'transparent',
 					'&:hover': {
-						background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
-						transform: 'translateY(-50%) scale(1.15)',
-						boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6)',
-						borderColor: 'rgba(139, 92, 246, 0.5)',
-					},
-					'&:active': {
-						transform: 'translateY(-50%) scale(0.95)',
+						background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+						transform: 'translateY(-50%) scale(1.1)',
+						boxShadow: '0 6px 25px rgba(139, 92, 246, 0.6)',
 					},
 				}}>
-				<ChevronRight sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
+				<ChevronRight sx={{ fontSize: { lg: '1.8rem', xl: '2rem' } }} />
 			</IconButton>
 
 			<Swiper
+				onSwiper={setSwiperInstance}
 				spaceBetween={20}
 				slidesPerView={1.5}
-				modules={[Navigation, Pagination, EffectCoverflow]}
+				modules={[Pagination, EffectCoverflow, Navigation]}
 				speed={600}
 				effect='slide'
 				grabCursor={true}
 				centeredSlides={false}
-				onSwiper={setSwiperInstance}
 				pagination={{
 					clickable: true,
 					dynamicBullets: true,

@@ -36,7 +36,8 @@
 	"variety": "Variété",
 	"kids": "Enfants",
 	"being_studied": "En cours d'étude",
-	"studied": "Etudiés",
+	"studied": "Étudiés",
+	"not_studied": "Non étudiés",
 	"startstudying": "Commencer à étudier ce matériel",
 	"stopstudying": "Ne plus étudier ce matériel",
 	"showaccents": "Montrer les accents",
@@ -49,5 +50,17 @@
 	"materials": "matériaux",
 	"inTotal": "au total",
 	"noMaterialsFound": "Aucun matériau trouvé",
-	"noMaterialsInCategory": "Vous n'avez pas encore de matériaux dans cette catégorie"
+	"noMaterialsInCategory": "Vous n'avez pas encore de matériaux dans cette catégorie",
+	"beginner": "Débutant",
+	"intermediate": "Intermédiaire",
+	"advanced": "Avancé",
+	"beginnerTooltip": "Matériaux adaptés aux débutants",
+	"intermediateTooltip": "Matériaux de niveau intermédiaire",
+	"advancedTooltip": "Matériaux pour niveau avancé",
+	"beingStudiedTooltip": "Matériaux que vous étudiez actuellement",
+	"studiedTooltip": "Matériaux que vous avez déjà étudiés",
+	"notStudiedTooltip": "Matériaux que vous n'avez pas encore commencés",
+	"search": "Rechercher",
+	"showall": "Tout afficher",
+	"showallTooltip": "Réinitialiser tous les filtres"
 }

@@ -11,7 +11,10 @@
       "Bash(node -e:*)",
       "Bash(/dev/null -i)",
       "Bash(grep:*)",
-      "Bash(timeout 10 npm run dev)"
+      "Bash(timeout 10 npm run dev)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []

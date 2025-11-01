@@ -84,6 +84,7 @@ const Material = () => {
 			{/* Compact Header */}
 			<Box
 				sx={{
+					display: { xs: 'none', lg: 'block' },
 					pt: { xs: '5.5rem', md: '6rem' },
 					pb: 3,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
@@ -118,7 +119,8 @@ const Material = () => {
 			<Container
 				maxWidth='lg'
 				sx={{
-					py: { xs: 3, md: 4 },
+					pt: { xs: '5.5rem', lg: 3 },
+					pb: { xs: 3, md: 4 },
 					px: { xs: 2, sm: 3 },
 				}}>
 				{/* Section Textes et Audio */}

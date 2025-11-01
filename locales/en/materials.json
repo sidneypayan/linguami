@@ -37,6 +37,7 @@
 	"kids": "Kids",
 	"being_studied": "Being studied",
 	"studied": "Studied",
+	"not_studied": "Not studied",
 	"startstudying": "Start studying this material",
 	"stopstudying": "Stop studying this material",
 	"showaccents": "Show accents",
@@ -49,5 +50,17 @@
 	"materials": "materials",
 	"inTotal": "in total",
 	"noMaterialsFound": "No materials found",
-	"noMaterialsInCategory": "You don't have any materials in this category yet"
+	"noMaterialsInCategory": "You don't have any materials in this category yet",
+	"beginner": "Beginner",
+	"intermediate": "Intermediate",
+	"advanced": "Advanced",
+	"beginnerTooltip": "Materials suitable for beginners",
+	"intermediateTooltip": "Intermediate level materials",
+	"advancedTooltip": "Advanced level materials",
+	"beingStudiedTooltip": "Materials you are currently studying",
+	"studiedTooltip": "Materials you have already studied",
+	"notStudiedTooltip": "Materials you haven't started yet",
+	"search": "Search",
+	"showall": "Show all",
+	"showallTooltip": "Reset all filters"
 }

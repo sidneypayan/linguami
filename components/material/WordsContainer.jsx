@@ -156,7 +156,13 @@ const WordsContainer = () => {
 											border: '1px solid rgba(139, 92, 246, 0.3)',
 											px: { xs: 1.25, sm: 1.5 },
 											backdropFilter: 'blur(10px)',
-											flexShrink: 0,
+											height: 'auto',
+											'& .MuiChip-label': {
+												whiteSpace: 'normal',
+												wordBreak: 'break-word',
+												overflowWrap: 'break-word',
+												padding: '8px 0',
+											},
 										}}
 									/>
 									<Typography
@@ -173,9 +179,8 @@ const WordsContainer = () => {
 											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
 											color: '#4a5568',
 											fontWeight: 500,
-											overflow: 'hidden',
-											textOverflow: 'ellipsis',
-											whiteSpace: 'nowrap',
+											wordBreak: 'break-word',
+											overflowWrap: 'break-word',
 										}}>
 										{translation || '—'}
 									</Typography>

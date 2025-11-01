@@ -37,6 +37,7 @@
 	"kids": "Детские песни",
 	"being_studied": "На изучении",
 	"studied": "Изучено",
+	"not_studied": "Не изучено",
 	"startstudying": "Начать изучение материала",
 	"stopstudying": "Отказаться от изучения материала",
 	"showaccents": "Показать ударение",
@@ -49,5 +50,17 @@
 	"materials": "материалы",
 	"inTotal": "всего",
 	"noMaterialsFound": "Материалы не найдены",
-	"noMaterialsInCategory": "У вас пока нет материалов в этой категории"
+	"noMaterialsInCategory": "У вас пока нет материалов в этой категории",
+	"beginner": "Начальный",
+	"intermediate": "Средний",
+	"advanced": "Продвинутый",
+	"beginnerTooltip": "Материалы для начинающих",
+	"intermediateTooltip": "Материалы среднего уровня",
+	"advancedTooltip": "Материалы продвинутого уровня",
+	"beingStudiedTooltip": "Материалы, которые вы изучаете",
+	"studiedTooltip": "Материалы, которые вы уже изучили",
+	"notStudiedTooltip": "Материалы, которые вы еще не начали",
+	"search": "Поиск",
+	"showall": "Показать все",
+	"showallTooltip": "Сбросить все фильтры"
 }

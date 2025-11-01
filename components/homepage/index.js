@@ -56,6 +56,67 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				...getOffset(),
 				transition: 'transform 0.4s ease',
 			}}>
+			{/* Decorative corners */}
+			<Box
+				sx={{
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					width: '40px',
+					height: '40px',
+					borderTop: '3px solid rgba(139, 92, 246, 0.4)',
+					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
+					borderRadius: '20px 0 0 0',
+					zIndex: 2,
+					transition: 'all 0.4s ease',
+				}}
+				className="corner-tl"
+			/>
+			<Box
+				sx={{
+					position: 'absolute',
+					top: 0,
+					right: 0,
+					width: '40px',
+					height: '40px',
+					borderTop: '3px solid rgba(6, 182, 212, 0.4)',
+					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
+					borderRadius: '0 20px 0 0',
+					zIndex: 2,
+					transition: 'all 0.4s ease',
+				}}
+				className="corner-tr"
+			/>
+			<Box
+				sx={{
+					position: 'absolute',
+					bottom: 0,
+					left: 0,
+					width: '40px',
+					height: '40px',
+					borderBottom: '3px solid rgba(139, 92, 246, 0.4)',
+					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
+					borderRadius: '0 0 0 20px',
+					zIndex: 2,
+					transition: 'all 0.4s ease',
+				}}
+				className="corner-bl"
+			/>
+			<Box
+				sx={{
+					position: 'absolute',
+					bottom: 0,
+					right: 0,
+					width: '40px',
+					height: '40px',
+					borderBottom: '3px solid rgba(6, 182, 212, 0.4)',
+					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
+					borderRadius: '0 0 20px 0',
+					zIndex: 2,
+					transition: 'all 0.4s ease',
+				}}
+				className="corner-br"
+			/>
 			{/* Glow effect background */}
 			<Box
 				sx={{
@@ -110,23 +171,6 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 						opacity: 0,
 						transition: 'opacity 0.4s ease',
 						pointerEvents: 'none',
-					},
-					'&:hover': {
-						transform: 'translateY(-8px) scale(1.01)',
-						boxShadow: '0 20px 60px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
-						borderColor: 'rgba(139, 92, 246, 0.3)',
-						'&::before': {
-							opacity: 1,
-						},
-						'&::after': {
-							opacity: 1,
-						},
-						'& .glow-bg': {
-							opacity: 1,
-						},
-						'& .feature-badge': {
-							transform: 'scale(1.05)',
-						},
 					},
 				}}>
 				{/* Image Section */}
@@ -429,12 +473,58 @@ const Homepage = () => {
 	return (
 		<>
 			<Hero />
-			<Container
-				width={1440}
+			<Box
 				sx={{
-					margin: { xs: '3rem auto', md: '5rem auto' },
-					padding: { xs: '0 0.75rem', md: '0 1.5rem' },
+					position: 'relative',
+					overflow: 'hidden',
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						backgroundImage: `
+							radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+							radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
+							linear-gradient(90deg, rgba(139, 92, 246, 0.02) 1px, transparent 1px),
+							linear-gradient(rgba(139, 92, 246, 0.02) 1px, transparent 1px)
+						`,
+						backgroundSize: '100% 100%, 100% 100%, 100px 100px, 100px 100px',
+						pointerEvents: 'none',
+						zIndex: 0,
+					},
 				}}>
+				<Container
+					maxWidth={false}
+					sx={{
+						margin: { xs: '3rem auto', md: '5rem auto' },
+						padding: { xs: '0 0.25rem', md: '0 1.5rem' },
+						maxWidth: '1350px',
+						position: 'relative',
+						zIndex: 1,
+					}}>
+					{/* Section Apprentissage multisupport */}
+					<Box
+						sx={{
+							position: 'relative',
+							mb: 6,
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: '50%',
+								left: '50%',
+								transform: 'translate(-50%, -50%)',
+								width: { xs: '90%', md: '70%' },
+								height: '150%',
+								background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.05) 0%, transparent 70%)',
+								borderRadius: '50%',
+								filter: 'blur(40px)',
+								pointerEvents: 'none',
+								zIndex: 0,
+							},
+						}}>
+						<Box>
 				<Typography
 					variant='h3'
 					align='center'
@@ -447,6 +537,21 @@ const Homepage = () => {
 						WebkitBackgroundClip: 'text',
 						WebkitTextFillColor: 'transparent',
 						backgroundClip: 'text',
+						position: 'relative',
+						animation: 'gradientShift 8s ease infinite',
+						filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
+						letterSpacing: '-0.02em',
+						'@keyframes gradientShift': {
+							'0%': {
+								backgroundPosition: '0% 50%',
+							},
+							'50%': {
+								backgroundPosition: '100% 50%',
+							},
+							'100%': {
+								backgroundPosition: '0% 50%',
+							},
+						},
 					}}>
 					{t('multimedia')}
 				</Typography>
@@ -461,19 +566,35 @@ const Homepage = () => {
 						maxWidth: '600px',
 						mx: 'auto',
 						fontWeight: 500,
+						lineHeight: 1.6,
+						letterSpacing: '0.01em',
 					}}>
 					{t('discoverResources')}
 				</Typography>
 
 				<Grid
 					container
-					spacing={{ xs: 2, sm: 3 }}
+					spacing={{ xs: 2, sm: 0, md: 0 }}
 					justifyContent='center'
 					sx={{
 						margin: { xs: '2rem auto', md: '4rem auto' },
 						maxWidth: { xs: '100%', sm: '100%' },
+						perspective: { xs: 'none', md: '2000px' },
+						perspectiveOrigin: 'center center',
 					}}>
-					{multimedia.map((icon, index) => (
+					{multimedia.map((icon, index) => {
+						// Effet de profondeur 3D - la carte centrale (index 2) est la plus avancée
+						const centerIndex = 2
+						const distance = Math.abs(index - centerIndex)
+						const scale = 1 + (0.25 - distance * 0.08) // Centre: 1.25, -1: 1.17, -2: 1.09
+						const translateZ = 80 - distance * 30 // Centre: 80px, -1: 50px, -2: 20px
+						const zIndex = 10 - distance // Centre: 10, extérieurs: 8, 6
+						const shadowIntensity = 0.4 - distance * 0.1
+
+						// Marges négatives pour créer le chevauchement
+						const marginLeft = index === 1 || index === 4 ? { sm: '-20px', md: '-30px' } : '0'
+
+						return (
 						<Grid
 							key={index}
 							item
@@ -483,6 +604,8 @@ const Homepage = () => {
 							sx={{
 								display: 'flex',
 								justifyContent: 'center',
+								zIndex: zIndex,
+								ml: marginLeft,
 							}}>
 							<Link href={icon.link} style={{ textDecoration: 'none', width: '100%', maxWidth: '280px' }}>
 								<Box
@@ -490,20 +613,25 @@ const Homepage = () => {
 										display: 'flex',
 										flexDirection: 'column',
 										alignItems: 'center',
-										gap: 2.5,
+										gap: 2,
 										textAlign: 'center',
-										p: { xs: 3, md: 3.5 },
+										p: { xs: 2.5, md: 3 },
 										height: '100%',
 										width: '100%',
-										minHeight: { xs: '280px', sm: '300px' },
+										minHeight: { xs: '280px', sm: '300px', md: '320px' },
 										borderRadius: 4,
 										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)',
 										border: '1px solid rgba(139, 92, 246, 0.2)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.12)',
+										boxShadow: `0 ${4 + translateZ * 0.4}px ${20 + translateZ}px rgba(139, 92, 246, ${shadowIntensity})`,
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										cursor: 'pointer',
 										position: 'relative',
 										overflow: 'hidden',
+										transform: {
+											xs: 'scale(1)',
+											md: `scale(${scale}) translateZ(${translateZ}px)`
+										},
+										transformStyle: 'preserve-3d',
 										'&::before': {
 											content: '""',
 											position: 'absolute',
@@ -515,8 +643,11 @@ const Homepage = () => {
 											transition: 'left 0.5s ease',
 										},
 										'&:hover': {
-											transform: 'translateY(-8px) scale(1.02)',
-											boxShadow: '0 16px 50px rgba(139, 92, 246, 0.3), 0 0 30px rgba(6, 182, 212, 0.2)',
+											transform: {
+												xs: 'scale(1.05)',
+												md: `scale(${scale * 1.05}) translateZ(${translateZ}px)`
+											},
+											boxShadow: '0 8px 32px rgba(139, 92, 246, 0.35), 0 0 24px rgba(6, 182, 212, 0.2)',
 											borderColor: 'rgba(139, 92, 246, 0.5)',
 											'&::before': {
 												left: '100%',
@@ -612,7 +743,17 @@ const Homepage = () => {
 												src={icon.img}
 												alt={icon.title}
 												fill
-												style={{ objectFit: 'cover' }}
+												quality={100}
+												sizes="(max-width: 600px) 110px, (max-width: 960px) 130px, 150px"
+												style={{
+													objectFit: 'cover',
+													imageRendering: '-webkit-optimize-contrast',
+													WebkitFontSmoothing: 'antialiased',
+													backfaceVisibility: 'hidden',
+													transform: 'translateZ(0)',
+												}}
+												priority={index < 3}
+												unoptimized={false}
 											/>
 
 											{/* Overlay pour masquer le logo Gemini en bas à droite */}
@@ -633,7 +774,7 @@ const Homepage = () => {
 										<Typography
 											variant='h6'
 											sx={{
-												fontSize: { xs: '1rem', md: '1.125rem' },
+												fontSize: { xs: '0.95rem', md: '1.05rem' },
 												fontWeight: 700,
 												color: '#1e1b4b',
 												mb: 0.5,
@@ -645,7 +786,7 @@ const Homepage = () => {
 											sx={{
 												color: '#64748b',
 												fontWeight: 500,
-												fontSize: { xs: '0.875rem', md: '0.95rem' },
+												fontSize: { xs: '0.8rem', md: '0.85rem' },
 												lineHeight: 1.5,
 											}}>
 											<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
@@ -659,8 +800,11 @@ const Homepage = () => {
 								</Box>
 							</Link>
 						</Grid>
-					))}
+						)
+					})}
 				</Grid>
+						</Box>
+					</Box>
 
 				<Modal
 					open={open}
@@ -815,6 +959,156 @@ const Homepage = () => {
 					</Box>
 				</Modal>
 
+				{/* Séparateur élégant entre les sections */}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						my: { xs: '5rem', md: '8rem' },
+						position: 'relative',
+					}}>
+					{/* Ligne gauche */}
+					<Box
+						sx={{
+							flex: 1,
+							height: '2px',
+							background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.3) 50%, rgba(139, 92, 246, 0.6))',
+							maxWidth: { xs: '30%', md: '40%' },
+						}}
+					/>
+					{/* Élément central décoratif */}
+					<Box
+						sx={{
+							mx: 3,
+							width: { xs: 50, md: 70 },
+							height: { xs: 50, md: 70 },
+							position: 'relative',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}>
+						{/* Cercle externe pulsant */}
+						<Box
+							sx={{
+								position: 'absolute',
+								width: '100%',
+								height: '100%',
+								borderRadius: '50%',
+								border: '2px solid rgba(139, 92, 246, 0.3)',
+								animation: 'expandPulse 3s ease-in-out infinite',
+								'@keyframes expandPulse': {
+									'0%, 100%': {
+										transform: 'scale(1)',
+										opacity: 0.5,
+									},
+									'50%': {
+										transform: 'scale(1.2)',
+										opacity: 0.8,
+									},
+								},
+							}}
+						/>
+						{/* Cercle interne avec gradient */}
+						<Box
+							sx={{
+								width: '70%',
+								height: '70%',
+								borderRadius: '50%',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.3)',
+								position: 'relative',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									inset: 4,
+									borderRadius: '50%',
+									background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%)',
+								},
+							}}
+						/>
+					</Box>
+					{/* Ligne droite */}
+					<Box
+						sx={{
+							flex: 1,
+							height: '2px',
+							background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.3) 50%, rgba(6, 182, 212, 0.6))',
+							maxWidth: { xs: '30%', md: '40%' },
+						}}
+					/>
+				</Box>
+
+				{/* Section Outils d'apprentissage */}
+				<Box
+					sx={{
+						position: 'relative',
+						mt: 0,
+						mb: { xs: '3rem', md: '5rem' },
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: '50%',
+							left: '50%',
+							transform: 'translate(-50%, -50%)',
+							width: { xs: '90%', md: '70%' },
+							height: '150%',
+							background: 'radial-gradient(ellipse, rgba(6, 182, 212, 0.05) 0%, transparent 70%)',
+							borderRadius: '50%',
+							filter: 'blur(40px)',
+							pointerEvents: 'none',
+							zIndex: 0,
+						},
+					}}>
+					<Box>
+					<Typography
+						variant='h3'
+						align='center'
+						sx={{
+							fontSize: { xs: '2rem', md: '3rem' },
+							fontWeight: 800,
+							mb: 2,
+							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+							backgroundSize: '200% 200%',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							position: 'relative',
+							animation: 'gradientShift 8s ease infinite',
+							filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
+							letterSpacing: '-0.02em',
+							'@keyframes gradientShift': {
+								'0%': {
+									backgroundPosition: '0% 50%',
+								},
+								'50%': {
+									backgroundPosition: '100% 50%',
+								},
+								'100%': {
+									backgroundPosition: '0% 50%',
+								},
+							},
+						}}>
+						Vos outils d'apprentissage
+					</Typography>
+
+					<Typography
+						variant='subtitle1'
+						align='center'
+						sx={{
+							color: '#64748b',
+							fontSize: { xs: '1rem', md: '1.125rem' },
+							maxWidth: '700px',
+							mx: 'auto',
+							fontWeight: 500,
+							lineHeight: 1.6,
+							letterSpacing: '0.01em',
+						}}>
+						Découvrez nos outils interactifs conçus pour enrichir votre expérience d'apprentissage
+					</Typography>
+					</Box>
+				</Box>
+
 				<FeatureCard
 					title={t('translator')}
 					subtitle={t('translatorsubtitle')}
@@ -822,7 +1116,7 @@ const Homepage = () => {
 					imageAlt="translator"
 					onShowClick={() => handleOpen('translator.mp4', t('translator'))}
 					reverse={true}
-					marginTop="5rem"
+					marginTop="0"
 					badge={t('badgeEssential')}
 					offsetDirection="center"
 					buttonText={t('viewDemo')}
@@ -835,7 +1129,7 @@ const Homepage = () => {
 					imageAlt="dictionary"
 					onShowClick={() => handleOpen('dictionary.mp4', t('dictionary'))}
 					reverse={false}
-					marginTop="6rem"
+					marginTop="8rem"
 					badge={t('badgeNew')}
 					offsetDirection="left"
 					buttonText={t('viewDemo')}
@@ -848,7 +1142,7 @@ const Homepage = () => {
 					imageAlt="flashcards"
 					onShowClick={() => handleOpen('flashcards.mp4', t('flashcards'))}
 					reverse={true}
-					marginTop="2rem"
+					marginTop="8rem"
 					badge={t('badgePopular')}
 					offsetDirection="right"
 					buttonText={t('viewDemo')}
@@ -862,13 +1156,14 @@ const Homepage = () => {
 						imageAlt="teacher"
 						onShowClick={() => {}}
 						reverse={false}
-						marginTop="6rem"
+						marginTop="8rem"
 						badge={t('badgePremium')}
 						offsetDirection="left"
 						buttonText={t('viewDemo')}
 					/>
 				</Link>
 			</Container>
+			</Box>
 		</>
 	)
 }

@@ -48,6 +48,7 @@ import {
 	PauseRounded,
 	VisibilityRounded,
 	CheckCircleRounded,
+	EditRounded,
 } from '@mui/icons-material'
 import Head from 'next/head'
 import {
@@ -248,20 +249,20 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					sx={{
 						flexDirection: {
 							xs: 'column',
-							md: 'row',
+							lg: 'row',
 						},
 						justifyContent: 'center',
 						alignItems: 'flex-start',
-						gap: { md: 2, lg: 4 },
-						px: { md: 2, lg: 3 },
+						gap: { lg: 4 },
+						px: { lg: 3 },
 						maxWidth: '1600px',
 						mx: 'auto',
 						width: '100%',
 					}}>
 					<Box
 						sx={{
-							py: { xs: 4, md: 6 },
-							px: { xs: 2, sm: 3 },
+							py: { xs: 4, lg: 6 },
+							px: { xs: 1, lg: 3 },
 							flex: 1,
 							minWidth: 0,
 							maxWidth: '100%',
@@ -291,11 +292,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									gap: 2,
 									marginBottom: '3rem',
 									marginTop: '2rem',
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-									padding: { xs: '1.5rem', sm: '2rem' },
-									borderRadius: 4,
-									border: '1px solid rgba(139, 92, 246, 0.2)',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+									padding: { xs: '1rem', lg: '2rem' },
+									borderRadius: { xs: 0, lg: 4 },
+									border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
+									boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 								}}>
 								{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
 								afficher le bouton proposant de l'ajouter aux matériels en cours
@@ -393,16 +394,18 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Button
 										variant='outlined'
 										onClick={handleEditContent}
+										startIcon={<EditRounded sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
 										sx={{
 											borderColor: '#8b5cf6',
 											color: '#8b5cf6',
 											fontWeight: 600,
 											fontSize: { xs: '0.9rem', sm: '1rem' },
-											padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
+											padding: { xs: '0.75rem', sm: '0.875rem 2rem' },
 											borderRadius: 3,
 											textTransform: 'none',
 											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 											borderWidth: '2px',
+											minWidth: { xs: 'auto', sm: 'auto' },
 											'&:hover': {
 												borderColor: '#8b5cf6',
 												borderWidth: '2px',
@@ -414,7 +417,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										Edit material
+										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+											Edit material
+										</Box>
+										<EditRounded sx={{ display: { xs: 'block', sm: 'none' }, fontSize: '1.5rem' }} />
 									</Button>
 								)}
 							</Box>
@@ -426,11 +432,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										position: 'relative',
 										zIndex: 100,
 										marginBottom: '2rem',
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-										padding: { xs: '1.5rem', sm: '2rem' },
-										borderRadius: 4,
-										border: '1px solid rgba(139, 92, 246, 0.2)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+										background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+										padding: { xs: '1rem', lg: '2rem' },
+										borderRadius: { xs: 0, lg: 4 },
+										border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
+										boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 									}}>
 									<BookMenu bookId={single_material.book_id} />
 								</Box>
@@ -442,12 +448,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								sx={{
 									position: 'relative',
 									zIndex: 100,
-									padding: { xs: 3, sm: 4, md: 5 },
+									padding: { xs: 1.5, lg: 5 },
 									marginBottom: '3rem',
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-									borderRadius: 4,
-									border: '1px solid rgba(139, 92, 246, 0.2)',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+									borderRadius: { xs: 0, lg: 4 },
+									border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
+									boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 								}}>
 								{showAccents ? (
 									<Typography
@@ -514,11 +520,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										justifyContent: 'center',
 										marginTop: '4rem',
 										marginBottom: '3rem',
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-										padding: { xs: '1.5rem', sm: '2rem' },
-										borderRadius: 4,
-										border: '1px solid rgba(16, 185, 129, 0.2)',
-										boxShadow: '0 4px 20px rgba(16, 185, 129, 0.15)',
+										background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+										padding: { xs: '1rem', lg: '2rem' },
+										borderRadius: { xs: 0, lg: 4 },
+										border: { xs: 'none', lg: '1px solid rgba(16, 185, 129, 0.2)' },
+										boxShadow: { xs: 'none', lg: '0 4px 20px rgba(16, 185, 129, 0.15)' },
 									}}>
 									<Button
 										variant='contained'
@@ -570,10 +576,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						</Box>
 					</Box>
 
-					{/* Floating button for mobile */}
+					{/* Floating button for mobile and tablet */}
 					<IconButton
 						sx={{
-							display: { xs: 'flex', md: 'none' },
+							display: { xs: 'flex', lg: 'none' },
 							position: 'fixed',
 							right: '1rem',
 							bottom: '12.5rem',
@@ -600,19 +606,19 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					{/* Desktop WordsContainer */}
 					<Box
 						sx={{
-							display: { xs: 'none', md: 'block' },
+							display: { xs: 'none', lg: 'block' },
 							width: {
-								md: '360px',
-								lg: '420px',
+								lg: '500px',
+								xl: '550px',
 							},
 							flexShrink: 0,
 							bgcolor: 'white',
 							position: 'sticky',
-							top: { md: 112, lg: 120 },
+							top: { lg: 120 },
 							alignSelf: 'flex-start',
 							maxHeight: 'calc(100vh - 130px)',
 							overflowY: 'auto',
-							pt: { md: 8, lg: 10 },
+							pt: { lg: 10 },
 							px: 3,
 							'&::-webkit-scrollbar': {
 								width: '12px',
@@ -636,11 +642,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						<WordsContainer />
 					</Box>
 
-					{/* Mobile fullscreen WordsContainer */}
+					{/* Mobile and tablet fullscreen WordsContainer */}
 					{showWordsContainer && (
 						<Box
 							sx={{
-								display: { xs: 'flex', md: 'none' },
+								display: { xs: 'flex', lg: 'none' },
 								position: 'fixed',
 								top: 0,
 								left: 0,
