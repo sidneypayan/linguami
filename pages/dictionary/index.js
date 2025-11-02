@@ -220,7 +220,7 @@ const Dictionary = () => {
 								fontWeight: 600,
 								fontSize: '0.875rem',
 							}}>
-							✨ Mode gratuit : jusqu'à {GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots
+							✨ Mode gratuit : jusqu&apos;à {GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots
 						</Typography>
 					</Container>
 				</Box>
@@ -262,7 +262,7 @@ const Dictionary = () => {
 								mb: 4,
 								fontWeight: 500,
 							}}>
-							Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !
+							Vous pouvez sauvegarder jusqu&apos;à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !
 						</Typography>
 
 						<Box
