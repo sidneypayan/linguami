@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { toast } from 'react-toastify'
 import { getaddWordsToUserDictionaryMessage } from '../../utils/helpers'
 import { calculateNextReview, initializeCard, getDueCards } from '../../utils/spacedRepetition'
+// Les limites de traduction sont maintenant gérées côté serveur via cookie HttpOnly
 
 const initialState = {
 	user_words: [],
@@ -25,35 +26,36 @@ export const translateWord = createAsyncThunk(
 	'words/translateWord',
 	async (param, thunkAPI) => {
 		try {
-			let { word, sentence, userLearningLanguage, locale = 'fr' } = param
+			const { word, sentence, userLearningLanguage, locale = 'fr', isAuthenticated = false } = param
 
-			// Déterminer la paire de langues : source-cible
-			// Source = langue du matériel (userLearningLanguage)
-			// Cible = langue de l'interface (locale)
-			const langPair = `${userLearningLanguage}-${locale}`
+			// Appel à notre API - la limite est vérifiée côté serveur via cookie HttpOnly
+			const { data } = await axios.post('/api/translations/translate', {
+				word,
+				sentence,
+				userLearningLanguage,
+				locale,
+				isAuthenticated
+			})
 
-			// Normalisation mot (cyrillique uniquement côté ru)
-			if (userLearningLanguage === 'ru') {
-				// Inclut А-Я а-я Ё ё, avec flag unicode
-				const matches = word.match(/[А-Яа-яЁё]+/gu)
-				word = matches ? matches.join('') : ''
+			// Retourner les données
+			return {
+				word: data.word,
+				data: data.data,
+				sentence: data.sentence
 			}
-
-			const url =
-				`https://dictionary.yandex.net/api/v1/dicservice.json/lookup` +
-				`?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072` +
-				`&lang=${langPair}&text=${encodeURIComponent(word)}&flags=004`
-
-			const { data } = await axios.get(url)
-
-			if (!data?.def?.length) {
-				// Pas de traduction trouvée → on renvoie quand même le mot + phrase
-				return { word, sentence }
-			}
-
-			return { word, data, sentence }
 		} catch (error) {
-			return thunkAPI.rejectWithValue(error)
+			// Si c'est une erreur 429, c'est que la limite serveur est atteinte
+			if (error.response?.status === 429) {
+				return thunkAPI.rejectWithValue({
+					message: error.response?.data?.message || 'Limite de traductions atteinte. Créez un compte pour continuer.',
+					limitReached: true
+				})
+			}
+
+			return thunkAPI.rejectWithValue({
+				message: error.response?.data?.message || error.message || 'Erreur lors de la traduction',
+				limitReached: false
+			})
 		}
 	}
 )
@@ -380,6 +382,7 @@ const wordsSlice = createSlice({
 			})
 			.addCase(translateWord.fulfilled, (state, { payload }) => {
 				const word = payload.word
+
 				if (payload.data) {
 					let asp
 					let form
@@ -403,8 +406,7 @@ const wordsSlice = createSlice({
 			})
 			.addCase(translateWord.rejected, (state, { payload }) => {
 				state.translation_loading = false
-				state.translation_error =
-					payload?.message || 'Erreur lors de la traduction'
+				state.translation_error = payload?.message || 'Erreur lors de la traduction'
 			})
 
 			// ADD

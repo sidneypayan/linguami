@@ -7,8 +7,10 @@ import {
 	deleteUserWord,
 } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
+import { getGuestWords, deleteGuestWord } from '../../utils/guestDictionary'
+import { toast } from 'react-toastify'
 import {
 	Box,
 	Button,
@@ -35,16 +37,81 @@ const WordsContainer = () => {
 	const { user_material_words, user_material_words_pending } = useSelector(
 		store => store.words
 	)
+	const [guestWords, setGuestWords] = useState([])
 
 	const materialId = router.query.material
 	const userId = user?.id
 
+	// Fonction pour charger les mots invités (mémorisée)
+	const loadGuestWords = useCallback(() => {
+		if (!isUserLoggedIn && typeof window !== 'undefined' && materialId) {
+			const words = getGuestWords()
+			// Filtrer les mots par matériel (comparer en string pour éviter les problèmes de type)
+			const materialWords = words.filter(word => String(word.material_id) === String(materialId))
+			setGuestWords(materialWords)
+		}
+	}, [isUserLoggedIn, materialId])
+
+	// Charger les mots des invités depuis localStorage
+	useEffect(() => {
+		loadGuestWords()
+	}, [loadGuestWords])
+
+	// Écouter l'événement d'ajout de mot invité
+	useEffect(() => {
+		if (!isUserLoggedIn && typeof window !== 'undefined') {
+			window.addEventListener('guestWordAdded', loadGuestWords)
+
+			return () => {
+				window.removeEventListener('guestWordAdded', loadGuestWords)
+			}
+		}
+	}, [isUserLoggedIn, loadGuestWords])
+
 	const handleDelete = id => {
-		dispatch(deleteUserWord(id))
+		if (isUserLoggedIn) {
+			dispatch(deleteUserWord(id))
+		} else {
+			// Supprimer le mot invité
+			const success = deleteGuestWord(id)
+			if (success) {
+				// Recharger les mots
+				loadGuestWords()
+				toast.success(t('word_deleted') || 'Mot supprimé')
+
+				// Émettre un événement pour notifier les autres composants
+				if (typeof window !== 'undefined') {
+					window.dispatchEvent(new Event('guestWordDeleted'))
+				}
+			} else {
+				toast.error(t('delete_error') || 'Erreur lors de la suppression')
+			}
+		}
 	}
 
 	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
 	const filteredWords = useMemo(() => {
+		// Pour les invités, utiliser guestWords
+		if (!isUserLoggedIn) {
+			if (!guestWords || !userLearningLanguage || !lang) {
+				return []
+			}
+
+			// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
+			if (userLearningLanguage === lang) {
+				return []
+			}
+
+			return guestWords.filter(word => {
+				const sourceWord = word[`word_${userLearningLanguage}`]
+				const translation = word[`word_${lang}`]
+
+				// N'afficher que les mots qui ont à la fois le mot source ET la traduction
+				return sourceWord && translation
+			})
+		}
+
+		// Pour les utilisateurs connectés
 		if (!user_material_words || !userLearningLanguage || !lang) return []
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
@@ -57,7 +124,7 @@ const WordsContainer = () => {
 			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
 			return sourceWord && translation
 		})
-	}, [user_material_words, userLearningLanguage, lang])
+	}, [isUserLoggedIn, guestWords, user_material_words, userLearningLanguage, lang])
 
 	// Fonction pour obtenir le mot source et la traduction selon les langues
 	const getWordDisplay = (word) => {
@@ -81,7 +148,7 @@ const WordsContainer = () => {
 
 	return (
 		<Box>
-			{isUserLoggedIn && filteredWords && filteredWords.length > 0 ? (
+			{filteredWords && filteredWords.length > 0 ? (
 				<Box>
 					{/* Bouton de révision */}
 					<Button
@@ -142,7 +209,8 @@ const WordsContainer = () => {
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
-										gap: { xs: 1.5, sm: 2 },
+										flexWrap: 'wrap',
+										gap: { xs: 1, sm: 1.5 },
 										flex: 1,
 										minWidth: 0,
 									}}>
@@ -158,32 +226,36 @@ const WordsContainer = () => {
 											backdropFilter: 'blur(10px)',
 											height: 'auto',
 											'& .MuiChip-label': {
-												whiteSpace: 'normal',
-												wordBreak: 'break-word',
-												overflowWrap: 'break-word',
+												whiteSpace: 'nowrap',
 												padding: '8px 0',
 											},
 										}}
 									/>
-									<Typography
+									<Box
 										sx={{
-											fontSize: { xs: '0.8125rem', sm: '0.9375rem' },
-											color: '#718096',
-											fontWeight: 500,
-											flexShrink: 0,
+											display: 'flex',
+											alignItems: 'center',
+											gap: { xs: 1, sm: 1.5 },
 										}}>
-										→
-									</Typography>
-									<Typography
-										sx={{
-											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-											color: '#4a5568',
-											fontWeight: 500,
-											wordBreak: 'break-word',
-											overflowWrap: 'break-word',
-										}}>
-										{translation || '—'}
-									</Typography>
+										<Typography
+											sx={{
+												fontSize: { xs: '0.8125rem', sm: '0.9375rem' },
+												color: '#718096',
+												fontWeight: 500,
+												flexShrink: 0,
+											}}>
+											→
+										</Typography>
+										<Typography
+											sx={{
+												fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+												color: '#4a5568',
+												fontWeight: 500,
+												whiteSpace: 'nowrap',
+											}}>
+											{translation || '—'}
+										</Typography>
+									</Box>
 								</Box>
 
 								<IconButton
@@ -204,7 +276,88 @@ const WordsContainer = () => {
 						)})}
 					</Box>
 				</Box>
-			) : isUserLoggedIn ? (
+			) : !isUserLoggedIn ? (
+				<Card
+					sx={{
+						p: { xs: 3, sm: 4, md: 5 },
+						borderRadius: 4,
+						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
+						border: '1px solid rgba(139, 92, 246, 0.2)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						mt: { xs: 2, md: 3 },
+					}}>
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							gap: 3,
+						}}>
+						<Box
+							sx={{
+								width: 80,
+								height: 80,
+								borderRadius: 4,
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+								border: '2px solid rgba(255, 255, 255, 0.5)',
+							}}>
+							<BookmarkAddRounded sx={{ fontSize: '2.5rem', color: 'white' }} />
+						</Box>
+
+						<Typography
+							variant='h4'
+							align='center'
+							sx={{
+								fontWeight: 800,
+								fontSize: { xs: '1.5rem', sm: '1.75rem' },
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}>
+							{t('guest_no_words_yet_title')}
+						</Typography>
+
+						<Typography
+							variant='body1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontSize: { xs: '1rem', sm: '1.0625rem' },
+								lineHeight: 1.7,
+								maxWidth: '500px',
+							}}>
+							{t('guest_no_words_yet_description')}
+						</Typography>
+
+						<Box
+							sx={{
+								width: '100%',
+								maxWidth: '400px',
+								p: 3,
+								borderRadius: 3,
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
+								border: '1px solid rgba(139, 92, 246, 0.2)',
+								backdropFilter: 'blur(10px)',
+							}}>
+							<Typography
+								sx={{
+									fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+									color: '#4a5568',
+									fontWeight: 600,
+									textAlign: 'center',
+									lineHeight: 1.6,
+								}}>
+								{t('guest_no_words_yet_tip')}
+							</Typography>
+						</Box>
+					</Box>
+				</Card>
+			) : (
 				<Card
 					sx={{
 						p: { xs: 3, sm: 4, md: 5 },
@@ -284,118 +437,6 @@ const WordsContainer = () => {
 							</Typography>
 						</Box>
 					</Box>
-				</Card>
-			) : (
-				<Card
-					sx={{
-						p: { xs: 3, sm: 4, md: 5 },
-						borderRadius: 4,
-						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						mt: { xs: 2, md: 5 },
-					}}>
-					<Typography
-						variant='h4'
-						align='center'
-						sx={{
-							fontWeight: 800,
-							mb: 1,
-							fontSize: { xs: '1.5rem', sm: '1.75rem' },
-							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-						}}>
-						{t('createaccount')}
-					</Typography>
-
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 2.5,
-							mt: 4,
-							mb: 4,
-						}}>
-						{[
-							{ icon: AutoStoriesRounded, text: t('translatewords') },
-							{ icon: BookmarkAddRounded, text: t('savewords') },
-							{ icon: FlashOnRounded, text: t('flashcards') },
-							{ icon: VolunteerActivismRounded, text: t('supportus') },
-						].map((item, index) => (
-							<Box
-								key={index}
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: 2,
-									p: 2.5,
-									borderRadius: 3,
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.15)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&:hover': {
-										transform: 'translateX(8px)',
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.3)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-									},
-								}}>
-								<Box
-									sx={{
-										width: 48,
-										height: 48,
-										borderRadius: 2.5,
-										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										boxShadow: '0 4px 16px rgba(139, 92, 246, 0.4)',
-										border: '2px solid rgba(255, 255, 255, 0.3)',
-									}}>
-									<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
-								</Box>
-								<Typography
-									sx={{
-										fontSize: { xs: '0.9375rem', sm: '1rem' },
-										color: '#4a5568',
-										fontWeight: 600,
-									}}>
-									{item.text}
-								</Typography>
-							</Box>
-						))}
-					</Box>
-
-					<Link href='/signin' style={{ textDecoration: 'none' }}>
-						<Button
-							fullWidth
-							variant='contained'
-							size='large'
-							sx={{
-								py: 2.5,
-								borderRadius: 3,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								fontWeight: 700,
-								fontSize: '1.0625rem',
-								textTransform: 'none',
-								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-									transform: 'translateY(-3px)',
-									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-									borderColor: 'rgba(139, 92, 246, 0.5)',
-								},
-								'&:active': {
-									transform: 'translateY(0)',
-								},
-							}}>
-							{t('noaccount')}
-						</Button>
-					</Link>
 				</Card>
 			)}
 		</Box>

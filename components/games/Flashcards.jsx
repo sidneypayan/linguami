@@ -7,9 +7,11 @@ import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
 import { toast } from 'react-toastify'
 import { useUserContext } from '../../context/user'
+import { getGuestWordsByLanguage, updateGuestWord } from '../../utils/guestDictionary'
 import {
 	getDueCards,
 	getButtonIntervals,
+	calculateNextReview,
 	BUTTON_TYPES,
 	CARD_STATES
 } from '../../utils/spacedRepetition'
@@ -31,8 +33,9 @@ const FlashCards = () => {
 	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { user_material_words, user_words } = useSelector(store => store.words)
+	const [guestWords, setGuestWords] = useState([])
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [reviewedCount, setReviewedCount] = useState(0)
 	const [sessionStartTime] = useState(Date.now())
@@ -58,9 +61,30 @@ const FlashCards = () => {
 	const [showPracticeOptions, setShowPracticeOptions] = useState(false)
 	const [practiceCount, setPracticeCount] = useState(20)
 
-	// Get appropriate word array based on current page
-	const baseWordsArray =
-		router.pathname === '/dictionary' ? user_words : user_material_words
+	// Charger les mots invités si non connecté
+	useEffect(() => {
+		if (!isUserLoggedIn && userLearningLanguage) {
+			const allWords = getGuestWordsByLanguage(userLearningLanguage)
+
+			// Si on est sur une page material, filtrer par materialId
+			const materialId = router.query.material
+
+			if (materialId && router.pathname !== '/dictionary') {
+				const materialWords = allWords.filter(word =>
+					String(word.material_id) === String(materialId)
+				)
+				setGuestWords(materialWords)
+			} else {
+				// Sinon (page dictionary ou pas de materialId), charger tous les mots
+				setGuestWords(allWords)
+			}
+		}
+	}, [isUserLoggedIn, userLearningLanguage, router.query.material, router.pathname])
+
+	// Get appropriate word array based on current page and user status
+	const baseWordsArray = isUserLoggedIn
+		? (router.pathname === '/dictionary' ? user_words : user_material_words)
+		: guestWords
 
 	// Filter to only show words that have both source and translation in current context
 	const wordsArray = useMemo(() => {
@@ -93,7 +117,7 @@ const FlashCards = () => {
 		}
 
 		// Réappliquer la limite à la session en cours
-		if (wordsArray && wordsArray.length > 0) {
+		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && lang) {
 			// Initialiser les cartes avec les valeurs SRS si nécessaires
 			const initializedCards = wordsArray.map(card => {
 				if (!card.card_state) {
@@ -124,7 +148,7 @@ const FlashCards = () => {
 
 	// Start a random practice session
 	const startRandomPractice = () => {
-		if (wordsArray && wordsArray.length > 0) {
+		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && lang) {
 			// Initialize cards with SRS values if needed
 			const initializedCards = wordsArray.map(card => {
 				if (!card.card_state) {
@@ -164,6 +188,14 @@ const FlashCards = () => {
 		// If wordsArray is undefined or null, we're still loading
 		if (!wordsArray) return
 
+		// Don't initialize if we don't have language data yet
+		// This prevents marking as initialized when wordsArray is empty due to missing language context
+		if (!userLearningLanguage || !lang) return
+
+		// For guest users, wait until guestWords are loaded before initializing
+		// This prevents initializing with an empty array due to race condition
+		if (!isUserLoggedIn && guestWords.length === 0 && wordsArray.length === 0) return
+
 		// Initialize any cards that don't have SRS fields
 		// Create deep copies to avoid reference issues
 		const initializedCards = wordsArray.map(card => {
@@ -192,13 +224,13 @@ const FlashCards = () => {
 		const dueCards = getDueCards(initializedCards)
 		const limitedCards = dueCards.slice(0, cardsLimit)
 
-		// Always mark as initialized after first attempt, even if no cards
+		// Mark as initialized only when we have the language context loaded
 		setSessionInitialized(true)
 
 		if (limitedCards.length > 0) {
 			setSessionCards(limitedCards)
 		}
-	}, [wordsArray, dispatch, sessionInitialized, cardsLimit])
+	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, lang, isUserLoggedIn, guestWords])
 
 	// Get current card (first in session queue)
 	const currentCard = sessionCards[0]
@@ -273,21 +305,37 @@ const FlashCards = () => {
 	const handleReview = async (buttonType) => {
 		if (!currentCard) return
 
-		// Dispatch review update
-		const result = await dispatch(updateWordReview({
-			wordId: currentCard.id,
-			buttonType,
-			currentCard
-		}))
+		let updatedCard
 
-		// Check for errors
-		if (result.error) {
-			toast.error(t('review_error'))
-			return
+		if (isUserLoggedIn) {
+			// Utilisateur connecté : utiliser Redux/Supabase
+			const result = await dispatch(updateWordReview({
+				wordId: currentCard.id,
+				buttonType,
+				currentCard
+			}))
+
+			// Check for errors
+			if (result.error) {
+				toast.error(t('review_error'))
+				return
+			}
+
+			// Get the updated card from the result
+			updatedCard = result.payload
+		} else {
+			// Invité : calculer et sauvegarder dans localStorage
+			updatedCard = calculateNextReview(currentCard, buttonType)
+
+			const savedCard = updateGuestWord(currentCard.id, updatedCard)
+			if (!savedCard) {
+				toast.error(t('review_error'))
+				return
+			}
+
+			// Mettre à jour l'état local
+			setGuestWords(prev => prev.map(w => w.id === currentCard.id ? savedCard : w))
 		}
-
-		// Get the updated card from the result
-		const updatedCard = result.payload
 
 		// Update stats
 		setReviewedCount(prev => prev + 1)

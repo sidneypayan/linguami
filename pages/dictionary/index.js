@@ -10,6 +10,8 @@ import {
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import Link from 'next/link'
 import SEO from '../../components/SEO'
+import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
+import { toast } from 'react-toastify'
 import {
 	Box,
 	Button,
@@ -54,6 +56,7 @@ const Dictionary = () => {
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [wordsPerPage, setWordsPerPage] = useState(20)
+	const [guestWords, setGuestWords] = useState([])
 
 	const handleCheck = e => {
 		if (e.target.checked) {
@@ -77,14 +80,35 @@ const Dictionary = () => {
 		}
 	}
 
+	const handleDeleteWord = (wordId) => {
+		if (isUserLoggedIn) {
+			// Utilisateur connecté : utiliser Redux/Supabase
+			dispatch(deleteUserWord(wordId))
+		} else {
+			// Invité : supprimer de localStorage
+			const success = deleteGuestWord(wordId)
+			if (success) {
+				// Recharger les mots
+				const updatedWords = getGuestWordsByLanguage(userLearningLanguage)
+				setGuestWords(updatedWords)
+				toast.success('Mot supprimé')
+			} else {
+				toast.error('Erreur lors de la suppression')
+			}
+		}
+	}
+
 	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
 	const filteredUserWords = useMemo(() => {
-		if (!user_words || !userLearningLanguage || !lang) return []
+		// Utiliser guestWords pour les invités, user_words pour les utilisateurs connectés
+		const wordsSource = isUserLoggedIn ? user_words : guestWords
+
+		if (!wordsSource || !userLearningLanguage || !lang) return []
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
 		if (userLearningLanguage === lang) return []
 
-		const filtered = user_words.filter(word => {
+		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
 			const translation = word[`word_${lang}`]
 
@@ -98,7 +122,7 @@ const Dictionary = () => {
 			const dateB = new Date(b.created_at)
 			return dateB - dateA // Ordre décroissant (plus récent d'abord)
 		})
-	}, [user_words, userLearningLanguage, lang])
+	}, [user_words, guestWords, userLearningLanguage, lang, isUserLoggedIn])
 
 	// Fonction pour obtenir le mot source et la traduction selon les langues
 	const getWordDisplay = (word) => {
@@ -119,16 +143,16 @@ const Dictionary = () => {
 	const totalPages = Math.ceil(filteredUserWords.length / wordsPerPage)
 
 	useEffect(() => {
-		// Attendre que le bootstrap soit terminé avant de rediriger
+		// Attendre que le bootstrap soit terminé
 		if (isBootstrapping) return
 
-		if (!isUserLoggedIn) {
-			router.push('/')
-			return
-		}
-
-		if (userId && userLearningLanguage) {
+		// Charger les mots seulement si l'utilisateur est connecté
+		if (isUserLoggedIn && userId && userLearningLanguage) {
 			dispatch(getAllUserWords({ userId, userLearningLanguage }))
+		} else if (!isUserLoggedIn && userLearningLanguage) {
+			// Charger les mots depuis localStorage pour les invités
+			const words = getGuestWordsByLanguage(userLearningLanguage)
+			setGuestWords(words)
 		}
 	}, [
 		dispatch,
@@ -138,7 +162,6 @@ const Dictionary = () => {
 		userLearningLanguage,
 		user_words_pending,
 		user_material_words_pending,
-		router,
 	])
 
 	if (user_words_loading) {
@@ -156,6 +179,200 @@ const Dictionary = () => {
 		fr: 'Mon Dictionnaire Personnel',
 		ru: 'Мой Личный Словарь',
 		en: 'My Personal Dictionary'
+	}
+
+	// Guest user message - Si invité avec 0 mots
+	if (!isUserLoggedIn && !isBootstrapping && guestWords.length === 0) {
+		return (
+			<>
+				<SEO
+					title={`${titles[router.locale] || titles.fr} | Linguami`}
+					description={descriptions[router.locale] || descriptions.fr}
+					path='/dictionary'
+					noindex={true}
+				/>
+
+				{/* Header Section */}
+				<Box
+					sx={{
+						pt: { xs: '5.5rem', md: '6rem' },
+						pb: 3,
+						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+						bgcolor: '#fafafa',
+					}}>
+					<Container maxWidth='lg'>
+						<Typography
+							variant='h4'
+							sx={{
+								fontWeight: 700,
+								fontSize: { xs: '1.75rem', sm: '2rem' },
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								mb: 1,
+							}}>
+							{titles[router.locale] || titles.fr}
+						</Typography>
+						<Typography
+							variant='body2'
+							sx={{
+								color: '#667eea',
+								fontWeight: 600,
+								fontSize: '0.875rem',
+							}}>
+							✨ Mode gratuit : jusqu'à {GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots
+						</Typography>
+					</Container>
+				</Box>
+
+				{/* Guest message */}
+				<Container
+					maxWidth='md'
+					sx={{
+						py: { xs: 4, md: 6 },
+					}}>
+					<Card
+						sx={{
+							p: { xs: 3, sm: 4, md: 5 },
+							borderRadius: 4,
+							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
+							border: '1px solid rgba(139, 92, 246, 0.2)',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						}}>
+						<Typography
+							variant='h5'
+							align='center'
+							sx={{
+								fontWeight: 800,
+								mb: 2,
+								fontSize: { xs: '1.5rem', sm: '1.75rem' },
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
+							}}>
+							Testez gratuitement avec 20 mots !
+						</Typography>
+						<Typography
+							variant='body1'
+							align='center'
+							sx={{
+								color: '#718096',
+								fontSize: { xs: '0.9375rem', sm: '1rem' },
+								mb: 4,
+								fontWeight: 500,
+							}}>
+							Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !
+						</Typography>
+
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: 2.5,
+								mb: 4,
+								position: 'relative',
+								zIndex: 1,
+							}}>
+							{[
+								{ icon: BookmarkAddRounded, text: tWords('feature_save_words') },
+								{ icon: FlashOnRounded, text: tWords('feature_flashcards') },
+								{ icon: AddCircleRounded, text: tWords('feature_add_manually') },
+								{ icon: AutoStoriesRounded, text: tWords('dictionary_disabled_benefit_access') },
+							].map((item, index) => (
+								<Box
+									key={index}
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										gap: 2,
+										p: 2,
+										borderRadius: 2,
+										background:
+											'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										border: '1px solid rgba(139, 92, 246, 0.2)',
+										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+										position: 'relative',
+										overflow: 'hidden',
+										'&::before': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: '-100%',
+											width: '100%',
+											height: '100%',
+											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
+											transition: 'left 0.5s ease',
+										},
+										'&:hover': {
+											transform: 'translateX(8px)',
+											background:
+												'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+											border: '1px solid rgba(139, 92, 246, 0.4)',
+											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+											'&::before': {
+												left: '100%',
+											},
+										},
+									}}>
+									<Box
+										sx={{
+											width: 44,
+											height: 44,
+											borderRadius: 2,
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
+											border: '1px solid rgba(139, 92, 246, 0.4)',
+										}}>
+										<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
+									</Box>
+									<Typography
+										sx={{
+											fontSize: { xs: '0.9375rem', sm: '1rem' },
+											color: '#4a5568',
+											fontWeight: 600,
+										}}>
+										{item.text}
+									</Typography>
+								</Box>
+							))}
+						</Box>
+
+						<Link href='/signin' style={{ textDecoration: 'none' }}>
+							<Button
+								variant='contained'
+								size='large'
+								fullWidth
+								sx={{
+									py: 2.5,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.3)',
+									fontWeight: 700,
+									fontSize: '1.0625rem',
+									textTransform: 'none',
+									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&:hover': {
+										background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+										transform: 'translateY(-3px)',
+										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+										borderColor: 'rgba(139, 92, 246, 0.5)',
+									},
+									'&:active': {
+										transform: 'translateY(0)',
+									},
+								}}>
+								{tWords('noaccount')}
+							</Button>
+						</Link>
+					</Card>
+				</Container>
+			</>
+		)
 	}
 
 	return (
@@ -176,26 +393,47 @@ const Dictionary = () => {
 					bgcolor: '#fafafa',
 				}}>
 				<Container maxWidth='lg'>
-					<Typography
-						variant='h4'
-						sx={{
-							fontWeight: 700,
-							fontSize: { xs: '1.75rem', sm: '2rem' },
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							mb: 1,
-						}}>
-						{titles[router.locale] || titles.fr}
-					</Typography>
-					<Typography
-						variant='body1'
-						sx={{
-							color: '#64748b',
-							fontSize: { xs: '0.9375rem', sm: '1rem' },
-						}}>
-						{descriptions[router.locale] || descriptions.fr}
-					</Typography>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+						<Box>
+							<Typography
+								variant='h4'
+								sx={{
+									fontWeight: 700,
+									fontSize: { xs: '1.75rem', sm: '2rem' },
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									mb: 1,
+								}}>
+								{titles[router.locale] || titles.fr}
+							</Typography>
+							<Typography
+								variant='body1'
+								sx={{
+									color: '#64748b',
+									fontSize: { xs: '0.9375rem', sm: '1rem' },
+								}}>
+								{descriptions[router.locale] || descriptions.fr}
+							</Typography>
+						</Box>
+						{!isUserLoggedIn && (
+							<Chip
+								label={`${guestWords.length}/${GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots gratuits`}
+								sx={{
+									background: guestWords.length >= GUEST_DICTIONARY_CONFIG.MAX_WORDS
+										? 'linear-gradient(135deg, rgba(245, 87, 108, 0.9) 0%, rgba(239, 68, 68, 0.8) 100%)'
+										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.4)',
+									color: 'white',
+									fontWeight: 700,
+									fontSize: '0.9375rem',
+									px: 2,
+									py: 2.5,
+									boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(6, 182, 212, 0.2)',
+								}}
+							/>
+						)}
+					</Box>
 				</Container>
 			</Box>
 
@@ -488,7 +726,7 @@ const Dictionary = () => {
 									</Box>
 									<IconButton
 										className='delete-btn'
-										onClick={() => dispatch(deleteUserWord(word.id))}
+										onClick={() => handleDeleteWord(word.id)}
 										sx={{
 											opacity: { xs: 1, md: 0 },
 											transition: 'all 0.3s ease',

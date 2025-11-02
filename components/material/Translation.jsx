@@ -8,6 +8,8 @@ import {
 } from '../../features/words/wordsSlice'
 import Link from 'next/link'
 import { useUserContext } from '../../context/user'
+import { addGuestWord, getGuestWordsCount, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
+import { toast } from 'react-toastify'
 import {
 	Box,
 	Paper,
@@ -43,8 +45,34 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	const [personalTranslation, setPersonalTranslation] = useState('')
 	const [translationError, setTranslationError] = useState('')
 	const { isUserLoggedIn, userLearningLanguage } = useUserContext()
+	const [guestWordsCount, setGuestWordsCount] = useState(0)
 
 	const MAX_TRANSLATION_LENGTH = 100
+
+	// Fonction pour recharger le compteur de mots
+	const reloadGuestWordsCount = () => {
+		if (!isUserLoggedIn && typeof window !== 'undefined') {
+			setGuestWordsCount(getGuestWordsCount())
+		}
+	}
+
+	// Mettre à jour le compteur de mots pour invités
+	useEffect(() => {
+		reloadGuestWordsCount()
+	}, [isUserLoggedIn, isTranslationOpen])
+
+	// Écouter les événements d'ajout/suppression de mots
+	useEffect(() => {
+		if (!isUserLoggedIn && typeof window !== 'undefined') {
+			window.addEventListener('guestWordAdded', reloadGuestWordsCount)
+			window.addEventListener('guestWordDeleted', reloadGuestWordsCount)
+
+			return () => {
+				window.removeEventListener('guestWordAdded', reloadGuestWordsCount)
+				window.removeEventListener('guestWordDeleted', reloadGuestWordsCount)
+			}
+		}
+	}, [isUserLoggedIn])
 
 	const sanitizeInput = (input) => {
 		// Supprimer les caractères potentiellement dangereux
@@ -187,24 +215,78 @@ const Translation = ({ coordinates, materialId, userId }) => {
 
 		const originalWord = translation.inf ? translation.inf : translation.word
 
-		dispatch(
-			addWordToDictionary({
-				originalWord,
-				translatedWord: sanitizedTranslation,
-				userId,
-				materialId,
-				word_sentence,
-				lang,
-				userLearningLanguage,
-				locale: lang,
-			})
-		)
+		// Si l'utilisateur est connecté, utiliser Supabase
+		if (isUserLoggedIn) {
+			dispatch(
+				addWordToDictionary({
+					originalWord,
+					translatedWord: sanitizedTranslation,
+					userId,
+					materialId,
+					word_sentence,
+					lang,
+					userLearningLanguage,
+					locale: lang,
+				})
+			)
+		} else {
+			// Si invité, utiliser localStorage
+			const wordData = {
+				word_ru: null,
+				word_fr: null,
+				word_en: null,
+				word_sentence: word_sentence || '',
+				material_id: materialId,
+				word_lang: userLearningLanguage,
+			}
+
+			// La langue source (apprise) détermine où va originalWord
+			if (userLearningLanguage === 'ru') {
+				wordData.word_ru = originalWord
+			} else if (userLearningLanguage === 'fr') {
+				wordData.word_fr = originalWord
+			} else if (userLearningLanguage === 'en') {
+				wordData.word_en = originalWord
+			}
+
+			// La langue cible (de l'interface) détermine où va la traduction
+			if (lang === 'ru') {
+				wordData.word_ru = sanitizedTranslation
+			} else if (lang === 'fr') {
+				wordData.word_fr = sanitizedTranslation
+			} else if (lang === 'en') {
+				wordData.word_en = sanitizedTranslation
+			}
+
+			// Ajouter au dictionnaire invité
+			const result = addGuestWord(wordData)
+
+			if (result.success) {
+				toast.success(t('word_added_success') || 'Mot ajouté au dictionnaire')
+				setGuestWordsCount(result.wordsCount)
+
+				// Émettre un événement pour notifier WordsContainer
+				if (typeof window !== 'undefined') {
+					window.dispatchEvent(new Event('guestWordAdded'))
+				}
+			} else if (result.error === 'limit_reached') {
+				// Ne rien faire ici, on gère ça dans le render
+				return
+			} else if (result.error === 'duplicate') {
+				toast.error(t('duplicate_translation') || 'Ce mot existe déjà dans votre dictionnaire')
+			} else {
+				toast.error(t('unexpected_error') || 'Erreur lors de l\'ajout du mot')
+			}
+		}
+
 		dispatch(toggleTranslationContainer(false))
 		setPersonalTranslation('')
 		setTranslationError('')
 	}
 
 	if (!isUserLoggedIn) {
+		const hasDictionaryLimit = guestWordsCount >= GUEST_DICTIONARY_CONFIG.MAX_WORDS
+
 		return (
 			isTranslationOpen && (
 				<Fade in={isTranslationOpen}>
@@ -214,38 +296,166 @@ const Translation = ({ coordinates, materialId, userId }) => {
 						sx={{
 							position: 'fixed',
 							...position,
-							width: { xs: 'calc(100vw - 40px)', sm: '350px' },
-							maxWidth: '350px',
+							width: { xs: 'calc(100vw - 40px)', sm: '380px' },
+							maxWidth: '380px',
+							maxHeight: '500px',
 							borderRadius: 4,
 							overflow: 'hidden',
+							overflowX: 'hidden',
 							background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
 							boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
 							zIndex: 1300,
+							display: 'flex',
+							flexDirection: 'column',
 						}}>
+						{/* Header */}
 						<Box
 							sx={{
 								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 								p: 2,
 								display: 'flex',
 								alignItems: 'center',
-								gap: 1,
+								justifyContent: 'space-between',
 							}}>
-							<Translate sx={{ color: 'white' }} />
-							<Typography variant='subtitle1' sx={{ color: 'white', fontWeight: 700 }}>
-								{t('registertotranslate')}
-							</Typography>
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+								<Translate sx={{ color: 'white' }} />
+								<Typography variant='subtitle1' sx={{ color: 'white', fontWeight: 700 }}>
+									{t('translation')}
+								</Typography>
+							</Box>
+							<IconButton
+								size='small'
+								onClick={() => {
+									dispatch(toggleTranslationContainer(false))
+									dispatch(cleanTranslation())
+								}}
+								sx={{
+									color: 'white',
+									'&:hover': {
+										backgroundColor: 'rgba(255, 255, 255, 0.2)',
+									},
+								}}>
+								<Close />
+							</IconButton>
 						</Box>
-						<Box sx={{ p: 3, textAlign: 'center' }}>
-							<Link href='/signin'>
-								<Button
-									variant='contained'
-									fullWidth
-									size='large'
-									sx={primaryButton}>
-									{t('noaccount')}
-								</Button>
-							</Link>
-						</Box>
+
+						{translation_error && translation_error.includes('Limite de traductions atteinte') ? (
+							/* Translation limit reached message */
+							<Box sx={{ p: 3, textAlign: 'center' }}>
+								<Typography variant='h6' sx={{ fontWeight: 600, mb: 2, color: '#f5576c' }}>
+									{t('translation_limit_title')}
+								</Typography>
+								<Typography variant='body2' sx={{ mb: 3, color: '#666' }}>
+									{t('translation_limit_message')}
+								</Typography>
+								<Link href='/signin'>
+									<Button
+										variant='contained'
+										fullWidth
+										size='large'
+										sx={primaryButton}>
+										{t('noaccount')}
+									</Button>
+								</Link>
+							</Box>
+						) : translation_error ? (
+							/* Error display */
+							<Box sx={{ p: 3 }}>
+								<Typography variant='h6' sx={{ fontWeight: 600, mb: 2 }}>
+									{translation.word}
+								</Typography>
+								<Typography color='error' variant='body2'>
+									{translation_error}
+								</Typography>
+							</Box>
+						) : translation.word && translation.definitions ? (
+							/* Translation display for guests */
+							<>
+								{/* Word info */}
+								{translation.inf && (
+									<Box sx={{ p: 2, backgroundColor: 'rgba(102, 126, 234, 0.08)' }}>
+										<Stack direction='row' spacing={1} alignItems='center' flexWrap='wrap'>
+											{translation.form && (
+												<Chip
+													label={translation.form}
+													size='small'
+													sx={{
+														fontWeight: 600,
+														background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+														color: 'white',
+													}}
+												/>
+											)}
+											<Typography variant='body2' sx={{ color: '#666' }}>
+												→
+											</Typography>
+											<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
+												{translation.inf}
+											</Typography>
+										</Stack>
+									</Box>
+								)}
+
+								<Divider />
+
+								{/* Translations list - Clickable for guests (if dictionary not full) */}
+								<Box sx={{ flex: 1, overflow: 'auto', overflowX: 'hidden', maxHeight: '250px' }}>
+									<List sx={{ py: 0 }}>
+										{translation.definitions.map((definition, index) => (
+											<ListItem key={index} disablePadding>
+												<ListItemButton
+													onClick={hasDictionaryLimit ? undefined : addWord}
+													disabled={hasDictionaryLimit}
+													sx={{
+														py: 1.5,
+														px: 2,
+														pl: 1.5,
+														transition: 'all 0.2s ease',
+														borderLeft: '3px solid transparent',
+														opacity: hasDictionaryLimit ? 0.5 : 1,
+														cursor: hasDictionaryLimit ? 'not-allowed' : 'pointer',
+														'&:hover': hasDictionaryLimit ? {} : {
+															backgroundColor: 'rgba(102, 126, 234, 0.08)',
+															borderLeftColor: '#667eea',
+															pl: 2.5,
+														},
+													}}>
+													<Typography variant='body2' sx={{ fontWeight: 500 }}>
+														{definition}
+													</Typography>
+												</ListItemButton>
+											</ListItem>
+										))}
+									</List>
+								</Box>
+
+								<Divider />
+
+								{/* Info message for guests */}
+								<Box sx={{ p: 2, backgroundColor: 'rgba(102, 126, 234, 0.05)' }}>
+									{hasDictionaryLimit ? (
+										<>
+											<Typography variant='caption' sx={{ display: 'block', mb: 1.5, color: '#f5576c', fontWeight: 600 }}>
+												⚠️ {t('dictionary_limit_title')} : supprimez des mots pour en ajouter de nouveaux
+											</Typography>
+											<Link href='/signin'>
+												<Button
+													variant='contained'
+													fullWidth
+													size='small'
+													sx={secondaryButton}>
+													{t('noaccount')}
+												</Button>
+											</Link>
+										</>
+									) : (
+										<Typography variant='caption' sx={{ display: 'block', color: '#666', fontWeight: 600, textAlign: 'center' }}>
+											{t('click_translation_to_add')}
+										</Typography>
+									)}
+								</Box>
+							</>
+						) : null}
 					</Paper>
 				</Fade>
 			)

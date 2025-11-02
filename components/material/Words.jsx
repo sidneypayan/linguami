@@ -11,7 +11,7 @@ import DOMPurify from 'isomorphic-dompurify'
 import { useUserContext } from '../../context/user'
 
 const Words = ({ content, locale = 'fr' }) => {
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const [regexAll, setRegexAll] = useState('')
 	const [regexWords, setRegexWords] = useState('')
 	const [regexSentences, setRegexSentences] = useState('')
@@ -87,7 +87,14 @@ const Words = ({ content, locale = 'fr' }) => {
 	const handleClick = e => {
 		const word = e.target.textContent
 		const sentence = e.target.parentElement.textContent
-		dispatch(translateWord({ word, sentence, userLearningLanguage, locale }))
+
+		dispatch(translateWord({
+			word,
+			sentence,
+			userLearningLanguage,
+			locale,
+			isAuthenticated: isUserLoggedIn
+		}))
 		dispatch(toggleTranslationContainer())
 		dispatch(cleanTranslation())
 	}

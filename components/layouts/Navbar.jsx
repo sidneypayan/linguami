@@ -62,7 +62,7 @@ const Navbar = props => {
 			icon: <LocalLibraryRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/lessons',
 			// Cacher seulement si chargement terminé ET aucune leçon
-			hideIf: !lessons_loading && lessons.length === 0,
+			hideIf: !lessons_loading && lessons?.length === 0,
 		},
 		{
 			name: t('blog'),
