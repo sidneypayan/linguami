@@ -127,12 +127,15 @@ const Dictionary = () => {
 			return
 		}
 
-		dispatch(getAllUserWords(userId))
+		if (userId && userLearningLanguage) {
+			dispatch(getAllUserWords({ userId, userLearningLanguage }))
+		}
 	}, [
 		dispatch,
 		isUserLoggedIn,
 		isBootstrapping,
 		userId,
+		userLearningLanguage,
 		user_words_pending,
 		user_material_words_pending,
 		router,

@@ -2,9 +2,14 @@ import useTranslation from 'next-translate/useTranslation'
 import Link from 'next/link'
 import { Box, Container, Stack, Typography, IconButton, Divider } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
+import { useRouter } from 'next/router'
 
 const Footer = () => {
 	const { t } = useTranslation('common')
+	const router = useRouter()
+
+	// Masquer le séparateur diagonal sur les pages de connexion/inscription
+	const hideTopSeparator = router.pathname === '/signin'
 
 	return (
 		<Box
@@ -15,7 +20,7 @@ const Footer = () => {
 				mt: 'auto',
 				position: 'relative',
 				overflow: 'hidden',
-				pt: { xs: '80px', md: '100px' },
+				pt: hideTopSeparator ? { xs: 4, md: 6 } : { xs: '80px', md: '100px' },
 				pb: { xs: 4, md: 6 },
 				'&::before': {
 					content: '""',
@@ -29,28 +34,30 @@ const Footer = () => {
 				},
 			}}>
 			{/* Modern diagonal separator at top */}
-			<Box
-				sx={{
-					position: 'absolute',
-					top: '-1px',
-					left: 0,
-					right: 0,
-					height: { xs: '61px', md: '81px' },
-					background: '#ffffff',
-					clipPath: 'polygon(0 0, 100% 50%, 100% 0)',
-					zIndex: 0,
-					'&::before': {
-						content: '""',
+			{!hideTopSeparator && (
+				<Box
+					sx={{
 						position: 'absolute',
-						top: 0,
+						top: '-1px',
 						left: 0,
 						right: 0,
-						bottom: 0,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-						clipPath: 'inherit',
-					},
-				}}
-			/>
+						height: { xs: '61px', md: '81px' },
+						background: '#ffffff',
+						clipPath: 'polygon(0 0, 100% 50%, 100% 0)',
+						zIndex: 0,
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
+							clipPath: 'inherit',
+						},
+					}}
+				/>
+			)}
 
 			<Container maxWidth='lg' sx={{ position: 'relative', zIndex: 1 }}>
 				<Stack

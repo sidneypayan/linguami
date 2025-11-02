@@ -19,6 +19,10 @@ import {
 	InputAdornment,
 	IconButton,
 	Tooltip,
+	Card,
+	CardContent,
+	Grid,
+	Divider,
 } from '@mui/material'
 import { Search, Person, AdminPanelSettings, ArrowUpward, ArrowDownward, UnfoldMore } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
@@ -188,15 +192,16 @@ const UsersPage = ({ users }) => {
 			{/* Admin Navbar */}
 			<AdminNavbar activePage="users" />
 
-			<Container maxWidth="xl" sx={{ py: 4 }}>
+			<Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 }, px: { xs: 2, md: 3 } }}>
 				{/* Page Header */}
-				<Box sx={{ mb: 4 }}>
+				<Box sx={{ mb: { xs: 3, md: 4 } }}>
 					<Typography
 						variant='h4'
 						sx={{
 							fontWeight: 700,
 							color: '#1E293B',
 							mb: 1,
+							fontSize: { xs: '1.5rem', md: '2rem' },
 						}}>
 						{t('usersManagement')}
 					</Typography>
@@ -204,6 +209,7 @@ const UsersPage = ({ users }) => {
 						variant='body1'
 						sx={{
 							color: '#64748B',
+							fontSize: { xs: '0.875rem', md: '1rem' },
 						}}>
 						{users.length} {users.length > 1 ? t('registeredUsersPlural') : t('registeredUsers')}
 					</Typography>
@@ -213,21 +219,22 @@ const UsersPage = ({ users }) => {
 				<Paper
 					elevation={0}
 					sx={{
-						p: 3,
-						borderRadius: 3,
+						p: { xs: 2, md: 3 },
+						borderRadius: { xs: 2, md: 3 },
 						border: '1px solid',
 						borderColor: 'divider',
-						mb: 3,
+						mb: { xs: 2, md: 3 },
 					}}>
 					<TextField
 						fullWidth
 						placeholder={t('searchByNameOrEmail')}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
+						size="small"
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<Search sx={{ color: '#64748B' }} />
+									<Search sx={{ color: '#64748B', fontSize: { xs: '1.2rem', md: '1.5rem' } }} />
 								</InputAdornment>
 							),
 						}}
@@ -235,15 +242,215 @@ const UsersPage = ({ users }) => {
 							'& .MuiOutlinedInput-root': {
 								borderRadius: 2,
 								bgcolor: 'white',
+								fontSize: { xs: '0.875rem', md: '1rem' },
 							},
 						}}
 					/>
 				</Paper>
 
-				{/* Users Table */}
+				{/* Mobile View - Cards */}
+				<Box sx={{ display: { xs: 'block', md: 'none' } }}>
+					{filteredUsers.length === 0 ? (
+						<Paper
+							elevation={0}
+							sx={{
+								p: 8,
+								textAlign: 'center',
+								borderRadius: 3,
+								border: '1px solid',
+								borderColor: 'divider',
+							}}>
+							<Typography variant='body1' color='text.secondary'>
+								{t('noUserFound')}
+							</Typography>
+						</Paper>
+					) : (
+						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+							{filteredUsers.map((user) => (
+								<Card
+									key={user.id}
+									elevation={0}
+									sx={{
+										borderRadius: 3,
+										border: '1px solid',
+										borderColor: 'divider',
+										overflow: 'hidden',
+									}}>
+									<CardContent sx={{ p: 3 }}>
+										{/* Header avec avatar et nom */}
+										<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+											<Avatar
+												src={user.avatar_id ? `/avatars/${user.avatar_id}.png` : null}
+												sx={{
+													width: 56,
+													height: 56,
+													bgcolor: '#667eea',
+												}}>
+												{user.name?.[0]?.toUpperCase() || 'U'}
+											</Avatar>
+											<Box sx={{ flex: 1 }}>
+												<Typography
+													variant='h6'
+													sx={{
+														fontWeight: 700,
+														color: '#1E293B',
+														mb: 0.5,
+													}}>
+													{user.name || 'Sans nom'}
+												</Typography>
+												<Typography
+													variant='body2'
+													sx={{
+														color: '#64748B',
+													}}>
+													{user.email || 'N/A'}
+												</Typography>
+											</Box>
+										</Box>
+
+										<Divider sx={{ mb: 2 }} />
+
+										{/* Grid d'informations */}
+										<Grid container spacing={2}>
+											{/* Role */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('role')}
+												</Typography>
+												<Chip
+													icon={user.role === 'admin' ? <AdminPanelSettings fontSize='small' /> : <Person fontSize='small' />}
+													label={user.role || 'user'}
+													size='small'
+													sx={{
+														bgcolor: alpha(getRoleColor(user.role), 0.1),
+														color: getRoleColor(user.role),
+														fontWeight: 600,
+														textTransform: 'capitalize',
+													}}
+												/>
+											</Grid>
+
+											{/* Premium */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('premium')}
+												</Typography>
+												<Chip
+													label={user.is_premium ? t('premium') : t('free')}
+													size='small'
+													sx={{
+														bgcolor: user.is_premium ? alpha('#F59E0B', 0.1) : alpha('#94A3B8', 0.1),
+														color: user.is_premium ? '#F59E0B' : '#64748B',
+														fontWeight: 600,
+														border: user.is_premium ? '1px solid' : 'none',
+														borderColor: user.is_premium ? alpha('#F59E0B', 0.3) : 'transparent',
+													}}
+												/>
+											</Grid>
+
+											{/* Langue apprise */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('learnedLanguage')}
+												</Typography>
+												{user.spoken_language ? (
+													<Chip
+														label={getLanguageInfo(user.spoken_language).flag + ' ' + getLanguageInfo(user.spoken_language).name}
+														size='small'
+														sx={{
+															bgcolor: alpha(getLanguageInfo(user.spoken_language).color, 0.1),
+															color: getLanguageInfo(user.spoken_language).color,
+															fontWeight: 600,
+														}}
+													/>
+												) : (
+													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
+														{t('notDefined')}
+													</Typography>
+												)}
+											</Grid>
+
+											{/* Niveau */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('level')}
+												</Typography>
+												{user.language_level ? (
+													<Chip
+														label={getLevelInfo(user.language_level).name}
+														size='small'
+														sx={{
+															bgcolor: alpha(getLevelInfo(user.language_level).color, 0.1),
+															color: getLevelInfo(user.language_level).color,
+															fontWeight: 600,
+														}}
+													/>
+												) : (
+													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
+														{t('notDefined')}
+													</Typography>
+												)}
+											</Grid>
+
+											{/* XP Total */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('totalXP')}
+												</Typography>
+												<Chip
+													label={user.total_xp?.toLocaleString() || '0'}
+													size='small'
+													sx={{
+														bgcolor: alpha('#F59E0B', 0.1),
+														color: '#F59E0B',
+														fontWeight: 700,
+													}}
+												/>
+											</Grid>
+
+											{/* Niveau XP */}
+											<Grid item xs={6}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('xpLevel')}
+												</Typography>
+												<Chip
+													label={`Niv. ${user.current_level || 1}`}
+													size='small'
+													sx={{
+														bgcolor: alpha('#8B5CF6', 0.1),
+														color: '#8B5CF6',
+														fontWeight: 700,
+													}}
+												/>
+											</Grid>
+
+											{/* Date de création */}
+											<Grid item xs={12}>
+												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
+													{t('creationDate')}
+												</Typography>
+												<Typography
+													variant='body2'
+													sx={{
+														color: '#1E293B',
+														fontWeight: 500,
+													}}>
+													{formatDate(user.created_at)}
+												</Typography>
+											</Grid>
+										</Grid>
+									</CardContent>
+								</Card>
+							))}
+						</Box>
+					)}
+				</Box>
+
+				{/* Desktop View - Table */}
 				<Paper
 					elevation={0}
 					sx={{
+						display: { xs: 'none', md: 'block' },
 						borderRadius: 3,
 						border: '1px solid',
 						borderColor: 'divider',

@@ -39,26 +39,50 @@ export default async function handler(req, res) {
 			return res.status(401).json({ error: 'Non authentifié' })
 		}
 
-		const { learningLangWord, browserLangWord, materialId } = req.body
+		const { learningLangWord, browserLangWord, materialId, userLearningLanguage, locale } = req.body
 
 		// Validation et sanitization
 		const validation = validateWordPair({ learningLangWord, browserLangWord })
 
 		if (!validation.isValid) {
-			console.log('Validation échouée:', validation.errors)
 			return res.status(400).json({
 				error: 'Données invalides',
 				errors: validation.errors,
 			})
 		}
 
+		// Déterminer dans quelles colonnes insérer les mots selon les langues
+		const wordData = {
+			word_ru: null,
+			word_fr: null,
+			word_en: null,
+		}
+
+		// La langue source (apprise) détermine où va learningLangWord
+		if (userLearningLanguage === 'ru') {
+			wordData.word_ru = validation.sanitized.learningLangWord
+		} else if (userLearningLanguage === 'fr') {
+			wordData.word_fr = validation.sanitized.learningLangWord
+		} else if (userLearningLanguage === 'en') {
+			wordData.word_en = validation.sanitized.learningLangWord
+		}
+
+		// La langue cible (de l'interface) détermine où va browserLangWord (la traduction)
+		if (locale === 'ru') {
+			wordData.word_ru = validation.sanitized.browserLangWord
+		} else if (locale === 'fr') {
+			wordData.word_fr = validation.sanitized.browserLangWord
+		} else if (locale === 'en') {
+			wordData.word_en = validation.sanitized.browserLangWord
+		}
+
 		// Préparer les données nettoyées
 		const cleanData = {
-			word_ru: validation.sanitized.learningLangWord,
-			word_fr: validation.sanitized.browserLangWord,
+			...wordData,
 			user_id: user.id, // Utiliser l'ID de l'utilisateur authentifié
 			material_id: materialId || null,
 			word_sentence: '',
+			word_lang: userLearningLanguage, // Track the language being learned
 			// Champs SRS
 			card_state: 'new',
 			ease_factor: 2.5,

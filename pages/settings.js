@@ -21,6 +21,8 @@ import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
+	useMediaQuery,
+	useTheme,
 } from '@mui/material'
 import {
 	PersonRounded,
@@ -37,6 +39,8 @@ import Head from 'next/head'
 const Settings = () => {
 	const { t } = useTranslation('settings')
 	const { userProfile, updateUserProfile } = useUserContext()
+	const theme = useTheme()
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
 	const [formData, setFormData] = useState({
 		username: '',
@@ -817,14 +821,15 @@ const Settings = () => {
 					onClose={() => setAvatarDialogOpen(false)}
 					maxWidth='md'
 					fullWidth
+					fullScreen={isMobile}
 					PaperProps={{
 						sx: {
-							borderRadius: 4,
+							borderRadius: { xs: 0, sm: 4 },
 							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
 							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.4)',
 							position: 'relative',
 							overflow: 'hidden',
-							m: { xs: 2, sm: 3 },
+							m: { xs: 0, sm: 3 },
 							'&::before': {
 								content: '""',
 								position: 'absolute',
@@ -832,7 +837,7 @@ const Settings = () => {
 								left: -2,
 								right: -2,
 								bottom: -2,
-								borderRadius: 4,
+								borderRadius: { xs: 0, sm: 4 },
 								background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
 								zIndex: -1,
 							},
@@ -843,12 +848,36 @@ const Settings = () => {
 							p: { xs: 2, sm: 3, md: 4 },
 							background: 'transparent',
 							overflow: 'auto',
+							position: 'relative',
 							'&::-webkit-scrollbar': {
 								display: 'none',
 							},
 							scrollbarWidth: 'none',
 							msOverflowStyle: 'none',
 						}}>
+						{/* Bouton de fermeture */}
+						<Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+							<IconButton
+								onClick={() => setAvatarDialogOpen(false)}
+								sx={{
+									color: 'white',
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)',
+									border: '2px solid rgba(139, 92, 246, 0.5)',
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+									width: { xs: 48, sm: 56 },
+									height: { xs: 48, sm: 56 },
+									'&:hover': {
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.5) 100%)',
+										transform: 'scale(1.1) rotate(90deg)',
+										boxShadow: '0 6px 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
+										borderColor: '#06b6d4',
+									},
+									transition: 'all 0.3s ease',
+								}}>
+								<CloseRounded sx={{ fontSize: { xs: 28, sm: 32 } }} />
+							</IconButton>
+						</Box>
+
 						<Box
 							sx={{
 								display: 'grid',

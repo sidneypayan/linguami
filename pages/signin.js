@@ -27,11 +27,49 @@ import {
 	EmailRounded,
 	LockRounded,
 	PersonRounded,
-	LanguageRounded,
+	TranslateRounded,
+	RecordVoiceOverRounded,
 	CheckCircleRounded,
 	CancelRounded,
+	SignalCellular1Bar,
+	SignalCellular2Bar,
+	SignalCellular3Bar,
 } from '@mui/icons-material'
 import Link from 'next/link'
+
+// Composants de drapeaux
+const FrenchFlag = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
+		<circle cx="16" cy="16" r="16" fill="#ED2939"/>
+		<path d="M 16 0 A 16 16 0 0 0 16 32 L 16 0" fill="#002395"/>
+		<path d="M 16 0 L 16 32 A 16 16 0 0 0 16 0" fill="#ED2939"/>
+		<rect x="10.67" width="10.67" height="32" fill="white"/>
+	</svg>
+)
+
+const RussianFlag = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
+		<circle cx="16" cy="16" r="16" fill="#0039A6"/>
+		<rect width="32" height="10.67" fill="white"/>
+		<rect y="10.67" width="32" height="10.67" fill="#0039A6"/>
+		<rect y="21.33" width="32" height="10.67" fill="#D52B1E"/>
+	</svg>
+)
+
+const EnglishFlag = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
+		<clipPath id="circle-clip-signin">
+			<circle cx="16" cy="16" r="16"/>
+		</clipPath>
+		<g clipPath="url(#circle-clip-signin)">
+			<rect width="32" height="32" fill="#012169"/>
+			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="white" strokeWidth="5.3"/>
+			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
+			<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="white" strokeWidth="8.5"/>
+			<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="#C8102E" strokeWidth="5.3"/>
+		</g>
+	</svg>
+)
 
 const initialState = {
 	email: '',
@@ -173,7 +211,7 @@ const Signin = () => {
 				justifyContent: 'center',
 				position: 'relative',
 				overflow: 'hidden',
-				py: { xs: 4, sm: 6 },
+				py: { xs: 0, sm: 6 },
 				'&::before': {
 					content: '""',
 					position: 'absolute',
@@ -199,13 +237,16 @@ const Signin = () => {
 					filter: 'blur(40px)',
 				},
 			}}>
-			<Container maxWidth='sm' sx={{ position: 'relative', zIndex: 1 }}>
+			<Container maxWidth='sm' sx={{ position: 'relative', zIndex: 1, px: { xs: 0, sm: 2 }, py: { xs: 0, sm: 0 }, mb: { xs: 0, sm: 0 } }}>
 				<Card
 					sx={{
 						p: { xs: 3, sm: 5 },
-						borderRadius: 4,
-						boxShadow: '0 24px 60px rgba(0, 0, 0, 0.3)',
+						borderRadius: { xs: 0, sm: 4 },
+						boxShadow: { xs: 'none', sm: '0 24px 60px rgba(0, 0, 0, 0.3)' },
 						background: 'white',
+						border: { xs: 'none !important', sm: 'initial' },
+						outline: 'none',
+						minHeight: { xs: '100vh', sm: 'auto' },
 					}}>
 					{/* Logo */}
 					<Box
@@ -461,7 +502,7 @@ const Signin = () => {
 													fontSize: '0.8rem',
 													color: '#718096',
 												}}>
-												{showAvatars ? t('hideAvatars') || 'Masquer les avatars' : t('clickToChangeAvatar') || 'Cliquer pour changer'}
+												{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
 											</Typography>
 										</Box>
 									</Button>
@@ -792,12 +833,74 @@ const Signin = () => {
 										onChange={handleChange}
 										startAdornment={
 											<InputAdornment position='start'>
-												<LanguageRounded sx={{ color: '#718096', ml: 1 }} />
+												<RecordVoiceOverRounded sx={{ color: '#718096', ml: 1 }} />
 											</InputAdornment>
-										}>
-										<MenuItem value='english'>{t('english')}</MenuItem>
-										<MenuItem value='french'>{t('french')}</MenuItem>
-										<MenuItem value='russian'>{t('russian')}</MenuItem>
+										}
+										renderValue={(selected) => {
+											const flags = {
+												english: <EnglishFlag size={20} />,
+												french: <FrenchFlag size={20} />,
+												russian: <RussianFlag size={20} />,
+											}
+											const names = {
+												english: t('english'),
+												french: t('french'),
+												russian: t('russian'),
+											}
+											return (
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													{flags[selected]}
+													<Typography>{names[selected]}</Typography>
+												</Box>
+											)
+										}}
+										MenuProps={{
+											PaperProps: {
+												sx: {
+													borderRadius: 2,
+													mt: 1,
+													boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+													'& .MuiMenuItem-root': {
+														borderRadius: 1,
+														mx: 1,
+														my: 0.5,
+														'&:hover': {
+															bgcolor: 'rgba(102, 126, 234, 0.08)',
+														},
+														'&.Mui-selected': {
+															bgcolor: 'rgba(102, 126, 234, 0.12)',
+															'&:hover': {
+																bgcolor: 'rgba(102, 126, 234, 0.16)',
+															},
+														},
+													},
+												},
+											},
+										}}>
+										<MenuItem value='english'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+													<EnglishFlag size={24} />
+												</Box>
+												<Typography sx={{ fontWeight: 500 }}>{t('english')}</Typography>
+											</Box>
+										</MenuItem>
+										<MenuItem value='french'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+													<FrenchFlag size={24} />
+												</Box>
+												<Typography sx={{ fontWeight: 500 }}>{t('french')}</Typography>
+											</Box>
+										</MenuItem>
+										<MenuItem value='russian'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+													<RussianFlag size={24} />
+												</Box>
+												<Typography sx={{ fontWeight: 500 }}>{t('russian')}</Typography>
+											</Box>
+										</MenuItem>
 									</Select>
 								</FormControl>
 
@@ -828,11 +931,64 @@ const Signin = () => {
 										onChange={handleChange}
 										startAdornment={
 											<InputAdornment position='start'>
-												<LanguageRounded sx={{ color: '#718096', ml: 1 }} />
+												<TranslateRounded sx={{ color: '#718096', ml: 1 }} />
 											</InputAdornment>
-										}>
-										<MenuItem value='french'>{t('french')}</MenuItem>
-										<MenuItem value='russian'>{t('russian')}</MenuItem>
+										}
+										renderValue={(selected) => {
+											const flags = {
+												french: <FrenchFlag size={20} />,
+												russian: <RussianFlag size={20} />,
+											}
+											const names = {
+												french: t('french'),
+												russian: t('russian'),
+											}
+											return (
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													{flags[selected]}
+													<Typography>{names[selected]}</Typography>
+												</Box>
+											)
+										}}
+										MenuProps={{
+											PaperProps: {
+												sx: {
+													borderRadius: 2,
+													mt: 1,
+													boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+													'& .MuiMenuItem-root': {
+														borderRadius: 1,
+														mx: 1,
+														my: 0.5,
+														'&:hover': {
+															bgcolor: 'rgba(102, 126, 234, 0.08)',
+														},
+														'&.Mui-selected': {
+															bgcolor: 'rgba(102, 126, 234, 0.12)',
+															'&:hover': {
+																bgcolor: 'rgba(102, 126, 234, 0.16)',
+															},
+														},
+													},
+												},
+											},
+										}}>
+										<MenuItem value='french'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+													<FrenchFlag size={24} />
+												</Box>
+												<Typography sx={{ fontWeight: 500 }}>{t('french')}</Typography>
+											</Box>
+										</MenuItem>
+										<MenuItem value='russian'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+													<RussianFlag size={24} />
+												</Box>
+												<Typography sx={{ fontWeight: 500 }}>{t('russian')}</Typography>
+											</Box>
+										</MenuItem>
 									</Select>
 								</FormControl>
 
@@ -860,12 +1016,61 @@ const Signin = () => {
 										name='languageLevel'
 										value={values.languageLevel}
 										label={t('languageLevel')}
-										onChange={handleChange}>
-										<MenuItem value='beginner'>{t('beginner')}</MenuItem>
-										<MenuItem value='intermediate'>
-											{t('intermediate')}
+										onChange={handleChange}
+										renderValue={(selected) => {
+											const levels = {
+												beginner: { icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, name: t('beginner') },
+												intermediate: { icon: <SignalCellular2Bar sx={{ color: '#f59e0b' }} />, name: t('intermediate') },
+												advanced: { icon: <SignalCellular3Bar sx={{ color: '#ef4444' }} />, name: t('advanced') },
+											}
+											return (
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													{levels[selected]?.icon}
+													<Typography>{levels[selected]?.name}</Typography>
+												</Box>
+											)
+										}}
+										MenuProps={{
+											PaperProps: {
+												sx: {
+													borderRadius: 2,
+													mt: 1,
+													boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+													'& .MuiMenuItem-root': {
+														borderRadius: 1,
+														mx: 1,
+														my: 0.5,
+														'&:hover': {
+															bgcolor: 'rgba(102, 126, 234, 0.08)',
+														},
+														'&.Mui-selected': {
+															bgcolor: 'rgba(102, 126, 234, 0.12)',
+															'&:hover': {
+																bgcolor: 'rgba(102, 126, 234, 0.16)',
+															},
+														},
+													},
+												},
+											},
+										}}>
+										<MenuItem value='beginner'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<SignalCellular1Bar sx={{ color: '#10b981' }} />
+												<Typography sx={{ fontWeight: 500 }}>{t('beginner')}</Typography>
+											</Box>
 										</MenuItem>
-										<MenuItem value='advanced'>{t('advanced')}</MenuItem>
+										<MenuItem value='intermediate'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<SignalCellular2Bar sx={{ color: '#f59e0b' }} />
+												<Typography sx={{ fontWeight: 500 }}>{t('intermediate')}</Typography>
+											</Box>
+										</MenuItem>
+										<MenuItem value='advanced'>
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+												<SignalCellular3Bar sx={{ color: '#ef4444' }} />
+												<Typography sx={{ fontWeight: 500 }}>{t('advanced')}</Typography>
+											</Box>
+										</MenuItem>
 									</Select>
 								</FormControl>
 							</>

@@ -42,6 +42,11 @@
 	"advanced": "Продвинутый",
 	"chooseAvatar": "Выберите аватар",
 	"avatarHelper": "Выберите персонажа, который вас представляет",
+	"clickToChangeAvatar": "Нажмите, чтобы изменить",
+	"hideAvatars": "Скрыть аватары",
 	"usernameAlreadyTaken": "Этот псевдоним уже занят",
-	"errorCheckingUsername": "Ошибка проверки псевдонима"
+	"errorCheckingUsername": "Ошибка проверки псевдонима",
+	"english": "Английский",
+	"french": "Французский",
+	"russian": "Русский"
 }

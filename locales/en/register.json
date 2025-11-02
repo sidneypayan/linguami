@@ -42,6 +42,11 @@
 	"advanced": "Advanced",
 	"chooseAvatar": "Choose your avatar",
 	"avatarHelper": "Select a character that represents you",
+	"clickToChangeAvatar": "Click to change",
+	"hideAvatars": "Hide avatars",
 	"usernameAlreadyTaken": "This username is already taken",
-	"errorCheckingUsername": "Error checking username"
+	"errorCheckingUsername": "Error checking username",
+	"english": "English",
+	"french": "French",
+	"russian": "Russian"
 }

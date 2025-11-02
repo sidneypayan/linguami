@@ -209,6 +209,57 @@ const FlashCards = () => {
 	const frontWord = isReversed ? translationWord : sourceWord
 	const backWord = isReversed ? sourceWord : translationWord
 
+	// Function to mask word in sentence with "..."
+	const getMaskedSentence = (sentence, wordToMask) => {
+		if (!sentence || !wordToMask) return sentence
+
+		// Normalize both strings (trim and lowercase)
+		const normalizedSentence = sentence.toLowerCase()
+		const normalizedWord = wordToMask.toLowerCase().trim()
+
+		// Find the position of the word (case insensitive)
+		const index = normalizedSentence.indexOf(normalizedWord)
+
+		if (index !== -1) {
+			// Replace the word at the exact position with "..."
+			return sentence.substring(0, index) + '...' + sentence.substring(index + wordToMask.length)
+		}
+
+		// If exact match not found, try to find the stem for declined/conjugated forms
+		if (normalizedWord.length > 4) {
+			const stem = normalizedWord.substring(0, normalizedWord.length - 2)
+			const stemIndex = normalizedSentence.indexOf(stem)
+
+			if (stemIndex !== -1) {
+				// Find the end of the word by looking for next space or punctuation
+				let endIndex = stemIndex
+				while (
+					endIndex < sentence.length &&
+					/[а-яА-ЯёЁa-zA-Z]/.test(sentence[endIndex])
+				) {
+					endIndex++
+				}
+				return sentence.substring(0, stemIndex) + '...' + sentence.substring(endIndex)
+			}
+		}
+
+		return sentence
+	}
+
+	// Determine which sentence to show based on reversed mode and showAnswer state
+	const displayedSentence = useMemo(() => {
+		if (!currentCard?.word_sentence) return null
+
+		// If normal mode (source word on front) and answer not shown, mask the word
+		// This prevents seeing the word you're supposed to guess in the example sentence
+		if (!isReversed && !showAnswer) {
+			return getMaskedSentence(currentCard.word_sentence, sourceWord)
+		}
+
+		// Otherwise show the full sentence
+		return currentCard.word_sentence
+	}, [currentCard, isReversed, showAnswer, sourceWord])
+
 	// Get button intervals for current card
 	const buttonIntervals = useMemo(() => {
 		if (!currentCard) return null
@@ -639,9 +690,9 @@ const FlashCards = () => {
 				</div>
 
 				{/* Show context sentence if available */}
-				{currentCard.word_sentence && (
+				{displayedSentence && (
 					<div className={styles.contextSentence}>
-						<em>{currentCard.word_sentence}</em>
+						<em>{displayedSentence}</em>
 					</div>
 				)}
 

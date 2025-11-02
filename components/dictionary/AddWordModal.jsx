@@ -83,6 +83,8 @@ const AddWordModal = ({ open, onClose }) => {
 					learningLangWord: validation.sanitized.learningLangWord,
 					browserLangWord: validation.sanitized.browserLangWord,
 					materialId: null,
+					userLearningLanguage,
+					locale: lang, // Interface language for translation
 				}),
 			})
 
@@ -104,7 +106,7 @@ const AddWordModal = ({ open, onClose }) => {
 			toast.success(result.message || t('word_add_success'))
 
 			// Recharger la liste des mots
-			dispatch(getAllUserWords(user.id))
+			dispatch(getAllUserWords({ userId: user.id, userLearningLanguage }))
 
 			// Réinitialiser le formulaire
 			setLearningLangWord('')

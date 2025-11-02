@@ -124,6 +124,35 @@ const MaterialsCard = ({ material }) => {
 							<PlayCircleOutline sx={{ fontSize: '2.5rem', color: 'white' }} />
 						</Box>
 					</Box>
+				</Box>
+
+				{/* Titre et badge de difficulté */}
+				<Box
+					sx={{
+						mt: 2,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1.5,
+						justifyContent: 'space-between',
+					}}>
+					<Typography
+						variant='subtitle1'
+						sx={{
+							fontWeight: 700,
+							fontSize: { xs: '0.95rem', sm: '1.05rem' },
+							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							lineHeight: 1.3,
+							display: '-webkit-box',
+							WebkitLineClamp: 2,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
+							flex: 1,
+						}}>
+						{t(material.section)}
+					</Typography>
 
 					{/* Badge de difficulté */}
 					{material.level && (
@@ -131,17 +160,13 @@ const MaterialsCard = ({ material }) => {
 							label={t(material.level)}
 							size="small"
 							sx={{
-								position: 'absolute',
-								top: 12,
-								right: 12,
-								zIndex: 2,
 								background: difficultyColors.bg,
-								backdropFilter: 'blur(10px)',
-								border: `1px solid ${difficultyColors.border}`,
+								border: `1.5px solid ${difficultyColors.border}`,
 								color: difficultyColors.text,
 								fontWeight: 700,
 								fontSize: '0.7rem',
-								height: 24,
+								height: 26,
+								flexShrink: 0,
 								'& .MuiChip-label': {
 									px: 1.5,
 								},
@@ -149,26 +174,6 @@ const MaterialsCard = ({ material }) => {
 						/>
 					)}
 				</Box>
-
-				{/* Titre */}
-				<Typography
-					mt={2}
-					variant='subtitle1'
-					sx={{
-						fontWeight: 700,
-						fontSize: { xs: '0.95rem', sm: '1.05rem' },
-						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
-						lineHeight: 1.3,
-						display: '-webkit-box',
-						WebkitLineClamp: 2,
-						WebkitBoxOrient: 'vertical',
-						overflow: 'hidden',
-					}}>
-					{t(material.section)}
-				</Typography>
 			</Box>
 		</Link>
 	)

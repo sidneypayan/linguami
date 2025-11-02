@@ -217,8 +217,7 @@ const LeaderboardPage = () => {
 				</Container>
 			</Box>
 
-			<Box sx={{ pt: { xs: 'calc(70px + 32px)', sm: 'calc(80px + 32px)', lg: 0 } }}>
-				<Container maxWidth="lg" sx={{ py: { xs: 0, md: 4 }, pb: 8, pt: { xs: 0, lg: 3 }, px: { xs: 0, sm: 2, md: 3 } }}>
+			<Container maxWidth="lg" sx={{ pt: { xs: 0, sm: 'calc(80px + 32px)', lg: 3 }, pb: 8, px: { xs: 0, sm: 2, md: 3 }, mt: 0 }}>
 
 				{/* User Stats Card - Compact version */}
 				{leaderboardData?.userStats && (
@@ -226,8 +225,11 @@ const LeaderboardPage = () => {
 						elevation={0}
 						sx={{
 							borderRadius: { xs: 0, sm: 3 },
-							p: { xs: 1.5, sm: 3 },
-							mb: { xs: 2, sm: 4 },
+							pt: { xs: 0, sm: 3 },
+							px: { xs: 1.5, sm: 3 },
+							pb: { xs: 1.5, sm: 3 },
+							mb: { xs: 1.5, sm: 4 },
+							mt: 0,
 							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
 							border: { xs: 'none', sm: '2px solid' },
 							borderColor: { sm: alpha('#667eea', 0.3) },
@@ -328,7 +330,7 @@ const LeaderboardPage = () => {
 						</Box>
 
 						{/* Mobile version - Compact 2x2 grid */}
-						<Box sx={{ display: { xs: 'grid', sm: 'none' }, gridTemplateColumns: 'repeat(2, 1fr)', gap: 1 }}>
+						<Box sx={{ display: { xs: 'grid', sm: 'none' }, gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, p: 1.5 }}>
 							{/* Votre Classement */}
 							<Box sx={{
 								display: 'flex',
@@ -839,7 +841,6 @@ const LeaderboardPage = () => {
 					</Typography>
 				</Box>
 			</Container>
-			</Box>
 		</>
 	)
 }

@@ -14,6 +14,8 @@ import {
 import {
 	Lock,
 	WaterDrop,
+	ExpandMore,
+	ExpandLess,
 } from '@mui/icons-material'
 import {
 	FaTrophy,
@@ -74,6 +76,7 @@ import { GiWaterDrop, GiWaveSurfer } from 'react-icons/gi'
 import useTranslation from 'next-translate/useTranslation'
 import SEO from '../components/SEO'
 import { useUserContext } from '../context/user'
+import Head from 'next/head'
 
 const StatisticsPage = () => {
 	const { t } = useTranslation('stats')
@@ -82,6 +85,7 @@ const StatisticsPage = () => {
 	const [stats, setStats] = useState(null)
 	const [xpProfile, setXpProfile] = useState(null)
 	const [goals, setGoals] = useState(null)
+	const [expandedBadges, setExpandedBadges] = useState({})
 
 	useEffect(() => {
 		if (user) {
@@ -246,7 +250,7 @@ const StatisticsPage = () => {
 			icon: <FaStar />,
 			color: '#8b5cf6',
 			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-			badges: [5, 10, 15, 20, 30, 50].map((level, index) => {
+			badges: [5, 10, 15, 20, 30, 50, 60].map((level, index) => {
 				return {
 					value: level,
 					icon: (
@@ -258,10 +262,32 @@ const StatisticsPage = () => {
 							style={{ objectFit: 'cover', borderRadius: '50%' }}
 						/>
 					),
-					isUnlocked: xpProfile ? xpProfile.currentLevel >= level : false,
+					isUnlocked: index === 0 ? true : (xpProfile ? xpProfile.currentLevel >= level : false),
 				}
 			}),
 			getCurrentValue: () => xpProfile ? xpProfile.currentLevel : 0,
+		},
+		reviewedWords: {
+			title: t('wordsReviewedBadges'),
+			icon: <FaRedo />,
+			color: '#8B5CF6',
+			gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+			badges: [50, 100, 250, 500, 1000, 5000, 10000].map((count, index) => {
+				return {
+					value: count,
+					icon: (
+						<Image
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/0${index + 1}_reviewed_words_badge.png`}
+							alt={`${count} words`}
+							width={90}
+							height={90}
+							style={{ objectFit: 'cover', borderRadius: '50%' }}
+						/>
+					),
+					isUnlocked: index === 0 ? true : (stats ? (stats.totalWordsReviewed || 0) >= count : false),
+				}
+			}),
+			getCurrentValue: () => stats ? (stats.totalWordsReviewed || 0) : 0,
 		},
 		/* Temporarily hidden - waiting for images
 		streaks: {
@@ -278,21 +304,6 @@ const StatisticsPage = () => {
 				}
 			}),
 			getCurrentValue: () => xpProfile ? xpProfile.longestStreak : 0,
-		},
-		wordsAdded: {
-			title: t('wordsAddedBadges'),
-			icon: <FaBook />,
-			color: '#10B981',
-			gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-			badges: [10, 50, 100, 150, 200, 250, 300].map((count, index) => {
-				const IconComponent = wordsAddedIcons[index]
-				return {
-					value: count,
-					icon: <IconComponent />,
-					isUnlocked: stats ? stats.totalWords >= count : false,
-				}
-			}),
-			getCurrentValue: () => stats ? stats.totalWords : 0,
 		},
 		wordsReviewed: {
 			title: t('wordsReviewedBadges'),
@@ -330,60 +341,25 @@ const StatisticsPage = () => {
 	return (
 		<>
 			<SEO title={t('pageTitle')} description={t('pageDescription')} />
+			<Head>
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+				<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+			</Head>
 
-			{/* Compact Header */}
-			<Box
-				sx={{
-					pt: { xs: '5.5rem', md: '6rem' },
-					pb: 3,
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: '#fafafa',
-				}}>
-				<Container maxWidth='xl'>
-					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1 }}>
-						<FaChartLine
-							style={{
-								fontSize: '2rem',
-								color: '#8b5cf6',
-							}}
-						/>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '1.75rem', sm: '2rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-							}}>
-							{t('pageTitle')}
-						</Typography>
-					</Box>
-					<Typography
-						variant='body1'
-						align='center'
-						sx={{
-							color: '#64748b',
-							fontSize: { xs: '0.9375rem', sm: '1rem' },
-						}}>
-						{t('pageDescription')}
-					</Typography>
-				</Container>
-			</Box>
-
-			<Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 }, pb: 8 }}>
+			<Container maxWidth="xl" sx={{ pt: { xs: '5.5rem', md: '6rem' }, py: { xs: 3, md: 4 }, pb: 8 }}>
 				{/* XP Profile Card - Circular Design */}
 				{xpProfile && (
 					<Paper
 						elevation={0}
 						sx={{
-							borderRadius: 4,
+							borderRadius: { xs: 0, md: 4 },
 							p: { xs: 3, md: 4 },
-							mb: 4,
+							mb: { xs: 2, md: 4 },
 							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
 							backdropFilter: 'blur(20px)',
-							boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)',
-							border: '1px solid rgba(139, 92, 246, 0.15)',
+							boxShadow: { xs: 'none', md: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)' },
+							border: { xs: 'none', md: '1px solid rgba(139, 92, 246, 0.15)' },
 							position: 'relative',
 							overflow: 'hidden',
 							'&::before': {
@@ -986,22 +962,28 @@ const StatisticsPage = () => {
 					<Paper
 						elevation={0}
 						sx={{
-							borderRadius: 3,
+							borderRadius: { xs: 0, md: 3 },
 							p: { xs: 3, md: 5 },
-							mb: 4,
+							mb: { xs: 2, md: 4 },
 							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-							border: '2px solid transparent',
-							backgroundImage: `
-								linear-gradient(white, white),
-								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-							`,
+							border: { xs: 'none', md: '2px solid transparent' },
+							backgroundImage: {
+								xs: 'none',
+								md: `
+									linear-gradient(white, white),
+									linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+								`
+							},
 							backgroundOrigin: 'border-box',
 							backgroundClip: 'padding-box, border-box',
-							boxShadow: `
-								0 10px 40px rgba(139, 92, 246, 0.12),
-								0 2px 8px rgba(0, 0, 0, 0.04),
-								inset 0 1px 0 rgba(255, 255, 255, 0.9)
-							`,
+							boxShadow: {
+								xs: 'none',
+								md: `
+									0 10px 40px rgba(139, 92, 246, 0.12),
+									0 2px 8px rgba(0, 0, 0, 0.04),
+									inset 0 1px 0 rgba(255, 255, 255, 0.9)
+								`
+							},
 							position: 'relative',
 							overflow: 'hidden',
 							'&::before': {
@@ -1254,22 +1236,28 @@ const StatisticsPage = () => {
 				<Paper
 					elevation={0}
 					sx={{
-						borderRadius: 3,
+						borderRadius: { xs: 0, md: 3 },
 						p: { xs: 3, sm: 4, md: 5 },
-						mb: 4,
+						mb: { xs: 0, md: 4 },
 						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-						border: '2px solid transparent',
-						backgroundImage: `
-							linear-gradient(white, white),
-							linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-						`,
+						border: { xs: 'none', md: '2px solid transparent' },
+						backgroundImage: {
+							xs: 'none',
+							md: `
+								linear-gradient(white, white),
+								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+							`
+						},
 						backgroundOrigin: 'border-box',
 						backgroundClip: 'padding-box, border-box',
-						boxShadow: `
-							0 10px 40px rgba(139, 92, 246, 0.12),
-							0 2px 8px rgba(0, 0, 0, 0.04),
-							inset 0 1px 0 rgba(255, 255, 255, 0.9)
-						`,
+						boxShadow: {
+							xs: 'none',
+							md: `
+								0 10px 40px rgba(139, 92, 246, 0.12),
+								0 2px 8px rgba(0, 0, 0, 0.04),
+								inset 0 1px 0 rgba(255, 255, 255, 0.9)
+							`
+						},
 						position: 'relative',
 						overflow: 'hidden',
 						'&::before': {
@@ -1334,50 +1322,80 @@ const StatisticsPage = () => {
 
 					{/* Badges Grid */}
 					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-						{Object.entries(badgesConfig).map(([key, category]) => (
-							<Box key={key}>
-								{/* Category Header */}
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 2,
-										mb: 3,
-										pb: 2,
-										borderBottom: '2px solid #E2E8F0',
-									}}>
+						{Object.entries(badgesConfig).map(([key, category]) => {
+							const isExpandedMobile = expandedBadges[key]
+							const toggleExpanded = () => {
+								setExpandedBadges(prev => ({
+									...prev,
+									[key]: !prev[key]
+								}))
+							}
+
+							return (
+								<Box key={key}>
+									{/* Category Header */}
 									<Box
+										onClick={toggleExpanded}
 										sx={{
-											width: 40,
-											height: 40,
-											borderRadius: 2,
-											background: category.color,
 											display: 'flex',
 											alignItems: 'center',
-											justifyContent: 'center',
-											color: 'white',
+											gap: 2,
+											mb: 3,
+											pb: 2,
+											borderBottom: '2px solid #E2E8F0',
+											cursor: { xs: 'pointer', md: 'default' },
+											transition: 'all 0.3s ease',
+											'&:hover': {
+												backgroundColor: { xs: alpha(category.color, 0.05), md: 'transparent' },
+											},
 										}}>
-										{category.icon}
+										<Box
+											sx={{
+												width: 40,
+												height: 40,
+												borderRadius: 2,
+												background: category.color,
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												color: 'white',
+											}}>
+											{category.icon}
+										</Box>
+										<Typography
+											variant="h6"
+											sx={{
+												fontWeight: 700,
+												color: '#1E293B',
+												fontSize: { xs: '1.1rem', md: '1.25rem' },
+												flex: 1,
+											}}>
+											{category.title}
+										</Typography>
+										<Box
+											sx={{
+												display: { xs: 'flex', md: 'none' },
+												alignItems: 'center',
+												justifyContent: 'center',
+												width: 32,
+												height: 32,
+												borderRadius: '50%',
+												background: alpha(category.color, 0.1),
+												color: category.color,
+												transition: 'all 0.3s ease',
+											}}>
+											{isExpandedMobile ? <ExpandLess /> : <ExpandMore />}
+										</Box>
 									</Box>
-									<Typography
-										variant="h6"
-										sx={{
-											fontWeight: 700,
-											color: '#1E293B',
-											fontSize: { xs: '1.1rem', md: '1.25rem' },
-										}}>
-										{category.title}
-									</Typography>
-								</Box>
 
-								{/* Badges Row */}
-								<Box
-									sx={{
-										display: 'flex',
-										flexWrap: 'wrap',
-										gap: 2.5,
-										justifyContent: { xs: 'center', sm: 'flex-start' },
-									}}>
+									{/* Badges Row */}
+									<Box
+										sx={{
+											display: { xs: isExpandedMobile ? 'flex' : 'none', md: 'flex' },
+											flexWrap: 'wrap',
+											gap: 2.5,
+											justifyContent: { xs: 'center', sm: 'flex-start' },
+										}}>
 									{category.badges.map((badge, index) => {
 										return (
 											<Box
@@ -1427,7 +1445,7 @@ const StatisticsPage = () => {
 													</Box>
 												</Box>
 
-												{/* Chiffre sous le cercle - Design moderne */}
+												{/* Chiffre sous le cercle - Design Médiéval Fantasy */}
 												<Box
 													sx={{
 														mt: 1.5,
@@ -1437,19 +1455,18 @@ const StatisticsPage = () => {
 													<Box
 														sx={{
 															position: 'relative',
-															px: { xs: 2, sm: 2.5 },
-															py: { xs: 0.8, sm: 1 },
-															borderRadius: '20px',
+															px: { xs: 2.5, sm: 3 },
+															py: { xs: 1, sm: 1.2 },
+															borderRadius: '8px',
 															background: badge.isUnlocked
-																? `linear-gradient(180deg, ${alpha(category.color, 0.25)} 0%, ${alpha(category.color, 0.15)} 100%)`
-																: 'linear-gradient(180deg, rgba(226, 232, 240, 0.8) 0%, rgba(203, 213, 225, 0.6) 100%)',
+																? 'linear-gradient(145deg, #2d2416 0%, #1a1410 100%)'
+																: 'linear-gradient(145deg, #4a5568 0%, #2d3748 100%)',
 															boxShadow: badge.isUnlocked
-																? `0 4px 12px ${alpha(category.color, 0.25)}, inset 0 1px 0 ${alpha('#ffffff', 0.4)}`
-																: '0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)',
+																? `0 4px 8px rgba(0, 0, 0, 0.6), inset 0 1px 1px ${alpha(category.color, 0.3)}, inset 0 -1px 1px rgba(0, 0, 0, 0.8)`
+																: '0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
 															border: badge.isUnlocked
-																? `1.5px solid ${alpha(category.color, 0.4)}`
-																: '1.5px solid rgba(203, 213, 225, 0.8)',
-															backdropFilter: 'blur(10px)',
+																? `3px solid ${category.color}`
+																: '2px solid rgba(100, 116, 139, 0.6)',
 															transition: 'all 0.3s ease',
 															'&::before': {
 																content: '""',
@@ -1457,28 +1474,58 @@ const StatisticsPage = () => {
 																top: 0,
 																left: 0,
 																right: 0,
-																height: '50%',
+																bottom: 0,
+																borderRadius: '6px',
 																background: badge.isUnlocked
-																	? `linear-gradient(180deg, ${alpha('#ffffff', 0.3)} 0%, transparent 100%)`
-																	: 'linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)',
-																borderRadius: '20px 20px 0 0',
+																	? `radial-gradient(circle at 30% 30%, ${alpha(category.color, 0.15)} 0%, transparent 70%)`
+																	: 'none',
+																pointerEvents: 'none',
+															},
+															'&::after': {
+																content: '""',
+																position: 'absolute',
+																top: 0,
+																left: 0,
+																right: 0,
+																bottom: 0,
+																borderRadius: '6px',
+																background: badge.isUnlocked
+																	? `
+																		repeating-linear-gradient(
+																			0deg,
+																			transparent,
+																			transparent 2px,
+																			rgba(0, 0, 0, 0.03) 2px,
+																			rgba(0, 0, 0, 0.03) 4px
+																		),
+																		repeating-linear-gradient(
+																			90deg,
+																			transparent,
+																			transparent 2px,
+																			rgba(0, 0, 0, 0.03) 2px,
+																			rgba(0, 0, 0, 0.03) 4px
+																		)
+																	`
+																	: 'none',
+																opacity: 0.3,
 																pointerEvents: 'none',
 															},
 														}}>
 														<Typography
 															variant="h5"
 															sx={{
-																fontWeight: 900,
-																color: badge.isUnlocked ? darkenColor(category.color, 0.15) : '#475569',
-																fontSize: { xs: '1rem', sm: '1.1rem' },
+																fontWeight: 800,
+																color: badge.isUnlocked ? category.color : '#94a3b8',
+																fontSize: { xs: '1.1rem', sm: '1.25rem' },
 																textAlign: 'center',
 																lineHeight: 1,
-																letterSpacing: '0.5px',
+																letterSpacing: '2px',
 																textShadow: badge.isUnlocked
-																	? `0 1px 2px ${alpha(category.color, 0.2)}`
-																	: '0 1px 2px rgba(0, 0, 0, 0.1)',
+																	? `0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 0 ${alpha(category.color, 0.5)}`
+																	: '0 1px 2px rgba(0, 0, 0, 0.6)',
 																position: 'relative',
 																zIndex: 1,
+																fontFamily: '"Cinzel", serif',
 															}}>
 															{badge.value}
 														</Typography>
@@ -1487,9 +1534,10 @@ const StatisticsPage = () => {
 											</Box>
 										)
 									})}
-							</Box>
-						</Box>
-						))}
+									</Box>
+								</Box>
+							)
+						})}
 					</Box>
 				</Paper>
 

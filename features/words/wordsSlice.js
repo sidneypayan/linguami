@@ -75,15 +75,6 @@ export const addWordToDictionary = createAsyncThunk(
 			locale,
 		} = word
 
-		console.log('📝 addWordToDictionary called with:', {
-			originalWord,
-			translatedWord,
-			userLearningLanguage,
-			locale,
-			userId,
-			materialId
-		})
-
 		// Déterminer dans quelles colonnes insérer les mots selon les langues
 		const wordData = {
 			word_ru: null,
@@ -109,8 +100,6 @@ export const addWordToDictionary = createAsyncThunk(
 			wordData.word_en = translatedWord
 		}
 
-		console.log('📝 wordData to insert:', wordData)
-
 		const insertData = {
 			...wordData,
 			user_id: userId,
@@ -130,7 +119,8 @@ export const addWordToDictionary = createAsyncThunk(
 			updated_at: new Date().toISOString(),
 		}
 
-		console.log('📝 Full insert data:', insertData)
+		// Add word_lang to track the language being learned
+		insertData.word_lang = userLearningLanguage
 
 		try {
 			const { data, error } = await supabase
@@ -197,12 +187,16 @@ export const getUserMaterialWords = createAsyncThunk(
 
 export const getAllUserWords = createAsyncThunk(
 	'words/getAllUserWords',
-	async (userId, thunkAPI) => {
+	async (param, thunkAPI) => {
 		try {
+			const { userId, userLearningLanguage } = param
+
+			// Filter by word_lang column - much faster than JOIN
 			const { data, error } = await supabase
 				.from('user_words')
 				.select('*')
 				.eq('user_id', userId)
+				.eq('word_lang', userLearningLanguage)
 
 			if (error) return thunkAPI.rejectWithValue(error)
 			return data

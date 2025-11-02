@@ -86,18 +86,18 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 					</Box>
 
 					{/* Navigation Buttons */}
-					<Box sx={{ display: 'flex', gap: 2 }}>
+					<Box sx={{ display: 'flex', gap: { xs: 1, md: 2 } }}>
 						{navButtons
 							.filter(btn => btn.variant === 'contained')
 							.map(btn => (
 								<Link key={btn.id} href={btn.href} passHref style={{ textDecoration: 'none' }}>
 									<Button
 										variant={btn.variant}
-										startIcon={btn.icon}
 										sx={{
 											bgcolor: activePage === btn.id ? '#5568d3' : '#667eea',
 											color: 'white',
-											px: 3,
+											minWidth: { xs: '48px', md: 'auto' },
+											px: { xs: 0, md: 3 },
 											py: 1.2,
 											borderRadius: 2,
 											textTransform: 'none',
@@ -107,8 +107,14 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 												bgcolor: '#5568d3',
 												boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
 											},
+											'& .MuiButton-startIcon': {
+												margin: { xs: 0, md: '0 8px 0 -4px' },
+											},
 										}}>
-										{btn.label}
+										{btn.icon}
+										<Box component="span" sx={{ display: { xs: 'none', md: 'inline' }, ml: 1 }}>
+											{btn.label}
+										</Box>
 									</Button>
 								</Link>
 							))}

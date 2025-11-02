@@ -42,6 +42,11 @@
 	"advanced": "Avancé",
 	"chooseAvatar": "Choisissez votre avatar",
 	"avatarHelper": "Sélectionnez un personnage qui vous représente",
+	"clickToChangeAvatar": "Cliquer pour changer",
+	"hideAvatars": "Masquer les avatars",
 	"usernameAlreadyTaken": "Ce pseudo est déjà utilisé",
-	"errorCheckingUsername": "Erreur lors de la vérification du pseudo"
+	"errorCheckingUsername": "Erreur lors de la vérification du pseudo",
+	"english": "Anglais",
+	"french": "Français",
+	"russian": "Russe"
 }

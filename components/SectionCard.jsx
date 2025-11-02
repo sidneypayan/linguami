@@ -215,13 +215,10 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							component='div'
 							variant='h6'
 							sx={{
-								lineHeight: '1.5rem',
-								fontSize: { xs: '1rem', sm: '1.15rem' },
+								lineHeight: '1.6rem',
+								fontSize: { xs: '1.1rem', sm: '1.25rem' },
 								fontWeight: 700,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
+								color: '#7c3aed',
 								mb: 0.5,
 							}}>
 							{material.title}
@@ -234,19 +231,9 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								sx={{
 									fontWeight: 600,
 									color: '#718096',
-									fontSize: { xs: '0.8rem', sm: '0.875rem' },
+									fontSize: { xs: '0.875rem', sm: '0.95rem' },
 								}}>
 								{material.section}
-							</Typography>
-							<Typography
-								variant='subtitle2'
-								component='div'
-								sx={{
-									fontWeight: 700,
-									color: '#8b5cf6',
-									fontSize: { xs: '0.8rem', sm: '0.875rem' },
-								}}>
-								{material.level}
 							</Typography>
 						</Box>
 					</Box>
@@ -263,25 +250,32 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					</Box>
 				</CardContent>
 
-				{/* Badge de niveau */}
+				{/* Badge de niveau élégant */}
 				{material.level && (
 					<Chip
 						label={difficultyInfo.label}
 						size="small"
 						sx={{
 							position: 'absolute',
-							top: 12,
-							left: 12,
-							zIndex: 2,
-							background: difficultyInfo.bg,
-							backdropFilter: 'blur(10px)',
-							border: `1px solid ${difficultyInfo.border}`,
+							top: 10,
+							left: 10,
+							zIndex: 3,
+							background: 'rgba(255, 255, 255, 0.96)',
+							backdropFilter: 'blur(8px)',
+							border: `1.5px solid ${difficultyInfo.border}`,
 							color: difficultyInfo.text,
 							fontWeight: 700,
 							fontSize: '0.7rem',
-							height: 24,
+							height: 26,
+							boxShadow: `0 2px 12px ${difficultyInfo.border}30, 0 1px 4px rgba(0, 0, 0, 0.12)`,
+							transition: 'all 0.2s ease',
 							'& .MuiChip-label': {
-								px: 1.5,
+								px: 1.75,
+								fontFamily: 'inherit',
+							},
+							'&:hover': {
+								boxShadow: `0 4px 16px ${difficultyInfo.border}50, 0 2px 6px rgba(0, 0, 0, 0.15)`,
+								transform: 'translateY(-1px)',
 							},
 						}}
 					/>
