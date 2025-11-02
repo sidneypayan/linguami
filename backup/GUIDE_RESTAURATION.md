@@ -7,10 +7,9 @@ Ce guide vous explique comment restaurer votre base de données Supabase en cas 
 1. [Prérequis](#prérequis)
 2. [Scénarios de restauration](#scénarios-de-restauration)
 3. [Restauration complète depuis SQL](#restauration-complète-depuis-sql)
-4. [Restauration depuis JSON](#restauration-depuis-json)
-5. [Restauration d'urgence via Supabase](#restauration-durgence-via-supabase)
-6. [Vérification après restauration](#vérification-après-restauration)
-7. [Dépannage](#dépannage)
+4. [Restauration d'urgence via Supabase](#restauration-durgence-via-supabase)
+5. [Vérification après restauration](#vérification-après-restauration)
+6. [Dépannage](#dépannage)
 
 ---
 
@@ -77,18 +76,9 @@ Pour obtenir votre `DATABASE_URL` :
 ### Scénario 3 : Migration vers un nouveau projet
 **Situation** : Vous voulez migrer vers un nouveau projet Supabase ou dupliquer l'environnement.
 
-**Solution** : Restauration complète depuis SQL ou JSON
+**Solution** : Restauration complète depuis SQL
 
 → Voir [Restauration complète depuis SQL](#restauration-complète-depuis-sql)
-
----
-
-### Scénario 4 : Restauration sélective
-**Situation** : Vous voulez restaurer seulement certaines tables ou données.
-
-**Solution** : Utilisation des exports JSON
-
-→ Voir [Restauration depuis JSON](#restauration-depuis-json)
 
 ---
 
@@ -156,129 +146,6 @@ psql "$DATABASE_URL" -c "\dt"
 
 # Compter les enregistrements dans une table clé
 psql "$DATABASE_URL" -c "SELECT COUNT(*) FROM user_xp_profile;"
-```
-
----
-
-## Restauration depuis JSON
-
-Cette méthode permet de restaurer des données spécifiques ou toutes les données à partir des exports JSON.
-
-### Script de restauration JSON
-
-Créez un fichier `backup/restore-json.js` :
-
-```javascript
-#!/usr/bin/env node
-
-const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
-const path = require('path');
-
-require('dotenv').config({ path: '.env.local' });
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('ERREUR: Variables d\'environnement manquantes');
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-async function restoreTable(tableName, backupFolder) {
-  console.log(`\nRestauration de ${tableName}...`);
-
-  const filePath = path.join(backupFolder, `${tableName}.json`);
-
-  if (!fs.existsSync(filePath)) {
-    console.error(`  ✗ Fichier introuvable: ${filePath}`);
-    return;
-  }
-
-  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  console.log(`  Nombre d'enregistrements: ${data.length}`);
-
-  if (data.length === 0) {
-    console.log(`  ⚠ Aucune donnée à restaurer`);
-    return;
-  }
-
-  // Option 1: Supprimer toutes les données existantes (ATTENTION!)
-  // const { error: deleteError } = await supabase.from(tableName).delete().neq('id', '00000000-0000-0000-0000-000000000000');
-  // if (deleteError) console.error(`  Erreur de suppression: ${deleteError.message}`);
-
-  // Option 2: Insertion par lots
-  const BATCH_SIZE = 100;
-  let inserted = 0;
-
-  for (let i = 0; i < data.length; i += BATCH_SIZE) {
-    const batch = data.slice(i, i + BATCH_SIZE);
-
-    const { error } = await supabase.from(tableName).upsert(batch, {
-      onConflict: 'id', // Ajustez selon votre clé primaire
-    });
-
-    if (error) {
-      console.error(`  Erreur batch ${i}-${i + batch.length}: ${error.message}`);
-    } else {
-      inserted += batch.length;
-      process.stdout.write(`\r  Progression: ${inserted}/${data.length}`);
-    }
-  }
-
-  console.log(`\n  ✓ Restauration terminée: ${inserted} enregistrements`);
-}
-
-async function main() {
-  const backupFolder = process.argv[2];
-
-  if (!backupFolder) {
-    console.error('Usage: node restore-json.js <backup_folder>');
-    console.error('Exemple: node restore-json.js backup/exports/backup_2025-01-15T10-30-00');
-    process.exit(1);
-  }
-
-  if (!fs.existsSync(backupFolder)) {
-    console.error(`Dossier introuvable: ${backupFolder}`);
-    process.exit(1);
-  }
-
-  console.log('=== Restauration depuis JSON ===');
-  console.log(`Dossier: ${backupFolder}\n`);
-
-  // Liste des tables à restaurer (dans le bon ordre!)
-  const tables = [
-    'users_profile',
-    'user_xp_profile',
-    'xp_rewards_config',
-    'xp_transactions',
-    'user_h5p_progress',
-    'user_goals',
-    'user_achievements',
-    'weekly_xp_tracking',
-    'monthly_xp_tracking',
-  ];
-
-  for (const table of tables) {
-    await restoreTable(table, backupFolder);
-  }
-
-  console.log('\n=== Restauration terminée ===');
-}
-
-main().catch(console.error);
-```
-
-### Utilisation
-
-```bash
-# Rendre le script exécutable (Linux/Mac)
-chmod +x backup/restore-json.js
-
-# Restaurer depuis un backup spécifique
-node backup/restore-json.js backup/exports/backup_2025-01-15T10-30-00
 ```
 
 ---

@@ -14,7 +14,13 @@
       "Bash(timeout 10 npm run dev)",
       "Bash(git stash:*)",
       "Bash(git checkout:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(rm:*)",
+      "Bash(taskkill:*)",
+      "Bash(cd:*)",
+      "Bash(npx eslint:*)",
+      "Bash(node:*)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []

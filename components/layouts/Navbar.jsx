@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useTranslation from 'next-translate/useTranslation'
 import { useUserContext } from '../../context/user.js'
 import { useRouter } from 'next/router'
@@ -76,6 +76,11 @@ const Navbar = props => {
 
 	const { window } = props
 	const [mobileOpen, setMobileOpen] = useState(false)
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen)
@@ -322,7 +327,7 @@ const Navbar = props => {
 			</Box>
 
 			{/* Bouton Sign in pour mobile */}
-			{!isUserLoggedIn && (
+			{isMounted && !isUserLoggedIn && (
 				<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1 }}>
 					<Link href={`/signin`}>
 						<Button
@@ -635,80 +640,84 @@ const Navbar = props => {
 						)}
 
 						{/* Language buttons - only show when not in material/blog detail */}
-						{!router.query.material && !router.query.slug && (
+						{isMounted && !router.query.material && !router.query.slug && (
 							<>
 								<InterfaceLanguageMenu />
 								<LanguageMenu />
 							</>
 						)}
 
-						{isUserLoggedIn ? (
-							<UserMenu />
-						) : (
-							<Box
-								sx={{
-									display: { xs: 'none', lg: 'flex' },
-									gap: 1.5,
-								}}>
-								<Link href={`/signin`}>
-									<Button
-										variant='contained'
+						{isMounted && (
+							<>
+								{isUserLoggedIn ? (
+									<UserMenu />
+								) : (
+									<Box
 										sx={{
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%)',
-											backdropFilter: 'blur(10px)',
-											color: 'white',
-											fontWeight: 700,
-											textTransform: 'none',
-											px: 3.5,
-											py: 1,
-											borderRadius: 2,
-											boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)',
-											border: '1px solid rgba(139, 92, 246, 0.5)',
-											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-											position: 'relative',
-											overflow: 'hidden',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: '-100%',
-												width: '100%',
-												height: '100%',
-												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-												transition: 'left 0.5s ease',
-											},
-											'&::after': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: 0,
-												right: 0,
-												bottom: 0,
-												borderRadius: 2,
-												background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)',
-												opacity: 0,
-												transition: 'opacity 0.3s ease',
-											},
-											'&:hover': {
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%)',
-												transform: 'translateY(-3px) scale(1.05)',
-												boxShadow: '0 6px 30px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
-												border: '1px solid rgba(139, 92, 246, 0.8)',
-												'&::before': {
-													left: '100%',
-												},
-												'&::after': {
-													opacity: 1,
-												},
-											},
-											'&:active': {
-												transform: 'translateY(-1px) scale(1.02)',
-											},
+											display: { xs: 'none', lg: 'flex' },
+											gap: 1.5,
 										}}>
-										{t('signin')}
-									</Button>
-								</Link>
-							</Box>
+										<Link href={`/signin`}>
+											<Button
+												variant='contained'
+												sx={{
+													background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%)',
+													backdropFilter: 'blur(10px)',
+													color: 'white',
+													fontWeight: 700,
+													textTransform: 'none',
+													px: 3.5,
+													py: 1,
+													borderRadius: 2,
+													boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)',
+													border: '1px solid rgba(139, 92, 246, 0.5)',
+													transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+													position: 'relative',
+													overflow: 'hidden',
+													'&::before': {
+														content: '""',
+														position: 'absolute',
+														top: 0,
+														left: '-100%',
+														width: '100%',
+														height: '100%',
+														background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+														transition: 'left 0.5s ease',
+													},
+													'&::after': {
+														content: '""',
+														position: 'absolute',
+														top: 0,
+														left: 0,
+														right: 0,
+														bottom: 0,
+														borderRadius: 2,
+														background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)',
+														opacity: 0,
+														transition: 'opacity 0.3s ease',
+													},
+													'&:hover': {
+														background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%)',
+														transform: 'translateY(-3px) scale(1.05)',
+														boxShadow: '0 6px 30px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
+														border: '1px solid rgba(139, 92, 246, 0.8)',
+														'&::before': {
+															left: '100%',
+														},
+														'&::after': {
+															opacity: 1,
+														},
+													},
+													'&:active': {
+														transform: 'translateY(-1px) scale(1.02)',
+													},
+												}}>
+												{t('signin')}
+											</Button>
+										</Link>
+									</Box>
+								)}
+							</>
 						)}
 					</Box>
 				</Toolbar>

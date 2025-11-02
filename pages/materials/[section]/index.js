@@ -202,6 +202,7 @@ const Section = () => {
 					selectedStatus={selectedStatus}
 					currentView={viewMode}
 					showNotStudiedFilter={true}
+					showStudiedFilter={false}
 					translationNamespace="materials"
 				/>
 

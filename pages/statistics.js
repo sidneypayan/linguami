@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
 	Box,
 	Container,
@@ -135,13 +136,6 @@ const StatisticsPage = () => {
 	// Vocabulary cards
 	const vocabularyCards = [
 		{
-			title: t('totalWordsInDictionary'),
-			value: stats?.totalWords || 0,
-			icon: <FaBook />,
-			color: '#8b5cf6',
-			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-		},
-		{
 			title: t('wordsAddedToday'),
 			value: stats?.wordsAddedToday || 0,
 			icon: <FaChartLine />,
@@ -161,6 +155,13 @@ const StatisticsPage = () => {
 			icon: <FaChartLine />,
 			color: '#F59E0B',
 			gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+		},
+		{
+			title: t('wordsReviewedToday'),
+			value: stats?.wordsReviewedToday || 0,
+			icon: <FaRedo />,
+			color: '#8B5CF6',
+			gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
 		},
 	]
 
@@ -191,13 +192,6 @@ const StatisticsPage = () => {
 			icon: <FaCheckCircle />,
 			color: '#10B981',
 			gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-		},
-		{
-			title: t('wordsReviewedToday'),
-			value: stats?.wordsReviewedToday || 0,
-			icon: <FaRedo />,
-			color: '#F59E0B',
-			gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
 		},
 	]
 
@@ -252,16 +246,24 @@ const StatisticsPage = () => {
 			icon: <FaStar />,
 			color: '#8b5cf6',
 			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-			badges: [5, 10, 15, 20, 30].map((level, index) => {
-				const IconComponent = levelIcons[index]
+			badges: [5, 10, 15, 20, 30, 50].map((level, index) => {
 				return {
 					value: level,
-					icon: <IconComponent />,
+					icon: (
+						<Image
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/xp_${index + 1}.png`}
+							alt={`Level ${level}`}
+							width={90}
+							height={90}
+							style={{ objectFit: 'cover', borderRadius: '50%' }}
+						/>
+					),
 					isUnlocked: xpProfile ? xpProfile.currentLevel >= level : false,
 				}
 			}),
 			getCurrentValue: () => xpProfile ? xpProfile.currentLevel : 0,
 		},
+		/* Temporarily hidden - waiting for images
 		streaks: {
 			title: t('streakBadges'),
 			icon: <FaFire />,
@@ -322,6 +324,7 @@ const StatisticsPage = () => {
 			}),
 			getCurrentValue: () => stats ? stats.materialsFinished : 0,
 		},
+		*/
 	}
 
 	return (
@@ -375,14 +378,70 @@ const StatisticsPage = () => {
 						elevation={0}
 						sx={{
 							borderRadius: 4,
-							p: 4,
-							mb: 3,
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							backdropFilter: 'blur(10px)',
-							color: 'white',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-							border: '1px solid rgba(139, 92, 246, 0.2)',
+							p: { xs: 3, md: 4 },
+							mb: 4,
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+							backdropFilter: 'blur(20px)',
+							boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)',
+							border: '1px solid rgba(139, 92, 246, 0.15)',
+							position: 'relative',
+							overflow: 'hidden',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								height: '4px',
+								background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
+							},
 						}}>
+						{/* Motivational message - Epic banner */}
+						<Box
+							sx={{
+								position: 'relative',
+								textAlign: 'center',
+								mb: 4,
+								py: 2.5,
+								px: 3,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)',
+								border: '2px solid',
+								borderImage: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4)) 1',
+								boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 16px rgba(139, 92, 246, 0.15)',
+								'&::before': {
+									content: '""',
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									right: 0,
+									bottom: 0,
+									background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.03) 50%, transparent 100%)',
+									pointerEvents: 'none',
+								},
+							}}>
+							<Typography
+								variant="h5"
+								sx={{
+									fontWeight: 800,
+									color: '#1E293B',
+									textTransform: 'uppercase',
+									letterSpacing: '1px',
+									textShadow: '0 2px 4px rgba(139, 92, 246, 0.1)',
+									position: 'relative',
+									zIndex: 1,
+								}}>
+								{xpProfile.currentLevel < 5
+									? `⚔️ VOTRE QUÊTE DÉBUTE`
+									: xpProfile.currentLevel < 10
+									? `🗡️ GUERRIER EN FORMATION`
+									: xpProfile.currentLevel < 20
+									? `⚡ CHAMPION AGUERRI`
+									: `👑 LÉGENDE VIVANTE`
+								}
+							</Typography>
+						</Box>
+
 						<Grid container spacing={4} alignItems="center" justifyContent="center">
 							{/* Circular XP Progress */}
 							<Grid item xs={12} sm={6} md={4}>
@@ -529,7 +588,12 @@ const StatisticsPage = () => {
 												fontWeight: 600,
 												color: '#64748B',
 											}}>
-											{xpProfile.progressPercent}% {t('toNextLevel')}
+											{xpProfile.progressPercent >= 75
+												? `💪 Plus que ${xpProfile.xpForNextLevel - xpProfile.xpInCurrentLevel} XP pour le niveau ${xpProfile.currentLevel + 1} !`
+												: xpProfile.progressPercent >= 50
+												? `🎯 À mi-chemin du niveau ${xpProfile.currentLevel + 1} !`
+												: `🌟 Continue d'apprendre pour progresser !`
+											}
 										</Typography>
 									</Box>
 								</Box>
@@ -671,7 +735,7 @@ const StatisticsPage = () => {
 												color: '#15803D',
 												fontSize: { xs: '1.2rem', md: '1.5rem' },
 											}}>
-											{xpProfile.dailyStreak} / {streakMilestone}
+											{xpProfile.dailyStreak} {xpProfile.dailyStreak === 1 ? 'jour' : 'jours'} 🔥
 										</Typography>
 										<Typography
 											variant="body1"
@@ -680,9 +744,16 @@ const StatisticsPage = () => {
 												fontWeight: 600,
 												color: '#64748B',
 											}}>
-											{daysRemaining > 0
-												? `${t('streakGoal', { days: daysRemaining, target: streakMilestone })}`
-												: t('milestoneReached')}
+											{xpProfile.dailyStreak === 0
+												? `🎯 Commence ta série aujourd'hui !`
+												: xpProfile.dailyStreak === 1
+												? `🌟 Super début ! Reviens demain !`
+												: xpProfile.dailyStreak < 7
+												? `💪 ${7 - xpProfile.dailyStreak} jour${7 - xpProfile.dailyStreak > 1 ? 's' : ''} pour atteindre 1 semaine !`
+												: xpProfile.dailyStreak < 30
+												? `🚀 ${30 - xpProfile.dailyStreak} jour${30 - xpProfile.dailyStreak > 1 ? 's' : ''} pour 1 mois de série !`
+												: `🏆 Tu es en feu ! Continue !`
+											}
 										</Typography>
 									</Box>
 								</Box>
@@ -836,7 +907,14 @@ const StatisticsPage = () => {
 												fontWeight: 600,
 												color: '#64748B',
 											}}>
-											{t('totalGoldCollected')}
+											{xpProfile.totalGold === 0
+												? `💰 Ton trésor commence ici !`
+												: xpProfile.totalGold < 100
+												? `🌟 Tu accumules tes premières pièces !`
+												: xpProfile.totalGold < 500
+												? `💎 Belle collection de gold !`
+												: `👑 Tu es riche ! Continue comme ça !`
+											}
 										</Typography>
 									</Box>
 								</Box>
@@ -903,48 +981,86 @@ const StatisticsPage = () => {
 					</Paper>
 				)}
 
-				{/* Goals - Mini Circular Progress */}
+				{/* Goals - Epic Quest Board */}
 				{goals && (
 					<Paper
 						elevation={0}
 						sx={{
-							borderRadius: 4,
+							borderRadius: 3,
 							p: { xs: 3, md: 5 },
 							mb: 4,
-							background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%)',
-							border: '1px solid rgba(102, 126, 234, 0.1)',
-							boxShadow: '0 8px 32px rgba(102, 126, 234, 0.08)',
+							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
+							border: '2px solid transparent',
+							backgroundImage: `
+								linear-gradient(white, white),
+								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+							`,
+							backgroundOrigin: 'border-box',
+							backgroundClip: 'padding-box, border-box',
+							boxShadow: `
+								0 10px 40px rgba(139, 92, 246, 0.12),
+								0 2px 8px rgba(0, 0, 0, 0.04),
+								inset 0 1px 0 rgba(255, 255, 255, 0.9)
+							`,
+							position: 'relative',
+							overflow: 'hidden',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								height: '3px',
+								background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
+								backgroundSize: '200% 100%',
+								animation: 'shimmer 4s ease-in-out infinite',
+								'@keyframes shimmer': {
+									'0%, 100%': { backgroundPosition: '0% 0%' },
+									'50%': { backgroundPosition: '100% 0%' },
+								},
+							},
 						}}>
 						<Box
 							sx={{
 								textAlign: 'center',
 								mb: 5,
 							}}>
-							<Typography
-								variant="h4"
-								sx={{
-									fontWeight: 800,
-									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									backgroundClip: 'text',
-									mb: 1,
-									fontSize: { xs: '1.8rem', md: '2.2rem' },
-									display: 'inline-flex',
-									alignItems: 'center',
-									gap: 2,
-								}}>
-								<FaTrophy style={{ fontSize: '2.5rem', color: '#F59E0B' }} />
-								{t('goals') || 'Objectifs'}
-							</Typography>
+							<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
+								<Box
+									sx={{
+										width: 48,
+										height: 48,
+										borderRadius: 2,
+										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
+									}}>
+									<FaTrophy style={{ fontSize: '1.5rem', color: 'white' }} />
+								</Box>
+								<Typography
+									variant="h4"
+									sx={{
+										fontWeight: 800,
+										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+										fontSize: { xs: '1.8rem', md: '2.2rem' },
+										letterSpacing: '-0.5px',
+									}}>
+									{t('goals') || 'Objectifs'}
+								</Typography>
+							</Box>
 							<Typography
 								variant="body1"
 								sx={{
 									color: '#64748B',
 									fontWeight: 500,
-									mt: 1,
+									fontSize: { xs: '0.95rem', md: '1rem' },
 								}}>
-								Suivez vos objectifs quotidiens, hebdomadaires et mensuels
+								Atteins tes objectifs et deviens encore meilleur ! 🎯
 							</Typography>
 						</Box>
 						<Grid container spacing={4} justifyContent="center">
@@ -1134,47 +1250,85 @@ const StatisticsPage = () => {
 					</Paper>
 				)}
 
-				{/* Badges Section */}
+				{/* Badges Section - Hall of Achievements */}
 				<Paper
 					elevation={0}
 					sx={{
-						borderRadius: 4,
+						borderRadius: 3,
 						p: { xs: 3, sm: 4, md: 5 },
 						mb: 4,
-						background: 'white',
-						border: '1px solid #E2E8F0',
-						boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
+						border: '2px solid transparent',
+						backgroundImage: `
+							linear-gradient(white, white),
+							linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+						`,
+						backgroundOrigin: 'border-box',
+						backgroundClip: 'padding-box, border-box',
+						boxShadow: `
+							0 10px 40px rgba(139, 92, 246, 0.12),
+							0 2px 8px rgba(0, 0, 0, 0.04),
+							inset 0 1px 0 rgba(255, 255, 255, 0.9)
+						`,
+						position: 'relative',
+						overflow: 'hidden',
+						'&::before': {
+							content: '""',
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							height: '3px',
+							background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
+							backgroundSize: '200% 100%',
+							animation: 'shimmer 4s ease-in-out infinite',
+							'@keyframes shimmer': {
+								'0%, 100%': { backgroundPosition: '0% 0%' },
+								'50%': { backgroundPosition: '100% 0%' },
+							},
+						},
 					}}>
 					<Box
 						sx={{
 							textAlign: 'center',
 							mb: 5,
 						}}>
-						<Typography
-							variant="h4"
-							sx={{
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								mb: 1,
-								fontSize: { xs: '1.8rem', md: '2.2rem' },
-								display: 'inline-flex',
-								alignItems: 'center',
-								gap: 2,
-							}}>
-							<FaTrophy style={{ fontSize: '2.5rem', color: '#F59E0B' }} />
-							{t('badges')}
-						</Typography>
+						<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
+								}}>
+								<FaTrophy style={{ fontSize: '1.5rem', color: 'white' }} />
+							</Box>
+							<Typography
+								variant="h4"
+								sx={{
+									fontWeight: 800,
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									fontSize: { xs: '1.8rem', md: '2.2rem' },
+									letterSpacing: '-0.5px',
+								}}>
+								{t('badges')}
+							</Typography>
+						</Box>
 						<Typography
 							variant="body1"
 							sx={{
 								color: '#64748B',
 								fontWeight: 500,
-								mt: 1,
+								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
-							{t('badgesDescription')}
+							Collectionne tous les badges et montre ta progression ! 🏅
 						</Typography>
 					</Box>
 
@@ -1225,21 +1379,6 @@ const StatisticsPage = () => {
 										justifyContent: { xs: 'center', sm: 'flex-start' },
 									}}>
 									{category.badges.map((badge, index) => {
-										// Déterminer si c'est le prochain badge à atteindre
-										const isNextToUnlock = !badge.isUnlocked &&
-											(index === 0 || category.badges[index - 1].isUnlocked)
-
-										// Calculer la progression pour le prochain badge
-										let progressPercentage = 0
-										if (isNextToUnlock) {
-											const currentCount = category.getCurrentValue()
-											const previousValue = index > 0 ? category.badges[index - 1].value : 0
-											const targetValue = badge.value
-											const progressInRange = currentCount - previousValue
-											const totalRange = targetValue - previousValue
-											progressPercentage = Math.min((progressInRange / totalRange) * 100, 100)
-										}
-
 										return (
 											<Box
 												key={index}
@@ -1250,152 +1389,26 @@ const StatisticsPage = () => {
 													alignItems: 'center',
 													gap: 1,
 												}}>
-												{/* Cercle badge avec SVG progress */}
+												{/* Cercle badge simple */}
 												<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-													{/* SVG Circle Progress - se remplit au même rythme que l'eau */}
-													<svg width="100" height="100" style={{ transform: 'rotate(-90deg)', position: 'absolute' }}>
-														{/* Background circle */}
-														<circle
-															cx="50"
-															cy="50"
-															r="45"
-															fill="none"
-															stroke={badge.isUnlocked ? alpha(category.color, 0.3) : 'rgba(203, 213, 225, 0.5)'}
-															strokeWidth="6"
-														/>
-														{/* Progress circle - se remplit selon le pourcentage */}
-														{(isNextToUnlock || badge.isUnlocked) && (
-															<circle
-																cx="50"
-																cy="50"
-																r="45"
-																fill="none"
-																stroke={badge.isUnlocked ? darkenColor(category.color, 0.25) : alpha(category.color, 0.7)}
-																strokeWidth="6"
-																strokeDasharray={`${2 * Math.PI * 45}`}
-																strokeDashoffset={`${2 * Math.PI * 45 * (1 - (badge.isUnlocked ? 1 : progressPercentage / 100))}`}
-																strokeLinecap="round"
-																style={{
-																	transition: 'stroke-dashoffset 1.5s ease-out',
-																	filter: badge.isUnlocked
-																		? `drop-shadow(0 0 8px ${alpha(category.color, 0.5)})`
-																		: 'none'
-																}}
-															/>
-														)}
-													</svg>
-
 													<Box
 														sx={{
 															width: { xs: 90, sm: 100 },
 															height: { xs: 90, sm: 100 },
 															borderRadius: '50%',
-															background: badge.isUnlocked
-																? `linear-gradient(135deg, ${alpha(category.color, 0.5)} 0%, ${alpha(category.color, 0.5)} 100%)`
-																: 'linear-gradient(135deg, rgba(226, 232, 240, 0.5) 0%, rgba(203, 213, 225, 0.5) 100%)',
 															display: 'flex',
 															alignItems: 'center',
 															justifyContent: 'center',
 															position: 'relative',
 															overflow: 'hidden',
+															border: badge.isUnlocked
+																? `3px solid ${category.color}`
+																: '3px solid rgba(203, 213, 225, 0.5)',
+															boxShadow: badge.isUnlocked
+																? `0 4px 12px ${alpha(category.color, 0.3)}`
+																: '0 2px 8px rgba(0, 0, 0, 0.08)',
+															transition: 'all 0.3s ease',
 														}}>
-														{/* Water fill effect - uniquement pour le badge en cours */}
-														{isNextToUnlock && progressPercentage > 0 && (
-															<Box
-																sx={{
-																	position: 'absolute',
-																	bottom: 0,
-																	left: 0,
-																	right: 0,
-																	height: `${progressPercentage}%`,
-																	background: category.color,
-																	transition: 'height 1.5s ease-out',
-																	'&::before': {
-																		content: '""',
-																		position: 'absolute',
-																		top: '-8px',
-																		left: '-10%',
-																		right: '-10%',
-																		height: '18px',
-																		background: `linear-gradient(to bottom, ${alpha(category.color, 0.8)}, ${category.color})`,
-																		animation: 'badgeWave1 6s ease-in-out infinite',
-																	},
-																	'&::after': {
-																		content: '""',
-																		position: 'absolute',
-																		top: '-6px',
-																		left: '-10%',
-																		right: '-10%',
-																		height: '16px',
-																		background: `linear-gradient(to bottom, ${alpha(category.color, 0.5)}, ${alpha(category.color, 0.7)})`,
-																		animation: 'badgeWave2 8s ease-in-out infinite',
-																	},
-																	'@keyframes badgeWave1': {
-																		'0%, 100%': {
-																			borderRadius: '65% 35% 40% 60%',
-																			transform: 'translateX(0) translateY(0) scaleY(1)',
-																		},
-																		'33%': {
-																			borderRadius: '40% 60% 50% 50%',
-																			transform: 'translateX(5%) translateY(2px) scaleY(0.88)',
-																		},
-																		'66%': {
-																			borderRadius: '50% 50% 60% 40%',
-																			transform: 'translateX(-4%) translateY(1px) scaleY(0.9)',
-																		},
-																	},
-																	'@keyframes badgeWave2': {
-																		'0%, 100%': {
-																			borderRadius: '45% 55% 48% 52%',
-																			transform: 'translateX(4%) translateY(1px) scaleY(0.95)',
-																		},
-																		'33%': {
-																			borderRadius: '58% 42% 55% 45%',
-																			transform: 'translateX(-3%) translateY(0) scaleY(1)',
-																		},
-																		'66%': {
-																			borderRadius: '42% 58% 45% 55%',
-																			transform: 'translateX(6%) translateY(1px) scaleY(0.9)',
-																		},
-																	},
-																}}
-															/>
-														)}
-
-														{/* Water fill pour badges complètement débloqués */}
-														{badge.isUnlocked && (
-															<Box
-																sx={{
-																	position: 'absolute',
-																	bottom: 0,
-																	left: 0,
-																	right: 0,
-																	height: '100%',
-																	background: category.color,
-																	'&::before': {
-																		content: '""',
-																		position: 'absolute',
-																		top: '-8px',
-																		left: '-10%',
-																		right: '-10%',
-																		height: '18px',
-																		background: `linear-gradient(to bottom, ${alpha(category.color, 0.8)}, ${category.color})`,
-																		animation: 'badgeWave1 6s ease-in-out infinite',
-																	},
-																	'&::after': {
-																		content: '""',
-																		position: 'absolute',
-																		top: '-6px',
-																		left: '-10%',
-																		right: '-10%',
-																		height: '16px',
-																		background: `linear-gradient(to bottom, ${alpha(category.color, 0.5)}, ${alpha(category.color, 0.7)})`,
-																		animation: 'badgeWave2 8s ease-in-out infinite',
-																	},
-																}}
-															/>
-														)}
-
 														{/* Contenu du cercle - uniquement l'icône */}
 														<Box sx={{
 															textAlign: 'center',
@@ -1404,41 +1417,14 @@ const StatisticsPage = () => {
 															display: 'flex',
 															alignItems: 'center',
 															justifyContent: 'center',
+															width: '100%',
+															height: '100%',
+															filter: badge.isUnlocked ? 'none' : 'grayscale(100%) opacity(0.4)',
+															transition: 'filter 0.3s ease',
 														}}>
-															<Box sx={{
-																fontSize: { xs: '2.5rem', sm: '2.8rem' },
-																color: 'white',
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'center',
-																lineHeight: 0,
-															}}>
-																{badge.icon}
-															</Box>
+															{badge.icon}
 														</Box>
 													</Box>
-
-													{/* Petit cadenas pour badges verrouillés (pas le prochain) */}
-													{!badge.isUnlocked && !isNextToUnlock && (
-														<Box
-															sx={{
-																position: 'absolute',
-																top: -4,
-																right: -4,
-																width: 24,
-																height: 24,
-																borderRadius: '50%',
-																background: `linear-gradient(135deg, ${category.color} 0%, ${alpha(category.color, 0.8)} 100%)`,
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'center',
-																border: '2px solid white',
-																boxShadow: `0 2px 6px ${alpha(category.color, 0.3)}`,
-																zIndex: 10,
-															}}>
-															<Lock sx={{ fontSize: '0.75rem', color: 'white' }} />
-														</Box>
-													)}
 												</Box>
 
 												{/* Chiffre sous le cercle - Design moderne */}
@@ -1512,26 +1498,48 @@ const StatisticsPage = () => {
 					<Box
 						sx={{
 							mb: 4,
-							pb: 2,
-							borderBottom: '3px solid',
-							borderImage: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%) 1',
+							display: 'flex',
+							alignItems: 'center',
+							gap: 2,
 						}}>
-						<Typography
-							variant="h4"
+						<Box
 							sx={{
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								fontSize: { xs: '1.8rem', md: '2rem' },
+								width: 48,
+								height: 48,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								display: 'flex',
 								alignItems: 'center',
-								gap: 1.5,
+								justifyContent: 'center',
+								boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
 							}}>
-							<span style={{ fontSize: '2rem' }}>📚</span>
-							{t('vocabularySection')}
-						</Typography>
+							<FaBook style={{ fontSize: '1.5rem', color: 'white' }} />
+						</Box>
+						<Box>
+							<Typography
+								variant="h4"
+								sx={{
+									fontWeight: 800,
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									fontSize: { xs: '1.8rem', md: '2rem' },
+									letterSpacing: '-0.5px',
+								}}>
+								{t('vocabularySection')}
+							</Typography>
+							<Typography
+								variant="body1"
+								sx={{
+									color: '#64748B',
+									fontWeight: 500,
+									fontSize: { xs: '0.9rem', md: '1rem' },
+									mt: 0.5,
+								}}>
+								Ton vocabulaire grandit chaque jour ! 📚✨
+							</Typography>
+						</Box>
 					</Box>
 					<Grid container spacing={3} sx={{ mb: 4 }}>
 						{vocabularyCards.map((card, index) => (
@@ -1539,26 +1547,50 @@ const StatisticsPage = () => {
 								<Card
 									elevation={0}
 									sx={{
-										borderRadius: 4,
-										overflow: 'hidden',
+										borderRadius: 2,
+										overflow: 'visible',
 										position: 'relative',
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										border: '2px solid transparent',
-										background: 'white',
-										boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+										backgroundImage: `
+											linear-gradient(white, white),
+											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
+										`,
+										backgroundOrigin: 'border-box',
+										backgroundClip: 'padding-box, border-box',
+										boxShadow: `
+											0 8px 24px ${alpha(card.color, 0.12)},
+											0 2px 6px rgba(0, 0, 0, 0.04),
+											inset 0 1px 0 rgba(255, 255, 255, 0.9)
+										`,
+										'&::before': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											height: '3px',
+											background: card.gradient,
+											zIndex: 1,
+											borderRadius: '2px 2px 0 0',
+										},
 										'&:hover': {
-											transform: 'translateY(-12px) scale(1.02)',
-											boxShadow: `0 20px 40px ${alpha(card.color, 0.25)}`,
-											border: `2px solid ${alpha(card.color, 0.3)}`,
+											transform: 'translateY(-8px)',
+											boxShadow: `
+												0 12px 32px ${alpha(card.color, 0.25)},
+												0 4px 12px rgba(0, 0, 0, 0.08),
+												inset 0 1px 0 rgba(255, 255, 255, 0.9)
+											`,
 											'& .card-icon': {
-												transform: 'rotate(10deg) scale(1.1)',
+												transform: 'scale(1.15)',
+												filter: `drop-shadow(0 4px 8px ${alpha(card.color, 0.4)})`,
 											},
 										},
 									}}>
 									<Box
 										sx={{
-											height: 8,
-											background: card.gradient,
+											height: 0,
 										}}
 									/>
 									<CardContent sx={{ p: 3.5 }}>
@@ -1574,15 +1606,27 @@ const StatisticsPage = () => {
 												sx={{
 													width: 72,
 													height: 72,
-													borderRadius: 4,
-													background: `linear-gradient(135deg, ${alpha(card.color, 0.15)} 0%, ${alpha(card.color, 0.05)} 100%)`,
+													borderRadius: 2,
+													background: `linear-gradient(135deg, ${alpha(card.color, 0.12)} 0%, ${alpha(card.color, 0.08)} 100%)`,
+													border: `2px solid ${alpha(card.color, 0.3)}`,
 													display: 'flex',
 													alignItems: 'center',
 													justifyContent: 'center',
 													color: card.color,
 													fontSize: '2rem',
 													transition: 'all 0.3s ease',
-													boxShadow: `0 8px 16px ${alpha(card.color, 0.15)}`,
+													boxShadow: `
+														inset 0 1px 0 rgba(255, 255, 255, 0.5),
+														0 4px 12px ${alpha(card.color, 0.2)}
+													`,
+													position: 'relative',
+													'&::before': {
+														content: '""',
+														position: 'absolute',
+														inset: 0,
+														background: `linear-gradient(135deg, transparent 0%, ${alpha(card.color, 0.05)} 100%)`,
+														borderRadius: 2,
+													},
 												}}>
 												{card.icon}
 											</Box>
@@ -1620,53 +1664,99 @@ const StatisticsPage = () => {
 					<Box
 						sx={{
 							mb: 4,
-							pb: 2,
-							borderBottom: '3px solid',
-							borderImage: 'linear-gradient(90deg, #3B82F6 0%, #10B981 100%) 1',
+							display: 'flex',
+							alignItems: 'center',
+							gap: 2,
 						}}>
-						<Typography
-							variant="h4"
+						<Box
 							sx={{
-								fontWeight: 800,
+								width: 48,
+								height: 48,
+								borderRadius: 2,
 								background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								fontSize: { xs: '1.8rem', md: '2rem' },
 								display: 'flex',
 								alignItems: 'center',
-								gap: 1.5,
+								justifyContent: 'center',
+								boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
 							}}>
-							<span style={{ fontSize: '2rem' }}>🎬</span>
-							{t('materialsSection')}
-						</Typography>
+							<FaVideo style={{ fontSize: '1.5rem', color: 'white' }} />
+						</Box>
+						<Box>
+							<Typography
+								variant="h4"
+								sx={{
+									fontWeight: 800,
+									background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									fontSize: { xs: '1.8rem', md: '2rem' },
+									letterSpacing: '-0.5px',
+								}}>
+								{t('materialsSection')}
+							</Typography>
+							<Typography
+								variant="body1"
+								sx={{
+									color: '#64748B',
+									fontWeight: 500,
+									fontSize: { xs: '0.9rem', md: '1rem' },
+									mt: 0.5,
+								}}>
+								Explore et apprends avec tes contenus favoris ! 🎬🎧
+							</Typography>
+						</Box>
 					</Box>
 					<Grid container spacing={3} sx={{ mb: 4 }}>
 						{materialsCards.map((card, index) => (
-							<Grid item xs={12} sm={6} md={4} key={index}>
+							<Grid item xs={12} sm={6} md={6} key={index}>
 								<Card
 									elevation={0}
 									sx={{
-										borderRadius: 4,
-										overflow: 'hidden',
+										borderRadius: 2,
+										overflow: 'visible',
 										position: 'relative',
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										border: '2px solid transparent',
-										background: 'white',
-										boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+										backgroundImage: `
+											linear-gradient(white, white),
+											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
+										`,
+										backgroundOrigin: 'border-box',
+										backgroundClip: 'padding-box, border-box',
+										boxShadow: `
+											0 8px 24px ${alpha(card.color, 0.12)},
+											0 2px 6px rgba(0, 0, 0, 0.04),
+											inset 0 1px 0 rgba(255, 255, 255, 0.9)
+										`,
+										'&::before': {
+											content: '""',
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											height: '3px',
+											background: card.gradient,
+											zIndex: 1,
+											borderRadius: '2px 2px 0 0',
+										},
 										'&:hover': {
-											transform: 'translateY(-12px) scale(1.02)',
-											boxShadow: `0 20px 40px ${alpha(card.color, 0.25)}`,
-											border: `2px solid ${alpha(card.color, 0.3)}`,
+											transform: 'translateY(-8px)',
+											boxShadow: `
+												0 12px 32px ${alpha(card.color, 0.25)},
+												0 4px 12px rgba(0, 0, 0, 0.08),
+												inset 0 1px 0 rgba(255, 255, 255, 0.9)
+											`,
 											'& .card-icon': {
-												transform: 'rotate(10deg) scale(1.1)',
+												transform: 'scale(1.15)',
+												filter: `drop-shadow(0 4px 8px ${alpha(card.color, 0.4)})`,
 											},
 										},
 									}}>
 									<Box
 										sx={{
-											height: 8,
-											background: card.gradient,
+											height: 0,
 										}}
 									/>
 									<CardContent sx={{ p: 3.5 }}>
@@ -1682,15 +1772,27 @@ const StatisticsPage = () => {
 												sx={{
 													width: 72,
 													height: 72,
-													borderRadius: 4,
-													background: `linear-gradient(135deg, ${alpha(card.color, 0.15)} 0%, ${alpha(card.color, 0.05)} 100%)`,
+													borderRadius: 2,
+													background: `linear-gradient(135deg, ${alpha(card.color, 0.12)} 0%, ${alpha(card.color, 0.08)} 100%)`,
+													border: `2px solid ${alpha(card.color, 0.3)}`,
 													display: 'flex',
 													alignItems: 'center',
 													justifyContent: 'center',
 													color: card.color,
 													fontSize: '2rem',
 													transition: 'all 0.3s ease',
-													boxShadow: `0 8px 16px ${alpha(card.color, 0.15)}`,
+													boxShadow: `
+														inset 0 1px 0 rgba(255, 255, 255, 0.5),
+														0 4px 12px ${alpha(card.color, 0.2)}
+													`,
+													position: 'relative',
+													'&::before': {
+														content: '""',
+														position: 'absolute',
+														inset: 0,
+														background: `linear-gradient(135deg, transparent 0%, ${alpha(card.color, 0.05)} 100%)`,
+														borderRadius: 2,
+													},
 												}}>
 												{card.icon}
 											</Box>

@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Hero from './Hero'
 import Link from 'next/link'
@@ -18,7 +18,12 @@ import {
 
 import { Stack } from '@mui/system'
 import { primaryButton } from '../../utils/buttonStyles'
-import { PlayArrow, AutoAwesome, Close } from '@mui/icons-material'
+import { PlayArrow, AutoAwesome, Close, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination, Autoplay } from 'swiper'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 const StyledGridItem = styled(Grid)(({ theme }) => ({
 	display: 'flex',
@@ -48,7 +53,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 	return (
 		<Box
 			sx={{
-				width: '1000px',
+				width: { xs: '100%', md: '850px', lg: '900px' },
 				maxWidth: '100%',
 				margin: '0 auto',
 				marginTop: { xs: '3rem', md: marginTop || '5rem' },
@@ -139,8 +144,8 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				sx={{
 					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
 					alignItems: 'center',
-					gap: { xs: 3, md: 5 },
-					padding: { xs: '1.5rem 2rem', sm: '2.5rem', md: '3.5rem 4rem' },
+					gap: { xs: 3, md: 4, lg: 4.5 },
+					padding: { xs: '1.5rem 2rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
 					borderRadius: 5,
 					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
 					backdropFilter: 'blur(20px)',
@@ -176,7 +181,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				{/* Image Section */}
 				<Box
 					sx={{
-						width: { xs: '100%', md: '45%' },
+						width: { xs: '100%', md: '42%' },
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
@@ -186,8 +191,8 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					<Box
 						sx={{
 							position: 'relative',
-							width: { xs: 200, md: 240 },
-							height: { xs: 200, md: 240 },
+							width: { xs: 200, md: 200, lg: 220 },
+							height: { xs: 200, md: 200, lg: 220 },
 							animation: 'float 3s ease-in-out infinite',
 							'@keyframes float': {
 								'0%, 100%': {
@@ -306,7 +311,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				<Stack
 					gap={2.5}
 					sx={{
-						width: { xs: '100%', md: '55%' },
+						width: { xs: '100%', md: '58%' },
 						textAlign: { xs: 'center', md: 'left' },
 						position: 'relative',
 						zIndex: 1,
@@ -339,7 +344,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					<Typography
 						variant='h3'
 						sx={{
-							fontSize: { xs: '1.875rem', md: '2.5rem' },
+							fontSize: { xs: '1.875rem', md: '2rem', lg: '2.25rem' },
 							fontWeight: 800,
 							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 							backgroundSize: '200% 200%',
@@ -359,7 +364,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 							color: '#64748b',
 							fontWeight: 500,
 							lineHeight: 1.8,
-							fontSize: { xs: '0.95rem', md: '1.05rem' },
+							fontSize: { xs: '0.95rem', md: '1rem', lg: '1.05rem' },
 						}}>
 						{subtitle}
 					</Typography>
@@ -372,9 +377,9 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 						startIcon={<PlayArrow />}
 						sx={{
 							alignSelf: { xs: 'center', md: 'flex-start' },
-							minWidth: { xs: '180px', md: '220px' },
-							height: 56,
-							fontSize: { xs: '0.95rem', md: '1.05rem' },
+							minWidth: { xs: '180px', md: '200px', lg: '210px' },
+							height: { xs: 56, md: 52, lg: 54 },
+							fontSize: { xs: '0.95rem', md: '0.98rem', lg: '1.02rem' },
 							fontWeight: 700,
 							textTransform: 'none',
 							borderRadius: 3,
@@ -420,6 +425,7 @@ const Homepage = () => {
 	const [open, setOpen] = useState(false)
 	const [videoSrc, setVideoSrc] = useState('')
 	const [modalName, setModalName] = useState('')
+	const [isMounted, setIsMounted] = useState(false)
 
 	const handleOpen = (src, name = '') => {
 		setVideoSrc(src)
@@ -432,7 +438,11 @@ const Homepage = () => {
 		setOpen(false)
 	}
 
-	const multimedia = [
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
+
+	const multimedia = useMemo(() => [
 		{
 			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video-mini.png`,
 			title: t('video'),
@@ -468,7 +478,7 @@ const Homepage = () => {
 			subtitleMobile: t('flashcardssubtitleMobile'),
 			link: '/dictionary',
 		},
-	]
+	], [t])
 
 	return (
 		<>
@@ -529,9 +539,10 @@ const Homepage = () => {
 					variant='h3'
 					align='center'
 					sx={{
-						fontSize: { xs: '2rem', md: '3rem' },
+						fontSize: { xs: '2rem', sm: '2.25rem', md: '2.75rem', lg: '3rem' },
 						fontWeight: 800,
 						mb: 2,
+						px: { xs: 2, sm: 3 },
 						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
 						backgroundSize: '200% 200%',
 						WebkitBackgroundClip: 'text',
@@ -561,9 +572,10 @@ const Homepage = () => {
 					align='center'
 					sx={{
 						color: '#64748b',
-						fontSize: { xs: '1rem', md: '1.125rem' },
+						fontSize: { xs: '1rem', sm: '1.05rem', md: '1.125rem' },
 						mb: 6,
-						maxWidth: '600px',
+						px: { xs: 2, sm: 3 },
+						maxWidth: '700px',
 						mx: 'auto',
 						fontWeight: 500,
 						lineHeight: 1.6,
@@ -572,14 +584,421 @@ const Homepage = () => {
 					{t('discoverResources')}
 				</Typography>
 
+				{/* Carousel pour mobile et tablette */}
+				<Box
+					sx={{
+						display: { xs: 'block', lg: 'none' },
+						mt: 4,
+						mb: 6,
+						'& .swiper-pagination-bullet': {
+							width: '10px',
+							height: '10px',
+							background: 'rgba(139, 92, 246, 0.3)',
+							opacity: 1,
+							transition: 'all 0.3s ease',
+						},
+						'& .swiper-pagination-bullet-active': {
+							width: '24px',
+							borderRadius: '5px',
+							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+							boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4)',
+						},
+						'& .swiper-pagination': {
+							bottom: '20px !important',
+						},
+					}}>
+					<Swiper
+						modules={[Navigation, Pagination, Autoplay]}
+						spaceBetween={20}
+						slidesPerView={1}
+						navigation={{
+							nextEl: '.swiper-button-next-custom',
+							prevEl: '.swiper-button-prev-custom',
+						}}
+						pagination={{
+							clickable: true,
+							dynamicBullets: true,
+						}}
+						autoplay={isMounted ? {
+							delay: 4000,
+							disableOnInteraction: false,
+							pauseOnMouseEnter: true,
+						} : false}
+						loop={isMounted}
+						breakpoints={{
+							600: {
+								slidesPerView: 2,
+								spaceBetween: 20,
+							},
+							900: {
+								slidesPerView: 3,
+								spaceBetween: 24,
+							},
+						}}
+						style={{
+							paddingBottom: '50px',
+							paddingLeft: '16px',
+							paddingRight: '16px',
+						}}>
+						{multimedia.map((icon, index) => (
+							<SwiperSlide key={index} style={{ display: 'flex', justifyContent: 'center' }}>
+								<Link href={icon.link} style={{ textDecoration: 'none', display: 'block', width: '100%', maxWidth: '220px' }}>
+									<Box
+										sx={{
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'center',
+											gap: 2,
+											textAlign: 'center',
+											p: { xs: 3, sm: 3.5 },
+											height: '100%',
+											minHeight: { xs: '320px', sm: '340px' },
+											borderRadius: 4,
+											background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
+											border: '2px solid transparent',
+											backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
+											backgroundOrigin: 'border-box',
+											backgroundClip: 'padding-box, border-box',
+											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											cursor: 'pointer',
+											position: 'relative',
+											overflow: 'hidden',
+											'&::before': {
+												content: '""',
+												position: 'absolute',
+												top: 0,
+												left: '-100%',
+												width: '100%',
+												height: '100%',
+												background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
+												transition: 'left 0.5s ease',
+											},
+											'&:hover': {
+												transform: 'translateY(-8px) scale(1.02)',
+												boxShadow: '0 12px 40px rgba(139, 92, 246, 0.45), 0 0 20px rgba(6, 182, 212, 0.25)',
+												borderColor: 'rgba(139, 92, 246, 0.5)',
+												'&::before': {
+													left: '100%',
+												},
+												'& .outer-frame': {
+													transform: 'translate(-3px, -3px) rotate(-2deg)',
+												},
+												'& .icon-container': {
+													transform: 'translate(-47%, -47%) rotate(2deg)',
+												},
+											},
+										}}>
+										<Box
+											sx={{
+												position: 'relative',
+												width: { xs: 110, sm: 120 },
+												height: { xs: 110, sm: 120 },
+											}}>
+											{/* Cercle de fond animé blur */}
+											<Box
+												sx={{
+													position: 'absolute',
+													width: '120%',
+													height: '120%',
+													top: '50%',
+													left: '50%',
+													transform: 'translate(-50%, -50%)',
+													background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
+													borderRadius: 4,
+													filter: 'blur(40px)',
+													animation: 'pulse 3s ease-in-out infinite',
+													'@keyframes pulse': {
+														'0%, 100%': {
+															opacity: 0.5,
+															transform: 'translate(-50%, -50%) scale(1)',
+														},
+														'50%': {
+															opacity: 0.8,
+															transform: 'translate(-50%, -50%) scale(1.1)',
+														},
+													},
+												}}
+											/>
+
+											{/* Cadre stylisé avec glassmorphism */}
+											<Box
+												className="outer-frame"
+												sx={{
+													position: 'absolute',
+													width: '100%',
+													height: '100%',
+													borderRadius: 3,
+													background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+													border: '3px solid rgba(255, 255, 255, 0.2)',
+													backdropFilter: 'blur(10px)',
+													boxShadow: `
+														0 0 30px rgba(139, 92, 246, 0.5),
+														inset 0 0 30px rgba(6, 182, 212, 0.2),
+														0 6px 24px rgba(0, 0, 0, 0.2)
+													`,
+													transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+													'&::before': {
+														content: '""',
+														position: 'absolute',
+														inset: '-3px',
+														borderRadius: 3,
+														padding: '3px',
+														background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+														WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+														WebkitMaskComposite: 'xor',
+														maskComposite: 'exclude',
+														opacity: 0.6,
+													},
+												}}
+											/>
+
+											{/* Conteneur de l'image avec overflow hidden */}
+											<Box
+												className="icon-container"
+												sx={{
+													position: 'relative',
+													width: '90%',
+													height: '90%',
+													top: '50%',
+													left: '50%',
+													transform: 'translate(-50%, -50%)',
+													borderRadius: 2.5,
+													overflow: 'hidden',
+													zIndex: 2,
+													transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+												}}>
+												<Image
+													src={icon.img}
+													alt={icon.title}
+													fill
+													quality={100}
+													sizes="(max-width: 600px) 130px, 150px"
+													style={{
+														objectFit: 'cover',
+														imageRendering: '-webkit-optimize-contrast',
+														WebkitFontSmoothing: 'antialiased',
+														backfaceVisibility: 'hidden',
+														transform: 'translateZ(0)',
+													}}
+													priority={index < 3}
+													unoptimized={false}
+												/>
+
+												{/* Overlay pour masquer le logo Gemini en bas à droite */}
+												<Box
+													sx={{
+														position: 'absolute',
+														bottom: 0,
+														right: 0,
+														width: '40%',
+														height: '25%',
+														background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.15) 40%)',
+														zIndex: 3,
+													}}
+												/>
+											</Box>
+										</Box>
+										<Box sx={{ width: '100%', px: 1 }}>
+											{/* Titre avec effet heroic fantasy */}
+											<Typography
+												variant='h6'
+												sx={{
+													fontSize: { xs: '1.1rem', sm: '1.15rem' },
+													fontWeight: 800,
+													background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+													backgroundSize: '200% 200%',
+													WebkitBackgroundClip: 'text',
+													WebkitTextFillColor: 'transparent',
+													backgroundClip: 'text',
+													textTransform: 'uppercase',
+													letterSpacing: '0.5px',
+													mb: 1,
+													textShadow: '0 2px 4px rgba(139, 92, 246, 0.2)',
+													position: 'relative',
+													'&::after': {
+														content: '""',
+														position: 'absolute',
+														bottom: -4,
+														left: '50%',
+														transform: 'translateX(-50%)',
+														width: '60%',
+														height: '1px',
+														background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
+													},
+												}}>
+												{icon.title}
+											</Typography>
+
+											{/* Séparateur décoratif */}
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
+													gap: 1,
+													my: 1.5,
+												}}>
+												<Box
+													sx={{
+														width: '20px',
+														height: '1px',
+														background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.6))',
+													}}
+												/>
+												<Box
+													sx={{
+														width: '6px',
+														height: '6px',
+														borderRadius: '50%',
+														background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
+														boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)',
+													}}
+												/>
+												<Box
+													sx={{
+														width: '20px',
+														height: '1px',
+														background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.6))',
+													}}
+												/>
+											</Box>
+
+											{/* Description avec style parchemin */}
+											<>
+												<Typography
+													variant='body2'
+													sx={{
+														display: { xs: 'block', sm: 'none' },
+														color: '#475569',
+														fontWeight: 500,
+														fontSize: '0.8rem',
+														lineHeight: 1.6,
+														fontStyle: 'italic',
+														px: 0.5,
+														textAlign: 'center',
+														position: 'relative',
+														'&::before': {
+															content: '"\u201C"',
+															position: 'absolute',
+															left: -4,
+															top: -8,
+															fontSize: '1.5rem',
+															color: 'rgba(139, 92, 246, 0.3)',
+															fontFamily: 'Georgia, serif',
+														},
+														'&::after': {
+															content: '"\u201D"',
+															position: 'absolute',
+															right: -4,
+															bottom: -8,
+															fontSize: '1.5rem',
+															color: 'rgba(6, 182, 212, 0.3)',
+															fontFamily: 'Georgia, serif',
+														},
+													}}>
+													{icon.subtitleMobile}
+												</Typography>
+												<Typography
+													variant='body2'
+													sx={{
+														display: { xs: 'none', sm: 'block' },
+														color: '#475569',
+														fontWeight: 500,
+														fontSize: '0.85rem',
+														lineHeight: 1.6,
+														fontStyle: 'italic',
+														px: 0.5,
+														textAlign: 'center',
+														position: 'relative',
+														'&::before': {
+															content: '"\u201C"',
+															position: 'absolute',
+															left: -4,
+															top: -8,
+															fontSize: '1.5rem',
+															color: 'rgba(139, 92, 246, 0.3)',
+															fontFamily: 'Georgia, serif',
+														},
+														'&::after': {
+															content: '"\u201D"',
+															position: 'absolute',
+															right: -4,
+															bottom: -8,
+															fontSize: '1.5rem',
+															color: 'rgba(6, 182, 212, 0.3)',
+															fontFamily: 'Georgia, serif',
+														},
+													}}>
+													{icon.subtitle}
+												</Typography>
+											</>
+										</Box>
+									</Box>
+								</Link>
+							</SwiperSlide>
+						))}
+					</Swiper>
+
+					{/* Boutons de navigation personnalisés */}
+					<Box
+						sx={{
+							display: 'flex',
+							justifyContent: 'center',
+							gap: 2,
+							mt: -2,
+						}}>
+						<IconButton
+							className="swiper-button-prev-custom"
+							sx={{
+								width: 48,
+								height: 48,
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+								border: '2px solid rgba(139, 92, 246, 0.3)',
+								transition: 'all 0.3s ease',
+								'&:hover': {
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+									transform: 'scale(1.1)',
+									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+								},
+								'&.swiper-button-disabled': {
+									opacity: 0.3,
+								},
+							}}>
+							<ArrowBackIosNew sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
+						</IconButton>
+						<IconButton
+							className="swiper-button-next-custom"
+							sx={{
+								width: 48,
+								height: 48,
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+								border: '2px solid rgba(139, 92, 246, 0.3)',
+								transition: 'all 0.3s ease',
+								'&:hover': {
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+									transform: 'scale(1.1)',
+									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+								},
+								'&.swiper-button-disabled': {
+									opacity: 0.3,
+								},
+							}}>
+							<ArrowForwardIos sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
+						</IconButton>
+					</Box>
+				</Box>
+
+				{/* Grille pour desktop */}
 				<Grid
 					container
-					spacing={{ xs: 2, sm: 0, md: 0 }}
+					spacing={{ xs: 2, sm: 2, md: 3, lg: 0 }}
 					justifyContent='center'
 					sx={{
+						display: { xs: 'none', lg: 'flex' },
 						margin: { xs: '2rem auto', md: '4rem auto' },
-						maxWidth: { xs: '100%', sm: '100%' },
-						perspective: { xs: 'none', md: '2000px' },
+						maxWidth: '1200px',
+						perspective: { xs: 'none', md: 'none', lg: '2000px' },
 						perspectiveOrigin: 'center center',
 					}}>
 					{multimedia.map((icon, index) => {
@@ -587,27 +1006,33 @@ const Homepage = () => {
 						const centerIndex = 2
 						const distance = Math.abs(index - centerIndex)
 						const scale = 1 + (0.25 - distance * 0.08) // Centre: 1.25, -1: 1.17, -2: 1.09
-						const translateZ = 80 - distance * 30 // Centre: 80px, -1: 50px, -2: 20px
-						const zIndex = 10 - distance // Centre: 10, extérieurs: 8, 6
-						const shadowIntensity = 0.4 - distance * 0.1
+						const translateZ = 100 - distance * 35 // Centre: 100px, -1: 65px, -2: 30px (augmenté pour plus de profondeur)
+						const zIndex = 15 - distance * 2 // Centre: 15, -1: 13, -2: 11 (augmenté pour plus de contraste)
+						const shadowIntensity = 0.5 - distance * 0.12
 
-						// Marges négatives pour créer le chevauchement
-						const marginLeft = index === 1 || index === 4 ? { sm: '-20px', md: '-30px' } : '0'
+						// Marges négatives pour créer le chevauchement progressif - désactivé sur tablette
+						const getMarginLeft = (idx) => {
+							if (idx === 0) return '0';
+							// Chevauchement progressif : chaque carte chevauche la précédente
+							return { sm: '0', md: '0', lg: '-18px' };
+						};
+						const marginLeft = getMarginLeft(index);
 
 						return (
 						<Grid
 							key={index}
 							item
 							xs={6}
-							sm={4}
+							sm={6}
+							md={4}
 							lg={2.4}
 							sx={{
 								display: 'flex',
 								justifyContent: 'center',
-								zIndex: zIndex,
+								zIndex: { xs: 1, lg: zIndex },
 								ml: marginLeft,
 							}}>
-							<Link href={icon.link} style={{ textDecoration: 'none', width: '100%', maxWidth: '280px' }}>
+							<Link href={icon.link} style={{ textDecoration: 'none', width: '100%', maxWidth: '210px' }}>
 								<Box
 									sx={{
 										display: 'flex',
@@ -615,23 +1040,33 @@ const Homepage = () => {
 										alignItems: 'center',
 										gap: 2,
 										textAlign: 'center',
-										p: { xs: 2.5, md: 3 },
+										p: { xs: 2.5, sm: 3, md: 3.5, lg: 3 },
 										height: '100%',
 										width: '100%',
-										minHeight: { xs: '280px', sm: '300px', md: '320px' },
+										minHeight: { xs: '280px', sm: '300px', md: '340px', lg: '320px' },
 										borderRadius: 4,
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.2)',
-										boxShadow: `0 ${4 + translateZ * 0.4}px ${20 + translateZ}px rgba(139, 92, 246, ${shadowIntensity})`,
+										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
+										border: '2px solid transparent',
+										backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
+										backgroundOrigin: 'border-box',
+										backgroundClip: 'padding-box, border-box',
+										boxShadow: {
+											xs: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+											sm: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+											md: '0 6px 24px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+											lg: `0 ${4 + translateZ * 0.4}px ${20 + translateZ}px rgba(139, 92, 246, ${shadowIntensity}), inset 0 1px 0 rgba(255, 255, 255, 0.8)`
+										},
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										cursor: 'pointer',
 										position: 'relative',
 										overflow: 'hidden',
 										transform: {
 											xs: 'scale(1)',
-											md: `scale(${scale}) translateZ(${translateZ}px)`
+											sm: 'scale(1)',
+											md: 'scale(1)',
+											lg: `scale(${scale}) translateZ(${translateZ}px)`
 										},
-										transformStyle: 'preserve-3d',
+										transformStyle: { xs: 'flat', lg: 'preserve-3d' },
 										'&::before': {
 											content: '""',
 											position: 'absolute',
@@ -645,10 +1080,16 @@ const Homepage = () => {
 										'&:hover': {
 											transform: {
 												xs: 'scale(1.05)',
-												md: `scale(${scale * 1.05}) translateZ(${translateZ}px)`
+												sm: 'scale(1.05)',
+												md: 'scale(1.05)',
+												lg: `scale(${scale * 1.08}) translateZ(${translateZ + 30}px) translateY(-10px)`
 											},
-											boxShadow: '0 8px 32px rgba(139, 92, 246, 0.35), 0 0 24px rgba(6, 182, 212, 0.2)',
-											borderColor: 'rgba(139, 92, 246, 0.5)',
+											zIndex: { xs: 1, lg: 100 },
+											boxShadow: {
+												xs: '0 8px 32px rgba(139, 92, 246, 0.4), 0 0 16px rgba(6, 182, 212, 0.2)',
+												md: '0 8px 32px rgba(139, 92, 246, 0.35), 0 0 24px rgba(6, 182, 212, 0.2)',
+												lg: '0 20px 60px rgba(139, 92, 246, 0.6), 0 0 40px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+											},
 											'&::before': {
 												left: '100%',
 											},
@@ -663,8 +1104,8 @@ const Homepage = () => {
 									<Box
 										sx={{
 											position: 'relative',
-											width: { xs: 90, md: 110 },
-											height: { xs: 90, md: 110 },
+											width: { xs: 90, sm: 100, md: 120, lg: 110 },
+											height: { xs: 90, sm: 100, md: 120, lg: 110 },
 										}}>
 										{/* Cercle de fond animé blur */}
 										<Box
@@ -770,32 +1211,140 @@ const Homepage = () => {
 											/>
 										</Box>
 									</Box>
-									<Box>
+									<Box sx={{ width: '100%', px: 1 }}>
+										{/* Titre avec effet heroic fantasy */}
 										<Typography
 											variant='h6'
 											sx={{
-												fontSize: { xs: '0.95rem', md: '1.05rem' },
-												fontWeight: 700,
-												color: '#1e1b4b',
-												mb: 0.5,
+												fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem', lg: '1.05rem' },
+												fontWeight: 800,
+												background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+												backgroundSize: '200% 200%',
+												WebkitBackgroundClip: 'text',
+												WebkitTextFillColor: 'transparent',
+												backgroundClip: 'text',
+												textTransform: 'uppercase',
+												letterSpacing: '0.5px',
+												mb: 1,
+												textShadow: '0 2px 4px rgba(139, 92, 246, 0.2)',
+												position: 'relative',
+												'&::after': {
+													content: '""',
+													position: 'absolute',
+													bottom: -4,
+													left: '50%',
+													transform: 'translateX(-50%)',
+													width: '60%',
+													height: '1px',
+													background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
+												},
 											}}>
 											{icon.title}
 										</Typography>
-										<Typography
-											variant='body2'
+
+										{/* Séparateur décoratif */}
+										<Box
 											sx={{
-												color: '#64748b',
-												fontWeight: 500,
-												fontSize: { xs: '0.8rem', md: '0.85rem' },
-												lineHeight: 1.5,
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												gap: 1,
+												my: 1.5,
 											}}>
-											<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											<Box
+												sx={{
+													width: '20px',
+													height: '1px',
+													background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.6))',
+												}}
+											/>
+											<Box
+												sx={{
+													width: '6px',
+													height: '6px',
+													borderRadius: '50%',
+													background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
+													boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)',
+												}}
+											/>
+											<Box
+												sx={{
+													width: '20px',
+													height: '1px',
+													background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.6))',
+												}}
+											/>
+										</Box>
+
+										{/* Description avec style parchemin */}
+										<>
+											<Typography
+												variant='body2'
+												sx={{
+													display: { xs: 'block', sm: 'none' },
+													color: '#475569',
+													fontWeight: 500,
+													fontSize: '0.8rem',
+													lineHeight: 1.6,
+													fontStyle: 'italic',
+													px: 0.5,
+													textAlign: 'center',
+													position: 'relative',
+													'&::before': {
+														content: '"\u201C"',
+														position: 'absolute',
+														left: -4,
+														top: -8,
+														fontSize: '1.5rem',
+														color: 'rgba(139, 92, 246, 0.3)',
+														fontFamily: 'Georgia, serif',
+													},
+													'&::after': {
+														content: '"\u201D"',
+														position: 'absolute',
+														right: -4,
+														bottom: -8,
+														fontSize: '1.5rem',
+														color: 'rgba(6, 182, 212, 0.3)',
+														fontFamily: 'Georgia, serif',
+													},
+												}}>
 												{icon.subtitleMobile}
-											</Box>
-											<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+											</Typography>
+											<Typography
+												variant='body2'
+												sx={{
+													display: { xs: 'none', sm: 'block' },
+													color: '#475569',
+													fontWeight: 500,
+													fontSize: { sm: '0.85rem', md: '0.9rem', lg: '0.85rem' },
+													lineHeight: 1.6,
+													fontStyle: 'italic',
+													px: 0.5,
+													textAlign: 'center',
+													position: 'relative',
+													'&::before': {
+														content: '"\u201C"',
+														position: 'absolute',
+														left: -4,
+														top: -8,
+														fontSize: '1.5rem',
+														color: 'rgba(139, 92, 246, 0.3)',
+														fontFamily: 'Georgia, serif',
+													},
+													'&::after': {
+														content: '"\u201D"',
+														position: 'absolute',
+														right: -4,
+														bottom: -8,
+														fontSize: '1.5rem',
+														color: 'rgba(6, 182, 212, 0.3)',
+														fontFamily: 'Georgia, serif',
+													},
+												}}>
 												{icon.subtitle}
-											</Box>
-										</Typography>
+											</Typography>
+										</>
 									</Box>
 								</Box>
 							</Link>

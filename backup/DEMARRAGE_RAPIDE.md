@@ -117,25 +117,6 @@ Démarrage de la sauvegarde...
 
 Le fichier sera créé dans : `backup/sql/linguami_backup_YYYYMMDD_HHMMSS.sql.gz`
 
-#### Test JSON :
-
-```bash
-cd backup
-node backup-json.js
-```
-
-**Résultat attendu :**
-```
-=== Export JSON de la base de données Linguami ===
-[1/9] users_profile
-  Nombre d'enregistrements: XX
-  ✓ Exporté: XX lignes
-...
-=== Export terminé ===
-```
-
-Les fichiers seront créés dans : `backup/exports/backup_YYYY-MM-DDTHH-MM-SS/`
-
 ---
 
 ## 🎯 Utilisation quotidienne
@@ -158,7 +139,6 @@ cd backup
 
 Cela fait :
 - ✅ Sauvegarde SQL complète
-- ✅ Export JSON de toutes les tables
 - ✅ Compression automatique
 - ✅ Nettoyage des anciennes sauvegardes
 - ✅ Logs détaillés
@@ -234,13 +214,11 @@ MAILTO=votre-email@example.com
 **Windows :**
 ```cmd
 dir /B /O-D backup\sql\*.gz
-dir /B /O-D /AD backup\exports\backup_*
 ```
 
 **Linux/Mac :**
 ```bash
 ls -lht backup/sql/*.gz | head -5
-ls -ldt backup/exports/backup_* | head -5
 ```
 
 ### Vérifier les logs
@@ -296,20 +274,6 @@ cat .env.local | grep DATABASE_URL
 
 ---
 
-### "permission denied" lors de l'export JSON
-
-**Cause :** Mauvaise clé Supabase (utilisation de l'anon key au lieu de service role)
-
-**Solution :**
-```env
-# Dans .env.local, assurez-vous d'utiliser la SERVICE ROLE KEY
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# Pas la clé anon !
-```
-
----
-
 ### Sauvegarde très lente
 
 **Causes possibles :**
@@ -319,11 +283,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **Solutions :**
 1. Lancez pendant les heures creuses (nuit)
-2. Augmentez la taille des batches dans `backup-json.js` :
-   ```javascript
-   const BATCH_SIZE = 1000; // au lieu de 100
-   ```
-3. Utilisez seulement la sauvegarde SQL (plus rapide)
+2. Vérifiez votre connexion Internet
 
 ---
 
@@ -333,9 +293,6 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```bash
 # Garder seulement les 3 dernières sauvegardes SQL
 ls -t backup/sql/*.gz | tail -n +4 | xargs rm
-
-# Garder seulement les 3 derniers exports JSON
-ls -td backup/exports/backup_* | tail -n +4 | xargs rm -rf
 
 # Nettoyer les logs de plus de 30 jours
 find backup/logs -name "*.log" -mtime +30 -delete
@@ -355,16 +312,6 @@ gunzip backup/sql/linguami_backup_YYYYMMDD_HHMMSS.sql.gz
 psql "$DATABASE_URL" < backup/sql/linguami_backup_YYYYMMDD_HHMMSS.sql
 ```
 
-### Restaurer depuis JSON (restauration sélective)
-
-```bash
-# Lister les backups disponibles
-node backup/restore-json.js
-
-# Restaurer un backup spécifique
-node backup/restore-json.js backup/exports/backup_2025-01-15T14-30-00
-```
-
 **Pour plus de détails, consultez :** [GUIDE_RESTAURATION.md](GUIDE_RESTAURATION.md)
 
 ---
@@ -374,8 +321,7 @@ node backup/restore-json.js backup/exports/backup_2025-01-15T14-30-00
 Avant de partir en vacances ou de faire une grosse mise à jour :
 
 - [ ] J'ai fait une sauvegarde SQL complète
-- [ ] J'ai fait un export JSON complet
-- [ ] J'ai vérifié que les fichiers sont bien créés
+- [ ] J'ai vérifié que le fichier est bien créé
 - [ ] J'ai testé une restauration sur un projet de test
 - [ ] J'ai copié les sauvegardes sur un disque externe ou cloud
 - [ ] J'ai noté mes identifiants Supabase dans un endroit sûr

@@ -4,6 +4,53 @@ Historique des modifications du système de sauvegarde.
 
 ---
 
+## [1.2.0] - 2025-11-02
+
+### 🔄 Changements majeurs
+
+#### Suppression de l'export JSON
+- **Raison :** Redondance avec la sauvegarde SQL
+  - Le backup SQL contient déjà toutes les données ET la structure
+  - Simplifie le système de backup
+  - Réduit l'espace disque utilisé
+
+#### Fichiers supprimés
+- ❌ `backup-json.js` - Export JSON des données
+- ❌ `restore-json.js` - Restauration depuis JSON
+- ❌ `backup/exports/` - Dossiers d'exports JSON existants
+
+#### Fichiers modifiés
+- ✅ `backup-auto.sh` - Suppression de la section export JSON
+- ✅ `backup-auto.bat` - Suppression de la section export JSON
+- ✅ `README.md` - Mise à jour de la documentation
+- ✅ `GUIDE_RESTAURATION.md` - Suppression de la section restauration JSON
+- ✅ `DEMARRAGE_RAPIDE.md` - Suppression des références JSON
+- ✅ `CHANGELOG.md` - Ajout de cette version
+
+### 💡 Impact
+
+**Avant (v1.1.0) :**
+- Backup SQL + Backup JSON (double emploi)
+- 2 systèmes de restauration à maintenir
+- Plus d'espace disque utilisé
+
+**Après (v1.2.0) :**
+- ✅ Backup SQL uniquement (complet et suffisant)
+- ✅ Un seul système de restauration
+- ✅ Documentation simplifiée
+- ✅ Moins d'espace disque utilisé
+
+### 📋 Migration depuis v1.1.0
+
+**Aucune action requise !** Le système continue de fonctionner.
+
+**Optionnel :**
+- Les anciens exports JSON dans `backup/exports/` ont été supprimés
+- Si vous en aviez besoin, ils ne sont plus générés
+- Les sauvegardes SQL restent inchangées et complètes
+
+---
+
 ## [1.1.0] - 2025-11-01
 
 ### ✨ Améliorations
@@ -51,15 +98,12 @@ Historique des modifications du système de sauvegarde.
 
 #### Scripts de sauvegarde
 - ✅ `backup-sql.sh` / `backup-sql.bat` - Sauvegarde SQL complète (pg_dump)
-- ✅ `backup-json.js` - Export JSON de toutes les tables
 - ✅ `backup-auto.sh` / `backup-auto.bat` - Sauvegarde automatisée
-- ✅ `restore-json.js` - Restauration interactive depuis JSON
 
 #### Structure
 ```
 backup/
 ├── sql/              # Sauvegardes SQL (.sql.gz)
-├── exports/          # Exports JSON
 ├── logs/             # Logs d'exécution
 └── scripts/          # Scripts de sauvegarde
 ```
@@ -82,12 +126,11 @@ backup/
 
 #### Fonctionnalités
 - ✅ Sauvegarde SQL complète avec compression
-- ✅ Export JSON lisible et versionnable
 - ✅ Nettoyage automatique (garde 7 dernières sauvegardes)
 - ✅ Logs détaillés
 - ✅ Support multi-plateforme (Windows, Linux, Mac)
 - ✅ Protection Git (données sensibles non committées)
-- ✅ Restauration interactive
+- ✅ Restauration depuis SQL
 
 ---
 

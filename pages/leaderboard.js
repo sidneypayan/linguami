@@ -176,10 +176,11 @@ const LeaderboardPage = () => {
 		<>
 			<SEO title={t('leaderboardTitle')} description={t('leaderboardDescription')} />
 
-			{/* Compact Header */}
+			{/* Compact Header - Desktop only */}
 			<Box
 				sx={{
-					pt: { xs: '5.5rem', md: '6rem' },
+					display: { xs: 'none', lg: 'block' },
+					pt: '6rem',
 					pb: 3,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
 					bgcolor: '#fafafa',
@@ -188,7 +189,7 @@ const LeaderboardPage = () => {
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1 }}>
 						<TrophyIcon
 							sx={{
-								fontSize: { xs: '2rem', md: '2.25rem' },
+								fontSize: '2.25rem',
 								color: '#F59E0B',
 							}}
 						/>
@@ -196,7 +197,7 @@ const LeaderboardPage = () => {
 							variant='h4'
 							sx={{
 								fontWeight: 700,
-								fontSize: { xs: '1.75rem', sm: '2rem' },
+								fontSize: '2rem',
 								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
@@ -209,35 +210,31 @@ const LeaderboardPage = () => {
 						align='center'
 						sx={{
 							color: '#64748b',
-							fontSize: { xs: '0.9375rem', sm: '1rem' },
+							fontSize: '1rem',
 						}}>
 						{t('leaderboardDescription')}
 					</Typography>
 				</Container>
 			</Box>
 
-			<Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 }, pb: 8 }}>
+			<Box sx={{ pt: { xs: 'calc(70px + 32px)', sm: 'calc(80px + 32px)', lg: 0 } }}>
+				<Container maxWidth="lg" sx={{ py: { xs: 0, md: 4 }, pb: 8, pt: { xs: 0, lg: 3 }, px: { xs: 0, sm: 2, md: 3 } }}>
 
-				{/* User Rank Card */}
+				{/* User Stats Card - Compact version */}
 				{leaderboardData?.userStats && (
 					<Paper
 						elevation={0}
 						sx={{
-							borderRadius: 3,
-							p: 3,
-							mb: 4,
+							borderRadius: { xs: 0, sm: 3 },
+							p: { xs: 1.5, sm: 3 },
+							mb: { xs: 2, sm: 4 },
 							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-							border: '2px solid',
-							borderColor: alpha('#667eea', 0.3),
+							border: { xs: 'none', sm: '2px solid' },
+							borderColor: { sm: alpha('#667eea', 0.3) },
+							borderBottom: { xs: '1px solid rgba(102, 126, 234, 0.2)', sm: 'none' },
 						}}>
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-								flexWrap: 'wrap',
-								gap: 2,
-							}}>
+						{/* Desktop version */}
+						<Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', justifyContent: 'space-between', gap: 3 }}>
 							<Box>
 								<Typography variant="subtitle2" sx={{
 									color: 'white',
@@ -266,7 +263,7 @@ const LeaderboardPage = () => {
 									</Typography>
 								)}
 							</Box>
-							<Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+							<Box sx={{ display: 'flex', gap: 3 }}>
 								<Box>
 									<Typography variant="subtitle2" sx={{
 										color: 'white',
@@ -329,6 +326,111 @@ const LeaderboardPage = () => {
 								</Box>
 							</Box>
 						</Box>
+
+						{/* Mobile version - Compact 2x2 grid */}
+						<Box sx={{ display: { xs: 'grid', sm: 'none' }, gridTemplateColumns: 'repeat(2, 1fr)', gap: 1 }}>
+							{/* Votre Classement */}
+							<Box sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								p: 1,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%)',
+							}}>
+								<Typography variant="caption" sx={{
+									color: '#667eea',
+									fontWeight: 700,
+									fontSize: '0.65rem',
+									textTransform: 'uppercase',
+									mb: 0.25,
+								}}>
+									{t('yourRanking')}
+								</Typography>
+								{userRank ? (
+									<Typography variant="h6" sx={{ fontWeight: 800, color: '#667eea', fontSize: '1.1rem' }}>
+										{getRankIcon(userRank)}
+									</Typography>
+								) : (
+									<Typography variant="caption" sx={{ fontWeight: 600, color: '#94A3B8', fontSize: '0.7rem' }}>
+										-
+									</Typography>
+								)}
+							</Box>
+
+							{/* XP Total */}
+							<Box sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								p: 1,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(30, 64, 175, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%)',
+							}}>
+								<Typography variant="caption" sx={{
+									color: '#1E40AF',
+									fontWeight: 700,
+									fontSize: '0.65rem',
+									textTransform: 'uppercase',
+									mb: 0.25,
+								}}>
+									XP
+								</Typography>
+								<Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#1E40AF' }}>
+									{leaderboardData.userStats.total_xp.toLocaleString()}
+								</Typography>
+							</Box>
+
+							{/* Streak */}
+							<Box sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								p: 1,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(21, 128, 61, 0.12) 0%, rgba(34, 197, 94, 0.08) 100%)',
+							}}>
+								<Typography variant="caption" sx={{
+									color: '#15803D',
+									fontWeight: 700,
+									fontSize: '0.65rem',
+									textTransform: 'uppercase',
+									mb: 0.25,
+								}}>
+									Streak
+								</Typography>
+								<Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#15803D' }}>
+									{leaderboardData.userStats.daily_streak} 🔥
+								</Typography>
+							</Box>
+
+							{/* Gold */}
+							<Box sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								p: 1,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.12) 0%, rgba(251, 146, 60, 0.08) 100%)',
+							}}>
+								<Typography variant="caption" sx={{
+									color: '#D97706',
+									fontWeight: 700,
+									fontSize: '0.65rem',
+									textTransform: 'uppercase',
+									mb: 0.25,
+								}}>
+									Gold
+								</Typography>
+								<Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#D97706' }}>
+									{(leaderboardData.userStats.total_gold || 0).toLocaleString()} 💰
+								</Typography>
+							</Box>
+						</Box>
 					</Paper>
 				)}
 
@@ -336,9 +438,10 @@ const LeaderboardPage = () => {
 				<Paper
 					elevation={0}
 					sx={{
-						borderRadius: 4,
+						borderRadius: { xs: 0, sm: 4 },
 						overflow: 'hidden',
-						border: '1px solid #E2E8F0',
+						border: { xs: 'none', sm: '1px solid #E2E8F0' },
+						mt: { xs: 0, sm: 0 },
 					}}>
 					<Box
 						sx={{
@@ -713,9 +816,9 @@ const LeaderboardPage = () => {
 				<Box
 					sx={{
 						textAlign: 'center',
-						mt: 6,
-						p: 3,
-						borderRadius: 3,
+						mt: { xs: 3, sm: 6 },
+						p: { xs: 2, sm: 3 },
+						borderRadius: { xs: 0, sm: 3 },
 						background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
 					}}>
 					<Typography
@@ -736,6 +839,7 @@ const LeaderboardPage = () => {
 					</Typography>
 				</Box>
 			</Container>
+			</Box>
 		</>
 	)
 }

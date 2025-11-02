@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { Search, Refresh, GridView, ViewList, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, AutoStories, Book } from '@mui/icons-material'
+import { Search, Refresh, GridView, ViewList, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, Schedule, PlayCircle, CheckCircle } from '@mui/icons-material'
 import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment } from '@mui/material'
 
 /**
@@ -15,6 +15,7 @@ import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment } from '@mui/
  * @param {string|null} selectedStatus - Statut sélectionné
  * @param {string} currentView - Vue actuelle ('card' ou 'list')
  * @param {boolean} showNotStudiedFilter - Afficher le filtre "Non étudié" (true pour section, false pour my-materials)
+ * @param {boolean} showStudiedFilter - Afficher le filtre "Étudiés" (true pour my-materials, false pour section)
  * @param {string} translationNamespace - Namespace de traduction ('materials' ou 'section')
  */
 const MaterialsFilterBar = ({
@@ -28,6 +29,7 @@ const MaterialsFilterBar = ({
 	selectedStatus = null,
 	currentView = 'card',
 	showNotStudiedFilter = false,
+	showStudiedFilter = true,
 	translationNamespace = 'materials'
 }) => {
 	const { t } = useTranslation(translationNamespace)
@@ -47,9 +49,12 @@ const MaterialsFilterBar = ({
 
 	const statuses = [
 		...(showNotStudiedFilter ? [
-			{ label: t('not_studied'), key: 'not_studied', tooltip: `📖 ${t('not_studied')} - ${t('notStudiedTooltip')}`, color: '#64748b', icon: Book }
+			{ label: t('not_studied'), key: 'not_studied', tooltip: `▶️ ${t('not_studied')} - ${t('notStudiedTooltip')}`, color: '#8b5cf6', icon: PlayCircle }
 		] : []),
-		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `📚 ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#3b82f6', icon: AutoStories },
+		{ label: t('being_studied'), key: 'is_being_studied', tooltip: `⏰ ${t('being_studied')} - ${t('beingStudiedTooltip')}`, color: '#f59e0b', icon: Schedule },
+		...(showStudiedFilter ? [
+			{ label: t('studied'), key: 'is_studied', tooltip: `✅ ${t('studied')} - ${t('studiedTooltip')}`, color: '#10b981', icon: CheckCircle }
+		] : []),
 	]
 
 	return (

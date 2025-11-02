@@ -7,7 +7,6 @@ Documentation complète du système de sauvegarde et de restauration de la base 
 Ce dossier contient tous les outils nécessaires pour sauvegarder et restaurer votre base de données Linguami. Vous avez accès à :
 
 - ✅ Sauvegarde SQL complète (structure + données)
-- ✅ Export JSON des données (facile à lire et versionner)
 - ✅ Scripts automatisés pour sauvegardes régulières
 - ✅ Guide complet de restauration
 
@@ -85,16 +84,7 @@ backup-sql.bat
 
 Résultat : Un fichier `.sql.gz` dans `backup/sql/`
 
-#### Option 2 : Export JSON
-
-```bash
-cd backup
-node backup-json.js
-```
-
-Résultat : Un dossier avec tous les fichiers JSON dans `backup/exports/`
-
-#### Option 3 : Sauvegarde complète automatisée
+#### Option 2 : Sauvegarde automatisée
 
 **Linux/Mac/Git Bash :**
 ```bash
@@ -109,7 +99,7 @@ cd backup
 backup-auto.bat
 ```
 
-Résultat : Sauvegarde SQL + Export JSON + Nettoyage automatique
+Résultat : Sauvegarde SQL + Nettoyage automatique
 
 ---
 
@@ -124,20 +114,11 @@ backup/
 ├── backup-sql.sh                  # Sauvegarde SQL (Linux/Mac)
 ├── backup-sql.bat                 # Sauvegarde SQL (Windows)
 │
-├── backup-json.js                 # Export JSON des données
-│
 ├── backup-auto.sh                 # Sauvegarde automatisée (Linux/Mac)
 ├── backup-auto.bat                # Sauvegarde automatisée (Windows)
 │
 ├── sql/                           # Sauvegardes SQL (.sql.gz)
 │   └── linguami_backup_*.sql.gz
-│
-├── exports/                       # Exports JSON
-│   └── backup_*/
-│       ├── _metadata.json
-│       ├── users_profile.json
-│       ├── user_xp_profile.json
-│       └── ...
 │
 └── logs/                          # Logs d'exécution
     └── *.log
@@ -176,50 +157,10 @@ backup/sql/linguami_backup_20250115_143022.sql.gz
 
 ---
 
-### 2. backup-json.js
+### 2. backup-auto.sh / backup-auto.bat
 
 **Ce qu'il fait :**
-- Exporte toutes les tables importantes en fichiers JSON
-- Crée un fichier de métadonnées
-- Facile à lire, versionner et analyser
-
-**Quand l'utiliser :**
-- Pour inspecter les données facilement
-- Pour versionner les données avec Git
-- Pour restauration sélective de tables
-- Pour analyse de données
-
-**Tables exportées :**
-- `users_profile` - Profils utilisateurs
-- `user_xp_profile` - Profils XP
-- `xp_rewards_config` - Configuration des récompenses
-- `xp_transactions` - Historique XP
-- `user_h5p_progress` - Progression H5P
-- `user_goals` - Objectifs utilisateurs
-- `user_achievements` - Achievements
-- `weekly_xp_tracking` - Tracking hebdomadaire
-- `monthly_xp_tracking` - Tracking mensuel
-
-**Usage :**
-```bash
-node backup-json.js
-```
-
-**Résultat :**
-```
-backup/exports/backup_2025-01-15T14-30-22/
-├── _metadata.json
-├── users_profile.json
-├── user_xp_profile.json
-└── ...
-```
-
----
-
-### 3. backup-auto.sh / backup-auto.bat
-
-**Ce qu'il fait :**
-- Exécute sauvegarde SQL + export JSON
+- Exécute sauvegarde SQL complète
 - Nettoie automatiquement les anciennes sauvegardes
 - Garde les 7 dernières sauvegardes
 - Crée des logs détaillés
@@ -264,7 +205,6 @@ crontab -e
 Consultez le **[Guide de Restauration](GUIDE_RESTAURATION.md)** complet pour :
 
 - Restauration complète depuis SQL
-- Restauration sélective depuis JSON
 - Restauration d'urgence via Supabase
 - Dépannage des problèmes courants
 
@@ -281,19 +221,6 @@ psql "$DATABASE_URL" < backup/sql/linguami_backup_YYYYMMDD_HHMMSS.sql
 ---
 
 ## ⚙️ Configuration avancée
-
-### Personnaliser les tables exportées en JSON
-
-Éditez `backup-json.js` et modifiez `TABLES_TO_BACKUP` :
-
-```javascript
-const TABLES_TO_BACKUP = [
-  { name: 'users_profile', orderBy: 'created_at' },
-  { name: 'user_xp_profile', orderBy: 'total_xp' },
-  // Ajoutez vos tables ici
-  { name: 'ma_nouvelle_table', orderBy: 'id' },
-];
-```
 
 ### Notifications par email/Telegram
 
@@ -342,7 +269,6 @@ if [ "$SQL_COUNT" -gt 7 ]; then  # Changez 7 par votre valeur
 # Sauvegardes
 backup/sql/*.sql
 backup/sql/*.sql.gz
-backup/exports/backup_*
 backup/logs/*.log
 
 # Configuration
@@ -366,7 +292,6 @@ backup/logs/*.log
 ```bash
 # Nombre de sauvegardes disponibles
 ls -l backup/sql/*.sql.gz | wc -l
-ls -ld backup/exports/backup_* | wc -l
 
 # Taille totale
 du -sh backup/
@@ -441,9 +366,6 @@ SUPABASE_SERVICE_ROLE_KEY=votre_service_role_key  # Pas l'anon key!
 ```bash
 # Garder seulement les 3 dernières sauvegardes SQL
 ls -t backup/sql/*.sql.gz | tail -n +4 | xargs rm
-
-# Garder seulement les 3 derniers exports JSON
-ls -td backup/exports/backup_* | tail -n +4 | xargs rm -rf
 ```
 
 ---
@@ -470,9 +392,13 @@ Pour améliorer ce système de backup :
 
 ## 📝 Changelog
 
+### Version 1.1 (2025-11-02)
+- ✅ Suppression de l'export JSON (redondant avec SQL)
+- ✅ Simplification du système de backup
+- ✅ Focus sur backup SQL complet uniquement
+
 ### Version 1.0 (2025-01-15)
 - ✅ Sauvegarde SQL complète
-- ✅ Export JSON des données
 - ✅ Scripts automatisés
 - ✅ Support Windows, Linux, Mac
 - ✅ Guide de restauration complet
@@ -497,21 +423,15 @@ Pour améliorer ce système de backup :
 - Hebdomadaires : 4 dernières semaines
 - Mensuelles : 12 derniers mois
 
-### SQL ou JSON, lequel choisir ?
+### Quel format utiliser ?
 
 **SQL (pg_dump) :**
 - ✅ Restauration complète facile
 - ✅ Inclut structure + données + fonctions
 - ✅ Format compact (compressé)
-- ❌ Moins lisible
+- ✅ Backup complet et auto-suffisant
 
-**JSON :**
-- ✅ Facile à lire et analyser
-- ✅ Restauration sélective possible
-- ✅ Versionnable avec Git
-- ❌ Ne contient pas la structure
-
-**Meilleure pratique :** **Faites les deux !** Le script `backup-auto` les fait automatiquement.
+Le script `backup-auto` effectue automatiquement la sauvegarde SQL et nettoie les anciennes versions.
 
 ### Puis-je sauvegarder automatiquement sur le cloud ?
 
@@ -520,13 +440,11 @@ Oui ! Ajoutez à la fin de `backup-auto.sh` :
 **Google Drive (rclone) :**
 ```bash
 rclone copy backup/sql/ gdrive:linguami-backups/sql/
-rclone copy backup/exports/ gdrive:linguami-backups/exports/
 ```
 
 **AWS S3 :**
 ```bash
 aws s3 sync backup/sql/ s3://mon-bucket/linguami/sql/
-aws s3 sync backup/exports/ s3://mon-bucket/linguami/exports/
 ```
 
 ---

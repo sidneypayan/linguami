@@ -146,23 +146,34 @@ const Hero = () => {
 						{t('title')}
 					</Typography>
 
-					<Typography
-						mb={5}
-						variant='h5'
-						sx={{
-							fontSize: { xs: '1.125rem', md: '1.5rem' },
-							fontWeight: 500,
-							lineHeight: 1.7,
-							color: 'rgba(255, 255, 255, 0.85)',
-							animation: 'fadeInUp 0.6s ease-out 0.2s both',
-						}}>
-						<Box component='span' sx={{ display: { xs: 'inline', md: 'none' } }}>
+					<>
+						<Typography
+							mb={5}
+							variant='h5'
+							sx={{
+								display: { xs: 'block', md: 'none' },
+								fontSize: '1.125rem',
+								fontWeight: 500,
+								lineHeight: 1.7,
+								color: 'rgba(255, 255, 255, 0.85)',
+								animation: 'fadeInUp 0.6s ease-out 0.2s both',
+							}}>
 							{t('subtitleMobile')}
-						</Box>
-						<Box component='span' sx={{ display: { xs: 'none', md: 'inline' } }}>
+						</Typography>
+						<Typography
+							mb={5}
+							variant='h5'
+							sx={{
+								display: { xs: 'none', md: 'block' },
+								fontSize: '1.5rem',
+								fontWeight: 500,
+								lineHeight: 1.7,
+								color: 'rgba(255, 255, 255, 0.85)',
+								animation: 'fadeInUp 0.6s ease-out 0.2s both',
+							}}>
 							{t('subtitle')}
-						</Box>
-					</Typography>
+						</Typography>
+					</>
 
 					<Link href={`/materials`}>
 						<Button

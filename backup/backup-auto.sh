@@ -68,9 +68,9 @@ fi
 log ""
 
 # =====================================
-# 1. SAUVEGARDE SQL
+# SAUVEGARDE SQL
 # =====================================
-log "${YELLOW}═══ 1/2 Sauvegarde SQL ═══${NC}"
+log "${YELLOW}═══ Sauvegarde SQL ═══${NC}"
 
 if [ -n "$DATABASE_URL" ]; then
     SQL_BACKUP_FILE="$SCRIPT_DIR/sql/linguami_backup_${TIMESTAMP}.sql"
@@ -105,27 +105,7 @@ fi
 log ""
 
 # =====================================
-# 2. EXPORT JSON
-# =====================================
-log "${YELLOW}═══ 2/2 Export JSON ═══${NC}"
-
-if [ -f "$SCRIPT_DIR/backup-json.js" ]; then
-    log "${BLUE}Exécution du script d'export JSON...${NC}"
-    node "$SCRIPT_DIR/backup-json.js" 2>&1 | tee -a "$LOG_FILE"
-
-    if [ $? -eq 0 ]; then
-        log "${GREEN}✓ Export JSON réussi${NC}"
-    else
-        log "${RED}✗ Échec de l'export JSON${NC}"
-    fi
-else
-    log "${RED}✗ Script backup-json.js introuvable${NC}"
-fi
-
-log ""
-
-# =====================================
-# 3. NETTOYAGE DES ANCIENNES SAUVEGARDES
+# NETTOYAGE DES ANCIENNES SAUVEGARDES
 # =====================================
 log "${YELLOW}═══ Nettoyage ═══${NC}"
 
@@ -134,14 +114,6 @@ SQL_COUNT=$(ls -1 "$SCRIPT_DIR/sql"/*.sql.gz 2>/dev/null | wc -l)
 if [ "$SQL_COUNT" -gt 7 ]; then
     log "${BLUE}Suppression des anciennes sauvegardes SQL (gardant les 7 dernières)...${NC}"
     ls -t "$SCRIPT_DIR/sql"/*.sql.gz | tail -n +8 | xargs rm
-    log "${GREEN}✓ Nettoyage effectué${NC}"
-fi
-
-# Garder seulement les 7 derniers exports JSON
-EXPORT_COUNT=$(ls -1d "$SCRIPT_DIR/exports"/backup_* 2>/dev/null | wc -l)
-if [ "$EXPORT_COUNT" -gt 7 ]; then
-    log "${BLUE}Suppression des anciens exports JSON (gardant les 7 derniers)...${NC}"
-    ls -td "$SCRIPT_DIR/exports"/backup_* | tail -n +8 | xargs rm -rf
     log "${GREEN}✓ Nettoyage effectué${NC}"
 fi
 
@@ -156,30 +128,20 @@ fi
 log ""
 
 # =====================================
-# 4. STATISTIQUES FINALES
+# STATISTIQUES FINALES
 # =====================================
 log "${YELLOW}═══ Statistiques ═══${NC}"
 
 TOTAL_SQL=$(ls -1 "$SCRIPT_DIR/sql"/*.sql.gz 2>/dev/null | wc -l)
-TOTAL_JSON=$(ls -1d "$SCRIPT_DIR/exports"/backup_* 2>/dev/null | wc -l)
 TOTAL_SIZE=$(du -sh "$SCRIPT_DIR" | cut -f1)
 
 log "Sauvegardes SQL disponibles: $TOTAL_SQL"
-log "Exports JSON disponibles: $TOTAL_JSON"
 log "Taille totale des sauvegardes: $TOTAL_SIZE"
 log ""
 
 # Dernières sauvegardes
 log "${BLUE}3 dernières sauvegardes SQL:${NC}"
 ls -lht "$SCRIPT_DIR/sql"/*.sql.gz 2>/dev/null | head -3 | awk '{print "  " $9 " (" $5 ")"}'
-
-log ""
-log "${BLUE}3 derniers exports JSON:${NC}"
-ls -dt "$SCRIPT_DIR/exports"/backup_* 2>/dev/null | head -3 | while read dir; do
-    size=$(du -sh "$dir" | cut -f1)
-    basename=$(basename "$dir")
-    log "  $basename ($size)"
-done
 
 log ""
 log "${GREEN}╔═══════════════════════════════════════════════════════╗${NC}"

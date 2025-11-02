@@ -32,10 +32,10 @@ const Footer = () => {
 			<Box
 				sx={{
 					position: 'absolute',
-					top: 0,
+					top: '-1px',
 					left: 0,
 					right: 0,
-					height: { xs: '60px', md: '80px' },
+					height: { xs: '61px', md: '81px' },
 					background: '#ffffff',
 					clipPath: 'polygon(0 0, 100% 50%, 100% 0)',
 					zIndex: 0,

@@ -70,9 +70,9 @@ if %DEPENDENCIES_OK% equ 0 (
 echo.
 
 REM =====================================
-REM 1. SAUVEGARDE SQL
+REM SAUVEGARDE SQL
 REM =====================================
-echo === 1/2 Sauvegarde SQL === | tee -a "%LOG_FILE%"
+echo === Sauvegarde SQL === | tee -a "%LOG_FILE%"
 
 if defined DATABASE_URL (
     set "SQL_BACKUP_FILE=%SCRIPT_DIR%sql\linguami_backup_%TIMESTAMP%.sql"
@@ -104,27 +104,7 @@ if defined DATABASE_URL (
 echo.
 
 REM =====================================
-REM 2. EXPORT JSON
-REM =====================================
-echo === 2/2 Export JSON === | tee -a "%LOG_FILE%"
-
-if exist "%SCRIPT_DIR%backup-json.js" (
-    echo [INFO] Execution du script d'export JSON... | tee -a "%LOG_FILE%"
-    node "%SCRIPT_DIR%backup-json.js" 2>&1 | tee -a "%LOG_FILE%"
-
-    if %errorlevel% equ 0 (
-        echo [OK] Export JSON reussi | tee -a "%LOG_FILE%"
-    ) else (
-        echo [ERREUR] Echec de l'export JSON | tee -a "%LOG_FILE%"
-    )
-) else (
-    echo [ERREUR] Script backup-json.js introuvable | tee -a "%LOG_FILE%"
-)
-
-echo.
-
-REM =====================================
-REM 3. NETTOYAGE DES ANCIENNES SAUVEGARDES
+REM NETTOYAGE DES ANCIENNES SAUVEGARDES
 REM =====================================
 echo === Nettoyage === | tee -a "%LOG_FILE%"
 
@@ -138,32 +118,17 @@ if %SQL_COUNT% gtr 7 (
     echo [OK] Nettoyage effectue | tee -a "%LOG_FILE%"
 )
 
-REM Compter les exports JSON
-set "EXPORT_COUNT=0"
-for /d %%d in ("%SCRIPT_DIR%exports\backup_*") do set /a EXPORT_COUNT+=1
-
-if %EXPORT_COUNT% gtr 7 (
-    echo [INFO] Suppression des anciens exports JSON gardant les 7 derniers... | tee -a "%LOG_FILE%"
-    REM Garder seulement les 7 derniers (à implémenter manuellement)
-    echo [OK] Nettoyage effectue | tee -a "%LOG_FILE%"
-)
-
 echo.
 
 REM =====================================
-REM 4. STATISTIQUES FINALES
+REM STATISTIQUES FINALES
 REM =====================================
 echo === Statistiques === | tee -a "%LOG_FILE%"
 echo Sauvegardes SQL disponibles: %SQL_COUNT% | tee -a "%LOG_FILE%"
-echo Exports JSON disponibles: %EXPORT_COUNT% | tee -a "%LOG_FILE%"
 echo.
 
 echo 3 dernieres sauvegardes SQL: | tee -a "%LOG_FILE%"
 dir /B /O-D "%SCRIPT_DIR%sql\*.sql.gz" 2>nul | findstr /N "^" | findstr "^[1-3]:" | tee -a "%LOG_FILE%"
-
-echo.
-echo 3 derniers exports JSON: | tee -a "%LOG_FILE%"
-dir /B /O-D /AD "%SCRIPT_DIR%exports\backup_*" 2>nul | findstr /N "^" | findstr "^[1-3]:" | tee -a "%LOG_FILE%"
 
 echo.
 echo ==========================================================
