@@ -444,35 +444,35 @@ const Homepage = () => {
 
 	const multimedia = useMemo(() => [
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video-mini.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/video-mini.webp`,
 			title: t('video'),
 			subtitle: t('videosubtitle'),
 			subtitleMobile: t('videosubtitleMobile'),
 			link: '/materials#videos',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio-mini.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/audio-mini.webp`,
 			title: t('audio'),
 			subtitle: t('audiosubtitle'),
 			subtitleMobile: t('audiosubtitleMobile'),
 			link: '/materials#audio',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text-mini.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/text-mini.webp`,
 			title: t('text'),
 			subtitle: t('textsubtitle'),
 			subtitleMobile: t('textsubtitleMobile'),
 			link: '/materials#texts',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary-mini.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary-mini.webp`,
 			title: t('dictionary'),
 			subtitle: t('dictionarysubtitle'),
 			subtitleMobile: t('dictionarysubtitleMobile'),
 			link: '/dictionary',
 		},
 		{
-			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards-mini.png`,
+			img: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards-mini.webp`,
 			title: t('flashcards'),
 			subtitle: t('flashcardssubtitle'),
 			subtitleMobile: t('flashcardssubtitleMobile'),
@@ -1661,7 +1661,7 @@ const Homepage = () => {
 				<FeatureCard
 					title={t('translator')}
 					subtitle={t('translatorsubtitle')}
-					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/translator.png`}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/translator.webp`}
 					imageAlt="translator"
 					onShowClick={() => handleOpen('translator.mp4', t('translator'))}
 					reverse={true}
@@ -1674,7 +1674,7 @@ const Homepage = () => {
 				<FeatureCard
 					title={t('dictionary')}
 					subtitle={t('giftranslatorsubtitle')}
-					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.png`}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/dictionary.webp`}
 					imageAlt="dictionary"
 					onShowClick={() => handleOpen('dictionary.mp4', t('dictionary'))}
 					reverse={false}
@@ -1687,7 +1687,7 @@ const Homepage = () => {
 				<FeatureCard
 					title={t('flashcards')}
 					subtitle={t('gifflashcardssubtitle')}
-					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.png`}
+					imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/flashcards.webp`}
 					imageAlt="flashcards"
 					onShowClick={() => handleOpen('flashcards.mp4', t('flashcards'))}
 					reverse={true}
@@ -1701,7 +1701,7 @@ const Homepage = () => {
 					<FeatureCard
 						title={t('teacher')}
 						subtitle={t('teachersubtitle')}
-						imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/teacher.png`}
+						imageSrc={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/teacher.webp`}
 						imageAlt="teacher"
 						onShowClick={() => {}}
 						reverse={false}

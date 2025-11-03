@@ -7,7 +7,10 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"test": "jest --watch"
+		"test": "jest --watch",
+		"optimize-images": "node scripts/optimize-images.js",
+		"optimize-image": "node scripts/optimize-single-image.js",
+		"optimize-replace": "node scripts/optimize-and-replace-images.js"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.10.5",
@@ -42,6 +45,7 @@
 		"react-redux": "^8.0.2",
 		"react-toastify": "^9.0.8",
 		"recharts": "^3.3.0",
+		"sharp": "^0.34.4",
 		"stripe": "^11.5.0",
 		"swiper": "^8.4.5"
 	},

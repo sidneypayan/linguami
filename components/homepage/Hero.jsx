@@ -328,7 +328,7 @@ const Hero = () => {
 							zIndex: 2,
 						}}>
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.png`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.webp`}
 							alt='Linguami hero'
 							fill
 							style={{

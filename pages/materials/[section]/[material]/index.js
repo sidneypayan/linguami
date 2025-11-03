@@ -1,5 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
 import { supabaseServer } from '../../../../lib/supabase-server'
@@ -21,7 +22,6 @@ import VideoPlayer from '../../../../components/material/VideoPlayer'
 import EditMaterialModal from '../../../../components/admin/EditMaterialModal'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
-import { getImageUrl } from '../../../../utils/imageUtils'
 
 import Player from '../../../../components/Player'
 
@@ -33,7 +33,6 @@ import { editContent } from '../../../../features/content/contentSlice'
 import {
 	Box,
 	Button,
-	CardMedia,
 	Container,
 	IconButton,
 	Stack,
@@ -121,12 +120,25 @@ const Material = ({ material: single_material, activitiesCount }) => {
 				<Container
 					maxWidth='sm'
 					sx={{ margin: '0 auto', marginBottom: '5rem' }}>
-					<CardMedia
-						component='img'
-						sx={{ maxWidth: 600, height: 230, borderRadius: '3px' }}
-						image={getImageUrl(single_material.image)}
-						alt={material.title}
-					/>
+					<Box
+						sx={{
+							position: 'relative',
+							width: '100%',
+							maxWidth: 600,
+							height: 230,
+							borderRadius: '3px',
+							overflow: 'hidden',
+						}}>
+						<Image
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.image}`}
+							alt={single_material.title}
+							fill
+							sizes="(max-width: 600px) 100vw, 600px"
+							style={{ objectFit: 'cover', borderRadius: '3px' }}
+							quality={85}
+							priority={false}
+						/>
+					</Box>
 				</Container>
 			)
 		}

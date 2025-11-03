@@ -7,7 +7,6 @@ import {
 	Typography,
 	Button,
 	Chip,
-	CardMedia,
 } from '@mui/material'
 import { ArrowForwardRounded, CalendarTodayRounded } from '@mui/icons-material'
 

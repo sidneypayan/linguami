@@ -16,13 +16,12 @@ import {
 	Card,
 	CardActionArea,
 	CardContent,
-	CardMedia,
 	Typography,
 	Chip,
 } from '@mui/material'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useUserContext } from '../context/user'
-import { getImageUrl } from '../utils/imageUtils'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const dispatch = useDispatch()
@@ -184,18 +183,17 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						position: 'relative',
 						overflow: 'hidden',
 					}}>
-					<CardMedia
-						component='img'
-						sx={{
-							width: '100%',
-							height: '100%',
-							margin: 0,
+					<Image
+						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
+						alt={material.title}
+						fill
+						sizes="(max-width: 640px) 140px, 160px"
+						style={{
 							objectFit: 'cover',
-							flexShrink: 0,
 							transition: 'transform 0.4s ease',
 						}}
-						image={getImageUrl(material.image)}
-						alt={material.title}
+						quality={85}
+						priority={false}
 					/>
 				</Box>
 
