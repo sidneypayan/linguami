@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
 	Dialog,
 	DialogTitle,
@@ -17,8 +17,10 @@ import {
 	Alert,
 	CircularProgress,
 	ListSubheader,
+	Divider,
+	Chip,
 } from '@mui/material'
-import { Close, Save } from '@mui/icons-material'
+import { Close, Save, CloudUpload, Image as ImageIcon, AudioFile, Delete } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 import { supabase } from '../../lib/supabase'
 
@@ -27,6 +29,10 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	const [formData, setFormData] = useState({})
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState('')
+	const [uploading, setUploading] = useState({ audio: false, image: false })
+	const [uploadedFiles, setUploadedFiles] = useState({ audio: null, image: null })
+	const audioInputRef = useRef(null)
+	const imageInputRef = useRef(null)
 
 	useEffect(() => {
 		if (material) {
@@ -51,6 +57,53 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			...prev,
 			[field]: value,
 		}))
+	}
+
+	const handleFileUpload = async (type) => {
+		const inputRef = type === 'audio' ? audioInputRef : imageInputRef
+		const file = inputRef.current?.files[0]
+		if (!file) return
+
+		setUploading(prev => ({ ...prev, [type]: true }))
+		setError('')
+
+		try {
+			// Générer un nom de fichier unique
+			const timestamp = Date.now()
+			const fileExt = file.name.split('.').pop()
+			const fileName = `${timestamp}-${Math.random().toString(36).substring(7)}.${fileExt}`
+			const filePath = `${type}/${fileName}`
+
+			// Upload vers Supabase Storage
+			const { error: uploadError } = await supabase.storage
+				.from('linguami')
+				.upload(filePath, file, {
+					cacheControl: '3600',
+					upsert: false
+				})
+
+			if (uploadError) throw uploadError
+
+			// Stocker le nom du fichier (pas l'URL complète)
+			setUploadedFiles(prev => ({ ...prev, [type]: fileName }))
+			handleChange(type, fileName)
+
+		} catch (err) {
+			console.error(`Erreur upload ${type}:`, err)
+			setError(err.message || `Erreur lors de l'upload du fichier ${type}`)
+		} finally {
+			setUploading(prev => ({ ...prev, [type]: false }))
+		}
+	}
+
+	const handleRemoveUpload = (type) => {
+		setUploadedFiles(prev => ({ ...prev, [type]: null }))
+		handleChange(type, '')
+		// Reset l'input file
+		const inputRef = type === 'audio' ? audioInputRef : imageInputRef
+		if (inputRef.current) {
+			inputRef.current.value = ''
+		}
 	}
 
 	const handleSave = async () => {
@@ -300,13 +353,76 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					{/* Image */}
 					{needsImage && (
 						<Grid item xs={12}>
+							<Box sx={{ mb: 2 }}>
+								<Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#475569' }}>
+									Image
+								</Typography>
+								<Divider sx={{ mb: 2 }} />
+							</Box>
+
+							{/* Option 1: Upload de fichier */}
+							<Box sx={{ mb: 2 }}>
+								<input
+									ref={imageInputRef}
+									type="file"
+									accept="image/*"
+									style={{ display: 'none' }}
+									onChange={() => handleFileUpload('image')}
+								/>
+								<Button
+									variant="outlined"
+									startIcon={uploading.image ? <CircularProgress size={16} /> : <CloudUpload />}
+									onClick={() => imageInputRef.current?.click()}
+									disabled={uploading.image || !!formData.image}
+									fullWidth
+									sx={{
+										py: 1.5,
+										borderRadius: 2,
+										textTransform: 'none',
+										borderStyle: 'dashed',
+										borderWidth: 2,
+										color: '#667eea',
+										borderColor: '#667eea',
+										'&:hover': {
+											borderColor: '#5568d3',
+											bgcolor: 'rgba(102, 126, 234, 0.05)',
+										},
+									}}>
+									{uploading.image ? 'Upload en cours...' : 'Upload une image'}
+								</Button>
+							</Box>
+
+							{/* OU divider */}
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+								<Divider sx={{ flex: 1 }} />
+								<Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>
+									OU
+								</Typography>
+								<Divider sx={{ flex: 1 }} />
+							</Box>
+
+							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
-								label={t('imageUrl')}
+								label="Nom du fichier image"
 								value={formData.image || ''}
 								onChange={(e) => handleChange('image', e.target.value)}
-								placeholder={t('imageUrlPlaceholder')}
+								placeholder="exemple: mon-image.jpg"
+								disabled={uploading.image}
+								InputProps={{
+									startAdornment: uploadedFiles.image && (
+										<Chip
+											label="Uploadé"
+											size="small"
+											color="success"
+											sx={{ mr: 1 }}
+											onDelete={() => handleRemoveUpload('image')}
+											deleteIcon={<Delete />}
+										/>
+									),
+								}}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+								helperText="Saisir uniquement le nom du fichier (ex: image.jpg), pas l'URL complète"
 							/>
 						</Grid>
 					)}
@@ -314,13 +430,76 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					{/* Audio */}
 					{needsAudio && (
 						<Grid item xs={12}>
+							<Box sx={{ mb: 2 }}>
+								<Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#475569' }}>
+									Audio
+								</Typography>
+								<Divider sx={{ mb: 2 }} />
+							</Box>
+
+							{/* Option 1: Upload de fichier */}
+							<Box sx={{ mb: 2 }}>
+								<input
+									ref={audioInputRef}
+									type="file"
+									accept="audio/*"
+									style={{ display: 'none' }}
+									onChange={() => handleFileUpload('audio')}
+								/>
+								<Button
+									variant="outlined"
+									startIcon={uploading.audio ? <CircularProgress size={16} /> : <CloudUpload />}
+									onClick={() => audioInputRef.current?.click()}
+									disabled={uploading.audio || !!formData.audio}
+									fullWidth
+									sx={{
+										py: 1.5,
+										borderRadius: 2,
+										textTransform: 'none',
+										borderStyle: 'dashed',
+										borderWidth: 2,
+										color: '#667eea',
+										borderColor: '#667eea',
+										'&:hover': {
+											borderColor: '#5568d3',
+											bgcolor: 'rgba(102, 126, 234, 0.05)',
+										},
+									}}>
+									{uploading.audio ? 'Upload en cours...' : 'Upload un fichier audio'}
+								</Button>
+							</Box>
+
+							{/* OU divider */}
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+								<Divider sx={{ flex: 1 }} />
+								<Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>
+									OU
+								</Typography>
+								<Divider sx={{ flex: 1 }} />
+							</Box>
+
+							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
-								label={t('audioUrl')}
+								label="Nom du fichier audio"
 								value={formData.audio || ''}
 								onChange={(e) => handleChange('audio', e.target.value)}
-								placeholder={t('audioUrlPlaceholder')}
+								placeholder="exemple: mon-audio.mp3"
+								disabled={uploading.audio}
+								InputProps={{
+									startAdornment: uploadedFiles.audio && (
+										<Chip
+											label="Uploadé"
+											size="small"
+											color="success"
+											sx={{ mr: 1 }}
+											onDelete={() => handleRemoveUpload('audio')}
+											deleteIcon={<Delete />}
+										/>
+									),
+								}}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+								helperText="Saisir uniquement le nom du fichier (ex: audio.mp3), pas l'URL complète"
 							/>
 						</Grid>
 					)}

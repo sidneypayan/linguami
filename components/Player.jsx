@@ -15,6 +15,7 @@ import {
 	Forward10Rounded,
 	Replay10Rounded,
 	HeadphonesRounded,
+	SpeedRounded,
 } from '@mui/icons-material'
 
 const Player = ({ src }) => {
@@ -24,10 +25,19 @@ const Player = ({ src }) => {
 	const [duration, setDuration] = useState(0)
 	const [volume, setVolume] = useState(1)
 	const [showVolumeSlider, setShowVolumeSlider] = useState(false)
+	const [playbackRate, setPlaybackRate] = useState(1)
 
 	useEffect(() => {
 		const audio = audioRef.current
 		if (!audio) return
+
+		// Activer la préservation du pitch (empêche la voix de devenir grave/aiguë)
+		// Supporté nativement dans les navigateurs modernes
+		audio.preservesPitch = true
+		// Fallback pour Firefox plus ancien
+		audio.mozPreservesPitch = true
+		// Fallback pour WebKit plus ancien
+		audio.webkitPreservesPitch = true
 
 		const updateTime = () => setCurrentTime(audio.currentTime)
 		const updateDuration = () => setDuration(audio.duration)
@@ -80,6 +90,17 @@ const Player = ({ src }) => {
 	const skip = (seconds) => {
 		const audio = audioRef.current
 		audio.currentTime = Math.max(0, Math.min(duration, audio.currentTime + seconds))
+	}
+
+	const cyclePlaybackRate = () => {
+		const audio = audioRef.current
+		// Vitesses de réduction uniquement (pour l'apprentissage)
+		const rates = [1, 0.9, 0.8, 0.7, 0.6, 0.5]
+		const currentIndex = rates.indexOf(playbackRate)
+		const nextIndex = (currentIndex + 1) % rates.length
+		const newRate = rates[nextIndex]
+		audio.playbackRate = newRate
+		setPlaybackRate(newRate)
 	}
 
 	const formatTime = (time) => {
@@ -273,6 +294,43 @@ const Player = ({ src }) => {
 						</Typography>
 					</Box>
 				</Box>
+
+				{/* Playback Speed Control */}
+				<Tooltip title='Vitesse de lecture' placement='top'>
+					<IconButton
+						onClick={cyclePlaybackRate}
+						size='small'
+						sx={{
+							color: playbackRate === 1 ? '#64748b' : '#8b5cf6',
+							width: { xs: 52, sm: 58 },
+							height: { xs: 38, sm: 42 },
+							background: playbackRate === 1
+								? 'rgba(139, 92, 246, 0.06)'
+								: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+							border: `1px solid ${playbackRate === 1 ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.3)'}`,
+							display: 'flex',
+							alignItems: 'center',
+							gap: 0.5,
+							flexShrink: 0,
+							'&:hover': {
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+								color: '#8b5cf6',
+								transform: 'scale(1.05)',
+								borderColor: 'rgba(139, 92, 246, 0.3)',
+							},
+							transition: 'all 0.2s ease',
+						}}>
+						<SpeedRounded sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }} />
+						<Typography
+							sx={{
+								fontSize: { xs: '0.65rem', sm: '0.7rem' },
+								fontWeight: 700,
+								lineHeight: 1,
+							}}>
+							{playbackRate}x
+						</Typography>
+					</IconButton>
+				</Tooltip>
 
 				{/* Volume Control */}
 				<Box

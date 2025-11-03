@@ -87,7 +87,7 @@ const MaterialsCard = ({ material }) => {
 						}}>
 						<Image
 							style={{ objectFit: 'cover' }}
-							src={getImageUrl(material.img)}
+							src={getImageUrl(material.image)}
 							sizes="(max-width: 600px) 50vw, (max-width: 900px) 33vw, 25vw"
 							quality={90}
 							alt={material.title}

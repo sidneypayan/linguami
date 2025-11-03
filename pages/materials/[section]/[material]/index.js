@@ -464,8 +464,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
 											lineHeight: 1.5,
-											letterSpacing: '0.01em',
-											wordSpacing: '-0.6em',
+											letterSpacing: '-0.02em',
+											wordSpacing: '-0.15em',
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
@@ -489,8 +489,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
 											lineHeight: 1.5,
-											letterSpacing: '0.01em',
-											wordSpacing: '-0.6em',
+											letterSpacing: '-0.02em',
+											wordSpacing: '-0.15em',
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,

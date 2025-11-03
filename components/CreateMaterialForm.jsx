@@ -1,4 +1,4 @@
-import { Box, Button, Typography, TextField, MenuItem, Card, CardContent, Alert, Chip, Stack, ListSubheader } from '@mui/material'
+import { Box, Button, Typography, TextField, MenuItem, Card, CardContent, Alert, Chip, Stack, ListSubheader, Divider } from '@mui/material'
 import { FormRow, FormRowSelect } from '.'
 import { lang, level, audioSections, videoSections } from '../utils/constants'
 import {
@@ -10,6 +10,7 @@ import {
 	Description,
 	AttachFile,
 	CheckCircle,
+	CloudUpload,
 } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 
@@ -406,28 +407,38 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						</Typography>
 					</Box>
 					<CardContent sx={{ p: 3 }}>
-						<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2 }}>
+						<Stack spacing={4}>
+							{/* Image - Upload ou saisie manuelle */}
 							<Box>
+								<Typography variant='subtitle2' sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
+									{t('image')}
+								</Typography>
+
+								{/* Option 1: Upload de fichier */}
 								<Button
 									component='label'
 									variant='outlined'
-									startIcon={<ImageIcon />}
+									startIcon={<CloudUpload />}
 									fullWidth
+									disabled={!!formData.image}
 									sx={{
-										py: 3,
-										borderColor: formData.image ? '#10B981' : '#E2E8F0',
-										color: formData.image ? '#10B981' : '#475569',
+										py: 2,
+										borderColor: '#667eea',
+										color: '#667eea',
 										fontWeight: 600,
-										borderStyle: formData.image ? 'solid' : 'dashed',
+										borderStyle: 'dashed',
 										borderWidth: 2,
-										bgcolor: formData.image ? '#ECFDF5' : 'transparent',
+										textTransform: 'none',
 										'&:hover': {
-											borderColor: formData.image ? '#059669' : '#667eea',
-											bgcolor: formData.image ? '#D1FAE5' : '#F5F3FF',
-											color: formData.image ? '#059669' : '#667eea',
+											borderColor: '#5568d3',
+											bgcolor: 'rgba(102, 126, 234, 0.05)',
+										},
+										'&:disabled': {
+											borderColor: '#E2E8F0',
+											color: '#94a3b8',
 										},
 									}}>
-									{formData.image ? `✓ ${formData.image}` : t('addImage')}
+									{t('uploadImage')}
 									<input
 										onChange={handleChange}
 										name='image'
@@ -436,34 +447,70 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 										accept='image/*'
 									/>
 								</Button>
-								{formData.image && (
-									<Typography variant='caption' sx={{ color: '#10B981', fontWeight: 600, mt: 1, display: 'block', textAlign: 'center' }}>
-										{t('imageLoadedSuccess')}
+
+								{/* OU divider */}
+								<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
+									<Divider sx={{ flex: 1 }} />
+									<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
+										{t('or')}
 									</Typography>
+									<Divider sx={{ flex: 1 }} />
+								</Box>
+
+								{/* Option 2: Saisie manuelle du nom de fichier */}
+								<TextField
+									fullWidth
+									label={t('imageFileName')}
+									value={typeof formData.image === 'string' ? formData.image : ''}
+									onChange={(e) => handleChange({ target: { name: 'image', value: e.target.value } })}
+									placeholder="exemple: mon-image.jpg"
+									helperText={t('fileNameOnlyHelper')}
+									sx={{
+										'& .MuiOutlinedInput-root': { borderRadius: 2 },
+									}}
+								/>
+
+								{formData.image && (
+									<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
+										<Typography variant='caption' sx={{ fontWeight: 600 }}>
+											✓ {formData.image}
+										</Typography>
+									</Alert>
 								)}
 							</Box>
+
+							{/* Audio - Upload ou saisie manuelle */}
 							{audioSections.includes(formData.section) && (
 								<Box>
+									<Typography variant='subtitle2' sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
+										{t('audio')}
+									</Typography>
+
+									{/* Option 1: Upload de fichier */}
 									<Button
 										component='label'
 										variant='outlined'
-										startIcon={<AudioFile />}
+										startIcon={<CloudUpload />}
 										fullWidth
+										disabled={!!formData.audio}
 										sx={{
-											py: 3,
-											borderColor: formData.audio ? '#10B981' : '#E2E8F0',
-											color: formData.audio ? '#10B981' : '#475569',
+											py: 2,
+											borderColor: '#667eea',
+											color: '#667eea',
 											fontWeight: 600,
-											borderStyle: formData.audio ? 'solid' : 'dashed',
+											borderStyle: 'dashed',
 											borderWidth: 2,
-											bgcolor: formData.audio ? '#ECFDF5' : 'transparent',
+											textTransform: 'none',
 											'&:hover': {
-												borderColor: formData.audio ? '#059669' : '#667eea',
-												bgcolor: formData.audio ? '#D1FAE5' : '#F5F3FF',
-												color: formData.audio ? '#059669' : '#667eea',
+												borderColor: '#5568d3',
+												bgcolor: 'rgba(102, 126, 234, 0.05)',
+											},
+											'&:disabled': {
+												borderColor: '#E2E8F0',
+												color: '#94a3b8',
 											},
 										}}>
-										{formData.audio ? `✓ ${formData.audio}` : t('addAudio')}
+										{t('uploadAudio')}
 										<input
 											onChange={handleChange}
 											name='audio'
@@ -472,14 +519,39 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 											accept='audio/*'
 										/>
 									</Button>
-									{formData.audio && (
-										<Typography variant='caption' sx={{ color: '#10B981', fontWeight: 600, mt: 1, display: 'block', textAlign: 'center' }}>
-											{t('audioLoadedSuccess')}
+
+									{/* OU divider */}
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
+										<Divider sx={{ flex: 1 }} />
+										<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
+											{t('or')}
 										</Typography>
+										<Divider sx={{ flex: 1 }} />
+									</Box>
+
+									{/* Option 2: Saisie manuelle du nom de fichier */}
+									<TextField
+										fullWidth
+										label={t('audioFileName')}
+										value={typeof formData.audio === 'string' ? formData.audio : ''}
+										onChange={(e) => handleChange({ target: { name: 'audio', value: e.target.value } })}
+										placeholder="exemple: mon-audio.mp3"
+										helperText={t('fileNameOnlyHelper')}
+										sx={{
+											'& .MuiOutlinedInput-root': { borderRadius: 2 },
+										}}
+									/>
+
+									{formData.audio && (
+										<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
+											<Typography variant='caption' sx={{ fontWeight: 600 }}>
+												✓ {formData.audio}
+											</Typography>
+										</Alert>
 									)}
 								</Box>
 							)}
-						</Box>
+						</Stack>
 					</CardContent>
 				</Card>
 

@@ -60,7 +60,8 @@ const CreateMaterial = () => {
 	const handleChange = e => {
 		let { name, value } = e.target
 
-		if (name === 'image' || name === 'audio') {
+		// Si c'est un upload de fichier (image ou audio)
+		if ((name === 'image' || name === 'audio') && e.target.files) {
 			const file = e.target.files[0]
 			if (!file) return
 
@@ -71,6 +72,7 @@ const CreateMaterial = () => {
 			})
 		}
 
+		// Pour tous les cas (upload ou saisie manuelle), mettre à jour formData
 		setFormData(prev => {
 			return { ...prev, [name]: value }
 		})
