@@ -74,7 +74,7 @@
 	"days_streak": "days in a row!",
 	"limit_reached_title": "Limit reached",
 	"limit_reached_message": "You have reached your limit of 20 translations",
-	"limit_reached_description": "Create a free account to get unlimited translations and access all features!",
+	"limit_reached_description": "Create a free account to increase the number of translations and access all features!",
 	"guest_benefits_dictionary": "With an account, you can also save your translations in a personal dictionary and review with flashcards.",
 	"guest_translations_remaining": "{{count}}/{{max}} translations remaining",
 	"guest_create_account_benefits": "Create an account to save your translations and access your personal dictionary!",
@@ -93,5 +93,5 @@
 	"dictionary_limit_title": "Word limit reached",
 	"dictionary_limit_message": "You have reached the limit of 20 words in your dictionary. Create an account to increase this limit and access all features.",
 	"translation_limit_title": "Translation limit reached",
-	"translation_limit_message": "You have reached the limit of 20 translations. Create a free account to get unlimited translations and access all features!"
+	"translation_limit_message": "You have reached the limit of 20 translations. Create a free account to increase the number of translations and access all features!"
 }

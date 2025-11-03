@@ -1,7 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { useUserContext } from '../context/user'
 import { supabase } from '../lib/supabase'
 import { AVATARS } from '../utils/avatars'
@@ -83,11 +84,19 @@ const initialState = {
 
 const Signin = () => {
 	const { t } = useTranslation('register')
+	const router = useRouter()
 	const [values, setValues] = useState(initialState)
 	const [formState, setFormState] = useState('signin')
 	const [showAvatars, setShowAvatars] = useState(false)
 
 	const { login, register, loginWithThirdPartyOAuth } = useUserContext()
+
+	// Gérer le query param pour afficher le formulaire de signup
+	useEffect(() => {
+		if (router.query.mode === 'signup') {
+			setFormState('signup')
+		}
+	}, [router.query.mode])
 
 	// Validation du mot de passe
 	const passwordValidation = useMemo(() => {

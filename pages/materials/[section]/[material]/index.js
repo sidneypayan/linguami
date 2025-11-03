@@ -144,7 +144,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 				<Box
 					sx={{
 						position: 'sticky',
-						top: { xs: '5.5rem', sm: '6rem', md: '6.5rem' },
+						top: { xs: 0, sm: '6rem', md: '6.5rem' },
 						zIndex: 1000,
 						marginBottom: '0.5rem',
 					}}>
@@ -196,6 +196,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 			y: e.clientY,
 		})
 	}
+
+	// Vérifier si une vidéo est affichée pour ajuster la position du bouton
+	const isVideoDisplayed = sections.music.includes(section) || sections.video.includes(section)
+
 	return (
 		single_material && (
 			<>
@@ -582,7 +586,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							display: { xs: 'flex', lg: 'none' },
 							position: 'fixed',
 							right: '1rem',
-							bottom: '12.5rem',
+							bottom: isVideoDisplayed ? '6rem' : '12.5rem',
 							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 							backdropFilter: 'blur(10px)',
 							border: '1px solid rgba(139, 92, 246, 0.3)',
@@ -662,7 +666,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							<IconButton
 								sx={{
 									position: 'fixed',
-									bottom: '12.5rem',
+									bottom: isVideoDisplayed ? '6rem' : '12.5rem',
 									right: '1rem',
 									background:
 										'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',

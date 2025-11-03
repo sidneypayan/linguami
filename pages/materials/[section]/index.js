@@ -151,7 +151,7 @@ const Section = () => {
 			{/* Compact Header */}
 			<Box
 				sx={{
-					display: { xs: 'none', lg: 'block' },
+					display: 'block',
 					pt: { xs: '5.5rem', md: '6rem' },
 					pb: 2.5,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
@@ -190,7 +190,7 @@ const Section = () => {
 				</Container>
 			</Box>
 
-			<Container maxWidth='lg' sx={{ pt: { xs: '5.5rem', lg: 3 }, pb: { xs: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
+			<Container maxWidth='lg' sx={{ pt: 3, pb: { xs: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}
 					onLevelChange={handleLevelChange}

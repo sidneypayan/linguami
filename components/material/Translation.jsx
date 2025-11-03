@@ -348,7 +348,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 								<Typography variant='body2' sx={{ mb: 3, color: '#666' }}>
 									{t('translation_limit_message')}
 								</Typography>
-								<Link href='/signin'>
+								<Link href='/signin?mode=signup'>
 									<Button
 										variant='contained'
 										fullWidth
@@ -438,7 +438,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 											<Typography variant='caption' sx={{ display: 'block', mb: 1.5, color: '#f5576c', fontWeight: 600 }}>
 												⚠️ {t('dictionary_limit_title')} : supprimez des mots pour en ajouter de nouveaux
 											</Typography>
-											<Link href='/signin'>
+											<Link href='/signin?mode=signup'>
 												<Button
 													variant='contained'
 													fullWidth

@@ -74,7 +74,7 @@
 	"days_streak": "jours d'affilée !",
 	"limit_reached_title": "Limite atteinte",
 	"limit_reached_message": "Vous avez atteint votre limite de 20 traductions",
-	"limit_reached_description": "Créez un compte gratuit pour obtenir des traductions illimitées et accéder à toutes les fonctionnalités !",
+	"limit_reached_description": "Créez un compte gratuit pour augmenter le nombre de traductions et accéder à toutes les fonctionnalités !",
 	"guest_benefits_dictionary": "Avec un compte, vous pourrez aussi sauvegarder vos traductions dans un dictionnaire personnel et réviser avec des flashcards.",
 	"guest_translations_remaining": "{{count}}/{{max}} traductions restantes",
 	"guest_create_account_benefits": "Créez un compte pour sauvegarder vos traductions et accéder à votre dictionnaire personnel !",
@@ -93,5 +93,5 @@
 	"dictionary_limit_title": "Limite de mots atteinte",
 	"dictionary_limit_message": "Vous avez atteint la limite de 20 mots dans votre dictionnaire. Créez un compte pour augmenter cette limite et accéder à toutes les fonctionnalités.",
 	"translation_limit_title": "Limite de traductions atteinte",
-	"translation_limit_message": "Vous avez atteint la limite de 20 traductions. Créez un compte gratuit pour obtenir des traductions illimitées et accéder à toutes les fonctionnalités !"
+	"translation_limit_message": "Vous avez atteint la limite de 20 traductions. Créez un compte gratuit pour augmenter le nombre de traductions et accéder à toutes les fonctionnalités !"
 }
