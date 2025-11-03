@@ -1,18 +1,21 @@
 {
-  "name": "Linguami - Apprentissage des langues",
+  "name": "Linguami - Apprendre les langues avec des matériels authentiques",
   "short_name": "Linguami",
-  "description": "Apprenez le français et le russe avec des matériels authentiques et des flashcards interactives",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "theme_color": "#667eea",
   "background_color": "#ffffff",
-  "display": "standalone",
-  "start_url": "/",
-  "scope": "/"
+  "display": "standalone"
 }

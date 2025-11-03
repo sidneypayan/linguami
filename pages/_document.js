@@ -7,13 +7,12 @@ export default function Document() {
 	return (
 		<Html>
 			<Head>
-				<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-				<link rel='alternate icon' href='/favicon.ico' />
-				<link
-					rel='apple-touch-icon'
-					sizes='180x180'
-					href='/apple-touch-icon.svg'
-				/>
+				{/* Favicons */}
+				<link rel='icon' type='image/x-icon' href='/favicon.ico' />
+				<link rel='icon' type='image/png' sizes='96x96' href='/favicon-96x96.png' />
+				{/* Apple Touch Icon */}
+				<link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png' />
+				{/* Web App Manifest */}
 				<link rel='manifest' href='/site.webmanifest' />
 				<meta name='theme-color' content='#667eea' />
 
