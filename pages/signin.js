@@ -380,7 +380,7 @@ const Signin = () => {
 								},
 							}}>
 							<Image
-								src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.png`}
+								src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.webp`}
 								alt='facebook'
 								width={24}
 								height={24}
@@ -423,7 +423,7 @@ const Signin = () => {
 								},
 							}}>
 							<Image
-								src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/google.png`}
+								src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/google.webp`}
 								alt='google'
 								width={24}
 								height={24}

@@ -255,14 +255,14 @@ const StatisticsPage = () => {
 					value: level,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/xp_${index + 1}.png`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/xp_${index + 1}.webp`}
 							alt={`Level ${level}`}
 							width={90}
 							height={90}
 							style={{ objectFit: 'cover', borderRadius: '50%' }}
 						/>
 					),
-					isUnlocked: index === 0 ? true : (xpProfile ? xpProfile.currentLevel >= level : false),
+					isUnlocked: xpProfile ? xpProfile.currentLevel >= level : false,
 				}
 			}),
 			getCurrentValue: () => xpProfile ? xpProfile.currentLevel : 0,
@@ -277,14 +277,14 @@ const StatisticsPage = () => {
 					value: count,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/0${index + 1}_reviewed_words_badge.png`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/0${index + 1}_reviewed_words_badge.webp`}
 							alt={`${count} words`}
 							width={90}
 							height={90}
 							style={{ objectFit: 'cover', borderRadius: '50%' }}
 						/>
 					),
-					isUnlocked: index === 0 ? true : (stats ? (stats.totalWordsReviewed || 0) >= count : false),
+					isUnlocked: stats ? (stats.totalWordsReviewed || 0) >= count : false,
 				}
 			}),
 			getCurrentValue: () => stats ? (stats.totalWordsReviewed || 0) : 0,
