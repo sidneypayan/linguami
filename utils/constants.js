@@ -243,7 +243,108 @@ export const materials_fr = [
 	},
 ]
 
-export const lang = ['ru', 'fr']
+export const materials_en = [
+	{
+		category: 'text & audio',
+		img: 'dialogues.webp',
+		title: 'Dialogues',
+		section: 'dialogues',
+		text: 'Our dialogues use current phrases in various situations. They will help you master the language spoken by native speakers in everyday life.',
+	},
+	{
+		category: 'text & audio',
+		img: 'slices-of-life.webp',
+		title: 'Slices of Life',
+		section: 'slices-of-life',
+		text: 'You will find here short autobiographical stories that will teach you to talk about yourself, your surroundings, your tastes and your feelings.',
+	},
+	{
+		category: 'text & audio',
+		img: 'beautiful-places.webp',
+		title: 'Beautiful Places',
+		section: 'beautiful-places',
+		text: 'Discover beautiful places around the world. An exciting visit that will give you the opportunity to practice the language while marveling.',
+	},
+	{
+		category: 'text & audio',
+		img: 'legends.webp',
+		title: 'Folklore and Legends',
+		section: 'legends',
+		text: 'Culture and folklore change from one country to another and shape the identity of peoples. In this section you will learn more about the particularities of culture, folklore and crafts.',
+	},
+	{
+		category: 'text & audio',
+		img: 'books.webp',
+		title: 'Audiobooks',
+		section: 'books',
+		text: 'Here you will find audiobooks accompanied by their text. This way you will expand your vocabulary and improve your listening comprehension while traveling in the exciting world of literature.',
+	},
+	{
+		category: 'video',
+		img: 'movie-trailers.webp',
+		title: 'Movie Trailers',
+		section: 'movie-trailers',
+		text: 'With movie trailers, you have a fun way to practice your listening comprehension.',
+	},
+	{
+		category: 'video',
+		img: 'movie-clips.webp',
+		title: 'Movie Clips',
+		section: 'movie-clips',
+		text: 'With movie clips you will work on your understanding of the language as native speakers speak it in everyday life, made of idioms, jargon, but above all emotions.',
+	},
+	{
+		category: 'video',
+		img: 'cartoons.webp',
+		title: 'Cartoons',
+		section: 'cartoons',
+		text: 'Cartoons are part of the culture. Knowing them will allow you to be considered by native speakers as one of their own.',
+	},
+	{
+		category: 'video',
+		img: 'various-materials.webp',
+		title: 'Various',
+		section: 'various-materials',
+		text: 'You will find in this section videos covering various subjects that do not find their place in the previous sections.',
+	},
+	{
+		category: 'music',
+		img: 'rock.webp',
+		title: 'Rock',
+		section: 'rock',
+		text: 'These songs accompanied by their lyrics will allow you to learn while having fun.',
+	},
+	{
+		category: 'music',
+		img: 'pop.webp',
+		title: 'Pop',
+		section: 'pop',
+		text: 'Popular music accompanied by lyrics to help you learn while enjoying great songs.',
+	},
+	{
+		category: 'music',
+		img: 'folk.webp',
+		title: 'Traditional Music & Folk',
+		section: 'folk',
+		text: 'Traditional and folk music to discover cultural heritage while learning the language.',
+	},
+	{
+		category: 'music',
+		img: 'variety.webp',
+		title: 'Hits',
+		section: 'variety',
+		text: 'Popular hits and variety songs to practice your listening skills while enjoying great music.',
+	},
+	{
+		category: 'music',
+		img: 'kids.webp',
+		title: 'Kids Songs',
+		section: 'kids',
+		text: 'Fun and educational songs for children and beginners.',
+	},
+]
+
+export const lang = ['ru', 'fr', 'en']
 export const level = ['débutant', 'intermédiaire', 'avancé']
 export const postData = {
 	lang: '',

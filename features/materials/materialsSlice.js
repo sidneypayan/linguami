@@ -75,7 +75,27 @@ export const getMaterials = createAsyncThunk(
 				.select('*')
 				.eq('lang', lang)
 				.eq('section', section)
-				.order('id', { ascending: false })
+
+			// Trier par titre puis par niveau
+			if (materials) {
+				// Définir l'ordre des niveaux
+				const levelOrder = { 'débutant': 1, 'intermédiaire': 2, 'avancé': 3 }
+
+				materials.sort((a, b) => {
+					// 1. Tri alphabétique par titre (priorité)
+					const titleCompare = (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' })
+
+					if (titleCompare !== 0) {
+						return titleCompare
+					}
+
+					// 2. Si même titre, tri par niveau (critère secondaire)
+					const levelA = levelOrder[a.level] || 999
+					const levelB = levelOrder[b.level] || 999
+					return levelA - levelB
+				})
+			}
+
 			return materials
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)

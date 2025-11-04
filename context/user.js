@@ -13,6 +13,25 @@ import { toast } from 'react-toastify'
 import { createToastMessages } from '../utils/toastMessages'
 
 // --------------------------------------------------------
+// Helper: Déterminer la langue d'apprentissage par défaut
+// --------------------------------------------------------
+const getDefaultLearningLanguage = (currentLocale) => {
+	// Langues disponibles pour l'apprentissage
+	const availableLanguages = ['fr', 'ru', 'en']
+
+	// Retirer la langue actuelle de l'interface des options
+	const options = availableLanguages.filter(lang => lang !== currentLocale)
+
+	// Priorité: anglais > français > russe
+	if (options.includes('en')) return 'en'
+	if (options.includes('fr')) return 'fr'
+	if (options.includes('ru')) return 'ru'
+
+	// Fallback: anglais si aucune autre option
+	return 'en'
+}
+
+// --------------------------------------------------------
 // Contexte
 // --------------------------------------------------------
 const UserContext = createContext(undefined)
@@ -97,7 +116,7 @@ const UserProvider = ({ children }) => {
 					} else {
 						// Si pas de langue d'apprentissage définie, en définir une différente de la locale
 						const currentLocale = router?.locale || 'fr'
-						const defaultLearningLang = currentLocale === 'ru' ? 'fr' : 'ru'
+						const defaultLearningLang = getDefaultLearningLanguage(currentLocale)
 						setUserLearningLanguage(defaultLearningLang)
 						try {
 							localStorage.setItem('learning_language', defaultLearningLang)
@@ -137,7 +156,7 @@ const UserProvider = ({ children }) => {
 					try {
 						const currentLocale = router?.locale || 'fr'
 						const stored = localStorage.getItem('learning_language')
-						const fallback = currentLocale === 'ru' ? 'fr' : 'ru'
+						const fallback = getDefaultLearningLanguage(currentLocale)
 
 						// Si la langue stockée est la même que la locale, utiliser le fallback
 						let lang = stored
@@ -169,7 +188,7 @@ const UserProvider = ({ children }) => {
 
 		// Si la langue d'apprentissage est la même que la locale, la changer
 		if (userLearningLanguage === router.locale) {
-			const newLearningLang = router.locale === 'ru' ? 'fr' : 'ru'
+			const newLearningLang = getDefaultLearningLanguage(router.locale)
 			setUserLearningLanguage(newLearningLang)
 			try {
 				localStorage.setItem('learning_language', newLearningLang)
@@ -226,7 +245,7 @@ const UserProvider = ({ children }) => {
 				const currentLocale = router?.locale || 'fr'
 				let lang = userLearningLanguage
 				if (!lang || lang === currentLocale) {
-					lang = currentLocale === 'ru' ? 'fr' : 'ru'
+					lang = getDefaultLearningLanguage(currentLocale)
 				}
 				return lang
 			})()

@@ -37,7 +37,13 @@ async function checkAndIncrementServerCount(ipAddress) {
 
 		if (fetchError && fetchError.code !== 'PGRST116') {
 			// PGRST116 = pas trouvé, c'est OK
-			console.error('Error fetching translation count:', fetchError)
+			// 42P01 = table n'existe pas
+			if (fetchError.code === '42P01') {
+				console.warn('guest_translation_tracking table does not exist, skipping server-side tracking')
+			} else {
+				console.error('Error fetching translation count:', fetchError)
+			}
+			// Continuer sans bloquer l'utilisateur
 			return { count: 0, limitReached: false }
 		}
 
@@ -177,16 +183,50 @@ async function performTranslation({ word, sentence, userLearningLanguage, locale
 	}
 
 	const langPair = `${userLearningLanguage}-${locale}`
-	const url =
-		`https://dictionary.yandex.net/api/v1/dicservice.json/lookup` +
-		`?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072` +
-		`&lang=${langPair}&text=${encodeURIComponent(normalizedWord)}&flags=004`
 
-	const { data } = await axios.get(url)
+	// Paires de langues supportées par Yandex Dictionary
+	const supportedPairs = [
+		'ru-fr', 'ru-en', 'ru-ru',
+		'fr-ru', 'fr-fr', 'fr-en',
+		'en-ru', 'en-fr', 'en-en'
+	]
 
-	return {
-		word: normalizedWord,
-		data: data?.def?.length ? data : null,
-		sentence
+	// Vérifier si la paire de langues est supportée
+	if (!supportedPairs.includes(langPair)) {
+		console.warn(`Unsupported language pair: ${langPair}`)
+		// Retourner un résultat vide au lieu de crasher
+		return {
+			word: normalizedWord,
+			data: null,
+			sentence,
+			unsupportedPair: true
+		}
+	}
+
+	try {
+		const url =
+			`https://dictionary.yandex.net/api/v1/dicservice.json/lookup` +
+			`?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072` +
+			`&lang=${langPair}&text=${encodeURIComponent(normalizedWord)}&flags=004`
+
+		console.log(`Translating: "${normalizedWord}" from ${langPair}`)
+		const { data } = await axios.get(url)
+
+		return {
+			word: normalizedWord,
+			data: data?.def?.length ? data : null,
+			sentence
+		}
+	} catch (error) {
+		console.error(`Yandex API error for ${langPair}:`, error.response?.data || error.message)
+
+		// Si l'API Yandex retourne une erreur, ne pas crasher complètement
+		return {
+			word: normalizedWord,
+			data: null,
+			sentence,
+			apiError: true,
+			errorMessage: error.message
+		}
 	}
 }

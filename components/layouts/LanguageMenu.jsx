@@ -113,8 +113,12 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const { t, lang } = useTranslation('common')
 	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
 
-	// Uniquement français et russe pour l'apprentissage (pas d'anglais car pas de contenu)
+	// Langues disponibles pour l'apprentissage (anglais en priorité)
 	const allLanguages = [
+		{
+			lang: 'en',
+			name: t('english'),
+		},
 		{
 			lang: 'fr',
 			name: t('french'),
@@ -192,7 +196,10 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					) : null
 				}
 				sx={{
-					display: variant === 'full' ? 'flex' : { xs: 'none', lg: 'flex' },
+					display: variant === 'full' ? 'flex' : 'none',
+					'@media (min-width: 1400px)': {
+						display: variant === 'full' ? 'flex' : 'flex',
+					},
 					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					color: 'white',
@@ -241,9 +248,12 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 				aria-expanded={open ? 'true' : undefined}
 				onClick={handleClick}
 				sx={{
-					display: variant === 'full' ? 'none' : { xs: 'flex', lg: 'none' },
-					width: { xs: 40, sm: 44, lg: 48 },
-					height: { xs: 40, sm: 44, lg: 48 },
+					display: variant === 'full' ? 'none' : 'flex',
+					'@media (min-width: 1400px)': {
+						display: 'none',
+					},
+					width: { xs: 40, sm: 44 },
+					height: { xs: 40, sm: 44 },
 					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
 					backdropFilter: 'blur(10px)',
 					border: '1px solid rgba(255, 255, 255, 0.2)',

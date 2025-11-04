@@ -6,72 +6,72 @@ export const AVATARS = [
 	{
 		id: 'avatar1',
 		name: 'Nain',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar2',
 		name: 'Naine',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar3',
 		name: 'Elfe',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar4',
 		name: 'Elfe',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar5',
 		name: 'Mort-vivant',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar6',
 		name: 'Morte-vivante',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar7',
 		name: 'Tauren',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar8',
 		name: 'Tauren',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar9',
 		name: 'Gnome',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar10',
 		name: 'Gnome',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar11',
 		name: 'Magicienne',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar12',
 		name: 'Magicien',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar13',
 		name: 'Orc',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_male.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar14',
 		name: 'Orque',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_female.png?v=${AVATAR_VERSION}`,
+		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_female.webp?v=${AVATAR_VERSION}`,
 	},
 ]
 

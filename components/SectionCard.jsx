@@ -14,7 +14,6 @@ import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
 import {
 	Box,
 	Card,
-	CardActionArea,
 	CardContent,
 	Typography,
 	Chip,
@@ -89,52 +88,48 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const difficultyInfo = getDifficultyInfo(material.level)
 
 	const SectionCardContent = () => (
-		<CardActionArea
+		<Card
 			sx={{
 				maxWidth: '500px',
 				margin: '0 auto',
-				borderRadius: '8px',
-				transition: 'all 0.2s ease',
+				cursor: 'pointer',
+				position: 'relative',
+				display: 'flex',
+				alignItems: 'stretch',
+				height: { xs: 160, sm: 180 },
+				boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+				background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+				border: '1px solid rgba(139, 92, 246, 0.2)',
+				borderRadius: '16px',
+				overflow: 'hidden',
+				transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+				'&::before': {
+					content: '""',
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
+					opacity: 0,
+					transition: 'opacity 0.3s ease',
+					zIndex: 0,
+				},
 				'&:active': {
 					transform: 'scale(0.98)',
 				},
-			}}>
-			<Card
-				sx={{
-					position: 'relative',
-					display: 'flex',
-					alignItems: 'stretch',
-					height: { xs: 160, sm: 180 },
-					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-					border: '1px solid rgba(139, 92, 246, 0.2)',
-					borderRadius: '16px',
-					overflow: 'hidden',
-					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+				'&:hover': {
+					boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
+					transform: 'translateY(-8px) scale(1.01)',
+					borderColor: 'rgba(139, 92, 246, 0.4)',
 					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
-						opacity: 0,
-						transition: 'opacity 0.3s ease',
-						zIndex: 0,
+						opacity: 1,
 					},
-					'&:hover': {
-						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
-						transform: 'translateY(-8px) scale(1.01)',
-						borderColor: 'rgba(139, 92, 246, 0.4)',
-						'&::before': {
-							opacity: 1,
-						},
-						'& .section-card-image img': {
-							transform: 'scale(1.1)',
-						},
+					'& .section-card-image img': {
+						transform: 'scale(1.1)',
 					},
-				}}>
+				},
+			}}>
 				{typeof checkIfUserMaterialIsInMaterials !== 'undefined' &&
 					checkIfUserMaterialIsInMaterials.is_being_studied && (
 						<Schedule
@@ -279,7 +274,6 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					/>
 				)}
 			</Card>
-		</CardActionArea>
 	)
 
 	return section === 'books' ? (

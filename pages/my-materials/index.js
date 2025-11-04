@@ -28,6 +28,7 @@ const UserMaterials = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedLevel, setSelectedLevel] = useState(null)
 	const [selectedStatus, setSelectedStatus] = useState(null)
+	const [selectedSection, setSelectedSection] = useState(null)
 	const [viewMode, setViewMode] = useState('card')
 
 	// Filtrage des matériels
@@ -38,6 +39,11 @@ const UserMaterials = () => {
 		filtered = filtered.filter(material =>
 			material.section !== 'books' && material.section !== 'book-chapters'
 		)
+
+		// Filtre par section
+		if (selectedSection) {
+			filtered = filtered.filter(material => material.section === selectedSection)
+		}
 
 		// Filtre par recherche
 		if (searchTerm) {
@@ -59,10 +65,14 @@ const UserMaterials = () => {
 		}
 
 		return filtered
-	}, [user_materials, searchTerm, selectedLevel, selectedStatus])
+	}, [user_materials, searchTerm, selectedLevel, selectedStatus, selectedSection])
 
 	const handleSearchChange = (value) => {
 		setSearchTerm(value)
+	}
+
+	const handleSectionChange = (section) => {
+		setSelectedSection(section)
 	}
 
 	const handleLevelChange = (level) => {
@@ -77,6 +87,7 @@ const UserMaterials = () => {
 		setSearchTerm('')
 		setSelectedLevel(null)
 		setSelectedStatus(null)
+		setSelectedSection(null)
 	}
 
 	const handleViewChange = (view) => {
@@ -175,15 +186,18 @@ const UserMaterials = () => {
 
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}
+					onSectionChange={handleSectionChange}
 					onLevelChange={handleLevelChange}
 					onStatusChange={handleStatusChange}
 					onClear={handleClear}
 					onViewChange={handleViewChange}
 					searchValue={searchTerm}
+					selectedSection={selectedSection}
 					selectedLevel={selectedLevel}
 					selectedStatus={selectedStatus}
 					currentView={viewMode}
 					showNotStudiedFilter={false}
+					showSectionFilter={true}
 					translationNamespace="materials"
 				/>
 

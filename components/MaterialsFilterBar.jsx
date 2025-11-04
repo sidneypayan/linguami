@@ -1,35 +1,48 @@
 import { useState } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { Search, Refresh, GridView, ViewList, SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar, Schedule, PlayCircle, CheckCircle } from '@mui/icons-material'
-import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment } from '@mui/material'
+import {
+	Search, Refresh, GridView, ViewList,
+	SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar,
+	Schedule, PlayCircle, CheckCircle,
+	OndemandVideo, RecordVoiceOver, MusicNote, Mic,
+	MenuBook, Movie, Theaters, SmartDisplay,
+	AutoStories, Landscape, Category
+} from '@mui/icons-material'
+import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl } from '@mui/material'
 
 /**
  * Composant réutilisable pour la barre de recherche et filtres des matériaux
  * @param {Function} onSearchChange - Callback pour le changement de recherche
+ * @param {Function} onSectionChange - Callback pour le changement de section
  * @param {Function} onLevelChange - Callback pour le changement de niveau
  * @param {Function} onStatusChange - Callback pour le changement de statut
  * @param {Function} onClear - Callback pour réinitialiser les filtres
  * @param {Function} onViewChange - Callback pour changer le mode de vue
  * @param {string} searchValue - Valeur actuelle de la recherche
+ * @param {string|null} selectedSection - Section sélectionnée
  * @param {string|null} selectedLevel - Niveau sélectionné
  * @param {string|null} selectedStatus - Statut sélectionné
  * @param {string} currentView - Vue actuelle ('card' ou 'list')
  * @param {boolean} showNotStudiedFilter - Afficher le filtre "Non étudié" (true pour section, false pour my-materials)
  * @param {boolean} showStudiedFilter - Afficher le filtre "Étudiés" (true pour my-materials, false pour section)
+ * @param {boolean} showSectionFilter - Afficher le filtre de section (true pour my-materials, false par défaut)
  * @param {string} translationNamespace - Namespace de traduction ('materials' ou 'section')
  */
 const MaterialsFilterBar = ({
 	onSearchChange,
+	onSectionChange,
 	onLevelChange,
 	onStatusChange,
 	onClear,
 	onViewChange,
 	searchValue = '',
+	selectedSection = null,
 	selectedLevel = null,
 	selectedStatus = null,
 	currentView = 'card',
 	showNotStudiedFilter = false,
 	showStudiedFilter = true,
+	showSectionFilter = false,
 	translationNamespace = 'materials'
 }) => {
 	const { t } = useTranslation(translationNamespace)
@@ -39,7 +52,22 @@ const MaterialsFilterBar = ({
 		e.preventDefault()
 	}
 
-	const activeFiltersCount = (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
+	const activeFiltersCount = (selectedSection ? 1 : 0) + (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
+
+	const sections = [
+		{ label: t('video'), key: 'video', tooltip: `🎬 ${t('video')}`, color: '#ef4444', icon: OndemandVideo },
+		{ label: t('dialogues'), key: 'dialogues', tooltip: `💬 ${t('dialogues')}`, color: '#06b6d4', icon: RecordVoiceOver },
+		{ label: t('music'), key: 'music', tooltip: `🎵 ${t('music')}`, color: '#ec4899', icon: MusicNote },
+		{ label: t('podcasts'), key: 'podcasts', tooltip: `🎙️ ${t('podcasts')}`, color: '#8b5cf6', icon: Mic },
+		{ label: t('short-stories'), key: 'short-stories', tooltip: `📖 ${t('short-stories')}`, color: '#f59e0b', icon: MenuBook },
+		{ label: t('movie-trailers'), key: 'movie-trailers', tooltip: `🎞️ ${t('movie-trailers')}`, color: '#ef4444', icon: Movie },
+		{ label: t('movie-clips'), key: 'movie-clips', tooltip: `🎬 ${t('movie-clips')}`, color: '#ef4444', icon: Theaters },
+		{ label: t('cartoons'), key: 'cartoons', tooltip: `🎨 ${t('cartoons')}`, color: '#06b6d4', icon: SmartDisplay },
+		{ label: t('legends'), key: 'legends', tooltip: `🏛️ ${t('legends')}`, color: '#8b5cf6', icon: AutoStories },
+		{ label: t('slices-of-life'), key: 'slices-of-life', tooltip: `🌟 ${t('slices-of-life')}`, color: '#10b981', icon: AutoStories },
+		{ label: t('beautiful-places'), key: 'beautiful-places', tooltip: `🏞️ ${t('beautiful-places')}`, color: '#10b981', icon: Landscape },
+		{ label: t('various-materials'), key: 'various-materials', tooltip: `📚 ${t('various-materials')}`, color: '#64748b', icon: Category },
+	]
 
 	const levels = [
 		{ label: t('beginner'), key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981', icon: SignalCellular1Bar },
@@ -173,7 +201,7 @@ const MaterialsFilterBar = ({
 				</Box>
 			</Box>
 
-			{/* Deuxième ligne : Filtres de niveau et statut */}
+			{/* Deuxième ligne : Filtres de section, niveau et statut */}
 			<Box
 				sx={{
 					display: 'flex',
@@ -181,6 +209,64 @@ const MaterialsFilterBar = ({
 					alignItems: 'center',
 					flexWrap: 'wrap',
 				}}>
+				{/* Section dropdown filter */}
+				{showSectionFilter && (
+					<FormControl size="small" sx={{ minWidth: { xs: 140, sm: 180 } }}>
+						<Select
+							value={selectedSection || ''}
+							onChange={(e) => onSectionChange(e.target.value || null)}
+							displayEmpty
+							sx={{
+								borderRadius: 3,
+								height: { xs: '36px', sm: '42px' },
+								fontWeight: 600,
+								fontSize: { xs: '0.85rem', sm: '0.95rem' },
+								backgroundColor: 'white',
+								border: '2px solid',
+								borderColor: selectedSection ? '#8b5cf6' : 'rgba(139, 92, 246, 0.2)',
+								boxShadow: selectedSection
+									? '0 4px 15px rgba(139, 92, 246, 0.4)'
+									: '0 2px 8px rgba(139, 92, 246, 0.15)',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								'& .MuiOutlinedInput-notchedOutline': {
+									border: 'none',
+								},
+								'&:hover': {
+									borderColor: '#8b5cf6',
+									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)',
+								},
+								'&.Mui-focused': {
+									borderColor: '#8b5cf6',
+									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+								},
+								'& .MuiSelect-select': {
+									display: 'flex',
+									alignItems: 'center',
+									gap: 1,
+									color: selectedSection ? '#8b5cf6' : '#666',
+								},
+							}}>
+							<MenuItem value="">
+								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+									<Category sx={{ fontSize: '1.1rem', color: '#8b5cf6' }} />
+									<span>{t('allMaterials')}</span>
+								</Box>
+							</MenuItem>
+							{sections.map(section => {
+								const SectionIcon = section.icon
+								return (
+									<MenuItem key={section.key} value={section.key}>
+										<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+											<SectionIcon sx={{ fontSize: '1.1rem', color: section.color }} />
+											<span>{section.label}</span>
+										</Box>
+									</MenuItem>
+								)
+							})}
+						</Select>
+					</FormControl>
+				)}
+
 				{/* Level filters */}
 				{levels.map(level => {
 					const LevelIcon = level.icon

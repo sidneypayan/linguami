@@ -27,6 +27,7 @@
 		"@supabase/ssr": "^0.7.0",
 		"@supabase/supabase-js": "^2.75.1",
 		"axios": "^0.27.2",
+		"browser-image-compression": "^2.0.2",
 		"cookie": "^1.0.2",
 		"dotenv": "^17.2.3",
 		"gray-matter": "^4.0.3",

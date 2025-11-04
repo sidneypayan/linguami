@@ -3,9 +3,12 @@ import { changePage } from '../../features/materials/materialsSlice'
 import { Box, IconButton, Button, Stack } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
-const Pagination = () => {
-	const { numOfPages, page } = useSelector(store => store.materials)
+const Pagination = ({ numOfPages: numOfPagesProp }) => {
+	const { numOfPages: numOfPagesRedux, page } = useSelector(store => store.materials)
 	const dispatch = useDispatch()
+
+	// Utiliser la prop si fournie, sinon utiliser la valeur Redux
+	const numOfPages = numOfPagesProp !== undefined ? numOfPagesProp : numOfPagesRedux
 
 	const nextPage = () => {
 		let newPage = page + 1

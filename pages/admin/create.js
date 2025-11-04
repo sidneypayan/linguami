@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import loadNamespaces from 'next-translate/loadNamespaces'
+import { supabase } from '../../lib/supabase'
 import {
 	Box,
 	Container,
@@ -80,6 +81,11 @@ const CreateMaterial = () => {
 
 	const submitContent = async e => {
 		e.preventDefault()
+
+		// DEBUG: Vérifier la session utilisateur
+		const { data: { user } } = await supabase.auth.getUser()
+		console.log('🔍 DEBUG - User ID:', user?.id)
+		console.log('🔍 DEBUG - User Email:', user?.email)
 
 		try {
 			let cleanedFormData = { ...formData }

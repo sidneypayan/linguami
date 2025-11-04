@@ -129,26 +129,58 @@
 	white-space: pre;
 }
 
+.sentence {
+	font-size: 0; /* Masquer les espaces whitespace HTML entre les spans */
+}
+
+.sentence > span,
+.sentence .translate,
+.sentence .punctuation {
+	font-size: 1.05rem; /* Mobile */
+}
+
+@media (min-width: 600px) {
+	.sentence > span,
+	.sentence .translate,
+	.sentence .punctuation {
+		font-size: 1.15rem; /* Tablette */
+	}
+}
+
+@media (min-width: 960px) {
+	.sentence > span,
+	.sentence .translate,
+	.sentence .punctuation {
+		font-size: 1.2rem; /* Desktop */
+	}
+}
+
+.punctuation {
+	display: inline; /* Ne pas créer de bloc */
+}
+
 .translate {
-	padding: 3px 5px;
+	padding: 3px 0;
+	margin-right: 2px; /* Petit espace entre les mots */
 	cursor: pointer;
 	border-radius: 6px;
-	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 	position: relative;
-	display: inline-block;
+	display: inline;
+}
+
+.translate.nospace {
+	margin-right: 0; /* Pas d'espace quand suivi de ponctuation */
 }
 
 .translate:hover {
 	background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
 	color: #667eea;
-	transform: translateY(-2px);
-	box-shadow: 0 6px 20px -4px rgba(102, 126, 234, 0.35);
-	font-weight: 500;
+	box-shadow: 0 4px 12px -2px rgba(102, 126, 234, 0.3);
 }
 
 .translate:active {
 	background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-	transform: translateY(-1px);
 	box-shadow: 0 3px 12px -2px rgba(102, 126, 234, 0.4);
 }
 

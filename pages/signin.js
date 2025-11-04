@@ -138,6 +138,36 @@ const Signin = () => {
 		})
 	}
 
+	// Mapper les noms de langues vers les codes de langue pour la base de données
+	const mapLanguageToCode = languageName => {
+		const languageMap = {
+			english: 'en',
+			french: 'fr',
+			russian: 'ru',
+		}
+		return languageMap[languageName] || languageName
+	}
+
+	// Filtrer les langues d'apprentissage disponibles (exclure la langue parlée)
+	const availableLearningLanguages = useMemo(() => {
+		const allLanguages = [
+			{ value: 'english', label: t('english'), flag: EnglishFlag },
+			{ value: 'french', label: t('french'), flag: FrenchFlag },
+			{ value: 'russian', label: t('russian'), flag: RussianFlag },
+		]
+
+		if (!values.spokenLanguage) return allLanguages
+
+		return allLanguages.filter(lang => lang.value !== values.spokenLanguage)
+	}, [values.spokenLanguage, t])
+
+	// Réinitialiser la langue d'apprentissage si elle devient invalide
+	useEffect(() => {
+		if (values.learningLanguage && values.spokenLanguage === values.learningLanguage) {
+			setValues(prev => ({ ...prev, learningLanguage: '' }))
+		}
+	}, [values.spokenLanguage, values.learningLanguage])
+
 	const handleSubmit = async e => {
 		e.preventDefault()
 
@@ -204,7 +234,12 @@ const Signin = () => {
 				return
 			}
 
-			return register(values)
+			// Mapper les codes de langue avant d'enregistrer
+			return register({
+				...values,
+				spokenLanguage: mapLanguageToCode(spokenLanguage),
+				learningLanguage: mapLanguageToCode(learningLanguage),
+			})
 		}
 
 		return login(values)
@@ -938,6 +973,7 @@ const Signin = () => {
 										value={values.learningLanguage}
 										label={t('learningLanguage')}
 										onChange={handleChange}
+										disabled={!values.spokenLanguage}
 										startAdornment={
 											<InputAdornment position='start'>
 												<TranslateRounded sx={{ color: '#718096', ml: 1 }} />
@@ -945,10 +981,12 @@ const Signin = () => {
 										}
 										renderValue={(selected) => {
 											const flags = {
+												english: <EnglishFlag size={20} />,
 												french: <FrenchFlag size={20} />,
 												russian: <RussianFlag size={20} />,
 											}
 											const names = {
+												english: t('english'),
 												french: t('french'),
 												russian: t('russian'),
 											}
@@ -982,22 +1020,19 @@ const Signin = () => {
 												},
 											},
 										}}>
-										<MenuItem value='french'>
-											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-													<FrenchFlag size={24} />
-												</Box>
-												<Typography sx={{ fontWeight: 500 }}>{t('french')}</Typography>
-											</Box>
-										</MenuItem>
-										<MenuItem value='russian'>
-											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-												<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-													<RussianFlag size={24} />
-												</Box>
-												<Typography sx={{ fontWeight: 500 }}>{t('russian')}</Typography>
-											</Box>
-										</MenuItem>
+										{availableLearningLanguages.map(language => {
+											const FlagComponent = language.flag
+											return (
+												<MenuItem key={language.value} value={language.value}>
+													<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+														<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+															<FlagComponent size={24} />
+														</Box>
+														<Typography sx={{ fontWeight: 500 }}>{language.label}</Typography>
+													</Box>
+												</MenuItem>
+											)
+										})}
 									</Select>
 								</FormControl>
 

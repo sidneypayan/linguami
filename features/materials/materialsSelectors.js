@@ -53,6 +53,7 @@ export const selectMaterialsData = createSelector(
 		numOfPages: materialsState.numOfPages,
 		sliceStart: materialsState.sliceStart,
 		sliceEnd: materialsState.sliceEnd,
+		materialsPerPage: materialsState.materialsPerPage,
 	})
 )
 

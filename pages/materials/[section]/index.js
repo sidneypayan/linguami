@@ -15,7 +15,7 @@ import {
 } from '../../../features/materials/materialsSlice'
 import { selectMaterialsData } from '../../../features/materials/materialsSelectors'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton, Typography } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
@@ -41,12 +41,44 @@ const Section = () => {
 		level,
 		sliceStart,
 		sliceEnd,
-		numOfPages,
+		page,
+		materialsPerPage,
 	} = useSelector(selectMaterialsData)
 
 	// Sélecteurs supplémentaires (non inclus dans selectMaterialsData)
 	const books_loading = useSelector(state => state.materials.books_loading)
 	const user_materials_status = useSelector(state => state.materials.user_materials_status)
+
+	// Définir cette fonction avant de l'utiliser dans useMemo
+	const checkIfUserMaterialIsInMaterials = id => {
+		const matchingMaterials = user_materials_status.find(
+			userMaterial => userMaterial.material_id === id
+		)
+		return matchingMaterials
+	}
+
+	// Filtrer localement les matériaux pour exclure ceux qui sont étudiés
+	// et s'assurer qu'ils correspondent à la langue d'apprentissage
+	const displayedMaterials = useMemo(() => {
+		if (!filtered_materials || !userLearningLanguage) return []
+		return filtered_materials.filter(material => {
+			// Vérifier que le matériel correspond à la langue d'apprentissage
+			if (material.lang !== userLearningLanguage) return false
+
+			const userStatus = checkIfUserMaterialIsInMaterials(material.id)
+			return !userStatus || !userStatus.is_studied
+		})
+	}, [filtered_materials, user_materials_status, userLearningLanguage])
+
+	// Calculer le nombre de pages basé sur les matériaux réellement affichés
+	const numOfPages = Math.ceil(displayedMaterials.length / materialsPerPage)
+
+	// S'assurer que la page actuelle ne dépasse pas le nombre de pages disponibles
+	const currentPage = Math.min(page, Math.max(1, numOfPages))
+
+	// Calculer localement sliceStart et sliceEnd basés sur les matériaux réellement affichés
+	const localSliceStart = (currentPage - 1) * materialsPerPage
+	const localSliceEnd = currentPage * materialsPerPage
 
 	const handleViewChange = (view) => {
 		setViewMode(view)
@@ -84,13 +116,6 @@ const Section = () => {
 		dispatch(showAllMaterials())
 	}
 
-	const checkIfUserMaterialIsInMaterials = id => {
-		const matchingMaterials = user_materials_status.find(
-			userMaterial => userMaterial.material_id === id
-		)
-		return matchingMaterials
-	}
-
 	useEffect(() => {
 		if (!userLearningLanguage || !section) return
 
@@ -108,6 +133,7 @@ const Section = () => {
 		dispatch(filterMaterials({ section, level }))
 	}, [section, level, dispatch])
 
+	// Afficher le loader pendant le chargement
 	if (materials_loading && books_loading) {
 		return <LoadingSpinner />
 	}
@@ -216,14 +242,13 @@ const Section = () => {
 							},
 							rowGap: 3,
 							columnGap: 8,
+							// Masquer temporairement pendant que displayedMaterials se met à jour
+							opacity: displayedMaterials.length > 0 ? 1 : 0,
+							transition: 'opacity 0.15s ease-in',
 						}}>
-						{filtered_materials?.length > 0 &&
-							filtered_materials
-								.filter(material => {
-									const userStatus = checkIfUserMaterialIsInMaterials(material.id)
-									return !userStatus || !userStatus.is_studied
-								})
-								.slice(sliceStart, sliceEnd)
+						{displayedMaterials.length > 0 &&
+							displayedMaterials
+								.slice(localSliceStart, localSliceEnd)
 								.map(material => (
 									<SectionCard
 										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
@@ -236,19 +261,12 @@ const Section = () => {
 					</Box>
 				) : (
 					<MaterialsTable
-						materials={
-							filtered_materials
-								?.filter(material => {
-									const userStatus = checkIfUserMaterialIsInMaterials(material.id)
-									return !userStatus || !userStatus.is_studied
-								})
-								.slice(sliceStart, sliceEnd) || []
-						}
+						materials={displayedMaterials.slice(localSliceStart, localSliceEnd)}
 						checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
 					/>
 				)}
 
-				{numOfPages > 1 && <Pagination />}
+				{numOfPages > 1 && <Pagination numOfPages={numOfPages} />}
 			</Container>
 		</>
 	)

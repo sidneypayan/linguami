@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import MaterialsCarousel from '../../components/materials/MaterialsCarousel'
-import { materials_ru, materials_fr } from '../../utils/constants'
+import { materials_ru, materials_fr, materials_en } from '../../utils/constants'
 import SEO from '../../components/SEO'
 import { Box, Typography, Container } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -17,17 +17,18 @@ const Material = () => {
 
 	useEffect(() => {
 		// Détermine quelle langue l'utilisateur apprend
-		// Si userLearningLanguage existe, on l'utilise, sinon on se base sur lang
-		const learningLang = userLearningLanguage || (lang === 'ru' ? 'fr' : 'ru')
+		const learningLang = userLearningLanguage || 'en' // Par défaut anglais si non défini
 
 		let selectedMaterials = []
 		if (learningLang === 'ru') {
 			selectedMaterials = materials_ru // Apprendre le russe
 		} else if (learningLang === 'fr') {
 			selectedMaterials = materials_fr // Apprendre le français
+		} else if (learningLang === 'en') {
+			selectedMaterials = materials_en // Apprendre l'anglais
 		} else {
-			// Par défaut ou si les deux langues
-			selectedMaterials = [...materials_ru, ...materials_fr]
+			// Par défaut : afficher toutes les langues
+			selectedMaterials = [...materials_ru, ...materials_fr, ...materials_en]
 		}
 
 		setMaterials(selectedMaterials)

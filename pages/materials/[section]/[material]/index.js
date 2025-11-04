@@ -14,6 +14,7 @@ import {
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
 import { getActivities } from '../../../../features/activities/activitiesSlice'
+import { toggleTranslationContainer, cleanTranslation } from '../../../../features/words/wordsSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
@@ -94,6 +95,14 @@ const Material = ({ material: single_material, activitiesCount }) => {
 			dispatch(getActivities({ id: single_material.id, type: 'materials' }))
 		}
 	}, [dispatch, single_material, isUserLoggedIn])
+
+	// Fermer la popup de traduction quand l'utilisateur change de matériel
+	useEffect(() => {
+		// Fermer la popup lors du changement de matériel
+		dispatch(toggleTranslationContainer(false))
+		dispatch(cleanTranslation())
+		setCoordinates({})
+	}, [single_material?.id, dispatch])
 
 	const handleEditContent = () => {
 		setEditModalOpen(true)
@@ -475,9 +484,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Typography
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-											lineHeight: 1.5,
-											letterSpacing: '-0.02em',
-											wordSpacing: '-0.15em',
+											lineHeight: 1.8,
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
@@ -500,9 +507,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Typography
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-											lineHeight: 1.5,
-											letterSpacing: '-0.02em',
-											wordSpacing: '-0.15em',
+											lineHeight: 1.8,
 											color: '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,

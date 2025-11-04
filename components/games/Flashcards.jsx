@@ -759,9 +759,6 @@ const FlashCards = () => {
 								title={t('again_btn')}>
 								<SentimentVeryDissatisfiedRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('again_btn')}</span>
-								<span className={styles.btnInterval}>
-									{buttonIntervals?.again || '<1min'}
-								</span>
 							</button>
 
 							<button
@@ -770,9 +767,6 @@ const FlashCards = () => {
 								title={t('hard_btn')}>
 								<ThumbDownRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('hard_btn')}</span>
-								<span className={styles.btnInterval}>
-									{buttonIntervals?.hard || '6min'}
-								</span>
 							</button>
 
 							<button
@@ -781,9 +775,6 @@ const FlashCards = () => {
 								title={t('good_btn')}>
 								<ThumbUpRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('good_btn')}</span>
-								<span className={styles.btnInterval}>
-									{buttonIntervals?.good || '10min'}
-								</span>
 							</button>
 
 							<button
@@ -792,9 +783,6 @@ const FlashCards = () => {
 								title={t('easy_btn')}>
 								<SentimentSatisfiedAltRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
 								<span className={styles.btnLabel}>{t('easy_btn')}</span>
-								<span className={styles.btnInterval}>
-									{buttonIntervals?.easy || '4j'}
-								</span>
 							</button>
 						</div>
 
