@@ -367,8 +367,12 @@ const wordsSlice = createSlice({
 	name: 'words',
 	initialState,
 	reducers: {
-		toggleTranslationContainer: state => {
-			state.isTranslationOpen = !state.isTranslationOpen
+		toggleTranslationContainer: (state, action) => {
+			// Si un payload est fourni, utiliser sa valeur
+			// Sinon, inverser l'état actuel
+			state.isTranslationOpen = action.payload !== undefined
+				? action.payload
+				: !state.isTranslationOpen
 		},
 		cleanTranslation: state => {
 			state.translation = {}
