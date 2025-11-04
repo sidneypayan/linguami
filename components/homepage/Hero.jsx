@@ -331,6 +331,7 @@ const Hero = () => {
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.webp`}
 							alt='Linguami hero'
 							fill
+							sizes="(max-width: 1024px) 0px, 320px"
 							style={{
 								objectFit: 'cover',
 								filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',

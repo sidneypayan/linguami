@@ -781,7 +781,7 @@ const Homepage = () => {
 														backfaceVisibility: 'hidden',
 														transform: 'translateZ(0)',
 													}}
-													priority={index < 3}
+													priority={index === 0}
 													unoptimized={false}
 												/>
 
@@ -1193,7 +1193,7 @@ const Homepage = () => {
 													backfaceVisibility: 'hidden',
 													transform: 'translateZ(0)',
 												}}
-												priority={index < 3}
+												priority={index === 0}
 												unoptimized={false}
 											/>
 
