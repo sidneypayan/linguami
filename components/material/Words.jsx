@@ -13,19 +13,16 @@ import { useUserContext } from '../../context/user'
 // Définir les regex en dehors du composant pour éviter recréations
 const REGEX_CONFIG = {
 	fr: {
-		all: /[ ….,;:?!–—«»"()]|[^\s….,;:?!–—«»"()]+/gi, // Capture TOUT sauf espaces et ponctuation forte
+		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
 		words: /[\w\u00C0-\u00FF]+/i, // Détection de mots (sans apostrophes pour éviter faux positifs)
-		sentences: /[\d+\w+\u00C0-\u00FF\- ,;:''"«»()–—-]+[….:!?|<br\s*\/?>]/gi,
 	},
 	ru: {
-		all: /[ ….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi,
+		all: /[ \t….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi,
 		words: /[\u0430-\u044f\ё\е́]+/i,
-		sentences: /[\d+\w+\u0430-\u044f\ё\е́\- ,;:''"«»()–—-]+[….:!?|<br\s*\/?>]/gi,
 	},
 	en: {
-		all: /[ ….,;:?!–—«»"()]|[^\s….,;:?!–—«»"()]+/gi, // Capture TOUT sauf espaces et ponctuation forte
+		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
 		words: /[\w]+/i, // Détection de mots
-		sentences: /[\d+\w+\- ,;:''"«»()–—-]+[….:!?|<br\s*\/?>]/gi,
 	},
 }
 
@@ -36,6 +33,7 @@ const Words = ({ content, locale = 'fr' }) => {
 	// Mémoïser le sanitize pour éviter recalcul à chaque render
 	const clean = useMemo(() => {
 		if (!content) return ''
+		// Sanitize le contenu (les sauts de ligne sont déjà en \n dans la DB)
 		return DOMPurify.sanitize(content)
 	}, [content])
 
@@ -80,11 +78,6 @@ const Words = ({ content, locale = 'fr' }) => {
 
 			return matches.map((item, index) => {
 				if (!item) return null
-
-				// Gérer les sauts de ligne
-				if (/^br$/.test(item)) {
-					return <span key={index} className={styles.break}></span>
-				}
 
 				// Vérifier si c'est un mot (utiliser match au lieu de test pour éviter problèmes de lastIndex)
 				if (item.match(regexConfig.words)) {
@@ -173,24 +166,25 @@ const Words = ({ content, locale = 'fr' }) => {
 	)
 
 	const wrapSentences = useMemo(() => {
-		// Sécurité : vérifier que le texte et les regex existent
-		if (!clean || !regexConfig.sentences) {
+		// Sécurité : vérifier que le texte existe
+		if (!clean) {
 			return clean
 		}
 
-		const matchSentences = clean.match(regexConfig.sentences)
+		// Splitter sur les sauts de ligne pour traiter ligne par ligne
+		const lines = clean.split(/\r?\n/)
 
-		if (matchSentences) {
-			return matchSentences.map((sentence, index) => (
-				<span key={index} className={styles.sentence}>
-					{wrapWords(sentence)}
-				</span>
-			))
-		}
-
-		// Fallback : si aucune phrase n'est détectée, wrapper quand même les mots
-		return <span className={styles.sentence}>{wrapWords(clean)}</span>
-	}, [clean, regexConfig, wrapWords])
+		return lines.map((line, index) => (
+			<React.Fragment key={index}>
+				{line && (
+					<span className={styles.sentence}>
+						{wrapWords(line)}
+					</span>
+				)}
+				{index < lines.length - 1 && <br />}
+			</React.Fragment>
+		))
+	}, [clean, wrapWords])
 
 	return wrapSentences
 }

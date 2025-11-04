@@ -93,8 +93,9 @@ const CreateMaterial = () => {
 			if (contentType !== 'posts') {
 				cleanedFormData = {
 					...formData,
-					body: formData.body?.replace(/(\r\n|\n|\r)/gm, '<br>') || '',
-					body_accents: formData.body_accents?.replace(/(\r\n|\n|\r)/gm, '<br>') || '',
+					// Garder les sauts de ligne natifs (\n) - meilleure pratique
+					body: formData.body || '',
+					body_accents: formData.body_accents || '',
 				}
 			}
 
@@ -125,9 +126,11 @@ const CreateMaterial = () => {
 			}
 
 			if (contentType !== 'posts' && editingContent.body) {
-				formattedContent.body = editingContent.body.replace(/<br>/g, '\n')
+				// Conversion <br> → \n pour rétrocompatibilité (anciennes données)
+				// Après la migration DB, cette conversion ne sera plus nécessaire
+				formattedContent.body = editingContent.body.replace(/<br\s*\/?>/gi, '\n')
 				formattedContent.body_accents =
-					editingContent.body_accents?.replace(/<br>/g, '\n') || ''
+					editingContent.body_accents?.replace(/<br\s*\/?>/gi, '\n') || ''
 			}
 
 			setFormData(formattedContent)

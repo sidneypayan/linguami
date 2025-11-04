@@ -124,6 +124,10 @@
 	font-size: 0.9rem;
 }
 
+.break {
+	display: inline;
+}
+
 .break::after {
 	content: '\a';
 	white-space: pre;
