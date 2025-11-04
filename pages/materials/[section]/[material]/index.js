@@ -317,11 +317,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									gap: 2,
 									marginBottom: '3rem',
 									marginTop: '2rem',
-									background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
-									padding: { xs: '1rem', lg: '2rem' },
-									borderRadius: { xs: 0, lg: 4 },
-									border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
-									boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 								}}>
 								{/* Si le matériel est à l'étude ou a déjà été étudié, ne pas
 								afficher le bouton proposant de l'ajouter aux matériels en cours
@@ -457,11 +452,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										position: 'relative',
 										zIndex: 100,
 										marginBottom: '2rem',
-										background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
-										padding: { xs: '1rem', lg: '2rem' },
-										borderRadius: { xs: 0, lg: 4 },
-										border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
-										boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
 									}}>
 									<BookMenu bookId={single_material.book_id} />
 								</Box>
@@ -541,11 +531,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										justifyContent: 'center',
 										marginTop: '4rem',
 										marginBottom: '3rem',
-										background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
-										padding: { xs: '1rem', lg: '2rem' },
-										borderRadius: { xs: 0, lg: 4 },
-										border: { xs: 'none', lg: '1px solid rgba(16, 185, 129, 0.2)' },
-										boxShadow: { xs: 'none', lg: '0 4px 20px rgba(16, 185, 129, 0.15)' },
 									}}>
 									<Button
 										variant='contained'

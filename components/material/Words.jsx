@@ -47,6 +47,11 @@ const Words = ({ content, locale = 'fr' }) => {
 			const word = e.target.textContent
 			const sentence = e.target.parentElement.textContent
 
+			// Dispatch custom event to pause video
+			if (typeof window !== 'undefined') {
+				window.dispatchEvent(new Event('word-clicked'))
+			}
+
 			dispatch(
 				translateWord({
 					word,

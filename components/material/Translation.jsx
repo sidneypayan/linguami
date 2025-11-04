@@ -184,6 +184,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 			if (isTranslationOpen && ref.current && !ref.current.contains(e.target)) {
 				dispatch(toggleTranslationContainer(false))
 				dispatch(cleanTranslation())
+				// Dispatch event to resume video
+				if (typeof window !== 'undefined') {
+					window.dispatchEvent(new Event('translation-closed'))
+				}
 			}
 		}
 		document.addEventListener('mousedown', checkIfClickedOutside)
@@ -282,6 +286,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		dispatch(toggleTranslationContainer(false))
 		setPersonalTranslation('')
 		setTranslationError('')
+		// Dispatch event to resume video
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new Event('translation-closed'))
+		}
 	}
 
 	if (!isUserLoggedIn) {
@@ -328,6 +336,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 								onClick={() => {
 									dispatch(toggleTranslationContainer(false))
 									dispatch(cleanTranslation())
+									// Dispatch event to resume video
+									if (typeof window !== 'undefined') {
+										window.dispatchEvent(new Event('translation-closed'))
+									}
 								}}
 								sx={{
 									color: 'white',
@@ -504,6 +516,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 							onClick={() => {
 								dispatch(toggleTranslationContainer(false))
 								dispatch(cleanTranslation())
+								// Dispatch event to resume video
+								if (typeof window !== 'undefined') {
+									window.dispatchEvent(new Event('translation-closed'))
+								}
 							}}
 							sx={{
 								color: 'white',

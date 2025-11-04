@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
 	Box,
 	IconButton,
@@ -18,6 +18,8 @@ const VideoPlayer = ({ videoUrl }) => {
 	const [viewMode, setViewMode] = useState('normal') // 'minimized', 'normal', 'theater'
 	const [userSelectedMode, setUserSelectedMode] = useState(null) // Track if user manually selected a mode
 	const [lastScrollY, setLastScrollY] = useState(0)
+	const iframeRef = useRef(null)
+	const playerRef = useRef(null)
 
 	const handleViewModeChange = (event, newMode) => {
 		if (newMode !== null) {
@@ -58,6 +60,66 @@ const VideoPlayer = ({ videoUrl }) => {
 			setUserSelectedMode(null) // Allow auto-minimize again
 		}
 	}, [userSelectedMode, viewMode])
+
+	// Load YouTube IFrame API and listen for word clicks to pause video
+	useEffect(() => {
+		// Load YouTube IFrame API
+		if (!window.YT) {
+			const tag = document.createElement('script')
+			tag.src = 'https://www.youtube.com/iframe_api'
+			const firstScriptTag = document.getElementsByTagName('script')[0]
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+		}
+
+		// Initialize player when API is ready
+		const initPlayer = () => {
+			if (window.YT && window.YT.Player && iframeRef.current) {
+				playerRef.current = new window.YT.Player(iframeRef.current, {
+					events: {
+						onReady: () => {
+							// Player is ready
+						}
+					}
+				})
+			}
+		}
+
+		if (window.YT && window.YT.Player) {
+			initPlayer()
+		} else {
+			window.onYouTubeIframeAPIReady = initPlayer
+		}
+
+		// Listen for word click events
+		const handleWordClick = () => {
+			if (playerRef.current && playerRef.current.pauseVideo) {
+				try {
+					playerRef.current.pauseVideo()
+				} catch (error) {
+					console.error('Error pausing video:', error)
+				}
+			}
+		}
+
+		// Listen for translation closed events to resume video
+		const handleTranslationClosed = () => {
+			if (playerRef.current && playerRef.current.playVideo) {
+				try {
+					playerRef.current.playVideo()
+				} catch (error) {
+					console.error('Error resuming video:', error)
+				}
+			}
+		}
+
+		window.addEventListener('word-clicked', handleWordClick)
+		window.addEventListener('translation-closed', handleTranslationClosed)
+
+		return () => {
+			window.removeEventListener('word-clicked', handleWordClick)
+			window.removeEventListener('translation-closed', handleTranslationClosed)
+		}
+	}, [videoUrl])
 
 	const getVideoContainerStyles = () => {
 		const baseStyles = {
@@ -156,6 +218,8 @@ const VideoPlayer = ({ videoUrl }) => {
 
 			{/* Video iframe */}
 			<iframe
+				ref={iframeRef}
+				id="youtube-player"
 				style={{
 					width: '100%',
 					height: '100%',
@@ -163,7 +227,7 @@ const VideoPlayer = ({ videoUrl }) => {
 					display: 'block',
 					borderRadius: 'inherit',
 				}}
-				src={videoUrl}
+				src={`${videoUrl}${videoUrl.includes('?') ? '&' : '?'}enablejsapi=1`}
 				allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'
 				allowFullScreen
 			/>

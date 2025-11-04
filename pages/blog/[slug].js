@@ -32,7 +32,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 			name: 'Linguami',
 			logo: {
 				'@type': 'ImageObject',
-				url: 'https://www.linguami.com/logo.png'
+				url: 'https://www.linguami.com/logo.webp'
 			}
 		},
 		mainEntityOfPage: {

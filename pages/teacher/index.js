@@ -25,8 +25,8 @@ const Teacher = () => {
 	const isLearningRussian = learningLang === 'ru'
 	const teacherName = isLearningRussian ? 'Natacha' : 'Sidney'
 	const img = isLearningRussian
-		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_female.png`
-		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_male.png`
+		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_female.webp`
+		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/elf_male.webp`
 
 	// Mots-clés SEO basés sur la langue d'apprentissage et la langue d'interface
 	const getKeywords = () => {
