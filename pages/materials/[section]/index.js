@@ -66,15 +66,11 @@ const Section = () => {
 	// Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
 	const displayedMaterials = useMemo(() => {
 		if (!filtered_materials || !userLearningLanguage) return []
-		const result = filtered_materials.filter(material => {
+		return filtered_materials.filter(material => {
 			// Vérifier que le matériel correspond à la langue d'apprentissage
 			return material.lang === userLearningLanguage
 		})
-		console.log('📦 DisplayedMaterials recalculated:', result.length, 'materials')
-		console.log('🔍 Sample levels:', result.slice(0, 3).map(m => ({ title: m.title, level: m.level })))
-		console.log('🎚️ Selected status filter:', selectedStatus)
-		return result
-	}, [filtered_materials, userLearningLanguage, selectedStatus])
+	}, [filtered_materials, userLearningLanguage])
 
 	// Calculer le nombre de pages basé sur les matériaux réellement affichés
 	const numOfPages = Math.ceil(displayedMaterials.length / materialsPerPage)
@@ -97,8 +93,6 @@ const Section = () => {
 
 	// Fonction helper pour appliquer les deux filtres ensemble
 	const applyBothFilters = (level, status) => {
-		console.log('🎯 Applying filters - level:', level, 'status:', status)
-
 		// Si aucun filtre, tout afficher
 		if (!level && !status) {
 			dispatch(showAllMaterials())
@@ -161,8 +155,6 @@ const Section = () => {
 			user_materials_status // Attendre que le statut des matériaux soit chargé
 		) {
 			const userLevel = userProfile.language_level
-			console.log('🎯 Applying default filters - level:', userLevel, '+ not_studied')
-			console.log('📊 User materials status loaded:', user_materials_status.length)
 
 			// Mettre à jour l'état local
 			setSelectedLevel(userLevel)
@@ -196,7 +188,6 @@ const Section = () => {
 			section !== 'books' &&
 			user_materials_status
 		) {
-			console.log('🔄 User level changed from', previousUserLevel, 'to', currentUserLevel)
 			// Le niveau a changé, réappliquer les filtres par défaut
 			setSelectedLevel(currentUserLevel)
 			setSelectedStatus('not_studied')
