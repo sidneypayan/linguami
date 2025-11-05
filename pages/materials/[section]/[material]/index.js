@@ -39,6 +39,7 @@ import {
 	Stack,
 	Typography,
 	Paper,
+	useTheme,
 } from '@mui/material'
 import {
 	ArrowBack,
@@ -62,6 +63,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 	const { t, lang } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } =
 		useUserContext()
 	const { material, section } = router.query
@@ -235,7 +238,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						pt: { xs: '5.5rem', md: '6rem' },
 						pb: 2.5,
 						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-						bgcolor: '#fafafa',
+						bgcolor: 'background.paper',
 					}}>
 					<Container maxWidth="lg">
 						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
@@ -465,7 +468,12 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									zIndex: 100,
 									padding: { xs: 1.5, lg: 5 },
 									marginBottom: '3rem',
-									background: { xs: 'transparent', lg: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
+									background: {
+										xs: 'transparent',
+										lg: isDark
+											? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+											: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
+									},
 									borderRadius: { xs: 0, lg: 4 },
 									border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
 									boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
@@ -475,7 +483,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
 											lineHeight: 1.8,
-											color: '#1a202c',
+											color: isDark ? '#f1f5f9' : '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
 											'& span': {
@@ -498,7 +506,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 										sx={{
 											fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
 											lineHeight: 1.8,
-											color: '#1a202c',
+											color: isDark ? '#f1f5f9' : '#1a202c',
 											cursor: 'pointer',
 											fontWeight: 400,
 											'& span': {
@@ -618,7 +626,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								xl: '550px',
 							},
 							flexShrink: 0,
-							bgcolor: 'white',
+							bgcolor: isDark ? '#0f172a' : 'white',
 							position: 'sticky',
 							top: { lg: 120 },
 							alignSelf: 'flex-start',
@@ -658,7 +666,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								left: 0,
 								right: 0,
 								bottom: 0,
-								backgroundColor: 'white',
+								backgroundColor: isDark ? '#0f172a' : 'white',
 								zIndex: 1100,
 								flexDirection: 'column',
 								overflowY: 'auto',

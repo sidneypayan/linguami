@@ -208,7 +208,7 @@ const Admin = ({
 		<Box
 			sx={{
 				minHeight: '100vh',
-				bgcolor: '#F8FAFC',
+				bgcolor: 'background.paper',
 			}}>
 			{/* Admin Navbar */}
 			<AdminNavbar activePage="dashboard" />

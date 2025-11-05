@@ -5,11 +5,13 @@ import { sortPostsByDate } from '../../utils/helpers'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { Container, Typography, Box } from '@mui/material'
+import { Container, Typography, Box, useTheme } from '@mui/material'
 import { RssFeedRounded } from '@mui/icons-material'
 
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	// Mots-clés SEO par langue
 	const keywordsByLang = {
@@ -74,7 +76,7 @@ const Blog = ({ posts }) => {
 						left: 0,
 						right: 0,
 						height: '60px',
-						background: '#ffffff',
+						background: isDark ? '#0f172a' : '#ffffff',
 						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
 					},
 				}}>

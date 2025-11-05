@@ -18,6 +18,7 @@ import {
 	Card,
 	Typography,
 	Chip,
+	useTheme,
 } from '@mui/material'
 import {
 	FavoriteBorderRounded,
@@ -33,6 +34,8 @@ const WordsContainer = () => {
 	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { user, isUserLoggedIn, userLearningLanguage } = useUserContext()
 	const { user_material_words, user_material_words_pending } = useSelector(
 		store => store.words
@@ -195,7 +198,9 @@ const WordsContainer = () => {
 									alignItems: 'center',
 									justifyContent: 'space-between',
 									gap: { xs: 1.5, sm: 2 },
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 									border: '1px solid rgba(139, 92, 246, 0.2)',
 									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
 									transition: 'opacity 0.2s ease',
@@ -240,7 +245,7 @@ const WordsContainer = () => {
 										<Typography
 											sx={{
 												fontSize: { xs: '0.8125rem', sm: '0.9375rem' },
-												color: '#718096',
+												color: isDark ? '#94a3b8' : '#718096',
 												fontWeight: 500,
 												flexShrink: 0,
 											}}>
@@ -249,7 +254,7 @@ const WordsContainer = () => {
 										<Typography
 											sx={{
 												fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-												color: '#4a5568',
+												color: isDark ? '#f1f5f9' : '#4a5568',
 												fontWeight: 500,
 												whiteSpace: 'nowrap',
 											}}>
@@ -283,7 +288,9 @@ const WordsContainer = () => {
 						borderRadius: 4,
 						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
 						border: '1px solid rgba(139, 92, 246, 0.2)',
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						background: isDark
+							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						mt: { xs: 2, md: 3 },
 					}}>
 					<Box
@@ -326,7 +333,7 @@ const WordsContainer = () => {
 							variant='body1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: isDark ? '#cbd5e1' : '#718096',
 								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								lineHeight: 1.7,
 								maxWidth: '500px',
@@ -347,7 +354,7 @@ const WordsContainer = () => {
 							<Typography
 								sx={{
 									fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-									color: '#4a5568',
+									color: isDark ? '#cbd5e1' : '#4a5568',
 									fontWeight: 600,
 									textAlign: 'center',
 									lineHeight: 1.6,
@@ -364,7 +371,9 @@ const WordsContainer = () => {
 						borderRadius: 4,
 						boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
 						border: '1px solid rgba(139, 92, 246, 0.2)',
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						background: isDark
+							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						mt: { xs: 2, md: 3 },
 					}}>
 					<Box
@@ -407,7 +416,7 @@ const WordsContainer = () => {
 							variant='body1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: isDark ? '#cbd5e1' : '#718096',
 								fontSize: { xs: '1rem', sm: '1.0625rem' },
 								lineHeight: 1.7,
 								maxWidth: '500px',
@@ -428,7 +437,7 @@ const WordsContainer = () => {
 							<Typography
 								sx={{
 									fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-									color: '#4a5568',
+									color: isDark ? '#cbd5e1' : '#4a5568',
 									fontWeight: 600,
 									textAlign: 'center',
 									lineHeight: 1.6,

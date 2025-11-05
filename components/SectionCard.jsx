@@ -17,6 +17,7 @@ import {
 	CardContent,
 	Typography,
 	Chip,
+	useTheme,
 } from '@mui/material'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -25,6 +26,8 @@ import useTranslation from 'next-translate/useTranslation'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const { t } = useTranslation('materials')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { section } = router.query
@@ -99,9 +102,13 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				display: 'flex',
 				alignItems: 'stretch',
 				height: { xs: 160, sm: 180 },
-				boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-				background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-				border: '1px solid rgba(139, 92, 246, 0.2)',
+				boxShadow: isDark
+					? '0 4px 20px rgba(139, 92, 246, 0.25)'
+					: '0 4px 20px rgba(139, 92, 246, 0.15)',
+				background: isDark
+					? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+					: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+				border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
 				borderRadius: '16px',
 				overflow: 'hidden',
 				transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -141,7 +148,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								right: '12px',
 								fontSize: '2rem',
 								color: '#f59e0b',
-								background: 'rgba(255, 255, 255, 0.95)',
+								background: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
 								backdropFilter: 'blur(10px)',
 								borderRadius: '50%',
 								padding: '6px',
@@ -160,7 +167,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								right: '12px',
 								fontSize: '2rem',
 								color: '#22c55e',
-								background: 'rgba(255, 255, 255, 0.95)',
+								background: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
 								backdropFilter: 'blur(10px)',
 								borderRadius: '50%',
 								padding: '6px',
@@ -213,7 +220,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								lineHeight: '1.6rem',
 								fontSize: { xs: '1.1rem', sm: '1.25rem' },
 								fontWeight: 700,
-								color: '#7c3aed',
+								color: isDark ? '#a78bfa' : '#7c3aed',
 								mb: 0.5,
 							}}>
 							{material.title}
@@ -225,7 +232,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								component='div'
 								sx={{
 									fontWeight: 600,
-									color: '#718096',
+									color: isDark ? '#94a3b8' : '#718096',
 									fontSize: { xs: '0.875rem', sm: '0.95rem' },
 								}}>
 								{material.section}
@@ -255,7 +262,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							top: 10,
 							left: 10,
 							zIndex: 3,
-							background: 'rgba(255, 255, 255, 0.96)',
+							background: isDark ? 'rgba(30, 41, 59, 0.96)' : 'rgba(255, 255, 255, 0.96)',
 							backdropFilter: 'blur(8px)',
 							border: `1.5px solid ${difficultyInfo.border}`,
 							color: difficultyInfo.text,

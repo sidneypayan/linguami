@@ -247,7 +247,7 @@ const CreateMaterial = () => {
 							<IconButton
 								onClick={() => router.back()}
 								sx={{
-									bgcolor: '#F8FAFC',
+									bgcolor: 'background.paper',
 									'&:hover': {
 										bgcolor: '#E2E8F0',
 									},

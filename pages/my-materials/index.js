@@ -137,7 +137,7 @@ const UserMaterials = () => {
 					pt: { xs: '5.5rem', md: '6rem' },
 					pb: 2.5,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: '#fafafa',
+					bgcolor: 'background.paper',
 				}}>
 				<Container maxWidth='lg'>
 					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>

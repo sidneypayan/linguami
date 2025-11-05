@@ -6,6 +6,7 @@ import {
 	Typography,
 	Paper,
 	Tooltip,
+	useTheme,
 } from '@mui/material'
 import {
 	PlayArrowRounded,
@@ -20,6 +21,8 @@ import {
 
 const Player = ({ src }) => {
 	const audioRef = useRef(null)
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentTime, setCurrentTime] = useState(0)
 	const [duration, setDuration] = useState(0)
@@ -123,7 +126,9 @@ const Player = ({ src }) => {
 				sx={{
 					maxWidth: { xs: '100%', sm: '540px', md: '680px' },
 					width: '100%',
-					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)',
+					background: isDark
+						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
+						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)',
 					backdropFilter: 'blur(10px)',
 					padding: { xs: '14px 16px', sm: '16px 20px' },
 					borderRadius: 4,
@@ -170,7 +175,7 @@ const Player = ({ src }) => {
 							onClick={() => skip(-10)}
 							size='small'
 							sx={{
-								color: '#64748b',
+								color: isDark ? '#94a3b8' : '#64748b',
 								width: { xs: 38, sm: 42 },
 								height: { xs: 38, sm: 42 },
 								background: 'rgba(139, 92, 246, 0.06)',
@@ -225,7 +230,7 @@ const Player = ({ src }) => {
 							onClick={() => skip(10)}
 							size='small'
 							sx={{
-								color: '#64748b',
+								color: isDark ? '#94a3b8' : '#64748b',
 								width: { xs: 38, sm: 42 },
 								height: { xs: 38, sm: 42 },
 								background: 'rgba(139, 92, 246, 0.06)',
@@ -281,7 +286,7 @@ const Player = ({ src }) => {
 						sx={{
 							display: 'flex',
 							justifyContent: 'space-between',
-							color: '#64748b',
+							color: isDark ? '#94a3b8' : '#64748b',
 							fontSize: '0.7rem',
 							fontWeight: 600,
 							mt: 0.5,
@@ -301,7 +306,7 @@ const Player = ({ src }) => {
 						onClick={cyclePlaybackRate}
 						size='small'
 						sx={{
-							color: playbackRate === 1 ? '#64748b' : '#8b5cf6',
+							color: playbackRate === 1 ? (isDark ? '#94a3b8' : '#64748b') : '#8b5cf6',
 							width: { xs: 52, sm: 58 },
 							height: { xs: 38, sm: 42 },
 							background: playbackRate === 1
@@ -383,7 +388,7 @@ const Player = ({ src }) => {
 							onClick={toggleMute}
 							size='small'
 							sx={{
-								color: '#64748b',
+								color: isDark ? '#94a3b8' : '#64748b',
 								width: { xs: 38, sm: 42 },
 								height: { xs: 38, sm: 42 },
 								background: 'rgba(139, 92, 246, 0.06)',

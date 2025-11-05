@@ -1,13 +1,18 @@
-import { Box, Container, Card } from '@mui/material'
+import { Box, Container, Card, useTheme } from '@mui/material'
 import { HomeRounded } from '@mui/icons-material'
 import Link from 'next/link'
 
 const AuthLayout = ({ children }) => {
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
+
 	return (
 		<Box
 			sx={{
 				minHeight: '100vh',
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				background: isDark
+					? 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)'
+					: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
@@ -61,13 +66,22 @@ const AuthLayout = ({ children }) => {
 					sx={{
 						p: { xs: 3, sm: 5 },
 						borderRadius: { xs: 0, sm: 4 },
-						boxShadow: {
-							xs: 'none',
-							sm: '0 24px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
-						},
-						background: 'rgba(255, 255, 255, 0.98)',
+						boxShadow: isDark
+							? {
+								xs: 'none',
+								sm: '0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.2) inset'
+							}
+							: {
+								xs: 'none',
+								sm: '0 24px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
+							},
+						background: isDark
+							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
+							: 'rgba(255, 255, 255, 0.98)',
 						backdropFilter: 'blur(20px)',
-						border: { xs: 'none !important', sm: 'initial' },
+						border: isDark
+							? { xs: 'none !important', sm: '1px solid rgba(139, 92, 246, 0.3)' }
+							: { xs: 'none !important', sm: 'initial' },
 						outline: 'none',
 						minHeight: { xs: '100vh', sm: 'auto' },
 					}}>

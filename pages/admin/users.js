@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { useState } from 'react'
 import loadNamespaces from 'next-translate/loadNamespaces'
 import {
@@ -187,7 +188,7 @@ const UsersPage = ({ users }) => {
 		<Box
 			sx={{
 				minHeight: '100vh',
-				bgcolor: '#F8FAFC',
+				bgcolor: 'background.paper',
 			}}>
 			{/* Admin Navbar */}
 			<AdminNavbar activePage="users" />
@@ -705,8 +706,30 @@ export const getServerSideProps = async ({ req, res }) => {
 		}
 	}
 
+	// Créer un client admin avec SERVICE_ROLE_KEY pour bypass RLS
+	// Vérifier que la clé existe
+	if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+		console.error('SUPABASE_SERVICE_ROLE_KEY is not defined')
+		return {
+			props: {
+				users: [],
+			},
+		}
+	}
+
+	const supabaseAdmin = createClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL,
+		process.env.SUPABASE_SERVICE_ROLE_KEY,
+		{
+			auth: {
+				autoRefreshToken: false,
+				persistSession: false,
+			},
+		}
+	)
+
 	// Récupérer tous les utilisateurs avec leurs informations XP
-	const { data: usersProfile, error: usersError } = await supabase
+	const { data: usersProfile, error: usersError } = await supabaseAdmin
 		.from('users_profile')
 		.select(`
 			id,
@@ -731,7 +754,7 @@ export const getServerSideProps = async ({ req, res }) => {
 	}
 
 	// Récupérer les informations XP pour chaque utilisateur
-	const { data: xpProfiles, error: xpError } = await supabase
+	const { data: xpProfiles, error: xpError } = await supabaseAdmin
 		.from('user_xp_profile')
 		.select('user_id, total_xp, current_level')
 

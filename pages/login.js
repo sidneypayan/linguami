@@ -12,6 +12,7 @@ import {
 	Typography,
 	InputAdornment,
 	Divider,
+	useTheme,
 } from '@mui/material'
 import {
 	EmailRounded,
@@ -21,6 +22,8 @@ import {
 const Login = () => {
 	const { t } = useTranslation('register')
 	const { login, loginWithThirdPartyOAuth } = useUserContext()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [values, setValues] = useState({ email: '', password: '' })
 
 	const handleChange = e => {
@@ -36,8 +39,10 @@ const Login = () => {
 		'& .MuiOutlinedInput-root': {
 			borderRadius: 2.5,
 			transition: 'all 0.3s ease',
+			backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'transparent',
+			color: isDark ? '#f1f5f9' : 'inherit',
 			'& fieldset': {
-				borderColor: 'rgba(102, 126, 234, 0.2)',
+				borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
 				borderWidth: '2px',
 			},
 			'&:hover fieldset': {
@@ -49,10 +54,14 @@ const Login = () => {
 			},
 		},
 		'& .MuiInputLabel-root': {
-			color: '#718096',
+			color: isDark ? '#94a3b8' : '#718096',
 			'&.Mui-focused': {
 				color: '#667eea',
 			},
+		},
+		'& .MuiInputBase-input::placeholder': {
+			color: isDark ? '#94a3b8' : 'inherit',
+			opacity: 1,
 		},
 	}
 
@@ -84,7 +93,7 @@ const Login = () => {
 					variant="body1"
 					align="center"
 					sx={{
-						color: '#718096',
+						color: isDark ? '#94a3b8' : '#718096',
 						mb: 4,
 						fontSize: '1rem',
 					}}>
@@ -97,7 +106,7 @@ const Login = () => {
 					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
 				/>
 
-				<Divider sx={{ my: 3.5, color: '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+				<Divider sx={{ my: 3.5, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
 					{t('or')}
 				</Divider>
 
@@ -119,7 +128,7 @@ const Login = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<EmailRounded sx={{ color: '#718096' }} />
+									<EmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -140,7 +149,7 @@ const Login = () => {
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">
-										<LockRounded sx={{ color: '#718096' }} />
+										<LockRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 									</InputAdornment>
 								),
 							}}
@@ -215,7 +224,7 @@ const Login = () => {
 						<Typography
 							variant="body2"
 							sx={{
-								color: '#718096',
+								color: isDark ? '#94a3b8' : '#718096',
 								fontSize: '0.9375rem',
 							}}>
 							{t('noAccountQuestion')}{' '}

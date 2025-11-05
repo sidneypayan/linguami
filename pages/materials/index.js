@@ -82,45 +82,10 @@ const Material = () => {
 				jsonLd={jsonLd}
 			/>
 
-			{/* Compact Header */}
-			<Box
-				sx={{
-					display: { xs: 'none', lg: 'block' },
-					pt: { xs: '5.5rem', md: '6rem' },
-					pb: 3,
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: '#fafafa',
-				}}>
-				<Container maxWidth='lg'>
-					<Typography
-						variant='h4'
-						sx={{
-							fontWeight: 700,
-							fontSize: { xs: '1.75rem', sm: '2rem' },
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							textAlign: 'center',
-							mb: 1,
-						}}>
-						{t('pagetitle')}
-					</Typography>
-					<Typography
-						variant='body1'
-						align='center'
-						sx={{
-							color: '#64748b',
-							fontSize: { xs: '0.9375rem', sm: '1rem' },
-						}}>
-						{t('description')}
-					</Typography>
-				</Container>
-			</Box>
-
 			<Container
 				maxWidth='lg'
 				sx={{
-					pt: { xs: '5.5rem', lg: 3 },
+					pt: { xs: '6.5rem', md: '7rem' },
 					pb: { xs: 3, md: 4 },
 					px: { xs: 2, sm: 3 },
 				}}>

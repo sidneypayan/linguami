@@ -149,7 +149,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					alignItems: 'center',
 					justifyContent: 'space-between',
 					pb: 2,
-					bgcolor: '#F8FAFC',
+					bgcolor: 'background.paper',
 					borderBottom: '1px solid',
 					borderColor: 'divider',
 				}}>
@@ -396,7 +396,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				</Grid>
 			</DialogContent>
 
-			<DialogActions sx={{ p: 3, pt: 2, bgcolor: '#F8FAFC', borderTop: '1px solid', borderColor: 'divider' }}>
+			<DialogActions sx={{ p: 3, pt: 2, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
 				<Button
 					onClick={onClose}
 					disabled={saving}

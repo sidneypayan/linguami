@@ -7,10 +7,14 @@ import {
 	Typography,
 	Button,
 	Chip,
+	useTheme,
 } from '@mui/material'
 import { ArrowForwardRounded, CalendarTodayRounded } from '@mui/icons-material'
 
 const BlogCard = ({ post }) => {
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
+
 	return (
 		<Link href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
 			<Card
@@ -20,9 +24,13 @@ const BlogCard = ({ post }) => {
 					borderRadius: 4,
 					overflow: 'hidden',
 					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-					boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-					border: '1px solid rgba(139, 92, 246, 0.2)',
+					background: isDark
+						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+					boxShadow: isDark
+						? '0 4px 20px rgba(139, 92, 246, 0.25)'
+						: '0 4px 20px rgba(139, 92, 246, 0.15)',
+					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
 					position: 'relative',
 					'&::before': {
 						content: '""',
@@ -121,7 +129,7 @@ const BlogCard = ({ post }) => {
 							fontWeight: 700,
 							fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
 							lineHeight: 1.3,
-							color: '#2d3748',
+							color: isDark ? '#f1f5f9' : '#2d3748',
 							transition: 'color 0.2s ease',
 							'&:hover': {
 								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
@@ -137,7 +145,7 @@ const BlogCard = ({ post }) => {
 					<Typography
 						variant='body1'
 						sx={{
-							color: '#718096',
+							color: isDark ? '#94a3b8' : '#718096',
 							fontSize: { xs: '0.95rem', sm: '1rem' },
 							lineHeight: 1.7,
 							flex: 1,

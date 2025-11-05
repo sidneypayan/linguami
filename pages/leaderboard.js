@@ -39,6 +39,7 @@ const LeaderboardPage = () => {
 	const { t } = useTranslation('common')
 	const { user } = useUserContext()
 	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 	const [loading, setLoading] = useState(true)
 	const [tabValue, setTabValue] = useState(0)
@@ -182,7 +183,7 @@ const LeaderboardPage = () => {
 					pt: '6rem',
 					pb: 3,
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: '#fafafa',
+					bgcolor: 'background.paper',
 				}}>
 				<Container maxWidth='lg'>
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 1 }}>
@@ -448,7 +449,9 @@ const LeaderboardPage = () => {
 						sx={{
 							borderBottom: 1,
 							borderColor: 'divider',
-							background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%)',
+							background: isDark
+								? 'linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%)',
 						}}>
 						<Tabs
 							value={tabValue}
@@ -462,6 +465,7 @@ const LeaderboardPage = () => {
 									fontSize: { xs: '0.875rem', md: '1rem' },
 									textTransform: 'none',
 									py: 2,
+									color: isDark ? '#cbd5e1' : 'inherit',
 								},
 								'& .MuiTabs-indicator': {
 									backgroundColor:
@@ -532,16 +536,18 @@ const LeaderboardPage = () => {
 							<TableHead>
 								<TableRow
 									sx={{
-										background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+										background: isDark
+											? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
+											: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
 									}}>
-									<TableCell sx={{ fontWeight: 700, color: '#1E293B', width: { xs: 60, md: 80 } }}>
+									<TableCell sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#1E293B', width: { xs: 60, md: 80 } }}>
 										{t('rankHeader')}
 									</TableCell>
-									<TableCell sx={{ fontWeight: 700, color: '#1E293B' }}>
+									<TableCell sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#1E293B' }}>
 										{t('userHeader')}
 									</TableCell>
 									{!isMobile && (
-										<TableCell sx={{ fontWeight: 700, color: '#1E293B', width: { xs: 100, md: 120 } }}>
+										<TableCell sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#1E293B', width: { xs: 100, md: 120 } }}>
 											{t('levelHeader')}
 										</TableCell>
 									)}
@@ -549,12 +555,17 @@ const LeaderboardPage = () => {
 										align="right"
 										sx={{
 											fontWeight: 700,
-											color:
-												tabValue === 0 ? '#1E40AF' :
-												tabValue === 1 ? '#7C3AED' :
-												tabValue === 2 ? '#DB2777' :
-												tabValue === 3 ? '#D97706' :
-												'#15803D',
+											color: isDark
+												? (tabValue === 0 ? '#93c5fd' :
+												   tabValue === 1 ? '#c4b5fd' :
+												   tabValue === 2 ? '#f9a8d4' :
+												   tabValue === 3 ? '#fcd34d' :
+												   '#86efac')
+												: (tabValue === 0 ? '#1E40AF' :
+												   tabValue === 1 ? '#7C3AED' :
+												   tabValue === 2 ? '#DB2777' :
+												   tabValue === 3 ? '#D97706' :
+												   '#15803D'),
 											width: { xs: 120, md: 150 }
 										}}>
 										{tabValue === 0 && t('xpHeader')}
@@ -676,7 +687,7 @@ const LeaderboardPage = () => {
 														variant="body1"
 														sx={{
 															fontWeight: 700,
-															color: '#1E293B',
+															color: isDark ? '#f1f5f9' : '#1E293B',
 															fontSize: { xs: '0.9rem', md: '1rem' },
 														}}>
 														{entry.username}
@@ -715,12 +726,17 @@ const LeaderboardPage = () => {
 												variant="h6"
 												sx={{
 													fontWeight: 800,
-													color:
-														tabValue === 0 ? '#1E40AF' :
-														tabValue === 1 ? '#7C3AED' :
-														tabValue === 2 ? '#DB2777' :
-														tabValue === 3 ? '#D97706' :
-														'#15803D',
+													color: isDark
+														? (tabValue === 0 ? '#93c5fd' :
+														   tabValue === 1 ? '#c4b5fd' :
+														   tabValue === 2 ? '#f9a8d4' :
+														   tabValue === 3 ? '#fcd34d' :
+														   '#86efac')
+														: (tabValue === 0 ? '#1E40AF' :
+														   tabValue === 1 ? '#7C3AED' :
+														   tabValue === 2 ? '#DB2777' :
+														   tabValue === 3 ? '#D97706' :
+														   '#15803D'),
 													fontSize: { xs: '1rem', md: '1.2rem' },
 												}}>
 												{getValueLabel(entry)}

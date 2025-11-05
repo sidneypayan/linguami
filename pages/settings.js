@@ -39,6 +39,7 @@ const Settings = () => {
 	const { t } = useTranslation('settings')
 	const { userProfile, updateUserProfile } = useUserContext()
 	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
 	const [formData, setFormData] = useState({
@@ -165,14 +166,28 @@ const Settings = () => {
 					alignItems: 'center',
 					py: 2.5,
 					px: 3,
-					borderBottom: `1px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.15)' : 'rgba(139, 92, 246, 0.15)'}`,
+					borderBottom: `1px solid ${
+						isLanguageField
+							? isDark
+								? 'rgba(6, 182, 212, 0.25)'
+								: 'rgba(6, 182, 212, 0.15)'
+							: isDark
+							? 'rgba(139, 92, 246, 0.25)'
+							: 'rgba(139, 92, 246, 0.15)'
+					}`,
 					'&:last-child': {
 						borderBottom: 'none',
 					},
 					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 					position: 'relative',
 					'&:hover': {
-						bgcolor: isLanguageField ? 'rgba(6, 182, 212, 0.1)' : 'rgba(139, 92, 246, 0.1)',
+						bgcolor: isLanguageField
+							? isDark
+								? 'rgba(6, 182, 212, 0.15)'
+								: 'rgba(6, 182, 212, 0.1)'
+							: isDark
+							? 'rgba(139, 92, 246, 0.15)'
+							: 'rgba(139, 92, 246, 0.1)',
 						'&::before': {
 							opacity: 1,
 						},
@@ -226,7 +241,13 @@ const Settings = () => {
 					<Typography
 						variant='body2'
 						sx={{
-							color: isLanguageField ? '#0891b2' : '#7c3aed',
+							color: isLanguageField
+								? isDark
+									? '#67e8f9'
+									: '#0891b2'
+								: isDark
+								? '#c4b5fd'
+								: '#7c3aed',
 							fontSize: '0.7rem',
 							fontWeight: 600,
 							mb: 0.5,
@@ -244,7 +265,7 @@ const Settings = () => {
 									onChange={handleChange(field)}
 									sx={{
 										fontSize: '0.95rem',
-										color: '#2d3748',
+										color: isDark ? '#f1f5f9' : '#2d3748',
 										'& .MuiOutlinedInput-notchedOutline': {
 											borderColor: iconColor,
 										},
@@ -277,7 +298,7 @@ const Settings = () => {
 								sx={{
 									'& .MuiOutlinedInput-root': {
 										fontSize: '0.95rem',
-										color: '#2d3748',
+										color: isDark ? '#f1f5f9' : '#2d3748',
 										'& fieldset': {
 											borderColor: iconColor,
 										},
@@ -298,7 +319,7 @@ const Settings = () => {
 							sx={{
 								fontSize: '0.95rem',
 								fontWeight: 600,
-								color: '#2d3748',
+								color: isDark ? '#f1f5f9' : '#2d3748',
 							}}>
 							{getDisplayValue()}
 						</Typography>
@@ -383,7 +404,7 @@ const Settings = () => {
 			<Head>
 				<title>{`${t('pageTitle')} - Linguami`}</title>
 			</Head>
-			<Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', py: 4, pt: { xs: 12, md: 10 } }}>
+			<Box sx={{ bgcolor: 'background.paper', minHeight: '100vh', py: 4, pt: { xs: 12, md: 10 } }}>
 				<Container maxWidth='md'>
 					{/* Carte de personnage héroïque */}
 					<Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
@@ -655,7 +676,9 @@ const Settings = () => {
 									overflow: 'hidden',
 									height: '100%',
 									position: 'relative',
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
 									backdropFilter: 'blur(20px)',
 									border: '2px solid rgba(139, 92, 246, 0.2)',
 									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.05) inset',
@@ -730,7 +753,9 @@ const Settings = () => {
 									overflow: 'hidden',
 									height: '100%',
 									position: 'relative',
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
 									backdropFilter: 'blur(20px)',
 									border: '2px solid rgba(6, 182, 212, 0.2)',
 									boxShadow: '0 8px 32px rgba(6, 182, 212, 0.15), 0 0 0 1px rgba(6, 182, 212, 0.05) inset',

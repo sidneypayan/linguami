@@ -6,11 +6,13 @@ import { marked } from 'marked'
 import fs from 'fs'
 import path from 'path'
 import useTranslation from 'next-translate/useTranslation'
-import { Box, Container, Typography, IconButton, Chip } from '@mui/material'
+import { Box, Container, Typography, IconButton, Chip, useTheme } from '@mui/material'
 import { ArrowBack, CalendarTodayRounded } from '@mui/icons-material'
 
 const Post = ({ frontmatter: { title, date, img, description }, slug, content }) => {
 	const { lang } = useTranslation()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	// Générer une description si elle n'existe pas dans le frontmatter
 	const pageDescription = description || `${title} - Article publié le ${date} sur le blog Linguami`
@@ -161,20 +163,20 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 				<Box
 					component="article"
 					sx={{
-						color: '#2d3748',
+						color: isDark ? '#f1f5f9' : '#2d3748',
 						fontSize: { xs: '1rem', sm: '1.0625rem' },
 						lineHeight: 1.8,
 
 						// Paragraphes
 						'& p': {
 							marginBottom: 3,
-							color: '#4a5568',
+							color: isDark ? '#cbd5e1' : '#4a5568',
 						},
 
 						// Titres
 						'& h1, & h2, & h3, & h4, & h5, & h6': {
 							fontWeight: 700,
-							color: '#2d3748',
+							color: isDark ? '#f1f5f9' : '#2d3748',
 							marginTop: 4,
 							marginBottom: 2,
 							lineHeight: 1.3,
@@ -196,7 +198,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							paddingLeft: { xs: 3, sm: 4 },
 							'& li': {
 								marginBottom: 1.5,
-								color: '#4a5568',
+								color: isDark ? '#cbd5e1' : '#4a5568',
 								'&::marker': {
 									color: '#8b5cf6',
 								},
@@ -207,10 +209,11 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 						'& pre': {
 							marginBottom: 3,
 							padding: { xs: 2, sm: 3 },
-							backgroundColor: '#1e293b',
+							backgroundColor: isDark ? '#0f172a' : '#1e293b',
 							borderRadius: 2,
 							overflow: 'auto',
 							boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+							border: isDark ? '1px solid rgba(139, 92, 246, 0.2)' : 'none',
 							'& code': {
 								backgroundColor: 'transparent',
 								color: '#e2e8f0',
@@ -222,7 +225,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 
 						// Inline code
 						'& code': {
-							backgroundColor: 'rgba(139, 92, 246, 0.1)',
+							backgroundColor: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.1)',
 							color: '#8b5cf6',
 							padding: '3px 8px',
 							borderRadius: 1,
@@ -252,8 +255,8 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							marginRight: 0,
 							marginBottom: 3,
 							fontStyle: 'italic',
-							color: '#718096',
-							backgroundColor: 'rgba(139, 92, 246, 0.05)',
+							color: isDark ? '#94a3b8' : '#718096',
+							backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.05)',
 							borderRadius: 2,
 							fontSize: '1.05em',
 							'& p': {
@@ -293,9 +296,10 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 								padding: { xs: 1, sm: 2 },
 								borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
 								textAlign: 'left',
+								color: isDark ? '#cbd5e1' : '#4a5568',
 							},
 							'& th': {
-								backgroundColor: 'rgba(139, 92, 246, 0.1)',
+								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.1)',
 								fontWeight: 700,
 								color: '#8b5cf6',
 							},

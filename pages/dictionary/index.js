@@ -26,6 +26,7 @@ import {
 	ToggleButtonGroup,
 	ToggleButton,
 	Card,
+	useTheme,
 } from '@mui/material'
 import {
 	DeleteRounded,
@@ -44,6 +45,8 @@ const Dictionary = () => {
 	const { t: tWords } = useTranslation('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
 	const userId = user?.id
 	const {
@@ -192,52 +195,22 @@ const Dictionary = () => {
 					noindex={true}
 				/>
 
-				{/* Header Section */}
-				<Box
-					sx={{
-						pt: { xs: '5.5rem', md: '6rem' },
-						pb: 3,
-						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-						bgcolor: '#fafafa',
-					}}>
-					<Container maxWidth='lg'>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '1.75rem', sm: '2rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								mb: 1,
-							}}>
-							{titles[router.locale] || titles.fr}
-						</Typography>
-						<Typography
-							variant='body2'
-							sx={{
-								color: '#667eea',
-								fontWeight: 600,
-								fontSize: '0.875rem',
-							}}>
-							✨ Mode gratuit : jusqu&apos;à {GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots
-						</Typography>
-					</Container>
-				</Box>
-
 				{/* Guest message */}
 				<Container
 					maxWidth='md'
 					sx={{
-						py: { xs: 4, md: 6 },
+						pt: { xs: '6.5rem', md: '7rem' },
+						pb: { xs: 4, md: 6 },
 					}}>
 					<Card
 						sx={{
 							p: { xs: 3, sm: 4, md: 5 },
 							borderRadius: 4,
 							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-							border: '1px solid rgba(139, 92, 246, 0.2)',
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						}}>
 						<Typography
 							variant='h5'
@@ -257,7 +230,7 @@ const Dictionary = () => {
 							variant='body1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: isDark ? '#94a3b8' : '#718096',
 								fontSize: { xs: '0.9375rem', sm: '1rem' },
 								mb: 4,
 								fontWeight: 500,
@@ -332,7 +305,7 @@ const Dictionary = () => {
 									<Typography
 										sx={{
 											fontSize: { xs: '0.9375rem', sm: '1rem' },
-											color: '#4a5568',
+											color: isDark ? '#e2e8f0' : '#4a5568',
 											fontWeight: 600,
 										}}>
 										{item.text}
@@ -384,63 +357,11 @@ const Dictionary = () => {
 				noindex={true}  // Page privée, ne pas indexer
 			/>
 
-			{/* Header Section - App Style */}
-			<Box
-				sx={{
-					pt: { xs: '5.5rem', md: '6rem' },
-					pb: 3,
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: '#fafafa',
-				}}>
-				<Container maxWidth='lg'>
-					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-						<Box>
-							<Typography
-								variant='h4'
-								sx={{
-									fontWeight: 700,
-									fontSize: { xs: '1.75rem', sm: '2rem' },
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									mb: 1,
-								}}>
-								{titles[router.locale] || titles.fr}
-							</Typography>
-							<Typography
-								variant='body1'
-								sx={{
-									color: '#64748b',
-									fontSize: { xs: '0.9375rem', sm: '1rem' },
-								}}>
-								{descriptions[router.locale] || descriptions.fr}
-							</Typography>
-						</Box>
-						{!isUserLoggedIn && (
-							<Chip
-								label={`${guestWords.length}/${GUEST_DICTIONARY_CONFIG.MAX_WORDS} mots gratuits`}
-								sx={{
-									background: guestWords.length >= GUEST_DICTIONARY_CONFIG.MAX_WORDS
-										? 'linear-gradient(135deg, rgba(245, 87, 108, 0.9) 0%, rgba(239, 68, 68, 0.8) 100%)'
-										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.4)',
-									color: 'white',
-									fontWeight: 700,
-									fontSize: '0.9375rem',
-									px: 2,
-									py: 2.5,
-									boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(6, 182, 212, 0.2)',
-								}}
-							/>
-						)}
-					</Box>
-				</Container>
-			</Box>
-
 			{filteredUserWords.length > 0 ? (
 				<Container
 					sx={{
-						py: { xs: 3, md: 4 },
+						pt: { xs: '6.5rem', md: '7rem' },
+						pb: { xs: 3, md: 4 },
 						px: { xs: 1, sm: 2, md: 3 },
 					}}
 					maxWidth='lg'>
@@ -529,10 +450,14 @@ const Dictionary = () => {
 						sx={{
 							p: { xs: 2.5, sm: 3 },
 							mb: 4,
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 							borderRadius: 4,
-							border: '1px solid rgba(139, 92, 246, 0.2)',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+							boxShadow: isDark
+								? '0 4px 20px rgba(139, 92, 246, 0.25)'
+								: '0 4px 20px rgba(139, 92, 246, 0.15)',
 						}}>
 						<Stack
 							direction={{ xs: 'column', sm: 'row' }}
@@ -544,7 +469,7 @@ const Dictionary = () => {
 									variant='body2'
 									sx={{
 										fontWeight: 700,
-										color: '#4a5568',
+										color: isDark ? '#94a3b8' : '#4a5568',
 										fontSize: '0.9375rem',
 									}}>
 									{tWords('words_per_page')}
@@ -563,8 +488,8 @@ const Dictionary = () => {
 											borderRadius: 2,
 											fontWeight: 700,
 											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-											color: '#718096',
-											background: 'white',
+											color: isDark ? '#94a3b8' : '#718096',
+											background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
 											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 											position: 'relative',
 											overflow: 'hidden',
@@ -637,9 +562,13 @@ const Dictionary = () => {
 								sx={{
 									p: { xs: 2, sm: 2.5 },
 									borderRadius: 4,
-									background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.2)',
-									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+									border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+									boxShadow: isDark
+										? '0 4px 20px rgba(139, 92, 246, 0.25)'
+										: '0 4px 20px rgba(139, 92, 246, 0.15)',
 									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 									position: 'relative',
 									overflow: 'hidden',
@@ -697,7 +626,7 @@ const Dictionary = () => {
 											<Typography
 												sx={{
 													fontSize: { xs: '0.875rem', sm: '1rem' },
-													color: '#718096',
+													color: isDark ? '#94a3b8' : '#718096',
 													fontWeight: 500,
 												}}>
 												→
@@ -705,7 +634,7 @@ const Dictionary = () => {
 											<Typography
 												sx={{
 													fontSize: { xs: '0.9375rem', sm: '1rem' },
-													color: '#4a5568',
+													color: isDark ? '#e2e8f0' : '#4a5568',
 													fontWeight: 600,
 												}}>
 												{translation || '—'}
@@ -715,7 +644,7 @@ const Dictionary = () => {
 											<Typography
 												sx={{
 													fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-													color: '#718096',
+													color: isDark ? '#94a3b8' : '#718096',
 													fontStyle: 'italic',
 													lineHeight: 1.6,
 													pl: { xs: 0, sm: 1 },
@@ -767,8 +696,8 @@ const Dictionary = () => {
 											borderColor: item.selected ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
 											background: item.selected
 												? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
-												: 'white',
-											color: item.selected ? 'white' : '#4a5568',
+												: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+											color: item.selected ? 'white' : isDark ? '#94a3b8' : '#4a5568',
 											borderRadius: 2,
 											minWidth: '44px',
 											height: '44px',
@@ -803,7 +732,7 @@ const Dictionary = () => {
 												},
 											},
 											'&.Mui-disabled': {
-												backgroundColor: '#f5f5f5',
+												backgroundColor: isDark ? 'rgba(30, 41, 59, 0.4)' : '#f5f5f5',
 												borderColor: 'rgba(139, 92, 246, 0.1)',
 												opacity: 0.4,
 											},
@@ -830,15 +759,18 @@ const Dictionary = () => {
 				<Container
 					maxWidth='md'
 					sx={{
-						py: { xs: 4, md: 6 },
+						pt: { xs: '6.5rem', md: '7rem' },
+						pb: { xs: 4, md: 6 },
 					}}>
 					<Card
 						sx={{
 							p: { xs: 3, sm: 4, md: 5 },
 							borderRadius: 4,
 							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-							border: '1px solid rgba(139, 92, 246, 0.2)',
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						}}>
 						<Typography
 							variant='h4'
@@ -858,7 +790,7 @@ const Dictionary = () => {
 							variant='body1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: isDark ? '#94a3b8' : '#718096',
 								fontSize: { xs: '0.9375rem', sm: '1rem' },
 								mb: 4,
 								fontWeight: 500,
@@ -933,7 +865,7 @@ const Dictionary = () => {
 									<Typography
 										sx={{
 											fontSize: { xs: '0.9375rem', sm: '1rem' },
-											color: '#4a5568',
+											color: isDark ? '#e2e8f0' : '#4a5568',
 											fontWeight: 600,
 										}}>
 										{item.text}
