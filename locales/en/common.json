@@ -9,6 +9,7 @@
 	"teacher": "Online Lessons",
 	"lessons": "Lessons",
 	"signin": "Sign in",
+	"signup": "Sign up",
 	"register": "Sign up",
 	"settings": "Settings",
 	"logout": "Logout",
@@ -74,5 +75,11 @@
 	"levelShort": "Lvl.",
 	"realTimeUpdate": "Leaderboard updates in real-time",
 	"days": "days",
-	"admin": "Admin"
+	"admin": "Admin",
+	"emailNotVerified": "Email not verified",
+	"emailNotVerifiedMessage": "Check your inbox to activate all features",
+	"resendEmail": "Resend email",
+	"sending": "Sending...",
+	"verificationEmailResent": "Verification email resent!",
+	"errorResendingEmail": "Error sending email"
 }

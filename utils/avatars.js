@@ -2,75 +2,76 @@
 const AVATAR_VERSION = '2'
 
 // Liste complète des avatars disponibles
+// Note: les noms sont des clés de traduction (voir locales/*/register.json)
 export const AVATARS = [
 	{
 		id: 'avatar1',
-		name: 'Nain',
+		nameKey: 'avatarDwarfMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar2',
-		name: 'Naine',
+		nameKey: 'avatarDwarfFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar3',
-		name: 'Elfe',
+		nameKey: 'avatarElfMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar4',
-		name: 'Elfe',
+		nameKey: 'avatarElfFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar5',
-		name: 'Mort-vivant',
+		nameKey: 'avatarUndeadMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar6',
-		name: 'Morte-vivante',
+		nameKey: 'avatarUndeadFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar7',
-		name: 'Tauren',
+		nameKey: 'avatarTaurenFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar8',
-		name: 'Tauren',
+		nameKey: 'avatarTaurenMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar9',
-		name: 'Gnome',
+		nameKey: 'avatarGnomeMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar10',
-		name: 'Gnome',
+		nameKey: 'avatarGnomeFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar11',
-		name: 'Magicienne',
+		nameKey: 'avatarWizardFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_female.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar12',
-		name: 'Magicien',
+		nameKey: 'avatarWizardMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar13',
-		name: 'Orc',
+		nameKey: 'avatarOrcMale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_male.webp?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar14',
-		name: 'Orque',
+		nameKey: 'avatarOrcFemale',
 		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_female.webp?v=${AVATAR_VERSION}`,
 	},
 ]

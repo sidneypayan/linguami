@@ -37,7 +37,7 @@ const drawerWidth = '80%'
 
 const Navbar = props => {
 	const { t, lang } = useTranslation('common')
-	const { user, userProfile, isUserLoggedIn, isUserAdmin } = useUserContext()
+	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
 	const router = useRouter()
 	const { lessons, lessons_loading } = useSelector(store => store.lessons)
 
@@ -326,10 +326,40 @@ const Navbar = props => {
 				</Box>
 			</Box>
 
-			{/* Bouton Sign in pour mobile */}
-			{isMounted && !isUserLoggedIn && (
-				<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1 }}>
-					<Link href={`/signin`}>
+			{/* Boutons Sign in / Sign up pour mobile */}
+			{isMounted && (
+				<>
+					{isBootstrapping ? (
+						// Skeleton pendant le chargement (mobile)
+						<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+							<Box
+								sx={{
+									height: 56,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+									animation: 'pulse 1.5s ease-in-out infinite',
+									'@keyframes pulse': {
+										'0%, 100%': { opacity: 0.6 },
+										'50%': { opacity: 0.3 },
+									},
+								}}
+							/>
+							<Box
+								sx={{
+									height: 56,
+									borderRadius: 3,
+									background: 'rgba(255, 255, 255, 0.1)',
+									animation: 'pulse 1.5s ease-in-out infinite 0.2s',
+									'@keyframes pulse': {
+										'0%, 100%': { opacity: 0.6 },
+										'50%': { opacity: 0.3 },
+									},
+								}}
+							/>
+						</Box>
+					) : !isUserLoggedIn ? (
+						<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+							<Link href={`/signup`}>
 						<Button
 							variant='contained'
 							fullWidth
@@ -353,10 +383,37 @@ const Navbar = props => {
 									transform: 'translateY(-1px)',
 								},
 							}}>
+							{t('signup')}
+						</Button>
+					</Link>
+					<Link href={`/login`}>
+						<Button
+							variant='outlined'
+							fullWidth
+							sx={{
+								color: 'white',
+								fontWeight: 600,
+								textTransform: 'none',
+								py: 1.75,
+								borderRadius: 3,
+								fontSize: '1.0625rem',
+								border: '1px solid rgba(255, 255, 255, 0.3)',
+								transition: 'all 0.3s ease',
+								'&:hover': {
+									background: 'rgba(255, 255, 255, 0.1)',
+									border: '1px solid rgba(255, 255, 255, 0.5)',
+									transform: 'translateY(-2px)',
+								},
+								'&:active': {
+									transform: 'translateY(-1px)',
+								},
+							}}>
 							{t('signin')}
 						</Button>
 					</Link>
 				</Box>
+					) : null}
+				</>
 			)}
 		</Box>
 	)
@@ -658,7 +715,29 @@ const Navbar = props => {
 
 						{isMounted && (
 							<>
-								{isUserLoggedIn ? (
+								{isBootstrapping ? (
+									// Skeleton pendant le chargement
+									<Box sx={{ ml: { xs: 0.5, sm: 1, lg: 2 } }}>
+										<Box
+											sx={{
+												width: { xs: 44, sm: 48, lg: 52 },
+												height: { xs: 44, sm: 48, lg: 52 },
+												borderRadius: '50%',
+												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+												border: '2px solid rgba(255, 255, 255, 0.2)',
+												animation: 'pulse 1.5s ease-in-out infinite',
+												'@keyframes pulse': {
+													'0%, 100%': {
+														opacity: 0.6,
+													},
+													'50%': {
+														opacity: 0.3,
+													},
+												},
+											}}
+										/>
+									</Box>
+								) : isUserLoggedIn ? (
 									<UserMenu />
 								) : (
 									<Box
@@ -669,7 +748,46 @@ const Navbar = props => {
 											},
 											gap: 1.5,
 										}}>
-										<Link href={`/signin`}>
+										<Link href={`/login`}>
+											<Button
+												variant='outlined'
+												sx={{
+													color: 'white',
+													fontWeight: 600,
+													textTransform: 'none',
+													px: 3,
+													py: 1,
+													borderRadius: 2,
+													border: '1px solid rgba(255, 255, 255, 0.3)',
+													transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+													position: 'relative',
+													overflow: 'hidden',
+													'&::before': {
+														content: '""',
+														position: 'absolute',
+														top: 0,
+														left: '-100%',
+														width: '100%',
+														height: '100%',
+														background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
+														transition: 'left 0.5s ease',
+													},
+													'&:hover': {
+														background: 'rgba(255, 255, 255, 0.1)',
+														border: '1px solid rgba(255, 255, 255, 0.5)',
+														transform: 'translateY(-2px)',
+														'&::before': {
+															left: '100%',
+														},
+													},
+													'&:active': {
+														transform: 'translateY(-1px)',
+													},
+												}}>
+												{t('signin')}
+											</Button>
+										</Link>
+										<Link href={`/signup`}>
 											<Button
 												variant='contained'
 												sx={{
@@ -724,7 +842,7 @@ const Navbar = props => {
 														transform: 'translateY(-1px) scale(1.02)',
 													},
 												}}>
-												{t('signin')}
+												{t('signup')}
 											</Button>
 										</Link>
 									</Box>

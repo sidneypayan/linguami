@@ -9,7 +9,7 @@ const Footer = () => {
 	const router = useRouter()
 
 	// Masquer le séparateur diagonal sur les pages de connexion/inscription
-	const hideTopSeparator = router.pathname === '/signin'
+	const hideTopSeparator = ['/signin', '/login', '/signup'].includes(router.pathname)
 
 	return (
 		<Box

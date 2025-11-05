@@ -11,6 +11,8 @@ import { supabase } from '../lib/supabase' // client navigateur (@supabase/ssr)
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { createToastMessages } from '../utils/toastMessages'
+import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '../lib/emailService'
+import { sendVerificationEmail, isEmailVerified } from '../lib/emailVerification'
 
 // --------------------------------------------------------
 // Helper: Déterminer la langue d'apprentissage par défaut
@@ -255,63 +257,49 @@ const UserProvider = ({ children }) => {
 				localStorage.setItem('learning_language', learningLang)
 			} catch {}
 
-			// Sign up avec auth metadata
-			const { data, error } = await supabase.auth.signUp({
+			// Créer l'utilisateur avec mot de passe
+			const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
 					data: {
 						learning_language: learningLang,
+						spoken_language: spokenLanguage || 'fr',
+						language_level: languageLevel || 'beginner',
 						username: username || null,
+						avatar_id: selectedAvatar || 'avatar1',
 					},
-					// callback après confirmation (doit être whitelisted)
 					emailRedirectTo: `${
 						process.env.NEXT_PUBLIC_API_URL || window.location.origin
 					}/auth/callback`,
 				},
 			})
-			if (error) return safeToastError(error)
+			if (signUpError) return safeToastError(signUpError)
 
-			// Si l'utilisateur a été créé, créer ou mettre à jour son profil
-			if (data?.user) {
+			// Le profil est créé automatiquement par le trigger de la base de données
+			// L'utilisateur peut se connecter immédiatement
+
+			// Envoyer l'email de vérification
+			if (signUpData?.user) {
 				try {
-					const profileData = {
-						id: data.user.id,
-						email: email,
-						name: username || email.split('@')[0],
-						learning_language: learningLang,
-						role: 'user',
-						is_premium: false,
-						avatar_id: selectedAvatar || 'avatar1', // Stocker l'ID de l'avatar
-					}
-
-					// Ajouter les champs supplémentaires s'ils sont fournis
-					if (spokenLanguage) {
-						profileData.spoken_language = spokenLanguage
-					}
-					if (languageLevel) {
-						profileData.language_level = languageLevel
-					}
-
-					// Insérer ou mettre à jour le profil
-					const { error: profileError } = await supabase
-						.from('users_profile')
-						.upsert(profileData, { onConflict: 'id' })
-
-					if (profileError) {
-						console.error('Error creating user profile:', profileError)
-						// Ne pas bloquer l'inscription si le profil échoue
-					}
-				} catch (err) {
-					console.error('Error creating user profile:', err)
+					const emailLanguage = getEmailLanguage(router?.locale || 'fr')
+					await sendVerificationEmail(
+						signUpData.user.id,
+						email,
+						emailLanguage
+					)
+					toast.success(toastMessages.confirmationEmailSent())
+				} catch (error) {
+					console.error('Error sending verification email:', error)
+					// Ne pas bloquer l'inscription si l'email échoue
+					toast.info('Compte créé ! Vous pourrez vérifier votre email plus tard.')
 				}
 			}
 
-			toast.success(toastMessages.confirmationEmailSent())
 			// Redirection douce, optionnelle
 			setTimeout(() => router.push('/'), 1200)
 		},
-		[router, userLearningLanguage, setUserLearningLanguage]
+		[router, userLearningLanguage, setUserLearningLanguage, toastMessages]
 	)
 
 	const login = useCallback(
@@ -363,11 +351,13 @@ const UserProvider = ({ children }) => {
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${
 				process.env.NEXT_PUBLIC_API_URL || window.location.origin
-			}/set-password`,
+			}/update-password`,
 		})
 		if (error) return safeToastError(error)
 		toast.success(toastMessages.passwordResetEmailSent())
-	}, [])
+		// Note: Pour personnaliser l'email de reset, configure les templates dans
+		// Supabase Dashboard → Authentication → Email Templates
+	}, [toastMessages])
 
 	const setNewPassword = useCallback(
 		async password => {
@@ -446,7 +436,11 @@ const UserProvider = ({ children }) => {
 				// Mettre à jour le profil local
 				const updated = Array.isArray(data) ? data[0] : data
 				if (updated) {
-					setUserProfile(updated)
+					// Merge avec le profil existant pour garder les données XP et auth
+				setUserProfile(prev => ({
+					...prev,
+					...updated
+				}))
 
 					// Mettre à jour la langue d'apprentissage si elle a changé
 					if (updateData.learning_language) {
@@ -477,6 +471,7 @@ const UserProvider = ({ children }) => {
 			isUserLoggedIn: !!user,
 			isBootstrapping,
 			userLearningLanguage,
+			isEmailVerified: isEmailVerified(userProfile),
 
 			register,
 			login,

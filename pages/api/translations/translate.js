@@ -204,9 +204,14 @@ async function performTranslation({ word, sentence, userLearningLanguage, locale
 	}
 
 	try {
+		const apiKey = process.env.YANDEX_DICT_API_KEY
+		if (!apiKey) {
+			throw new Error('YANDEX_DICT_API_KEY is not configured')
+		}
+
 		const url =
 			`https://dictionary.yandex.net/api/v1/dicservice.json/lookup` +
-			`?key=dict.1.1.20180305T123901Z.013e5aa10ad8d371.11feed250196fcfb1631d44fbf20d837c8c1e072` +
+			`?key=${apiKey}` +
 			`&lang=${langPair}&text=${encodeURIComponent(normalizedWord)}&flags=004`
 
 		console.log(`Translating: "${normalizedWord}" from ${langPair}`)

@@ -27,7 +27,6 @@ import {
 import {
 	PersonRounded,
 	EmailRounded,
-	CakeRounded,
 	LanguageRounded,
 	EditRounded,
 	CheckRounded,
@@ -45,7 +44,6 @@ const Settings = () => {
 	const [formData, setFormData] = useState({
 		username: '',
 		email: '',
-		dateOfBirth: '',
 		languageLevel: '',
 	})
 
@@ -54,7 +52,6 @@ const Settings = () => {
 	const [editMode, setEditMode] = useState({
 		username: false,
 		email: false,
-		dateOfBirth: false,
 		languageLevel: false,
 	})
 	const [avatarDialogOpen, setAvatarDialogOpen] = useState(false)
@@ -66,7 +63,6 @@ const Settings = () => {
 			setFormData({
 				username: userProfile.name || '',
 				email: userProfile.email || '',
-				dateOfBirth: userProfile.date_of_birth || '',
 				languageLevel: userProfile.language_level || '',
 			})
 			setSelectedAvatar(userProfile.avatar_id || 'avatar1')
@@ -95,8 +91,7 @@ const Settings = () => {
 			const fieldMapping = {
 				username: 'name',
 				email: 'email',
-				dateOfBirth: 'date_of_birth',
-				languageLevel: 'language_level',
+					languageLevel: 'language_level',
 			}
 
 			updateData[fieldMapping[field]] = formData[field]
@@ -120,7 +115,6 @@ const Settings = () => {
 			const fieldMapping = {
 				username: 'name',
 				email: 'email',
-				dateOfBirth: 'date_of_birth',
 				languageLevel: 'language_level',
 			}
 			setFormData({
@@ -387,7 +381,7 @@ const Settings = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('pageTitle')} - Linguami</title>
+				<title>{`${t('pageTitle')} - Linguami`}</title>
 			</Head>
 			<Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', py: 4, pt: { xs: 12, md: 10 } }}>
 				<Container maxWidth='md'>
@@ -724,8 +718,7 @@ const Settings = () => {
 								</Box>
 								{renderField('username', t('username'), <PersonRounded fontSize='small' />)}
 								{renderField('email', t('email'), <EmailRounded fontSize='small' />, 'email')}
-								{renderField('dateOfBirth', t('dateOfBirth'), <CakeRounded fontSize='small' />, 'date')}
-							</Paper>
+								</Paper>
 						</Grid>
 
 						{/* Section Préférences linguistiques */}
@@ -936,7 +929,7 @@ const Settings = () => {
 												}}>
 												<Avatar
 													src={avatar.url}
-													alt={avatar.name}
+													alt={t(avatar.nameKey)}
 													sx={{
 														width: '100%',
 														height: '100%',

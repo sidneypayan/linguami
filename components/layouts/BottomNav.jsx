@@ -13,7 +13,7 @@ import { useUserContext } from '../../context/user'
 const BottomNav = () => {
 	const router = useRouter()
 	const { t } = useTranslation('common')
-	const { isUserLoggedIn, userLearningLanguage } = useUserContext()
+	const { isUserLoggedIn, userLearningLanguage, isBootstrapping } = useUserContext()
 	const { user_words } = useSelector(store => store.words)
 
 	// Vérifier si des cours sont disponibles pour la langue choisie
@@ -41,7 +41,7 @@ const BottomNav = () => {
 				if (isUserLoggedIn) {
 					router.push('/dictionary')
 				} else {
-					router.push('/signin')
+					router.push('/login')
 				}
 				break
 			case 'lessons':
@@ -136,7 +136,7 @@ const BottomNav = () => {
 					label={router.locale === 'fr' ? 'Dico' : 'Слова'}
 					value='dictionary'
 					icon={
-						isUserLoggedIn && user_words.length > 0 ? (
+						!isBootstrapping && isUserLoggedIn && user_words.length > 0 ? (
 							<Badge
 								badgeContent={user_words.length}
 								max={99}

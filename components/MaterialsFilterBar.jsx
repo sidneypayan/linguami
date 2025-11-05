@@ -70,9 +70,9 @@ const MaterialsFilterBar = ({
 	]
 
 	const levels = [
-		{ label: t('beginner'), key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981', icon: SignalCellular1Bar },
-		{ label: t('intermediate'), key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b', icon: SignalCellular2Bar },
-		{ label: t('advanced'), key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444', icon: SignalCellular3Bar },
+		{ label: t('beginner'), key: 'beginner', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981', icon: SignalCellular1Bar },
+		{ label: t('intermediate'), key: 'intermediate', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b', icon: SignalCellular2Bar },
+		{ label: t('advanced'), key: 'advanced', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444', icon: SignalCellular3Bar },
 	]
 
 	const statuses = [

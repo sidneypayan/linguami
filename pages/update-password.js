@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import {
 	Box,
@@ -10,19 +10,49 @@ import {
 	Card,
 	Container,
 	InputAdornment,
+	CircularProgress,
 } from '@mui/material'
-import { HomeRounded, EmailRounded } from '@mui/icons-material'
+import { HomeRounded, EmailRounded, LockRounded } from '@mui/icons-material'
 import { useUserContext } from '../context/user'
+import { supabase } from '../lib/supabase'
 import Link from 'next/link'
 
 const initialState = {
 	email: '',
+	password: '',
+	confirmPassword: '',
 }
 
 const UpdatePassword = () => {
 	const { t } = useTranslation('register')
+	const router = useRouter()
 	const [values, setValues] = useState(initialState)
-	const { updatePassword } = useUserContext()
+	const [isResetting, setIsResetting] = useState(false)
+	const [loading, setLoading] = useState(true)
+	const { updatePassword, setNewPassword } = useUserContext()
+
+	// Détecter si on arrive depuis l'email avec un token
+	useEffect(() => {
+		const checkSession = async () => {
+			try {
+				// Vérifier si l'utilisateur a une session de récupération
+				const { data: { session }, error } = await supabase.auth.getSession()
+
+				if (error) throw error
+
+				// Si une session existe, c'est qu'on vient de cliquer sur le lien de reset
+				if (session?.user) {
+					setIsResetting(true)
+				}
+			} catch (error) {
+				console.error('Error checking session:', error)
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		checkSession()
+	}, [])
 
 	const handleChange = e => {
 		const name = e.target.name
@@ -31,16 +61,64 @@ const UpdatePassword = () => {
 		setValues({ ...values, [name]: value })
 	}
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
 
-		const { email } = values
+		if (isResetting) {
+			// Cas 2 : Définir le nouveau mot de passe
+			const { password, confirmPassword } = values
 
-		if (!email) {
-			toast.error(t('fillAllFields'))
+			if (!password || !confirmPassword) {
+				return toast.error(t('fillAllFields'))
+			}
+
+			if (password !== confirmPassword) {
+				return toast.error(t('passwordsDoNotMatch'))
+			}
+
+			// Validation des règles de mot de passe
+			if (password.length < 8) {
+				return toast.error(t('passwordMinLength8'))
+			}
+
+			if (!/[A-Z]/.test(password)) {
+				return toast.error(t('passwordRequirements') + ' : ' + t('passwordUpperCase'))
+			}
+
+			if (!/[0-9]/.test(password)) {
+				return toast.error(t('passwordRequirements') + ' : ' + t('passwordNumber'))
+			}
+
+			if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+				return toast.error(t('passwordRequirements') + ' : ' + t('passwordSpecialChar'))
+			}
+
+			return setNewPassword(password)
+		} else {
+			// Cas 1 : Demander le lien de reset
+			const { email } = values
+
+			if (!email) {
+				return toast.error(t('fillAllFields'))
+			}
+
+			return updatePassword(email)
 		}
+	}
 
-		return updatePassword(email)
+	if (loading) {
+		return (
+			<Box
+				sx={{
+					minHeight: '100vh',
+					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+				}}>
+				<CircularProgress sx={{ color: 'white' }} size={60} />
+			</Box>
+		)
 	}
 
 	return (
@@ -121,7 +199,7 @@ const UpdatePassword = () => {
 							WebkitTextFillColor: 'transparent',
 							backgroundClip: 'text',
 						}}>
-						{t('updatePasswordTitle')}
+						{isResetting ? t('setNewPassword') : t('updatePasswordTitle')}
 					</Typography>
 
 					<Typography
@@ -131,40 +209,106 @@ const UpdatePassword = () => {
 							color: '#718096',
 							mb: 4,
 						}}>
-						{t('updatePasswordSubtitle')}
+						{isResetting ? t('enterNewPassword') : t('updatePasswordSubtitle')}
 					</Typography>
 
 					{/* Formulaire */}
 					<Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-						<TextField
-							fullWidth
-							onChange={handleChange}
-							type='email'
-							label={t('email')}
-							name='email'
-							value={values.email}
-							autoComplete='email'
-							id='email'
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position='start'>
-										<EmailRounded sx={{ color: '#718096' }} />
-									</InputAdornment>
-								),
-							}}
-							sx={{
-								'& .MuiOutlinedInput-root': {
-									borderRadius: 2,
-									'&:hover fieldset': {
-										borderColor: '#667eea',
+						{isResetting ? (
+							<>
+								{/* Nouveau mot de passe */}
+								<TextField
+									fullWidth
+									onChange={handleChange}
+									type='password'
+									label={t('newPassword')}
+									name='password'
+									value={values.password}
+									autoComplete='new-password'
+									id='password'
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position='start'>
+												<LockRounded sx={{ color: '#718096' }} />
+											</InputAdornment>
+										),
+									}}
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}
+								/>
+
+								{/* Confirmation mot de passe */}
+								<TextField
+									fullWidth
+									onChange={handleChange}
+									type='password'
+									label={t('confirmPassword')}
+									name='confirmPassword'
+									value={values.confirmPassword}
+									autoComplete='new-password'
+									id='confirmPassword'
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position='start'>
+												<LockRounded sx={{ color: '#718096' }} />
+											</InputAdornment>
+										),
+									}}
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											borderRadius: 2,
+											'&:hover fieldset': {
+												borderColor: '#667eea',
+											},
+											'&.Mui-focused fieldset': {
+												borderColor: '#667eea',
+												borderWidth: 2,
+											},
+										},
+									}}
+								/>
+							</>
+						) : (
+							<TextField
+								fullWidth
+								onChange={handleChange}
+								type='email'
+								label={t('email')}
+								name='email'
+								value={values.email}
+								autoComplete='email'
+								id='email'
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<EmailRounded sx={{ color: '#718096' }} />
+										</InputAdornment>
+									),
+								}}
+								sx={{
+									'& .MuiOutlinedInput-root': {
+										borderRadius: 2,
+										'&:hover fieldset': {
+											borderColor: '#667eea',
+										},
+										'&.Mui-focused fieldset': {
+											borderColor: '#667eea',
+											borderWidth: 2,
+										},
 									},
-									'&.Mui-focused fieldset': {
-										borderColor: '#667eea',
-										borderWidth: 2,
-									},
-								},
-							}}
-						/>
+								}}
+							/>
+						)}
 
 						<Button
 							fullWidth
@@ -204,10 +348,10 @@ const UpdatePassword = () => {
 									transform: 'translateY(0)',
 								},
 							}}>
-							{t('sendRequest')}
+							{isResetting ? t('updatePassword') : t('sendRequest')}
 						</Button>
 
-						<Link href='/signin' style={{ textDecoration: 'none' }}>
+						<Link href='/login' style={{ textDecoration: 'none' }}>
 							<Button
 								sx={{
 									color: '#667eea',

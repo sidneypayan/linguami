@@ -29,7 +29,6 @@ export const createContent = createAsyncThunk(
 			if (files && files.length > 0) {
 				for (const fileData of files) {
 					if (fileData.fileType === 'image') {
-						console.log(`🔄 Optimisation de ${fileData.fileName}...`)
 
 						const optimized = await optimizeImage(fileData.file)
 
@@ -39,8 +38,6 @@ export const createContent = createAsyncThunk(
 						// Mettre à jour le nom du fichier dans le contenu (juste le nom, sans https://)
 						finalContent[fileData.fileType] = optimized.main.fileName
 
-						console.log(`✅ Optimisé: ${optimized.savings}% d'économie`)
-						console.log(`  - Nouveau nom: ${optimized.main.fileName}`)
 					}
 				}
 			}
@@ -48,7 +45,7 @@ export const createContent = createAsyncThunk(
 			// Sanitize le contenu avant de l'insérer
 			const sanitizedContent = sanitizeObject(finalContent, {
 				urlFields: ['video'], // Seulement video est une URL complète
-				numberFields: ['book_id', 'chapter_number'], // level n'est PAS un nombre, c'est une string (débutant, intermédiaire, avancé)
+				numberFields: ['book_id', 'chapter_number'], // level n'est PAS un nombre, c'est une string (beginner, intermediate, advanced)
 				filenameFields: ['image', 'audio'], // Ce sont des noms de fichiers, pas des URLs
 			})
 
@@ -68,7 +65,6 @@ export const createContent = createAsyncThunk(
 					if (fileType === 'image' && optimizedFilesMap.has(fileName)) {
 						const optimized = optimizedFilesMap.get(fileName)
 
-						console.log(`📤 Upload de ${optimized.main.fileName}...`)
 
 						// Upload de la version principale
 						const { error: mainError } = await supabase.storage
@@ -98,7 +94,6 @@ export const createContent = createAsyncThunk(
 							throw thumbError
 						}
 
-						console.log(`✅ Upload terminé: principal + thumbnail`)
 					} else {
 						// Pour les fichiers non-image (audio, etc.), upload normal
 						const safeName = sanitizeFilename(fileName)
@@ -115,7 +110,6 @@ export const createContent = createAsyncThunk(
 							throw error
 						}
 
-						console.log(`✅ Upload terminé: ${safeName}`)
 					}
 				}
 

@@ -7,7 +7,6 @@
 	"avatarSettings": "Avatar",
 	"username": "Username",
 	"email": "Email address",
-	"dateOfBirth": "Date of birth",
 	"languageLevel": "Language level",
 	"avatar": "Avatar",
 	"chooseAvatar": "Choose your avatar",
@@ -19,5 +18,19 @@
 	"cancel": "Cancel",
 	"edit": "Edit",
 	"updateSuccess": "Profile updated successfully",
-	"updateError": "Error updating profile"
+	"updateError": "Error updating profile",
+	"avatarDwarfMale": "Dwarf",
+	"avatarDwarfFemale": "Dwarf",
+	"avatarElfMale": "Elf",
+	"avatarElfFemale": "Elf",
+	"avatarUndeadMale": "Undead",
+	"avatarUndeadFemale": "Undead",
+	"avatarTaurenMale": "Tauren",
+	"avatarTaurenFemale": "Tauren",
+	"avatarGnomeMale": "Gnome",
+	"avatarGnomeFemale": "Gnome",
+	"avatarWizardMale": "Wizard",
+	"avatarWizardFemale": "Wizard",
+	"avatarOrcMale": "Orc",
+	"avatarOrcFemale": "Orc"
 }

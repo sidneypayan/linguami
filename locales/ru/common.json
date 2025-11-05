@@ -9,6 +9,7 @@
 	"teacher": "Онлайн уроки",
 	"lessons": "Уроки",
 	"signin": "Войти",
+	"signup": "Регистрация",
 	"register": "Зарегистрироваться",
 	"settings": "Параметры",
 	"logout": "Выход",
@@ -74,5 +75,11 @@
 	"levelShort": "Ур.",
 	"realTimeUpdate": "Рейтинг обновляется в реальном времени",
 	"days": "дней",
-	"admin": "Админ"
+	"admin": "Админ",
+	"emailNotVerified": "Email не подтвержден",
+	"emailNotVerifiedMessage": "Проверьте почту, чтобы активировать все функции",
+	"resendEmail": "Отправить повторно",
+	"sending": "Отправка...",
+	"verificationEmailResent": "Email подтверждения отправлен!",
+	"errorResendingEmail": "Ошибка отправки email"
 }

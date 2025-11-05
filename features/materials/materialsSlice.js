@@ -79,7 +79,7 @@ export const getMaterials = createAsyncThunk(
 			// Trier par titre puis par niveau
 			if (materials) {
 				// Définir l'ordre des niveaux
-				const levelOrder = { 'débutant': 1, 'intermédiaire': 2, 'avancé': 3 }
+				const levelOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 }
 
 				materials.sort((a, b) => {
 					// 1. Tri alphabétique par titre (priorité)
@@ -318,7 +318,6 @@ export const getBookChapters = createAsyncThunk(
 				.eq('section', 'book-chapters')
 				.eq('book_id', bookId)
 				.order('id')
-			if (error) console.log(error)
 			return chapters
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error)
@@ -339,27 +338,16 @@ const resetPagination = state => {
 const applyFilters = state => {
 	const { section, level, status, search, userMaterialsStatus } = state.activeFilters
 
-	console.log('📊 applyFilters called with activeFilters:', {
-		section,
-		level,
-		status,
-		search,
-		userMaterialsStatusCount: userMaterialsStatus.length
-	})
-
 	// Choisir la bonne source de données selon la section
 	// Note: state.materials et state.books contiennent déjà seulement les items de leur section respective
 	// car ils sont filtrés lors de la récupération depuis la DB
 	let sourceData = state.activeFilters.section === 'books' ? state.books : state.materials
-	console.log('📊 Source data count:', sourceData.length)
 
 	// Si aucun filtre n'est actif, on retourne toutes les données
 	// Note: level === 'all' ou level === null signifie "pas de filtre de niveau"
 	const hasActiveFilters = (level && level !== 'all') || status || search
-	console.log('📊 Has active filters:', hasActiveFilters, '(level:', level, ', status:', status, ', search:', search, ')')
 
 	if (!hasActiveFilters) {
-		console.log('📊 No active filters, returning all source data')
 		state.filtered_materials = sourceData
 		state.totalMaterials = sourceData.length
 		state.numOfPages = Math.ceil(sourceData.length / state.materialsPerPage)
@@ -374,7 +362,6 @@ const applyFilters = state => {
 	// Filtre par niveau
 	if (level && level !== 'all') {
 		filtered = filtered.filter(item => item.level === level)
-		console.log('📊 After level filter:', filtered.length, 'items')
 	}
 
 	// Filtre par statut
@@ -392,21 +379,15 @@ const applyFilters = state => {
 				.map(userMaterial => userMaterial.material_id)
 			filtered = filtered.filter(item => materialIdsWithStatus.includes(item.id))
 		}
-		console.log('📊 After status filter:', filtered.length, 'items')
 	}
 
 	// Filtre par recherche
 	if (search) {
-		console.log('📊 Applying search filter for:', search)
-		console.log('📊 Sample titles before search:', filtered.slice(0, 3).map(item => item.title))
 		filtered = filtered.filter(item =>
 			item.title.toLowerCase().includes(search.toLowerCase())
 		)
-		console.log('📊 After search filter:', filtered.length, 'items')
-		console.log('📊 Filtered titles:', filtered.map(item => item.title))
 	}
 
-	console.log('📊 Final filtered_materials count:', filtered.length)
 	state.filtered_materials = filtered
 	resetPagination(state)
 }
@@ -429,6 +410,17 @@ const materialsSlice = createSlice({
 			state.activeFilters.userMaterialsStatus = userMaterialsStatus
 			applyFilters(state)
 		},
+		filterMaterialsByLevelAndStatus: (state, { payload }) => {
+			const { section, level, status, userMaterialsStatus } = payload
+			state.level = level || 'all'
+			state.activeFilters.section = section
+			state.activeFilters.level = level || null
+			state.activeFilters.status = status || null
+			if (userMaterialsStatus) {
+				state.activeFilters.userMaterialsStatus = userMaterialsStatus
+			}
+			applyFilters(state)
+		},
 		showAllMaterials: state => {
 			// Réinitialiser tous les filtres sauf la section
 			const currentSection = state.activeFilters.section
@@ -443,8 +435,6 @@ const materialsSlice = createSlice({
 			applyFilters(state)
 		},
 		searchMaterial: (state, { payload }) => {
-			console.log('🔍 searchMaterial reducer called with:', payload)
-			console.log('🔍 Current activeFilters before search:', state.activeFilters)
 			state.activeFilters.search = payload
 			state.search = payload
 			applyFilters(state)
@@ -643,6 +633,7 @@ export default materialsSlice.reducer
 export const {
 	filterMaterials,
 	filterMaterialsByStatus,
+	filterMaterialsByLevelAndStatus,
 	showAllMaterials,
 	searchMaterial,
 	changePage,

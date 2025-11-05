@@ -60,7 +60,6 @@ const LeaderboardPage = () => {
 				throw new Error(`HTTP error! status: ${response.status}`)
 			}
 			const data = await response.json()
-			console.log('Leaderboard data:', data)
 			setLeaderboardData(data)
 		} catch (error) {
 			console.error('Error fetching leaderboard:', error)

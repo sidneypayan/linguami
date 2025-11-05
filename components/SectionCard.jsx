@@ -21,8 +21,10 @@ import {
 import Link from 'next/link'
 import Image from 'next/image'
 import { useUserContext } from '../context/user'
+import useTranslation from 'next-translate/useTranslation'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
+	const { t } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { section } = router.query
@@ -45,25 +47,25 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	}
 
 	const getDifficultyInfo = level => {
-		if (level === 'débutant') {
+		if (level === 'beginner') {
 			return {
-				label: 'Débutant',
+				label: t('beginner'),
 				bg: 'rgba(16, 185, 129, 0.15)',
 				border: '#10b981',
 				text: '#059669',
 			}
 		}
-		if (level === 'intermédiaire') {
+		if (level === 'intermediate') {
 			return {
-				label: 'Intermédiaire',
+				label: t('intermediate'),
 				bg: 'rgba(245, 158, 11, 0.15)',
 				border: '#f59e0b',
 				text: '#d97706',
 			}
 		}
-		if (level === 'avancé') {
+		if (level === 'advanced') {
 			return {
-				label: 'Avancé',
+				label: t('advanced'),
 				bg: 'rgba(239, 68, 68, 0.15)',
 				border: '#ef4444',
 				text: '#dc2626',

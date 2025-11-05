@@ -345,7 +345,7 @@ export const materials_en = [
 ]
 
 export const lang = ['ru', 'fr', 'en']
-export const level = ['débutant', 'intermédiaire', 'avancé']
+export const level = ['beginner', 'intermediate', 'advanced']
 export const postData = {
 	lang: '',
 	title: '',

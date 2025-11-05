@@ -9,6 +9,7 @@
 	"teacher": "Cours en ligne",
 	"lessons": "Leçons",
 	"signin": "Se connecter",
+	"signup": "Créer un compte",
 	"register": "s'inscrire",
 	"settings": "Réglages",
 	"logout": "Déconnexion",
@@ -74,5 +75,11 @@
 	"levelShort": "Niv.",
 	"realTimeUpdate": "Le classement est mis à jour en temps réel",
 	"days": "jours",
-	"admin": "Admin"
+	"admin": "Admin",
+	"emailNotVerified": "Email non vérifié",
+	"emailNotVerifiedMessage": "Vérifiez votre boîte mail pour activer toutes les fonctionnalités",
+	"resendEmail": "Renvoyer l'email",
+	"sending": "Envoi...",
+	"verificationEmailResent": "Email de vérification renvoyé !",
+	"errorResendingEmail": "Erreur lors de l'envoi de l'email"
 }

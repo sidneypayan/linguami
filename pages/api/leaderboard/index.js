@@ -52,56 +52,28 @@ export default async function handler(req, res) {
 			console.warn('Failed to get week bounds:', weekError)
 		}
 
-		// 1. Récupérer le top 100 par XP
+		// 1. Récupérer le top 100 par XP (via leaderboard_view)
 		const { data: topXp, error: xpError } = await supabase
-			.from('user_xp_profile')
-			.select(`
-				user_id,
-				total_xp,
-				current_level,
-				users_profile:user_id (
-					name,
-					email,
-					avatar_id
-				)
-			`)
+			.from('leaderboard_view')
+			.select('id, name, avatar_id, total_xp, current_level')
 			.order('total_xp', { ascending: false })
 			.limit(100)
 
 		if (xpError) throw xpError
 
-		// 2. Récupérer le top 100 par Streak
+		// 2. Récupérer le top 100 par Streak (via leaderboard_view)
 		const { data: topStreak, error: streakError } = await supabase
-			.from('user_xp_profile')
-			.select(`
-				user_id,
-				daily_streak,
-				longest_streak,
-				current_level,
-				users_profile:user_id (
-					name,
-					email,
-					avatar_id
-				)
-			`)
+			.from('leaderboard_view')
+			.select('id, name, avatar_id, daily_streak, current_level')
 			.order('daily_streak', { ascending: false })
 			.limit(100)
 
 		if (streakError) throw streakError
 
-		// 3. Récupérer le top 100 par Gold
+		// 3. Récupérer le top 100 par Gold (via leaderboard_view)
 		const { data: topGold, error: goldError } = await supabase
-			.from('user_xp_profile')
-			.select(`
-				user_id,
-				total_gold,
-				current_level,
-				users_profile:user_id (
-					name,
-					email,
-					avatar_id
-				)
-			`)
+			.from('leaderboard_view')
+			.select('id, name, avatar_id, total_gold, current_level')
 			.order('total_gold', { ascending: false })
 			.limit(100)
 
@@ -120,11 +92,11 @@ export default async function handler(req, res) {
 			if (weeklyError) {
 				console.warn('Weekly leaderboard fetch failed:', weeklyError)
 			} else if (data && data.length > 0) {
-				// Récupérer les profils utilisateur séparément
+				// Récupérer les profils utilisateur séparément (via la vue sécurisée)
 				const userIds = data.map((entry) => entry.user_id)
 				const { data: profiles } = await supabase
-					.from('users_profile')
-					.select('id, name, email, avatar_id')
+					.from('public_users_profile')
+					.select('id, name, avatar_id')
 					.in('id', userIds)
 
 				// Joindre les données
@@ -157,7 +129,6 @@ export default async function handler(req, res) {
 		let topMonthly = null
 
 		if (monthStart) {
-			console.log('🔍 Fetching monthly leaderboard with month_start:', monthStart)
 
 			const { data, error: monthlyError } = await supabase
 				.from('monthly_xp_tracking')
@@ -166,16 +137,15 @@ export default async function handler(req, res) {
 				.order('monthly_xp', { ascending: false })
 				.limit(100)
 
-			console.log('📊 Monthly data fetched:', data)
 
 			if (monthlyError) {
 				console.warn('Monthly leaderboard fetch failed:', monthlyError)
 			} else if (data && data.length > 0) {
-				// Récupérer les profils utilisateur séparément
+				// Récupérer les profils utilisateur séparément (via la vue sécurisée)
 				const userIds = data.map((entry) => entry.user_id)
 				const { data: profiles } = await supabase
-					.from('users_profile')
-					.select('id, name, email, avatar_id')
+					.from('public_users_profile')
+					.select('id, name, avatar_id')
 					.in('id', userIds)
 
 				// Joindre les données
@@ -270,13 +240,13 @@ export default async function handler(req, res) {
 			if (!data) return []
 			return data.map((entry, index) => ({
 				rank: index + 1,
-				userId: entry.user_id,
-				username: entry.users_profile?.name || entry.users_profile?.email || 'Anonymous',
-				avatar_id: entry.users_profile?.avatar_id || 'avatar1',
-				avatarId: entry.users_profile?.avatar_id || 'avatar1',
+				userId: entry.user_id || entry.id,
+				username: entry.name || entry.users_profile?.name || 'Anonymous',
+				avatar_id: entry.avatar_id || entry.users_profile?.avatar_id || 'avatar1',
+				avatarId: entry.avatar_id || entry.users_profile?.avatar_id || 'avatar1',
 				value: entry[valueKey],
 				level: entry.current_level || null,
-				isCurrentUser: entry.user_id === user.id,
+				isCurrentUser: (entry.user_id || entry.id) === user.id,
 			}))
 		}
 

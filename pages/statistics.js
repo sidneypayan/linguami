@@ -99,19 +99,16 @@ const StatisticsPage = () => {
 			// Fetch regular statistics
 			const statsResponse = await fetch('/api/statistics')
 			const statsData = await statsResponse.json()
-			console.log('📊 Stats data received:', statsData)
 			setStats(statsData)
 
 			// Fetch XP profile
 			const xpResponse = await fetch('/api/xp/profile')
 			const xpData = await xpResponse.json()
-			console.log('💎 XP profile received:', xpData.profile)
 			setXpProfile(xpData.profile)
 
 			// Fetch goals
 			const goalsResponse = await fetch('/api/goals')
 			const goalsData = await goalsResponse.json()
-			console.log('🎯 Goals received:', goalsData.goals)
 			setGoals(goalsData.goals)
 		} catch (error) {
 			console.error('Error fetching statistics:', error)
@@ -169,7 +166,6 @@ const StatisticsPage = () => {
 		},
 	]
 
-	console.log('📚 Vocabulary cards:', vocabularyCards.map(c => ({ title: c.title, value: c.value })))
 
 	// Calculate next streak milestone
 	const getNextStreakMilestone = (currentStreak) => {

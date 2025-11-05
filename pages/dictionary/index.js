@@ -341,7 +341,7 @@ const Dictionary = () => {
 							))}
 						</Box>
 
-						<Link href='/signin' style={{ textDecoration: 'none' }}>
+						<Link href='/login' style={{ textDecoration: 'none' }}>
 							<Button
 								variant='contained'
 								size='large'

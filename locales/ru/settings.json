@@ -7,7 +7,6 @@
 	"avatarSettings": "Аватар",
 	"username": "Псевдоним",
 	"email": "Адрес электронной почты",
-	"dateOfBirth": "Дата рождения",
 	"languageLevel": "Уровень языка",
 	"avatar": "Аватар",
 	"chooseAvatar": "Выберите аватар",
@@ -19,5 +18,19 @@
 	"cancel": "Отменить",
 	"edit": "Изменить",
 	"updateSuccess": "Профиль успешно обновлен",
-	"updateError": "Ошибка обновления профиля"
+	"updateError": "Ошибка обновления профиля",
+	"avatarDwarfMale": "Гном",
+	"avatarDwarfFemale": "Гномка",
+	"avatarElfMale": "Эльф",
+	"avatarElfFemale": "Эльфийка",
+	"avatarUndeadMale": "Нежить",
+	"avatarUndeadFemale": "Нежить",
+	"avatarTaurenMale": "Таурен",
+	"avatarTaurenFemale": "Тауренка",
+	"avatarGnomeMale": "Гном",
+	"avatarGnomeFemale": "Гномка",
+	"avatarWizardMale": "Маг",
+	"avatarWizardFemale": "Волшебница",
+	"avatarOrcMale": "Орк",
+	"avatarOrcFemale": "Оркесса"
 }

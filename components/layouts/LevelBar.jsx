@@ -23,15 +23,12 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 
 	const handleSubmit = e => {
 		e.preventDefault()
-		console.log('🔍 LevelBar handleSubmit - search term:', search)
-		console.log('🔍 LevelBar handleSubmit - current section:', section)
 		dispatch(searchMaterial(search))
 	}
 
 	const handleSearchChange = e => {
 		const value = e.target.value
 		setSearch(value)
-		console.log('🔍 LevelBar handleSearchChange - search term:', value)
 		// Recherche dynamique au fur et à mesure de la saisie
 		dispatch(searchMaterial(value))
 	}
@@ -56,9 +53,9 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 	}
 
 	const levels = [
-		{ label: 'Débutant', key: 'débutant', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
-		{ label: 'Intermédiaire', key: 'intermédiaire', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
-		{ label: 'Avancé', key: 'avancé', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
+		{ label: t('beginner'), key: 'beginner', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
+		{ label: t('intermediate'), key: 'intermediate', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
+		{ label: t('advanced'), key: 'advanced', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
 	]
 
 	const statuses = [

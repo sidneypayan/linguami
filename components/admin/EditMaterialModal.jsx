@@ -214,9 +214,9 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								label={t('level')}
 								onChange={(e) => handleChange('level', e.target.value)}
 								sx={{ borderRadius: 2 }}>
-								<MenuItem value="débutant">{t('beginner')}</MenuItem>
-								<MenuItem value="intermédiaire">{t('intermediate')}</MenuItem>
-								<MenuItem value="avancé">{t('advanced')}</MenuItem>
+								<MenuItem value="beginner">{t('beginner')}</MenuItem>
+								<MenuItem value="intermediate">{t('intermediate')}</MenuItem>
+								<MenuItem value="advanced">{t('advanced')}</MenuItem>
 							</Select>
 						</FormControl>
 					</Grid>

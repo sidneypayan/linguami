@@ -69,16 +69,16 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	}
 
 	const getLevelColor = (level) => {
-		if (level === 'débutant') return '#10b981'
-		if (level === 'intermédiaire') return '#f59e0b'
-		if (level === 'avancé') return '#ef4444'
+		if (level === 'beginner') return '#10b981'
+		if (level === 'intermediate') return '#f59e0b'
+		if (level === 'advanced') return '#ef4444'
 		return '#8b5cf6'
 	}
 
 	const getLevelLabel = (level) => {
-		if (level === 'débutant') return 'Débutant'
-		if (level === 'intermédiaire') return 'Intermédiaire'
-		if (level === 'avancé') return 'Avancé'
+		if (level === 'beginner') return t('beginner')
+		if (level === 'intermediate') return t('intermediate')
+		if (level === 'advanced') return t('advanced')
 		return level
 	}
 

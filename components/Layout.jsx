@@ -1,6 +1,7 @@
 import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
 import BottomNav from './layouts/BottomNav'
+import EmailVerificationBanner from './auth/EmailVerificationBanner'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -31,6 +32,7 @@ const Layout = ({ children }) => {
 				minHeight: '100vh',
 			}}>
 			<Navbar />
+			<EmailVerificationBanner />
 			<Box
 				component='main'
 				sx={{

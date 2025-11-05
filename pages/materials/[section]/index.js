@@ -12,10 +12,11 @@ import {
 	searchMaterial,
 	showAllMaterials,
 	filterMaterialsByStatus,
+	filterMaterialsByLevelAndStatus,
 } from '../../../features/materials/materialsSlice'
 import { selectMaterialsData } from '../../../features/materials/materialsSelectors'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Container, IconButton, Typography } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
@@ -25,13 +26,17 @@ import LoadingSpinner from '../../../components/LoadingSpinner'
 
 const Section = () => {
 	const { t, lang } = useTranslation('materials')
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, userProfile } = useUserContext()
 	const router = useRouter()
 	const { section } = router.query
 	const [viewMode, setViewMode] = useState('card')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedLevel, setSelectedLevel] = useState(null)
 	const [selectedStatus, setSelectedStatus] = useState(null)
+	const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false)
+
+	// Tracker le niveau précédent pour détecter les changements
+	const prevUserLevelRef = useRef(null)
 
 	const dispatch = useDispatch()
 	// Utiliser le sélecteur mémoïsé pour optimiser les performances
@@ -57,18 +62,19 @@ const Section = () => {
 		return matchingMaterials
 	}
 
-	// Filtrer localement les matériaux pour exclure ceux qui sont étudiés
-	// et s'assurer qu'ils correspondent à la langue d'apprentissage
+	// Filtrer localement les matériaux pour s'assurer qu'ils correspondent à la langue d'apprentissage
+	// Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
 	const displayedMaterials = useMemo(() => {
 		if (!filtered_materials || !userLearningLanguage) return []
-		return filtered_materials.filter(material => {
+		const result = filtered_materials.filter(material => {
 			// Vérifier que le matériel correspond à la langue d'apprentissage
-			if (material.lang !== userLearningLanguage) return false
-
-			const userStatus = checkIfUserMaterialIsInMaterials(material.id)
-			return !userStatus || !userStatus.is_studied
+			return material.lang === userLearningLanguage
 		})
-	}, [filtered_materials, user_materials_status, userLearningLanguage])
+		console.log('📦 DisplayedMaterials recalculated:', result.length, 'materials')
+		console.log('🔍 Sample levels:', result.slice(0, 3).map(m => ({ title: m.title, level: m.level })))
+		console.log('🎚️ Selected status filter:', selectedStatus)
+		return result
+	}, [filtered_materials, userLearningLanguage, selectedStatus])
 
 	// Calculer le nombre de pages basé sur les matériaux réellement affichés
 	const numOfPages = Math.ceil(displayedMaterials.length / materialsPerPage)
@@ -89,35 +95,52 @@ const Section = () => {
 		dispatch(searchMaterial(value))
 	}
 
+	// Fonction helper pour appliquer les deux filtres ensemble
+	const applyBothFilters = (level, status) => {
+		console.log('🎯 Applying filters - level:', level, 'status:', status)
+
+		// Si aucun filtre, tout afficher
+		if (!level && !status) {
+			dispatch(showAllMaterials())
+			return
+		}
+
+		// Utiliser la nouvelle action qui gère les deux filtres ensemble
+		dispatch(filterMaterialsByLevelAndStatus({
+			section,
+			level,
+			status,
+			userMaterialsStatus: user_materials_status
+		}))
+	}
+
 	const handleLevelChange = (level) => {
 		setSelectedLevel(level)
-		setSelectedStatus(null)
-		if (level) {
-			dispatch(filterMaterials({ section, level }))
-		} else {
-			dispatch(showAllMaterials())
-		}
+		// Garder le statut actuel et appliquer les deux filtres
+		applyBothFilters(level, selectedStatus)
 	}
 
 	const handleStatusChange = (status) => {
 		setSelectedStatus(status)
-		setSelectedLevel(null)
-		if (status) {
-			dispatch(filterMaterialsByStatus({ section, status, userMaterialsStatus: user_materials_status }))
-		} else {
-			dispatch(showAllMaterials())
-		}
+		// Garder le niveau actuel et appliquer les deux filtres
+		applyBothFilters(selectedLevel, status)
 	}
 
 	const handleClear = () => {
 		setSearchTerm('')
 		setSelectedLevel(null)
 		setSelectedStatus(null)
+		// Réinitialiser tous les filtres
 		dispatch(showAllMaterials())
 	}
 
 	useEffect(() => {
 		if (!userLearningLanguage || !section) return
+
+		// Réinitialiser le flag quand la section change
+		setHasAppliedDefaultFilter(false)
+		// Réinitialiser aussi le filtre de statut
+		setSelectedStatus(null)
 
 		if (section === 'books') {
 			dispatch(getBooks({ userLearningLanguage }))
@@ -127,11 +150,72 @@ const Section = () => {
 		}
 	}, [userLearningLanguage, section, dispatch])
 
+	// Appliquer les filtres par défaut : niveau utilisateur + non étudiés
 	useEffect(() => {
-		if (!level || !section || section === 'books') return
+		if (
+			!materials_loading &&
+			userProfile?.language_level &&
+			section &&
+			section !== 'books' &&
+			!hasAppliedDefaultFilter &&
+			user_materials_status // Attendre que le statut des matériaux soit chargé
+		) {
+			const userLevel = userProfile.language_level
+			console.log('🎯 Applying default filters - level:', userLevel, '+ not_studied')
+			console.log('📊 User materials status loaded:', user_materials_status.length)
 
-		dispatch(filterMaterials({ section, level }))
-	}, [section, level, dispatch])
+			// Mettre à jour l'état local
+			setSelectedLevel(userLevel)
+			setSelectedStatus('not_studied')
+
+			// Appliquer les deux filtres ensemble
+			dispatch(filterMaterialsByLevelAndStatus({
+				section,
+				level: userLevel,
+				status: 'not_studied',
+				userMaterialsStatus: user_materials_status
+			}))
+
+			setHasAppliedDefaultFilter(true)
+			// Sauvegarder le niveau actuel comme référence
+			prevUserLevelRef.current = userLevel
+		}
+	}, [materials_loading, userProfile?.language_level, section, hasAppliedDefaultFilter, user_materials_status, dispatch])
+
+	// Détecter et réagir aux changements de niveau utilisateur
+	useEffect(() => {
+		const currentUserLevel = userProfile?.language_level
+		const previousUserLevel = prevUserLevelRef.current
+
+		// Vérifier si le niveau a vraiment changé
+		if (
+			currentUserLevel &&
+			previousUserLevel &&
+			currentUserLevel !== previousUserLevel &&
+			section &&
+			section !== 'books' &&
+			user_materials_status
+		) {
+			console.log('🔄 User level changed from', previousUserLevel, 'to', currentUserLevel)
+			// Le niveau a changé, réappliquer les filtres par défaut
+			setSelectedLevel(currentUserLevel)
+			setSelectedStatus('not_studied')
+
+			// Appliquer les deux filtres ensemble
+			dispatch(filterMaterialsByLevelAndStatus({
+				section,
+				level: currentUserLevel,
+				status: 'not_studied',
+				userMaterialsStatus: user_materials_status
+			}))
+
+			// Mettre à jour la référence
+			prevUserLevelRef.current = currentUserLevel
+		}
+	}, [userProfile?.language_level, section, user_materials_status, dispatch])
+
+	// Note: Ce useEffect a été supprimé car il créait un conflit avec le filtre par défaut
+	// basé sur le niveau utilisateur. Le filtre est maintenant géré par les useEffect ci-dessus.
 
 	// Afficher le loader pendant le chargement
 	if (materials_loading && books_loading) {
