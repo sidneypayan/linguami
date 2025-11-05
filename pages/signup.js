@@ -23,6 +23,7 @@ import {
 	LinearProgress,
 	Avatar,
 	Collapse,
+	useTheme,
 } from '@mui/material'
 import {
 	EmailRounded,
@@ -52,6 +53,8 @@ const initialState = {
 const Signup = () => {
 	const { t } = useTranslation('register')
 	const { register, loginWithThirdPartyOAuth } = useUserContext()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [values, setValues] = useState(initialState)
 	const [showAvatars, setShowAvatars] = useState(false)
 
@@ -192,8 +195,10 @@ const Signup = () => {
 		'& .MuiOutlinedInput-root': {
 			borderRadius: 2.5,
 			transition: 'all 0.3s ease',
+			backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'transparent',
+			color: isDark ? '#f1f5f9' : 'inherit',
 			'& fieldset': {
-				borderColor: 'rgba(102, 126, 234, 0.2)',
+				borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
 				borderWidth: '2px',
 			},
 			'&:hover fieldset': {
@@ -205,10 +210,17 @@ const Signup = () => {
 			},
 		},
 		'& .MuiInputLabel-root': {
-			color: '#718096',
+			color: isDark ? '#94a3b8' : '#718096',
 			'&.Mui-focused': {
 				color: '#667eea',
 			},
+		},
+		'& .MuiInputBase-input::placeholder': {
+			color: isDark ? '#94a3b8' : 'inherit',
+			opacity: 1,
+		},
+		'& .MuiFormHelperText-root': {
+			color: isDark ? '#94a3b8' : 'inherit',
 		},
 	}
 
@@ -240,7 +252,7 @@ const Signup = () => {
 					variant="body1"
 					align="center"
 					sx={{
-						color: '#718096',
+						color: isDark ? '#94a3b8' : '#718096',
 						mb: 4,
 						fontSize: '1rem',
 					}}>
@@ -253,7 +265,7 @@ const Signup = () => {
 					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
 				/>
 
-				<Divider sx={{ my: 3.5, color: '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+				<Divider sx={{ my: 3.5, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
 					{t('or')}
 				</Divider>
 
@@ -277,7 +289,7 @@ const Signup = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<PersonRounded sx={{ color: '#718096' }} />
+									<PersonRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -299,7 +311,7 @@ const Signup = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<EmailRounded sx={{ color: '#718096' }} />
+									<EmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -321,7 +333,7 @@ const Signup = () => {
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">
-										<LockRounded sx={{ color: '#718096' }} />
+										<LockRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 									</InputAdornment>
 								),
 							}}
@@ -362,7 +374,7 @@ const Signup = () => {
 											) : (
 												<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
 											)}
-											<Typography variant="body2" sx={{ fontSize: '0.8125rem', color: '#64748B' }}>
+											<Typography variant="body2" sx={{ fontSize: '0.8125rem', color: isDark ? '#94a3b8' : '#64748B' }}>
 												{label}
 											</Typography>
 										</Box>
@@ -384,7 +396,7 @@ const Signup = () => {
 							onChange={handleChange}
 							startAdornment={
 								<InputAdornment position="start">
-									<RecordVoiceOverRounded sx={{ color: '#718096', ml: 1 }} />
+									<RecordVoiceOverRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
 								</InputAdornment>
 							}
 							renderValue={(selected) => {
@@ -432,7 +444,7 @@ const Signup = () => {
 							onChange={handleChange}
 							startAdornment={
 								<InputAdornment position="start">
-									<TranslateRounded sx={{ color: '#718096', ml: 1 }} />
+									<TranslateRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
 								</InputAdornment>
 							}
 							renderValue={(selected) => {
@@ -552,7 +564,7 @@ const Signup = () => {
 									<Typography
 										sx={{
 											fontWeight: 600,
-											color: '#2d3748',
+											color: isDark ? '#f1f5f9' : '#2d3748',
 											fontSize: '1rem',
 										}}>
 										{t(AVATARS.find(a => a.id === values.selectedAvatar)?.nameKey)}
@@ -560,7 +572,7 @@ const Signup = () => {
 									<Typography
 										sx={{
 											fontSize: '0.8125rem',
-											color: '#718096',
+											color: isDark ? '#94a3b8' : '#718096',
 										}}>
 										{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
 									</Typography>
@@ -646,7 +658,7 @@ const Signup = () => {
 												variant="caption"
 												sx={{
 													fontSize: '0.75rem',
-													color: isSelected ? '#667eea' : '#64748B',
+													color: isSelected ? '#667eea' : (isDark ? '#94a3b8' : '#64748B'),
 													fontWeight: isSelected ? 600 : 400,
 													textAlign: 'center',
 												}}>
@@ -707,7 +719,7 @@ const Signup = () => {
 						<Typography
 							variant="body2"
 							sx={{
-								color: '#718096',
+								color: isDark ? '#94a3b8' : '#718096',
 								fontSize: '0.9375rem',
 							}}>
 							{t('haveAccountQuestion')}{' '}

@@ -14,6 +14,7 @@ import {
 	Chip,
 	IconButton,
 	Backdrop,
+	useTheme,
 } from '@mui/material'
 
 import { Stack } from '@mui/system'
@@ -38,6 +39,9 @@ const StyledGridItem = styled(Grid)(({ theme }) => ({
 }))
 
 const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse, marginTop, badge, offsetDirection, buttonText }) => {
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
+
 	const getOffset = () => {
 		if (!offsetDirection || offsetDirection === 'center') return {};
 		return {
@@ -147,10 +151,14 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					gap: { xs: 3, md: 4, lg: 4.5 },
 					padding: { xs: '1.5rem 2rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
 					borderRadius: 5,
-					background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
+					background: isDark
+						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)'
+						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
 					backdropFilter: 'blur(20px)',
-					border: '1px solid rgba(139, 92, 246, 0.15)',
-					boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
+					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)',
+					boxShadow: isDark
+						? '0 8px 32px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
+						: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
 					position: 'relative',
 					overflow: 'hidden',
 					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -361,7 +369,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					<Typography
 						variant='body1'
 						sx={{
-							color: '#64748b',
+							color: isDark ? '#94a3b8' : '#64748b',
 							fontWeight: 500,
 							lineHeight: 1.8,
 							fontSize: { xs: '0.95rem', md: '1rem', lg: '1.05rem' },
@@ -422,6 +430,8 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 
 const Homepage = () => {
 	const { t } = useTranslation('home')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [open, setOpen] = useState(false)
 	const [videoSrc, setVideoSrc] = useState('')
 	const [modalName, setModalName] = useState('')
@@ -571,7 +581,7 @@ const Homepage = () => {
 					variant='subtitle1'
 					align='center'
 					sx={{
-						color: '#64748b',
+						color: isDark ? '#94a3b8' : '#64748b',
 						fontSize: { xs: '1rem', sm: '1.05rem', md: '1.125rem' },
 						mb: 6,
 						px: { xs: 2, sm: 3 },
@@ -654,9 +664,9 @@ const Homepage = () => {
 											height: '100%',
 											minHeight: { xs: '320px', sm: '340px' },
 											borderRadius: 4,
-											background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
+											background: isDark ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)' : 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
 											border: '2px solid transparent',
-											backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
+											backgroundImage: isDark ? 'linear-gradient(rgba(30, 41, 59, 1), rgba(30, 41, 59, 1)), linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5), rgba(139, 92, 246, 0.5))' : 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
 											backgroundOrigin: 'border-box',
 											backgroundClip: 'padding-box, border-box',
 											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
@@ -870,7 +880,7 @@ const Homepage = () => {
 													variant='body2'
 													sx={{
 														display: { xs: 'block', sm: 'none' },
-														color: '#475569',
+														color: isDark ? '#94a3b8' : '#475569',
 														fontWeight: 500,
 														fontSize: '0.8rem',
 														lineHeight: 1.6,
@@ -903,7 +913,7 @@ const Homepage = () => {
 													variant='body2'
 													sx={{
 														display: { xs: 'none', sm: 'block' },
-														color: '#475569',
+														color: isDark ? '#94a3b8' : '#475569',
 														fontWeight: 500,
 														fontSize: '0.85rem',
 														lineHeight: 1.6,
@@ -1045,9 +1055,9 @@ const Homepage = () => {
 										width: '100%',
 										minHeight: { xs: '280px', sm: '300px', md: '340px', lg: '320px' },
 										borderRadius: 4,
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
+										background: isDark ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)' : 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
 										border: '2px solid transparent',
-										backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
+										backgroundImage: isDark ? 'linear-gradient(rgba(30, 41, 59, 1), rgba(30, 41, 59, 1)), linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5), rgba(139, 92, 246, 0.5))' : 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
 										backgroundOrigin: 'border-box',
 										backgroundClip: 'padding-box, border-box',
 										boxShadow: {
@@ -1282,7 +1292,7 @@ const Homepage = () => {
 												variant='body2'
 												sx={{
 													display: { xs: 'block', sm: 'none' },
-													color: '#475569',
+													color: isDark ? '#94a3b8' : '#475569',
 													fontWeight: 500,
 													fontSize: '0.8rem',
 													lineHeight: 1.6,
@@ -1315,7 +1325,7 @@ const Homepage = () => {
 												variant='body2'
 												sx={{
 													display: { xs: 'none', sm: 'block' },
-													color: '#475569',
+													color: isDark ? '#94a3b8' : '#475569',
 													fontWeight: 500,
 													fontSize: { sm: '0.85rem', md: '0.9rem', lg: '0.85rem' },
 													lineHeight: 1.6,
@@ -1401,11 +1411,15 @@ const Homepage = () => {
 						<Box
 							sx={{
 								position: 'relative',
-								background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+								background: isDark
+									? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+									: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 								backdropFilter: 'blur(20px)',
 								borderRadius: 5,
-								border: '1px solid rgba(139, 92, 246, 0.2)',
-								boxShadow: '0 20px 80px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
+								border: isDark ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid rgba(139, 92, 246, 0.2)',
+								boxShadow: isDark
+									? '0 20px 80px rgba(139, 92, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
+									: '0 20px 80px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
 								overflow: 'hidden',
 								'&::before': {
 									content: '""',
@@ -1428,8 +1442,10 @@ const Homepage = () => {
 									alignItems: 'center',
 									justifyContent: 'space-between',
 									p: { xs: 2, md: 3 },
-									borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.03) 100%)',
+									borderBottom: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)',
+									background: isDark
+										? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)'
+										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.03) 100%)',
 								}}>
 								{modalName && (
 									<Typography
@@ -1645,7 +1661,7 @@ const Homepage = () => {
 						variant='subtitle1'
 						align='center'
 						sx={{
-							color: '#64748b',
+							color: isDark ? '#94a3b8' : '#64748b',
 							fontSize: { xs: '1rem', md: '1.125rem' },
 							maxWidth: '700px',
 							mx: 'auto',

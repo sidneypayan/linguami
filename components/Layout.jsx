@@ -7,13 +7,14 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { getLessons } from '../features/lessons/lessonsSlice'
 import FlashCards from './games/Flashcards'
-import { Box } from '@mui/material'
+import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const Layout = ({ children }) => {
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { isFlashcardsOpen } = useSelector(store => store.cards)
 	const lang = router.locale
+	const theme = useTheme()
 
 	// Charger les leçons au démarrage pour vérifier s'il y en a pour cette langue
 	useEffect(() => {
@@ -25,25 +26,31 @@ const Layout = ({ children }) => {
 	return isFlashcardsOpen ? (
 		<FlashCards />
 	) : (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				minHeight: '100vh',
-			}}>
-			<Navbar />
-			<EmailVerificationBanner />
+		<>
+			<CssBaseline />
 			<Box
-				component='main'
 				sx={{
-					flex: 1,
-					pb: { xs: '90px', md: 0 }, // Padding bottom pour la bottom nav sur mobile et tablette
+					display: 'flex',
+					flexDirection: 'column',
+					minHeight: '100vh',
+					bgcolor: 'background.default',
+					color: 'text.primary',
+					transition: 'background-color 0.3s ease, color 0.3s ease',
 				}}>
-				{children}
+				<Navbar />
+				<EmailVerificationBanner />
+				<Box
+					component='main'
+					sx={{
+						flex: 1,
+						pb: { xs: '90px', md: 0 }, // Padding bottom pour la bottom nav sur mobile et tablette
+					}}>
+					{children}
+				</Box>
+				<Footer />
+				<BottomNav />
 			</Box>
-			<Footer />
-			<BottomNav />
-		</Box>
+		</>
 	)
 }
 

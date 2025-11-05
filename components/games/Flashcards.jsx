@@ -27,16 +27,31 @@ import {
 	SentimentSatisfiedAltRounded,
 	SentimentVeryDissatisfiedRounded,
 } from '@mui/icons-material'
-import { IconButton } from '@mui/material'
+import { IconButton, useTheme } from '@mui/material'
 
 const FlashCards = () => {
 	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { user_material_words, user_words } = useSelector(store => store.words)
 	const [guestWords, setGuestWords] = useState([])
 	const [showAnswer, setShowAnswer] = useState(false)
+
+	// Style réutilisable pour les boutons de fermeture
+	const closeButtonStyle = {
+		position: 'absolute',
+		top: '1rem',
+		right: '1rem',
+		color: isDark ? '#a78bfa' : '#667eea',
+		transition: 'all 0.2s ease',
+		'&:hover': {
+			background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(102, 126, 234, 0.1)',
+			transform: 'rotate(90deg) scale(1.1)',
+		},
+	}
 	const [reviewedCount, setReviewedCount] = useState(0)
 	const [sessionStartTime] = useState(Date.now())
 	const [sessionCards, setSessionCards] = useState([])
@@ -451,24 +466,14 @@ const FlashCards = () => {
 		const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 60000) // minutes
 
 		return (
-			<div className={styles.container}>
+			<div className={isDark ? styles.containerDark : styles.container}>
 				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					sx={{
-						position: 'absolute',
-						top: '1rem',
-						right: '1rem',
-						color: '#667eea',
-						transition: 'all 0.2s ease',
-						'&:hover': {
-							background: 'rgba(102, 126, 234, 0.1)',
-							transform: 'rotate(90deg) scale(1.1)',
-						},
-					}}>
+					sx={closeButtonStyle}>
 					<CloseRounded sx={{ fontSize: '2rem' }} />
 				</IconButton>
 				<h3 className={styles.flashcardsTitle}>
@@ -507,24 +512,14 @@ const FlashCards = () => {
 	// If not initialized yet, show loading
 	if (!sessionInitialized) {
 		return (
-			<div className={styles.container}>
+			<div className={isDark ? styles.containerDark : styles.container}>
 				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					sx={{
-						position: 'absolute',
-						top: '1rem',
-						right: '1rem',
-						color: '#667eea',
-						transition: 'all 0.2s ease',
-						'&:hover': {
-							background: 'rgba(102, 126, 234, 0.1)',
-							transform: 'rotate(90deg) scale(1.1)',
-						},
-					}}>
+					sx={closeButtonStyle}>
 					<CloseRounded sx={{ fontSize: '2rem' }} />
 				</IconButton>
 				<div className={styles.wordsContainer}>
@@ -537,24 +532,14 @@ const FlashCards = () => {
 	// If no words at all in the array
 	if (!wordsArray || wordsArray.length === 0) {
 		return (
-			<div className={styles.container}>
+			<div className={isDark ? styles.containerDark : styles.container}>
 				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					sx={{
-						position: 'absolute',
-						top: '1rem',
-						right: '1rem',
-						color: '#667eea',
-						transition: 'all 0.2s ease',
-						'&:hover': {
-							background: 'rgba(102, 126, 234, 0.1)',
-							transform: 'rotate(90deg) scale(1.1)',
-						},
-					}}>
+					sx={closeButtonStyle}>
 					<CloseRounded sx={{ fontSize: '2rem' }} />
 				</IconButton>
 				<div className={styles.wordsContainer}>
@@ -576,24 +561,14 @@ const FlashCards = () => {
 	// If no current card (no cards due)
 	if (!currentCard) {
 		return (
-			<div className={styles.container}>
+			<div className={isDark ? styles.containerDark : styles.container}>
 				<IconButton
 					onClick={() => {
 						dispatch(toggleFlashcardsContainer(false))
 						setSessionInitialized(false)
 					}}
 					className={styles.closeIcon}
-					sx={{
-						position: 'absolute',
-						top: '1rem',
-						right: '1rem',
-						color: '#667eea',
-						transition: 'all 0.2s ease',
-						'&:hover': {
-							background: 'rgba(102, 126, 234, 0.1)',
-							transform: 'rotate(90deg) scale(1.1)',
-						},
-					}}>
+					sx={closeButtonStyle}>
 					<CloseRounded sx={{ fontSize: '2rem' }} />
 				</IconButton>
 				<div className={styles.wordsContainer}>
@@ -648,24 +623,14 @@ const FlashCards = () => {
 	}
 
 	return (
-		<div className={styles.container}>
+		<div className={isDark ? styles.containerDark : styles.container}>
 			<IconButton
 				onClick={() => {
 					dispatch(toggleFlashcardsContainer(false))
 					setSessionInitialized(false)
 				}}
 				className={styles.closeIcon}
-				sx={{
-					position: 'absolute',
-					top: '1rem',
-					right: '1rem',
-					color: '#667eea',
-					transition: 'all 0.2s ease',
-					'&:hover': {
-						background: 'rgba(102, 126, 234, 0.1)',
-						transform: 'rotate(90deg) scale(1.1)',
-					},
-				}}>
+				sx={closeButtonStyle}>
 				<CloseRounded sx={{ fontSize: '2rem' }} />
 			</IconButton>
 

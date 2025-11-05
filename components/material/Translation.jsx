@@ -24,6 +24,7 @@ import {
 	Fade,
 	IconButton,
 	Stack,
+	useTheme,
 } from '@mui/material'
 import { Add, Close, Translate } from '@mui/icons-material'
 import { primaryButton, secondaryButton } from '../../utils/buttonStyles'
@@ -33,6 +34,8 @@ const Translation = ({ coordinates, materialId, userId }) => {
 
 	const dispatch = useDispatch()
 	const ref = useRef()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	const {
 		translation,
@@ -310,7 +313,9 @@ const Translation = ({ coordinates, materialId, userId }) => {
 							borderRadius: 4,
 							overflow: 'hidden',
 							overflowX: 'hidden',
-							background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
+							background: isDark
+								? 'linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
+								: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
 							boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
 							zIndex: 1300,
 							display: 'flex',
@@ -357,7 +362,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 								<Typography variant='h6' sx={{ fontWeight: 600, mb: 2, color: '#f5576c' }}>
 									{t('translation_limit_title')}
 								</Typography>
-								<Typography variant='body2' sx={{ mb: 3, color: '#666' }}>
+								<Typography variant='body2' sx={{ mb: 3, color: isDark ? '#cbd5e1' : '#666' }}>
 									{t('translation_limit_message')}
 								</Typography>
 								<Link href='/signup'>
@@ -398,10 +403,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 													}}
 												/>
 											)}
-											<Typography variant='body2' sx={{ color: '#666' }}>
+											<Typography variant='body2' sx={{ color: isDark ? '#94a3b8' : '#666' }}>
 												→
 											</Typography>
-											<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
+											<Typography variant='subtitle1' sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : 'inherit' }}>
 												{translation.inf}
 											</Typography>
 										</Stack>
@@ -432,7 +437,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 															pl: 2.5,
 														},
 													}}>
-													<Typography variant='body2' sx={{ fontWeight: 500 }}>
+													<Typography variant='body2' sx={{ fontWeight: 500, color: isDark ? '#f1f5f9' : 'inherit' }}>
 														{definition}
 													</Typography>
 												</ListItemButton>
@@ -461,7 +466,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 											</Link>
 										</>
 									) : (
-										<Typography variant='caption' sx={{ display: 'block', color: '#666', fontWeight: 600, textAlign: 'center' }}>
+										<Typography variant='caption' sx={{ display: 'block', color: isDark ? '#cbd5e1' : '#666', fontWeight: 600, textAlign: 'center' }}>
 											{t('click_translation_to_add')}
 										</Typography>
 									)}
@@ -490,7 +495,9 @@ const Translation = ({ coordinates, materialId, userId }) => {
 						borderRadius: 4,
 						overflow: 'hidden',
 						overflowX: 'hidden',
-						background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
+						background: isDark
+							? 'linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
+							: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
 						boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
 						zIndex: 1300,
 						display: 'flex',
@@ -554,10 +561,10 @@ const Translation = ({ coordinates, materialId, userId }) => {
 											color: 'white',
 										}}
 									/>
-									<Typography variant='body2' sx={{ color: '#666' }}>
+									<Typography variant='body2' sx={{ color: isDark ? '#94a3b8' : '#666' }}>
 										→
 									</Typography>
-									<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
+									<Typography variant='subtitle1' sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : 'inherit' }}>
 										{translation.inf}
 									</Typography>
 								</Stack>
@@ -584,7 +591,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 														pl: 2.5,
 													},
 												}}>
-												<Typography variant='body2' sx={{ fontWeight: 500 }}>
+												<Typography variant='body2' sx={{ fontWeight: 500, color: isDark ? '#f1f5f9' : 'inherit' }}>
 													{definition}
 												</Typography>
 											</ListItemButton>
@@ -601,14 +608,14 @@ const Translation = ({ coordinates, materialId, userId }) => {
 								onSubmit={addWord}
 								sx={{
 									p: 2,
-									backgroundColor: 'white',
+									backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'white',
 								}}>
 								<Typography
 									variant='caption'
 									sx={{
 										display: 'block',
 										mb: 1,
-										color: '#666',
+										color: isDark ? '#cbd5e1' : '#666',
 										fontWeight: 600,
 									}}>
 									{t('custom_translation')}

@@ -1,11 +1,13 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../features/materials/materialsSlice'
-import { Box, IconButton, Button, Stack } from '@mui/material'
+import { Box, IconButton, Button, Stack, useTheme } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 const Pagination = ({ numOfPages: numOfPagesProp }) => {
 	const { numOfPages: numOfPagesRedux, page } = useSelector(store => store.materials)
 	const dispatch = useDispatch()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	// Utiliser la prop si fournie, sinon utiliser la valeur Redux
 	const numOfPages = numOfPagesProp !== undefined ? numOfPagesProp : numOfPagesRedux
@@ -95,13 +97,14 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 					sx={{
 						width: '44px',
 						height: '44px',
-						backgroundColor: 'white',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
+						backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+						color: isDark ? '#cbd5e1' : 'inherit',
+						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
 						borderRadius: 2,
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 						position: 'relative',
 						overflow: 'hidden',
-						boxShadow: '0 2px 6px rgba(139, 92, 246, 0.08)',
+						boxShadow: isDark ? '0 2px 6px rgba(139, 92, 246, 0.15)' : '0 2px 6px rgba(139, 92, 246, 0.08)',
 						'&::before': {
 							content: '""',
 							position: 'absolute',
@@ -123,9 +126,10 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 							},
 						},
 						'&:disabled': {
-							backgroundColor: '#f5f5f5',
+							backgroundColor: isDark ? 'rgba(30, 41, 59, 0.4)' : '#f5f5f5',
 							borderColor: 'rgba(139, 92, 246, 0.1)',
 							opacity: 0.4,
+							color: isDark ? '#475569' : 'inherit',
 						},
 					}}>
 					<ChevronLeft />
@@ -139,7 +143,7 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 								key={`dots-${index}`}
 								sx={{
 									px: 1,
-									color: '#718096',
+									color: isDark ? '#cbd5e1' : '#718096',
 									fontWeight: 600,
 								}}>
 								...
@@ -159,11 +163,11 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 								fontWeight: 700,
 								fontSize: '1rem',
 								border: '1px solid',
-								borderColor: page === pageNumber ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
+								borderColor: page === pageNumber ? 'rgba(139, 92, 246, 0.6)' : (isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)'),
 								background: page === pageNumber
 									? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
-									: 'white',
-								color: page === pageNumber ? 'white' : '#4a5568',
+									: (isDark ? 'rgba(30, 41, 59, 0.8)' : 'white'),
+								color: page === pageNumber ? 'white' : (isDark ? '#cbd5e1' : '#4a5568'),
 								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 								position: 'relative',
 								overflow: 'hidden',
@@ -206,13 +210,14 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 					sx={{
 						width: '44px',
 						height: '44px',
-						backgroundColor: 'white',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
+						backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+						color: isDark ? '#cbd5e1' : 'inherit',
+						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
 						borderRadius: 2,
 						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 						position: 'relative',
 						overflow: 'hidden',
-						boxShadow: '0 2px 6px rgba(139, 92, 246, 0.08)',
+						boxShadow: isDark ? '0 2px 6px rgba(139, 92, 246, 0.15)' : '0 2px 6px rgba(139, 92, 246, 0.08)',
 						'&::before': {
 							content: '""',
 							position: 'absolute',
@@ -234,9 +239,10 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 							},
 						},
 						'&:disabled': {
-							backgroundColor: '#f5f5f5',
+							backgroundColor: isDark ? 'rgba(30, 41, 59, 0.4)' : '#f5f5f5',
 							borderColor: 'rgba(139, 92, 246, 0.1)',
 							opacity: 0.4,
+							color: isDark ? '#475569' : 'inherit',
 						},
 					}}>
 					<ChevronRight />

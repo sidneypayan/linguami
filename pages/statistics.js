@@ -10,6 +10,7 @@ import {
 	CardContent,
 	CircularProgress,
 	alpha,
+	useTheme,
 } from '@mui/material'
 import {
 	Lock,
@@ -81,6 +82,8 @@ import Head from 'next/head'
 const StatisticsPage = () => {
 	const { t } = useTranslation('stats')
 	const { user } = useUserContext()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [loading, setLoading] = useState(true)
 	const [stats, setStats] = useState(null)
 	const [xpProfile, setXpProfile] = useState(null)
@@ -352,10 +355,12 @@ const StatisticsPage = () => {
 							borderRadius: { xs: 0, md: 4 },
 							p: { xs: 3, md: 4 },
 							mb: { xs: 2, md: 4 },
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
 							backdropFilter: 'blur(20px)',
-							boxShadow: { xs: 'none', md: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)' },
-							border: { xs: 'none', md: '1px solid rgba(139, 92, 246, 0.15)' },
+							boxShadow: { xs: 'none', md: isDark ? '0 8px 32px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.15)' : '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)' },
+							border: { xs: 'none', md: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)' },
 							position: 'relative',
 							overflow: 'hidden',
 							'&::before': {
@@ -396,7 +401,7 @@ const StatisticsPage = () => {
 								variant="h5"
 								sx={{
 									fontWeight: 800,
-									color: '#1E293B',
+									color: isDark ? '#f1f5f9' : '#1E293B',
 									textTransform: 'uppercase',
 									letterSpacing: '1px',
 									textShadow: '0 2px 4px rgba(139, 92, 246, 0.1)',
@@ -548,7 +553,7 @@ const StatisticsPage = () => {
 											variant="h5"
 											sx={{
 												fontWeight: 700,
-												color: '#1E40AF',
+												color: isDark ? '#93c5fd' : '#1E40AF',
 												fontSize: { xs: '1.2rem', md: '1.5rem' },
 											}}>
 											{xpProfile.xpInCurrentLevel} / {xpProfile.xpForNextLevel} XP
@@ -558,7 +563,7 @@ const StatisticsPage = () => {
 											sx={{
 												mt: 0.5,
 												fontWeight: 600,
-												color: '#64748B',
+												color: isDark ? '#cbd5e1' : '#64748B',
 											}}>
 											{xpProfile.progressPercent >= 75
 												? `💪 Plus que ${xpProfile.xpForNextLevel - xpProfile.xpInCurrentLevel} XP pour le niveau ${xpProfile.currentLevel + 1} !`
@@ -704,7 +709,7 @@ const StatisticsPage = () => {
 											variant="h5"
 											sx={{
 												fontWeight: 700,
-												color: '#15803D',
+												color: isDark ? '#86efac' : '#15803D',
 												fontSize: { xs: '1.2rem', md: '1.5rem' },
 											}}>
 											{xpProfile.dailyStreak} {xpProfile.dailyStreak === 1 ? 'jour' : 'jours'} 🔥
@@ -714,7 +719,7 @@ const StatisticsPage = () => {
 											sx={{
 												mt: 0.5,
 												fontWeight: 600,
-												color: '#64748B',
+												color: isDark ? '#cbd5e1' : '#64748B',
 											}}>
 											{xpProfile.dailyStreak === 0
 												? `🎯 Commence ta série aujourd'hui !`
@@ -865,19 +870,19 @@ const StatisticsPage = () => {
 												variant="h5"
 												sx={{
 													fontWeight: 700,
-													color: '#D97706',
+													color: isDark ? '#fcd34d' : '#D97706',
 													fontSize: { xs: '1.2rem', md: '1.5rem' },
 												}}>
 												{xpProfile.totalGold}
 											</Typography>
-											<FaCoins style={{ fontSize: '1.5rem', color: '#D97706' }} />
+											<FaCoins style={{ fontSize: '1.5rem', color: isDark ? '#fcd34d' : '#D97706' }} />
 										</Box>
 										<Typography
 											variant="body1"
 											sx={{
 												mt: 0.5,
 												fontWeight: 600,
-												color: '#64748B',
+												color: isDark ? '#cbd5e1' : '#64748B',
 											}}>
 											{xpProfile.totalGold === 0
 												? `💰 Ton trésor commence ici !`
@@ -961,11 +966,16 @@ const StatisticsPage = () => {
 							borderRadius: { xs: 0, md: 3 },
 							p: { xs: 3, md: 5 },
 							mb: { xs: 2, md: 4 },
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-							border: { xs: 'none', md: '2px solid transparent' },
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
+							border: { xs: 'none', md: isDark ? '2px solid rgba(139, 92, 246, 0.3)' : '2px solid transparent' },
 							backgroundImage: {
 								xs: 'none',
-								md: `
+								md: isDark ? `
+									linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
+									linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+								` : `
 									linear-gradient(white, white),
 									linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
 								`
@@ -974,7 +984,11 @@ const StatisticsPage = () => {
 							backgroundClip: 'padding-box, border-box',
 							boxShadow: {
 								xs: 'none',
-								md: `
+								md: isDark ? `
+									0 10px 40px rgba(139, 92, 246, 0.25),
+									0 2px 8px rgba(0, 0, 0, 0.08),
+									inset 0 1px 0 rgba(139, 92, 246, 0.1)
+								` : `
 									0 10px 40px rgba(139, 92, 246, 0.12),
 									0 2px 8px rgba(0, 0, 0, 0.04),
 									inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1034,7 +1048,7 @@ const StatisticsPage = () => {
 							<Typography
 								variant="body1"
 								sx={{
-									color: '#64748B',
+									color: isDark ? '#cbd5e1' : '#64748B',
 									fontWeight: 500,
 									fontSize: { xs: '0.95rem', md: '1rem' },
 								}}>
@@ -1088,15 +1102,15 @@ const StatisticsPage = () => {
 													transform: 'translate(-50%, -50%)',
 													textAlign: 'center',
 												}}>
-												<Typography variant="h3" sx={{ fontWeight: 800, color: '#667eea', lineHeight: 1 }}>
+												<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#a78bfa' : '#667eea', lineHeight: 1 }}>
 													{Math.floor((goals.daily.current_xp / goals.daily.target_xp) * 100)}%
 												</Typography>
 											</Box>
 										</Box>
-										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: '#1E293B' }}>
+										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
 											📅 {t('dailyGoal')}
 										</Typography>
-										<Typography variant="body1" sx={{ color: '#64748B', mt: 0.5 }}>
+										<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
 											{goals.daily.current_xp} / {goals.daily.target_xp} XP
 										</Typography>
 									</Box>
@@ -1149,15 +1163,15 @@ const StatisticsPage = () => {
 													transform: 'translate(-50%, -50%)',
 													textAlign: 'center',
 												}}>
-												<Typography variant="h3" sx={{ fontWeight: 800, color: '#3B82F6', lineHeight: 1 }}>
+												<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#93c5fd' : '#3B82F6', lineHeight: 1 }}>
 													{Math.floor((goals.weekly.current_xp / goals.weekly.target_xp) * 100)}%
 												</Typography>
 											</Box>
 										</Box>
-										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: '#1E293B' }}>
+										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
 											📊 {t('weeklyGoal')}
 										</Typography>
-										<Typography variant="body1" sx={{ color: '#64748B', mt: 0.5 }}>
+										<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
 											{goals.weekly.current_xp} / {goals.weekly.target_xp} XP
 										</Typography>
 									</Box>
@@ -1210,15 +1224,15 @@ const StatisticsPage = () => {
 													transform: 'translate(-50%, -50%)',
 													textAlign: 'center',
 												}}>
-												<Typography variant="h3" sx={{ fontWeight: 800, color: '#10B981', lineHeight: 1 }}>
+												<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#86efac' : '#10B981', lineHeight: 1 }}>
 													{Math.floor((goals.monthly.current_xp / goals.monthly.target_xp) * 100)}%
 												</Typography>
 											</Box>
 										</Box>
-										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: '#1E293B' }}>
+										<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
 											📆 {t('monthlyGoal')}
 										</Typography>
-										<Typography variant="body1" sx={{ color: '#64748B', mt: 0.5 }}>
+										<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
 											{goals.monthly.current_xp} / {goals.monthly.target_xp} XP
 										</Typography>
 									</Box>
@@ -1235,11 +1249,16 @@ const StatisticsPage = () => {
 						borderRadius: { xs: 0, md: 3 },
 						p: { xs: 3, sm: 4, md: 5 },
 						mb: { xs: 0, md: 4 },
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-						border: { xs: 'none', md: '2px solid transparent' },
+						background: isDark
+							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
+						border: { xs: 'none', md: isDark ? '2px solid rgba(139, 92, 246, 0.3)' : '2px solid transparent' },
 						backgroundImage: {
 							xs: 'none',
-							md: `
+							md: isDark ? `
+								linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
+								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
+							` : `
 								linear-gradient(white, white),
 								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
 							`
@@ -1248,7 +1267,11 @@ const StatisticsPage = () => {
 						backgroundClip: 'padding-box, border-box',
 						boxShadow: {
 							xs: 'none',
-							md: `
+							md: isDark ? `
+								0 10px 40px rgba(139, 92, 246, 0.25),
+								0 2px 8px rgba(0, 0, 0, 0.08),
+								inset 0 1px 0 rgba(139, 92, 246, 0.1)
+							` : `
 								0 10px 40px rgba(139, 92, 246, 0.12),
 								0 2px 8px rgba(0, 0, 0, 0.04),
 								inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1308,7 +1331,7 @@ const StatisticsPage = () => {
 						<Typography
 							variant="body1"
 							sx={{
-								color: '#64748B',
+								color: isDark ? '#cbd5e1' : '#64748B',
 								fontWeight: 500,
 								fontSize: { xs: '0.95rem', md: '1rem' },
 							}}>
@@ -1362,7 +1385,7 @@ const StatisticsPage = () => {
 											variant="h6"
 											sx={{
 												fontWeight: 700,
-												color: '#1E293B',
+												color: isDark ? '#f1f5f9' : '#1E293B',
 												fontSize: { xs: '1.1rem', md: '1.25rem' },
 												flex: 1,
 											}}>
@@ -1511,7 +1534,7 @@ const StatisticsPage = () => {
 															variant="h5"
 															sx={{
 																fontWeight: 800,
-																color: badge.isUnlocked ? category.color : '#94a3b8',
+																color: badge.isUnlocked ? category.color : isDark ? '#64748b' : '#94a3b8',
 																fontSize: { xs: '1.1rem', sm: '1.25rem' },
 																textAlign: 'center',
 																lineHeight: 1,
@@ -1576,7 +1599,7 @@ const StatisticsPage = () => {
 							<Typography
 								variant="body1"
 								sx={{
-									color: '#64748B',
+									color: isDark ? '#cbd5e1' : '#64748B',
 									fontWeight: 500,
 									fontSize: { xs: '0.9rem', md: '1rem' },
 									mt: 0.5,
@@ -1596,14 +1619,23 @@ const StatisticsPage = () => {
 										position: 'relative',
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										border: '2px solid transparent',
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
-										backgroundImage: `
+										background: isDark
+											? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+											: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+										backgroundImage: isDark ? `
+											linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
+											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
+										` : `
 											linear-gradient(white, white),
 											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
 										`,
 										backgroundOrigin: 'border-box',
 										backgroundClip: 'padding-box, border-box',
-										boxShadow: `
+										boxShadow: isDark ? `
+											0 8px 24px ${alpha(card.color, 0.2)},
+											0 2px 6px rgba(0, 0, 0, 0.08),
+											inset 0 1px 0 ${alpha(card.color, 0.1)}
+										` : `
 											0 8px 24px ${alpha(card.color, 0.12)},
 											0 2px 6px rgba(0, 0, 0, 0.04),
 											inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1621,7 +1653,11 @@ const StatisticsPage = () => {
 										},
 										'&:hover': {
 											transform: 'translateY(-8px)',
-											boxShadow: `
+											boxShadow: isDark ? `
+												0 12px 32px ${alpha(card.color, 0.3)},
+												0 4px 12px rgba(0, 0, 0, 0.12),
+												inset 0 1px 0 ${alpha(card.color, 0.15)}
+											` : `
 												0 12px 32px ${alpha(card.color, 0.25)},
 												0 4px 12px rgba(0, 0, 0, 0.08),
 												inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1679,7 +1715,7 @@ const StatisticsPage = () => {
 											variant='h3'
 											sx={{
 												fontWeight: 900,
-												color: '#1E293B',
+												color: isDark ? '#f1f5f9' : '#1E293B',
 												mb: 1.5,
 												textAlign: 'center',
 												fontSize: '2.5rem',
@@ -1689,7 +1725,7 @@ const StatisticsPage = () => {
 										<Typography
 											variant='body2'
 											sx={{
-												color: '#64748B',
+												color: isDark ? '#cbd5e1' : '#64748B',
 												fontWeight: 600,
 												textAlign: 'center',
 												lineHeight: 1.5,
@@ -1742,7 +1778,7 @@ const StatisticsPage = () => {
 							<Typography
 								variant="body1"
 								sx={{
-									color: '#64748B',
+									color: isDark ? '#cbd5e1' : '#64748B',
 									fontWeight: 500,
 									fontSize: { xs: '0.9rem', md: '1rem' },
 									mt: 0.5,
@@ -1762,14 +1798,23 @@ const StatisticsPage = () => {
 										position: 'relative',
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										border: '2px solid transparent',
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
-										backgroundImage: `
+										background: isDark
+											? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+											: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
+										backgroundImage: isDark ? `
+											linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
+											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
+										` : `
 											linear-gradient(white, white),
 											linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
 										`,
 										backgroundOrigin: 'border-box',
 										backgroundClip: 'padding-box, border-box',
-										boxShadow: `
+										boxShadow: isDark ? `
+											0 8px 24px ${alpha(card.color, 0.2)},
+											0 2px 6px rgba(0, 0, 0, 0.08),
+											inset 0 1px 0 ${alpha(card.color, 0.1)}
+										` : `
 											0 8px 24px ${alpha(card.color, 0.12)},
 											0 2px 6px rgba(0, 0, 0, 0.04),
 											inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1787,7 +1832,11 @@ const StatisticsPage = () => {
 										},
 										'&:hover': {
 											transform: 'translateY(-8px)',
-											boxShadow: `
+											boxShadow: isDark ? `
+												0 12px 32px ${alpha(card.color, 0.3)},
+												0 4px 12px rgba(0, 0, 0, 0.12),
+												inset 0 1px 0 ${alpha(card.color, 0.15)}
+											` : `
 												0 12px 32px ${alpha(card.color, 0.25)},
 												0 4px 12px rgba(0, 0, 0, 0.08),
 												inset 0 1px 0 rgba(255, 255, 255, 0.9)
@@ -1845,7 +1894,7 @@ const StatisticsPage = () => {
 											variant='h3'
 											sx={{
 												fontWeight: 900,
-												color: '#1E293B',
+												color: isDark ? '#f1f5f9' : '#1E293B',
 												mb: 1.5,
 												textAlign: 'center',
 												fontSize: '2.5rem',
@@ -1855,7 +1904,7 @@ const StatisticsPage = () => {
 										<Typography
 											variant='body2'
 											sx={{
-												color: '#64748B',
+												color: isDark ? '#cbd5e1' : '#64748B',
 												fontWeight: 600,
 												textAlign: 'center',
 												lineHeight: 1.5,

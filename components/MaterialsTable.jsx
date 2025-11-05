@@ -1,6 +1,8 @@
 import React from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
+import useTranslation from 'next-translate/useTranslation'
 import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
 import { useUserContext } from '../context/user'
 import {
@@ -30,9 +32,11 @@ import { sections } from '../data/sections'
 import { getImageUrl } from '../utils/imageUtils'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
+	const { t } = useTranslation('materials')
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 	const { section } = router.query
 	const { userLearningLanguage } = useUserContext()
@@ -113,7 +117,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	if (isMobile) {
 		return (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-				{materials.map((material) => (
+				{materials.map((material, index) => (
 					<Paper
 						key={material.id}
 						onClick={() => handleRowClick(material)}
@@ -121,9 +125,13 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							p: 2,
 							borderRadius: 4,
 							cursor: 'pointer',
-							border: '1px solid rgba(139, 92, 246, 0.2)',
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
+							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							boxShadow: isDark
+								? '0 4px 20px rgba(139, 92, 246, 0.25)'
+								: '0 4px 20px rgba(139, 92, 246, 0.15)',
 							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&:hover': {
 								boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
@@ -136,17 +144,38 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 						}}>
 						<Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
 							{/* Image */}
-							<Avatar
-								src={getImageUrl(material.image)}
-								alt={material.title}
-								variant="rounded"
-								sx={{
-									width: 80,
-									height: 80,
-									flexShrink: 0,
-									boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-								}}
-							/>
+							{index === 0 ? (
+								<Box
+									sx={{
+										width: 80,
+										height: 80,
+										flexShrink: 0,
+										borderRadius: 2,
+										overflow: 'hidden',
+										position: 'relative',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+									}}>
+									<Image
+										src={getImageUrl(material.image)}
+										alt={material.title}
+										fill
+										priority
+										style={{ objectFit: 'cover' }}
+									/>
+								</Box>
+							) : (
+								<Avatar
+									src={getImageUrl(material.image)}
+									alt={material.title}
+									variant="rounded"
+									sx={{
+										width: 80,
+										height: 80,
+										flexShrink: 0,
+										boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+									}}
+								/>
+							)}
 
 							{/* Content */}
 							<Box sx={{ flex: 1, minWidth: 0 }}>
@@ -183,7 +212,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									<Typography
 										variant="caption"
 										sx={{
-											color: '#718096',
+											color: isDark ? '#94a3b8' : '#718096',
 											fontWeight: 500,
 										}}>
 										{material.section}
@@ -203,9 +232,14 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 			component={Paper}
 			sx={{
 				borderRadius: 4,
-				boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-				border: '1px solid rgba(139, 92, 246, 0.2)',
+				boxShadow: isDark
+					? '0 4px 20px rgba(139, 92, 246, 0.25)'
+					: '0 4px 20px rgba(139, 92, 246, 0.15)',
+				border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
 				overflow: 'hidden',
+				background: isDark
+					? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+					: 'background.paper',
 			}}>
 			<Table>
 				<TableHead>
@@ -273,7 +307,9 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							onClick={() => handleRowClick(material)}
 							sx={{
 								cursor: 'pointer',
-								backgroundColor: index % 2 === 0 ? 'rgba(139, 92, 246, 0.03)' : 'white',
+								backgroundColor: index % 2 === 0
+									? 'rgba(139, 92, 246, 0.03)'
+									: isDark ? 'rgba(15, 23, 42, 0.5)' : 'white',
 								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 								'&:hover': {
 									backgroundColor: 'rgba(139, 92, 246, 0.08)',
@@ -286,16 +322,36 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							}}>
 							{/* Image/Icon Column */}
 							<TableCell sx={{ py: 2 }}>
-								<Avatar
-									src={getImageUrl(material.image)}
-									alt={material.title}
-									variant="rounded"
-									sx={{
-										width: 50,
-										height: 50,
-										boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-									}}
-								/>
+								{index === 0 ? (
+									<Box
+										sx={{
+											width: 50,
+											height: 50,
+											borderRadius: 1.5,
+											overflow: 'hidden',
+											position: 'relative',
+											boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+										}}>
+										<Image
+											src={getImageUrl(material.image)}
+											alt={material.title}
+											fill
+											priority
+											style={{ objectFit: 'cover' }}
+										/>
+									</Box>
+								) : (
+									<Avatar
+										src={getImageUrl(material.image)}
+										alt={material.title}
+										variant="rounded"
+										sx={{
+											width: 50,
+											height: 50,
+											boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+										}}
+									/>
+								)}
 							</TableCell>
 
 							{/* Title Column */}
@@ -322,7 +378,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									sx={{
 										fontSize: '0.9rem',
 										fontWeight: 600,
-										color: '#718096',
+										color: isDark ? '#94a3b8' : '#718096',
 									}}>
 									{material.section}
 								</Typography>

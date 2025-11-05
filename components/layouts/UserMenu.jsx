@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useUserContext } from '../../context/user.js'
 import { useState, useMemo } from 'react'
-import { styled, alpha } from '@mui/material/styles'
+import { styled, alpha, useTheme } from '@mui/material/styles'
 import { getAvatarUrl } from '../../utils/avatars.js'
 import {
 	Box,
@@ -46,15 +46,17 @@ const StyledMenu = styled(props => (
 		borderRadius: 16,
 		marginTop: theme.spacing(1),
 		minWidth: 280,
-		color:
+		color: theme.palette.text.primary,
+		background:
 			theme.palette.mode === 'light'
-				? 'rgb(55, 65, 81)'
-				: theme.palette.grey[300],
-		background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+				? 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
+				: 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
 		backdropFilter: 'blur(10px)',
-		border: '1px solid rgba(139, 92, 246, 0.2)',
+		border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)'}`,
 		boxShadow:
-			'0 8px 32px rgba(139, 92, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)',
+			theme.palette.mode === 'light'
+				? '0 8px 32px rgba(139, 92, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)'
+				: '0 8px 32px rgba(139, 92, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5)',
 		'& .MuiMenu-list': {
 			padding: '0',
 		},
@@ -70,16 +72,19 @@ const StyledMenu = styled(props => (
 			},
 			'& .MuiSvgIcon-root': {
 				fontSize: 20,
-				color: '#8b5cf6',
+				color: theme.palette.mode === 'light' ? '#8b5cf6' : '#a78bfa',
 				transition: 'transform 0.3s ease',
 			},
 			'&:hover': {
-				background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
+				background:
+					theme.palette.mode === 'light'
+						? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)'
+						: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
 				transform: 'translateX(4px)',
-				borderLeft: '2px solid #8b5cf6',
+				borderLeft: `2px solid ${theme.palette.mode === 'light' ? '#8b5cf6' : '#a78bfa'}`,
 				'& .MuiSvgIcon-root': {
 					transform: 'scale(1.1)',
-					color: '#06b6d4',
+					color: theme.palette.mode === 'light' ? '#06b6d4' : '#67e8f9',
 				},
 			},
 			'&:active': {
@@ -88,7 +93,7 @@ const StyledMenu = styled(props => (
 		},
 		'& .MuiDivider-root': {
 			margin: '8px 0',
-			borderColor: 'rgba(139, 92, 246, 0.2)',
+			borderColor: theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)',
 		},
 		'&:before': {
 			content: '""',
@@ -98,8 +103,11 @@ const StyledMenu = styled(props => (
 			right: 14,
 			width: 10,
 			height: 10,
-			background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-			border: '1px solid rgba(139, 92, 246, 0.2)',
+			background:
+				theme.palette.mode === 'light'
+					? 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
+					: 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
+			border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)'}`,
 			transform: 'translateY(-50%) rotate(45deg)',
 			zIndex: 0,
 		},
@@ -110,6 +118,8 @@ const UserMenu = () => {
 	const { t, lang } = useTranslation('common')
 	const { user, userProfile, logout } = useUserContext()
 	const dispatch = useDispatch()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
@@ -261,7 +271,7 @@ const UserMenu = () => {
 									sx={{
 										width: '100%',
 										height: '100%',
-										border: '3px solid #0f172a',
+										border: `3px solid ${isDark ? '#1e293b' : '#0f172a'}`,
 										boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
 									}}>
 									<PersonRounded sx={{ fontSize: 35 }} />
@@ -279,7 +289,7 @@ const UserMenu = () => {
 											display: 'flex',
 											alignItems: 'center',
 											justifyContent: 'center',
-											border: '2px solid #0f172a',
+											border: `2px solid ${isDark ? '#1e293b' : '#0f172a'}`,
 											boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
 										}}>
 										<VerifiedRounded sx={{ fontSize: 12, color: 'white' }} />

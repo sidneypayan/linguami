@@ -18,6 +18,7 @@ import {
 	Typography,
 	IconButton,
 	CircularProgress,
+	useTheme,
 } from '@mui/material'
 import { Close, Add } from '@mui/icons-material'
 
@@ -25,6 +26,8 @@ const AddWordModal = ({ open, onClose }) => {
 	const { t } = useTranslation('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { user, userLearningLanguage } = useUserContext()
 	const lang = router.locale
 
@@ -137,8 +140,13 @@ const AddWordModal = ({ open, onClose }) => {
 			PaperProps={{
 				sx: {
 					borderRadius: 4,
-					background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
-					boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+					background: isDark
+						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
+						: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
+					boxShadow: isDark
+						? '0 20px 60px rgba(139, 92, 246, 0.3)'
+						: '0 20px 60px rgba(0,0,0,0.15)',
+					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : 'none',
 				},
 			}}>
 			<DialogTitle sx={{ pb: 2, pt: 3, px: 4 }}>
@@ -157,7 +165,7 @@ const AddWordModal = ({ open, onClose }) => {
 							}}>
 							<Add sx={{ color: 'white' }} />
 						</Box>
-						<Typography variant='h5' component='div' sx={{ fontWeight: 700, color: '#333' }}>
+						<Typography variant='h5' component='div' sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
 							{t('addword')}
 						</Typography>
 					</Box>
@@ -165,9 +173,10 @@ const AddWordModal = ({ open, onClose }) => {
 						onClick={handleClose}
 						size='small'
 						sx={{
-							backgroundColor: 'rgba(0,0,0,0.04)',
+							backgroundColor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0,0,0,0.04)',
+							color: isDark ? '#cbd5e1' : 'inherit',
 							'&:hover': {
-								backgroundColor: 'rgba(0,0,0,0.08)',
+								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(0,0,0,0.08)',
 							},
 						}}>
 						<Close />
@@ -197,7 +206,7 @@ const AddWordModal = ({ open, onClose }) => {
 								/>
 								<Typography
 									variant='subtitle1'
-									sx={{ fontWeight: 700, color: '#333' }}>
+									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
 									{t('word_in_learning_language', { lang: getLearningLanguageName() })}
 								</Typography>
 							</Box>
@@ -221,11 +230,12 @@ const AddWordModal = ({ open, onClose }) => {
 								sx={{
 									'& .MuiOutlinedInput-root': {
 										borderRadius: 2,
-										backgroundColor: 'white',
+										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
+										color: isDark ? '#f1f5f9' : 'inherit',
 										fontSize: '1.1rem',
 										'& fieldset': {
 											borderWidth: 2,
-											borderColor: '#e0e0e0',
+											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
 										},
 										'&:hover fieldset': {
 											borderColor: '#667eea',
@@ -234,6 +244,13 @@ const AddWordModal = ({ open, onClose }) => {
 											borderColor: '#667eea',
 											borderWidth: 2,
 										},
+									},
+									'& .MuiInputBase-input::placeholder': {
+										color: isDark ? '#94a3b8' : 'inherit',
+										opacity: 1,
+									},
+									'& .MuiFormHelperText-root': {
+										color: isDark ? '#94a3b8' : 'inherit',
 									},
 								}}
 							/>
@@ -258,7 +275,7 @@ const AddWordModal = ({ open, onClose }) => {
 								/>
 								<Typography
 									variant='subtitle1'
-									sx={{ fontWeight: 700, color: '#333' }}>
+									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
 									{t('word_in_browser_language', { lang: getBrowserLanguageName() })}
 								</Typography>
 							</Box>
@@ -281,11 +298,12 @@ const AddWordModal = ({ open, onClose }) => {
 								sx={{
 									'& .MuiOutlinedInput-root': {
 										borderRadius: 2,
-										backgroundColor: 'white',
+										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
+										color: isDark ? '#f1f5f9' : 'inherit',
 										fontSize: '1.1rem',
 										'& fieldset': {
 											borderWidth: 2,
-											borderColor: '#e0e0e0',
+											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
 										},
 										'&:hover fieldset': {
 											borderColor: '#f093fb',
@@ -295,6 +313,13 @@ const AddWordModal = ({ open, onClose }) => {
 											borderWidth: 2,
 										},
 									},
+									'& .MuiInputBase-input::placeholder': {
+										color: isDark ? '#94a3b8' : 'inherit',
+										opacity: 1,
+									},
+									'& .MuiFormHelperText-root': {
+										color: isDark ? '#94a3b8' : 'inherit',
+									},
 								}}
 							/>
 						</Box>
@@ -302,15 +327,15 @@ const AddWordModal = ({ open, onClose }) => {
 						{/* Message d'information */}
 						<Box
 							sx={{
-								backgroundColor: 'rgba(102, 126, 234, 0.1)',
+								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(102, 126, 234, 0.1)',
 								borderRadius: 2,
 								padding: 2,
-								border: '1px solid rgba(102, 126, 234, 0.2)',
+								border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(102, 126, 234, 0.2)',
 							}}>
 							<Typography
 								variant='body2'
 								sx={{
-									color: '#5a67d8',
+									color: isDark ? '#a78bfa' : '#5a67d8',
 									textAlign: 'center',
 									lineHeight: 1.6,
 								}}>
@@ -329,16 +354,16 @@ const AddWordModal = ({ open, onClose }) => {
 						sx={{
 							flex: { xs: 1, sm: 0 },
 							borderWidth: 2,
-							borderColor: '#e0e0e0',
-							color: '#666',
+							borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
+							color: isDark ? '#cbd5e1' : '#666',
 							fontWeight: 600,
 							textTransform: 'none',
 							borderRadius: 2,
 							minWidth: 120,
 							'&:hover': {
 								borderWidth: 2,
-								borderColor: '#bbb',
-								backgroundColor: 'rgba(0,0,0,0.02)',
+								borderColor: isDark ? 'rgba(139, 92, 246, 0.5)' : '#bbb',
+								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0,0,0,0.02)',
 							},
 						}}>
 						{t('cancel')}

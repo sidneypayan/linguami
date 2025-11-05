@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { styled, alpha } from '@mui/material/styles'
+import { styled, alpha, useTheme } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -112,6 +112,8 @@ const StyledMenu = styled(props => (
 const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const { t, lang } = useTranslation('common')
 	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	// Langues disponibles pour l'apprentissage (anglais en priorité)
 	const allLanguages = [
@@ -344,7 +346,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 								<Typography
 									sx={{
 										fontWeight: isSelected ? 600 : 500,
-										color: isSelected ? '#667eea' : '#2d3748',
+										color: isSelected ? '#667eea' : isDark ? '#f1f5f9' : '#2d3748',
 										flex: 1,
 									}}>
 									{language.name}

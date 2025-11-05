@@ -54,7 +54,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					}}>
 					<Box
 						sx={{
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							px: 3,
 							py: 2,
 							borderBottom: '1px solid #E2E8F0',
@@ -105,7 +105,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					}}>
 					<Box
 						sx={{
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							px: 3,
 							py: 2,
 							borderBottom: '1px solid #E2E8F0',
@@ -208,7 +208,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					}}>
 					<Box
 						sx={{
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							px: 3,
 							py: 2,
 							borderBottom: '1px solid #E2E8F0',
@@ -250,7 +250,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					}}>
 					<Box
 						sx={{
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							px: 3,
 							py: 2,
 							borderBottom: '1px solid #E2E8F0',
@@ -397,7 +397,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 					}}>
 					<Box
 						sx={{
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							px: 3,
 							py: 2,
 							borderBottom: '1px solid #E2E8F0',
@@ -565,7 +565,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						}}>
 						<Box
 							sx={{
-								bgcolor: '#F8FAFC',
+								bgcolor: 'background.paper',
 								px: 3,
 								py: 2,
 								borderBottom: '1px solid #E2E8F0',
@@ -596,7 +596,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						}}>
 						<Box
 							sx={{
-								bgcolor: '#F8FAFC',
+								bgcolor: 'background.paper',
 								px: 3,
 								py: 2,
 								borderBottom: '1px solid #E2E8F0',

@@ -8,7 +8,7 @@ import {
 	MenuBook, Movie, Theaters, SmartDisplay,
 	AutoStories, Landscape, Category
 } from '@mui/icons-material'
-import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl } from '@mui/material'
+import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl, useTheme } from '@mui/material'
 
 /**
  * Composant réutilisable pour la barre de recherche et filtres des matériaux
@@ -46,6 +46,8 @@ const MaterialsFilterBar = ({
 	translationNamespace = 'materials'
 }) => {
 	const { t } = useTranslation(translationNamespace)
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [showFilters, setShowFilters] = useState(false)
 
 	const handleSearchSubmit = (e) => {
@@ -94,9 +96,14 @@ const MaterialsFilterBar = ({
 				mb: 4,
 				p: { xs: 2, md: 3 },
 				borderRadius: { xs: 0, md: 4 },
-				background: { xs: 'transparent', md: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)' },
-				border: { xs: 'none', md: '1px solid rgba(139, 92, 246, 0.2)' },
-				boxShadow: { xs: 'none', md: '0 4px 20px rgba(139, 92, 246, 0.15)' },
+				background: {
+					xs: 'transparent',
+					md: isDark
+						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
+				},
+				border: { xs: 'none', md: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)' },
+				boxShadow: { xs: 'none', md: isDark ? '0 4px 20px rgba(139, 92, 246, 0.25)' : '0 4px 20px rgba(139, 92, 246, 0.15)' },
 			}}>
 			{/* Première ligne : Search bar et view toggle */}
 			<Box
@@ -111,6 +118,7 @@ const MaterialsFilterBar = ({
 					onSubmit={handleSearchSubmit}
 					sx={{
 						flex: 1,
+						maxWidth: { xs: '100%', md: 'calc(100% - 48px)' },
 					}}>
 					<TextField
 						fullWidth
@@ -141,7 +149,8 @@ const MaterialsFilterBar = ({
 						sx={{
 							'& .MuiOutlinedInput-root': {
 								borderRadius: 3,
-								backgroundColor: 'white',
+								backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+								color: isDark ? '#f1f5f9' : 'inherit',
 								'& fieldset': {
 									borderColor: 'rgba(139, 92, 246, 0.2)',
 									borderWidth: 2,
@@ -154,6 +163,10 @@ const MaterialsFilterBar = ({
 									borderWidth: 2,
 								},
 							},
+							'& .MuiInputBase-input::placeholder': {
+								color: isDark ? '#94a3b8' : 'rgba(0, 0, 0, 0.6)',
+								opacity: 1,
+							},
 						}}
 					/>
 				</Box>
@@ -163,41 +176,47 @@ const MaterialsFilterBar = ({
 					sx={{
 						display: 'flex',
 						gap: 0.5,
-						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+						background: isDark
+							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 						borderRadius: 2,
 						padding: '3px',
 						boxShadow: '0 2px 8px rgba(139, 92, 246, 0.15)',
 						border: '2px solid rgba(139, 92, 246, 0.2)',
 						flexShrink: 0,
 					}}>
-					<IconButton
-						onClick={() => onViewChange('card')}
-						sx={{
-							width: { xs: '34px', sm: '36px' },
-							height: { xs: '34px', sm: '36px' },
-							background: currentView === 'card' ? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)' : 'transparent',
-							color: currentView === 'card' ? 'white' : '#8b5cf6',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							'&:hover': {
-								background: currentView === 'card' ? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)' : 'rgba(139, 92, 246, 0.1)',
-							},
-						}}>
-						<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-					</IconButton>
-					<IconButton
-						onClick={() => onViewChange('list')}
-						sx={{
-							width: { xs: '34px', sm: '36px' },
-							height: { xs: '34px', sm: '36px' },
-							background: currentView === 'list' ? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)' : 'transparent',
-							color: currentView === 'list' ? 'white' : '#8b5cf6',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							'&:hover': {
-								background: currentView === 'list' ? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)' : 'rgba(139, 92, 246, 0.1)',
-							},
-						}}>
-						<ViewList sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-					</IconButton>
+					<Tooltip title="Vue en grille" arrow placement='top' enterTouchDelay={0} leaveTouchDelay={2000}>
+						<IconButton
+							onClick={() => onViewChange('card')}
+							sx={{
+								width: { xs: '34px', sm: '36px' },
+								height: { xs: '34px', sm: '36px' },
+								background: currentView === 'card' ? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)' : 'transparent',
+								color: currentView === 'card' ? 'white' : '#8b5cf6',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								'&:hover': {
+									background: currentView === 'card' ? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)' : 'rgba(139, 92, 246, 0.1)',
+								},
+							}}>
+							<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="Vue en liste" arrow placement='top' enterTouchDelay={0} leaveTouchDelay={2000}>
+						<IconButton
+							onClick={() => onViewChange('list')}
+							sx={{
+								width: { xs: '34px', sm: '36px' },
+								height: { xs: '34px', sm: '36px' },
+								background: currentView === 'list' ? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)' : 'transparent',
+								color: currentView === 'list' ? 'white' : '#8b5cf6',
+								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+								'&:hover': {
+									background: currentView === 'list' ? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)' : 'rgba(139, 92, 246, 0.1)',
+								},
+							}}>
+							<ViewList sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
+						</IconButton>
+					</Tooltip>
 				</Box>
 			</Box>
 
@@ -221,7 +240,7 @@ const MaterialsFilterBar = ({
 								height: { xs: '36px', sm: '42px' },
 								fontWeight: 600,
 								fontSize: { xs: '0.85rem', sm: '0.95rem' },
-								backgroundColor: 'white',
+								backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
 								border: '2px solid',
 								borderColor: selectedSection ? '#8b5cf6' : 'rgba(139, 92, 246, 0.2)',
 								boxShadow: selectedSection
@@ -243,7 +262,10 @@ const MaterialsFilterBar = ({
 									display: 'flex',
 									alignItems: 'center',
 									gap: 1,
-									color: selectedSection ? '#8b5cf6' : '#666',
+									color: selectedSection ? '#8b5cf6' : isDark ? '#cbd5e1' : '#666',
+								},
+								'& .MuiSelect-icon': {
+									color: isDark ? '#cbd5e1' : 'inherit',
 								},
 							}}>
 							<MenuItem value="">
@@ -272,32 +294,50 @@ const MaterialsFilterBar = ({
 					const LevelIcon = level.icon
 					const isSelected = selectedLevel === level.key
 					return (
-						<Tooltip key={level.label} title={level.tooltip} arrow placement='top'>
+						<Tooltip
+							key={level.label}
+							title={level.tooltip}
+							arrow
+							placement='top'
+							enterTouchDelay={0}
+							leaveTouchDelay={2000}>
 							<Chip
-								icon={<LevelIcon sx={{ fontSize: '1.1rem', color: level.color }} />}
+								icon={<LevelIcon sx={{
+									fontSize: '1.1rem',
+									color: isSelected ? 'white' : level.color,
+									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
+								}} />}
 								label={level.label}
 								onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
 								sx={{
-									fontWeight: 600,
+									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
 									px: { xs: 0.5, sm: 1.5 },
 									height: { xs: '36px', sm: '42px' },
 									borderRadius: 3,
 									cursor: 'pointer',
-									border: '2px solid',
+									border: isSelected ? '3px solid' : '2px solid',
 									borderColor: isSelected ? level.color : `${level.color}60`,
 									background: isSelected
-										? `linear-gradient(135deg, ${level.color}20, ${level.color}30)`
-										: 'rgba(255, 255, 255, 0.9)',
-									color: isSelected ? level.color : '#666',
+										? `linear-gradient(135deg, ${level.color} 0%, ${level.color}dd 100%)`
+										: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+									color: isSelected ? 'white' : isDark ? '#cbd5e1' : '#666',
 									boxShadow: isSelected
-										? `0 4px 15px ${level.color}40`
+										? `0 6px 24px ${level.color}60, 0 0 0 4px ${level.color}20`
 										: `0 2px 8px ${level.color}20`,
 									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									animation: isSelected ? 'pulse 2s ease-in-out infinite' : 'none',
+									'@keyframes pulse': {
+										'0%, 100%': {
+											boxShadow: `0 6px 24px ${level.color}60, 0 0 0 4px ${level.color}20`,
+										},
+										'50%': {
+											boxShadow: `0 6px 28px ${level.color}80, 0 0 0 6px ${level.color}30`,
+										},
+									},
 									'& .MuiChip-icon': {
 										marginLeft: '8px',
 										marginRight: '-4px',
-										color: level.color,
 									},
 									'& .MuiChip-label': {
 										display: { xs: 'none', sm: 'block' },
@@ -312,13 +352,12 @@ const MaterialsFilterBar = ({
 									},
 									'&:hover': {
 										transform: 'translateY(-2px) scale(1.05)',
-										boxShadow: `0 6px 20px ${level.color}50`,
+										boxShadow: `0 8px 28px ${level.color}70`,
 										borderColor: level.color,
-										background: `linear-gradient(135deg, ${level.color}30, ${level.color}40)`,
-										color: level.color,
-										'& .MuiChip-icon': {
-											color: level.color,
-										},
+										background: isSelected
+											? `linear-gradient(135deg, ${level.color}dd 0%, ${level.color} 100%)`
+											: `linear-gradient(135deg, ${level.color}30, ${level.color}40)`,
+										color: isSelected ? 'white' : level.color,
 									},
 								}}
 							/>
@@ -327,36 +366,57 @@ const MaterialsFilterBar = ({
 				})}
 
 				{/* Status filters */}
-				{statuses.map(status => {
+				{statuses.map((status, index) => {
 					const StatusIcon = status.icon
 					const isSelected = selectedStatus === status.key
 					return (
-						<Tooltip key={status.label} title={status.tooltip} arrow placement='top'>
+						<Tooltip
+							key={status.label}
+							title={status.tooltip}
+							arrow
+							placement='top'
+							enterTouchDelay={0}
+							leaveTouchDelay={2000}>
 							<Chip
-								icon={<StatusIcon sx={{ fontSize: '1.1rem', color: status.color }} />}
+								icon={<StatusIcon sx={{
+									fontSize: '1.1rem',
+									color: isSelected ? 'white' : status.color,
+									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
+								}} />}
 								label={status.label}
 								onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
 								sx={{
-									fontWeight: 600,
+									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
 									px: { xs: 0.5, sm: 1.5 },
 									height: { xs: '36px', sm: '42px' },
+									ml: index === 0 ? { xs: 1.5, sm: 0 } : 0,
 									borderRadius: 3,
 									cursor: 'pointer',
-									border: '2px solid',
+									border: isSelected ? '3px solid' : '2px solid',
 									borderColor: isSelected ? status.color : `${status.color}60`,
 									background: isSelected
-										? `linear-gradient(135deg, ${status.color}20, ${status.color}30)`
-										: 'rgba(255, 255, 255, 0.9)',
-									color: isSelected ? status.color : '#666',
+										? `linear-gradient(135deg, ${status.color} 0%, ${status.color}dd 100%)`
+										: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+									color: isSelected ? 'white' : isDark ? '#cbd5e1' : '#666',
 									boxShadow: isSelected
-										? `0 4px 15px ${status.color}40`
+										? `0 6px 24px ${status.color}60, 0 0 0 4px ${status.color}20`
 										: `0 2px 8px ${status.color}20`,
 									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+									animation: isSelected ? 'pulse 2s ease-in-out infinite' : 'none',
+									'@keyframes pulse': {
+										'0%, 100%': {
+											boxShadow: `0 6px 24px ${status.color}60, 0 0 0 4px ${status.color}20`,
+										},
+										'50%': {
+											boxShadow: `0 6px 28px ${status.color}80, 0 0 0 6px ${status.color}30`,
+										},
+									},
 									'& .MuiChip-icon': {
 										marginLeft: '8px',
 										marginRight: '-4px',
-										color: status.color,
+										color: isSelected ? 'white' : status.color,
+										filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
 									},
 									'& .MuiChip-label': {
 										display: { xs: 'none', sm: 'block' },
@@ -386,13 +446,20 @@ const MaterialsFilterBar = ({
 				})}
 
 				{/* Reset button */}
-				<Tooltip title={`🔄 ${t('showall')} - ${t('showallTooltip')}`} arrow placement='top'>
+				<Tooltip
+					title={`🔄 ${t('showall')} - ${t('showallTooltip')}`}
+					arrow
+					placement='top'
+					enterTouchDelay={0}
+					leaveTouchDelay={2000}>
 					<IconButton
 						onClick={onClear}
 						sx={{
 							width: { xs: '36px', sm: '42px' },
 							height: { xs: '36px', sm: '42px' },
-							background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							background: isDark
+								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
 							border: '2px solid rgba(139, 92, 246, 0.2)',
 							boxShadow: '0 2px 8px rgba(139, 92, 246, 0.15)',
 							color: '#8b5cf6',

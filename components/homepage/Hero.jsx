@@ -1,11 +1,13 @@
 import useTranslation from 'next-translate/useTranslation'
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
 import Link from 'next/link'
 import Image from 'next/image'
 import { primaryButton } from '../../utils/buttonStyles'
 
 const Hero = () => {
 	const { t, lang } = useTranslation('home')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	return (
 		<Box
@@ -363,7 +365,7 @@ const Hero = () => {
 					left: 0,
 					right: 0,
 					height: { xs: '60px', md: '80px' },
-					background: '#ffffff',
+					background: isDark ? '#0f172a' : '#ffffff',
 					clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
 					'&::before': {
 						content: '""',

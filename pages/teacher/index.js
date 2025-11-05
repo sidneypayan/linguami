@@ -11,12 +11,15 @@ import {
 	Stack,
 	Typography,
 	Avatar,
+	useTheme,
 } from '@mui/material'
 import { FormatQuote } from '@mui/icons-material'
 
 const Teacher = () => {
 	const { t, lang } = useTranslation('teacher')
 	const { userLearningLanguage } = useUserContext()
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 
 	// Déterminer la langue d'apprentissage (fallback sur lang si pas défini)
 	const learningLang = userLearningLanguage || (lang === 'ru' ? 'fr' : 'ru')
@@ -282,7 +285,7 @@ const Teacher = () => {
 					sx={{
 						fontSize: { xs: '1.0625rem', sm: '1.125rem' },
 						lineHeight: 1.8,
-						color: '#4a5568',
+						color: isDark ? '#cbd5e1' : '#4a5568',
 						textAlign: 'center',
 						mb: 6,
 					}}>
@@ -310,7 +313,7 @@ const Teacher = () => {
 							variant='subtitle1'
 							align='center'
 							sx={{
-								color: '#718096',
+								color: isDark ? '#94a3b8' : '#718096',
 								mb: 5,
 							}}>
 							{t('reviewsSubtitle')}
@@ -348,13 +351,21 @@ const Teacher = () => {
 										position: 'relative',
 										borderRadius: 4,
 										overflow: 'visible',
-										background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)',
-										border: '1px solid rgba(139, 92, 246, 0.2)',
+										background: isDark
+											? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
+											: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+										boxShadow: isDark
+											? '0 4px 20px rgba(139, 92, 246, 0.25)'
+											: '0 4px 20px rgba(139, 92, 246, 0.15)',
+										border: isDark
+											? '1px solid rgba(139, 92, 246, 0.3)'
+											: '1px solid rgba(139, 92, 246, 0.2)',
 										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 										'&:hover': {
 											transform: 'translateY(-8px)',
-											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+											boxShadow: isDark
+												? '0 12px 40px rgba(139, 92, 246, 0.4)'
+												: '0 12px 40px rgba(139, 92, 246, 0.3)',
 											borderColor: 'rgba(139, 92, 246, 0.4)',
 										},
 									}}>
@@ -382,7 +393,7 @@ const Teacher = () => {
 											sx={{
 												fontWeight: 700,
 												mb: 2,
-												color: '#2d3748',
+												color: isDark ? '#f1f5f9' : '#2d3748',
 												fontSize: { xs: '1.25rem', sm: '1.5rem' },
 											}}>
 											{review.name}
@@ -390,7 +401,7 @@ const Teacher = () => {
 										<Typography
 											variant='body1'
 											sx={{
-												color: '#718096',
+												color: isDark ? '#cbd5e1' : '#718096',
 												lineHeight: 1.7,
 												fontSize: { xs: '0.9375rem', sm: '1rem' },
 												textAlign: 'center',

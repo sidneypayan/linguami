@@ -4,6 +4,7 @@ import { useUserContext } from '../../context/user.js'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import UserMenu from './UserMenu'
+import ThemeToggle from '../ThemeToggle'
 import {
 	AppBar,
 	Box,
@@ -318,9 +319,10 @@ const Navbar = props => {
 				)}
 			</List>
 
-			{/* Language selectors pour mobile */}
+			{/* Language selectors et theme toggle pour mobile */}
 			<Box sx={{ px: 3, pb: 2, mt: 'auto', position: 'relative', zIndex: 1 }}>
 				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
+					<ThemeToggle variant="full" />
 					<InterfaceLanguageMenu variant="full" onClose={handleDrawerToggle} />
 					<LanguageMenu variant="full" onClose={handleDrawerToggle} />
 				</Box>
@@ -705,9 +707,10 @@ const Navbar = props => {
 							</Link>
 						)}
 
-						{/* Language buttons - only show when not in material/blog detail */}
+						{/* Theme toggle and Language buttons - only show when not in material/blog detail */}
 						{isMounted && !router.query.material && !router.query.slug && (
 							<>
+								<ThemeToggle />
 								<InterfaceLanguageMenu />
 								<LanguageMenu />
 							</>

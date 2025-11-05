@@ -43,7 +43,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 				}}>
 				<Box
 					sx={{
-						bgcolor: '#F8FAFC',
+						bgcolor: 'background.paper',
 						px: 3,
 						py: 2,
 						borderBottom: '1px solid #E2E8F0',
@@ -93,7 +93,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 				}}>
 				<Box
 					sx={{
-						bgcolor: '#F8FAFC',
+						bgcolor: 'background.paper',
 						px: 3,
 						py: 2,
 						borderBottom: '1px solid #E2E8F0',
@@ -145,7 +145,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 				}}>
 				<Box
 					sx={{
-						bgcolor: '#F8FAFC',
+						bgcolor: 'background.paper',
 						px: 3,
 						py: 2,
 						borderBottom: '1px solid #E2E8F0',
@@ -193,7 +193,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 				}}>
 				<Box
 					sx={{
-						bgcolor: '#F8FAFC',
+						bgcolor: 'background.paper',
 						px: 3,
 						py: 2,
 						borderBottom: '1px solid #E2E8F0',
@@ -234,7 +234,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 						sx={{
 							mt: 2,
 							p: 2,
-							bgcolor: '#F8FAFC',
+							bgcolor: 'background.paper',
 							borderRadius: 2,
 							border: '1px solid #E2E8F0',
 						}}>
