@@ -53,10 +53,18 @@ const emailTemplates = {
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin: 35px 0;">
                                 <tr>
                                     <td align="center">
+                                        <!--[if mso]>
+                                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{confirmationUrl}}" style="height:54px;v-text-anchor:middle;width:300px;" arcsize="22%" strokecolor="#667eea" fillcolor="#667eea">
+                                            <w:anchorlock/>
+                                            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">Confirmer mon compte</center>
+                                        </v:roundrect>
+                                        <![endif]-->
+                                        <!--[if !mso]><!-->
                                         <a href="{{confirmationUrl}}"
-                                           style="display: inline-block; padding: 18px 45px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);">
+                                           style="display: inline-block; padding: 18px 45px; background-color: #667eea; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; font-family: 'Poppins', sans-serif;">
                                             Confirmer mon compte
                                         </a>
+                                        <!--<![endif]-->
                                     </td>
                                 </tr>
                             </table>
@@ -174,10 +182,18 @@ const emailTemplates = {
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin: 35px 0;">
                                 <tr>
                                     <td align="center">
+                                        <!--[if mso]>
+                                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{confirmationUrl}}" style="height:54px;v-text-anchor:middle;width:300px;" arcsize="22%" strokecolor="#667eea" fillcolor="#667eea">
+                                            <w:anchorlock/>
+                                            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">Confirm my account</center>
+                                        </v:roundrect>
+                                        <![endif]-->
+                                        <!--[if !mso]><!-->
                                         <a href="{{confirmationUrl}}"
-                                           style="display: inline-block; padding: 18px 45px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);">
+                                           style="display: inline-block; padding: 18px 45px; background-color: #667eea; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; font-family: 'Poppins', sans-serif;">
                                             Confirm my account
                                         </a>
+                                        <!--<![endif]-->
                                     </td>
                                 </tr>
                             </table>
@@ -295,10 +311,18 @@ const emailTemplates = {
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin: 35px 0;">
                                 <tr>
                                     <td align="center">
+                                        <!--[if mso]>
+                                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{confirmationUrl}}" style="height:54px;v-text-anchor:middle;width:300px;" arcsize="22%" strokecolor="#667eea" fillcolor="#667eea">
+                                            <w:anchorlock/>
+                                            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">Подтвердить аккаунт</center>
+                                        </v:roundrect>
+                                        <![endif]-->
+                                        <!--[if !mso]><!-->
                                         <a href="{{confirmationUrl}}"
-                                           style="display: inline-block; padding: 18px 45px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);">
+                                           style="display: inline-block; padding: 18px 45px; background-color: #667eea; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 12px; font-family: 'Poppins', sans-serif;">
                                             Подтвердить аккаунт
                                         </a>
+                                        <!--<![endif]-->
                                     </td>
                                 </tr>
                             </table>
@@ -414,7 +438,7 @@ serve(async req => {
 				Authorization: `Bearer ${resendApiKey}`,
 			},
 			body: JSON.stringify({
-				from: 'Linguami <onboarding@resend.dev>',
+				from: 'Linguami <noreply@linguami.com>',
 				to: [email],
 				subject: template.subject,
 				html: htmlContent,

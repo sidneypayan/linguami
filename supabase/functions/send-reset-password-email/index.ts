@@ -339,7 +339,7 @@ serve(async req => {
 				Authorization: `Bearer ${resendApiKey}`,
 			},
 			body: JSON.stringify({
-				from: 'Linguami <onboarding@resend.dev>',
+				from: 'Linguami <noreply@linguami.com>',
 				to: [email],
 				subject: template.subject,
 				html: htmlContent,
