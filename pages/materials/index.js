@@ -30,6 +30,7 @@ const Material = () => {
 	// État local pour stocker tous les matériaux chargés
 	const [allLoadedMaterials, setAllLoadedMaterials] = useState([])
 	const [isLoadingAllMaterials, setIsLoadingAllMaterials] = useState(false)
+	const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false)
 
 	const [materials, setMaterials] = useState([])
 	const [practice, setPractice] = useState([])
@@ -53,7 +54,7 @@ const Material = () => {
 	const materialsPerPage = 20
 
 	// Niveau de l'utilisateur
-	const userLevel = userProfile?.level || 'beginner'
+	const userLevel = userProfile?.language_level || 'beginner'
 
 	// Charger la préférence de mode d'affichage depuis le localStorage (après le montage)
 	useEffect(() => {
@@ -122,6 +123,30 @@ const Material = () => {
 			dispatch(getUserMaterialsStatus())
 		}
 	}, [displayMode, userLearningLanguage, dispatch])
+
+	// Appliquer les filtres par défaut (niveau utilisateur + non étudiés) lors du passage en mode liste
+	useEffect(() => {
+		if (
+			displayMode === 'list' &&
+			!isLoadingAllMaterials &&
+			allLoadedMaterials.length > 0 &&
+			!hasAppliedDefaultFilter &&
+			userLevel &&
+			user_materials_status // Attendre que le statut des matériaux soit chargé
+		) {
+			// Appliquer le niveau de l'utilisateur et le statut "non étudiés" comme filtres par défaut
+			setSelectedLevel(userLevel)
+			setSelectedStatus('not_studied')
+			setHasAppliedDefaultFilter(true)
+		}
+	}, [displayMode, isLoadingAllMaterials, allLoadedMaterials.length, hasAppliedDefaultFilter, userLevel, user_materials_status])
+
+	// Réinitialiser le flag quand on change de mode d'affichage
+	useEffect(() => {
+		if (displayMode === 'category') {
+			setHasAppliedDefaultFilter(false)
+		}
+	}, [displayMode])
 
 	// Réinitialiser la page à 1 quand les filtres changent
 	useEffect(() => {
