@@ -62,5 +62,18 @@
 	"notStudiedTooltip": "Материалы, которые вы еще не начали",
 	"search": "Поиск",
 	"showall": "Показать все",
-	"showallTooltip": "Сбросить все фильтры"
+	"showallTooltip": "Сбросить все фильтры",
+	"practiceCategory": "Практика языка",
+	"cultureCategory": "Культура и развлечения",
+	"heritageCategory": "Культура и наследие",
+	"cinemaCategory": "Кино и видео",
+	"songsCategory": "Музыка",
+	"literatureCategory": "Литература и истории",
+	"filterByCategory": "Фильтр по типу медиа",
+	"filterByDuration": "Фильтр по продолжительности",
+	"all": "Все",
+	"textAudio": "Текст и аудио",
+	"short": "Короткие (< 5 мин)",
+	"medium": "Средние (5-20 мин)",
+	"long": "Длинные (> 20 мин)"
 }

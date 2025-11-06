@@ -37,7 +37,7 @@ const MaterialsCard = ({ material }) => {
 						position: 'relative',
 						cursor: 'pointer',
 						width: '100%',
-						height: { xs: 200, sm: 220 },
+						height: { xs: 160, sm: 170, md: 180 },
 						borderRadius: 4,
 						overflow: 'hidden',
 						background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -166,6 +166,7 @@ const MaterialsCard = ({ material }) => {
 								fontSize: '0.7rem',
 								height: 26,
 								flexShrink: 0,
+								pointerEvents: 'none',
 								'& .MuiChip-label': {
 									px: 1.5,
 								},

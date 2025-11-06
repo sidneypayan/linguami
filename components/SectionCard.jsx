@@ -155,6 +155,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
 								border: '2px solid rgba(245, 158, 11, 0.3)',
 								zIndex: 2,
+								pointerEvents: 'none',
 							}}
 						/>
 					)}
@@ -174,6 +175,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)',
 								border: '2px solid rgba(34, 197, 94, 0.3)',
 								zIndex: 2,
+								pointerEvents: 'none',
 							}}
 						/>
 					)}
@@ -271,13 +273,10 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							height: 26,
 							boxShadow: `0 2px 12px ${difficultyInfo.border}30, 0 1px 4px rgba(0, 0, 0, 0.12)`,
 							transition: 'all 0.2s ease',
+							pointerEvents: 'none',
 							'& .MuiChip-label': {
 								px: 1.75,
 								fontFamily: 'inherit',
-							},
-							'&:hover': {
-								boxShadow: `0 4px 16px ${difficultyInfo.border}50, 0 2px 6px rgba(0, 0, 0, 0.15)`,
-								transform: 'translateY(-1px)',
 							},
 						}}
 					/>
@@ -286,7 +285,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	)
 
 	return section === 'books' ? (
-		<button onClick={handleClick} className={styles.cardButton}>
+		<button type="button" onClick={handleClick} className={styles.cardButton}>
 			<SectionCardContent />
 		</button>
 	) : (

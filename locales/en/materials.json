@@ -62,5 +62,18 @@
 	"notStudiedTooltip": "Materials you haven't started yet",
 	"search": "Search",
 	"showall": "Show all",
-	"showallTooltip": "Reset all filters"
+	"showallTooltip": "Reset all filters",
+	"practiceCategory": "Language Practice",
+	"cultureCategory": "Culture & Entertainment",
+	"heritageCategory": "Culture & Heritage",
+	"cinemaCategory": "Cinema & Videos",
+	"songsCategory": "Music",
+	"literatureCategory": "Literature & Stories",
+	"filterByCategory": "Filter by media type",
+	"filterByDuration": "Filter by duration",
+	"all": "All",
+	"textAudio": "Text & Audio",
+	"short": "Short (< 5 min)",
+	"medium": "Medium (5-20 min)",
+	"long": "Long (> 20 min)"
 }
