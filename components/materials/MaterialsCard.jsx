@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Typography, Chip } from '@mui/material'
 import { PlayCircleOutline } from '@mui/icons-material'
@@ -84,14 +83,15 @@ const MaterialsCard = ({ material }) => {
 							height: '100%',
 							transition: 'transform 0.4s ease',
 						}}>
-						<Image
-							style={{ objectFit: 'cover' }}
+						<Box
+							component='img'
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
-							sizes="(max-width: 600px) 50vw, (max-width: 900px) 33vw, 25vw"
-							quality={90}
 							alt={material.title}
-							priority={false}
-							fill
+							sx={{
+								width: '100%',
+								height: '100%',
+								objectFit: 'cover',
+							}}
 						/>
 					</Box>
 

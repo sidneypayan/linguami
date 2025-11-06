@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { FaSkype, FaEnvelope } from 'react-icons/fa'
+import { FaEnvelope, FaMicrosoft } from 'react-icons/fa'
 import SEO from '../../components/SEO'
 import { useUserContext } from '../../context/user'
 import {
@@ -14,6 +14,11 @@ import {
 	useTheme,
 } from '@mui/material'
 import { FormatQuote } from '@mui/icons-material'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination, Autoplay } from 'swiper'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 const Teacher = () => {
 	const { t, lang } = useTranslation('teacher')
@@ -36,12 +41,12 @@ const Teacher = () => {
 		if (isLearningRussian) {
 			// Apprend le russe → Natacha (professeure de russe)
 			if (lang === 'ru') return 'преподаватель русского, частные уроки русского, учить русский с носителем, уроки русского онлайн'
-			if (lang === 'en') return 'russian teacher, private russian lessons, learn russian with native speaker, online russian lessons, russian skype lessons'
-			return 'professeur russe, cours particuliers russe, apprendre russe avec professeur natif, leçons russe en ligne, cours russe skype'
+			if (lang === 'en') return 'russian teacher, private russian lessons, learn russian with native speaker, online russian lessons, russian teams lessons'
+			return 'professeur russe, cours particuliers russe, apprendre russe avec professeur natif, leçons russe en ligne, cours russe teams'
 		} else {
 			// Apprend le français → Sidney (professeur de français)
 			if (lang === 'ru') return 'преподаватель французского, частные уроки французского, учить французский с носителем, уроки французского онлайн'
-			if (lang === 'en') return 'french teacher, private french lessons, learn french with native speaker, online french lessons, french skype lessons'
+			if (lang === 'en') return 'french teacher, private french lessons, learn french with native speaker, online french lessons, french teams lessons'
 			return 'professeur français, cours particuliers français, apprendre français avec professeur natif, leçons français en ligne'
 		}
 	}
@@ -214,9 +219,9 @@ const Teacher = () => {
 							px: { xs: 2, sm: 0 },
 						}}>
 						<Button
-							href={t(isLearningRussian ? 'skypeRussian' : 'skypeFrench')}
+							href={t(isLearningRussian ? 'teamsRussian' : 'teamsFrench')}
 							variant='contained'
-							startIcon={<FaSkype />}
+							startIcon={<FaMicrosoft />}
 							sx={{
 								background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
 								color: '#8b5cf6',
@@ -238,7 +243,7 @@ const Teacher = () => {
 									transform: 'translateY(-2px)',
 								},
 							}}>
-							Skype
+							Teams
 						</Button>
 						<Button
 							href={t(isLearningRussian ? 'mailRussian' : 'mailFrench')}
@@ -271,6 +276,19 @@ const Teacher = () => {
 						</Button>
 					</Stack>
 				</Container>
+
+				{/* Modern diagonal separator */}
+				<Box
+					sx={{
+						position: 'absolute',
+						bottom: -1,
+						left: 0,
+						right: 0,
+						height: { xs: '41px', md: '81px' },
+						bgcolor: 'background.default',
+						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
+					}}
+				/>
 			</Box>
 
 			{/* Section de présentation */}
@@ -293,7 +311,7 @@ const Teacher = () => {
 				</Typography>
 
 				{/* Section des avis */}
-				{lang === 'fr' && (
+				{isLearningRussian && (
 					<Box sx={{ mt: { xs: 6, md: 8 } }}>
 						<Typography
 							variant='h4'
@@ -319,35 +337,60 @@ const Teacher = () => {
 							{t('reviewsSubtitle')}
 						</Typography>
 
-						<Stack
-							gap={{ xs: 3, md: 4 }}
-							sx={{
-								flexDirection: {
-									xs: 'column',
-									lg: 'row',
-								},
-							}}>
-							{[
-								{
-									name: 'David',
-									text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
-									color: '#8b5cf6',
-								},
-								{
-									name: 'Carole',
-									text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
-									color: '#06b6d4',
-								},
-								{
-									name: 'Daniel',
-									text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
-									color: '#8b5cf6',
-								},
-							].map((review, index) => (
-								<Card
-									key={review.name}
+						<Box sx={{ position: 'relative' }}>
+							<Swiper
+								modules={[Navigation, Pagination, Autoplay]}
+								spaceBetween={24}
+								slidesPerView={1}
+								navigation={{
+									nextEl: '.swiper-button-next-reviews',
+									prevEl: '.swiper-button-prev-reviews',
+								}}
+								pagination={{
+									clickable: true,
+									dynamicBullets: true,
+								}}
+								autoplay={{
+									delay: 5000,
+									disableOnInteraction: false,
+									pauseOnMouseEnter: true,
+								}}
+								loop={false}
+								breakpoints={{
+									768: {
+										slidesPerView: 2,
+										spaceBetween: 24,
+									},
+									1024: {
+										slidesPerView: 3,
+										spaceBetween: 32,
+									},
+								}}
+								style={{
+									paddingBottom: '50px',
+									paddingTop: '30px',
+								}}>
+								{[
+									{
+										name: 'David',
+										text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
+										color: '#8b5cf6',
+									},
+									{
+										name: 'Carole',
+										text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
+										color: '#06b6d4',
+									},
+									{
+										name: 'Daniel',
+										text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
+										color: '#8b5cf6',
+									},
+								].map((review, index) => (
+									<SwiperSlide key={review.name} style={{ display: 'flex', height: 'auto' }}>
+										<Card
 									sx={{
-										flex: 1,
+										width: '100%',
 										position: 'relative',
 										borderRadius: 4,
 										overflow: 'visible',
@@ -410,8 +453,10 @@ const Teacher = () => {
 										</Typography>
 									</CardContent>
 								</Card>
-							))}
-						</Stack>
+									</SwiperSlide>
+								))}
+							</Swiper>
+						</Box>
 					</Box>
 				)}
 			</Container>

@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import Link from 'next/link'
-import { Box, Container, Stack, Typography, IconButton, Divider, useTheme } from '@mui/material'
+import { Box, Container, Stack, Typography, IconButton, Divider, useTheme, useMediaQuery } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
 import { useRouter } from 'next/router'
 
@@ -9,6 +9,7 @@ const Footer = () => {
 	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
 	// Masquer le séparateur diagonal sur les pages de connexion/inscription
 	const hideTopSeparator = ['/signin', '/login', '/signup'].includes(router.pathname)
@@ -22,8 +23,12 @@ const Footer = () => {
 				mt: 'auto',
 				position: 'relative',
 				overflow: 'hidden',
-				pt: hideTopSeparator ? { xs: 4, md: 6 } : { xs: '80px', md: '100px' },
-				pb: { xs: 4, md: 6 },
+				pt: hideTopSeparator ? { xs: 3, md: 6 } : { xs: 'calc(3rem + 40px)', md: 'calc(6rem + 80px)' },
+				pb: { xs: 3, md: 6 },
+				clipPath: hideTopSeparator ? 'none' : {
+					xs: 'polygon(0 40px, 100% 0, 100% 100%, 0 100%)',
+					md: 'polygon(0 80px, 100% 0, 100% 100%, 0 100%)',
+				},
 				'&::before': {
 					content: '""',
 					position: 'absolute',
@@ -35,36 +40,10 @@ const Footer = () => {
 					pointerEvents: 'none',
 				},
 			}}>
-			{/* Modern diagonal separator at top */}
-			{!hideTopSeparator && (
-				<Box
-					sx={{
-						position: 'absolute',
-						top: '-1px',
-						left: 0,
-						right: 0,
-						height: { xs: '61px', md: '81px' },
-						background: isDark ? '#0f172a' : '#ffffff',
-						clipPath: 'polygon(0 0, 100% 50%, 100% 0)',
-						zIndex: 0,
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-							clipPath: 'inherit',
-						},
-					}}
-				/>
-			)}
-
 			<Container maxWidth='lg' sx={{ position: 'relative', zIndex: 1 }}>
 				<Stack
 					direction={{ xs: 'column', md: 'row' }}
-					spacing={{ xs: 4, md: 8 }}
+					spacing={{ xs: 2.5, md: 8 }}
 					justifyContent='space-between'
 					alignItems={{ xs: 'center', md: 'flex-start' }}>
 
@@ -74,7 +53,8 @@ const Footer = () => {
 							variant='h4'
 							sx={{
 								fontWeight: 800,
-								mb: 2,
+								mb: { xs: 0, md: 2 },
+								fontSize: { xs: '1.75rem', md: '2.125rem' },
 								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #a78bfa 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
@@ -87,6 +67,7 @@ const Footer = () => {
 						<Typography
 							variant='body2'
 							sx={{
+								display: { xs: 'none', md: 'block' },
 								color: 'rgba(255, 255, 255, 0.9)',
 								maxWidth: '300px',
 								lineHeight: 1.7,
@@ -102,12 +83,13 @@ const Footer = () => {
 							variant='h6'
 							sx={{
 								fontWeight: 700,
-								mb: 2,
+								mb: { xs: 1, md: 2 },
+								fontSize: { xs: '1rem', md: '1.25rem' },
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
 							{t('usefulLinks')}
 						</Typography>
-						<Stack spacing={1.5}>
+						<Stack spacing={{ xs: 1, md: 1.5 }}>
 							<Link
 								href='https://paypal.me/linguami'
 								target='_blank'
@@ -172,15 +154,18 @@ const Footer = () => {
 							variant='h6'
 							sx={{
 								fontWeight: 700,
-								mb: 2,
+								mb: { xs: 1, md: 2 },
+								fontSize: { xs: '1rem', md: '1.25rem' },
 								color: 'rgba(255, 255, 255, 0.95)',
 							}}>
 							{t('followUs')}
 						</Typography>
-						<Stack direction='row' spacing={1} justifyContent='center'>
+						<Stack direction='row' spacing={{ xs: 0.75, md: 1 }} justifyContent='center'>
 							<Link href='https://www.facebook.com/linguami/' target='_blank'>
 								<IconButton
 									sx={{
+										width: { xs: '38px', md: '40px' },
+										height: { xs: '38px', md: '40px' },
 										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 										color: 'white',
 										backdropFilter: 'blur(10px)',
@@ -189,6 +174,10 @@ const Footer = () => {
 										overflow: 'hidden',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
+										'& svg': {
+											fontSize: { xs: '1.25rem', md: '1.5rem' },
+											transition: 'transform 0.6s ease',
+										},
 										'&::before': {
 											content: '""',
 											position: 'absolute',
@@ -209,9 +198,6 @@ const Footer = () => {
 										},
 										'&:hover svg': {
 											transform: 'rotate(360deg)',
-										},
-										'& svg': {
-											transition: 'transform 0.6s ease',
 										},
 									}}>
 									<Facebook />
@@ -220,6 +206,8 @@ const Footer = () => {
 							<Link href='https://twitter.com/linguami/' target='_blank'>
 								<IconButton
 									sx={{
+										width: { xs: '38px', md: '40px' },
+										height: { xs: '38px', md: '40px' },
 										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 										color: 'white',
 										backdropFilter: 'blur(10px)',
@@ -228,6 +216,10 @@ const Footer = () => {
 										overflow: 'hidden',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
+										'& svg': {
+											fontSize: { xs: '1.25rem', md: '1.5rem' },
+											transition: 'transform 0.6s ease',
+										},
 										'&::before': {
 											content: '""',
 											position: 'absolute',
@@ -248,9 +240,6 @@ const Footer = () => {
 										},
 										'&:hover svg': {
 											transform: 'rotate(360deg)',
-										},
-										'& svg': {
-											transition: 'transform 0.6s ease',
 										},
 									}}>
 									<Twitter />
@@ -261,6 +250,8 @@ const Footer = () => {
 								target='_blank'>
 								<IconButton
 									sx={{
+										width: { xs: '38px', md: '40px' },
+										height: { xs: '38px', md: '40px' },
 										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 										color: 'white',
 										backdropFilter: 'blur(10px)',
@@ -269,6 +260,10 @@ const Footer = () => {
 										overflow: 'hidden',
 										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
+										'& svg': {
+											fontSize: { xs: '1.25rem', md: '1.5rem' },
+											transition: 'transform 0.6s ease',
+										},
 										'&::before': {
 											content: '""',
 											position: 'absolute',
@@ -289,9 +284,6 @@ const Footer = () => {
 										},
 										'&:hover svg': {
 											transform: 'rotate(360deg)',
-										},
-										'& svg': {
-											transition: 'transform 0.6s ease',
 										},
 									}}>
 									<YouTube />
@@ -303,7 +295,7 @@ const Footer = () => {
 
 				<Divider
 					sx={{
-						my: 4,
+						my: { xs: 2.5, md: 4 },
 						borderColor: 'rgba(139, 92, 246, 0.3)',
 						boxShadow: '0 0 10px rgba(139, 92, 246, 0.2)',
 					}}

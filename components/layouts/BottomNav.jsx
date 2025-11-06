@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
-import { Paper, BottomNavigation, BottomNavigationAction, Badge } from '@mui/material'
+import { Paper, BottomNavigation, BottomNavigationAction, Badge, useTheme } from '@mui/material'
 import {
 	HomeRounded,
 	AutoStoriesRounded,
@@ -13,6 +13,8 @@ import { useUserContext } from '../../context/user'
 const BottomNav = () => {
 	const router = useRouter()
 	const { t } = useTranslation('common')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const { isUserLoggedIn, userLearningLanguage, isBootstrapping } = useUserContext()
 	const { user_words } = useSelector(store => store.words)
 
@@ -62,10 +64,16 @@ const BottomNav = () => {
 				display: { xs: 'block', md: 'none' },
 				zIndex: 1100,
 				borderRadius: 0,
-				boxShadow: '0 -4px 24px rgba(102, 126, 234, 0.15)',
-				borderTop: '1px solid rgba(102, 126, 234, 0.15)',
+				boxShadow: isDark
+					? '0 -4px 24px rgba(139, 92, 246, 0.25)'
+					: '0 -4px 24px rgba(102, 126, 234, 0.15)',
+				borderTop: isDark
+					? '1px solid rgba(139, 92, 246, 0.3)'
+					: '1px solid rgba(102, 126, 234, 0.15)',
 				backdropFilter: 'blur(10px)',
-				background: 'rgba(255, 255, 255, 0.95)',
+				background: isDark
+					? 'rgba(15, 23, 42, 0.95)'
+					: 'rgba(255, 255, 255, 0.95)',
 			}}
 			elevation={0}>
 			<BottomNavigation
@@ -102,14 +110,16 @@ const BottomNav = () => {
 							},
 						},
 						'&:not(.Mui-selected)': {
-							color: '#9ca3af',
+							color: isDark ? '#cbd5e1' : '#9ca3af',
 							'& .MuiBottomNavigationAction-label': {
 								fontSize: '0.6875rem',
 								fontWeight: 600,
-								color: '#9ca3af',
+								color: isDark ? '#cbd5e1' : '#9ca3af',
 							},
 							'&:active': {
-								background: 'rgba(102, 126, 234, 0.05)',
+								background: isDark
+									? 'rgba(139, 92, 246, 0.08)'
+									: 'rgba(102, 126, 234, 0.05)',
 							},
 						},
 					},
@@ -151,7 +161,9 @@ const BottomNav = () => {
 										padding: '0 5px',
 										borderRadius: '10px',
 										boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)',
-										border: '2px solid white',
+										border: isDark
+											? '2px solid rgba(15, 23, 42, 0.95)'
+											: '2px solid white',
 									},
 								}}>
 								<BookmarksRounded />

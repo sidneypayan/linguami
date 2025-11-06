@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { changePage } from '../../features/materials/materialsSlice'
-import { Box, IconButton, Button, Stack, useTheme } from '@mui/material'
+import { Box, IconButton, Button, Stack, useTheme, useMediaQuery } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 const Pagination = ({ numOfPages: numOfPagesProp }) => {
@@ -8,6 +8,7 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
 	// Utiliser la prop si fournie, sinon utiliser la valeur Redux
 	const numOfPages = numOfPagesProp !== undefined ? numOfPagesProp : numOfPagesRedux
@@ -31,7 +32,7 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 	// Générer les numéros de page à afficher
 	const getPageNumbers = () => {
 		const pages = []
-		const maxVisible = 5 // Nombre maximum de pages visibles
+		const maxVisible = isMobile ? 3 : 5 // Moins de pages sur mobile
 
 		if (numOfPages <= maxVisible) {
 			// Si peu de pages, afficher toutes
@@ -48,12 +49,12 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 
 			// Ajuster si on est au début
 			if (page <= 3) {
-				end = 4
+				end = isMobile ? 2 : 4
 			}
 
 			// Ajuster si on est à la fin
 			if (page >= numOfPages - 2) {
-				start = numOfPages - 3
+				start = isMobile ? numOfPages - 1 : numOfPages - 3
 			}
 
 			// Ajouter "..." si nécessaire
@@ -88,15 +89,16 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 				alignItems: 'center',
 				mt: 5,
 				mb: 3,
+				px: { xs: 1, sm: 0 },
 			}}>
-			<Stack direction='row' spacing={1} alignItems='center'>
+			<Stack direction='row' spacing={{ xs: 0.5, sm: 1 }} alignItems='center'>
 				{/* Bouton précédent */}
 				<IconButton
 					onClick={prevPage}
 					disabled={page === 1}
 					sx={{
-						width: '44px',
-						height: '44px',
+						width: { xs: '36px', sm: '44px' },
+						height: { xs: '36px', sm: '44px' },
 						backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
 						color: isDark ? '#cbd5e1' : 'inherit',
 						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
@@ -157,11 +159,11 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 							onClick={() => dispatch(changePage(pageNumber))}
 							variant={page === pageNumber ? 'contained' : 'outlined'}
 							sx={{
-								minWidth: '44px',
-								height: '44px',
+								minWidth: { xs: '36px', sm: '44px' },
+								height: { xs: '36px', sm: '44px' },
 								borderRadius: 2,
 								fontWeight: 700,
-								fontSize: '1rem',
+								fontSize: { xs: '0.875rem', sm: '1rem' },
 								border: '1px solid',
 								borderColor: page === pageNumber ? 'rgba(139, 92, 246, 0.6)' : (isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)'),
 								background: page === pageNumber
@@ -208,8 +210,8 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 					onClick={nextPage}
 					disabled={page === numOfPages}
 					sx={{
-						width: '44px',
-						height: '44px',
+						width: { xs: '36px', sm: '44px' },
+						height: { xs: '36px', sm: '44px' },
 						backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
 						color: isDark ? '#cbd5e1' : 'inherit',
 						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',

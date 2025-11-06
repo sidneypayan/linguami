@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
@@ -79,6 +78,12 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 		return '#8b5cf6'
 	}
 
+	const getRarity = (level) => {
+		if (level === 'advanced') return 'legendary'
+		if (level === 'intermediate') return 'epic'
+		return 'common'
+	}
+
 	const getLevelLabel = (level) => {
 		if (level === 'beginner') return t('beginner')
 		if (level === 'intermediate') return t('intermediate')
@@ -116,51 +121,175 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	// Version mobile - liste de cartes compactes
 	if (isMobile) {
 		return (
-			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-				{materials.map((material, index) => (
+			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+				{materials.map((material, index) => {
+					const rarity = getRarity(material.level)
+					const levelColor = getLevelColor(material.level)
+					const status = checkIfUserMaterialIsInMaterials(material.id)
+
+					return (
 					<Paper
 						key={material.id}
 						onClick={() => handleRowClick(material)}
 						sx={{
-							p: 2,
-							borderRadius: 4,
+							position: 'relative',
+							p: 0,
+							borderRadius: '16px',
 							cursor: 'pointer',
-							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+							overflow: 'hidden',
+							border: '2px solid transparent',
+							backgroundImage: isDark
+								? rarity === 'legendary'
+									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
+									: rarity === 'epic'
+									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+									: 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)'
+								: rarity === 'legendary'
+								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
+								: rarity === 'epic'
+								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+								: 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)',
+							backgroundOrigin: 'border-box',
+							backgroundClip: 'padding-box, border-box',
 							boxShadow: isDark
-								? '0 4px 20px rgba(139, 92, 246, 0.25)'
-								: '0 4px 20px rgba(139, 92, 246, 0.15)',
+								? rarity === 'legendary'
+									? '0 6px 24px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.2)'
+									: rarity === 'epic'
+									? '0 6px 24px rgba(245, 158, 11, 0.4), 0 0 60px rgba(245, 158, 11, 0.15)'
+									: '0 6px 24px rgba(16, 185, 129, 0.25), 0 0 60px rgba(16, 185, 129, 0.1)'
+								: rarity === 'legendary'
+								? '0 6px 24px rgba(239, 68, 68, 0.3), 0 2px 12px rgba(239, 68, 68, 0.2)'
+								: rarity === 'epic'
+								? '0 6px 24px rgba(245, 158, 11, 0.25), 0 2px 12px rgba(245, 158, 11, 0.15)'
+								: '0 6px 24px rgba(16, 185, 129, 0.2), 0 2px 12px rgba(16, 185, 129, 0.1)',
 							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								background: isDark
+									? 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 92, 246, 0.03) 2px, rgba(139, 92, 246, 0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 92, 246, 0.03) 2px, rgba(139, 92, 246, 0.03) 4px)'
+									: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 92, 246, 0.02) 2px, rgba(139, 92, 246, 0.02) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 92, 246, 0.02) 2px, rgba(139, 92, 246, 0.02) 4px)',
+								opacity: 0.3,
+								zIndex: 0,
+								pointerEvents: 'none',
+							},
+							'&::after': {
+								content: '""',
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								background: isDark
+									? rarity === 'legendary'
+										? 'radial-gradient(circle at 0% 0%, rgba(239, 68, 68, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 50%)'
+										: rarity === 'epic'
+										? 'radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)'
+										: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)'
+									: rarity === 'legendary'
+									? 'radial-gradient(circle at 0% 0%, rgba(239, 68, 68, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.08) 0%, transparent 50%)'
+									: rarity === 'epic'
+									? 'radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 50%)'
+									: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%)',
+								opacity: 0,
+								transition: 'opacity 0.5s ease',
+								zIndex: 0,
+								pointerEvents: 'none',
+							},
 							'&:hover': {
-								boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
-								transform: 'translateY(-4px)',
-								borderColor: 'rgba(139, 92, 246, 0.4)',
+								boxShadow: isDark
+									? rarity === 'legendary'
+										? '0 10px 36px rgba(239, 68, 68, 0.7), 0 0 90px rgba(239, 68, 68, 0.35)'
+										: rarity === 'epic'
+										? '0 10px 36px rgba(245, 158, 11, 0.6), 0 0 90px rgba(245, 158, 11, 0.3)'
+										: '0 10px 36px rgba(16, 185, 129, 0.4), 0 0 90px rgba(16, 185, 129, 0.2)'
+									: rarity === 'legendary'
+									? '0 10px 36px rgba(239, 68, 68, 0.45), 0 4px 20px rgba(239, 68, 68, 0.3)'
+									: rarity === 'epic'
+									? '0 10px 36px rgba(245, 158, 11, 0.4), 0 4px 20px rgba(245, 158, 11, 0.25)'
+									: '0 10px 36px rgba(16, 185, 129, 0.35), 0 4px 20px rgba(16, 185, 129, 0.2)',
+								transform: 'translateY(-4px) scale(1.01)',
+								'&::after': {
+									opacity: 1,
+								},
 							},
 							'&:active': {
 								transform: 'scale(0.98)',
 							},
 						}}>
-						<Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+						{/* Badge de statut positionné en haut à droite */}
+						{status?.is_being_studied && (
+							<Schedule
+								sx={{
+									position: 'absolute',
+									top: 8,
+									right: 8,
+									fontSize: '1.3rem',
+									color: '#f59e0b',
+									background: isDark
+										? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
+										: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 240, 0.95) 100%)',
+									backdropFilter: 'blur(12px)',
+									borderRadius: '50%',
+									padding: '5px',
+									boxShadow: '0 3px 15px rgba(245, 158, 11, 0.6), 0 0 30px rgba(245, 158, 11, 0.4)',
+									border: '2px solid rgba(245, 158, 11, 0.6)',
+									zIndex: 10,
+									pointerEvents: 'none',
+								}}
+							/>
+						)}
+						{status?.is_studied && (
+							<CheckCircle
+								sx={{
+									position: 'absolute',
+									top: 8,
+									right: 8,
+									fontSize: '1.3rem',
+									color: '#22c55e',
+									background: isDark
+										? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
+										: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 255, 245, 0.95) 100%)',
+									backdropFilter: 'blur(12px)',
+									borderRadius: '50%',
+									padding: '5px',
+									boxShadow: '0 3px 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.4)',
+									border: '2px solid rgba(34, 197, 94, 0.6)',
+									zIndex: 10,
+									pointerEvents: 'none',
+								}}
+							/>
+						)}
+
+						<Box sx={{ display: 'flex', gap: 2, alignItems: 'center', p: 2, position: 'relative', zIndex: 1 }}>
 							{/* Image */}
 							{index === 0 ? (
 								<Box
 									sx={{
-										width: 80,
-										height: 80,
+										width: 90,
+										height: 90,
 										flexShrink: 0,
 										borderRadius: 2,
 										overflow: 'hidden',
 										position: 'relative',
-										boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+										boxShadow: isDark
+											? `0 4px 16px ${levelColor}40`
+											: `0 4px 16px ${levelColor}30`,
+										border: `2px solid ${levelColor}40`,
 									}}>
-									<Image
+									<Box
+										component='img'
 										src={getImageUrl(material.image)}
 										alt={material.title}
-										fill
-										priority
-										style={{ objectFit: 'cover' }}
+										sx={{
+											width: '100%',
+											height: '100%',
+											objectFit: 'cover',
+										}}
 									/>
 								</Box>
 							) : (
@@ -169,59 +298,143 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									alt={material.title}
 									variant="rounded"
 									sx={{
-										width: 80,
-										height: 80,
+										width: 90,
+										height: 90,
 										flexShrink: 0,
-										boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+										boxShadow: isDark
+											? `0 4px 16px ${levelColor}40`
+											: `0 4px 16px ${levelColor}30`,
+										border: `2px solid ${levelColor}40`,
 									}}
 								/>
 							)}
 
 							{/* Content */}
-							<Box sx={{ flex: 1, minWidth: 0 }}>
-								<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-									<Typography
-										sx={{
-											fontSize: '1rem',
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-											lineHeight: 1.3,
-											flex: 1,
-											mr: 1,
-										}}>
-										{material.title}
-									</Typography>
-									{getStatusIcon(material.id)}
-								</Box>
+							<Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+								<Typography
+									sx={{
+										fontSize: '0.95rem',
+										fontWeight: 800,
+										background: isDark
+											? rarity === 'legendary'
+												? 'linear-gradient(135deg, #ef4444 0%, #f87171 50%, #ef4444 100%)'
+												: rarity === 'epic'
+												? 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%)'
+												: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%)'
+											: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #7c3aed 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+										lineHeight: 1.3,
+										mb: 1,
+										textTransform: 'uppercase',
+										letterSpacing: '0.3px',
+										pr: 2,
+									}}>
+									{material.title}
+								</Typography>
 
-								<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-									<Chip
-										label={getLevelLabel(material.level)}
-										size="small"
+								<Box>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between', mb: 0.5 }}>
+										<Typography
+											variant="caption"
+											sx={{
+												color: isDark ? '#cbd5e1' : '#64748b',
+												fontWeight: 600,
+												fontSize: '0.75rem',
+												textTransform: 'capitalize',
+											}}>
+											{material.section}
+										</Typography>
+										<Chip
+											label={getLevelLabel(material.level)}
+											size="small"
+											sx={{
+												background: isDark
+													? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
+													: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 245, 0.95) 100%)',
+												backdropFilter: 'blur(12px)',
+												border: `1.5px solid ${levelColor}`,
+												color: levelColor,
+												fontWeight: 800,
+												fontSize: '0.65rem',
+												height: 22,
+												boxShadow: isDark
+													? `0 3px 15px ${levelColor}60, 0 0 20px ${levelColor}40`
+													: `0 3px 12px ${levelColor}50`,
+												textTransform: 'uppercase',
+												letterSpacing: '0.5px',
+												'& .MuiChip-label': {
+													px: 1,
+													textShadow: isDark ? `0 0 8px ${levelColor}80` : 'none',
+												},
+											}}
+										/>
+									</Box>
+
+									{/* Decorative divider */}
+									<Box
 										sx={{
-											backgroundColor: getLevelColor(material.level),
-											color: 'white',
-											fontWeight: 600,
-											fontSize: '0.75rem',
-											height: '24px',
-										}}
-									/>
-									<Typography
-										variant="caption"
-										sx={{
-											color: isDark ? '#94a3b8' : '#718096',
-											fontWeight: 500,
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											gap: 0.5,
+											opacity: 0.8,
+											mt: 2.5,
+											mb: -2.5,
 										}}>
-										{material.section}
-									</Typography>
+										<Box
+											sx={{
+												flex: 1,
+												height: '1px',
+												background: isDark
+													? `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 100%)`
+													: `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.5)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 100%)`,
+											}}
+										/>
+										<Box
+											sx={{
+												width: 3,
+												height: 3,
+												background: levelColor,
+												transform: 'rotate(45deg)',
+												boxShadow: `0 0 4px ${levelColor}`,
+											}}
+										/>
+										<Box
+											sx={{
+												width: 2,
+												height: 2,
+												background: levelColor,
+												borderRadius: '50%',
+												opacity: 0.6,
+											}}
+										/>
+										<Box
+											sx={{
+												width: 3,
+												height: 3,
+												background: levelColor,
+												transform: 'rotate(45deg)',
+												boxShadow: `0 0 4px ${levelColor}`,
+											}}
+										/>
+										<Box
+											sx={{
+												flex: 1,
+												height: '1px',
+												background: isDark
+													? `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 0%, transparent 100%)`
+													: `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.5)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 0%, transparent 100%)`,
+											}}
+										/>
+									</Box>
 								</Box>
 							</Box>
 						</Box>
 					</Paper>
-				))}
+					)
+				})}
 			</Box>
 		)
 	}
@@ -332,12 +545,15 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 											position: 'relative',
 											boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
 										}}>
-										<Image
+										<Box
+											component='img'
 											src={getImageUrl(material.image)}
 											alt={material.title}
-											fill
-											priority
-											style={{ objectFit: 'cover' }}
+											sx={{
+												width: '100%',
+												height: '100%',
+												objectFit: 'cover',
+											}}
 										/>
 									</Box>
 								) : (

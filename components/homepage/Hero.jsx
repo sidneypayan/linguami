@@ -1,7 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
 import Link from 'next/link'
-import Image from 'next/image'
 import { primaryButton } from '../../utils/buttonStyles'
 
 const Hero = () => {
@@ -14,10 +13,14 @@ const Hero = () => {
 			sx={{
 				position: 'relative',
 				padding: {
-					xs: '4rem 0 2.5rem 0',
-					md: '5.5rem 0 4rem 0',
+					xs: '3rem 0 calc(2rem + 40px) 0',
+					md: '5.5rem 0 calc(4rem + 80px) 0',
 				},
 				background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+				clipPath: {
+					xs: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%)',
+					md: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), 0 100%)',
+				},
 				overflow: 'hidden',
 				'&::before': {
 					content: '""',
@@ -58,7 +61,7 @@ const Hero = () => {
 				width={1440}
 				maxWidth='100%'
 				sx={{
-					padding: { xs: '2rem', md: '3rem' },
+					padding: { xs: '1.5rem', md: '3rem' },
 					margin: '0 auto',
 					justifyContent: {
 						xs: 'center',
@@ -78,9 +81,9 @@ const Hero = () => {
 							display: 'inline-flex',
 							alignItems: 'center',
 							gap: 1,
-							px: 3,
-							py: 1,
-							mb: 3,
+							px: { xs: 2.5, md: 3 },
+							py: { xs: 0.75, md: 1 },
+							mb: { xs: 2, md: 3 },
 							borderRadius: 50,
 							background: 'rgba(139, 92, 246, 0.2)',
 							border: '1px solid rgba(139, 92, 246, 0.3)',
@@ -119,9 +122,9 @@ const Hero = () => {
 					<Typography
 						variant='h2'
 						component='h1'
-						mb={3}
+						mb={{ xs: 2, md: 3 }}
 						sx={{
-							fontSize: { xs: '2.5rem', sm: '3rem', md: '4rem' },
+							fontSize: { xs: '2.25rem', sm: '3rem', md: '4rem' },
 							fontWeight: 800,
 							lineHeight: 1.15,
 							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
@@ -150,11 +153,11 @@ const Hero = () => {
 
 					<>
 						<Typography
-							mb={5}
+							mb={{ xs: 3, md: 5 }}
 							variant='h5'
 							sx={{
 								display: { xs: 'block', md: 'none' },
-								fontSize: '1.125rem',
+								fontSize: '1rem',
 								fontWeight: 500,
 								lineHeight: 1.7,
 								color: 'rgba(255, 255, 255, 0.85)',
@@ -329,16 +332,16 @@ const Hero = () => {
 							overflow: 'hidden',
 							zIndex: 2,
 						}}>
-						<Image
+						<Box
+							component='img'
 							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.webp`}
 							alt='Linguami hero'
-							fill
-							sizes="(max-width: 1024px) 0px, 320px"
-							style={{
+							sx={{
+								width: '100%',
+								height: '100%',
 								objectFit: 'cover',
 								filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
 							}}
-							priority
 						/>
 
 						{/* Overlay pour masquer le logo Gemini en bas à droite */}
@@ -356,29 +359,6 @@ const Hero = () => {
 					</Box>
 				</Box>
 			</Stack>
-
-			{/* Modern diagonal separator */}
-			<Box
-				sx={{
-					position: 'absolute',
-					bottom: 0,
-					left: 0,
-					right: 0,
-					height: { xs: '60px', md: '80px' },
-					background: isDark ? '#0f172a' : '#ffffff',
-					clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-						clipPath: 'inherit',
-					},
-				}}
-			/>
 		</Box>
 	)
 }

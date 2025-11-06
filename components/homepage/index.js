@@ -1,6 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useState, useMemo, useEffect } from 'react'
-import Image from 'next/image'
 import Hero from './Hero'
 import Link from 'next/link'
 import {
@@ -60,7 +59,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				width: { xs: '100%', md: '850px', lg: '900px' },
 				maxWidth: '100%',
 				margin: '0 auto',
-				marginTop: { xs: '3rem', md: marginTop || '5rem' },
+				marginTop: typeof marginTop === 'object' ? marginTop : { xs: '3rem', md: marginTop || '5rem' },
 				position: 'relative',
 				...getOffset(),
 				transition: 'transform 0.4s ease',
@@ -148,8 +147,8 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 				sx={{
 					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
 					alignItems: 'center',
-					gap: { xs: 3, md: 4, lg: 4.5 },
-					padding: { xs: '1.5rem 2rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
+					gap: { xs: 2, md: 4, lg: 4.5 },
+					padding: { xs: '1.5rem 1.5rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
 					borderRadius: 5,
 					background: isDark
 						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)'
@@ -317,7 +316,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 
 				{/* Content Section */}
 				<Stack
-					gap={2.5}
+					gap={{ xs: 2, md: 2.5 }}
 					sx={{
 						width: { xs: '100%', md: '58%' },
 						textAlign: { xs: 'center', md: 'left' },
@@ -369,7 +368,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					<Typography
 						variant='body1'
 						sx={{
-							color: isDark ? '#94a3b8' : '#64748b',
+							color: isDark ? '#cbd5e1' : '#64748b',
 							fontWeight: 500,
 							lineHeight: 1.8,
 							fontSize: { xs: '0.95rem', md: '1rem', lg: '1.05rem' },
@@ -506,11 +505,9 @@ const Homepage = () => {
 						bottom: 0,
 						backgroundImage: `
 							radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
-							radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.03) 0%, transparent 50%),
-							linear-gradient(90deg, rgba(139, 92, 246, 0.02) 1px, transparent 1px),
-							linear-gradient(rgba(139, 92, 246, 0.02) 1px, transparent 1px)
+							radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.03) 0%, transparent 50%)
 						`,
-						backgroundSize: '100% 100%, 100% 100%, 100px 100px, 100px 100px',
+						backgroundSize: '100% 100%, 100% 100%',
 						pointerEvents: 'none',
 						zIndex: 0,
 					},
@@ -518,7 +515,7 @@ const Homepage = () => {
 				<Container
 					maxWidth={false}
 					sx={{
-						margin: { xs: '3rem auto', md: '5rem auto' },
+						margin: { xs: '2rem auto', md: '5rem auto' },
 						padding: { xs: '0 0.25rem', md: '0 1.5rem' },
 						maxWidth: '1350px',
 						position: 'relative',
@@ -549,9 +546,9 @@ const Homepage = () => {
 					variant='h3'
 					align='center'
 					sx={{
-						fontSize: { xs: '2rem', sm: '2.25rem', md: '2.75rem', lg: '3rem' },
+						fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem', lg: '3rem' },
 						fontWeight: 800,
-						mb: 2,
+						mb: { xs: 1.5, md: 2 },
 						px: { xs: 2, sm: 3 },
 						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
 						backgroundSize: '200% 200%',
@@ -581,9 +578,9 @@ const Homepage = () => {
 					variant='subtitle1'
 					align='center'
 					sx={{
-						color: isDark ? '#94a3b8' : '#64748b',
-						fontSize: { xs: '1rem', sm: '1.05rem', md: '1.125rem' },
-						mb: 6,
+						color: isDark ? '#cbd5e1' : '#64748b',
+						fontSize: { xs: '0.95rem', sm: '1.05rem', md: '1.125rem' },
+						mb: { xs: 4, md: 6 },
 						px: { xs: 2, sm: 3 },
 						maxWidth: '700px',
 						mx: 'auto',
@@ -634,7 +631,7 @@ const Homepage = () => {
 							disableOnInteraction: false,
 							pauseOnMouseEnter: true,
 						} : false}
-						loop={isMounted}
+						loop={false}
 						breakpoints={{
 							600: {
 								slidesPerView: 2,
@@ -778,21 +775,16 @@ const Homepage = () => {
 													zIndex: 2,
 													transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 												}}>
-												<Image
+												<Box
+													component='img'
 													src={icon.img}
 													alt={icon.title}
-													fill
-													quality={100}
-													sizes="(max-width: 600px) 130px, 150px"
-													style={{
+													sx={{
+														width: '100%',
+														height: '100%',
 														objectFit: 'cover',
-														imageRendering: '-webkit-optimize-contrast',
-														WebkitFontSmoothing: 'antialiased',
-														backfaceVisibility: 'hidden',
-														transform: 'translateZ(0)',
+														filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
 													}}
-													priority={index === 0}
-													unoptimized={false}
 												/>
 
 												{/* Overlay pour masquer le logo Gemini en bas à droite */}
@@ -880,7 +872,7 @@ const Homepage = () => {
 													variant='body2'
 													sx={{
 														display: { xs: 'block', sm: 'none' },
-														color: isDark ? '#94a3b8' : '#475569',
+														color: isDark ? '#cbd5e1' : '#475569',
 														fontWeight: 500,
 														fontSize: '0.8rem',
 														lineHeight: 1.6,
@@ -913,7 +905,7 @@ const Homepage = () => {
 													variant='body2'
 													sx={{
 														display: { xs: 'none', sm: 'block' },
-														color: isDark ? '#94a3b8' : '#475569',
+														color: isDark ? '#cbd5e1' : '#475569',
 														fontWeight: 500,
 														fontSize: '0.85rem',
 														lineHeight: 1.6,
@@ -1190,21 +1182,16 @@ const Homepage = () => {
 												zIndex: 2,
 												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 											}}>
-											<Image
+											<Box
+												component='img'
 												src={icon.img}
 												alt={icon.title}
-												fill
-												quality={100}
-												sizes="(max-width: 600px) 110px, (max-width: 960px) 130px, 150px"
-												style={{
+												sx={{
+													width: '100%',
+													height: '100%',
 													objectFit: 'cover',
-													imageRendering: '-webkit-optimize-contrast',
-													WebkitFontSmoothing: 'antialiased',
-													backfaceVisibility: 'hidden',
-													transform: 'translateZ(0)',
+													filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
 												}}
-												priority={index === 0}
-												unoptimized={false}
 											/>
 
 											{/* Overlay pour masquer le logo Gemini en bas à droite */}
@@ -1292,7 +1279,7 @@ const Homepage = () => {
 												variant='body2'
 												sx={{
 													display: { xs: 'block', sm: 'none' },
-													color: isDark ? '#94a3b8' : '#475569',
+													color: isDark ? '#cbd5e1' : '#475569',
 													fontWeight: 500,
 													fontSize: '0.8rem',
 													lineHeight: 1.6,
@@ -1325,7 +1312,7 @@ const Homepage = () => {
 												variant='body2'
 												sx={{
 													display: { xs: 'none', sm: 'block' },
-													color: isDark ? '#94a3b8' : '#475569',
+													color: isDark ? '#cbd5e1' : '#475569',
 													fontWeight: 500,
 													fontSize: { sm: '0.85rem', md: '0.9rem', lg: '0.85rem' },
 													lineHeight: 1.6,
@@ -1530,7 +1517,7 @@ const Homepage = () => {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						my: { xs: '5rem', md: '8rem' },
+						my: { xs: '3.5rem', md: '8rem' },
 						position: 'relative',
 					}}>
 					{/* Ligne gauche */}
@@ -1609,7 +1596,7 @@ const Homepage = () => {
 					sx={{
 						position: 'relative',
 						mt: 0,
-						mb: { xs: '3rem', md: '5rem' },
+						mb: { xs: '2rem', md: '5rem' },
 						'&::before': {
 							content: '""',
 							position: 'absolute',
@@ -1630,9 +1617,9 @@ const Homepage = () => {
 						variant='h3'
 						align='center'
 						sx={{
-							fontSize: { xs: '2rem', md: '3rem' },
+							fontSize: { xs: '1.75rem', md: '3rem' },
 							fontWeight: 800,
-							mb: 2,
+							mb: { xs: 1.5, md: 2 },
 							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
 							backgroundSize: '200% 200%',
 							WebkitBackgroundClip: 'text',
@@ -1661,8 +1648,8 @@ const Homepage = () => {
 						variant='subtitle1'
 						align='center'
 						sx={{
-							color: isDark ? '#94a3b8' : '#64748b',
-							fontSize: { xs: '1rem', md: '1.125rem' },
+							color: isDark ? '#cbd5e1' : '#64748b',
+							fontSize: { xs: '0.95rem', md: '1.125rem' },
 							maxWidth: '700px',
 							mx: 'auto',
 							fontWeight: 500,
@@ -1694,7 +1681,7 @@ const Homepage = () => {
 					imageAlt="dictionary"
 					onShowClick={() => handleOpen('dictionary.mp4', t('dictionary'))}
 					reverse={false}
-					marginTop="8rem"
+					marginTop={{ xs: '5rem', md: '8rem' }}
 					badge={t('badgeNew')}
 					offsetDirection="left"
 					buttonText={t('viewDemo')}
@@ -1707,7 +1694,7 @@ const Homepage = () => {
 					imageAlt="flashcards"
 					onShowClick={() => handleOpen('flashcards.mp4', t('flashcards'))}
 					reverse={true}
-					marginTop="8rem"
+					marginTop={{ xs: '5rem', md: '8rem' }}
 					badge={t('badgePopular')}
 					offsetDirection="right"
 					buttonText={t('viewDemo')}
@@ -1721,7 +1708,7 @@ const Homepage = () => {
 						imageAlt="teacher"
 						onShowClick={() => {}}
 						reverse={false}
-						marginTop="8rem"
+						marginTop={{ xs: '5rem', md: '8rem' }}
 						badge={t('badgePremium')}
 						offsetDirection="left"
 						buttonText={t('viewDemo')}

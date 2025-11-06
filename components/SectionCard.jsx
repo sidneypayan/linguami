@@ -20,7 +20,6 @@ import {
 	useTheme,
 } from '@mui/material'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useUserContext } from '../context/user'
 import useTranslation from 'next-translate/useTranslation'
 
@@ -322,17 +321,16 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							zIndex: 1,
 						},
 					}}>
-					<Image
+					<Box
+						component='img'
 						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
 						alt={material.title}
-						fill
-						sizes="(max-width: 640px) 340px, 340px"
-						style={{
+						sx={{
+							width: '100%',
+							height: '100%',
 							objectFit: 'cover',
 							transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
 						}}
-						quality={90}
-						priority={false}
 					/>
 				</Box>
 
