@@ -18,19 +18,18 @@ import { sendVerificationEmail, isEmailVerified } from '../lib/emailVerification
 // Helper: Déterminer la langue d'apprentissage par défaut
 // --------------------------------------------------------
 const getDefaultLearningLanguage = (currentLocale) => {
-	// Langues disponibles pour l'apprentissage
-	const availableLanguages = ['fr', 'ru', 'en']
+	// Langues disponibles pour l'apprentissage (anglais suspendu temporairement)
+	const availableLanguages = ['fr', 'ru']
 
 	// Retirer la langue actuelle de l'interface des options
 	const options = availableLanguages.filter(lang => lang !== currentLocale)
 
-	// Priorité: anglais > français > russe
-	if (options.includes('en')) return 'en'
+	// Priorité: français > russe
 	if (options.includes('fr')) return 'fr'
 	if (options.includes('ru')) return 'ru'
 
-	// Fallback: anglais si aucune autre option
-	return 'en'
+	// Fallback: français si aucune autre option
+	return 'fr'
 }
 
 // --------------------------------------------------------

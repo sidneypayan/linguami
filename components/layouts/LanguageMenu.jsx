@@ -115,12 +115,8 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	// Langues disponibles pour l'apprentissage (anglais en priorité)
+	// Langues disponibles pour l'apprentissage (anglais suspendu temporairement)
 	const allLanguages = [
-		{
-			lang: 'en',
-			name: t('english'),
-		},
 		{
 			lang: 'fr',
 			name: t('french'),

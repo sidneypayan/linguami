@@ -112,15 +112,15 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				height: { xs: 280, sm: 300 },
 				boxShadow: isDark
 					? rarity === 'legendary'
-						? '0 8px 36px rgba(212, 175, 55, 0.6), 0 0 100px rgba(212, 175, 55, 0.3), inset 0 0 80px rgba(212, 175, 55, 0.08)'
+						? '0 8px 36px rgba(239, 68, 68, 0.6), 0 0 100px rgba(239, 68, 68, 0.3), inset 0 0 80px rgba(239, 68, 68, 0.08)'
 						: rarity === 'epic'
-						? '0 8px 32px rgba(139, 92, 246, 0.5), 0 0 80px rgba(139, 92, 246, 0.25), inset 0 0 60px rgba(139, 92, 246, 0.06)'
-						: '0 8px 28px rgba(139, 92, 246, 0.3), 0 0 60px rgba(139, 92, 246, 0.15), inset 0 0 40px rgba(139, 92, 246, 0.04)'
+						? '0 8px 32px rgba(245, 158, 11, 0.5), 0 0 80px rgba(245, 158, 11, 0.25), inset 0 0 60px rgba(245, 158, 11, 0.06)'
+						: '0 8px 28px rgba(16, 185, 129, 0.3), 0 0 60px rgba(16, 185, 129, 0.15), inset 0 0 40px rgba(16, 185, 129, 0.04)'
 					: rarity === 'legendary'
-					? '0 8px 36px rgba(212, 175, 55, 0.4), 0 4px 20px rgba(212, 175, 55, 0.25)'
+					? '0 8px 36px rgba(239, 68, 68, 0.4), 0 4px 20px rgba(239, 68, 68, 0.25)'
 					: rarity === 'epic'
-					? '0 8px 32px rgba(139, 92, 246, 0.35), 0 4px 18px rgba(139, 92, 246, 0.2)'
-					: '0 8px 28px rgba(139, 92, 246, 0.25), 0 4px 14px rgba(139, 92, 246, 0.15)',
+					? '0 8px 32px rgba(245, 158, 11, 0.35), 0 4px 18px rgba(245, 158, 11, 0.2)'
+					: '0 8px 28px rgba(16, 185, 129, 0.25), 0 4px 14px rgba(16, 185, 129, 0.15)',
 				background: isDark
 					? 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%)'
 					: 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%)',
@@ -129,15 +129,15 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					: '3px solid transparent',
 				backgroundImage: isDark
 					? rarity === 'legendary'
-						? 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #d4af37 0%, #f4d03f 20%, #d4af37 40%, #f4d03f 60%, #d4af37 80%, #f4d03f 100%)'
+						? 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
 						: rarity === 'epic'
-						? 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #8b5cf6 0%, #a78bfa 25%, #8b5cf6 50%, #a78bfa 75%, #8b5cf6 100%)'
-						: 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #64748b 0%, #8b5cf6 50%, #64748b 100%)'
+						? 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+						: 'linear-gradient(180deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 50%, rgba(15, 10, 30, 0.98) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)'
 					: rarity === 'legendary'
-					? 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #d4af37 0%, #f4d03f 20%, #d4af37 40%, #f4d03f 60%, #d4af37 80%, #f4d03f 100%)'
+					? 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
 					: rarity === 'epic'
-					? 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #8b5cf6 0%, #a78bfa 25%, #8b5cf6 50%, #a78bfa 75%, #8b5cf6 100%)'
-					: 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #8b5cf6 100%)',
+					? 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+					: 'linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 50%, rgba(245, 240, 230, 0.98) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)',
 				backgroundOrigin: 'border-box',
 				backgroundClip: 'padding-box, border-box',
 				borderRadius: '20px',
@@ -166,8 +166,16 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					right: 0,
 					bottom: 0,
 					background: isDark
-						? 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 60%)'
-						: 'radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 60%)',
+						? rarity === 'legendary'
+							? 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.15) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 60%)'
+							: rarity === 'epic'
+							? 'radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 60%)'
+							: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 60%)'
+						: rarity === 'legendary'
+						? 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.1) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(239, 68, 68, 0.08) 0%, transparent 60%)'
+						: rarity === 'epic'
+						? 'radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.1) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 60%)'
+						: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%)',
 					opacity: 0,
 					transition: 'opacity 0.5s ease',
 					zIndex: 0,
@@ -179,15 +187,15 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 				'&:hover': {
 					boxShadow: isDark
 						? rarity === 'legendary'
-							? '0 16px 48px rgba(212, 175, 55, 0.8), 0 0 140px rgba(212, 175, 55, 0.5), inset 0 0 100px rgba(212, 175, 55, 0.15)'
+							? '0 16px 48px rgba(239, 68, 68, 0.8), 0 0 140px rgba(239, 68, 68, 0.5), inset 0 0 100px rgba(239, 68, 68, 0.15)'
 							: rarity === 'epic'
-							? '0 14px 42px rgba(139, 92, 246, 0.7), 0 0 120px rgba(139, 92, 246, 0.45), inset 0 0 90px rgba(139, 92, 246, 0.12)'
-							: '0 12px 36px rgba(139, 92, 246, 0.5), 0 0 100px rgba(139, 92, 246, 0.35), inset 0 0 80px rgba(139, 92, 246, 0.1)'
+							? '0 14px 42px rgba(245, 158, 11, 0.7), 0 0 120px rgba(245, 158, 11, 0.45), inset 0 0 90px rgba(245, 158, 11, 0.12)'
+							: '0 12px 36px rgba(16, 185, 129, 0.5), 0 0 100px rgba(16, 185, 129, 0.35), inset 0 0 80px rgba(16, 185, 129, 0.1)'
 						: rarity === 'legendary'
-						? '0 16px 48px rgba(212, 175, 55, 0.6), 0 8px 36px rgba(212, 175, 55, 0.4)'
+						? '0 16px 48px rgba(239, 68, 68, 0.6), 0 8px 36px rgba(239, 68, 68, 0.4)'
 						: rarity === 'epic'
-						? '0 14px 42px rgba(139, 92, 246, 0.55), 0 7px 30px rgba(139, 92, 246, 0.35)'
-						: '0 12px 36px rgba(139, 92, 246, 0.45), 0 6px 24px rgba(139, 92, 246, 0.3)',
+						? '0 14px 42px rgba(245, 158, 11, 0.55), 0 7px 30px rgba(245, 158, 11, 0.35)'
+						: '0 12px 36px rgba(16, 185, 129, 0.45), 0 6px 24px rgba(16, 185, 129, 0.3)',
 					transform: 'translateY(-8px) scale(1.02)',
 					'&::after': {
 						opacity: 1,
@@ -195,18 +203,16 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					'& .holographic-effect': {
 						opacity: rarity === 'legendary' ? 0.5 : rarity === 'epic' ? 0.3 : 0.15,
 					},
-					'& .corner-ornament': {
-						opacity: 1,
-						transform: 'scale(1.1)',
-					},
 					'& .section-card-image img': {
 						transform: 'scale(1.15)',
 					},
 					'& .card-title': {
 						textShadow: isDark
 							? rarity === 'legendary'
-								? '0 0 30px rgba(212, 175, 55, 1), 0 0 60px rgba(212, 175, 55, 0.6)'
-								: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(139, 92, 246, 0.5)'
+								? '0 0 30px rgba(239, 68, 68, 1), 0 0 60px rgba(239, 68, 68, 0.6)'
+								: rarity === 'epic'
+								? '0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.5)'
+								: '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.5)'
 							: '0 2px 8px rgba(139, 92, 246, 0.3)',
 					},
 				},
@@ -230,65 +236,6 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						'@keyframes holographicShine': {
 							'0%': { backgroundPosition: '200% 0' },
 							'100%': { backgroundPosition: '-200% 0' },
-						},
-					}}
-				/>
-
-				{/* Coins décoratifs */}
-				{/* Coin supérieur gauche */}
-				<Box
-					className="corner-ornament"
-					sx={{
-						position: 'absolute',
-						top: 8,
-						left: 8,
-						width: 14,
-						height: 14,
-						borderTop: `2px solid ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
-						borderLeft: `2px solid ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
-						opacity: 0.6,
-						transition: 'all 0.3s ease',
-						zIndex: 5,
-						pointerEvents: 'none',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: -2,
-							left: -2,
-							width: 4,
-							height: 4,
-							background: rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b',
-							borderRadius: '50%',
-							boxShadow: `0 0 6px ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
-						},
-					}}
-				/>
-
-				{/* Coin supérieur droit */}
-				<Box
-					className="corner-ornament"
-					sx={{
-						position: 'absolute',
-						top: 8,
-						right: 8,
-						width: 14,
-						height: 14,
-						borderTop: `2px solid ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
-						borderRight: `2px solid ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
-						opacity: 0.6,
-						transition: 'all 0.3s ease',
-						zIndex: 5,
-						pointerEvents: 'none',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: -2,
-							right: -2,
-							width: 4,
-							height: 4,
-							background: rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b',
-							borderRadius: '50%',
-							boxShadow: `0 0 6px ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
 						},
 					}}
 				/>
@@ -402,7 +349,11 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 						zIndex: 2,
 						background: isDark
 							? 'linear-gradient(to bottom, transparent 0%, rgba(20, 20, 35, 0.3) 100%)'
-							: 'linear-gradient(to bottom, transparent 0%, rgba(212, 175, 55, 0.05) 100%)',
+							: rarity === 'legendary'
+							? 'linear-gradient(to bottom, transparent 0%, rgba(239, 68, 68, 0.05) 100%)'
+							: rarity === 'epic'
+							? 'linear-gradient(to bottom, transparent 0%, rgba(245, 158, 11, 0.05) 100%)'
+							: 'linear-gradient(to bottom, transparent 0%, rgba(16, 185, 129, 0.05) 100%)',
 					}}>
 					<Box sx={{ textAlign: 'center', mb: 0.5 }}>
 						<Typography
@@ -413,7 +364,11 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								fontSize: { xs: '0.9rem', sm: '0.95rem' },
 								fontWeight: 800,
 								background: isDark
-									? 'linear-gradient(135deg, #d4af37 0%, #f4e4a6 50%, #d4af37 100%)'
+									? rarity === 'legendary'
+										? 'linear-gradient(135deg, #ef4444 0%, #f87171 50%, #ef4444 100%)'
+										: rarity === 'epic'
+										? 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%)'
+										: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%)'
 									: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #7c3aed 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
@@ -422,7 +377,11 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								textTransform: 'uppercase',
 								letterSpacing: '0.3px',
 								textShadow: isDark
-									? '0 2px 10px rgba(212, 175, 55, 0.3)'
+									? rarity === 'legendary'
+										? '0 2px 10px rgba(239, 68, 68, 0.3)'
+										: rarity === 'epic'
+										? '0 2px 10px rgba(245, 158, 11, 0.3)'
+										: '0 2px 10px rgba(16, 185, 129, 0.3)'
 									: 'none',
 								transition: 'all 0.3s ease',
 							}}>
@@ -481,24 +440,24 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								flex: 1,
 								height: '1.5px',
 								background: isDark
-									? `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(212, 175, 55, 0.8)' : rarity === 'epic' ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.4)'} 100%)`
-									: `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(212, 175, 55, 0.6)' : rarity === 'epic' ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.3)'} 100%)`,
+									? `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.8)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.6)' : 'rgba(16, 185, 129, 0.4)'} 100%)`
+									: `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.3)'} 100%)`,
 							}}
 						/>
 						<Box
 							sx={{
 								width: 4,
 								height: 4,
-								background: rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b',
+								background: rarity === 'legendary' ? '#ef4444' : rarity === 'epic' ? '#f59e0b' : '#10b981',
 								transform: 'rotate(45deg)',
-								boxShadow: `0 0 6px ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
+								boxShadow: `0 0 6px ${rarity === 'legendary' ? '#ef4444' : rarity === 'epic' ? '#f59e0b' : '#10b981'}`,
 							}}
 						/>
 						<Box
 							sx={{
 								width: 3,
 								height: 3,
-								background: rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b',
+								background: rarity === 'legendary' ? '#ef4444' : rarity === 'epic' ? '#f59e0b' : '#10b981',
 								borderRadius: '50%',
 								opacity: 0.6,
 							}}
@@ -507,9 +466,9 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							sx={{
 								width: 4,
 								height: 4,
-								background: rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b',
+								background: rarity === 'legendary' ? '#ef4444' : rarity === 'epic' ? '#f59e0b' : '#10b981',
 								transform: 'rotate(45deg)',
-								boxShadow: `0 0 6px ${rarity === 'legendary' ? '#d4af37' : rarity === 'epic' ? '#8b5cf6' : '#64748b'}`,
+								boxShadow: `0 0 6px ${rarity === 'legendary' ? '#ef4444' : rarity === 'epic' ? '#f59e0b' : '#10b981'}`,
 							}}
 						/>
 						<Box
@@ -517,8 +476,8 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								flex: 1,
 								height: '1.5px',
 								background: isDark
-									? `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(212, 175, 55, 0.8)' : rarity === 'epic' ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.4)'} 0%, transparent 100%)`
-									: `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(212, 175, 55, 0.6)' : rarity === 'epic' ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.3)'} 0%, transparent 100%)`,
+									? `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.8)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.6)' : 'rgba(16, 185, 129, 0.4)'} 0%, transparent 100%)`
+									: `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.3)'} 0%, transparent 100%)`,
 							}}
 						/>
 					</Box>

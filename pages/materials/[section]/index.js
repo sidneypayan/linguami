@@ -338,11 +338,13 @@ const Section = () => {
               sx={{
                 display: "grid",
                 gridTemplateColumns: {
-                  sx: "1fr",
-                  md: "repeat(2, 1fr)",
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(4, 1fr)",
                 },
                 rowGap: 3,
-                columnGap: 8,
+                columnGap: 3,
                 // Masquer temporairement pendant que displayedMaterials se met à jour
                 opacity: displayedMaterials.length > 0 ? 1 : 0,
                 transition: "opacity 0.15s ease-in",

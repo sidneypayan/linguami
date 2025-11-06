@@ -106,10 +106,9 @@ const Signup = () => {
 		return languageMap[languageName] || languageName
 	}
 
-	// Filtrer les langues d'apprentissage disponibles
+	// Filtrer les langues d'apprentissage disponibles (anglais suspendu temporairement)
 	const availableLearningLanguages = useMemo(() => {
 		const allLanguages = [
-			{ value: 'english', label: t('english'), flag: EnglishFlag },
 			{ value: 'french', label: t('french'), flag: FrenchFlag },
 			{ value: 'russian', label: t('russian'), flag: RussianFlag },
 		]

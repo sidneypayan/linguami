@@ -55,10 +55,27 @@ const Material = () => {
 	// Niveau de l'utilisateur
 	const userLevel = userProfile?.level || 'beginner'
 
+	// Charger la préférence de mode d'affichage depuis le localStorage (après le montage)
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const saved = localStorage.getItem('materialsDisplayMode')
+			if (saved && (saved === 'category' || saved === 'list')) {
+				setDisplayMode(saved)
+			}
+		}
+	}, [])
+
+	// Sauvegarder la préférence de mode d'affichage dans le localStorage
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('materialsDisplayMode', displayMode)
+		}
+	}, [displayMode])
+
 	// Charger les sections (pour le mode catégorie)
 	useEffect(() => {
 		// Détermine quelle langue l'utilisateur apprend
-		const learningLang = userLearningLanguage || 'en' // Par défaut anglais si non défini
+		const learningLang = userLearningLanguage || 'fr' // Par défaut français si non défini
 
 		let selectedMaterials = []
 		if (learningLang === 'ru') {
@@ -66,10 +83,10 @@ const Material = () => {
 		} else if (learningLang === 'fr') {
 			selectedMaterials = materials_fr // Apprendre le français
 		} else if (learningLang === 'en') {
-			selectedMaterials = materials_en // Apprendre l'anglais
+			selectedMaterials = materials_en // Apprendre l'anglais (legacy - pour les utilisateurs existants)
 		} else {
-			// Par défaut : afficher toutes les langues
-			selectedMaterials = [...materials_ru, ...materials_fr, ...materials_en]
+			// Par défaut : français
+			selectedMaterials = materials_fr
 		}
 
 		setMaterials(selectedMaterials)
@@ -79,8 +96,6 @@ const Material = () => {
 	useEffect(() => {
 		if (displayMode === 'list' && userLearningLanguage && allLoadedMaterials.length === 0) {
 			setIsLoadingAllMaterials(true)
-			// Définir le niveau par défaut à celui de l'utilisateur
-			setSelectedLevel(userLevel)
 
 			// Charger tous les matériaux de toutes les sections
 			const sections = ['dialogues', 'slices-of-life', 'beautiful-places', 'legends', 'culture',
@@ -179,7 +194,9 @@ const Material = () => {
 		if (selectedStatus) {
 			filtered = filtered.filter(material => {
 				const userMaterial = checkIfUserMaterialIsInMaterials(material.id)
-				if (selectedStatus === 'is_being_studied') {
+				if (selectedStatus === 'not_studied') {
+					return !userMaterial || (!userMaterial.is_being_studied && !userMaterial.is_studied)
+				} else if (selectedStatus === 'is_being_studied') {
 					return userMaterial?.is_being_studied
 				} else if (selectedStatus === 'is_studied') {
 					return userMaterial?.is_studied
@@ -621,7 +638,8 @@ const Material = () => {
 							selectedLevel={selectedLevel}
 							selectedStatus={selectedStatus}
 							currentView={viewMode}
-							showNotStudiedFilter={false}
+							showNotStudiedFilter={true}
+							showStudiedFilter={false}
 							showSectionFilter={true}
 							translationNamespace="materials"
 						/>

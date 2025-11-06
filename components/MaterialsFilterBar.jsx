@@ -49,9 +49,18 @@ const MaterialsFilterBar = ({
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [showFilters, setShowFilters] = useState(false)
+	const [openTooltip, setOpenTooltip] = useState(null)
 
 	const handleSearchSubmit = (e) => {
 		e.preventDefault()
+	}
+
+	const handleTooltipToggle = (tooltipId) => {
+		setOpenTooltip(openTooltip === tooltipId ? null : tooltipId)
+	}
+
+	const handleTooltipClose = () => {
+		setOpenTooltip(null)
 	}
 
 	const activeFiltersCount = (selectedSection ? 1 : 0) + (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
@@ -195,9 +204,20 @@ const MaterialsFilterBar = ({
 						border: '2px solid rgba(139, 92, 246, 0.2)',
 						flexShrink: 0,
 					}}>
-					<Tooltip title="Vue en grille" arrow placement='top' enterTouchDelay={0} leaveTouchDelay={2000}>
+					<Tooltip
+						title="Vue en grille"
+						arrow
+						placement='top'
+						open={openTooltip === 'view-card'}
+						onClose={handleTooltipClose}
+						disableHoverListener
+						disableFocusListener
+						disableTouchListener>
 						<IconButton
-							onClick={() => onViewChange('card')}
+							onClick={() => {
+								onViewChange('card')
+								handleTooltipToggle('view-card')
+							}}
 							sx={{
 								width: { xs: '34px', sm: '36px' },
 								height: { xs: '34px', sm: '36px' },
@@ -211,9 +231,20 @@ const MaterialsFilterBar = ({
 							<GridView sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
 						</IconButton>
 					</Tooltip>
-					<Tooltip title="Vue en liste" arrow placement='top' enterTouchDelay={0} leaveTouchDelay={2000}>
+					<Tooltip
+						title="Vue en liste"
+						arrow
+						placement='top'
+						open={openTooltip === 'view-list'}
+						onClose={handleTooltipClose}
+						disableHoverListener
+						disableFocusListener
+						disableTouchListener>
 						<IconButton
-							onClick={() => onViewChange('list')}
+							onClick={() => {
+								onViewChange('list')
+								handleTooltipToggle('view-list')
+							}}
 							sx={{
 								width: { xs: '34px', sm: '36px' },
 								height: { xs: '34px', sm: '36px' },
@@ -379,14 +410,18 @@ const MaterialsFilterBar = ({
 				{levels.map(level => {
 					const LevelIcon = level.icon
 					const isSelected = selectedLevel === level.key
+					const tooltipId = `level-${level.key}`
 					return (
 						<Tooltip
 							key={level.label}
 							title={level.tooltip}
 							arrow
 							placement='top'
-							enterTouchDelay={0}
-							leaveTouchDelay={2000}>
+							open={openTooltip === tooltipId}
+							onClose={handleTooltipClose}
+							disableHoverListener
+							disableFocusListener
+							disableTouchListener>
 							<Chip
 								icon={<LevelIcon sx={{
 									fontSize: '1.1rem',
@@ -394,7 +429,10 @@ const MaterialsFilterBar = ({
 									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
 								}} />}
 								label={level.label}
-								onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
+								onClick={(e) => {
+									onLevelChange(selectedLevel === level.key ? null : level.key)
+									handleTooltipToggle(tooltipId)
+								}}
 								sx={{
 									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -455,14 +493,18 @@ const MaterialsFilterBar = ({
 				{statuses.map((status, index) => {
 					const StatusIcon = status.icon
 					const isSelected = selectedStatus === status.key
+					const tooltipId = `status-${status.key}`
 					return (
 						<Tooltip
 							key={status.label}
 							title={status.tooltip}
 							arrow
 							placement='top'
-							enterTouchDelay={0}
-							leaveTouchDelay={2000}>
+							open={openTooltip === tooltipId}
+							onClose={handleTooltipClose}
+							disableHoverListener
+							disableFocusListener
+							disableTouchListener>
 							<Chip
 								icon={<StatusIcon sx={{
 									fontSize: '1.1rem',
@@ -470,7 +512,10 @@ const MaterialsFilterBar = ({
 									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
 								}} />}
 								label={status.label}
-								onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
+								onClick={(e) => {
+									onStatusChange(selectedStatus === status.key ? null : status.key)
+									handleTooltipToggle(tooltipId)
+								}}
 								sx={{
 									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -536,10 +581,16 @@ const MaterialsFilterBar = ({
 					title={`🔄 ${t('showall')} - ${t('showallTooltip')}`}
 					arrow
 					placement='top'
-					enterTouchDelay={0}
-					leaveTouchDelay={2000}>
+					open={openTooltip === 'reset'}
+					onClose={handleTooltipClose}
+					disableHoverListener
+					disableFocusListener
+					disableTouchListener>
 					<IconButton
-						onClick={onClear}
+						onClick={(e) => {
+							onClear()
+							handleTooltipToggle('reset')
+						}}
 						sx={{
 							width: { xs: '36px', sm: '42px' },
 							height: { xs: '36px', sm: '42px' },
