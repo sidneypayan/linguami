@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { getToastMessage } from '../../utils/toastMessages'
 import { sanitizeObject, sanitizeFilename, validateFileType } from '../../utils/sanitize'
 import { optimizeImage } from '../../utils/imageOptimizer'
+import { convertAudioToM4a } from '../../utils/audioConverter'
 
 const initialState = {
 	editingContent: {},
@@ -22,10 +23,10 @@ export const createContent = createAsyncThunk(
 			// Clone le contenu pour pouvoir le modifier
 			let finalContent = { ...content }
 
-			// Map pour stocker les fichiers optimisés
-			const optimizedFilesMap = new Map()
+			// Map pour stocker les fichiers optimisés/convertis
+			const processedFilesMap = new Map()
 
-			// Si on a des fichiers images, les optimiser AVANT l'insert
+			// Si on a des fichiers, les optimiser/convertir AVANT l'insert
 			if (files && files.length > 0) {
 				for (const fileData of files) {
 					if (fileData.fileType === 'image') {
@@ -33,11 +34,20 @@ export const createContent = createAsyncThunk(
 						const optimized = await optimizeImage(fileData.file)
 
 						// Stocker les fichiers optimisés pour l'upload plus tard
-						optimizedFilesMap.set(fileData.fileName, optimized)
+						processedFilesMap.set(fileData.fileName, { type: 'image', data: optimized })
 
 						// Mettre à jour le nom du fichier dans le contenu (juste le nom, sans https://)
 						finalContent[fileData.fileType] = optimized.main.fileName
 
+					} else if (fileData.fileType === 'audio') {
+						// Convertir l'audio en m4a
+						const converted = await convertAudioToM4a(fileData.file)
+
+						// Stocker le fichier converti pour l'upload plus tard
+						processedFilesMap.set(fileData.fileName, { type: 'audio', data: converted })
+
+						// Mettre à jour le nom du fichier dans le contenu
+						finalContent[fileData.fileType] = converted.fileName
 					}
 				}
 			}
@@ -62,8 +72,8 @@ export const createContent = createAsyncThunk(
 					}
 
 					// Si c'est une image optimisée, uploader les versions optimisées
-					if (fileType === 'image' && optimizedFilesMap.has(fileName)) {
-						const optimized = optimizedFilesMap.get(fileName)
+					if (fileType === 'image' && processedFilesMap.has(fileName)) {
+						const optimized = processedFilesMap.get(fileName).data
 
 
 						// Upload de la version principale
@@ -94,8 +104,25 @@ export const createContent = createAsyncThunk(
 							throw thumbError
 						}
 
+					} else if (fileType === 'audio' && processedFilesMap.has(fileName)) {
+						// Si c'est un audio converti, uploader le fichier m4a
+						const converted = processedFilesMap.get(fileName).data
+
+						const { error } = await supabase.storage
+							.from('linguami')
+							.upload(`${fileType}/${converted.fileName}`, converted.file, {
+								cacheControl: '3600',
+								upsert: false,
+								contentType: 'audio/mp4',
+							})
+
+						if (error) {
+							console.error(`❌ Erreur upload ${converted.fileName}:`, error)
+							throw error
+						}
+
 					} else {
-						// Pour les fichiers non-image (audio, etc.), upload normal
+						// Pour les fichiers non traités, upload normal
 						const safeName = sanitizeFilename(fileName)
 
 						const { error } = await supabase.storage
