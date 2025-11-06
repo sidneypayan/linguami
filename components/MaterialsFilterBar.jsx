@@ -8,7 +8,7 @@ import {
 	MenuBook, Movie, Theaters, SmartDisplay,
 	AutoStories, Landscape, Category
 } from '@mui/icons-material'
-import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl, useTheme } from '@mui/material'
+import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl, useTheme, ListSubheader } from '@mui/material'
 
 /**
  * Composant réutilisable pour la barre de recherche et filtres des matériaux
@@ -56,20 +56,30 @@ const MaterialsFilterBar = ({
 
 	const activeFiltersCount = (selectedSection ? 1 : 0) + (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
 
-	const sections = [
-		{ label: t('video'), key: 'video', tooltip: `🎬 ${t('video')}`, color: '#ef4444', icon: OndemandVideo },
-		{ label: t('dialogues'), key: 'dialogues', tooltip: `💬 ${t('dialogues')}`, color: '#06b6d4', icon: RecordVoiceOver },
-		{ label: t('music'), key: 'music', tooltip: `🎵 ${t('music')}`, color: '#ec4899', icon: MusicNote },
-		{ label: t('podcasts'), key: 'podcasts', tooltip: `🎙️ ${t('podcasts')}`, color: '#8b5cf6', icon: Mic },
-		{ label: t('short-stories'), key: 'short-stories', tooltip: `📖 ${t('short-stories')}`, color: '#f59e0b', icon: MenuBook },
-		{ label: t('movie-trailers'), key: 'movie-trailers', tooltip: `🎞️ ${t('movie-trailers')}`, color: '#ef4444', icon: Movie },
-		{ label: t('movie-clips'), key: 'movie-clips', tooltip: `🎬 ${t('movie-clips')}`, color: '#ef4444', icon: Theaters },
-		{ label: t('cartoons'), key: 'cartoons', tooltip: `🎨 ${t('cartoons')}`, color: '#06b6d4', icon: SmartDisplay },
-		{ label: t('legends'), key: 'legends', tooltip: `🏛️ ${t('legends')}`, color: '#8b5cf6', icon: AutoStories },
-		{ label: t('slices-of-life'), key: 'slices-of-life', tooltip: `🌟 ${t('slices-of-life')}`, color: '#10b981', icon: AutoStories },
-		{ label: t('beautiful-places'), key: 'beautiful-places', tooltip: `🏞️ ${t('beautiful-places')}`, color: '#10b981', icon: Landscape },
-		{ label: t('various-materials'), key: 'various-materials', tooltip: `📚 ${t('various-materials')}`, color: '#64748b', icon: Category },
-	]
+	// Sections organisées par catégorie
+	const sectionsByCategory = {
+		'text & audio': [
+			{ label: t('dialogues'), key: 'dialogues', tooltip: `💬 ${t('dialogues')}`, color: '#06b6d4', icon: RecordVoiceOver },
+			{ label: t('slices-of-life'), key: 'slices-of-life', tooltip: `🌟 ${t('slices-of-life')}`, color: '#10b981', icon: AutoStories },
+			{ label: t('beautiful-places'), key: 'beautiful-places', tooltip: `🏞️ ${t('beautiful-places')}`, color: '#10b981', icon: Landscape },
+			{ label: t('legends'), key: 'legends', tooltip: `🏛️ ${t('legends')}`, color: '#8b5cf6', icon: AutoStories },
+			{ label: t('podcasts'), key: 'podcasts', tooltip: `🎙️ ${t('podcasts')}`, color: '#8b5cf6', icon: Mic },
+			{ label: t('short-stories'), key: 'short-stories', tooltip: `📖 ${t('short-stories')}`, color: '#f59e0b', icon: MenuBook },
+		],
+		'video': [
+			{ label: t('movie-trailers'), key: 'movie-trailers', tooltip: `🎞️ ${t('movie-trailers')}`, color: '#ef4444', icon: Movie },
+			{ label: t('movie-clips'), key: 'movie-clips', tooltip: `🎬 ${t('movie-clips')}`, color: '#ef4444', icon: Theaters },
+			{ label: t('cartoons'), key: 'cartoons', tooltip: `🎨 ${t('cartoons')}`, color: '#06b6d4', icon: SmartDisplay },
+			{ label: t('various-materials'), key: 'various-materials', tooltip: `📚 ${t('various-materials')}`, color: '#64748b', icon: Category },
+		],
+		'music': [
+			{ label: t('rock'), key: 'rock', tooltip: `🎸 ${t('rock')}`, color: '#ec4899', icon: MusicNote },
+			{ label: t('pop'), key: 'pop', tooltip: `🎤 ${t('pop')}`, color: '#ec4899', icon: MusicNote },
+			{ label: t('folk'), key: 'folk', tooltip: `🎻 ${t('folk')}`, color: '#ec4899', icon: MusicNote },
+			{ label: t('variety'), key: 'variety', tooltip: `🎵 ${t('variety')}`, color: '#ec4899', icon: MusicNote },
+			{ label: t('kids'), key: 'kids', tooltip: `👶 ${t('kids')}`, color: '#ec4899', icon: MusicNote },
+		]
+	}
 
 	const levels = [
 		{ label: t('beginner'), key: 'beginner', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981', icon: SignalCellular1Bar },
@@ -274,17 +284,93 @@ const MaterialsFilterBar = ({
 									<span>{t('allMaterials')}</span>
 								</Box>
 							</MenuItem>
-							{sections.map(section => {
-								const SectionIcon = section.icon
-								return (
-									<MenuItem key={section.key} value={section.key}>
-										<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-											<SectionIcon sx={{ fontSize: '1.1rem', color: section.color }} />
-											<span>{section.label}</span>
-										</Box>
-									</MenuItem>
-								)
-							})}
+
+						{/* Text & Audio category */}
+						<ListSubheader
+							sx={{
+								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.08)',
+								color: isDark ? '#a78bfa' : '#8b5cf6',
+								fontWeight: 700,
+								fontSize: '0.85rem',
+								lineHeight: '32px',
+								px: 2,
+								textTransform: 'uppercase',
+								letterSpacing: '0.5px',
+							}}>
+							📚 {t('textAudio') || 'Text & Audio'}
+						</ListSubheader>
+						{sectionsByCategory['text & audio'].map(section => {
+							const SectionIcon = section.icon
+							return (
+								<MenuItem
+									key={section.key}
+									value={section.key}
+									sx={{ pl: 4 }}>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										<SectionIcon sx={{ fontSize: '1.1rem', color: section.color }} />
+										<span>{section.label}</span>
+									</Box>
+								</MenuItem>
+							)
+						})}
+
+						{/* Video category */}
+						<ListSubheader
+							sx={{
+								backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.08)',
+								color: isDark ? '#fca5a5' : '#ef4444',
+								fontWeight: 700,
+								fontSize: '0.85rem',
+								lineHeight: '32px',
+								px: 2,
+								textTransform: 'uppercase',
+								letterSpacing: '0.5px',
+							}}>
+							🎬 {t('video') || 'Vidéo'}
+						</ListSubheader>
+						{sectionsByCategory['video'].map(section => {
+							const SectionIcon = section.icon
+							return (
+								<MenuItem
+									key={section.key}
+									value={section.key}
+									sx={{ pl: 4 }}>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										<SectionIcon sx={{ fontSize: '1.1rem', color: section.color }} />
+										<span>{section.label}</span>
+									</Box>
+								</MenuItem>
+							)
+						})}
+
+						{/* Music category */}
+						<ListSubheader
+							sx={{
+								backgroundColor: isDark ? 'rgba(236, 72, 153, 0.15)' : 'rgba(236, 72, 153, 0.08)',
+								color: isDark ? '#f9a8d4' : '#ec4899',
+								fontWeight: 700,
+								fontSize: '0.85rem',
+								lineHeight: '32px',
+								px: 2,
+								textTransform: 'uppercase',
+								letterSpacing: '0.5px',
+							}}>
+							🎵 {t('music') || 'Musique'}
+						</ListSubheader>
+						{sectionsByCategory['music'].map(section => {
+							const SectionIcon = section.icon
+							return (
+								<MenuItem
+									key={section.key}
+									value={section.key}
+									sx={{ pl: 4 }}>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										<SectionIcon sx={{ fontSize: '1.1rem', color: section.color }} />
+										<span>{section.label}</span>
+									</Box>
+								</MenuItem>
+							)
+						})}
 						</Select>
 					</FormControl>
 				)}

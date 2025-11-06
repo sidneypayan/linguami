@@ -6,7 +6,6 @@ export const materials_ru = [
 		title: 'dialogues',
 		section: 'dialogues',
 		text: 'Nos dialogues utilisent des tournures de phrases actuelles dans des situations variées. Ils vous aideront à maîtriser la langue parlée par les Russes au quotidien.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -15,7 +14,6 @@ export const materials_ru = [
 		title: 'tranches de vie',
 		section: 'slices-of-life',
 		text: 'Vous trouverez ici de courts récits autobiographiques qui vous apprendrons à parler de vous, de votre entourage, de vos goûts et de vos sentiments.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -24,7 +22,6 @@ export const materials_ru = [
 		title: 'beaux endroits',
 		section: 'beautiful-places',
 		text: "La Russie est un vaste pays qui compte parmi les plus beaux endroits de la planète. Nous vous emmenons pour une visite passionnante qui vous donnera l'occasion de pratiquer la langue tout en vous émerveillant.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -33,7 +30,6 @@ export const materials_ru = [
 		title: 'culture',
 		section: 'culture',
 		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -42,7 +38,6 @@ export const materials_ru = [
 		title: 'légendes et folklore',
 		section: 'legends',
 		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -51,7 +46,6 @@ export const materials_ru = [
 		title: 'podcasts',
 		section: 'podcasts',
 		text: 'Avec nos podcast apprenez-en plus sur les particularités de la langue russe.',
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -60,7 +54,6 @@ export const materials_ru = [
 		title: 'livres audio',
 		section: 'books',
 		text: 'Ici vous trouverez des livres audio accompagnés de leur texte. Ainsi vous élargirez votre vocabulaire et améliorerez votre compréhension orale tout en voyageant dans le monde passionnant de la littérature.',
-		duration: 'long',
 	},
 	{
 		category: 'text & audio',
@@ -69,7 +62,6 @@ export const materials_ru = [
 		title: 'histoires courtes',
 		section: 'short-stories',
 		text: "Les histoires courtes ont le même objectif que les livres audio, mais sont plus condensées. Idéal pour ceux d'entre vous qui ne souhaitent pas se plonger dans un livre de plusieurs chapitres.",
-		duration: 'medium',
 	},
 	{
 		category: 'video',
@@ -78,7 +70,6 @@ export const materials_ru = [
 		title: 'bandes annonces',
 		section: 'movie-trailers',
 		text: "Avec les bandes annonces de films, vous disposez d'un moyen ludique pour vous entraîner à la compréhension orale du russe.",
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -87,7 +78,6 @@ export const materials_ru = [
 		title: 'extraits de films',
 		section: 'movie-clips',
 		text: "Avec les extraits de films russes vous travaillerez votre compréhension de la langue telle que les Russes la parle au quotidien, faite d'idiomes, de jargon, mais surtout d'émotions.",
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -96,7 +86,6 @@ export const materials_ru = [
 		title: 'dessins animés',
 		section: 'cartoons',
 		text: "Les dessins animés russes font partie de la culture du pays. Les Russes y font souvent référence dans leurs conversations et les connaître vous permettra d'être considéré par les Russes comme l'un des leurs.",
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -105,7 +94,6 @@ export const materials_ru = [
 		title: 'eralash',
 		section: 'eralash',
 		text: 'Eralash est une série de sketch humoristiques mettant en scène des enfants. Fraîches et drôles, ces petites saynètes vous feront apprendre dans la bonne humeur.',
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -114,7 +102,6 @@ export const materials_ru = [
 		title: 'galileo',
 		section: 'galileo',
 		text: "Galileo est une émission de vulgarisation très populaire en Russie. Son présentateur déjanté y aborde des thèmes aussi variés que l'art, la science, la technologie, le sport, l'alimentation etc. Grâce à la grande variété des sujets traités, vous élargirez votre vocabulaire tout en vous cultivant.",
-		duration: 'medium',
 	},
 	{
 		category: 'video',
@@ -123,7 +110,6 @@ export const materials_ru = [
 		title: 'various materials',
 		section: 'various-materials',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'medium',
 	},
 	{
 		category: 'music',
@@ -132,7 +118,6 @@ export const materials_ru = [
 		title: 'rock',
 		section: 'rock',
 		text: "Ces chansons russes accompagnées de leur texte vous permettront d'apprendre tout en vous divertissant.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -141,7 +126,6 @@ export const materials_ru = [
 		title: 'pop',
 		section: 'pop',
 		text: "Les dessins animés russes font partie de la culture du pays. Les Russes y font souvent référence dans leurs conversations et les connaître vous permettra d'être considéré par les Russes comme l'un des leurs.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -150,7 +134,6 @@ export const materials_ru = [
 		title: 'trad/folk',
 		section: 'folk',
 		text: "Galileo est une émission de vulgarisation très populaire en Russie. Son présentateur déjanté y aborde des thèmes aussi variés que l'art, la science, la technologie, le sport, l'alimentation etc. Grâce à la grande variété des sujets traités, vous élargirez votre vocabulaire tout en vous cultivant.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -159,7 +142,6 @@ export const materials_ru = [
 		title: 'variété',
 		section: 'variety',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -168,7 +150,6 @@ export const materials_ru = [
 		title: 'enfants',
 		section: 'kids',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'short',
 	},
 ]
 
@@ -180,7 +161,6 @@ export const materials_fr = [
 		title: 'Диалоги',
 		section: 'dialogues',
 		text: 'Nos dialogues utilisent des tournures de phrases actuelles dans des situations variées. Ils vous aideront à maîtriser la langue parlée par les Russes au quotidien.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -189,7 +169,6 @@ export const materials_fr = [
 		title: 'Кусочки жизни',
 		section: 'slices-of-life',
 		text: 'Vous trouverez ici de courts récits autobiographiques qui vous apprendrons à parler de vous, de votre entourage, de vos goûts et de vos sentiments.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -198,7 +177,6 @@ export const materials_fr = [
 		title: 'Красивые места',
 		section: 'beautiful-places',
 		text: "La Russie est un vaste pays qui compte parmi les plus beaux endroits de la planète. Nous vous emmenons pour une visite passionnante qui vous donnera l'occasion de pratiquer la langue tout en vous émerveillant.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -207,7 +185,6 @@ export const materials_fr = [
 		title: 'Культура',
 		section: 'culture',
 		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -216,7 +193,6 @@ export const materials_fr = [
 		title: 'Фольклор и легенды',
 		section: 'legends',
 		text: "La culture et le folklore changent d'un pays à l'autre et forgent l'identité des peuples. Dans cette section vous en saurez plus sur les particularités de la culture , du folklore et de l'artisanat russe.",
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -225,7 +201,6 @@ export const materials_fr = [
 		title: 'Аудиокниги',
 		section: 'books',
 		text: 'Ici vous trouverez des livres audio accompagnés de leur texte. Ainsi vous élargirez votre vocabulaire et améliorerez votre compréhension orale tout en voyageant dans le monde passionnant de la littérature.',
-		duration: 'long',
 	},
 	{
 		category: 'video',
@@ -234,7 +209,6 @@ export const materials_fr = [
 		title: 'Трейлеры',
 		section: 'movie-trailers',
 		text: "Avec les bandes annonces de films, vous disposez d'un moyen ludique pour vous entraîner à la compréhension orale du russe.",
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -243,7 +217,6 @@ export const materials_fr = [
 		title: 'Фрагменты из фильмов',
 		section: 'movie-clips',
 		text: "Avec les extraits de films russes vous travaillerez votre compréhension de la langue telle que les Russes la parle au quotidien, faite d'idiomes, de jargon, mais surtout d'émotions.",
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -252,7 +225,6 @@ export const materials_fr = [
 		title: 'Мультфильмы',
 		section: 'cartoons',
 		text: "Les dessins animés russes font partie de la culture du pays. Les Russes y font souvent référence dans leurs conversations et les connaître vous permettra d'être considéré par les Russes comme l'un des leurs.",
-		duration: 'short',
 	},
 
 	{
@@ -262,7 +234,6 @@ export const materials_fr = [
 		title: 'Разное',
 		section: 'various-materials',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'medium',
 	},
 	{
 		category: 'music',
@@ -271,7 +242,6 @@ export const materials_fr = [
 		title: 'Рок',
 		section: 'rock',
 		text: "Ces chansons russes accompagnées de leur texte vous permettront d'apprendre tout en vous divertissant.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -280,7 +250,6 @@ export const materials_fr = [
 		title: 'Поп',
 		section: 'pop',
 		text: "Les dessins animés russes font partie de la culture du pays. Les Russes y font souvent référence dans leurs conversations et les connaître vous permettra d'être considéré par les Russes comme l'un des leurs.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -289,7 +258,6 @@ export const materials_fr = [
 		title: 'Традиционная музыка и Фольк',
 		section: 'folk',
 		text: "Galileo est une émission de vulgarisation très populaire en Russie. Son présentateur déjanté y aborde des thèmes aussi variés que l'art, la science, la technologie, le sport, l'alimentation etc. Grâce à la grande variété des sujets traités, vous élargirez votre vocabulaire tout en vous cultivant.",
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -298,7 +266,6 @@ export const materials_fr = [
 		title: 'Хиты',
 		section: 'variety',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -307,7 +274,6 @@ export const materials_fr = [
 		title: 'Детские песни',
 		section: 'kids',
 		text: 'Vous retrouverez dans cette section des vidéos abordants des sujets variés et ne trouvant pas leur place dans les sections précédentes.',
-		duration: 'short',
 	},
 ]
 
@@ -319,7 +285,6 @@ export const materials_en = [
 		title: 'Dialogues',
 		section: 'dialogues',
 		text: 'Our dialogues use current phrases in various situations. They will help you master the language spoken by native speakers in everyday life.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -328,7 +293,6 @@ export const materials_en = [
 		title: 'Slices of Life',
 		section: 'slices-of-life',
 		text: 'You will find here short autobiographical stories that will teach you to talk about yourself, your surroundings, your tastes and your feelings.',
-		duration: 'short',
 	},
 	{
 		category: 'text & audio',
@@ -337,7 +301,6 @@ export const materials_en = [
 		title: 'Beautiful Places',
 		section: 'beautiful-places',
 		text: 'Discover beautiful places around the world. An exciting visit that will give you the opportunity to practice the language while marveling.',
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -346,7 +309,6 @@ export const materials_en = [
 		title: 'Folklore and Legends',
 		section: 'legends',
 		text: 'Culture and folklore change from one country to another and shape the identity of peoples. In this section you will learn more about the particularities of culture, folklore and crafts.',
-		duration: 'medium',
 	},
 	{
 		category: 'text & audio',
@@ -355,7 +317,6 @@ export const materials_en = [
 		title: 'Audiobooks',
 		section: 'books',
 		text: 'Here you will find audiobooks accompanied by their text. This way you will expand your vocabulary and improve your listening comprehension while traveling in the exciting world of literature.',
-		duration: 'long',
 	},
 	{
 		category: 'video',
@@ -364,7 +325,6 @@ export const materials_en = [
 		title: 'Movie Trailers',
 		section: 'movie-trailers',
 		text: 'With movie trailers, you have a fun way to practice your listening comprehension.',
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -373,7 +333,6 @@ export const materials_en = [
 		title: 'Movie Clips',
 		section: 'movie-clips',
 		text: 'With movie clips you will work on your understanding of the language as native speakers speak it in everyday life, made of idioms, jargon, but above all emotions.',
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -382,7 +341,6 @@ export const materials_en = [
 		title: 'Cartoons',
 		section: 'cartoons',
 		text: 'Cartoons are part of the culture. Knowing them will allow you to be considered by native speakers as one of their own.',
-		duration: 'short',
 	},
 	{
 		category: 'video',
@@ -391,7 +349,6 @@ export const materials_en = [
 		title: 'Various',
 		section: 'various-materials',
 		text: 'You will find in this section videos covering various subjects that do not find their place in the previous sections.',
-		duration: 'medium',
 	},
 	{
 		category: 'music',
@@ -400,7 +357,6 @@ export const materials_en = [
 		title: 'Rock',
 		section: 'rock',
 		text: 'These songs accompanied by their lyrics will allow you to learn while having fun.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -409,7 +365,6 @@ export const materials_en = [
 		title: 'Pop',
 		section: 'pop',
 		text: 'Popular music accompanied by lyrics to help you learn while enjoying great songs.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -418,7 +373,6 @@ export const materials_en = [
 		title: 'Traditional Music & Folk',
 		section: 'folk',
 		text: 'Traditional and folk music to discover cultural heritage while learning the language.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -427,7 +381,6 @@ export const materials_en = [
 		title: 'Hits',
 		section: 'variety',
 		text: 'Popular hits and variety songs to practice your listening skills while enjoying great music.',
-		duration: 'short',
 	},
 	{
 		category: 'music',
@@ -436,7 +389,6 @@ export const materials_en = [
 		title: 'Kids Songs',
 		section: 'kids',
 		text: 'Fun and educational songs for children and beginners.',
-		duration: 'short',
 	},
 ]
 

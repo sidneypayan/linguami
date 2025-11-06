@@ -75,5 +75,7 @@
 	"textAudio": "Text & Audio",
 	"short": "Short (< 5 min)",
 	"medium": "Medium (5-20 min)",
-	"long": "Long (> 20 min)"
+	"long": "Long (> 20 min)",
+	"categoryView": "Category View",
+	"listView": "List View with Filters"
 }
