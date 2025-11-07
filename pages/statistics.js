@@ -254,7 +254,7 @@ const StatisticsPage = () => {
 					value: level,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/xp_${index + 1}.webp`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}xp_${index + 1}.webp`}
 							alt={`Level ${level}`}
 							width={90}
 							height={90}
@@ -276,7 +276,7 @@ const StatisticsPage = () => {
 					value: count,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/0${index + 1}_reviewed_words_badge.webp`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}0${index + 1}_reviewed_words_badge.webp`}
 							alt={`${count} words`}
 							width={90}
 							height={90}

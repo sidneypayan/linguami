@@ -334,7 +334,7 @@ const Hero = () => {
 						}}>
 						<Box
 							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/hero.webp`}
+							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}hero.webp`}
 							alt='Linguami hero'
 							sx={{
 								width: '100%',
