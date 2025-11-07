@@ -53,9 +53,9 @@ const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = fals
 	}
 
 	const levels = [
-		{ label: t('beginner'), key: 'beginner', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert émeraude - Facile
-		{ label: t('intermediate'), key: 'intermediate', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#f59e0b' }, // Orange ambré - Moyen
-		{ label: t('advanced'), key: 'advanced', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#ef4444' }, // Rouge - Difficile
+		{ label: t('beginner'), key: 'beginner', tooltip: `🌱 ${t('beginner')} - ${t('beginnerTooltip')}`, color: '#10b981' }, // Vert - Common (WoW)
+		{ label: t('intermediate'), key: 'intermediate', tooltip: `🚀 ${t('intermediate')} - ${t('intermediateTooltip')}`, color: '#a855f7' }, // Violet - Epic (WoW)
+		{ label: t('advanced'), key: 'advanced', tooltip: `⭐ ${t('advanced')} - ${t('advancedTooltip')}`, color: '#fbbf24' }, // Orange - Legendary (WoW)
 	]
 
 	const statuses = [

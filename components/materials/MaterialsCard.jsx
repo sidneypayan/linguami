@@ -12,9 +12,9 @@ const MaterialsCard = ({ material }) => {
 			case 'beginner':
 				return { bg: 'rgba(16, 185, 129, 0.15)', border: '#10b981', text: '#059669' }
 			case 'intermediate':
-				return { bg: 'rgba(245, 158, 11, 0.15)', border: '#f59e0b', text: '#d97706' }
+				return { bg: 'rgba(168, 85, 247, 0.15)', border: '#a855f7', text: '#d97706' }
 			case 'advanced':
-				return { bg: 'rgba(239, 68, 68, 0.15)', border: '#ef4444', text: '#dc2626' }
+				return { bg: 'rgba(251, 191, 36, 0.15)', border: '#fbbf24', text: '#dc2626' }
 			default:
 				return { bg: 'rgba(139, 92, 246, 0.15)', border: '#8b5cf6', text: '#7c3aed' }
 		}

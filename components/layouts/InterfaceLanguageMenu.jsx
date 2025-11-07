@@ -11,37 +11,47 @@ import { useUserContext } from '../../context/user'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (
-	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
-		<circle cx="16" cy="16" r="16" fill="#ED2939"/>
-		<path d="M 16 0 A 16 16 0 0 0 16 32 L 16 0" fill="#002395"/>
-		<path d="M 16 0 L 16 32 A 16 16 0 0 0 16 0" fill="#ED2939"/>
-		<rect x="10.67" width="10.67" height="32" fill="white"/>
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+		<defs>
+			<clipPath id="circle-clip-french-interface">
+				<circle cx="16" cy="16" r="16"/>
+			</clipPath>
+		</defs>
+		<g clipPath="url(#circle-clip-french-interface)">
+			<circle cx="16" cy="16" r="16" fill="#ED2939"/>
+			<path d="M 16 0 A 16 16 0 0 0 16 32 L 16 0" fill="#002395"/>
+			<path d="M 16 0 L 16 32 A 16 16 0 0 0 16 0" fill="#ED2939"/>
+			<rect x="10.67" width="10.67" height="32" fill="white"/>
+		</g>
 	</svg>
 )
 
 // Composant drapeau russe
 const RussianFlag = ({ size = 32 }) => (
-	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
-		<circle cx="16" cy="16" r="16" fill="#0039A6"/>
-		<rect width="32" height="10.67" fill="white"/>
-		<rect y="10.67" width="32" height="10.67" fill="#0039A6"/>
-		<rect y="21.33" width="32" height="10.67" fill="#D52B1E"/>
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+		<defs>
+			<clipPath id="circle-clip-russian-interface">
+				<circle cx="16" cy="16" r="16"/>
+			</clipPath>
+		</defs>
+		<g clipPath="url(#circle-clip-russian-interface)">
+			<circle cx="16" cy="16" r="16" fill="#0039A6"/>
+			<rect width="32" height="10.67" fill="white"/>
+			<rect y="10.67" width="32" height="10.67" fill="#0039A6"/>
+			<rect y="21.33" width="32" height="10.67" fill="#D52B1E"/>
+		</g>
 	</svg>
 )
 
 // Composant drapeau anglais (UK)
 const EnglishFlag = ({ size = 32 }) => (
-	<svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block' }}>
-		<circle cx="16" cy="16" r="16" fill="#012169"/>
-		<path d="M 0 0 L 32 0 L 32 32 L 0 32 Z" fill="#012169"/>
-		<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="white" strokeWidth="5.3"/>
-		<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
-		<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="white" strokeWidth="8.5"/>
-		<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="#C8102E" strokeWidth="5.3"/>
-		<clipPath id="circle-clip">
-			<circle cx="16" cy="16" r="16"/>
-		</clipPath>
-		<g clipPath="url(#circle-clip)">
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+		<defs>
+			<clipPath id="circle-clip-english-interface">
+				<circle cx="16" cy="16" r="16"/>
+			</clipPath>
+		</defs>
+		<g clipPath="url(#circle-clip-english-interface)">
 			<rect width="32" height="32" fill="#012169"/>
 			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="white" strokeWidth="5.3"/>
 			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
@@ -284,6 +294,11 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							justifyContent: 'center',
 							width: { xs: 24, sm: 28, lg: 30 },
 							height: { xs: 24, sm: 28, lg: 30 },
+							minWidth: { xs: 24, sm: 28, lg: 30 },
+							minHeight: { xs: 24, sm: 28, lg: 30 },
+							maxWidth: { xs: 24, sm: 28, lg: 30 },
+							maxHeight: { xs: 24, sm: 28, lg: 30 },
+							flexShrink: 0,
 							borderRadius: '50%',
 							overflow: 'hidden',
 							border: '2px solid rgba(255, 255, 255, 0.4)',

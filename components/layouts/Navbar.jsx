@@ -101,7 +101,8 @@ const Navbar = props => {
 				display: 'flex',
 				flexDirection: 'column',
 				position: 'relative',
-				overflow: 'hidden',
+				overflowY: 'auto',
+				overflowX: 'hidden',
 				'&::before': {
 					content: '""',
 					position: 'absolute',

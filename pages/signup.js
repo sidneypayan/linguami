@@ -488,8 +488,8 @@ const Signup = () => {
 							renderValue={(selected) => {
 								const levels = {
 									beginner: { icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, name: t('beginner') },
-									intermediate: { icon: <SignalCellular2Bar sx={{ color: '#f59e0b' }} />, name: t('intermediate') },
-									advanced: { icon: <SignalCellular3Bar sx={{ color: '#ef4444' }} />, name: t('advanced') },
+									intermediate: { icon: <SignalCellular2Bar sx={{ color: '#a855f7' }} />, name: t('intermediate') },
+									advanced: { icon: <SignalCellular3Bar sx={{ color: '#fbbf24' }} />, name: t('advanced') },
 								}
 								return (
 									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -500,8 +500,8 @@ const Signup = () => {
 							}}>
 							{[
 								{ value: 'beginner', icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, label: t('beginner') },
-								{ value: 'intermediate', icon: <SignalCellular2Bar sx={{ color: '#f59e0b' }} />, label: t('intermediate') },
-								{ value: 'advanced', icon: <SignalCellular3Bar sx={{ color: '#ef4444' }} />, label: t('advanced') },
+								{ value: 'intermediate', icon: <SignalCellular2Bar sx={{ color: '#a855f7' }} />, label: t('intermediate') },
+								{ value: 'advanced', icon: <SignalCellular3Bar sx={{ color: '#fbbf24' }} />, label: t('advanced') },
 							].map(({ value, icon, label }) => (
 								<MenuItem key={value} value={value}>
 									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

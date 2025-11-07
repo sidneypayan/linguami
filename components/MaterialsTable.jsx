@@ -73,8 +73,8 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 
 	const getLevelColor = (level) => {
 		if (level === 'beginner') return '#10b981'
-		if (level === 'intermediate') return '#f59e0b'
-		if (level === 'advanced') return '#ef4444'
+		if (level === 'intermediate') return '#a855f7'
+		if (level === 'advanced') return '#fbbf24'
 		return '#8b5cf6'
 	}
 
@@ -110,7 +110,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 				<Schedule
 					sx={{
 						fontSize: '1.5rem',
-						color: '#f59e0b',
+						color: '#a855f7',
 					}}
 				/>
 			)
@@ -140,27 +140,27 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							border: '2px solid transparent',
 							backgroundImage: isDark
 								? rarity === 'legendary'
-									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
+									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #fbbf24 0%, #fcd34d 25%, #fbbf24 50%, #fcd34d 75%, #fbbf24 100%)'
 									: rarity === 'epic'
-									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+									? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #a855f7 0%, #c084fc 25%, #a855f7 50%, #c084fc 75%, #a855f7 100%)'
 									: 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)'
 								: rarity === 'legendary'
-								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #ef4444 0%, #f87171 25%, #ef4444 50%, #f87171 75%, #ef4444 100%)'
+								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #fbbf24 0%, #fcd34d 25%, #fbbf24 50%, #fcd34d 75%, #fbbf24 100%)'
 								: rarity === 'epic'
-								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #f59e0b 50%, #fbbf24 75%, #f59e0b 100%)'
+								? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #a855f7 0%, #c084fc 25%, #a855f7 50%, #c084fc 75%, #a855f7 100%)'
 								: 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)',
 							backgroundOrigin: 'border-box',
 							backgroundClip: 'padding-box, border-box',
 							boxShadow: isDark
 								? rarity === 'legendary'
-									? '0 6px 24px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.2)'
+									? '0 6px 24px rgba(251, 191, 36, 0.5), 0 0 60px rgba(251, 191, 36, 0.2)'
 									: rarity === 'epic'
-									? '0 6px 24px rgba(245, 158, 11, 0.4), 0 0 60px rgba(245, 158, 11, 0.15)'
+									? '0 6px 24px rgba(168, 85, 247, 0.4), 0 0 60px rgba(168, 85, 247, 0.15)'
 									: '0 6px 24px rgba(16, 185, 129, 0.25), 0 0 60px rgba(16, 185, 129, 0.1)'
 								: rarity === 'legendary'
-								? '0 6px 24px rgba(239, 68, 68, 0.3), 0 2px 12px rgba(239, 68, 68, 0.2)'
+								? '0 6px 24px rgba(251, 191, 36, 0.3), 0 2px 12px rgba(251, 191, 36, 0.2)'
 								: rarity === 'epic'
-								? '0 6px 24px rgba(245, 158, 11, 0.25), 0 2px 12px rgba(245, 158, 11, 0.15)'
+								? '0 6px 24px rgba(168, 85, 247, 0.25), 0 2px 12px rgba(168, 85, 247, 0.15)'
 								: '0 6px 24px rgba(16, 185, 129, 0.2), 0 2px 12px rgba(16, 185, 129, 0.1)',
 							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 							'&::before': {
@@ -186,14 +186,14 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 								bottom: 0,
 								background: isDark
 									? rarity === 'legendary'
-										? 'radial-gradient(circle at 0% 0%, rgba(239, 68, 68, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 50%)'
+										? 'radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.1) 0%, transparent 50%)'
 										: rarity === 'epic'
-										? 'radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)'
+										? 'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%)'
 										: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)'
 									: rarity === 'legendary'
-									? 'radial-gradient(circle at 0% 0%, rgba(239, 68, 68, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.08) 0%, transparent 50%)'
+									? 'radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.08) 0%, transparent 50%)'
 									: rarity === 'epic'
-									? 'radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 50%)'
+									? 'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.08) 0%, transparent 50%)'
 									: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%)',
 								opacity: 0,
 								transition: 'opacity 0.5s ease',
@@ -203,14 +203,14 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							'&:hover': {
 								boxShadow: isDark
 									? rarity === 'legendary'
-										? '0 10px 36px rgba(239, 68, 68, 0.7), 0 0 90px rgba(239, 68, 68, 0.35)'
+										? '0 10px 36px rgba(251, 191, 36, 0.7), 0 0 90px rgba(251, 191, 36, 0.35)'
 										: rarity === 'epic'
-										? '0 10px 36px rgba(245, 158, 11, 0.6), 0 0 90px rgba(245, 158, 11, 0.3)'
+										? '0 10px 36px rgba(168, 85, 247, 0.6), 0 0 90px rgba(168, 85, 247, 0.3)'
 										: '0 10px 36px rgba(16, 185, 129, 0.4), 0 0 90px rgba(16, 185, 129, 0.2)'
 									: rarity === 'legendary'
-									? '0 10px 36px rgba(239, 68, 68, 0.45), 0 4px 20px rgba(239, 68, 68, 0.3)'
+									? '0 10px 36px rgba(251, 191, 36, 0.45), 0 4px 20px rgba(251, 191, 36, 0.3)'
 									: rarity === 'epic'
-									? '0 10px 36px rgba(245, 158, 11, 0.4), 0 4px 20px rgba(245, 158, 11, 0.25)'
+									? '0 10px 36px rgba(168, 85, 247, 0.4), 0 4px 20px rgba(168, 85, 247, 0.25)'
 									: '0 10px 36px rgba(16, 185, 129, 0.35), 0 4px 20px rgba(16, 185, 129, 0.2)',
 								transform: 'translateY(-4px) scale(1.01)',
 								'&::after': {
@@ -229,15 +229,15 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									top: 8,
 									right: 8,
 									fontSize: '1.3rem',
-									color: '#f59e0b',
+									color: '#a855f7',
 									background: isDark
 										? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
 										: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 240, 0.95) 100%)',
 									backdropFilter: 'blur(12px)',
 									borderRadius: '50%',
 									padding: '5px',
-									boxShadow: '0 3px 15px rgba(245, 158, 11, 0.6), 0 0 30px rgba(245, 158, 11, 0.4)',
-									border: '2px solid rgba(245, 158, 11, 0.6)',
+									boxShadow: '0 3px 15px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)',
+									border: '2px solid rgba(168, 85, 247, 0.6)',
 									zIndex: 10,
 									pointerEvents: 'none',
 								}}
@@ -317,9 +317,9 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 										fontWeight: 800,
 										background: isDark
 											? rarity === 'legendary'
-												? 'linear-gradient(135deg, #ef4444 0%, #f87171 50%, #ef4444 100%)'
+												? 'linear-gradient(135deg, #fbbf24 0%, #fcd34d 50%, #fbbf24 100%)'
 												: rarity === 'epic'
-												? 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%)'
+												? 'linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #a855f7 100%)'
 												: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%)'
 											: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #7c3aed 100%)',
 										WebkitBackgroundClip: 'text',
@@ -388,8 +388,8 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 												flex: 1,
 												height: '1px',
 												background: isDark
-													? `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 100%)`
-													: `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.5)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 100%)`,
+													? `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(251, 191, 36, 0.6)' : rarity === 'epic' ? 'rgba(168, 85, 247, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 100%)`
+													: `linear-gradient(90deg, transparent 0%, ${rarity === 'legendary' ? 'rgba(251, 191, 36, 0.5)' : rarity === 'epic' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 100%)`,
 											}}
 										/>
 										<Box
@@ -424,8 +424,8 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 												flex: 1,
 												height: '1px',
 												background: isDark
-													? `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.6)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 0%, transparent 100%)`
-													: `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(239, 68, 68, 0.5)' : rarity === 'epic' ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 0%, transparent 100%)`,
+													? `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(251, 191, 36, 0.6)' : rarity === 'epic' ? 'rgba(168, 85, 247, 0.5)' : 'rgba(16, 185, 129, 0.4)'} 0%, transparent 100%)`
+													: `linear-gradient(90deg, ${rarity === 'legendary' ? 'rgba(251, 191, 36, 0.5)' : rarity === 'epic' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(16, 185, 129, 0.3)'} 0%, transparent 100%)`,
 											}}
 										/>
 									</Box>
