@@ -70,11 +70,11 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					position: 'absolute',
 					top: 0,
 					left: 0,
-					width: '40px',
-					height: '40px',
+					width: { xs: '30px', md: '40px' },
+					height: { xs: '30px', md: '40px' },
 					borderTop: '3px solid rgba(139, 92, 246, 0.4)',
 					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
-					borderRadius: '20px 0 0 0',
+					borderRadius: { xs: '15px 0 0 0', md: '20px 0 0 0' },
 					zIndex: 2,
 					transition: 'all 0.4s ease',
 				}}
@@ -85,11 +85,11 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					position: 'absolute',
 					top: 0,
 					right: 0,
-					width: '40px',
-					height: '40px',
+					width: { xs: '30px', md: '40px' },
+					height: { xs: '30px', md: '40px' },
 					borderTop: '3px solid rgba(6, 182, 212, 0.4)',
 					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRadius: '0 20px 0 0',
+					borderRadius: { xs: '0 15px 0 0', md: '0 20px 0 0' },
 					zIndex: 2,
 					transition: 'all 0.4s ease',
 				}}
@@ -100,11 +100,11 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					position: 'absolute',
 					bottom: 0,
 					left: 0,
-					width: '40px',
-					height: '40px',
+					width: { xs: '30px', md: '40px' },
+					height: { xs: '30px', md: '40px' },
 					borderBottom: '3px solid rgba(139, 92, 246, 0.4)',
 					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
-					borderRadius: '0 0 0 20px',
+					borderRadius: { xs: '0 0 0 15px', md: '0 0 0 20px' },
 					zIndex: 2,
 					transition: 'all 0.4s ease',
 				}}
@@ -115,11 +115,11 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					position: 'absolute',
 					bottom: 0,
 					right: 0,
-					width: '40px',
-					height: '40px',
+					width: { xs: '30px', md: '40px' },
+					height: { xs: '30px', md: '40px' },
 					borderBottom: '3px solid rgba(6, 182, 212, 0.4)',
 					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRadius: '0 0 20px 0',
+					borderRadius: { xs: '0 0 15px 0', md: '0 0 20px 0' },
 					zIndex: 2,
 					transition: 'all 0.4s ease',
 				}}
@@ -148,7 +148,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
 					alignItems: 'center',
 					gap: { xs: 2, md: 4, lg: 4.5 },
-					padding: { xs: '1.5rem 1.5rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
+					padding: { xs: '1.25rem 1.25rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
 					borderRadius: 5,
 					background: isDark
 						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)'
@@ -198,8 +198,8 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 					<Box
 						sx={{
 							position: 'relative',
-							width: { xs: 200, md: 200, lg: 220 },
-							height: { xs: 200, md: 200, lg: 220 },
+							width: { xs: 160, md: 200, lg: 220 },
+							height: { xs: 160, md: 200, lg: 220 },
 							animation: 'float 3s ease-in-out infinite',
 							'@keyframes float': {
 								'0%, 100%': {
@@ -385,7 +385,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 						sx={{
 							alignSelf: { xs: 'center', md: 'flex-start' },
 							minWidth: { xs: '180px', md: '200px', lg: '210px' },
-							height: { xs: 56, md: 52, lg: 54 },
+							height: { xs: 48, md: 52, lg: 54 },
 							fontSize: { xs: '0.95rem', md: '0.98rem', lg: '1.02rem' },
 							fontWeight: 700,
 							textTransform: 'none',
@@ -611,7 +611,7 @@ const Homepage = () => {
 							boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4)',
 						},
 						'& .swiper-pagination': {
-							bottom: '20px !important',
+							bottom: '10px !important',
 						},
 					}}>
 					<Swiper
@@ -643,7 +643,7 @@ const Homepage = () => {
 							},
 						}}
 						style={{
-							paddingBottom: '50px',
+							paddingBottom: '60px',
 							paddingLeft: '16px',
 							paddingRight: '16px',
 						}}>
@@ -657,9 +657,9 @@ const Homepage = () => {
 											alignItems: 'center',
 											gap: 2,
 											textAlign: 'center',
-											p: { xs: 3, sm: 3.5 },
+											p: { xs: 2.5, sm: 3.5 },
 											height: '100%',
-											minHeight: { xs: '320px', sm: '340px' },
+											minHeight: { xs: '280px', sm: '320px' },
 											borderRadius: 4,
 											background: isDark ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)' : 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
 											border: '2px solid transparent',
@@ -699,8 +699,8 @@ const Homepage = () => {
 										<Box
 											sx={{
 												position: 'relative',
-												width: { xs: 110, sm: 120 },
-												height: { xs: 110, sm: 120 },
+												width: { xs: 100, sm: 120 },
+												height: { xs: 100, sm: 120 },
 											}}>
 											{/* Cercle de fond animé blur */}
 											<Box
@@ -948,7 +948,7 @@ const Homepage = () => {
 							display: 'flex',
 							justifyContent: 'center',
 							gap: 2,
-							mt: -2,
+							mt: 1,
 						}}>
 						<IconButton
 							className="swiper-button-prev-custom"
@@ -1681,7 +1681,7 @@ const Homepage = () => {
 					imageAlt="dictionary"
 					onShowClick={() => handleOpen('dictionary.mp4', t('dictionary'))}
 					reverse={false}
-					marginTop={{ xs: '5rem', md: '8rem' }}
+					marginTop={{ xs: '3rem', md: '8rem' }}
 					badge={t('badgeNew')}
 					offsetDirection="left"
 					buttonText={t('viewDemo')}
@@ -1694,7 +1694,7 @@ const Homepage = () => {
 					imageAlt="flashcards"
 					onShowClick={() => handleOpen('flashcards.mp4', t('flashcards'))}
 					reverse={true}
-					marginTop={{ xs: '5rem', md: '8rem' }}
+					marginTop={{ xs: '3rem', md: '8rem' }}
 					badge={t('badgePopular')}
 					offsetDirection="right"
 					buttonText={t('viewDemo')}
@@ -1708,7 +1708,7 @@ const Homepage = () => {
 						imageAlt="teacher"
 						onShowClick={() => {}}
 						reverse={false}
-						marginTop={{ xs: '5rem', md: '8rem' }}
+						marginTop={{ xs: '3rem', md: '8rem' }}
 						badge={t('badgePremium')}
 						offsetDirection="left"
 						buttonText={t('viewDemo')}

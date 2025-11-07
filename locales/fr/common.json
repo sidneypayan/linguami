@@ -31,6 +31,7 @@
 	"emailNotConfirmed": "Nous vous avons envoyé un mail d'inscription",
 	"loginSuccess": "Vous êtes bien connecté",
 	"passwordResetEmailSent": "Vous allez recevoir un email avec les instructions nécessaires",
+	"magicLinkSent": "Vérifiez votre boîte mail ! Nous vous avons envoyé un lien de connexion",
 	"passwordUpdateSuccess": "Mot de passe mis à jour avec succès",
 	"passwordUpdateError": "Erreur avec le mot de passe",
 	"languageUpdateError": "Erreur lors de la mise à jour de la langue",

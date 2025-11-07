@@ -3,7 +3,7 @@ import { styled, alpha, useTheme } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { ExpandMoreRounded, TranslateRounded, CheckCircleRounded } from '@mui/icons-material'
+import { ExpandMoreRounded, SchoolRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useUserContext } from '../../context/user.js'
@@ -191,7 +191,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 				disableElevation
 				disableRipple
 				onClick={handleClick}
-				startIcon={<TranslateRounded sx={{ fontSize: '1.3rem' }} />}
+				startIcon={<SchoolRounded sx={{ fontSize: '1.3rem' }} />}
 				endIcon={
 					!isSingleLanguage ? (
 						<ExpandMoreRounded
@@ -294,7 +294,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 						{getFlag(userLearningLanguage, 28)}
 					</Box>
 				)}
-				<TranslateRounded
+				<SchoolRounded
 					sx={{
 						position: 'absolute',
 						bottom: -2,

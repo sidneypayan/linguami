@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useUserContext } from '../context/user'
 import AuthLayout from '../components/auth/AuthLayout'
 import OAuthButtons from '../components/auth/OAuthButtons'
+import MagicLinkDialog from '../components/auth/MagicLinkDialog'
 import Head from 'next/head'
 import Link from 'next/link'
 import {
@@ -15,16 +16,18 @@ import {
 	useTheme,
 } from '@mui/material'
 import {
-	EmailRounded,
-	LockRounded,
+	AlternateEmailRounded,
+	KeyRounded,
+	LoginRounded,
 } from '@mui/icons-material'
 
 const Login = () => {
 	const { t } = useTranslation('register')
-	const { login, loginWithThirdPartyOAuth } = useUserContext()
+	const { login, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [values, setValues] = useState({ email: '', password: '' })
+	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 
 	const handleChange = e => {
 		setValues({ ...values, [e.target.name]: e.target.value })
@@ -72,15 +75,15 @@ const Login = () => {
 				<meta name="description" content={t('signinSubtitle')} />
 			</Head>
 
-			<AuthLayout>
+			<AuthLayout icon={<LoginRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
 				{/* Titre */}
 				<Typography
 					variant="h4"
 					align="center"
 					sx={{
 						fontWeight: 800,
-						mb: 1,
-						fontSize: { xs: '1.875rem', sm: '2.125rem' },
+						mb: { xs: 3, sm: 1 },
+						fontSize: { xs: '1.5rem', sm: '2.125rem' },
 						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 						WebkitBackgroundClip: 'text',
 						WebkitTextFillColor: 'transparent',
@@ -94,7 +97,8 @@ const Login = () => {
 					align="center"
 					sx={{
 						color: isDark ? '#94a3b8' : '#718096',
-						mb: 4,
+						mb: { xs: 3, sm: 4 },
+				display: { xs: 'none', sm: 'block' },
 						fontSize: '1rem',
 					}}>
 					{t('signinSubtitle')}
@@ -103,10 +107,12 @@ const Login = () => {
 				{/* Boutons OAuth */}
 				<OAuthButtons
 					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
+				onAppleClick={() => loginWithThirdPartyOAuth('apple')}
 					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
+				onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
 				/>
 
-				<Divider sx={{ my: 3.5, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+				<Divider sx={{ my: { xs: 2.5, sm: 3.5 }, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
 					{t('or')}
 				</Divider>
 
@@ -114,7 +120,7 @@ const Login = () => {
 				<Box
 					component="form"
 					onSubmit={handleSubmit}
-					sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+					sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, sm: 3 } }}>
 					<TextField
 						fullWidth
 						onChange={handleChange}
@@ -128,7 +134,7 @@ const Login = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<EmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+									<AlternateEmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -149,7 +155,7 @@ const Login = () => {
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">
-										<LockRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 									</InputAdornment>
 								),
 							}}
@@ -184,7 +190,7 @@ const Login = () => {
 						variant="contained"
 						size="large"
 						sx={{
-							py: 2,
+							py: { xs: 1.75, sm: 2 },
 							borderRadius: 2.5,
 							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 							fontWeight: 700,
@@ -220,7 +226,7 @@ const Login = () => {
 					</Button>
 
 					{/* Lien vers inscription */}
-					<Box sx={{ textAlign: 'center', mt: 1 }}>
+					<Box sx={{ textAlign: 'center', mt: { xs: 0.75, sm: 1 } }}>
 						<Typography
 							variant="body2"
 							sx={{
@@ -246,6 +252,12 @@ const Login = () => {
 						</Typography>
 					</Box>
 				</Box>
+
+				<MagicLinkDialog
+					open={magicLinkDialogOpen}
+					onClose={() => setMagicLinkDialogOpen(false)}
+					onSend={sendMagicLink}
+				/>
 			</AuthLayout>
 		</>
 	)

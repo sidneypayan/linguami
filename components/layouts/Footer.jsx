@@ -1,18 +1,13 @@
 import useTranslation from 'next-translate/useTranslation'
 import Link from 'next/link'
-import { Box, Container, Stack, Typography, IconButton, Divider, useTheme, useMediaQuery } from '@mui/material'
+import { Box, Container, Stack, Typography, IconButton, useTheme, useMediaQuery } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
-import { useRouter } from 'next/router'
 
 const Footer = () => {
 	const { t } = useTranslation('common')
-	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
-	// Masquer le séparateur diagonal sur les pages de connexion/inscription
-	const hideTopSeparator = ['/signin', '/login', '/signup'].includes(router.pathname)
 
 	return (
 		<Box
@@ -23,9 +18,9 @@ const Footer = () => {
 				mt: 'auto',
 				position: 'relative',
 				overflow: 'hidden',
-				pt: hideTopSeparator ? { xs: 3, md: 6 } : { xs: 'calc(3rem + 40px)', md: 'calc(6rem + 80px)' },
-				pb: { xs: 3, md: 6 },
-				clipPath: hideTopSeparator ? 'none' : {
+				pt: { xs: 'calc(1.5rem + 40px)', md: '80px' },
+				pb: { xs: 'calc(72px + 32px)', md: 6 },
+				clipPath: {
 					xs: 'polygon(0 40px, 100% 0, 100% 100%, 0 100%)',
 					md: 'polygon(0 80px, 100% 0, 100% 100%, 0 100%)',
 				},
@@ -293,19 +288,12 @@ const Footer = () => {
 					</Box>
 				</Stack>
 
-				<Divider
-					sx={{
-						my: { xs: 2.5, md: 4 },
-						borderColor: 'rgba(139, 92, 246, 0.3)',
-						boxShadow: '0 0 10px rgba(139, 92, 246, 0.2)',
-					}}
-				/>
-
 				{/* Copyright */}
 				<Typography
 					variant='body2'
 					align='center'
 					sx={{
+						mt: { xs: 2.5, md: 4 },
 						color: 'rgba(255, 255, 255, 0.8)',
 						fontWeight: 500,
 					}}>

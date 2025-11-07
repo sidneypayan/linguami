@@ -31,6 +31,7 @@
 	"emailNotConfirmed": "We sent you a registration email",
 	"loginSuccess": "You are successfully logged in",
 	"passwordResetEmailSent": "You will receive an email with the necessary instructions",
+	"magicLinkSent": "Check your inbox! We've sent you a sign-in link",
 	"passwordUpdateSuccess": "Password updated successfully",
 	"passwordUpdateError": "Password error",
 	"languageUpdateError": "Error updating language",

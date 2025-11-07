@@ -34,6 +34,9 @@ const Layout = ({ children }) => {
 					flexDirection: 'column',
 					minHeight: '100vh',
 					bgcolor: 'background.default',
+					background: theme.palette.mode === 'dark'
+						? 'background.default'
+						: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
 					color: 'text.primary',
 					transition: 'background-color 0.3s ease, color 0.3s ease',
 				}}>
@@ -43,7 +46,8 @@ const Layout = ({ children }) => {
 					component='main'
 					sx={{
 						flex: 1,
-						pb: { xs: '90px', md: 0 }, // Padding bottom pour la bottom nav sur mobile et tablette
+						display: 'flex',
+						flexDirection: 'column',
 					}}>
 					{children}
 				</Box>

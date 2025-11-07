@@ -25,8 +25,8 @@ const MaterialsFilter = ({ selectedCategory, onCategoryChange }) => {
 	return (
 		<Box
 			sx={{
-				mb: 4,
-				p: { xs: 1.5, sm: 3 },
+				mb: { xs: 3, md: 4 },
+				p: { xs: 1.25, sm: 3 },
 				borderRadius: 3,
 				background: isDark
 					? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)'
@@ -63,7 +63,7 @@ const MaterialsFilter = ({ selectedCategory, onCategoryChange }) => {
 									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
 									px: { xs: 1, sm: 1.5 },
-									height: { xs: '36px', sm: '42px' },
+									height: { xs: '32px', sm: '42px' },
 									borderRadius: 3,
 									cursor: 'pointer',
 									border: isSelected ? '3px solid' : '2px solid',

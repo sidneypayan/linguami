@@ -31,6 +31,7 @@
 	"emailNotConfirmed": "Мы отправили вам письмо для регистрации",
 	"loginSuccess": "Вы успешно вошли в систему",
 	"passwordResetEmailSent": "Вы получите письмо с необходимыми инструкциями",
+	"magicLinkSent": "Проверьте почту! Мы отправили вам ссылку для входа",
 	"passwordUpdateSuccess": "Пароль успешно обновлён",
 	"passwordUpdateError": "Ошибка с паролем",
 	"languageUpdateError": "Ошибка при обновлении языка",

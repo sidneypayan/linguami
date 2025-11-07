@@ -1,55 +1,66 @@
 import { Box, Container, Card, useTheme } from '@mui/material'
-import { HomeRounded } from '@mui/icons-material'
+import { LoginRounded } from '@mui/icons-material'
 import Link from 'next/link'
 
-const AuthLayout = ({ children }) => {
+const AuthLayout = ({ children, icon }) => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
 	return (
 		<Box
 			sx={{
-				minHeight: '100vh',
-				background: isDark
-					? 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)'
-					: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				flex: 1,
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				position: 'relative',
 				overflow: 'hidden',
-				py: { xs: 0, sm: 6 },
-				// Effet de fond avec cercles floutés
+				padding: {
+					xs: '0',
+					md: '2rem 0 calc(80px + 2rem) 0',
+				},
+				mb: { xs: '0', md: '-80px' },
+				background: isDark
+					? 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)'
+					: 'linear-gradient(145deg, #f8fafc 0%, #e0e7ff 50%, #ddd6fe 100%)',
+				clipPath: {
+					xs: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%)',
+					md: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), 0 100%)',
+				},
 				'&::before': {
 					content: '""',
 					position: 'absolute',
-					top: '-10%',
-					right: '-10%',
-					width: '60%',
-					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 70%)',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background: isDark
+						? 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)'
+						: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.12) 0%, transparent 50%)',
 					pointerEvents: 'none',
-					filter: 'blur(60px)',
-					animation: 'float 20s ease-in-out infinite',
 				},
 				'&::after': {
 					content: '""',
 					position: 'absolute',
-					bottom: '-10%',
-					left: '-10%',
-					width: '60%',
-					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 30%, transparent 70%)',
+					top: '20%',
+					left: '10%',
+					width: '500px',
+					height: '500px',
+					background: isDark
+						? 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)'
+						: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)',
+					filter: 'blur(80px)',
 					pointerEvents: 'none',
-					filter: 'blur(60px)',
-					animation: 'float 25s ease-in-out infinite reverse',
+					animation: 'pulse 4s ease-in-out infinite',
 				},
-				'@keyframes float': {
+				'@keyframes pulse': {
 					'0%, 100%': {
-						transform: 'translate(0, 0) scale(1)',
+						opacity: 0.5,
+						transform: 'scale(1)',
 					},
 					'50%': {
-						transform: 'translate(-20px, 20px) scale(1.1)',
+						opacity: 0.8,
+						transform: 'scale(1.1)',
 					},
 				},
 			}}>
@@ -59,12 +70,12 @@ const AuthLayout = ({ children }) => {
 					position: 'relative',
 					zIndex: 1,
 					px: { xs: 0, sm: 2 },
-					py: { xs: 0, sm: 0 },
+					py: { xs: 2, sm: 3 },
 					mb: { xs: 0, sm: 0 }
 				}}>
 				<Card
 					sx={{
-						p: { xs: 3, sm: 5 },
+						p: 0,
 						borderRadius: { xs: 0, sm: 4 },
 						boxShadow: isDark
 							? {
@@ -83,27 +94,34 @@ const AuthLayout = ({ children }) => {
 							? { xs: 'none !important', sm: '1px solid rgba(139, 92, 246, 0.3)' }
 							: { xs: 'none !important', sm: 'initial' },
 						outline: 'none',
-						minHeight: { xs: '100vh', sm: 'auto' },
+						overflow: 'hidden',
 					}}>
-					{/* Logo avec lien vers l'accueil */}
-					<Link href="/">
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								mb: 3,
-								textDecoration: 'none',
-								cursor: 'pointer',
-								transition: 'transform 0.3s ease',
-								'&:hover': {
-									transform: 'scale(1.05)',
-								},
-							}}>
+					{/* Section supérieure avec background de la page */}
+					<Box
+						sx={{
+							bgcolor: 'background.default',
+							pt: { xs: 2, sm: 3 },
+							pb: { xs: 1.5, sm: 2 },
+							borderRadius: { xs: 0, sm: '16px 16px 0 0' },
+						}}>
+						{/* Logo avec lien vers l'accueil */}
+						<Link href="/">
 							<Box
 								sx={{
-									width: 64,
-									height: 64,
+									display: { xs: 'none', sm: 'flex' },
+									alignItems: 'center',
+									justifyContent: 'center',
+									textDecoration: 'none',
+									cursor: 'pointer',
+									transition: 'transform 0.3s ease',
+									'&:hover': {
+										transform: 'scale(1.05)',
+									},
+								}}>
+							<Box
+								sx={{
+									width: { xs: 56, sm: 64 },
+									height: { xs: 56, sm: 64 },
 									borderRadius: 3,
 									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 									display: 'flex',
@@ -123,14 +141,17 @@ const AuthLayout = ({ children }) => {
 										maskComposite: 'exclude',
 									},
 								}}>
-								<HomeRounded sx={{ fontSize: '2.25rem', color: 'white' }} />
+								{icon || <LoginRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}
 							</Box>
 						</Box>
 					</Link>
+				</Box>
 
-					{/* Contenu */}
+				{/* Contenu principal */}
+				<Box sx={{ p: { xs: 3, sm: 5 }, pb: { xs: 5, sm: 7 } }}>
 					{children}
-				</Card>
+				</Box>
+			</Card>
 			</Container>
 		</Box>
 	)

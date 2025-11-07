@@ -13,7 +13,7 @@ const Hero = () => {
 			sx={{
 				position: 'relative',
 				padding: {
-					xs: '3rem 0 calc(2rem + 40px) 0',
+					xs: '2.5rem 0 calc(1.5rem + 40px) 0',
 					md: '5.5rem 0 calc(4rem + 80px) 0',
 				},
 				background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
@@ -61,7 +61,7 @@ const Hero = () => {
 				width={1440}
 				maxWidth='100%'
 				sx={{
-					padding: { xs: '1.5rem', md: '3rem' },
+					padding: { xs: '1.25rem', md: '3rem' },
 					margin: '0 auto',
 					justifyContent: {
 						xs: 'center',
@@ -81,9 +81,9 @@ const Hero = () => {
 							display: 'inline-flex',
 							alignItems: 'center',
 							gap: 1,
-							px: { xs: 2.5, md: 3 },
-							py: { xs: 0.75, md: 1 },
-							mb: { xs: 2, md: 3 },
+							px: { xs: 2, md: 3 },
+							py: { xs: 0.6, md: 1 },
+							mb: { xs: 1.5, md: 3 },
 							borderRadius: 50,
 							background: 'rgba(139, 92, 246, 0.2)',
 							border: '1px solid rgba(139, 92, 246, 0.3)',
@@ -122,11 +122,11 @@ const Hero = () => {
 					<Typography
 						variant='h2'
 						component='h1'
-						mb={{ xs: 2, md: 3 }}
+						mb={{ xs: 1.5, md: 3 }}
 						sx={{
-							fontSize: { xs: '2.25rem', sm: '3rem', md: '4rem' },
+							fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
 							fontWeight: 800,
-							lineHeight: 1.15,
+							lineHeight: 1.2,
 							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
 							backgroundSize: '200% 200%',
 							WebkitBackgroundClip: 'text',
@@ -153,13 +153,13 @@ const Hero = () => {
 
 					<>
 						<Typography
-							mb={{ xs: 3, md: 5 }}
+							mb={{ xs: 2, md: 5 }}
 							variant='h5'
 							sx={{
 								display: { xs: 'block', md: 'none' },
-								fontSize: '1rem',
+								fontSize: '0.95rem',
 								fontWeight: 500,
-								lineHeight: 1.7,
+								lineHeight: 1.6,
 								color: 'rgba(255, 255, 255, 0.85)',
 								animation: 'fadeInUp 0.6s ease-out 0.2s both',
 							}}>
@@ -192,7 +192,7 @@ const Hero = () => {
 								fontSize: { xs: '1rem', md: '1.125rem' },
 								textTransform: 'none',
 								px: { xs: 4, md: 5 },
-								py: { xs: 1.75, md: 2 },
+								py: { xs: 1.5, md: 2 },
 								borderRadius: 3,
 								boxShadow: '0 8px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
 								border: '1px solid rgba(139, 92, 246, 0.5)',

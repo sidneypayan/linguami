@@ -61,6 +61,7 @@ export const createToastMessages = (locale = null) => ({
 	passwordUpdateSuccess: () => getToastMessage('passwordUpdateSuccess', locale),
 	passwordUpdateError: () => getToastMessage('passwordUpdateError', locale),
 	languageUpdateError: () => getToastMessage('languageUpdateError', locale),
+	magicLinkSent: () => getToastMessage('magicLinkSent', locale),
 	genericError: () => getToastMessage('genericError', locale),
 })
 

@@ -34,7 +34,7 @@ import {
 import LanguageMenu from './LanguageMenu.jsx'
 import InterfaceLanguageMenu from './InterfaceLanguageMenu.jsx'
 
-const drawerWidth = '80%'
+const drawerWidth = '75%'
 
 const Navbar = props => {
 	const { t, lang } = useTranslation('common')
@@ -124,57 +124,8 @@ const Navbar = props => {
 					pointerEvents: 'none',
 				},
 			}}>
-			{/* Header du drawer */}
-			<Box
-				sx={{
-					p: 3,
-					pb: 2.5,
-					display: 'flex',
-					alignItems: 'center',
-					gap: 2,
-					borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-					position: 'relative',
-					zIndex: 1,
-				}}>
-				<Box
-					sx={{
-						width: 48,
-						height: 48,
-						borderRadius: 3,
-						background: 'rgba(255, 255, 255, 0.2)',
-						backdropFilter: 'blur(10px)',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-					}}>
-					<HomeRounded sx={{ fontSize: '1.75rem', color: 'white' }} />
-				</Box>
-				<Box>
-					<Box
-						sx={{
-							fontWeight: 800,
-							fontSize: '1.5rem',
-							color: 'white',
-							letterSpacing: '-0.5px',
-							lineHeight: 1.2,
-						}}>
-						Linguami
-					</Box>
-					<Box
-						sx={{
-							fontSize: '0.75rem',
-							color: 'rgba(255, 255, 255, 0.8)',
-							fontWeight: 500,
-							mt: 0.25,
-						}}>
-						Apprentissage des langues
-					</Box>
-				</Box>
-			</Box>
-
 			{/* Navigation */}
-			<List sx={{ color: '#fff', px: 2.5, py: 4, position: 'relative', zIndex: 1, flex: 1 }}>
+			<List sx={{ color: '#fff', px: 2, pt: 2.5, pb: 2, position: 'relative', zIndex: 1, flex: 1 }}>
 				{navigationLinks.map((link, index) => {
 					const isActive = isActivePath(link.href)
 					return (
@@ -182,12 +133,12 @@ const Navbar = props => {
 							key={link.name}
 							disablePadding
 							sx={{
-								mb: 1.5,
-								animation: `slideIn 0.3s ease-out ${index * 0.05}s both`,
+								mb: 1,
+								animation: `slideIn 0.25s ease-out ${index * 0.03}s both`,
 								'@keyframes slideIn': {
 									'0%': {
 										opacity: 0,
-										transform: 'translateX(-20px)',
+										transform: 'translateX(-15px)',
 									},
 									'100%': {
 										opacity: 1,
@@ -198,9 +149,9 @@ const Navbar = props => {
 							<Link href={`${link.href}`} style={{ width: '100%' }}>
 								<ListItemButton
 									sx={{
-										borderRadius: 3,
-										py: 1.5,
-										px: 2,
+										borderRadius: 2.5,
+										py: 1.4,
+										px: 1.75,
 										backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
 										backdropFilter: isActive ? 'blur(10px)' : 'none',
 										boxShadow: isActive ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
@@ -215,9 +166,9 @@ const Navbar = props => {
 									<ListItemIcon
 										sx={{
 											color: '#fff',
-											minWidth: 44,
+											minWidth: 40,
 											'& .MuiSvgIcon-root': {
-												fontSize: '1.5rem',
+												fontSize: '1.45rem',
 												filter: isActive ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'none',
 											},
 										}}>
@@ -227,7 +178,7 @@ const Navbar = props => {
 										primary={link.name}
 										primaryTypographyProps={{
 											fontWeight: isActive ? 700 : 600,
-											fontSize: '1.0625rem',
+											fontSize: '1rem',
 											letterSpacing: '-0.2px',
 										}}
 									/>
@@ -253,12 +204,12 @@ const Navbar = props => {
 					<ListItem
 						disablePadding
 						sx={{
-							mb: 1.5,
-							animation: `slideIn 0.3s ease-out ${navigationLinks.length * 0.05}s both`,
+							mb: 1,
+							animation: `slideIn 0.25s ease-out ${navigationLinks.length * 0.03}s both`,
 							'@keyframes slideIn': {
 								'0%': {
 									opacity: 0,
-									transform: 'translateX(-20px)',
+									transform: 'translateX(-15px)',
 								},
 								'100%': {
 									opacity: 1,
@@ -269,9 +220,9 @@ const Navbar = props => {
 						<Link href="/admin" style={{ width: '100%' }}>
 							<ListItemButton
 								sx={{
-									borderRadius: 3,
-									py: 1.5,
-									px: 2,
+									borderRadius: 2.5,
+									py: 1.4,
+									px: 1.75,
 									backgroundColor: isActivePath('/admin') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
 									backdropFilter: isActivePath('/admin') ? 'blur(10px)' : 'none',
 									boxShadow: isActivePath('/admin') ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
@@ -287,9 +238,9 @@ const Navbar = props => {
 								<ListItemIcon
 									sx={{
 										color: '#fff',
-										minWidth: 44,
+										minWidth: 40,
 										'& .MuiSvgIcon-root': {
-											fontSize: '1.5rem',
+											fontSize: '1.45rem',
 											filter: isActivePath('/admin') ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'drop-shadow(0 2px 4px rgba(255,215,0,0.3))',
 										},
 									}}>
@@ -299,7 +250,7 @@ const Navbar = props => {
 									primary={t('admin')}
 									primaryTypographyProps={{
 										fontWeight: isActivePath('/admin') ? 700 : 600,
-										fontSize: '1.0625rem',
+										fontSize: '1rem',
 										letterSpacing: '-0.2px',
 									}}
 								/>
@@ -320,25 +271,16 @@ const Navbar = props => {
 				)}
 			</List>
 
-			{/* Language selectors et theme toggle pour mobile */}
-			<Box sx={{ px: 3, pb: 2, mt: 'auto', position: 'relative', zIndex: 1 }}>
-				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
-					<ThemeToggle variant="full" />
-					<InterfaceLanguageMenu variant="full" onClose={handleDrawerToggle} />
-					<LanguageMenu variant="full" onClose={handleDrawerToggle} />
-				</Box>
-			</Box>
-
 			{/* Boutons Sign in / Sign up pour mobile */}
 			{isMounted && (
 				<>
 					{isBootstrapping ? (
 						// Skeleton pendant le chargement (mobile)
-						<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+						<Box sx={{ px: 2.5, pb: 3, mt: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 							<Box
 								sx={{
-									height: 56,
-									borderRadius: 3,
+									height: 50,
+									borderRadius: 2.5,
 									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
 									animation: 'pulse 1.5s ease-in-out infinite',
 									'@keyframes pulse': {
@@ -349,8 +291,8 @@ const Navbar = props => {
 							/>
 							<Box
 								sx={{
-									height: 56,
-									borderRadius: 3,
+									height: 50,
+									borderRadius: 2.5,
 									background: 'rgba(255, 255, 255, 0.1)',
 									animation: 'pulse 1.5s ease-in-out infinite 0.2s',
 									'@keyframes pulse': {
@@ -361,7 +303,7 @@ const Navbar = props => {
 							/>
 						</Box>
 					) : !isUserLoggedIn ? (
-						<Box sx={{ px: 3, pb: 4, position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+						<Box sx={{ px: 2.5, pb: 3, mt: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 							<Link href={`/signup`}>
 						<Button
 							variant='contained'
@@ -371,9 +313,9 @@ const Navbar = props => {
 								color: 'white',
 								fontWeight: 700,
 								textTransform: 'none',
-								py: 1.75,
-								borderRadius: 3,
-								fontSize: '1.0625rem',
+								py: 1.5,
+								borderRadius: 2.5,
+								fontSize: '1rem',
 								boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4)',
 								border: '1px solid rgba(139, 92, 246, 0.3)',
 								transition: 'all 0.3s ease',
@@ -397,9 +339,9 @@ const Navbar = props => {
 								color: 'white',
 								fontWeight: 600,
 								textTransform: 'none',
-								py: 1.75,
-								borderRadius: 3,
-								fontSize: '1.0625rem',
+								py: 1.5,
+								borderRadius: 2.5,
+								fontSize: '1rem',
 								border: '1px solid rgba(255, 255, 255, 0.3)',
 								transition: 'all 0.3s ease',
 								'&:hover': {

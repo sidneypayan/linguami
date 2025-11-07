@@ -1,14 +1,15 @@
-import { Button, Stack, useTheme } from '@mui/material'
+import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
+import { Apple, EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 
-const OAuthButtons = ({ onGoogleClick, onFacebookClick }) => {
+const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
 	const buttonStyles = {
-		py: 1.75,
+		py: { xs: 1.75, sm: 1.75 },
 		borderRadius: 2.5,
 		border: '2px solid',
 		borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
@@ -50,35 +51,75 @@ const OAuthButtons = ({ onGoogleClick, onFacebookClick }) => {
 		},
 	}
 
-	return (
-		<Stack direction="row" spacing={2}>
-			<Button
-				variant="outlined"
-				fullWidth
-				onClick={onFacebookClick}
-				sx={buttonStyles}
-				aria-label={t('signInWithFacebook')}>
-				<Image
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.webp`}
-					alt="Facebook"
-					width={24}
-					height={24}
-				/>
-			</Button>
-			<Button
-				variant="outlined"
-				fullWidth
-				onClick={onGoogleClick}
-				sx={buttonStyles}
-				aria-label={t('signInWithGoogle')}>
+	const providers = [
+		{
+			id: 'google',
+			onClick: onGoogleClick,
+			labelLong: t('signInWithGoogle'),
+			labelShort: t('google'),
+			icon: (
 				<Image
 					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/google.webp`}
 					alt="Google"
 					width={24}
 					height={24}
 				/>
-			</Button>
-		</Stack>
+			),
+		},
+		{
+			id: 'apple',
+			onClick: onAppleClick,
+			labelLong: t('signInWithApple'),
+			labelShort: t('apple'),
+			icon: <Apple sx={{ fontSize: '1.5rem' }} />,
+		},
+		{
+			id: 'facebook',
+			onClick: onFacebookClick,
+			labelLong: t('signInWithFacebook'),
+			labelShort: t('facebook'),
+			icon: (
+				<Image
+					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}/facebook.webp`}
+					alt="Facebook"
+					width={24}
+					height={24}
+				/>
+			),
+		},
+		{
+			id: 'email',
+			onClick: onMagicLinkClick,
+			labelLong: t('signInWithEmail'),
+			labelShort: t('magicLink'),
+			icon: <EmailRounded sx={{ fontSize: '1.5rem' }} />,
+		},
+	]
+
+	return (
+		<Box
+			sx={{
+				display: 'grid',
+				gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+				gap: 2,
+			}}>
+			{providers.map((provider) => (
+				<Button
+					key={provider.id}
+					variant="outlined"
+					fullWidth
+					onClick={provider.onClick}
+					sx={buttonStyles}
+					aria-label={provider.labelLong}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
+						{provider.icon}
+						<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
+							{provider.labelShort}
+						</Typography>
+					</Box>
+				</Button>
+			))}
+		</Box>
 	)
 }
 

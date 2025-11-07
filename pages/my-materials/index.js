@@ -134,18 +134,20 @@ const UserMaterials = () => {
 			<Box
 				sx={{
 					display: { xs: 'none', lg: 'block' },
-					pt: { xs: '5.5rem', md: '6rem' },
-					pb: 2.5,
+					pt: { xs: '3.75rem', md: '6rem' },
+					pb: { xs: 2, md: 2.5 },
 					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
 					bgcolor: 'background.paper',
 				}}>
 				<Container maxWidth='lg'>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 2 }, mb: { xs: 1.25, md: 1.5 } }}>
 						<IconButton
 							sx={{
 								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
 								border: '1px solid rgba(139, 92, 246, 0.3)',
 								color: '#8b5cf6',
+								width: { xs: 40, md: 44 },
+								height: { xs: 40, md: 44 },
 								transition: 'all 0.3s ease',
 								'&:hover': {
 									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
@@ -161,7 +163,7 @@ const UserMaterials = () => {
 								variant='h4'
 								sx={{
 									fontWeight: 700,
-									fontSize: { xs: '1.75rem', sm: '2rem' },
+									fontSize: { xs: '1.5rem', sm: '2rem' },
 									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 									WebkitBackgroundClip: 'text',
 									WebkitTextFillColor: 'transparent',
@@ -182,7 +184,41 @@ const UserMaterials = () => {
 				</Container>
 			</Box>
 
-			<Container sx={{ pt: { xs: '5.5rem', lg: 3 }, pb: { xs: 3, md: 4 } }}>
+			<Container sx={{ pt: { xs: '3.75rem', lg: 2.5 }, pb: { xs: 2.5, md: 4 } }}>
+
+				{/* Mobile Title - Hidden on desktop */}
+				<Box
+					sx={{
+						display: { xs: 'flex', lg: 'none' },
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						mb: 2.5,
+						pb: 1.5,
+						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+					}}>
+					<Box>
+						<Typography
+							variant='h5'
+							sx={{
+								fontWeight: 700,
+								fontSize: '1.5rem',
+								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								mb: 0.25,
+							}}>
+							{t('myMaterialsTitle')}
+						</Typography>
+						<Typography
+							variant='body2'
+							sx={{
+								color: '#64748b',
+								fontSize: '0.875rem',
+							}}>
+							{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
+						</Typography>
+					</Box>
+				</Box>
 
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}
@@ -234,8 +270,8 @@ const UserMaterials = () => {
 								xs: '1fr',
 								md: 'repeat(2, 1fr)',
 							},
-							rowGap: 3,
-							columnGap: 8,
+							rowGap: { xs: 2, md: 3 },
+							columnGap: { xs: 2, md: 4 },
 						}}>
 						{filteredMaterials.map(material => (
 							<SectionCard

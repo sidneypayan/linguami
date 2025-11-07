@@ -266,24 +266,26 @@ const Section = () => {
         jsonLd={jsonLd}
       />
 
-      {/* Compact Header */}
+      {/* Compact Header - Hidden on mobile/tablet */}
       <Box
         sx={{
-          display: "block",
-          pt: { xs: "5.5rem", md: "6rem" },
-          pb: 2.5,
+          display: { xs: "none", lg: "block" },
+          pt: { xs: "3.75rem", md: "6rem" },
+          pb: { xs: 2, md: 2.5 },
           borderBottom: "1px solid rgba(139, 92, 246, 0.15)",
           bgcolor: "background.paper",
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, md: 2 }, mb: { xs: 1.25, md: 1.5 } }}>
             <IconButton
               sx={{
                 background:
                   "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)",
                 border: "1px solid rgba(139, 92, 246, 0.3)",
                 color: "#8b5cf6",
+                width: { xs: 40, md: 44 },
+                height: { xs: 40, md: 44 },
                 transition: "all 0.3s ease",
                 "&:hover": {
                   background:
@@ -300,7 +302,7 @@ const Section = () => {
               variant="h4"
               sx={{
                 fontWeight: 700,
-                fontSize: { xs: "1.75rem", sm: "2rem" },
+                fontSize: { xs: "1.5rem", sm: "2rem" },
                 background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -315,7 +317,7 @@ const Section = () => {
 
       <Container
         maxWidth="lg"
-        sx={{ pt: 3, pb: { xs: 3, md: 4 }, px: { xs: 2, sm: 3 } }}
+        sx={{ pt: { xs: "3.75rem", lg: 2.5 }, pb: { xs: 2.5, md: 4 }, px: { xs: 2, sm: 3 } }}
       >
         <Box sx={{ width: "100%", maxWidth: "100%" }}>
           <MaterialsFilterBar
@@ -343,8 +345,8 @@ const Section = () => {
                   md: "repeat(3, 1fr)",
                   lg: "repeat(4, 1fr)",
                 },
-                rowGap: 3,
-                columnGap: 3,
+                rowGap: { xs: 2, md: 3 },
+                columnGap: { xs: 2, md: 3 },
                 // Masquer temporairement pendant que displayedMaterials se met à jour
                 opacity: displayedMaterials.length > 0 ? 1 : 0,
                 transition: "opacity 0.15s ease-in",

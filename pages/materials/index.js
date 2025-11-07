@@ -324,8 +324,8 @@ const Material = () => {
 			<Container
 				maxWidth='lg'
 				sx={{
-					pt: { xs: '6.5rem', md: '7rem' },
-					pb: { xs: 3, md: 4 },
+					pt: { xs: '3.75rem', md: '7rem' },
+					pb: { xs: 2.5, md: 4 },
 					px: { xs: 2, sm: 3 },
 				}}>
 				{/* Bouton de toggle entre les modes */}
@@ -333,13 +333,13 @@ const Material = () => {
 					sx={{
 						display: 'flex',
 						justifyContent: 'center',
-						mb: 4,
+						mb: { xs: 3, md: 4 },
 					}}>
 					<Box
 						sx={{
 							display: 'inline-flex',
 							gap: 1,
-							p: 0.75,
+							p: { xs: 0.5, md: 0.75 },
 							borderRadius: 4,
 							background: isDark
 								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
@@ -352,8 +352,8 @@ const Material = () => {
 							onClick={toggleDisplayMode}
 							startIcon={<ViewModule />}
 							sx={{
-								px: { xs: 2, sm: 3 },
-								py: 1,
+								px: { xs: 1.5, sm: 3 },
+								py: { xs: 0.85, md: 1 },
 								borderRadius: 3,
 								fontWeight: 600,
 								fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -371,15 +371,20 @@ const Material = () => {
 									boxShadow: displayMode === 'category' ? '0 6px 20px rgba(139, 92, 246, 0.5)' : 'none',
 								},
 							}}>
-							{t('categoryView') || 'Vue par catégories'}
+							<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+								{t('categoryView') || 'Vue par catégories'}
+							</Box>
+							<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+								{t('categories') || 'Catégories'}
+							</Box>
 						</Button>
 						<Button
 							variant={displayMode === 'list' ? 'contained' : 'text'}
 							onClick={toggleDisplayMode}
 							startIcon={<ViewListIcon />}
 							sx={{
-								px: { xs: 2, sm: 3 },
-								py: 1,
+								px: { xs: 1.5, sm: 3 },
+								py: { xs: 0.85, md: 1 },
 								borderRadius: 3,
 								fontWeight: 600,
 								fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -397,7 +402,12 @@ const Material = () => {
 									boxShadow: displayMode === 'list' ? '0 6px 20px rgba(139, 92, 246, 0.5)' : 'none',
 								},
 							}}>
-							{t('listView') || 'Vue liste avec filtres'}
+							<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+								{t('listView') || 'Vue liste avec filtres'}
+							</Box>
+							<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+								{t('materials') || 'Matériels'}
+							</Box>
 						</Button>
 					</Box>
 				</Box>
@@ -431,21 +441,21 @@ const Material = () => {
 
 						{/* Section Pratique de la langue */}
 						{practice.length > 0 && (
-							<Box id='practice' sx={{ scrollMarginTop: '100px', mb: { xs: 6, md: 8 } }}>
+							<Box id='practice' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
 								<Box
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
-										gap: 2,
-										mb: 4,
+										gap: { xs: 1.5, md: 2 },
+										mb: { xs: 3, md: 4 },
 										pb: 2,
 										borderBottom: '2px solid',
 										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
 									}}>
 									<Box
 										sx={{
-											width: 56,
-											height: 56,
+											width: { xs: 48, md: 56 },
+											height: { xs: 48, md: 56 },
 											borderRadius: 3,
 											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
 											backdropFilter: 'blur(10px)',
@@ -455,13 +465,13 @@ const Material = () => {
 											justifyContent: 'center',
 											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
 										}}>
-										<School sx={{ fontSize: '2rem', color: '#8b5cf6' }} />
+										<School sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
 									</Box>
 									<Typography
 										variant='h3'
 										sx={{
 											fontWeight: 800,
-											fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
 											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',
@@ -476,22 +486,22 @@ const Material = () => {
 
 						{/* Section Culture & Divertissement */}
 						{culture.length > 0 && (
-							<Box id='culture' sx={{ scrollMarginTop: '100px', mb: { xs: 6, md: 8 } }}>
+							<Box id='culture' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
 								{/* Titre principal */}
 								<Box
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
-										gap: 2,
-										mb: 4,
+										gap: { xs: 1.5, md: 2 },
+										mb: { xs: 3, md: 4 },
 										pb: 2,
 										borderBottom: '2px solid',
 										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
 									}}>
 									<Box
 										sx={{
-											width: 56,
-											height: 56,
+											width: { xs: 48, md: 56 },
+											height: { xs: 48, md: 56 },
 											borderRadius: 3,
 											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
 											backdropFilter: 'blur(10px)',
@@ -501,13 +511,13 @@ const Material = () => {
 											justifyContent: 'center',
 											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
 										}}>
-										<Palette sx={{ fontSize: '2rem', color: '#8b5cf6' }} />
+										<Palette sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
 									</Box>
 									<Typography
 										variant='h3'
 										sx={{
 											fontWeight: 800,
-											fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
 											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',
@@ -519,13 +529,13 @@ const Material = () => {
 
 								{/* Sous-section : Culture & Patrimoine */}
 								{culture.filter(m => m.category === 'text & audio').length > 0 && (
-									<Box sx={{ mb: 5 }}>
+									<Box sx={{ mb: { xs: 3.5, md: 5 } }}>
 										<Box
 											sx={{
 												display: 'flex',
 												alignItems: 'center',
 												gap: 1.5,
-												mb: 3,
+												mb: { xs: 2.5, md: 3 },
 												pl: { xs: 0, md: 2 },
 											}}>
 											<Museum sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
@@ -547,13 +557,13 @@ const Material = () => {
 
 								{/* Sous-section : Cinéma & Vidéos */}
 								{culture.filter(m => m.category === 'video').length > 0 && (
-									<Box sx={{ mb: 5 }}>
+									<Box sx={{ mb: { xs: 3.5, md: 5 } }}>
 										<Box
 											sx={{
 												display: 'flex',
 												alignItems: 'center',
 												gap: 1.5,
-												mb: 3,
+												mb: { xs: 2.5, md: 3 },
 												pl: { xs: 0, md: 2 },
 											}}>
 											<Movie sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
@@ -581,7 +591,7 @@ const Material = () => {
 												display: 'flex',
 												alignItems: 'center',
 												gap: 1.5,
-												mb: 3,
+												mb: { xs: 2.5, md: 3 },
 												pl: { xs: 0, md: 2 },
 											}}>
 											<MusicNote sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
@@ -605,21 +615,21 @@ const Material = () => {
 
 						{/* Section Littérature & Histoires */}
 						{literature.length > 0 && (
-							<Box id='literature' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 6 } }}>
+							<Box id='literature' sx={{ scrollMarginTop: '100px', mb: { xs: 2.5, md: 6 } }}>
 								<Box
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
-										gap: 2,
-										mb: 4,
+										gap: { xs: 1.5, md: 2 },
+										mb: { xs: 3, md: 4 },
 										pb: 2,
 										borderBottom: '2px solid',
 										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
 									}}>
 									<Box
 										sx={{
-											width: 56,
-											height: 56,
+											width: { xs: 48, md: 56 },
+											height: { xs: 48, md: 56 },
 											borderRadius: 3,
 											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
 											backdropFilter: 'blur(10px)',
@@ -629,13 +639,13 @@ const Material = () => {
 											justifyContent: 'center',
 											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
 										}}>
-										<MenuBook sx={{ fontSize: '2rem', color: '#8b5cf6' }} />
+										<MenuBook sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
 									</Box>
 									<Typography
 										variant='h3'
 										sx={{
 											fontWeight: 800,
-											fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
+											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
 											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',

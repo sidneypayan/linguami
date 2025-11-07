@@ -340,6 +340,21 @@ const UserProvider = ({ children }) => {
 		// Redirection gérée par le provider / callback
 	}, [])
 
+	const sendMagicLink = useCallback(async email => {
+		const { error } = await supabase.auth.signInWithOtp({
+			email,
+			options: {
+				emailRedirectTo: process.env.NEXT_PUBLIC_API_URL || window.location.origin,
+			},
+		})
+		if (error) {
+			safeToastError(error)
+			return false
+		}
+		toast.success(toastMessages.magicLinkSent())
+		return true
+	}, [toastMessages])
+
 	const logout = useCallback(async () => {
 		const { error } = await supabase.auth.signOut()
 		if (error) return safeToastError(error)
@@ -475,6 +490,7 @@ const UserProvider = ({ children }) => {
 			register,
 			login,
 			loginWithThirdPartyOAuth,
+			sendMagicLink,
 			logout,
 			updatePassword,
 			setNewPassword,
@@ -491,6 +507,7 @@ const UserProvider = ({ children }) => {
 			register,
 			login,
 			loginWithThirdPartyOAuth,
+			sendMagicLink,
 			logout,
 			updatePassword,
 			setNewPassword,

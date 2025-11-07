@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { AVATARS } from '../utils/avatars'
 import AuthLayout from '../components/auth/AuthLayout'
 import OAuthButtons from '../components/auth/OAuthButtons'
+import MagicLinkDialog from '../components/auth/MagicLinkDialog'
 import { FrenchFlag, RussianFlag, EnglishFlag } from '../components/auth/FlagIcons'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -26,10 +27,10 @@ import {
 	useTheme,
 } from '@mui/material'
 import {
-	EmailRounded,
-	LockRounded,
-	PersonRounded,
-	TranslateRounded,
+	AlternateEmailRounded,
+	KeyRounded,
+	BadgeRounded,
+	SchoolRounded,
 	RecordVoiceOverRounded,
 	CheckCircleRounded,
 	CancelRounded,
@@ -38,6 +39,7 @@ import {
 	SignalCellular3Bar,
 	KeyboardArrowDownRounded,
 	KeyboardArrowUpRounded,
+	HowToRegRounded,
 } from '@mui/icons-material'
 
 const initialState = {
@@ -52,11 +54,12 @@ const initialState = {
 
 const Signup = () => {
 	const { t } = useTranslation('register')
-	const { register, loginWithThirdPartyOAuth } = useUserContext()
+	const { register, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [values, setValues] = useState(initialState)
 	const [showAvatars, setShowAvatars] = useState(false)
+	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 
 	// Validation du mot de passe
 	const passwordValidation = useMemo(() => {
@@ -230,15 +233,15 @@ const Signup = () => {
 				<meta name="description" content={t('signupSubtitle')} />
 			</Head>
 
-			<AuthLayout>
+			<AuthLayout icon={<HowToRegRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
 				{/* Titre */}
 				<Typography
 					variant="h4"
 					align="center"
 					sx={{
 						fontWeight: 800,
-						mb: 1,
-						fontSize: { xs: '1.875rem', sm: '2.125rem' },
+						mb: { xs: 3, sm: 1 },
+						fontSize: { xs: '1.5rem', sm: '2.125rem' },
 						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 						WebkitBackgroundClip: 'text',
 						WebkitTextFillColor: 'transparent',
@@ -252,7 +255,8 @@ const Signup = () => {
 					align="center"
 					sx={{
 						color: isDark ? '#94a3b8' : '#718096',
-						mb: 4,
+						mb: { xs: 3, sm: 4 },
+					display: { xs: 'none', sm: 'block' },
 						fontSize: '1rem',
 					}}>
 					{t('signupSubtitle')}
@@ -261,10 +265,12 @@ const Signup = () => {
 				{/* Boutons OAuth */}
 				<OAuthButtons
 					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
+				onAppleClick={() => loginWithThirdPartyOAuth('apple')}
 					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
+				onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
 				/>
 
-				<Divider sx={{ my: 3.5, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+				<Divider sx={{ my: { xs: 2.5, sm: 3.5 }, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
 					{t('or')}
 				</Divider>
 
@@ -272,7 +278,7 @@ const Signup = () => {
 				<Box
 					component="form"
 					onSubmit={handleSubmit}
-					sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+					sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, sm: 3 } }}>
 
 					{/* Pseudo */}
 					<TextField
@@ -288,7 +294,7 @@ const Signup = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<PersonRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+									<BadgeRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -310,7 +316,7 @@ const Signup = () => {
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<EmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+									<AlternateEmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 								</InputAdornment>
 							),
 						}}
@@ -332,7 +338,7 @@ const Signup = () => {
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">
-										<LockRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 									</InputAdornment>
 								),
 							}}
@@ -443,7 +449,7 @@ const Signup = () => {
 							onChange={handleChange}
 							startAdornment={
 								<InputAdornment position="start">
-									<TranslateRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
+									<SchoolRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
 								</InputAdornment>
 							}
 							renderValue={(selected) => {
@@ -677,7 +683,7 @@ const Signup = () => {
 						variant="contained"
 						size="large"
 						sx={{
-							py: 2,
+							py: { xs: 1.75, sm: 2 },
 							mt: 1,
 							borderRadius: 2.5,
 							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -714,7 +720,7 @@ const Signup = () => {
 					</Button>
 
 					{/* Lien vers connexion */}
-					<Box sx={{ textAlign: 'center', mt: 1 }}>
+					<Box sx={{ textAlign: 'center', mt: { xs: 2, sm: 2 } }}>
 						<Typography
 							variant="body2"
 							sx={{
@@ -740,6 +746,12 @@ const Signup = () => {
 						</Typography>
 					</Box>
 				</Box>
+
+				<MagicLinkDialog
+					open={magicLinkDialogOpen}
+					onClose={() => setMagicLinkDialogOpen(false)}
+					onSend={sendMagicLink}
+				/>
 			</AuthLayout>
 		</>
 	)
