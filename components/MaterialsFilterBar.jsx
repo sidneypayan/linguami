@@ -74,6 +74,7 @@ const MaterialsFilterBar = ({
 			{ label: t('legends'), key: 'legends', tooltip: `🏛️ ${t('legends')}`, color: '#8b5cf6', icon: AutoStories },
 			{ label: t('podcasts'), key: 'podcasts', tooltip: `🎙️ ${t('podcasts')}`, color: '#8b5cf6', icon: Mic },
 			{ label: t('short-stories'), key: 'short-stories', tooltip: `📖 ${t('short-stories')}`, color: '#f59e0b', icon: MenuBook },
+			{ label: t('books'), key: 'books', tooltip: `📚 ${t('books')}`, color: '#ec4899', icon: MenuBook },
 		],
 		'video': [
 			{ label: t('movie-trailers'), key: 'movie-trailers', tooltip: `🎞️ ${t('movie-trailers')}`, color: '#ef4444', icon: Movie },

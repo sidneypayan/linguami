@@ -64,21 +64,46 @@ export default async function handler(req, res) {
 		return trimmed.length > 0 && (trimmed.startsWith('http://') || trimmed.startsWith('https://'))
 	})
 
-	// Vérifier chaque lien vidéo
-	const checkedVideos = await Promise.all(
-		materialsWithVideo.map(async (material) => {
-			const status = await checkVideoLink(material.video)
-			return {
-				...material,
-				status,
+	// Vérifier chaque lien vidéo avec limite de concurrence pour éviter timeout
+	const BATCH_SIZE = 5 // Vérifier 5 vidéos à la fois
+	const checkedVideos = []
+
+	for (let i = 0; i < materialsWithVideo.length; i += BATCH_SIZE) {
+		const batch = materialsWithVideo.slice(i, i + BATCH_SIZE)
+		const batchResults = await Promise.allSettled(
+			batch.map(async (material) => {
+				try {
+					const status = await checkVideoLink(material.video)
+					return {
+						...material,
+						status,
+					}
+				} catch (error) {
+					console.error(`Error checking video ${material.id}:`, error)
+					return {
+						...material,
+						status: 'error',
+					}
+				}
+			})
+		)
+
+		// Ajouter les résultats réussis
+		batchResults.forEach(result => {
+			if (result.status === 'fulfilled') {
+				checkedVideos.push(result.value)
 			}
 		})
-	)
+	}
 
 	// Filtrer pour ne garder que les liens cassés
 	const brokenVideos = checkedVideos.filter(v => v.status === 'broken')
 
-	res.status(200).json({ brokenVideos, totalVideos: materialsWithVideo.length })
+	res.status(200).json({
+		brokenVideos,
+		totalVideos: materialsWithVideo.length,
+		checked: checkedVideos.length
+	})
 }
 
 async function checkVideoLink(url) {
@@ -92,10 +117,15 @@ async function checkVideoLink(url) {
 
 			// Méthode 1: Vérifier avec l'API oEmbed (rapide)
 			try {
+				const controller = new AbortController()
+				const timeoutId = setTimeout(() => controller.abort(), 5000)
+
 				const oembedResponse = await fetch(
 					`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
-					{ method: 'GET', signal: AbortSignal.timeout(5000) }
+					{ method: 'GET', signal: controller.signal }
 				)
+
+				clearTimeout(timeoutId)
 
 				// Si oEmbed retourne une erreur, la vidéo est définitivement cassée
 				if (!oembedResponse.ok) {
@@ -110,16 +140,21 @@ async function checkVideoLink(url) {
 			}
 
 			// Méthode 2: Vérifier la page embed pour plus de détails
+			const embedController = new AbortController()
+			const embedTimeoutId = setTimeout(() => embedController.abort(), 10000)
+
 			const embedResponse = await fetch(
 				`https://www.youtube.com/embed/${videoId}`,
 				{
 					method: 'GET',
-					signal: AbortSignal.timeout(10000),
+					signal: embedController.signal,
 					headers: {
 						'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
 					},
 				}
 			)
+
+			clearTimeout(embedTimeoutId)
 
 			if (!embedResponse.ok) return 'broken'
 
@@ -196,13 +231,18 @@ async function checkVideoLink(url) {
 
 		// Odysee
 		if (url.includes('odysee.com')) {
+			const odyseeController = new AbortController()
+			const odyseeTimeoutId = setTimeout(() => odyseeController.abort(), 10000)
+
 			const response = await fetch(url, {
 				method: 'GET',
-				signal: AbortSignal.timeout(10000),
+				signal: odyseeController.signal,
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
 				},
 			})
+
+			clearTimeout(odyseeTimeoutId)
 
 			if (!response.ok) return 'broken'
 
@@ -217,13 +257,18 @@ async function checkVideoLink(url) {
 
 		// Rutube
 		if (url.includes('rutube.ru')) {
+			const rutubeController = new AbortController()
+			const rutubeTimeoutId = setTimeout(() => rutubeController.abort(), 10000)
+
 			const response = await fetch(url, {
 				method: 'GET',
-				signal: AbortSignal.timeout(10000),
+				signal: rutubeController.signal,
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
 				},
 			})
+
+			clearTimeout(rutubeTimeoutId)
 
 			if (!response.ok) return 'broken'
 
@@ -237,10 +282,15 @@ async function checkVideoLink(url) {
 		}
 
 		// Autres liens
+		const otherController = new AbortController()
+		const otherTimeoutId = setTimeout(() => otherController.abort(), 10000)
+
 		const response = await fetch(url, {
 			method: 'HEAD',
-			signal: AbortSignal.timeout(10000),
+			signal: otherController.signal,
 		})
+
+		clearTimeout(otherTimeoutId)
 		return response.ok ? 'working' : 'broken'
 	} catch (error) {
 		console.error(`Error checking ${url}:`, error.message)

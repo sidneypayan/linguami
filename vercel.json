@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "pages/api/admin/check-videos.js": {
+      "maxDuration": 60
+    }
+  }
+}
