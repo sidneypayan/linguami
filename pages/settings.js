@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useUserContext } from '../context/user'
 import useTranslation from 'next-translate/useTranslation'
 import { toast } from 'react-toastify'
@@ -21,8 +21,13 @@ import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
+	DialogActions,
 	useMediaQuery,
 	useTheme,
+	Switch,
+	FormControlLabel,
+	Slider,
+	LinearProgress,
 } from '@mui/material'
 import {
 	PersonRounded,
@@ -32,6 +37,12 @@ import {
 	CheckRounded,
 	CloseRounded,
 	SettingsRounded,
+	NotificationsRounded,
+	LockRounded,
+	DeleteForeverRounded,
+	TrackChangesRounded,
+	CheckCircleRounded,
+	CancelRounded,
 } from '@mui/icons-material'
 import Head from 'next/head'
 
@@ -46,6 +57,12 @@ const Settings = () => {
 		username: '',
 		email: '',
 		languageLevel: '',
+		learningLanguage: '',
+		dailyXpGoal: 100,
+		emailReminders: true,
+		streakReminders: true,
+		newContentNotifications: true,
+		showInLeaderboard: true,
 	})
 
 	const [selectedAvatar, setSelectedAvatar] = useState('avatar1')
@@ -54,9 +71,39 @@ const Settings = () => {
 		username: false,
 		email: false,
 		languageLevel: false,
+		learningLanguage: false,
+		dailyXpGoal: false,
 	})
 	const [avatarDialogOpen, setAvatarDialogOpen] = useState(false)
 	const [isAvatarHovered, setIsAvatarHovered] = useState(false)
+	const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
+	const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false)
+	const [passwordData, setPasswordData] = useState({
+		currentPassword: '',
+		newPassword: '',
+		confirmPassword: '',
+	})
+
+	// Validation du mot de passe (mêmes règles que signup)
+	const passwordValidation = useMemo(() => {
+		const { newPassword } = passwordData
+		return {
+			minLength: newPassword.length >= 8,
+			hasUpperCase: /[A-Z]/.test(newPassword),
+			hasNumber: /[0-9]/.test(newPassword),
+			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+		}
+	}, [passwordData.newPassword])
+
+	const passwordStrength = useMemo(() => {
+		const checks = Object.values(passwordValidation)
+		const passed = checks.filter(Boolean).length
+		return (passed / checks.length) * 100
+	}, [passwordValidation])
+
+	const isPasswordValid = useMemo(() => {
+		return Object.values(passwordValidation).every(Boolean)
+	}, [passwordValidation])
 
 	// Charger les données du profil utilisateur
 	useEffect(() => {
@@ -65,6 +112,12 @@ const Settings = () => {
 				username: userProfile.name || '',
 				email: userProfile.email || '',
 				languageLevel: userProfile.language_level || '',
+				learningLanguage: userProfile.learning_language || 'fr',
+				dailyXpGoal: userProfile.daily_xp_goal || 100,
+				emailReminders: userProfile.email_reminders ?? true,
+				streakReminders: userProfile.streak_reminders ?? true,
+				newContentNotifications: userProfile.new_content_notifications ?? true,
+				showInLeaderboard: userProfile.show_in_leaderboard ?? true,
 			})
 			setSelectedAvatar(userProfile.avatar_id || 'avatar1')
 		}
@@ -75,6 +128,38 @@ const Settings = () => {
 			...formData,
 			[field]: event.target.value,
 		})
+	}
+
+	const handleToggle = field => async event => {
+		const newValue = event.target.checked
+		setFormData({
+			...formData,
+			[field]: newValue,
+		})
+
+		// Auto-save toggles
+		setLoading(true)
+		try {
+			const fieldMapping = {
+				emailReminders: 'email_reminders',
+				streakReminders: 'streak_reminders',
+				newContentNotifications: 'new_content_notifications',
+				showInLeaderboard: 'show_in_leaderboard',
+			}
+
+			await updateUserProfile({ [fieldMapping[field]]: newValue })
+			toast.success(t('updateSuccess'))
+		} catch (error) {
+			console.error('Error updating toggle:', error)
+			toast.error(error.message || t('updateError'))
+			// Revert on error
+			setFormData({
+				...formData,
+				[field]: !newValue,
+			})
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	const toggleEditMode = field => {
@@ -92,7 +177,9 @@ const Settings = () => {
 			const fieldMapping = {
 				username: 'name',
 				email: 'email',
-					languageLevel: 'language_level',
+				languageLevel: 'language_level',
+				learningLanguage: 'learning_language',
+				dailyXpGoal: 'daily_xp_goal',
 			}
 
 			updateData[fieldMapping[field]] = formData[field]
@@ -117,11 +204,85 @@ const Settings = () => {
 				username: 'name',
 				email: 'email',
 				languageLevel: 'language_level',
+				learningLanguage: 'learning_language',
+				dailyXpGoal: 'daily_xp_goal',
 			}
 			setFormData({
 				...formData,
 				[field]: userProfile[fieldMapping[field]] || '',
 			})
+		}
+	}
+
+	const handleChangePassword = async () => {
+		if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+			toast.error(t('fillAllFields'))
+			return
+		}
+
+		if (passwordData.newPassword !== passwordData.confirmPassword) {
+			toast.error(t('passwordMismatch'))
+			return
+		}
+
+		if (!isPasswordValid) {
+			toast.error(t('passwordRequirements'))
+			return
+		}
+
+		setLoading(true)
+		try {
+			const response = await fetch('/api/auth/change-password', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					currentPassword: passwordData.currentPassword,
+					newPassword: passwordData.newPassword,
+				}),
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				throw new Error(data.error || t('changePasswordError'))
+			}
+
+			toast.success(t('passwordChanged'))
+			setChangePasswordDialogOpen(false)
+			setPasswordData({
+				currentPassword: '',
+				newPassword: '',
+				confirmPassword: '',
+			})
+		} catch (error) {
+			console.error('Error changing password:', error)
+			toast.error(error.message || t('changePasswordError'))
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleDeleteAccount = async () => {
+		setLoading(true)
+		try {
+			const response = await fetch('/api/auth/delete-account', {
+				method: 'DELETE',
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				throw new Error(data.error || t('deleteAccountError'))
+			}
+
+			toast.success(t('accountDeleted'))
+			// Logout will be handled by the API
+			window.location.href = '/'
+		} catch (error) {
+			console.error('Error deleting account:', error)
+			toast.error(error.message || t('deleteAccountError'))
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -830,6 +991,451 @@ const Settings = () => {
 							</Paper>
 						</Grid>
 
+						{/* Section Objectifs & Motivation */}
+						<Grid item xs={12} md={6}>
+							<Paper
+								elevation={0}
+								sx={{
+									borderRadius: 4,
+									overflow: 'hidden',
+									height: '100%',
+									position: 'relative',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									backdropFilter: 'blur(20px)',
+									border: '2px solid rgba(245, 87, 108, 0.2)',
+									boxShadow: '0 8px 32px rgba(245, 87, 108, 0.15), 0 0 0 1px rgba(245, 87, 108, 0.05) inset',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										background: 'radial-gradient(circle at 50% 0%, rgba(245, 87, 108, 0.08) 0%, transparent 50%)',
+										pointerEvents: 'none',
+										opacity: 0,
+										transition: 'opacity 0.4s ease',
+									},
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 48px rgba(245, 87, 108, 0.25), 0 0 0 1px rgba(245, 87, 108, 0.3) inset',
+										borderColor: 'rgba(245, 87, 108, 0.4)',
+										'&::before': {
+											opacity: 1,
+										},
+									},
+								}}>
+								<Box
+									sx={{
+										px: 3,
+										py: 2.5,
+										background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.85) 0%, rgba(190, 24, 93, 0.85) 100%)',
+										borderBottom: '1px solid rgba(245, 87, 108, 0.3)',
+										position: 'relative',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											bottom: -1,
+											left: '50%',
+											transform: 'translateX(-50%)',
+											width: '60%',
+											height: 2,
+											background: 'linear-gradient(90deg, transparent 0%, #f5576c 50%, transparent 100%)',
+											boxShadow: '0 0 10px rgba(245, 87, 108, 0.6)',
+										},
+									}}>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 700,
+											background: 'linear-gradient(135deg, #fff 0%, #fda4af 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											fontSize: '1rem',
+											textTransform: 'uppercase',
+											letterSpacing: '0.1em',
+											textAlign: 'center',
+											textShadow: '0 0 20px rgba(245, 87, 108, 0.5)',
+										}}>
+										{t('goalsAndMotivation')}
+									</Typography>
+								</Box>
+								<Box sx={{ p: 3 }}>
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: 2,
+											mb: 2,
+										}}>
+										<Box
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												width: 44,
+												height: 44,
+												borderRadius: '50%',
+												background: 'linear-gradient(135deg, rgba(245, 87, 108, 0.25) 0%, rgba(225, 29, 72, 0.25) 100%)',
+												border: '2px solid rgba(245, 87, 108, 0.3)',
+												color: '#f5576c',
+												boxShadow: '0 4px 12px rgba(245, 87, 108, 0.2)',
+											}}>
+											<TrackChangesRounded fontSize='small' />
+										</Box>
+										<Typography
+											variant='body2'
+											sx={{
+												color: isDark ? '#fda4af' : '#e11d48',
+												fontSize: '0.7rem',
+												fontWeight: 600,
+												textTransform: 'uppercase',
+												letterSpacing: '0.08em',
+											}}>
+											{t('dailyXpGoal')}
+										</Typography>
+									</Box>
+									<Slider
+										value={formData.dailyXpGoal}
+										onChange={(e, newValue) => setFormData({ ...formData, dailyXpGoal: newValue })}
+										onChangeCommitted={(e, newValue) => handleSave('dailyXpGoal')}
+										min={50}
+										max={500}
+										step={50}
+										marks
+										valueLabelDisplay='on'
+										valueLabelFormat={value => `${value} XP`}
+										sx={{
+											color: '#f5576c',
+											'& .MuiSlider-thumb': {
+												background: 'linear-gradient(135deg, #f5576c 0%, #e11d48 100%)',
+												boxShadow: '0 4px 12px rgba(245, 87, 108, 0.4)',
+												'&:hover': {
+													boxShadow: '0 6px 16px rgba(245, 87, 108, 0.6)',
+												},
+											},
+											'& .MuiSlider-track': {
+												background: 'linear-gradient(90deg, #f5576c 0%, #e11d48 100%)',
+											},
+											'& .MuiSlider-valueLabel': {
+												background: 'linear-gradient(135deg, #f5576c 0%, #e11d48 100%)',
+											},
+										}}
+									/>
+									<Typography
+										variant='caption'
+										sx={{
+											color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+											display: 'block',
+											mt: 1,
+											textAlign: 'center',
+										}}>
+										{t('xpPerDay')}
+									</Typography>
+								</Box>
+							</Paper>
+						</Grid>
+
+						{/* Section Notifications */}
+						<Grid item xs={12} md={6}>
+							<Paper
+								elevation={0}
+								sx={{
+									borderRadius: 4,
+									overflow: 'hidden',
+									height: '100%',
+									position: 'relative',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									backdropFilter: 'blur(20px)',
+									border: '2px solid rgba(251, 146, 60, 0.2)',
+									boxShadow: '0 8px 32px rgba(251, 146, 60, 0.15), 0 0 0 1px rgba(251, 146, 60, 0.05) inset',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										background: 'radial-gradient(circle at 50% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%)',
+										pointerEvents: 'none',
+										opacity: 0,
+										transition: 'opacity 0.4s ease',
+									},
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 48px rgba(251, 146, 60, 0.25), 0 0 0 1px rgba(251, 146, 60, 0.3) inset',
+										borderColor: 'rgba(251, 146, 60, 0.4)',
+										'&::before': {
+											opacity: 1,
+										},
+									},
+								}}>
+								<Box
+									sx={{
+										px: 3,
+										py: 2.5,
+										background: 'linear-gradient(135deg, rgba(234, 88, 12, 0.85) 0%, rgba(194, 65, 12, 0.85) 100%)',
+										borderBottom: '1px solid rgba(251, 146, 60, 0.3)',
+										position: 'relative',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											bottom: -1,
+											left: '50%',
+											transform: 'translateX(-50%)',
+											width: '60%',
+											height: 2,
+											background: 'linear-gradient(90deg, transparent 0%, #fb923c 50%, transparent 100%)',
+											boxShadow: '0 0 10px rgba(251, 146, 60, 0.6)',
+										},
+									}}>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 700,
+											background: 'linear-gradient(135deg, #fff 0%, #fdba74 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											fontSize: '1rem',
+											textTransform: 'uppercase',
+											letterSpacing: '0.1em',
+											textAlign: 'center',
+											textShadow: '0 0 20px rgba(251, 146, 60, 0.5)',
+										}}>
+										{t('notifications')}
+									</Typography>
+								</Box>
+								<Box sx={{ p: 3 }}>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={formData.emailReminders}
+												onChange={handleToggle('emailReminders')}
+												disabled={loading}
+												sx={{
+													'& .MuiSwitch-switchBase.Mui-checked': {
+														color: '#fb923c',
+													},
+													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+														backgroundColor: '#fb923c',
+													},
+												}}
+											/>
+										}
+										label={
+											<Box>
+												<Typography variant='body2' sx={{ fontWeight: 600 }}>
+													{t('emailReminders')}
+												</Typography>
+												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+													{t('emailRemindersDesc')}
+												</Typography>
+											</Box>
+										}
+										sx={{ mb: 2 }}
+									/>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={formData.streakReminders}
+												onChange={handleToggle('streakReminders')}
+												disabled={loading}
+												sx={{
+													'& .MuiSwitch-switchBase.Mui-checked': {
+														color: '#fb923c',
+													},
+													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+														backgroundColor: '#fb923c',
+													},
+												}}
+											/>
+										}
+										label={
+											<Box>
+												<Typography variant='body2' sx={{ fontWeight: 600 }}>
+													{t('streakReminders')}
+												</Typography>
+												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+													{t('streakRemindersDesc')}
+												</Typography>
+											</Box>
+										}
+										sx={{ mb: 2 }}
+									/>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={formData.newContentNotifications}
+												onChange={handleToggle('newContentNotifications')}
+												disabled={loading}
+												sx={{
+													'& .MuiSwitch-switchBase.Mui-checked': {
+														color: '#fb923c',
+													},
+													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+														backgroundColor: '#fb923c',
+													},
+												}}
+											/>
+										}
+										label={
+											<Box>
+												<Typography variant='body2' sx={{ fontWeight: 600 }}>
+													{t('newContentNotifications')}
+												</Typography>
+												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+													{t('newContentNotificationsDesc')}
+												</Typography>
+											</Box>
+										}
+									/>
+								</Box>
+							</Paper>
+						</Grid>
+
+						{/* Section Confidentialité & Sécurité */}
+						<Grid item xs={12} md={6}>
+							<Paper
+								elevation={0}
+								sx={{
+									borderRadius: 4,
+									overflow: 'hidden',
+									height: '100%',
+									position: 'relative',
+									background: isDark
+										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
+										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
+									backdropFilter: 'blur(20px)',
+									border: '2px solid rgba(239, 68, 68, 0.2)',
+									boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.05) inset',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&::before': {
+										content: '""',
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										background: 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.08) 0%, transparent 50%)',
+										pointerEvents: 'none',
+										opacity: 0,
+										transition: 'opacity 0.4s ease',
+									},
+									'&:hover': {
+										transform: 'translateY(-4px)',
+										boxShadow: '0 12px 48px rgba(239, 68, 68, 0.25), 0 0 0 1px rgba(239, 68, 68, 0.3) inset',
+										borderColor: 'rgba(239, 68, 68, 0.4)',
+										'&::before': {
+											opacity: 1,
+										},
+									},
+								}}>
+								<Box
+									sx={{
+										px: 3,
+										py: 2.5,
+										background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.85) 0%, rgba(185, 28, 28, 0.85) 100%)',
+										borderBottom: '1px solid rgba(239, 68, 68, 0.3)',
+										position: 'relative',
+										'&::after': {
+											content: '""',
+											position: 'absolute',
+											bottom: -1,
+											left: '50%',
+											transform: 'translateX(-50%)',
+											width: '60%',
+											height: 2,
+											background: 'linear-gradient(90deg, transparent 0%, #ef4444 50%, transparent 100%)',
+											boxShadow: '0 0 10px rgba(239, 68, 68, 0.6)',
+										},
+									}}>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 700,
+											background: 'linear-gradient(135deg, #fff 0%, #fca5a5 100%)',
+											WebkitBackgroundClip: 'text',
+											WebkitTextFillColor: 'transparent',
+											fontSize: '1rem',
+											textTransform: 'uppercase',
+											letterSpacing: '0.1em',
+											textAlign: 'center',
+											textShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
+										}}>
+										{t('privacyAndSecurity')}
+									</Typography>
+								</Box>
+								<Box sx={{ p: 3 }}>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={formData.showInLeaderboard}
+												onChange={handleToggle('showInLeaderboard')}
+												disabled={loading}
+												sx={{
+													'& .MuiSwitch-switchBase.Mui-checked': {
+														color: '#10b981',
+													},
+													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+														backgroundColor: '#10b981',
+													},
+												}}
+											/>
+										}
+										label={
+											<Box>
+												<Typography variant='body2' sx={{ fontWeight: 600 }}>
+													{t('showInLeaderboard')}
+												</Typography>
+												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
+													{t('showInLeaderboardDesc')}
+												</Typography>
+											</Box>
+										}
+										sx={{ mb: 3 }}
+									/>
+									<Button
+										fullWidth
+										variant='outlined'
+										startIcon={<LockRounded />}
+										onClick={() => setChangePasswordDialogOpen(true)}
+										sx={{
+											mb: 2,
+											borderColor: '#ef4444',
+											color: '#ef4444',
+											'&:hover': {
+												borderColor: '#dc2626',
+												bgcolor: 'rgba(239, 68, 68, 0.05)',
+											},
+										}}>
+										{t('changePassword')}
+									</Button>
+									<Button
+										fullWidth
+										variant='outlined'
+										startIcon={<DeleteForeverRounded />}
+										onClick={() => setDeleteAccountDialogOpen(true)}
+										sx={{
+											borderColor: '#dc2626',
+											color: '#dc2626',
+											'&:hover': {
+												borderColor: '#b91c1c',
+												bgcolor: 'rgba(220, 38, 38, 0.05)',
+											},
+										}}>
+										{t('deleteAccount')}
+									</Button>
+								</Box>
+							</Paper>
+						</Grid>
+
+
 					</Grid>
 				</Container>
 
@@ -993,6 +1599,203 @@ const Settings = () => {
 							})}
 						</Box>
 					</DialogContent>
+				</Dialog>
+
+				{/* Dialog pour changer le mot de passe */}
+				<Dialog
+					open={changePasswordDialogOpen}
+					onClose={() => setChangePasswordDialogOpen(false)}
+					maxWidth='sm'
+					fullWidth
+					PaperProps={{
+						sx: {
+							borderRadius: 4,
+							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
+							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.4)',
+							border: '2px solid rgba(239, 68, 68, 0.3)',
+						},
+					}}>
+					<DialogTitle sx={{ textAlign: 'center', color: '#fca5a5', fontWeight: 700 }}>
+						{t('changePassword')}
+					</DialogTitle>
+					<DialogContent>
+						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+							<TextField
+								fullWidth
+								type='password'
+								label={t('currentPassword')}
+								value={passwordData.currentPassword}
+								onChange={e => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+								sx={{
+									'& .MuiOutlinedInput-root': {
+										'& fieldset': { borderColor: '#ef4444' },
+										'&:hover fieldset': { borderColor: '#dc2626' },
+										'&.Mui-focused fieldset': { borderColor: '#ef4444' },
+									},
+									'& .MuiInputLabel-root': { color: '#fca5a5' },
+									'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
+								}}
+							/>
+							<Box>
+								<TextField
+									fullWidth
+									type='password'
+									label={t('newPassword')}
+									value={passwordData.newPassword}
+									onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+									sx={{
+										'& .MuiOutlinedInput-root': {
+											'& fieldset': { borderColor: '#ef4444' },
+											'&:hover fieldset': { borderColor: '#dc2626' },
+											'&.Mui-focused fieldset': { borderColor: '#ef4444' },
+										},
+										'& .MuiInputLabel-root': { color: '#fca5a5' },
+										'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
+									}}
+								/>
+
+								{/* Indicateur de force du mot de passe */}
+								{passwordData.newPassword && (
+									<Box sx={{ mt: 2 }}>
+										<LinearProgress
+											variant='determinate'
+											value={passwordStrength}
+											sx={{
+												height: 6,
+												borderRadius: 3,
+												backgroundColor: 'rgba(255, 255, 255, 0.1)',
+												'& .MuiLinearProgress-bar': {
+													borderRadius: 3,
+													background:
+														passwordStrength < 50
+															? 'linear-gradient(90deg, #EF4444, #F87171)'
+															: passwordStrength < 75
+															? 'linear-gradient(90deg, #F59E0B, #FBBF24)'
+															: 'linear-gradient(90deg, #10B981, #34D399)',
+												},
+											}}
+										/>
+										<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+											{[
+												{ key: 'minLength', label: t('passwordMinLength') },
+												{ key: 'hasUpperCase', label: t('passwordUpperCase') },
+												{ key: 'hasNumber', label: t('passwordNumber') },
+												{ key: 'hasSpecialChar', label: t('passwordSpecialChar') },
+											].map(({ key, label }) => (
+												<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													{passwordValidation[key] ? (
+														<CheckCircleRounded sx={{ fontSize: '1.1rem', color: '#10B981' }} />
+													) : (
+														<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
+													)}
+													<Typography variant='body2' sx={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
+														{label}
+													</Typography>
+												</Box>
+											))}
+										</Box>
+									</Box>
+								)}
+							</Box>
+							<TextField
+								fullWidth
+								type='password'
+								label={t('confirmPassword')}
+								value={passwordData.confirmPassword}
+								onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+								sx={{
+									'& .MuiOutlinedInput-root': {
+										'& fieldset': { borderColor: '#ef4444' },
+										'&:hover fieldset': { borderColor: '#dc2626' },
+										'&.Mui-focused fieldset': { borderColor: '#ef4444' },
+									},
+									'& .MuiInputLabel-root': { color: '#fca5a5' },
+									'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
+								}}
+							/>
+						</Box>
+					</DialogContent>
+					<DialogActions sx={{ p: 3, pt: 0 }}>
+						<Button
+							onClick={() => setChangePasswordDialogOpen(false)}
+							sx={{
+								color: '#94a3b8',
+								'&:hover': { bgcolor: 'rgba(148, 163, 184, 0.1)' },
+							}}>
+							{t('cancel')}
+						</Button>
+						<Button
+							onClick={handleChangePassword}
+							disabled={loading}
+							variant='contained'
+							sx={{
+								bgcolor: '#ef4444',
+								'&:hover': { bgcolor: '#dc2626' },
+								'&:disabled': { bgcolor: 'rgba(239, 68, 68, 0.5)' },
+							}}>
+							{t('save')}
+						</Button>
+					</DialogActions>
+				</Dialog>
+
+				{/* Dialog pour supprimer le compte */}
+				<Dialog
+					open={deleteAccountDialogOpen}
+					onClose={() => setDeleteAccountDialogOpen(false)}
+					maxWidth='sm'
+					fullWidth
+					PaperProps={{
+						sx: {
+							borderRadius: 4,
+							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
+							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(220, 38, 38, 0.4)',
+							border: '2px solid rgba(220, 38, 38, 0.3)',
+						},
+					}}>
+					<DialogTitle sx={{ textAlign: 'center', color: '#fca5a5', fontWeight: 700 }}>
+						{t('deleteAccountConfirm')}
+					</DialogTitle>
+					<DialogContent>
+						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 2,
+									p: 2,
+									borderRadius: 2,
+									bgcolor: 'rgba(220, 38, 38, 0.1)',
+									border: '1px solid rgba(220, 38, 38, 0.3)',
+								}}>
+								<DeleteForeverRounded sx={{ fontSize: 40, color: '#dc2626' }} />
+								<Typography variant='body2' sx={{ color: '#fca5a5' }}>
+									{t('deleteAccountWarning')}
+								</Typography>
+							</Box>
+						</Box>
+					</DialogContent>
+					<DialogActions sx={{ p: 3, pt: 0 }}>
+						<Button
+							onClick={() => setDeleteAccountDialogOpen(false)}
+							sx={{
+								color: '#94a3b8',
+								'&:hover': { bgcolor: 'rgba(148, 163, 184, 0.1)' },
+							}}>
+							{t('cancel')}
+						</Button>
+						<Button
+							onClick={handleDeleteAccount}
+							disabled={loading}
+							variant='contained'
+							startIcon={<DeleteForeverRounded />}
+							sx={{
+								bgcolor: '#dc2626',
+								'&:hover': { bgcolor: '#b91c1c' },
+								'&:disabled': { bgcolor: 'rgba(220, 38, 38, 0.5)' },
+							}}>
+							{t('deleteAccount')}
+						</Button>
+					</DialogActions>
 				</Dialog>
 			</Box>
 		</>

@@ -832,4 +832,5 @@ const Navbar = props => {
 }
 
 // Mémoïser la navbar (composant statique)
-export default React.memo(Navbar)
+// Removed React.memo to allow re-rendering when userProfile context changes
+export default Navbar

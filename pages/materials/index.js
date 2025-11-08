@@ -16,7 +16,7 @@ import { School, Palette, Museum, Movie, MusicNote, MenuBook, ViewModule, ViewLi
 
 const Material = () => {
 	const { t, lang } = useTranslation('materials')
-	const { userLearningLanguage, userProfile } = useUserContext()
+	const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const dispatch = useDispatch()
@@ -674,7 +674,7 @@ const Material = () => {
 							selectedStatus={selectedStatus}
 							currentView={viewMode}
 							showNotStudiedFilter={true}
-							showStudiedFilter={false}
+							showStudiedFilter={isUserAdmin}
 							showSectionFilter={true}
 							translationNamespace="materials"
 						/>

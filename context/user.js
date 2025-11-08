@@ -73,7 +73,7 @@ const UserProvider = ({ children }) => {
 		// Récupérer les données XP
 		const { data: xpData, error: xpError } = await supabase
 			.from('user_xp_profile')
-			.select('total_xp, current_level, daily_streak, total_gold')
+			.select('total_xp, current_level, daily_streak, total_gold, xp_in_current_level, longest_streak')
 			.eq('user_id', userId)
 			.maybeSingle()
 
@@ -84,6 +84,8 @@ const UserProvider = ({ children }) => {
 			level: xpData?.current_level || 1,
 			streak: xpData?.daily_streak || 0,
 			gold: xpData?.total_gold || 0,
+			xp_in_current_level: xpData?.xp_in_current_level || 0,
+			longest_streak: xpData?.longest_streak || 0,
 		}
 	}, [])
 
@@ -474,6 +476,24 @@ const UserProvider = ({ children }) => {
 	)
 
 	// --------------------------------------------------------
+	// Fonction pour rafraîchir le profil utilisateur (utile après gain d'XP)
+	// --------------------------------------------------------
+	const refreshUserProfile = useCallback(async () => {
+		if (!user) return null
+
+		try {
+			const profile = await fetchUserProfile(user.id)
+			if (profile) {
+				setUserProfile({ ...user, ...profile })
+				return profile
+			}
+		} catch (err) {
+			console.error('Error refreshing user profile:', err)
+		}
+		return null
+	}, [user, fetchUserProfile])
+
+	// --------------------------------------------------------
 	// Valeur exposée
 	// --------------------------------------------------------
 	const value = useMemo(
@@ -496,6 +516,7 @@ const UserProvider = ({ children }) => {
 			setNewPassword,
 			changeLearningLanguage,
 			updateUserProfile,
+			refreshUserProfile,
 		}),
 		[
 			user,
@@ -513,6 +534,7 @@ const UserProvider = ({ children }) => {
 			setNewPassword,
 			changeLearningLanguage,
 			updateUserProfile,
+			refreshUserProfile,
 		]
 	)
 

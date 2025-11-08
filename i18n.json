@@ -7,7 +7,7 @@
 		"/blog": ["blog"],
 		"/materials": ["materials"],
 		"/materials/[section]": ["materials", "section"],
-		"/materials/[section]/[material]": ["register", "materials", "words", "admin"],
+		"/materials/[section]/[material]": ["register", "materials", "words", "admin", "exercises"],
 		"/my-materials": ["materials"],
 		"/dictionary": ["common", "words"],
 		"/login": ["register"],
@@ -26,6 +26,12 @@
 		"/settings": ["settings"],
 		"/admin": ["common", "admin"],
 		"/admin/create": ["common", "admin"],
-		"/admin/users": ["common", "admin"]
+		"/admin/users": ["common", "admin"],
+		"/admin/exercises": ["common", "admin", "exercises"],
+		"/admin/exercises/create-fitb": ["common", "admin", "exercises"],
+		"/admin/exercises/create-mcq": ["common", "admin", "exercises"],
+		"/admin/exercises/create-drag-drop": ["common", "admin", "exercises"],
+		"/admin/exercises/preview/[id]": ["common", "admin", "exercises"],
+		"/admin/exercises/edit/[id]": ["common", "admin", "exercises"]
 	}
 }

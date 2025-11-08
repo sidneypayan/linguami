@@ -38,30 +38,40 @@ export default async function handler(req, res) {
 		return res.status(401).json({ error: 'Unauthorized' })
 	}
 
-	const { actionType, sourceId, description } = req.body
+	const { actionType, sourceId, description, customXp } = req.body
 
 	if (!actionType) {
 		return res.status(400).json({ error: 'actionType is required' })
 	}
 
 	try {
-		// 1. Récupérer la configuration XP et Gold pour cette action
-		const { data: config, error: configError } = await supabase
-			.from('xp_rewards_config')
-			.select('xp_amount, gold_amount, is_active')
-			.eq('action_type', actionType)
-			.single()
+		let xpAmount = 0
+		let goldAmount = 0
 
-		if (configError || !config) {
-			return res.status(404).json({ error: 'Action type not found' })
+		// If customXp is provided, use it and calculate gold automatically
+		if (customXp !== undefined && customXp !== null) {
+			xpAmount = customXp
+			// Calculate gold using 10:1 ratio (10 XP = 1 Gold)
+			goldAmount = Math.floor(customXp / 10)
+		} else {
+			// 1. Récupérer la configuration XP et Gold pour cette action
+			const { data: config, error: configError } = await supabase
+				.from('xp_rewards_config')
+				.select('xp_amount, gold_amount, is_active')
+				.eq('action_type', actionType)
+				.single()
+
+			if (configError || !config) {
+				return res.status(404).json({ error: 'Action type not found' })
+			}
+
+			if (!config.is_active) {
+				return res.status(400).json({ error: 'This action type is not active' })
+			}
+
+			xpAmount = config.xp_amount
+			goldAmount = config.gold_amount || 0
 		}
-
-		if (!config.is_active) {
-			return res.status(400).json({ error: 'This action type is not active' })
-		}
-
-		const xpAmount = config.xp_amount
-		const goldAmount = config.gold_amount || 0
 
 		// 2. Récupérer ou créer le profil XP de l'utilisateur
 		let { data: profile, error: profileError } = await supabase

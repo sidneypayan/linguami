@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Box, Container, Typography, Button } from '@mui/material'
-import { Add, People } from '@mui/icons-material'
+import { Add, People, School } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 
 const AdminNavbar = ({ activePage = 'dashboard' }) => {
@@ -18,6 +18,13 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			label: t('newContent'),
 			href: '/admin/create',
 			icon: <Add />,
+			variant: 'contained',
+		},
+		{
+			id: 'exercises',
+			label: t('exercises'),
+			href: '/admin/exercises',
+			icon: <School />,
 			variant: 'contained',
 		},
 		{

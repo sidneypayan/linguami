@@ -86,14 +86,13 @@ Or gagné dans chaque transaction (historique)
 
 ### Philosophie de distribution de l'or
 
-L'or est beaucoup plus rare que l'XP (environ 50-100x plus rare) et récompense les **accomplissements significatifs**, pas les actions répétitives :
-- **0 gold** : Actions répétitives individuelles (toutes les flashcards individuelles, word_added)
-- **1-2 gold** : Actions quotidiennes significatives (login, objectif quotidien)
-- **3-5 gold** : Accomplissements notables (session parfaite, matériau complété, streak 3 jours)
-- **8-15 gold** : Accomplissements majeurs (streak 7 jours, objectif mensuel)
-- **30 gold** : Accomplissements exceptionnels (streak 30 jours complet)
+L'or utilise un **ratio uniforme de 10:1** (10 XP = 1 Gold) pour toutes les activités :
+- **0 gold** : Actions donnant moins de 10 XP (flashcards individuelles, word_added, login quotidien)
+- **1 gold** : Actions de 10-19 XP (objectif quotidien, matériau complété, streak 3 jours)
+- **2-3 gold** : Accomplissements de 20-39 XP (session parfaite, streak 7 jours, objectifs hebdomadaires)
+- **4-10 gold** : Accomplissements majeurs de 40-100 XP (mastered words, objectifs mensuels, streak 30 jours)
 
-**Principe clé** : On ne peut pas "farmer" l'or facilement. Il faut un engagement réel dans le temps.
+**Principe clé** : Ratio simple et constant de 10:1 - l'or reste rare car calculé automatiquement depuis l'XP.
 
 ---
 
@@ -229,77 +228,85 @@ L'API `/api/xp/profile` retourne maintenant les transactions avec le champ `gold
 
 Les récompenses en or sont configurables dans la table `xp_rewards_config`.
 
-**Philosophie** : L'or est environ 50-100x plus rare que l'XP pour créer un sentiment de valeur et d'accomplissement.
+**Philosophie** : L'or utilise un **ratio uniforme de 10:1** (10 XP = 1 Gold) pour toutes les activités, calculé automatiquement.
 
 ### Actions disponibles
 
 #### Flashcards
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `flashcard_again` | 0 | 0 | - | Pas de récompense |
-| `flashcard_hard` | 1 | 0 | - | Pas d'or pour actions répétitives |
-| `flashcard_good` | 2 | 0 | - | XP seulement |
-| `flashcard_easy` | 3 | 0 | - | XP seulement |
-| `perfect_session` | 20 | 5 | 4:1 | Seule les sessions parfaites donnent de l'or |
-| `session_20_cards` | 0 | 0 | - | Pas de récompense |
-| `session_50_cards` | 0 | 0 | - | Pas de récompense |
-
-**Principe** : Les cartes individuelles ne donnent plus d'or (trop facile à farmer). Seule une session parfaite est récompensée.
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `flashcard_again` | 0 | 0 | 10:1 | Pas de récompense |
+| `flashcard_hard` | 1 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `flashcard_good` | 2 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `flashcard_easy` | 3 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `card_graduated` | 5 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `perfect_session` | 20 | 2 | 10:1 | Session parfaite récompensée |
+| `session_20_cards` | 0 | 0 | 10:1 | Pas de récompense |
+| `session_50_cards` | 0 | 0 | 10:1 | Pas de récompense |
 
 #### Matériaux
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `material_started` | 2 | 1 | 2:1 | Encourager à explorer |
-| `material_completed` | 10 | 5 | 2:1 | Accomplissement significatif |
-| `book_chapter_read` | 5 | - | - | Non implémenté |
-| `book_completed` | 30 | - | - | Non implémenté |
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `material_started` | 2 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `material_completed` | 10 | 1 | 10:1 | Accomplissement significatif |
+| `book_chapter_read` | 5 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `book_completed` | 30 | 3 | 10:1 | Livre complet |
 
 #### Activités H5P
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `h5p_activity_completed` | 4 | 2 | 2:1 | Activité complétée |
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `h5p_activity_completed` | 4 | 0 | 10:1 | < 10 XP, donc 0 gold |
 
 #### Vocabulaire
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `word_added` | 1 | 0 | - | Action simple, pas d'or |
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `word_added` | 1 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `mastered_100_words` | 40 | 4 | 10:1 | Accomplissement majeur |
+| `mastered_500_words` | 100 | 10 | 10:1 | Grand accomplissement |
 
 #### Engagement quotidien
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `daily_login` | 2 | 1 | 2:1 | Récompense quotidienne |
-| `daily_goal_achieved` | 10 | 2 | 5:1 | Bonus objectif quotidien |
-| `weekly_goal_achieved` | 30 | 5 | 6:1 | Bonus objectif hebdomadaire |
-| `monthly_goal_achieved` | 100 | 15 | 6.7:1 | Bonus objectif mensuel |
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `daily_login` | 2 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `daily_goal_achieved` | 10 | 1 | 10:1 | Objectif quotidien atteint |
+| `weekly_goal_achieved` | 30 | 3 | 10:1 | Objectif hebdomadaire |
+| `monthly_goal_achieved` | 100 | 10 | 10:1 | Objectif mensuel |
 
-#### Streaks (meilleurs ratios pour l'engagement)
-| Action | XP | Gold | Ratio XP:Gold | Notes |
-|--------|-----|------|---------------|-------|
-| `streak_3_days` | 10 | 3 | 3.3:1 | 3 jours consécutifs |
-| `streak_7_days` | 25 | 8 | 3.1:1 | 1 semaine complète |
-| `streak_30_days` | 100 | 30 | 3.3:1 | 1 mois complet - très rare ! |
+#### Streaks
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `streak_3_days` | 10 | 1 | 10:1 | 3 jours consécutifs |
+| `streak_7_days` | 25 | 2 | 10:1 | 1 semaine complète |
+| `streak_30_days` | 100 | 10 | 10:1 | 1 mois complet - très rare ! |
 
-**Note** : Les streaks ont les meilleurs ratios XP:Gold car ils représentent un engagement dans le temps difficile à maintenir.
+#### Progression
+| Action | XP | Gold | Ratio | Notes |
+|--------|-----|------|-------|-------|
+| `level_up` | 30 | 3 | 10:1 | Niveau supérieur |
+| `first_material_per_section` | 8 | 0 | 10:1 | < 10 XP, donc 0 gold |
+| `all_sections_tried` | 40 | 4 | 10:1 | Toutes sections explorées |
 
-### Économie attendue avec ce système
+**Note** : Ratio uniforme et simple - tout est calculé automatiquement avec `Math.floor(xp / 10)`.
+
+### Économie attendue avec ce système (ratio 10:1)
 
 **Utilisateur actif (20 XP/jour)** :
-- Login quotidien : 1 gold
-- Objectif quotidien atteint : 2 gold
-- Activités (matériaux, H5P) : ~1-3 gold
-- **Total par jour** : ~3-6 gold
+- Login quotidien : 0 gold (2 XP < 10)
+- Objectif quotidien atteint : 1 gold (10 XP)
+- Activités (matériaux, révisions) : ~1 gold (10 XP pour material_completed)
+- **Total par jour** : ~2 gold
 
 **Sur un mois (utilisateur régulier)** :
-- Actions quotidiennes : ~90-120 gold
-- Objectif hebdomadaire (x4) : 20 gold
-- Objectif mensuel : 15 gold
-- Streak 30 jours : 30 gold (bonus exceptionnel)
-- **Total mensuel** : ~125-185 gold
+- Actions quotidiennes : ~30-60 gold
+- Objectif hebdomadaire (x4) : 12 gold (30 XP × 4)
+- Objectif mensuel : 10 gold (100 XP)
+- Streak 30 jours : 10 gold (100 XP bonus)
+- **Total mensuel** : ~52-92 gold
 
 **Prix recommandés pour la boutique future** :
-- Items cosmétiques simples : 50-100 gold
-- Fonctionnalités premium temporaires : 150-300 gold
-- Items rares/exclusifs : 500-1000 gold
+- Items cosmétiques simples : 25-50 gold
+- Fonctionnalités premium temporaires : 75-150 gold
+- Items rares/exclusifs : 250-500 gold
 
 ### Modifier les valeurs d'or
 
@@ -505,33 +512,39 @@ C'est normal - seules les nouvelles transactions après la migration auront un `
 - **XP** : Donné généreusement pour toute activité. Ne peut pas être dépensé. Sert uniquement à monter de niveau.
 - **Gold** : Rare et précieux. Peut être dépensé. Créé une économie dans l'application.
 
-### Ratios XP:Gold appliqués
+### Ratio XP:Gold appliqué
 
-Le système utilise des ratios variables selon le type d'action :
+Le système utilise un **ratio uniforme de 10:1** pour toutes les actions :
 
-- **Actions répétitives** : ∞:0 (XP seulement, pas d'or) - ex: flashcards individuelles
-- **Actions quotidiennes** : 2:1 (2 XP = 1 Gold) - ex: login, matériaux
-- **Accomplissements** : 4:1 à 6:1 - ex: perfect_session, objectifs
-- **Engagement à long terme** : 3:1 (meilleur ratio) - ex: streaks
+- **Ratio unique** : 10 XP = 1 Gold (calculé avec `Math.floor(xp / 10)`)
+- **Actions < 10 XP** : Donnent 0 gold - ex: flashcards individuelles, login quotidien
+- **Actions ≥ 10 XP** : Donnent gold proportionnellement - ex: 10 XP = 1 gold, 20 XP = 2 gold, 100 XP = 10 gold
 
-**Pourquoi ces ratios ?**
-- Les actions répétitives ne donnent pas d'or pour éviter le "farming"
-- Les accomplissements significatifs ont de meilleurs ratios
-- Les streaks ont les meilleurs ratios car ils sont difficiles à maintenir
+**Avantages de ce système :**
+- Simplicité : un seul ratio facile à comprendre
+- Prévisibilité : les utilisateurs savent exactement combien d'or ils gagneront
+- Équité : tous les types d'actions utilisent le même calcul
+- Automatique : pas besoin de configurer manuellement les montants d'or
 
 Cela crée une économie où :
-- L'or est suffisamment rare pour avoir de la valeur (50-100x plus rare que l'XP)
-- Les utilisateurs doivent s'engager dans le temps pour accumuler de l'or
-- Les items de la boutique peuvent être prix entre 50-1000 gold selon leur valeur
+- L'or est environ 10x plus rare que l'XP
+- Les petites actions (< 10 XP) ne donnent pas d'or, évitant le "farming"
+- Les items de la boutique peuvent être prix entre 25-500 gold selon leur valeur
 
 ### Éviter l'inflation
 
-⚠️ **Attention** : Ne donnez pas trop d'or ! L'or doit rester rare pour maintenir son intérêt. Si les utilisateurs accumulent trop d'or trop vite, le système perd de son attrait.
+Avec le ratio 10:1, l'inflation est naturellement contrôlée :
 
-Règles :
-- Actions répétables infiniment (flashcards) = peu ou pas d'or (0-1 gold)
-- Actions quotidiennes limitées (login) = or modéré (2-5 gold)
-- Accomplissements majeurs uniques = beaucoup d'or (10-50 gold)
+✅ **Avantages du ratio 10:1 :**
+- Actions répétables (< 10 XP) ne donnent pas d'or → évite le farming
+- Seuls les accomplissements significatifs (≥ 10 XP) donnent de l'or
+- Ratio automatique → cohérence garantie pour toutes les actions
+- L'or reste suffisamment rare (~10x plus rare que l'XP)
+
+📊 **Contrôle naturel :**
+- Actions < 10 XP = 0 gold (flashcards individuelles, login)
+- Actions 10-20 XP = 1-2 gold (objectifs quotidiens, matériaux)
+- Actions 20-100 XP = 2-10 gold (objectifs hebdo/mensuels, streaks)
 
 ---
 

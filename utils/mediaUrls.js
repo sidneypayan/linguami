@@ -4,7 +4,6 @@
  * New structure:
  * - Audio: audio/{lang}/{filename}
  * - Images: image/materials/{filename}, image/blog/{filename}, image/ui/{filename}
- * - H5P: h5p/{filename}
  */
 
 /**
@@ -50,14 +49,4 @@ export function getBlogImageUrl(post) {
  */
 export function getUIImageUrl(filename) {
   return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}ui/${filename}`
-}
-
-/**
- * Get H5P file URL
- * @param {Object} activity - Activity object with h5p_file property
- * @returns {string|null} Full H5P URL or null if no file
- */
-export function getH5pUrl(activity) {
-  if (!activity?.h5p_file) return null
-  return `${process.env.NEXT_PUBLIC_SUPABASE_H5P}${activity.h5p_file}`
 }

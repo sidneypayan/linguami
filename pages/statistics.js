@@ -82,7 +82,7 @@ import Head from 'next/head'
 
 const StatisticsPage = () => {
 	const { t } = useTranslation('stats')
-	const { user } = useUserContext()
+	const { user, userProfile } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [loading, setLoading] = useState(true)
@@ -97,6 +97,30 @@ const StatisticsPage = () => {
 		}
 	}, [user])
 
+	// Update xpProfile when userProfile changes (real-time updates after exercises)
+	useEffect(() => {
+		if (userProfile && userProfile.xp !== undefined) {
+			// Calculate XP for next level using formula: 100 * level^1.5
+			// Level 1: 100, Level 2: 283, Level 3: 520, etc.
+			const currentLevel = userProfile.level || 1
+			const xpForNextLevel = Math.ceil(100 * Math.pow(currentLevel, 1.5))
+			const xpInLevel = userProfile.xp_in_current_level || 0
+			const progressPercent = Math.min(Math.floor((xpInLevel / xpForNextLevel) * 100), 100)
+
+			// Map userProfile to xpProfile format expected by the page
+			setXpProfile({
+				currentLevel: currentLevel,
+				totalXp: userProfile.xp || 0,
+				totalGold: userProfile.gold || 0,
+				dailyStreak: userProfile.streak || 0,
+				longestStreak: userProfile.longest_streak || userProfile.streak || 0,
+				xpInCurrentLevel: xpInLevel,
+				xpForNextLevel: xpForNextLevel,
+				progressPercent: progressPercent,
+			})
+		}
+	}, [userProfile])
+
 	const fetchStatistics = async () => {
 		setLoading(true)
 		try {
@@ -105,10 +129,8 @@ const StatisticsPage = () => {
 			const statsData = await statsResponse.json()
 			setStats(statsData)
 
-			// Fetch XP profile
-			const xpResponse = await fetch('/api/xp/profile')
-			const xpData = await xpResponse.json()
-			setXpProfile(xpData.profile)
+			// XP profile is now managed by userProfile context (see useEffect below)
+			// No need to fetch from API as it can cause race conditions
 
 			// Fetch goals
 			const goalsResponse = await fetch('/api/goals')

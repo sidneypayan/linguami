@@ -26,7 +26,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const Section = () => {
   const { t, lang } = useTranslation("materials");
-  const { userLearningLanguage, userProfile } = useUserContext();
+  const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext();
   const router = useRouter();
   const { section } = router.query;
   const [viewMode, setViewMode] = useState("card");
@@ -331,7 +331,7 @@ const Section = () => {
             selectedStatus={selectedStatus}
             currentView={viewMode}
             showNotStudiedFilter={true}
-            showStudiedFilter={false}
+            showStudiedFilter={isUserAdmin}
             translationNamespace="materials"
           />
 

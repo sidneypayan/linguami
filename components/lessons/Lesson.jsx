@@ -1,13 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
-import { Box, Container, Typography, Divider, Button, Card } from '@mui/material'
+import { Box, Container, Typography, Button, Card } from '@mui/material'
 import { CheckCircleRounded } from '@mui/icons-material'
-import {
-	getActivities,
-	getActivitiesCount,
-} from '../../features/activities/activitiesSlice'
 import {
 	addLessonToStudied,
 	getUserLessonsStatus,
@@ -15,31 +10,12 @@ import {
 } from '../../features/lessons/lessonsSlice'
 import { useUserContext } from '../../context/user'
 
-const H5PViewer = dynamic(() => import('../../components/H5PViewer'), {
-	ssr: false,
-})
-
 const Lesson = ({ lesson }) => {
 	const { t } = useTranslation('lessons')
 	const dispatch = useDispatch()
-	const { isUserLoggedIn } = useUserContext()
-	const { activities, activities_count } = useSelector(
-		store => store.activities
-	)
 
 	const { user_lesson_status } = useSelector(store => store.lessons)
 	const isLessonStudied = user_lesson_status?.is_studied
-
-	useEffect(() => {
-		if (lesson) {
-			// Toujours récupérer le comptage pour tous les utilisateurs
-			dispatch(getActivitiesCount({ id: lesson.id, type: 'lessons' }))
-			// Récupérer les activités complètes uniquement si connecté
-			if (isUserLoggedIn) {
-				dispatch(getActivities({ id: lesson.id, type: 'lessons' }))
-			}
-		}
-	}, [dispatch, lesson, isUserLoggedIn])
 
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
@@ -63,46 +39,6 @@ const Lesson = ({ lesson }) => {
 				</Typography>
 			</Box>
 		)
-	}
-
-	const displayh5pActivities = () => {
-		// Si l'utilisateur n'est pas connecté et qu'il y a des activités en DB
-		if (!isUserLoggedIn && activities_count > 0) {
-			return (
-				<Typography
-					variant='subtitle1'
-					sx={{ fontWeight: '600', mt: 4 }}
-					align='center'>
-					{t('h5p')}
-				</Typography>
-			)
-		}
-
-		// Si l'utilisateur est connecté et qu'il y a des activités
-		if (activities && activities.length > 0) {
-			return (
-				<>
-					<Divider sx={{ mt: 10, mb: 8 }} />
-					<Container>
-						<Typography variant='h4' component='h3' align='center'>
-							{t('exercices')}
-						</Typography>
-						{activities.map(activity => {
-							const h5pJsonPath =
-								process.env.NEXT_PUBLIC_SUPABASE_H5P +
-								'lessons/' +
-								activity.material_id +
-								activity.h5p_url
-
-							return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
-						})}
-					</Container>
-				</>
-			)
-		}
-
-		// Sinon, ne rien afficher
-		return null
 	}
 
 	return (
@@ -275,7 +211,6 @@ const Lesson = ({ lesson }) => {
 					}
 				})}
 			</Card>
-			{displayh5pActivities()}
 
 			{!isLessonStudied && (
 				<Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>

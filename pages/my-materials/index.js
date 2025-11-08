@@ -268,10 +268,12 @@ const UserMaterials = () => {
 							display: 'grid',
 							gridTemplateColumns: {
 								xs: '1fr',
-								md: 'repeat(2, 1fr)',
+								sm: 'repeat(2, 1fr)',
+								md: 'repeat(3, 1fr)',
+								lg: 'repeat(4, 1fr)',
 							},
 							rowGap: { xs: 2, md: 3 },
-							columnGap: { xs: 2, md: 4 },
+							columnGap: { xs: 2, md: 3 },
 						}}>
 						{filteredMaterials.map(material => (
 							<SectionCard

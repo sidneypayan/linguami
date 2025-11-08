@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import {
 	Box,
@@ -11,8 +11,15 @@ import {
 	Container,
 	InputAdornment,
 	CircularProgress,
+	LinearProgress,
 } from '@mui/material'
-import { HomeRounded, EmailRounded, LockRounded } from '@mui/icons-material'
+import {
+	HomeRounded,
+	EmailRounded,
+	LockRounded,
+	CheckCircleRounded,
+	CancelRounded,
+} from '@mui/icons-material'
 import { useUserContext } from '../context/user'
 import { supabase } from '../lib/supabase'
 import Link from 'next/link'
@@ -30,6 +37,27 @@ const UpdatePassword = () => {
 	const [isResetting, setIsResetting] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const { updatePassword, setNewPassword } = useUserContext()
+
+	// Validation du mot de passe (mêmes règles que signup et settings)
+	const passwordValidation = useMemo(() => {
+		const { password } = values
+		return {
+			minLength: password.length >= 8,
+			hasUpperCase: /[A-Z]/.test(password),
+			hasNumber: /[0-9]/.test(password),
+			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+		}
+	}, [values.password])
+
+	const passwordStrength = useMemo(() => {
+		const checks = Object.values(passwordValidation)
+		const passed = checks.filter(Boolean).length
+		return (passed / checks.length) * 100
+	}, [passwordValidation])
+
+	const isPasswordValid = useMemo(() => {
+		return Object.values(passwordValidation).every(Boolean)
+	}, [passwordValidation])
 
 	// Détecter si on arrive depuis l'email avec un token
 	useEffect(() => {
@@ -76,21 +104,8 @@ const UpdatePassword = () => {
 				return toast.error(t('passwordsDoNotMatch'))
 			}
 
-			// Validation des règles de mot de passe
-			if (password.length < 8) {
-				return toast.error(t('passwordMinLength8'))
-			}
-
-			if (!/[A-Z]/.test(password)) {
-				return toast.error(t('passwordRequirements') + ' : ' + t('passwordUpperCase'))
-			}
-
-			if (!/[0-9]/.test(password)) {
-				return toast.error(t('passwordRequirements') + ' : ' + t('passwordNumber'))
-			}
-
-			if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-				return toast.error(t('passwordRequirements') + ' : ' + t('passwordSpecialChar'))
+			if (!isPasswordValid) {
+				return toast.error(t('passwordRequirements'))
 			}
 
 			return setNewPassword(password)
@@ -217,35 +232,80 @@ const UpdatePassword = () => {
 						{isResetting ? (
 							<>
 								{/* Nouveau mot de passe */}
-								<TextField
-									fullWidth
-									onChange={handleChange}
-									type='password'
-									label={t('newPassword')}
-									name='password'
-									value={values.password}
-									autoComplete='new-password'
-									id='password'
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<LockRounded sx={{ color: '#718096' }} />
-											</InputAdornment>
-										),
-									}}
-									sx={{
-										'& .MuiOutlinedInput-root': {
-											borderRadius: 2,
-											'&:hover fieldset': {
-												borderColor: '#667eea',
+								<Box>
+									<TextField
+										fullWidth
+										onChange={handleChange}
+										type='password'
+										label={t('newPassword')}
+										name='password'
+										value={values.password}
+										autoComplete='new-password'
+										id='password'
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<LockRounded sx={{ color: '#718096' }} />
+												</InputAdornment>
+											),
+										}}
+										sx={{
+											'& .MuiOutlinedInput-root': {
+												borderRadius: 2,
+												'&:hover fieldset': {
+													borderColor: '#667eea',
+												},
+												'&.Mui-focused fieldset': {
+													borderColor: '#667eea',
+													borderWidth: 2,
+												},
 											},
-											'&.Mui-focused fieldset': {
-												borderColor: '#667eea',
-												borderWidth: 2,
-											},
-										},
-									}}
-								/>
+										}}
+									/>
+
+									{/* Indicateur de force du mot de passe */}
+									{values.password && (
+										<Box sx={{ mt: 2 }}>
+											<LinearProgress
+												variant='determinate'
+												value={passwordStrength}
+												sx={{
+													height: 6,
+													borderRadius: 3,
+													backgroundColor: '#E5E7EB',
+													'& .MuiLinearProgress-bar': {
+														borderRadius: 3,
+														background:
+															passwordStrength < 50
+																? 'linear-gradient(90deg, #EF4444, #F87171)'
+																: passwordStrength < 75
+																? 'linear-gradient(90deg, #F59E0B, #FBBF24)'
+																: 'linear-gradient(90deg, #10B981, #34D399)',
+													},
+												}}
+											/>
+											<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+												{[
+													{ key: 'minLength', label: t('passwordMinLength') },
+													{ key: 'hasUpperCase', label: t('passwordUpperCase') },
+													{ key: 'hasNumber', label: t('passwordNumber') },
+													{ key: 'hasSpecialChar', label: t('passwordSpecialChar') },
+												].map(({ key, label }) => (
+													<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+														{passwordValidation[key] ? (
+															<CheckCircleRounded sx={{ fontSize: '1.1rem', color: '#10B981' }} />
+														) : (
+															<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
+														)}
+														<Typography variant='body2' sx={{ fontSize: '0.8125rem', color: '#64748B' }}>
+															{label}
+														</Typography>
+													</Box>
+												))}
+											</Box>
+										</Box>
+									)}
+								</Box>
 
 								{/* Confirmation mot de passe */}
 								<TextField

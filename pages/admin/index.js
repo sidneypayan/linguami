@@ -29,6 +29,7 @@ import {
 	DialogActions,
 	TextField,
 	CircularProgress,
+	useTheme,
 } from '@mui/material'
 import {
 	Add,
@@ -52,6 +53,8 @@ const Admin = ({
 	booksCountByLang,
 }) => {
 	const { t } = useTranslation('admin')
+	const theme = useTheme()
+	const isDark = theme.palette.mode === 'dark'
 	const [selectedLang, setSelectedLang] = useState('fr')
 	const [brokenVideos, setBrokenVideos] = useState([])
 	const [loadingVideos, setLoadingVideos] = useState(false)

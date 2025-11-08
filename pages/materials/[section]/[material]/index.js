@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../lib/supabase'
-import { supabaseServer } from '../../../../lib/supabase-server'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -13,7 +12,6 @@ import {
 	getUserMaterialsStatus,
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
-import { getActivities } from '../../../../features/activities/activitiesSlice'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
@@ -24,16 +22,12 @@ import Words from '../../../../components/material/Words'
 import WordsContainer from '../../../../components/material/WordsContainer'
 import VideoPlayer from '../../../../components/material/VideoPlayer'
 import EditMaterialModal from '../../../../components/admin/EditMaterialModal'
+import ExerciseSection from '../../../../components/exercises/ExerciseSection'
 import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 
 import Player from '../../../../components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '../../../../utils/mediaUrls'
-
-const H5PViewer = dynamic(() => import('../../../../components/H5PViewer'), {
-	ssr: false,
-})
-
 import { editContent } from '../../../../features/content/contentSlice'
 import {
 	Box,
@@ -63,7 +57,7 @@ import {
 	successButton,
 } from '../../../../utils/buttonStyles'
 
-const Material = ({ material: single_material, activitiesCount }) => {
+const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation('materials')
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -79,7 +73,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 	const [currentMaterial, setCurrentMaterial] = useState(single_material)
 
 	const { user_material_status } = useSelector(store => store.materials)
-	const { activities } = useSelector(store => store.activities)
 
 	const { is_being_studied, is_studied } = user_material_status
 
@@ -94,14 +87,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 		dispatch(getUserMaterialStatus(single_material.id))
 	}, [dispatch, single_material])
-
-	useEffect(() => {
-		if (!single_material?.id) return
-
-		if (isUserLoggedIn) {
-			dispatch(getActivities({ id: single_material.id, type: 'materials' }))
-		}
-	}, [dispatch, single_material, isUserLoggedIn])
 
 	// Fermer la popup de traduction quand l'utilisateur change de matériel
 	useEffect(() => {
@@ -162,7 +147,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 	const displayAudioPlayer = (section, audio) => {
 		if (sections.audio.includes(section)) {
-			return <Player src={getAudioUrl({ ...single_material, lang: userLearningLanguage })} />
+			return <Player src={getAudioUrl(single_material)} />
 		}
 	}
 
@@ -183,39 +168,6 @@ const Material = ({ material: single_material, activitiesCount }) => {
 		}
 	}
 
-	const displayh5pActivities = () => {
-		// Si l'utilisateur n'est pas connecté et qu'il y a des activités en DB
-		if (!isUserLoggedIn && activitiesCount > 0) {
-			return (
-				<Typography
-					variant='subtitle1'
-					sx={{ fontWeight: '600', mt: 4 }}
-					align='center'>
-					{t('h5p')}
-				</Typography>
-			)
-		}
-
-		// Si l'utilisateur est connecté et qu'il y a des activités
-		if (activities && activities.length > 0) {
-			return (
-				<div>
-					{activities.map(activity => {
-						const h5pJsonPath =
-							process.env.NEXT_PUBLIC_SUPABASE_H5P +
-							'materials/' +
-							activity.material_id +
-							activity.h5p_url
-
-						return <H5PViewer key={activity.id} h5pJsonPath={h5pJsonPath} />
-					})}
-				</div>
-			)
-		}
-
-		// Sinon, ne rien afficher
-		return null
-	}
 
 	const getCoordinates = e => {
 		// Utiliser les coordonnées du viewport (clientX/clientY)
@@ -560,7 +512,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								)}
 							</Paper>
 
-							{displayh5pActivities()}
+							{/* Exercise Section */}
+							<ExerciseSection materialId={single_material.id} />
 
 							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
 							{!is_studied && isUserLoggedIn && (
@@ -761,17 +714,9 @@ export const getStaticProps = async ({ params }) => {
 		.eq('id', params.material)
 		.single()
 
-	// Compter les activités H5P côté serveur avec le client serveur (bypasse RLS)
-	const { count: activitiesCount, error: countError } = await supabaseServer
-		.from('h5p')
-		.select('*', { count: 'exact', head: true })
-		.eq('material_id', params.material)
-		.eq('type', 'materials')
-
 	return {
 		props: {
 			material,
-			activitiesCount: activitiesCount || 0,
 		},
 		revalidate: 60,
 	}
