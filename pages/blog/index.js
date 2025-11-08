@@ -7,6 +7,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { Container, Typography, Box, useTheme } from '@mui/material'
 import { RssFeedRounded } from '@mui/icons-material'
+import { getBlogImageUrl } from '../../utils/mediaUrls'
 
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
@@ -32,7 +33,7 @@ const Blog = ({ posts }) => {
 			'@type': 'BlogPosting',
 			headline: post.frontmatter.title,
 			datePublished: post.frontmatter.date,
-			image: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${post.frontmatter.img}`,
+			image: getBlogImageUrl(post),
 			url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog/${post.slug}`,
 			author: {
 				'@type': 'Organization',

@@ -14,7 +14,10 @@ import {
 	addMaterialToStudied,
 } from '../../../../features/materials/materialsSlice'
 import { getActivities } from '../../../../features/activities/activitiesSlice'
-import { toggleTranslationContainer, cleanTranslation } from '../../../../features/words/wordsSlice'
+import {
+	toggleTranslationContainer,
+	cleanTranslation,
+} from '../../../../features/words/wordsSlice'
 import BookMenu from '../../../../components/material/BookMenu'
 import Translation from '../../../../components/material/Translation'
 import Words from '../../../../components/material/Words'
@@ -25,6 +28,7 @@ import { useUserContext } from '../../../../context/user'
 import { sections } from '../../../../data/sections'
 
 import Player from '../../../../components/Player'
+import { getAudioUrl, getMaterialImageUrl } from '../../../../utils/mediaUrls'
 
 const H5PViewer = dynamic(() => import('../../../../components/H5PViewer'), {
 	ssr: false,
@@ -142,10 +146,10 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							overflow: 'hidden',
 						}}>
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${single_material.image}`}
+							src={getMaterialImageUrl(single_material)}
 							alt={single_material.title}
 							fill
-							sizes="(max-width: 600px) 100vw, 600px"
+							sizes='(max-width: 600px) 100vw, 600px'
 							style={{ objectFit: 'cover', borderRadius: '3px' }}
 							quality={85}
 							priority={false}
@@ -158,7 +162,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 
 	const displayAudioPlayer = (section, audio) => {
 		if (sections.audio.includes(section)) {
-			return <Player src={process.env.NEXT_PUBLIC_SUPABASE_AUDIO + audio} />
+			return <Player src={getAudioUrl({ ...single_material, lang: userLearningLanguage })} />
 		}
 	}
 
@@ -170,6 +174,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 						position: 'sticky',
 						top: { xs: 0, sm: '6rem', md: '6.5rem' },
 						zIndex: 1000,
+						marginTop: { xs: '1rem', sm: 0 },
 						marginBottom: '0.5rem',
 					}}>
 					<VideoPlayer videoUrl={single_material.video} />
@@ -222,7 +227,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 	}
 
 	// Vérifier si une vidéo est affichée pour ajuster la position du bouton
-	const isVideoDisplayed = sections.music.includes(section) || sections.video.includes(section)
+	const isVideoDisplayed =
+		sections.music.includes(section) || sections.video.includes(section)
 
 	return (
 		single_material && (
@@ -235,21 +241,24 @@ const Material = ({ material: single_material, activitiesCount }) => {
 				{/* Compact Header */}
 				<Box
 					sx={{
-						pt: { xs: '5.5rem', md: '6rem' },
-						pb: 2.5,
+						pt: { xs: '30px', md: '6rem' },
+						pb: { xs: '20px', md: 2.5 },
 						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
 						bgcolor: 'background.paper',
 					}}>
-					<Container maxWidth="lg">
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+					<Container maxWidth='lg'>
+						<Box
+							sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
 							<IconButton
 								sx={{
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
+									background:
+										'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
 									border: '1px solid rgba(139, 92, 246, 0.3)',
 									color: '#8b5cf6',
 									transition: 'all 0.3s ease',
 									'&:hover': {
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+										background:
+											'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
 										transform: 'scale(1.05)',
 									},
 								}}
@@ -262,7 +271,8 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								sx={{
 									fontWeight: 700,
 									fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									background:
+										'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 									WebkitBackgroundClip: 'text',
 									WebkitTextFillColor: 'transparent',
 									flex: 1,
@@ -289,19 +299,18 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					}}>
 					<Box
 						sx={{
-							py: { xs: 4, lg: 6 },
+							py: { xs: 0, lg: 6 },
 							px: { xs: 1, lg: 3 },
 							flex: 1,
 							minWidth: 0,
 							maxWidth: '100%',
 						}}>
-
 						{getImageRegardingSection(section)}
 						{displayVideo(section)}
 
 						<Box
 							sx={{
-								marginTop: { xs: '1rem', sm: '1.5rem' },
+								marginTop: { xs: '0rem', sm: '1.5rem' },
 								px: { xs: 0, sm: 1 },
 							}}>
 							<Translation
@@ -358,11 +367,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+										<Box
+											component='span'
+											sx={{ display: { xs: 'none', sm: 'inline' } }}>
 											{t('startstudying')}
 										</Box>
-										<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-											{lang === 'fr' ? 'Commencer à étudier' : 'Начать изучение'}
+										<Box
+											component='span'
+											sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											{lang === 'fr'
+												? 'Commencer à étudier'
+												: 'Начать изучение'}
 										</Box>
 									</Button>
 								)}
@@ -401,11 +416,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+										<Box
+											component='span'
+											sx={{ display: { xs: 'none', sm: 'inline' } }}>
 											{t('stopstudying')}
 										</Box>
-										<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-											{lang === 'fr' ? 'Ne plus étudier' : 'Отказаться от изучения'}
+										<Box
+											component='span'
+											sx={{ display: { xs: 'inline', sm: 'none' } }}>
+											{lang === 'fr'
+												? 'Ne plus étudier'
+												: 'Отказаться от изучения'}
 										</Box>
 									</Button>
 								)}
@@ -417,7 +438,11 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									<Button
 										variant='outlined'
 										onClick={handleEditContent}
-										startIcon={<EditRounded sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
+										startIcon={
+											<EditRounded
+												sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+											/>
+										}
 										sx={{
 											borderColor: '#8b5cf6',
 											color: '#8b5cf6',
@@ -440,10 +465,17 @@ const Material = ({ material: single_material, activitiesCount }) => {
 												transform: 'scale(0.98)',
 											},
 										}}>
-										<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+										<Box
+											component='span'
+											sx={{ display: { xs: 'none', sm: 'inline' } }}>
 											Edit material
 										</Box>
-										<EditRounded sx={{ display: { xs: 'block', sm: 'none' }, fontSize: '1.5rem' }} />
+										<EditRounded
+											sx={{
+												display: { xs: 'block', sm: 'none' },
+												fontSize: '1.5rem',
+											}}
+										/>
 									</Button>
 								)}
 							</Box>
@@ -468,15 +500,16 @@ const Material = ({ material: single_material, activitiesCount }) => {
 									zIndex: 100,
 									padding: { xs: 1.5, lg: 5 },
 									marginBottom: '3rem',
-									background: {
-										xs: 'transparent',
-										lg: isDark
-											? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-											: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
-									},
+									background: 'transparent',
 									borderRadius: { xs: 0, lg: 4 },
-									border: { xs: 'none', lg: '1px solid rgba(139, 92, 246, 0.2)' },
-									boxShadow: { xs: 'none', lg: '0 4px 20px rgba(139, 92, 246, 0.15)' },
+									border: {
+										xs: 'none',
+										lg: '1px solid rgba(139, 92, 246, 0.2)',
+									},
+									boxShadow: {
+										xs: 'none',
+										lg: '0 4px 20px rgba(139, 92, 246, 0.15)',
+									},
 								}}>
 								{showAccents ? (
 									<Typography
@@ -530,7 +563,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 							{displayh5pActivities()}
 
 							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
-							{!is_studied && (
+							{!is_studied && isUserLoggedIn && (
 								<Box
 									sx={{
 										position: 'relative',
@@ -618,7 +651,7 @@ const Material = ({ material: single_material, activitiesCount }) => {
 					</IconButton>
 
 					{/* Desktop WordsContainer */}
-					<Box
+					<WordsContainer
 						sx={{
 							display: { xs: 'none', lg: 'block' },
 							width: {
@@ -626,19 +659,22 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								xl: '550px',
 							},
 							flexShrink: 0,
-							bgcolor: isDark ? '#0f172a' : 'white',
+							background: isDark
+								? 'background.default'
+								: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
 							position: 'sticky',
 							top: { lg: 120 },
 							alignSelf: 'flex-start',
 							maxHeight: 'calc(100vh - 130px)',
 							overflowY: 'auto',
-							pt: { lg: 10 },
+							pt: { lg: 6 },
 							px: 3,
 							'&::-webkit-scrollbar': {
 								width: '12px',
 							},
 							'&::-webkit-scrollbar-track': {
-								background: 'linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
+								background:
+									'linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
 								borderRadius: '6px',
 							},
 							'&::-webkit-scrollbar-thumb': {
@@ -647,14 +683,14 @@ const Material = ({ material: single_material, activitiesCount }) => {
 								border: '2px solid rgba(255, 255, 255, 0.3)',
 								boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
 								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
+									background:
+										'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
 									borderColor: 'rgba(255, 255, 255, 0.5)',
 									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.5)',
 								},
 							},
-						}}>
-						<WordsContainer />
-					</Box>
+						}}
+					/>
 
 					{/* Mobile and tablet fullscreen WordsContainer */}
 					{showWordsContainer && (

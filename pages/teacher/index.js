@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { FaEnvelope, FaMicrosoft } from 'react-icons/fa'
 import SEO from '../../components/SEO'
 import { useUserContext } from '../../context/user'
+import { getUIImageUrl } from '../../utils/mediaUrls'
 import {
 	Box,
 	Button,
@@ -33,8 +34,8 @@ const Teacher = () => {
 	const isLearningRussian = learningLang === 'ru'
 	const teacherName = isLearningRussian ? 'Natacha' : 'Sidney'
 	const img = isLearningRussian
-		? `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_female.webp`
-		: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_male.webp`
+		? getUIImageUrl('elf_female.webp')
+		: getUIImageUrl('elf_male.webp')
 
 	// Mots-clés SEO basés sur la langue d'apprentissage et la langue d'interface
 	const getKeywords = () => {

@@ -10,6 +10,7 @@ import {
 	useTheme,
 } from '@mui/material'
 import { ArrowForwardRounded, CalendarTodayRounded } from '@mui/icons-material'
+import { getBlogImageUrl } from '../../utils/mediaUrls'
 
 const BlogCard = ({ post }) => {
 	const theme = useTheme()
@@ -88,7 +89,7 @@ const BlogCard = ({ post }) => {
 							style={{ objectFit: 'cover' }}
 							sizes='(max-width: 900px) 100vw, 40vw'
 							quality={90}
-							src={process.env.NEXT_PUBLIC_SUPABASE_IMAGE + post.frontmatter.img}
+							src={getBlogImageUrl(post)}
 							alt={post.frontmatter.title}
 						/>
 					</Box>

@@ -30,7 +30,7 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 
-const WordsContainer = () => {
+const WordsContainer = ({ sx = {} }) => {
 	const { t, lang } = useTranslation('words')
 	const router = useRouter()
 	const dispatch = useDispatch()
@@ -150,7 +150,7 @@ const WordsContainer = () => {
 	])
 
 	return (
-		<Box>
+		<Box sx={sx}>
 			{filteredWords && filteredWords.length > 0 ? (
 				<Box>
 					{/* Bouton de révision */}

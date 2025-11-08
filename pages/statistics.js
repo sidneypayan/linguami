@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { getUIImageUrl } from '../utils/mediaUrls'
 import {
 	Box,
 	Container,
@@ -254,7 +255,7 @@ const StatisticsPage = () => {
 					value: level,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}xp_${index + 1}.webp`}
+							src={getUIImageUrl(`xp_${index + 1}.webp`)}
 							alt={`Level ${level}`}
 							width={90}
 							height={90}
@@ -276,7 +277,7 @@ const StatisticsPage = () => {
 					value: count,
 					icon: (
 						<Image
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}0${index + 1}_reviewed_words_badge.webp`}
+							src={getUIImageUrl(`0${index + 1}_reviewed_words_badge.webp`)}
 							alt={`${count} words`}
 							width={90}
 							height={90}

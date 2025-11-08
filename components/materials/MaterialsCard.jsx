@@ -2,6 +2,7 @@ import Link from 'next/link'
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Typography, Chip } from '@mui/material'
 import { PlayCircleOutline } from '@mui/icons-material'
+import { getMaterialImageUrl } from '../../utils/mediaUrls'
 
 const MaterialsCard = ({ material }) => {
 	const { t } = useTranslation('materials')
@@ -85,7 +86,7 @@ const MaterialsCard = ({ material }) => {
 						}}>
 						<Box
 							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.img}`}
+							src={getMaterialImageUrl(material)}
 							alt={material.title}
 							sx={{
 								width: '100%',

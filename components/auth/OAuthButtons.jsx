@@ -2,6 +2,7 @@ import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
 import { Apple, EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
+import { getUIImageUrl } from '../../utils/mediaUrls'
 
 const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')
@@ -59,7 +60,7 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 			labelShort: t('google'),
 			icon: (
 				<Image
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}google.webp`}
+					src={getUIImageUrl('google.webp')}
 					alt="Google"
 					width={24}
 					height={24}
@@ -80,7 +81,7 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 			labelShort: t('facebook'),
 			icon: (
 				<Image
-					src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}facebook.webp`}
+					src={getUIImageUrl('facebook.webp')}
 					alt="Facebook"
 					width={24}
 					height={24}

@@ -2,6 +2,7 @@ import React from 'react'
 import { sections } from '../data/sections'
 import { useDispatch } from 'react-redux'
 import styles from '../styles/sections/SectionCard.module.css'
+import { getMaterialImageUrl } from '../utils/mediaUrls'
 import {
 	Movie,
 	MusicNote,
@@ -311,7 +312,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 					}}>
 					<Box
 						component='img'
-						src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${material.image}`}
+						src={getMaterialImageUrl(material)}
 						alt={material.title}
 						sx={{
 							width: '100%',

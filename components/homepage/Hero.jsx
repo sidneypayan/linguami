@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
 import Link from 'next/link'
 import { primaryButton } from '../../utils/buttonStyles'
+import { getUIImageUrl } from '../../utils/mediaUrls'
 
 const Hero = () => {
 	const { t, lang } = useTranslation('home')
@@ -334,7 +335,7 @@ const Hero = () => {
 						}}>
 						<Box
 							component='img'
-							src={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}hero.webp`}
+							src={getUIImageUrl('hero.webp')}
 							alt='Linguami hero'
 							sx={{
 								width: '100%',

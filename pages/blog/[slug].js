@@ -8,6 +8,7 @@ import path from 'path'
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Container, Typography, IconButton, Chip, useTheme } from '@mui/material'
 import { ArrowBack, CalendarTodayRounded } from '@mui/icons-material'
+import { getBlogImageUrl } from '../../utils/mediaUrls'
 
 const Post = ({ frontmatter: { title, date, img, description }, slug, content }) => {
 	const { lang } = useTranslation()
@@ -23,7 +24,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 		'@type': 'BlogPosting',
 		headline: title,
 		datePublished: date,
-		image: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${img}`,
+		image: getBlogImageUrl({ img }),
 		author: {
 			'@type': 'Organization',
 			name: 'Linguami',
@@ -51,7 +52,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 				title={`${title} | Linguami Blog`}
 				description={pageDescription}
 				path={`/blog/${slug}`}
-				image={`${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${img}`}
+				image={getBlogImageUrl({ img })}
 				jsonLd={jsonLd}
 			/>
 
@@ -79,7 +80,7 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 					style={{ objectFit: 'cover' }}
 					quality={100}
 					priority
-					src={process.env.NEXT_PUBLIC_SUPABASE_IMAGE + img}
+					src={getBlogImageUrl({ img })}
 					alt={title}
 				/>
 

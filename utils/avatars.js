@@ -1,3 +1,5 @@
+import { getUIImageUrl } from './mediaUrls'
+
 // Numéro de version pour forcer le rechargement des avatars (incrémenter quand les images changent)
 const AVATAR_VERSION = '2'
 
@@ -7,72 +9,72 @@ export const AVATARS = [
 	{
 		id: 'avatar1',
 		nameKey: 'avatarDwarfMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('dwarf_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar2',
 		nameKey: 'avatarDwarfFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}dwarf_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('dwarf_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar3',
 		nameKey: 'avatarElfMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('elf_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar4',
 		nameKey: 'avatarElfFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}elf_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('elf_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar5',
 		nameKey: 'avatarUndeadMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('undead_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar6',
 		nameKey: 'avatarUndeadFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}undead_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('undead_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar7',
 		nameKey: 'avatarTaurenFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('tauren_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar8',
 		nameKey: 'avatarTaurenMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}tauren_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('tauren_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar9',
 		nameKey: 'avatarGnomeMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('gnome_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar10',
 		nameKey: 'avatarGnomeFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}gnome_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('gnome_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar11',
 		nameKey: 'avatarWizardFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('wizard_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar12',
 		nameKey: 'avatarWizardMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}wizard_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('wizard_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar13',
 		nameKey: 'avatarOrcMale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_male.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('orc_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar14',
 		nameKey: 'avatarOrcFemale',
-		url: `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}orc_female.webp?v=${AVATAR_VERSION}`,
+		url: `${getUIImageUrl('orc_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 ]
 
