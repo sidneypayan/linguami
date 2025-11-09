@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import { getToastMessage } from '../../utils/toastMessages'
 import { sanitizeObject, sanitizeFilename, validateFileType } from '../../utils/sanitize'
 import { optimizeImage } from '../../utils/imageOptimizer'

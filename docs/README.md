@@ -37,7 +37,6 @@ Documentation complète du système XP et de gamification de Linguami.
 - `user_xp_profile` - Profils XP des utilisateurs
 - `xp_rewards_config` - Configuration des récompenses
 - `xp_transactions` - Historique des transactions
-- `user_h5p_progress` - Progression sur activités H5P
 - `user_goals` - Objectifs utilisateurs
 - `user_achievements` - Badges et achievements
 

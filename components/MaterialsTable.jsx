@@ -14,7 +14,6 @@ import {
 	Paper,
 	Box,
 	Typography,
-	Avatar,
 	Chip,
 	useMediaQuery,
 	useTheme,
@@ -267,47 +266,30 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 
 						<Box sx={{ display: 'flex', gap: 2, alignItems: 'center', p: 2, position: 'relative', zIndex: 1 }}>
 							{/* Image */}
-							{index === 0 ? (
+							<Box
+								sx={{
+									width: 90,
+									height: 90,
+									flexShrink: 0,
+									borderRadius: 2,
+									overflow: 'hidden',
+									position: 'relative',
+									boxShadow: isDark
+										? `0 4px 16px ${levelColor}40`
+										: `0 4px 16px ${levelColor}30`,
+									border: `2px solid ${levelColor}40`,
+								}}>
 								<Box
-									sx={{
-										width: 90,
-										height: 90,
-										flexShrink: 0,
-										borderRadius: 2,
-										overflow: 'hidden',
-										position: 'relative',
-										boxShadow: isDark
-											? `0 4px 16px ${levelColor}40`
-											: `0 4px 16px ${levelColor}30`,
-										border: `2px solid ${levelColor}40`,
-									}}>
-									<Box
-										component='img'
-										src={getImageUrl(material.image)}
-										alt={material.title}
-										sx={{
-											width: '100%',
-											height: '100%',
-											objectFit: 'cover',
-										}}
-									/>
-								</Box>
-							) : (
-								<Avatar
+									component='img'
 									src={getImageUrl(material.image)}
 									alt={material.title}
-									variant="rounded"
 									sx={{
-										width: 90,
-										height: 90,
-										flexShrink: 0,
-										boxShadow: isDark
-											? `0 4px 16px ${levelColor}40`
-											: `0 4px 16px ${levelColor}30`,
-										border: `2px solid ${levelColor}40`,
+										width: '100%',
+										height: '100%',
+										objectFit: 'cover',
 									}}
 								/>
-							)}
+							</Box>
 
 							{/* Content */}
 							<Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -535,39 +517,26 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							}}>
 							{/* Image/Icon Column */}
 							<TableCell sx={{ py: 2 }}>
-								{index === 0 ? (
+								<Box
+									sx={{
+										width: 50,
+										height: 50,
+										borderRadius: 1.5,
+										overflow: 'hidden',
+										position: 'relative',
+										boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+									}}>
 									<Box
-										sx={{
-											width: 50,
-											height: 50,
-											borderRadius: 1.5,
-											overflow: 'hidden',
-											position: 'relative',
-											boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-										}}>
-										<Box
-											component='img'
-											src={getImageUrl(material.image)}
-											alt={material.title}
-											sx={{
-												width: '100%',
-												height: '100%',
-												objectFit: 'cover',
-											}}
-										/>
-									</Box>
-								) : (
-									<Avatar
+										component='img'
 										src={getImageUrl(material.image)}
 										alt={material.title}
-										variant="rounded"
 										sx={{
-											width: 50,
-											height: 50,
-											boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+											width: '100%',
+											height: '100%',
+											objectFit: 'cover',
 										}}
 									/>
-								)}
+								</Box>
 							</TableCell>
 
 							{/* Title Column */}

@@ -13,7 +13,7 @@ import { School, ExpandMore, ExpandLess, LockOpen, EmojiEvents, TrendingUp } fro
 import { createBrowserClient } from '../../lib/supabase'
 import { useUserContext } from '../../context/user'
 import { useRouter } from 'next/router'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import useTranslation from 'next-translate/useTranslation'
 import FillInTheBlank from './FillInTheBlank'
 import MultipleChoice from './MultipleChoice'

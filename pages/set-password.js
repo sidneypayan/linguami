@@ -1,6 +1,6 @@
 // /pages/set-password.js
 import useTranslation from 'next-translate/useTranslation'
-import { toast } from 'react-toastify'
+import toast from '../utils/toast'
 import { useRouter } from 'next/router'
 import { useEffect, useState, useMemo } from 'react'
 import {

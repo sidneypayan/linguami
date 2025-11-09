@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useUserContext } from '../context/user'
 import useTranslation from 'next-translate/useTranslation'
-import { toast } from 'react-toastify'
+import toast from '../utils/toast'
 import { AVATARS, getAvatarUrl } from '../utils/avatars'
 import {
 	Container,
@@ -304,6 +304,7 @@ const Settings = () => {
 	const renderField = (field, label, icon, type = 'text', options = null) => {
 		const isEditing = editMode[field]
 		const value = formData[field]
+		const isEmailField = field === 'email' // Email non modifiable pour raisons de sécurité
 
 		// Déterminer les couleurs selon le type de champ - Dark Fantasy Theme
 		const isLanguageField = field === 'languageLevel'
@@ -476,14 +477,28 @@ const Settings = () => {
 							/>
 						)
 					) : (
-						<Typography
-							sx={{
-								fontSize: '0.95rem',
-								fontWeight: 600,
-								color: isDark ? '#f1f5f9' : '#2d3748',
-							}}>
-							{getDisplayValue()}
-						</Typography>
+						<>
+							<Typography
+								sx={{
+									fontSize: '0.95rem',
+									fontWeight: 600,
+									color: isDark ? '#f1f5f9' : '#2d3748',
+								}}>
+								{getDisplayValue()}
+							</Typography>
+							{isEmailField && (
+								<Typography
+									variant='caption'
+									sx={{
+										color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+										fontSize: '0.7rem',
+										fontStyle: 'italic',
+										mt: 0.5,
+									}}>
+									{t('emailNotEditable')}
+								</Typography>
+							)}
+						</>
 					)}
 				</Box>
 
@@ -530,30 +545,32 @@ const Settings = () => {
 							</IconButton>
 						</>
 					) : (
-						<IconButton
-							size='small'
-							onClick={() => toggleEditMode(field)}
-							sx={{
-								color: 'white',
-								background: isLanguageField
-									? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.3) 100%)'
-									: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 100%)',
-								border: `1px solid ${iconColor}`,
-								boxShadow: isLanguageField
-									? '0 4px 12px rgba(6, 182, 212, 0.2)'
-									: '0 4px 12px rgba(139, 92, 246, 0.2)',
-								'&:hover': {
+						!isEmailField && (
+							<IconButton
+								size='small'
+								onClick={() => toggleEditMode(field)}
+								sx={{
+									color: 'white',
 									background: isLanguageField
-										? 'linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(8, 145, 178, 0.5) 100%)'
-										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%)',
-									transform: 'scale(1.1) rotate(15deg)',
+										? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.3) 100%)'
+										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 100%)',
+									border: `1px solid ${iconColor}`,
 									boxShadow: isLanguageField
-										? '0 6px 16px rgba(6, 182, 212, 0.4)'
-										: '0 6px 16px rgba(139, 92, 246, 0.4)',
-								},
-							}}>
-							<EditRounded fontSize='small' />
-						</IconButton>
+										? '0 4px 12px rgba(6, 182, 212, 0.2)'
+										: '0 4px 12px rgba(139, 92, 246, 0.2)',
+									'&:hover': {
+										background: isLanguageField
+											? 'linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(8, 145, 178, 0.5) 100%)'
+											: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%)',
+										transform: 'scale(1.1) rotate(15deg)',
+										boxShadow: isLanguageField
+											? '0 6px 16px rgba(6, 182, 212, 0.4)'
+											: '0 6px 16px rgba(139, 92, 246, 0.4)',
+									},
+								}}>
+								<EditRounded fontSize='small' />
+							</IconButton>
+						)
 					)}
 				</Box>
 			</Box>
@@ -1063,78 +1080,183 @@ const Settings = () => {
 										{t('goalsAndMotivation')}
 									</Typography>
 								</Box>
-								<Box sx={{ p: 3 }}>
-									<Box
-										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											gap: 2,
-											mb: 2,
-										}}>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												width: 44,
-												height: 44,
-												borderRadius: '50%',
-												background: 'linear-gradient(135deg, rgba(245, 87, 108, 0.25) 0%, rgba(225, 29, 72, 0.25) 100%)',
-												border: '2px solid rgba(245, 87, 108, 0.3)',
-												color: '#f5576c',
-												boxShadow: '0 4px 12px rgba(245, 87, 108, 0.2)',
-											}}>
-											<TrackChangesRounded fontSize='small' />
-										</Box>
-										<Typography
-											variant='body2'
-											sx={{
-												color: isDark ? '#fda4af' : '#e11d48',
-												fontSize: '0.7rem',
-												fontWeight: 600,
-												textTransform: 'uppercase',
-												letterSpacing: '0.08em',
-											}}>
-											{t('dailyXpGoal')}
-										</Typography>
-									</Box>
-									<Slider
-										value={formData.dailyXpGoal}
-										onChange={(e, newValue) => setFormData({ ...formData, dailyXpGoal: newValue })}
-										onChangeCommitted={(e, newValue) => handleSave('dailyXpGoal')}
-										min={50}
-										max={500}
-										step={50}
-										marks
-										valueLabelDisplay='on'
-										valueLabelFormat={value => `${value} XP`}
-										sx={{
-											color: '#f5576c',
-											'& .MuiSlider-thumb': {
-												background: 'linear-gradient(135deg, #f5576c 0%, #e11d48 100%)',
-												boxShadow: '0 4px 12px rgba(245, 87, 108, 0.4)',
-												'&:hover': {
-													boxShadow: '0 6px 16px rgba(245, 87, 108, 0.6)',
-												},
-											},
-											'& .MuiSlider-track': {
-												background: 'linear-gradient(90deg, #f5576c 0%, #e11d48 100%)',
-											},
-											'& .MuiSlider-valueLabel': {
-												background: 'linear-gradient(135deg, #f5576c 0%, #e11d48 100%)',
-											},
-										}}
-									/>
+								<Box sx={{ p: 2.5 }}>
 									<Typography
-										variant='caption'
+										variant='body2'
 										sx={{
-											color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-											display: 'block',
-											mt: 1,
+											color: isDark ? '#fda4af' : '#e11d48',
+											fontSize: '0.75rem',
+											fontWeight: 600,
+											textTransform: 'uppercase',
+											letterSpacing: '0.08em',
+											mb: 2.5,
 											textAlign: 'center',
 										}}>
-										{t('xpPerDay')}
+										{t('dailyXpGoal')}
 									</Typography>
+
+									{/* Goal Cards */}
+									<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+										{[
+											{ value: 50, emoji: '🌱', label: t('goalRelaxed'), time: t('goal5to10min'), color: '#10b981' },
+											{ value: 100, emoji: '⭐', label: t('goalRegular'), time: t('goal15to20min'), color: '#f59e0b', recommended: true },
+											{ value: 200, emoji: '🔥', label: t('goalMotivated'), time: t('goal30min'), color: '#f97316' },
+											{ value: 300, emoji: '💪', label: t('goalIntensive'), time: t('goal45minPlus'), color: '#ef4444' },
+											{ value: 0, emoji: '🎯', label: t('goalNone'), time: t('goalAtMyPace'), color: '#8b5cf6' },
+										].map(goal => {
+											const isSelected = formData.dailyXpGoal === goal.value
+											return (
+												<Box
+													key={goal.value}
+													onClick={async () => {
+														setFormData({ ...formData, dailyXpGoal: goal.value })
+														// Auto-save
+														setLoading(true)
+														try {
+															await updateUserProfile({ daily_xp_goal: goal.value })
+															toast.success(t('updateSuccess'))
+														} catch (error) {
+															console.error('Error updating goal:', error)
+															toast.error(error.message || t('updateError'))
+														} finally {
+															setLoading(false)
+														}
+													}}
+													sx={{
+														position: 'relative',
+														cursor: loading ? 'not-allowed' : 'pointer',
+														p: 1.75,
+														borderRadius: 2.5,
+														background: isSelected
+															? `linear-gradient(135deg, ${goal.color}15 0%, ${goal.color}25 100%)`
+															: isDark
+															? 'linear-gradient(135deg, rgba(30, 27, 75, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)'
+															: 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 250, 252, 0.6) 100%)',
+														border: isSelected ? `2.5px solid ${goal.color}` : `1.5px solid ${goal.color}40`,
+														opacity: loading ? 0.6 : 1,
+														transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+														boxShadow: isSelected
+															? `0 4px 16px ${goal.color}40, 0 0 24px ${goal.color}20`
+															: '0 2px 8px rgba(0, 0, 0, 0.1)',
+														'&:hover': loading ? {} : {
+															transform: 'translateX(4px)',
+															boxShadow: `0 6px 24px ${goal.color}50, 0 0 32px ${goal.color}30`,
+															borderColor: goal.color,
+															background: `linear-gradient(135deg, ${goal.color}20 0%, ${goal.color}30 100%)`,
+														},
+														'&::before': isSelected ? {
+															content: '""',
+															position: 'absolute',
+															left: 0,
+															top: 0,
+															bottom: 0,
+															width: 4,
+															background: `linear-gradient(180deg, ${goal.color} 0%, ${goal.color}dd 100%)`,
+															borderRadius: '2.5px 0 0 2.5px',
+															boxShadow: `0 0 12px ${goal.color}80`,
+														} : {},
+													}}>
+													{/* Recommended Badge */}
+													{goal.recommended && (
+														<Box
+															sx={{
+																position: 'absolute',
+																top: -8,
+																right: 8,
+																bgcolor: goal.color,
+																color: 'white',
+																px: 1.5,
+																py: 0.3,
+																borderRadius: 2,
+																fontSize: '0.65rem',
+																fontWeight: 700,
+																textTransform: 'uppercase',
+																letterSpacing: '0.05em',
+																boxShadow: `0 4px 12px ${goal.color}60`,
+															}}>
+															{t('recommended')}
+														</Box>
+													)}
+
+													<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+														{/* Emoji Icon */}
+														<Box
+															sx={{
+																fontSize: '2rem',
+																lineHeight: 1,
+																display: 'flex',
+																alignItems: 'center',
+																justifyContent: 'center',
+																width: 50,
+																height: 50,
+																borderRadius: '50%',
+																background: `linear-gradient(135deg, ${goal.color}20 0%, ${goal.color}30 100%)`,
+																border: `2px solid ${goal.color}50`,
+																flexShrink: 0,
+																transition: 'transform 0.3s ease',
+																transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+															}}>
+															{goal.emoji}
+														</Box>
+
+														{/* Content */}
+														<Box sx={{ flex: 1, minWidth: 0 }}>
+															<Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.5 }}>
+																<Typography
+																	sx={{
+																		fontWeight: 700,
+																		fontSize: '0.95rem',
+																		color: isSelected ? goal.color : isDark ? '#f1f5f9' : '#2d3748',
+																		transition: 'color 0.3s ease',
+																	}}>
+																	{goal.label}
+																</Typography>
+																{goal.value > 0 && (
+																	<Typography
+																		sx={{
+																			fontSize: '0.75rem',
+																			fontWeight: 600,
+																			color: goal.color,
+																			opacity: 0.8,
+																		}}>
+																		{goal.value} XP
+																	</Typography>
+																)}
+															</Box>
+															<Typography
+																variant='caption'
+																sx={{
+																	color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
+																	fontSize: '0.7rem',
+																	display: 'block',
+																}}>
+																{goal.time}
+															</Typography>
+														</Box>
+
+														{/* Check Icon */}
+														{isSelected && (
+															<Box
+																sx={{
+																	display: 'flex',
+																	alignItems: 'center',
+																	justifyContent: 'center',
+																	width: 28,
+																	height: 28,
+																	borderRadius: '50%',
+																	background: goal.color,
+																	color: 'white',
+																	boxShadow: `0 4px 12px ${goal.color}60`,
+																	flexShrink: 0,
+																}}>
+																<CheckRounded sx={{ fontSize: 18 }} />
+															</Box>
+														)}
+													</Box>
+												</Box>
+											)
+										})}
+									</Box>
 								</Box>
 							</Paper>
 						</Grid>

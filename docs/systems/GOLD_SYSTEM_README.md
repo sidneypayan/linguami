@@ -252,11 +252,6 @@ Les récompenses en or sont configurables dans la table `xp_rewards_config`.
 | `book_chapter_read` | 5 | 0 | 10:1 | < 10 XP, donc 0 gold |
 | `book_completed` | 30 | 3 | 10:1 | Livre complet |
 
-#### Activités H5P
-| Action | XP | Gold | Ratio | Notes |
-|--------|-----|------|-------|-------|
-| `h5p_activity_completed` | 4 | 0 | 10:1 | < 10 XP, donc 0 gold |
-
 #### Vocabulaire
 | Action | XP | Gold | Ratio | Notes |
 |--------|-----|------|-------|-------|
@@ -265,12 +260,14 @@ Les récompenses en or sont configurables dans la table `xp_rewards_config`.
 | `mastered_500_words` | 100 | 10 | 10:1 | Grand accomplissement |
 
 #### Engagement quotidien
-| Action | XP | Gold | Ratio | Notes |
-|--------|-----|------|-------|-------|
-| `daily_login` | 2 | 0 | 10:1 | < 10 XP, donc 0 gold |
-| `daily_goal_achieved` | 10 | 1 | 10:1 | Objectif quotidien atteint |
-| `weekly_goal_achieved` | 30 | 3 | 10:1 | Objectif hebdomadaire |
-| `monthly_goal_achieved` | 100 | 10 | 10:1 | Objectif mensuel |
+| Action | XP | Gold | Notes |
+|--------|-----|------|-------|
+| `daily_login` | 2 | 0 | < 10 XP, donc 0 gold |
+| `daily_goal_achieved` | **0** | **1** | 🎯 **Gold uniquement** - Objectif quotidien atteint |
+| `weekly_goal_achieved` | **0** | **3** | 🎯 **Gold uniquement** - Objectif hebdomadaire atteint |
+| `monthly_goal_achieved` | **0** | **10** | 🎯 **Gold uniquement** - Objectif mensuel atteint |
+
+**💡 Changement important** : Les objectifs ne donnent plus d'XP, uniquement de l'or. Cela évite de gonfler artificiellement le niveau et rend l'or plus précieux.
 
 #### Streaks
 | Action | XP | Gold | Ratio | Notes |

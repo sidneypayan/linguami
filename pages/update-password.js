@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useMemo } from 'react'
-import { toast } from 'react-toastify'
+import toast from '../utils/toast'
 import {
 	Box,
 	Button,

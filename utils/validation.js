@@ -85,25 +85,72 @@ export const validateWord = (word, maxLength = 200) => {
 }
 
 /**
- * Valide les données d'un mot complet (original + traduction)
- * @param {Object} wordData - { learningLangWord, browserLangWord }
+ * Valide une phrase de contexte optionnelle
+ * @param {string} sentence - La phrase à valider
+ * @param {number} maxLength - Longueur maximale (défaut: 500)
+ * @returns {Object} - { isValid: boolean, sanitized: string, error: string }
+ */
+export const validateContextSentence = (sentence, maxLength = 500) => {
+	// Si vide ou null, c'est valide (optionnel)
+	if (!sentence || sentence.trim() === '') {
+		return {
+			isValid: true,
+			sanitized: '',
+			error: null,
+		}
+	}
+
+	// Vérifier que c'est une chaîne
+	if (typeof sentence !== 'string') {
+		return {
+			isValid: false,
+			sanitized: '',
+			error: 'La phrase doit être une chaîne de caractères',
+		}
+	}
+
+	// Nettoyer
+	const sanitized = sanitizeText(sentence)
+
+	// Vérifier la longueur maximale
+	if (sanitized.length > maxLength) {
+		return {
+			isValid: false,
+			sanitized: '',
+			error: `La phrase ne peut pas dépasser ${maxLength} caractères`,
+		}
+	}
+
+	return {
+		isValid: true,
+		sanitized,
+		error: null,
+	}
+}
+
+/**
+ * Valide les données d'un mot complet (original + traduction + contexte optionnel)
+ * @param {Object} wordData - { learningLangWord, browserLangWord, contextSentence }
  * @returns {Object} - { isValid: boolean, sanitized: Object, errors: Object }
  */
-export const validateWordPair = ({ learningLangWord, browserLangWord }) => {
+export const validateWordPair = ({ learningLangWord, browserLangWord, contextSentence }) => {
 	const validatedLearning = validateWord(learningLangWord, 200)
 	const validatedBrowser = validateWord(browserLangWord, 200)
+	const validatedContext = validateContextSentence(contextSentence, 500)
 
-	const isValid = validatedLearning.isValid && validatedBrowser.isValid
+	const isValid = validatedLearning.isValid && validatedBrowser.isValid && validatedContext.isValid
 
 	return {
 		isValid,
 		sanitized: {
 			learningLangWord: validatedLearning.sanitized,
 			browserLangWord: validatedBrowser.sanitized,
+			contextSentence: validatedContext.sanitized,
 		},
 		errors: {
 			learningLangWord: validatedLearning.error,
 			browserLangWord: validatedBrowser.error,
+			contextSentence: validatedContext.error,
 		},
 	}
 }

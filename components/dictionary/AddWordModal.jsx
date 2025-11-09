@@ -4,7 +4,7 @@ import { useUserContext } from '../../context/user'
 import { getAllUserWords } from '../../features/words/wordsSlice'
 import { validateWordPair } from '../../utils/validation'
 import { supabase } from '../../lib/supabase'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import {
@@ -33,6 +33,7 @@ const AddWordModal = ({ open, onClose }) => {
 
 	const [learningLangWord, setLearningLangWord] = useState('')
 	const [browserLangWord, setBrowserLangWord] = useState('')
+	const [contextSentence, setContextSentence] = useState('')
 	const [errors, setErrors] = useState({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -56,6 +57,7 @@ const AddWordModal = ({ open, onClose }) => {
 			const validation = validateWordPair({
 				learningLangWord,
 				browserLangWord,
+				contextSentence,
 			})
 
 			if (!validation.isValid) {
@@ -85,6 +87,7 @@ const AddWordModal = ({ open, onClose }) => {
 				body: JSON.stringify({
 					learningLangWord: validation.sanitized.learningLangWord,
 					browserLangWord: validation.sanitized.browserLangWord,
+					contextSentence: validation.sanitized.contextSentence || null,
 					materialId: null,
 					userLearningLanguage,
 					locale: lang, // Interface language for translation
@@ -114,6 +117,7 @@ const AddWordModal = ({ open, onClose }) => {
 			// Réinitialiser le formulaire
 			setLearningLangWord('')
 			setBrowserLangWord('')
+			setContextSentence('')
 			setErrors({})
 			onClose()
 		} catch (error) {
@@ -127,6 +131,7 @@ const AddWordModal = ({ open, onClose }) => {
 	const handleClose = () => {
 		setLearningLangWord('')
 		setBrowserLangWord('')
+		setContextSentence('')
 		setErrors({})
 		onClose()
 	}
@@ -310,6 +315,84 @@ const AddWordModal = ({ open, onClose }) => {
 										},
 										'&.Mui-focused fieldset': {
 											borderColor: '#f093fb',
+											borderWidth: 2,
+										},
+									},
+									'& .MuiInputBase-input::placeholder': {
+										color: isDark ? '#94a3b8' : 'inherit',
+										opacity: 1,
+									},
+									'& .MuiFormHelperText-root': {
+										color: isDark ? '#94a3b8' : 'inherit',
+									},
+								}}
+							/>
+						</Box>
+
+						{/* Champ optionnel pour la phrase de contexte */}
+						<Box>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 1,
+									mb: 1.5,
+								}}>
+								<Box
+									sx={{
+										width: 8,
+										height: 24,
+										borderRadius: 1,
+										background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+									}}
+								/>
+								<Typography
+									variant='subtitle1'
+									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
+									{t('context_sentence_label')}
+								</Typography>
+								<Typography
+									variant='caption'
+									sx={{
+										color: isDark ? '#94a3b8' : '#718096',
+										fontStyle: 'italic',
+										fontWeight: 500,
+									}}>
+									({t('optional')})
+								</Typography>
+							</Box>
+							<TextField
+								fullWidth
+								multiline
+								rows={2}
+								value={contextSentence}
+								onChange={e => {
+									setContextSentence(e.target.value)
+									if (errors.contextSentence) {
+										setErrors({ ...errors, contextSentence: null })
+									}
+								}}
+								placeholder={t('context_sentence_placeholder')}
+								variant='outlined'
+								error={!!errors.contextSentence}
+								helperText={errors.contextSentence || t('context_sentence_helper')}
+								disabled={isSubmitting}
+								inputProps={{ maxLength: 500 }}
+								sx={{
+									'& .MuiOutlinedInput-root': {
+										borderRadius: 2,
+										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
+										color: isDark ? '#f1f5f9' : 'inherit',
+										fontSize: '1rem',
+										'& fieldset': {
+											borderWidth: 2,
+											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
+										},
+										'&:hover fieldset': {
+											borderColor: '#10b981',
+										},
+										'&.Mui-focused fieldset': {
+											borderColor: '#10b981',
 											borderWidth: 2,
 										},
 									},

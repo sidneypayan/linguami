@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useState, useMemo, useEffect } from 'react'
-import { toast } from 'react-toastify'
+import toast from '../utils/toast'
 import { useUserContext } from '../context/user'
 import { supabase } from '../lib/supabase'
 import { AVATARS } from '../utils/avatars'

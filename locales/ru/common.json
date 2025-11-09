@@ -82,5 +82,18 @@
 	"resendEmail": "Отправить повторно",
 	"sending": "Отправка...",
 	"verificationEmailResent": "Email подтверждения отправлен!",
-	"errorResendingEmail": "Ошибка отправки email"
+	"errorResendingEmail": "Ошибка отправки email",
+	"achievement_level_up_title": "Новый уровень!",
+	"achievement_level_up_desc": "Вы достигли уровня {{level}}!",
+	"achievement_daily_goal_title": "Дневная цель достигнута!",
+	"achievement_daily_goal_desc": "Вы заработали {{gold}} золотых монет!",
+	"achievement_weekly_goal_title": "Недельная цель достигнута!",
+	"achievement_weekly_goal_desc": "Вы заработали {{gold}} золотых монет!",
+	"achievement_monthly_goal_title": "Месячная цель достигнута!",
+	"achievement_monthly_goal_desc": "Вы заработали {{gold}} золотых монет!",
+	"achievement_streak_title": "В огне!",
+	"achievement_streak_desc": "{{days}} дней подряд обучения!",
+	"achievement_title": "Достижение разблокировано!",
+	"achievement_desc": "Поздравляем с прогрессом!",
+	"tap_to_close": "Нажмите, чтобы закрыть"
 }

@@ -11,7 +11,7 @@ import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import Link from 'next/link'
 import SEO from '../../components/SEO'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import {
 	Box,
 	Button,

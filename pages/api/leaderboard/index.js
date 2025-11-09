@@ -79,36 +79,21 @@ export default async function handler(req, res) {
 
 		if (goldError) throw goldError
 
-		// 3.5. Récupérer le top 100 par XP hebdomadaire
+		// 3.5. Récupérer le top 100 par XP hebdomadaire (filtrés par show_in_leaderboard)
 		let topWeekly = null
 		if (weekStart) {
 			const { data, error: weeklyError } = await supabase
-				.from('weekly_xp_tracking')
-				.select('user_id, weekly_xp, week_start, week_end')
+				.from('weekly_leaderboard_view')
+				.select('user_id, weekly_xp, week_start, week_end, name, avatar_id')
 				.eq('week_start', weekStart)
 				.order('weekly_xp', { ascending: false })
 				.limit(100)
 
 			if (weeklyError) {
 				console.warn('Weekly leaderboard fetch failed:', weeklyError)
-			} else if (data && data.length > 0) {
-				// Récupérer les profils utilisateur séparément (via la vue sécurisée)
-				const userIds = data.map((entry) => entry.user_id)
-				const { data: profiles } = await supabase
-					.from('public_users_profile')
-					.select('id, name, avatar_id')
-					.in('id', userIds)
-
-				// Joindre les données
-				topWeekly = data.map((entry) => {
-					const profile = profiles?.find((p) => p.id === entry.user_id)
-					return {
-						...entry,
-						users_profile: profile || null,
-					}
-				})
 			} else {
-				topWeekly = data
+				// Les données de profil sont déjà incluses dans la vue
+				topWeekly = data || []
 			}
 		}
 
@@ -129,35 +114,18 @@ export default async function handler(req, res) {
 		let topMonthly = null
 
 		if (monthStart) {
-
 			const { data, error: monthlyError } = await supabase
-				.from('monthly_xp_tracking')
-				.select('user_id, monthly_xp, month_start, month_end')
+				.from('monthly_leaderboard_view')
+				.select('user_id, monthly_xp, month_start, month_end, name, avatar_id')
 				.eq('month_start', monthStart)
 				.order('monthly_xp', { ascending: false })
 				.limit(100)
 
-
 			if (monthlyError) {
 				console.warn('Monthly leaderboard fetch failed:', monthlyError)
-			} else if (data && data.length > 0) {
-				// Récupérer les profils utilisateur séparément (via la vue sécurisée)
-				const userIds = data.map((entry) => entry.user_id)
-				const { data: profiles } = await supabase
-					.from('public_users_profile')
-					.select('id, name, avatar_id')
-					.in('id', userIds)
-
-				// Joindre les données
-				topMonthly = data.map((entry) => {
-					const profile = profiles?.find((p) => p.id === entry.user_id)
-					return {
-						...entry,
-						users_profile: profile || null,
-					}
-				})
 			} else {
-				topMonthly = data
+				// Les données de profil sont déjà incluses dans la vue
+				topMonthly = data || []
 			}
 		}
 
@@ -175,28 +143,28 @@ export default async function handler(req, res) {
 		let userRankMonthly = null
 
 		if (userProfile) {
-			// Rang XP
+			// Rang XP - compter uniquement les utilisateurs visibles dans le leaderboard
 			const { count: xpRank } = await supabase
-				.from('user_xp_profile')
+				.from('leaderboard_view')
 				.select('*', { count: 'exact', head: true })
 				.gt('total_xp', userProfile.total_xp)
 			userRankXp = (xpRank || 0) + 1
 
-			// Rang Streak
+			// Rang Streak - compter uniquement les utilisateurs visibles dans le leaderboard
 			const { count: streakRank } = await supabase
-				.from('user_xp_profile')
+				.from('leaderboard_view')
 				.select('*', { count: 'exact', head: true })
 				.gt('daily_streak', userProfile.daily_streak)
 			userRankStreak = (streakRank || 0) + 1
 
-			// Rang Gold
+			// Rang Gold - compter uniquement les utilisateurs visibles dans le leaderboard
 			const { count: goldRank } = await supabase
-				.from('user_xp_profile')
+				.from('leaderboard_view')
 				.select('*', { count: 'exact', head: true })
 				.gt('total_gold', userProfile.total_gold || 0)
 			userRankGold = (goldRank || 0) + 1
 
-			// Rang hebdomadaire
+			// Rang hebdomadaire - compter uniquement les utilisateurs visibles
 			if (weekStart) {
 				const { data: userWeekly } = await supabase
 					.from('weekly_xp_tracking')
@@ -207,7 +175,7 @@ export default async function handler(req, res) {
 
 				if (userWeekly) {
 					const { count: weeklyRank } = await supabase
-						.from('weekly_xp_tracking')
+						.from('weekly_leaderboard_view')
 						.select('*', { count: 'exact', head: true })
 						.eq('week_start', weekStart)
 						.gt('weekly_xp', userWeekly.weekly_xp || 0)
@@ -215,7 +183,7 @@ export default async function handler(req, res) {
 				}
 			}
 
-			// Rang mensuel
+			// Rang mensuel - compter uniquement les utilisateurs visibles
 			if (monthStart) {
 				const { data: userMonthly } = await supabase
 					.from('monthly_xp_tracking')
@@ -226,7 +194,7 @@ export default async function handler(req, res) {
 
 				if (userMonthly) {
 					const { count: monthlyRank } = await supabase
-						.from('monthly_xp_tracking')
+						.from('monthly_leaderboard_view')
 						.select('*', { count: 'exact', head: true })
 						.eq('month_start', monthStart)
 						.gt('monthly_xp', userMonthly.monthly_xp || 0)

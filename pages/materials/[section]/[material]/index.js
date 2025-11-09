@@ -512,8 +512,8 @@ const Material = ({ material: single_material }) => {
 								)}
 							</Paper>
 
-							{/* Exercise Section */}
-							<ExerciseSection materialId={single_material.id} />
+							{/* Exercise Section - Visible uniquement pour les admins */}
+							{isUserAdmin && <ExerciseSection materialId={single_material.id} />}
 
 							{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
 							{!is_studied && isUserLoggedIn && (

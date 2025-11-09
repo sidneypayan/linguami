@@ -16,7 +16,6 @@
 Le système XP de Linguami gamifie l'apprentissage en récompensant les utilisateurs pour leurs actions :
 - Révision de flashcards
 - Complétion de matériaux
-- Activités H5P
 - Engagement quotidien
 - Streaks de connexion
 
@@ -40,7 +39,6 @@ Le système XP de Linguami gamifie l'apprentissage en récompensant les utilisat
 4. Exécutez le script
 
 Cela créera les tables suivantes :
-- `user_h5p_progress` - Suivi des activités H5P
 - `xp_rewards_config` - Configuration des récompenses
 - `user_xp_profile` - Profil XP des utilisateurs
 - `xp_transactions` - Historique des gains XP
@@ -108,13 +106,36 @@ Historique de tous les gains XP et Gold
 
 La formule utilisée : `100 * level^1.5`
 
-| Niveau | XP nécessaire | Total XP |
-|--------|---------------|----------|
-| 1      | 100           | 100      |
-| 2      | 283           | 383      |
-| 3      | 520           | 903      |
-| 4      | 800           | 1703     |
-| 5      | 1118          | 2821     |
+**Système de niveaux illimité** - Les utilisateurs peuvent progresser indéfiniment.
+
+| Niveau | XP nécessaire | Total XP cumulé | Palier / Titre |
+|--------|---------------|-----------------|----------------|
+| 1      | 100           | 100             | ⚔️ **Apprenti** (1-5) |
+| 2      | 283           | 383             | |
+| 3      | 520           | 903             | |
+| 4      | 800           | 1,703           | |
+| 5      | 1,118         | 2,821           | |
+| 6      | 1,470         | 4,291           | 🗡️ **Guerrier** (6-10) |
+| 7      | 1,854         | 6,145           | |
+| 8      | 2,267         | 8,412           | |
+| 9      | 2,708         | 11,120          | |
+| 10     | 3,162         | 14,282          | |
+| 11     | 3,640         | 17,922          | 🛡️ **Vétéran** (11-20) |
+| 15     | 5,809         | 40,050          | |
+| 20     | 8,944         | 85,775          | |
+| 21     | 9,655         | 95,430          | 👑 **Champion** (21-30) |
+| 30     | 16,431        | 218,566         | |
+| 31     | 17,266        | 235,832         | ⚡ **Légende** (31-50) |
+| 50     | 35,355        | 693,921         | |
+| 51+    | ...           | ...             | 🔥 **Maître Absolu** (51+) |
+
+**Paliers de titres :**
+- **Niveau 1-5** : ⚔️ Apprenti
+- **Niveau 6-10** : 🗡️ Guerrier
+- **Niveau 11-20** : 🛡️ Vétéran
+- **Niveau 21-30** : 👑 Champion
+- **Niveau 31-50** : ⚡ Légende
+- **Niveau 51+** : 🔥 Maître Absolu
 
 ---
 
@@ -410,11 +431,6 @@ Le système XP récompense **l'apprentissage actif et l'engagement régulier** :
 | `book_chapter_read` | 5 | Chapitre de livre lu |
 | `book_completed` | 30 | Livre complet terminé |
 
-#### Activités H5P
-| Action | XP | Description |
-|--------|-------|-------------|
-| `h5p_activity_completed` | 4 | Activité H5P complétée |
-
 #### Vocabulaire
 | Action | XP | Description |
 |--------|-------|-------------|
@@ -423,14 +439,14 @@ Le système XP récompense **l'apprentissage actif et l'engagement régulier** :
 | `mastered_500_words` | 100 | 500 mots maîtrisés |
 
 #### Engagement
-| Action | XP | Description | Effort |
-|--------|-------|-------------|--------|
-| `daily_login` | 2 | Première connexion du jour | - |
-| `daily_goal_achieved` | 10 | 🎯 Objectif quotidien atteint | ~10 min (50% bonus) |
-| `weekly_goal_achieved` | 30 | 🎯 Objectif hebdomadaire atteint | ~1h30 (20% bonus) |
-| `monthly_goal_achieved` | 100 | 🎯 Objectif mensuel atteint | ~6-8h (17% bonus) |
+| Action | XP | Gold | Description |
+|--------|-------|------|-------------|
+| `daily_login` | 2 | 0 | Première connexion du jour |
+| `daily_goal_achieved` | 0 | **1** | 🎯 Objectif quotidien atteint (Gold uniquement) |
+| `weekly_goal_achieved` | 0 | **3** | 🎯 Objectif hebdomadaire atteint (Gold uniquement) |
+| `monthly_goal_achieved` | 0 | **10** | 🎯 Objectif mensuel atteint (Gold uniquement) |
 
-**Note** : Les bonus d'objectifs représentent 15-50% de l'XP nécessaire pour les atteindre. Ils récompensent la constance et l'atteinte de buts fixés.
+**Note** : Les objectifs ne donnent **que de l'or**, pas d'XP. Cela encourage la constance sans gonfler artificiellement l'XP.
 
 #### Streaks
 | Action | XP | Description | Effort total |

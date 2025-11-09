@@ -9,7 +9,7 @@ import {
 import Link from 'next/link'
 import { useUserContext } from '../../context/user'
 import { addGuestWord, getGuestWordsCount, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import {
 	Box,
 	Paper,

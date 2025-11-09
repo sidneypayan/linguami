@@ -14,8 +14,10 @@ export const addCacheBuster = (imageUrl) => {
 	}
 
 	// Si c'est juste un nom de fichier, ajouter le préfixe et le cache-buster
-	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE
-	return `${baseUrl}/${imageUrl}?t=${Date.now()}`
+	// Normaliser les slashes pour éviter les doubles slashes
+	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+	const path = imageUrl.replace(/^\/+/, '')
+	return `${baseUrl}/${path}?t=${Date.now()}`
 }
 
 /**
@@ -33,9 +35,10 @@ export const getImageUrl = (imagePath) => {
 	}
 
 	// Construire l'URL complète
-	// Vérifier si imagePath commence déjà par un /
-	const separator = imagePath.startsWith('/') ? '' : '/'
-	return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${separator}${imagePath}?t=${Date.now()}`
+	// Normaliser les slashes pour éviter les doubles slashes
+	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '') // Retirer les / à la fin
+	const path = imagePath.replace(/^\/+/, '') // Retirer les / au début
+	return `${baseUrl}/${path}?t=${Date.now()}`
 }
 
 /**
@@ -67,7 +70,9 @@ export const getOptimizedImageUrl = (imageName, size = 'medium') => {
 	const baseName = imageName.replace(/\.[^/.]+$/, '')
 	const webpFileName = `${baseName}.webp`
 
-	return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}${folder}/${webpFileName}`
+	// Normaliser les slashes pour éviter les doubles slashes
+	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+	return `${baseUrl}/${folder}/${webpFileName}`
 }
 
 /**

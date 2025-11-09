@@ -5,8 +5,9 @@ import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import { updateWordReview, initializeWordSRS, suspendCard } from '../../features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import { useUserContext } from '../../context/user'
+import { useAchievementContext } from '../AchievementProvider'
 import { getGuestWordsByLanguage, updateGuestWord } from '../../utils/guestDictionary'
 import {
 	getDueCards,
@@ -36,6 +37,7 @@ const FlashCards = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
+	const { showAchievements } = useAchievementContext()
 	const { user_material_words, user_words } = useSelector(store => store.words)
 	const [guestWords, setGuestWords] = useState([])
 	const [showAnswer, setShowAnswer] = useState(false)
@@ -371,23 +373,9 @@ const FlashCards = () => {
 				if (xpResponse.ok) {
 					const xpData = await xpResponse.json()
 
-					// Show level up notification
-					if (xpData.leveledUp) {
-						toast.success(`🎉 ${t('level_up')} ${xpData.currentLevel}!`, {
-							position: 'top-center',
-							autoClose: 3000
-						})
-					}
-
-					// Check for streak achievements
+					// Afficher tous les achievements en séquence
 					if (xpData.achievements && xpData.achievements.length > 0) {
-						xpData.achievements.forEach(achievement => {
-							if (achievement.type.includes('streak')) {
-								toast.success(`🔥 ${achievement.streak} ${t('days_streak')}!`, {
-									position: 'top-center'
-								})
-							}
-						})
+						showAchievements(xpData.achievements)
 					}
 				}
 			} catch (error) {

@@ -23,7 +23,7 @@ import {
 import { Add, Delete, ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '../../../context/user'
 import { createBrowserClient } from '../../../lib/supabase'
-import { toast } from 'react-toastify'
+import toast from '../../../utils/toast'
 import Head from 'next/head'
 import useTranslation from 'next-translate/useTranslation'
 

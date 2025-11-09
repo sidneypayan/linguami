@@ -6,7 +6,7 @@ import { useUserContext } from '../../context/user'
 import { resendVerificationEmail } from '../../lib/emailVerification'
 import { useRouter } from 'next/router'
 import { getEmailLanguage } from '../../lib/emailService'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 
 /**
  * Bannière d'avertissement pour les utilisateurs dont l'email n'est pas vérifié

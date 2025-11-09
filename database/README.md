@@ -40,7 +40,6 @@ database/
 - Table `user_xp_profile` - Profils XP et niveaux des utilisateurs
 - Table `xp_rewards_config` - Configuration des récompenses XP
 - Table `xp_transactions` - Historique complet des transactions XP
-- Table `user_h5p_progress` - Suivi de la progression sur activités H5P
 - Table `user_goals` - Objectifs quotidiens/hebdomadaires/mensuels
 - Table `user_achievements` - Système de badges et achievements
 
@@ -60,7 +59,6 @@ database/
 - `user_xp_profile`
 - `xp_rewards_config`
 - `xp_transactions`
-- `user_h5p_progress`
 - `user_goals`
 - `user_achievements`
 
@@ -372,7 +370,6 @@ Après la migration :
 - `xp_transactions` - Historique complet des gains XP/Gold
 
 **Progression :**
-- `user_h5p_progress` - Progression activités H5P
 - `user_goals` - Objectifs utilisateurs
 - `user_achievements` - Badges et achievements
 
@@ -384,7 +381,6 @@ Après la migration :
 - `materials` - Matériaux pédagogiques
 - `sections` - Sections de cours
 - `lessons` - Leçons
-- `h5p` - Activités interactives H5P
 - `posts` - Articles de blog
 
 ---

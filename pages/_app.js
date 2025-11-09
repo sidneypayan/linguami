@@ -1,12 +1,12 @@
 import 'normalize.css'
 import '../styles/globals.css'
 import Layout from '../components/Layout'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { Toaster } from 'sonner'
 import UserProvider from '../context/user.js'
 import { ThemeModeProvider, useThemeMode } from '../context/ThemeContext'
 import { store } from '../features/store'
 import { Provider } from 'react-redux'
+import { AchievementProvider } from '../components/AchievementProvider'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import * as gtm from '../lib/gtm'
@@ -37,21 +37,19 @@ function AppContent({ Component, pageProps }) {
 	return (
 		<>
 			<Provider store={store}>
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
-				<ToastContainer
-					position='top-center'
-					autoClose={3000}
-					hideProgressBar={false}
-					newestOnTop
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-					theme={mode}
-				/>
+				<AchievementProvider>
+					<Layout>
+						<Component {...pageProps} />
+					</Layout>
+					<Toaster
+						position='top-center'
+						expand={false}
+						richColors
+						closeButton
+						theme={mode}
+						duration={3000}
+					/>
+				</AchievementProvider>
 			</Provider>
 		</>
 	)

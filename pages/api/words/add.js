@@ -39,10 +39,10 @@ export default async function handler(req, res) {
 			return res.status(401).json({ error: 'Non authentifié' })
 		}
 
-		const { learningLangWord, browserLangWord, materialId, userLearningLanguage, locale } = req.body
+		const { learningLangWord, browserLangWord, contextSentence, materialId, userLearningLanguage, locale } = req.body
 
 		// Validation et sanitization
-		const validation = validateWordPair({ learningLangWord, browserLangWord })
+		const validation = validateWordPair({ learningLangWord, browserLangWord, contextSentence })
 
 		if (!validation.isValid) {
 			return res.status(400).json({
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
 			...wordData,
 			user_id: user.id, // Utiliser l'ID de l'utilisateur authentifié
 			material_id: materialId || null,
-			word_sentence: '',
+			word_sentence: validation.sanitized.contextSentence || '',
 			word_lang: userLearningLanguage, // Track the language being learned
 			// Champs SRS
 			card_state: 'new',

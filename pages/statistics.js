@@ -163,29 +163,29 @@ const StatisticsPage = () => {
 	// Vocabulary cards
 	const vocabularyCards = [
 		{
-			title: t('wordsAddedToday'),
-			value: stats?.wordsAddedToday || 0,
-			icon: <FaChartLine />,
+			title: t('wordsReviewedToday'),
+			value: stats?.wordsReviewedToday || 0,
+			icon: <FaRedo />,
 			color: '#10B981',
 			gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
 		},
 		{
-			title: t('wordsAddedThisWeek'),
-			value: stats?.wordsAddedThisWeek || 0,
-			icon: <FaChartLine />,
+			title: t('wordsReviewedThisWeek'),
+			value: stats?.wordsReviewedThisWeek || 0,
+			icon: <FaRedo />,
 			color: '#3B82F6',
 			gradient: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
 		},
 		{
-			title: t('wordsAddedThisMonth'),
-			value: stats?.wordsAddedThisMonth || 0,
-			icon: <FaChartLine />,
+			title: t('wordsReviewedThisMonth'),
+			value: stats?.wordsReviewedThisMonth || 0,
+			icon: <FaRedo />,
 			color: '#F59E0B',
 			gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
 		},
 		{
-			title: t('wordsReviewedToday'),
-			value: stats?.wordsReviewedToday || 0,
+			title: t('totalWordsReviewed'),
+			value: stats?.totalWordsReviewed || 0,
 			icon: <FaRedo />,
 			color: '#8B5CF6',
 			gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
@@ -431,13 +431,17 @@ const StatisticsPage = () => {
 									position: 'relative',
 									zIndex: 1,
 								}}>
-								{xpProfile.currentLevel < 5
-									? `⚔️ VOTRE QUÊTE DÉBUTE`
-									: xpProfile.currentLevel < 10
-									? `🗡️ GUERRIER EN FORMATION`
-									: xpProfile.currentLevel < 20
-									? `⚡ CHAMPION AGUERRI`
-									: `👑 LÉGENDE VIVANTE`
+								{xpProfile.currentLevel < 6
+									? `⚔️ APPRENTI`
+									: xpProfile.currentLevel < 11
+									? `🗡️ GUERRIER`
+									: xpProfile.currentLevel < 21
+									? `🛡️ VÉTÉRAN`
+									: xpProfile.currentLevel < 31
+									? `👑 CHAMPION`
+									: xpProfile.currentLevel < 51
+									? `⚡ LÉGENDE`
+									: `🔥 MAÎTRE ABSOLU`
 								}
 							</Typography>
 						</Box>

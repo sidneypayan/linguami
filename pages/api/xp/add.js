@@ -237,6 +237,107 @@ export default async function handler(req, res) {
 			})
 		}
 
+		// 10. Vérifier les objectifs atteints (quotidien, hebdomadaire, mensuel)
+		try {
+			// Récupérer l'objectif quotidien de l'utilisateur
+			const { data: userGoalProfile } = await supabase
+				.from('users_profile')
+				.select('daily_xp_goal')
+				.eq('id', user.id)
+				.single()
+
+			const dailyGoalTarget = userGoalProfile?.daily_xp_goal || 100
+
+			// Vérifier l'XP d'aujourd'hui
+			const today = new Date().toISOString().split('T')[0]
+			const { data: todayXp } = await supabase.rpc('get_daily_xp', {
+				p_user_id: user.id,
+				p_date: today,
+			})
+
+			const dailyXpEarned = todayXp && todayXp.length > 0 ? todayXp[0].daily_xp : 0
+
+			// Vérifier si l'objectif quotidien vient d'être atteint
+			const previousDailyXp = dailyXpEarned - xpAmount
+			const justCompletedDaily = previousDailyXp < dailyGoalTarget && dailyXpEarned >= dailyGoalTarget
+
+			if (justCompletedDaily && dailyGoalTarget > 0) {
+				achievements.push({
+					type: 'daily_goal_achieved',
+					goldEarned: 1,
+				})
+			}
+
+			// Vérifier les objectifs hebdomadaire et mensuel
+			const { data: weekBounds } = await supabase.rpc('get_week_bounds')
+			const { data: monthBounds } = await supabase.rpc('get_month_bounds')
+
+			if (weekBounds && weekBounds.length > 0) {
+				const weekStart = weekBounds[0].week_start
+				const { data: weeklyGoal } = await supabase
+					.from('user_goals')
+					.select('*')
+					.eq('user_id', user.id)
+					.eq('goal_type', 'weekly')
+					.eq('period_start', weekStart)
+					.single()
+
+				if (weeklyGoal) {
+					const { data: weeklyXp } = await supabase
+						.from('weekly_xp_tracking')
+						.select('weekly_xp')
+						.eq('user_id', user.id)
+						.eq('week_start', weekStart)
+						.single()
+
+					const currentWeeklyXp = weeklyXp?.weekly_xp || 0
+					const previousWeeklyXp = currentWeeklyXp - xpAmount
+					const justCompletedWeekly = previousWeeklyXp < weeklyGoal.target_value && currentWeeklyXp >= weeklyGoal.target_value
+
+					if (justCompletedWeekly && weeklyGoal.target_value > 0) {
+						achievements.push({
+							type: 'weekly_goal_achieved',
+							goldEarned: 3,
+						})
+					}
+				}
+			}
+
+			if (monthBounds && monthBounds.length > 0) {
+				const monthStart = monthBounds[0].month_start
+				const { data: monthlyGoal } = await supabase
+					.from('user_goals')
+					.select('*')
+					.eq('user_id', user.id)
+					.eq('goal_type', 'monthly')
+					.eq('period_start', monthStart)
+					.single()
+
+				if (monthlyGoal) {
+					const { data: monthlyXp } = await supabase
+						.from('monthly_xp_tracking')
+						.select('monthly_xp')
+						.eq('user_id', user.id)
+						.eq('month_start', monthStart)
+						.single()
+
+					const currentMonthlyXp = monthlyXp?.monthly_xp || 0
+					const previousMonthlyXp = currentMonthlyXp - xpAmount
+					const justCompletedMonthly = previousMonthlyXp < monthlyGoal.target_value && currentMonthlyXp >= monthlyGoal.target_value
+
+					if (justCompletedMonthly && monthlyGoal.target_value > 0) {
+						achievements.push({
+							type: 'monthly_goal_achieved',
+							goldEarned: 10,
+						})
+					}
+				}
+			}
+		} catch (goalsError) {
+			console.error('Error checking goals for achievements:', goalsError)
+			// Don't fail the whole request if goals check fails
+		}
+
 		return res.status(200).json({
 			success: true,
 			xpGained: xpAmount,

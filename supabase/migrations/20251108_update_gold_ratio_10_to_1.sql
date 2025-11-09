@@ -21,7 +21,6 @@ WHERE is_active = TRUE;
 -- flashcard_good: 2 XP → 0 Gold
 -- flashcard_easy: 3 XP → 0 Gold
 -- card_graduated: 5 XP → 0 Gold
--- h5p_activity_completed: 4 XP → 0 Gold
 -- word_added: 1 XP → 0 Gold
 -- daily_login: 2 XP → 0 Gold
 -- material_started: 2 XP → 0 Gold

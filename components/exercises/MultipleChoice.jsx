@@ -20,7 +20,7 @@ import {
 	EmojiEvents,
 } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { getLocalizedQuestion } from '../../utils/exerciseHelpers'

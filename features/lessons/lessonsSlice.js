@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { supabase } from '../../lib/supabase'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import { getToastMessage } from '../../utils/toastMessages'
 
 const initialState = {

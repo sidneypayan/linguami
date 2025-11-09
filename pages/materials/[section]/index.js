@@ -74,15 +74,18 @@ const Section = () => {
     });
   }, [filtered_materials, userLearningLanguage]);
 
+  // Définir le nombre de matériaux par page selon le mode de vue
+  const itemsPerPage = viewMode === 'card' ? 8 : 10;
+
   // Calculer le nombre de pages basé sur les matériaux réellement affichés
-  const numOfPages = Math.ceil(displayedMaterials.length / materialsPerPage);
+  const numOfPages = Math.ceil(displayedMaterials.length / itemsPerPage);
 
   // S'assurer que la page actuelle ne dépasse pas le nombre de pages disponibles
   const currentPage = Math.min(page, Math.max(1, numOfPages));
 
   // Calculer localement sliceStart et sliceEnd basés sur les matériaux réellement affichés
-  const localSliceStart = (currentPage - 1) * materialsPerPage;
-  const localSliceEnd = currentPage * materialsPerPage;
+  const localSliceStart = (currentPage - 1) * itemsPerPage;
+  const localSliceEnd = currentPage * itemsPerPage;
 
   const handleViewChange = (view) => {
     setViewMode(view);

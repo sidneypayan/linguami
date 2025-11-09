@@ -6,7 +6,7 @@ import {
 	Schedule, PlayCircle, CheckCircle,
 	OndemandVideo, RecordVoiceOver, MusicNote, Mic,
 	MenuBook, Movie, Theaters, SmartDisplay,
-	AutoStories, Landscape, Category
+	AutoStories, Landscape, Category, Museum
 } from '@mui/icons-material'
 import { Box, TextField, IconButton, Chip, Tooltip, InputAdornment, Select, MenuItem, FormControl, useTheme, ListSubheader } from '@mui/material'
 
@@ -48,19 +48,9 @@ const MaterialsFilterBar = ({
 	const { t } = useTranslation(translationNamespace)
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const [showFilters, setShowFilters] = useState(false)
-	const [openTooltip, setOpenTooltip] = useState(null)
 
 	const handleSearchSubmit = (e) => {
 		e.preventDefault()
-	}
-
-	const handleTooltipToggle = (tooltipId) => {
-		setOpenTooltip(openTooltip === tooltipId ? null : tooltipId)
-	}
-
-	const handleTooltipClose = () => {
-		setOpenTooltip(null)
 	}
 
 	const activeFiltersCount = (selectedSection ? 1 : 0) + (selectedLevel ? 1 : 0) + (selectedStatus ? 1 : 0)
@@ -72,6 +62,7 @@ const MaterialsFilterBar = ({
 			{ label: t('slices-of-life'), key: 'slices-of-life', tooltip: `🌟 ${t('slices-of-life')}`, color: '#10b981', icon: AutoStories },
 			{ label: t('beautiful-places'), key: 'beautiful-places', tooltip: `🏞️ ${t('beautiful-places')}`, color: '#10b981', icon: Landscape },
 			{ label: t('legends'), key: 'legends', tooltip: `🏛️ ${t('legends')}`, color: '#8b5cf6', icon: AutoStories },
+			{ label: t('culture'), key: 'culture', tooltip: `🎭 ${t('culture')}`, color: '#8b5cf6', icon: Museum },
 			{ label: t('podcasts'), key: 'podcasts', tooltip: `🎙️ ${t('podcasts')}`, color: '#8b5cf6', icon: Mic },
 			{ label: t('short-stories'), key: 'short-stories', tooltip: `📖 ${t('short-stories')}`, color: '#f59e0b', icon: MenuBook },
 			{ label: t('books'), key: 'books', tooltip: `📚 ${t('books')}`, color: '#ec4899', icon: MenuBook },
@@ -209,16 +200,9 @@ const MaterialsFilterBar = ({
 						title="Vue en grille"
 						arrow
 						placement='top'
-						open={openTooltip === 'view-card'}
-						onClose={handleTooltipClose}
-						disableHoverListener
-						disableFocusListener
 						disableTouchListener>
 						<IconButton
-							onClick={() => {
-								onViewChange('card')
-								handleTooltipToggle('view-card')
-							}}
+							onClick={() => onViewChange('card')}
 							sx={{
 								width: { xs: '34px', sm: '36px' },
 								height: { xs: '34px', sm: '36px' },
@@ -236,16 +220,9 @@ const MaterialsFilterBar = ({
 						title="Vue en liste"
 						arrow
 						placement='top'
-						open={openTooltip === 'view-list'}
-						onClose={handleTooltipClose}
-						disableHoverListener
-						disableFocusListener
 						disableTouchListener>
 						<IconButton
-							onClick={() => {
-								onViewChange('list')
-								handleTooltipToggle('view-list')
-							}}
+							onClick={() => onViewChange('list')}
 							sx={{
 								width: { xs: '34px', sm: '36px' },
 								height: { xs: '34px', sm: '36px' },
@@ -411,17 +388,12 @@ const MaterialsFilterBar = ({
 				{levels.map(level => {
 					const LevelIcon = level.icon
 					const isSelected = selectedLevel === level.key
-					const tooltipId = `level-${level.key}`
 					return (
 						<Tooltip
 							key={level.label}
 							title={level.tooltip}
 							arrow
 							placement='top'
-							open={openTooltip === tooltipId}
-							onClose={handleTooltipClose}
-							disableHoverListener
-							disableFocusListener
 							disableTouchListener>
 							<Chip
 								icon={<LevelIcon sx={{
@@ -430,10 +402,7 @@ const MaterialsFilterBar = ({
 									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
 								}} />}
 								label={level.label}
-								onClick={(e) => {
-									onLevelChange(selectedLevel === level.key ? null : level.key)
-									handleTooltipToggle(tooltipId)
-								}}
+								onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
 								sx={{
 									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -494,17 +463,12 @@ const MaterialsFilterBar = ({
 				{statuses.map((status, index) => {
 					const StatusIcon = status.icon
 					const isSelected = selectedStatus === status.key
-					const tooltipId = `status-${status.key}`
 					return (
 						<Tooltip
 							key={status.label}
 							title={status.tooltip}
 							arrow
 							placement='top'
-							open={openTooltip === tooltipId}
-							onClose={handleTooltipClose}
-							disableHoverListener
-							disableFocusListener
 							disableTouchListener>
 							<Chip
 								icon={<StatusIcon sx={{
@@ -513,10 +477,7 @@ const MaterialsFilterBar = ({
 									filter: isSelected ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' : 'none',
 								}} />}
 								label={status.label}
-								onClick={(e) => {
-									onStatusChange(selectedStatus === status.key ? null : status.key)
-									handleTooltipToggle(tooltipId)
-								}}
+								onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
 								sx={{
 									fontWeight: isSelected ? 700 : 600,
 									fontSize: { xs: '0.85rem', sm: '0.95rem' },
@@ -582,16 +543,9 @@ const MaterialsFilterBar = ({
 					title={`🔄 ${t('showall')} - ${t('showallTooltip')}`}
 					arrow
 					placement='top'
-					open={openTooltip === 'reset'}
-					onClose={handleTooltipClose}
-					disableHoverListener
-					disableFocusListener
 					disableTouchListener>
 					<IconButton
-						onClick={(e) => {
-							onClear()
-							handleTooltipToggle('reset')
-						}}
+						onClick={onClear}
 						sx={{
 							width: { xs: '36px', sm: '42px' },
 							height: { xs: '36px', sm: '42px' },

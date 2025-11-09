@@ -74,5 +74,17 @@
 	"accessibility": "Accessibilité",
 	"french": "Français",
 	"russian": "Russe",
-	"english": "Anglais"
+	"english": "Anglais",
+	"goalRelaxed": "Décontracté",
+	"goalRegular": "Régulier",
+	"goalMotivated": "Motivé",
+	"goalIntensive": "Intensif",
+	"goalNone": "Sans objectif",
+	"goal5to10min": "5-10 min • 5 flashcards • 1 petit exercice",
+	"goal15to20min": "15-20 min • 10 flashcards • 1 matériau",
+	"goal30min": "30 min • Session complète + matériau",
+	"goal45minPlus": "45+ min • Pour les super motivés !",
+	"goalAtMyPace": "J'apprends à mon rythme, sans pression",
+	"recommended": "Recommandé",
+	"emailNotEditable": "L'adresse email ne peut pas être modifiée pour des raisons de sécurité"
 }

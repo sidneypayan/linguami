@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
 import { getGuestWords, deleteGuestWord } from '../../utils/guestDictionary'
-import { toast } from 'react-toastify'
+import toast from '../../utils/toast'
 import {
 	Box,
 	Button,

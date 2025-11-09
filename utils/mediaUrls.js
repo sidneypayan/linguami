@@ -17,7 +17,11 @@ export function getAudioUrl(material) {
     console.warn('getAudioUrl: material.lang is missing, audio may not load correctly')
     return null
   }
-  return `${process.env.NEXT_PUBLIC_SUPABASE_AUDIO}${material.lang}/${material.audio}`
+  // Normaliser les slashes pour éviter les doubles slashes
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_AUDIO.replace(/\/+$/, '')
+  const lang = material.lang.replace(/^\/+/, '')
+  const audio = material.audio.replace(/^\/+/, '')
+  return `${baseUrl}/${lang}/${audio}`
 }
 
 /**
@@ -28,7 +32,10 @@ export function getAudioUrl(material) {
 export function getMaterialImageUrl(material) {
   const imageFile = material?.image || material?.img
   if (!imageFile) return null
-  return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}materials/${imageFile}`
+  // Normaliser les slashes pour éviter les doubles slashes
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const file = imageFile.replace(/^\/+/, '')
+  return `${baseUrl}/materials/${file}`
 }
 
 /**
@@ -39,7 +46,10 @@ export function getMaterialImageUrl(material) {
 export function getBlogImageUrl(post) {
   const imageFile = post?.img || post?.frontmatter?.img
   if (!imageFile) return null
-  return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}blog/${imageFile}`
+  // Normaliser les slashes pour éviter les doubles slashes
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const file = imageFile.replace(/^\/+/, '')
+  return `${baseUrl}/blog/${file}`
 }
 
 /**
@@ -48,5 +58,8 @@ export function getBlogImageUrl(post) {
  * @returns {string} Full image URL
  */
 export function getUIImageUrl(filename) {
-  return `${process.env.NEXT_PUBLIC_SUPABASE_IMAGE}ui/${filename}`
+  // Normaliser les slashes pour éviter les doubles slashes
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const file = filename.replace(/^\/+/, '')
+  return `${baseUrl}/ui/${file}`
 }
