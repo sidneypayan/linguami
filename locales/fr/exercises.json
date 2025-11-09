@@ -149,5 +149,7 @@
 	"perfectScoreForXP": "Pour gagner les XP de cet exercice, tu dois obtenir un score de 100%. Réessaye pour viser la perfection !",
 	"corrections": "Corrections",
 	"empty": "(vide)",
-	"listenToAudio": "Écoute l'audio du matériel pour compléter cet exercice"
+	"listenToAudio": "Écoute l'audio du matériel pour compléter cet exercice",
+	"listenAndType": "Écoute chaque phrase et écris exactement ce que tu entends",
+	"typeWhatYouHear": "Écris ce que tu entends..."
 }

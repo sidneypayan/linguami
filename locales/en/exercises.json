@@ -149,5 +149,7 @@
 	"perfectScoreForXP": "To earn the XP for this exercise, you need to get a 100% score. Try again to aim for perfection!",
 	"corrections": "Corrections",
 	"empty": "(empty)",
-	"listenToAudio": "Listen to the material's audio to complete this exercise"
+	"listenToAudio": "Listen to the material's audio to complete this exercise",
+	"listenAndType": "Listen to each sentence and write exactly what you hear",
+	"typeWhatYouHear": "Type what you hear..."
 }

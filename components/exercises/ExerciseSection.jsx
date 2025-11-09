@@ -16,6 +16,7 @@ import { useRouter } from 'next/router'
 import toast from '../../utils/toast'
 import useTranslation from 'next-translate/useTranslation'
 import FillInTheBlank from './FillInTheBlank'
+import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
 import LoadingSpinner from '../LoadingSpinner'
@@ -276,10 +277,18 @@ const ExerciseSection = ({ materialId }) => {
 								{t('backToExercises')}
 							</Button>
 							{activeExercise.type === 'fill_in_blank' && (
-								<FillInTheBlank
-									exercise={activeExercise}
-									onComplete={handleExerciseComplete}
-								/>
+								// Check if it's an audio dictation exercise (has sentences with audioUrl)
+								activeExercise.data?.sentences?.[0]?.audioUrl ? (
+									<AudioDictation
+										exercise={activeExercise}
+										onComplete={handleExerciseComplete}
+									/>
+								) : (
+									<FillInTheBlank
+										exercise={activeExercise}
+										onComplete={handleExerciseComplete}
+									/>
+								)
 							)}
 							{activeExercise.type === 'mcq' && (
 								<MultipleChoice
@@ -551,7 +560,7 @@ const ExerciseSection = ({ materialId }) => {
 														color: '#8b5cf6',
 														fontWeight: 600,
 													}}>
-													{t('questionsCount', { count: exercise.data?.questions?.length || 0 })}
+													{t('questionsCount', { count: exercise.data?.questions?.length || exercise.data?.sentences?.length || 0 })}
 												</Typography>
 												<Typography
 													variant="caption"
@@ -587,7 +596,7 @@ const ExerciseSection = ({ materialId }) => {
 															<>✅ {t('completed')}</>
 														) : (
 															<>
-																{Math.round((exerciseProgress[exercise.id].score / 100) * (exercise.data?.questions?.length || 0))}/{exercise.data?.questions?.length || 0} {t('correct')}
+																{Math.round((exerciseProgress[exercise.id].score / 100) * (exercise.data?.questions?.length || exercise.data?.sentences?.length || 0))}/{exercise.data?.questions?.length || exercise.data?.sentences?.length || 0} {t('correct')}
 															</>
 														)}
 													</Typography>

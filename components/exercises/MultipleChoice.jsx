@@ -63,6 +63,21 @@ const MultipleChoice = ({ exercise, onComplete }) => {
 			en: "Comprehension questions",
 			ru: "Вопросы на понимание",
 			fr: "Questions de compréhension"
+		},
+		"Compréhension du texte": {
+			en: "Text Comprehension",
+			ru: "Понимание текста",
+			fr: "Compréhension du texte"
+		},
+		"Text Comprehension": {
+			en: "Text Comprehension",
+			ru: "Понимание текста",
+			fr: "Compréhension du texte"
+		},
+		"Понимание текста": {
+			en: "Text Comprehension",
+			ru: "Понимание текста",
+			fr: "Compréhension du texte"
 		}
 	}
 

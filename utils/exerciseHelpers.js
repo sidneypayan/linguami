@@ -77,3 +77,38 @@ export const getLocalizedQuestion = (question, locale = 'fr') => {
 
   return localized
 }
+
+/**
+ * Get localized field from an object
+ * Handles fields with language suffixes like correctText_en, correctText_fr
+ *
+ * @param {object} obj - The object containing the field
+ * @param {string} fieldName - The base field name (e.g., 'correctText')
+ * @param {string} locale - The current locale (fr, en, ru)
+ * @returns {string} The localized field value
+ */
+export const getLocalizedField = (obj, fieldName, locale = 'fr') => {
+  if (!obj) return ''
+
+  // Try to get the field with locale suffix
+  const fieldWithLocale = `${fieldName}_${locale}`
+  if (obj[fieldWithLocale]) {
+    return obj[fieldWithLocale]
+  }
+
+  // Fallback to base field name (usually the material's language)
+  if (obj[fieldName]) {
+    return obj[fieldName]
+  }
+
+  // Try other languages as fallback
+  const fallbacks = ['en', 'fr', 'ru'].filter(l => l !== locale)
+  for (const lang of fallbacks) {
+    const fallbackField = `${fieldName}_${lang}`
+    if (obj[fallbackField]) {
+      return obj[fallbackField]
+    }
+  }
+
+  return ''
+}

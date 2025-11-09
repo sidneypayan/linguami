@@ -231,10 +231,11 @@ function MaterialList() {
 
 **4. Interactive Exercise System**
 - Location: `/components/exercises/`
-- Three exercise types:
+- Four exercise types:
   1. **Multiple Choice (MCQ)** - Questions with 2-6 options
-  2. **Fill in the Blank** - Text with `___` placeholders
-  3. **Drag and Drop** - Match pairs between two columns
+  2. **Fill in the Blank (Classic)** - Text with `___` placeholders
+  3. **Fill in the Blank (Audio Dictation)** - Listen to audio and fill in missing word
+  4. **Drag and Drop** - Match pairs between two columns
 - Features:
   - Multilingual support (questions can have translations in fr, ru, en)
   - XP rewards for 100% completion (first time only)
@@ -251,9 +252,9 @@ function MaterialList() {
     "lang": "fr|ru|en",
     "xp_reward": 10,
     "data": {
-      "questions": [
-        // Question objects vary by type
-      ]
+      "questions": [...]  // For MCQ, classic FITB, Drag&Drop
+      // OR
+      "sentences": [...]  // For Audio Dictation FITB
     }
   }
   ```
@@ -262,6 +263,454 @@ function MaterialList() {
   - `POST /api/exercises/submit` - Submit exercise completion
   - Validates 100% score for XP rewards
   - Tracks first-time completion for XP eligibility
+
+## Exercise Creation - Overview
+
+**CRITICAL: There are ONLY 3 types of exercises supported. All exercises MUST follow these exact models.**
+
+### Supported Exercise Types
+
+1. **Audio Dictation Fill-in-the-Blank** (`fill_in_blank` with audio)
+   - Type: `fill_in_blank`
+   - MUST have: 6 sentences with audio files
+   - Script: `scripts/create-fitb-audio.js`
+   - Title: "Compréhension auditive" / "Listening Comprehension" / "Понимание на слух"
+
+2. **Drag and Drop - Vocabulary Association** (`drag_and_drop`)
+   - Type: `drag_and_drop`
+   - MUST have: 6 vocabulary pairs
+   - Script: `scripts/create-dragdrop.js`
+   - Title: "Association de vocabulaire" / "Vocabulary Association" / "Ассоциация слов"
+
+3. **Multiple Choice Questions - Text Comprehension** (`mcq`)
+   - Type: `mcq`
+   - MUST have: 6 questions with 4 options each
+   - Script: `scripts/create-mcq.js`
+   - Title: "Compréhension du texte" / "Text Comprehension" / "Понимание текста"
+
+### Global Exercise Rules
+
+**Exercise titles:**
+- MUST be displayed in user's browser language (not material language)
+- Component automatically translates titles based on locale
+
+**Exercise language:**
+- `lang` field MUST match material language
+- Questions can be translated for UI, but content stays in material language
+- See specific exercise sections below for exact field naming rules
+
+**DO NOT create:**
+- Classic Fill-in-the-Blank without audio
+- Exercises with different question/pair counts than specified
+- Any other exercise types
+
+### Creating Audio Dictation Fill-in-the-Blank Exercises
+
+**IMPORTANT: Always use this exact process when creating FITB exercises with audio.**
+
+**Exercise title display:**
+- Title MUST be displayed in user's browser language (not material language)
+- French: "Compréhension auditive"
+- English: "Listening Comprehension"
+- Russian: "Понимание на слух"
+
+**Format:**
+- Extract **6 sentences** from the material text
+- Each sentence has **ONE blank** (missing word) indicated by `___`
+- Audio file plays the **complete sentence** (including the missing word)
+- User listens and fills in **only the missing word**
+
+**Data structure:**
+```json
+{
+  "type": "fill_in_blank",
+  "material_id": 158,
+  "title": "Понимание на слух",
+  "level": "intermediate",
+  "lang": "ru",  // CRITICAL: Must match material language
+  "xp_reward": 10,
+  "data": {
+    "sentences": [
+      {
+        "id": 1,
+        "audioUrl": "https://linguami-cdn.etreailleurs.workers.dev/audio/exercises/ru/material_158/sentence_1.m4a",
+        "sentenceWithBlank": "Воттоваара – ___ массив на территории республики Карелия.",
+        "sentenceWithBlank_en": "Vottovaara is a ___ massif in the Republic of Karelia.",
+        "sentenceWithBlank_fr": "Vottovaara est un massif ___ en République de Carélie.",
+        "correctAnswer": "скальный",
+        "correctAnswer_en": "rock",
+        "correctAnswer_fr": "rocheux"
+      }
+      // ... 5 more sentences
+    ]
+  }
+}
+```
+
+**Field naming rules:**
+- **Base field** (no suffix): Material language (e.g., `sentenceWithBlank`, `correctAnswer`)
+- **Suffixed fields** (`_en`, `_fr`, `_ru`): Translations for UI in other languages
+- **CRITICAL**: Component uses base fields ONLY for display (not suffixed versions)
+
+**Audio generation process:**
+
+1. **Extract 6 key sentences** from material text
+2. **Generate audio** using ElevenLabs API:
+   - Russian materials: Use voice `Ekaterina` (ID: `C3FusDjPequ6qFchqpzu`)
+   - French materials: Use voice ID: `5jCmrHdxbpU36l1wb3Ke`
+   - Model: `eleven_turbo_v2_5` (v3)
+   - Settings: `stability: 0.5`, `similarity_boost: 0.75`
+3. **Upload to Cloudflare R2**:
+   - Path pattern: `audio/exercises/{lang}/material_{id}/sentence_{num}.m4a`
+   - Example: `audio/exercises/ru/material_158/sentence_1.m4a`
+   - Use AWS S3 SDK (R2 is S3-compatible)
+4. **Update exercise** in database with audio URLs
+
+**Automated script (RECOMMENDED):**
+
+Use the reusable script `scripts/create-fitb-audio.js`:
+
+```bash
+# Step 1: Create a JSON file with your 6 sentences
+# Example: sentences-481.json
+[
+  {
+    "id": 1,
+    "fullText": "Le plateau de Valensole est une région naturelle de France.",
+    "sentenceWithBlank": "Le plateau de Valensole est une région ___ de France.",
+    "sentenceWithBlank_en": "The Valensole plateau is a ___ region of France.",
+    "sentenceWithBlank_ru": "Плато Валансоль — это ___ регион Франции.",
+    "correctAnswer": "naturelle",
+    "correctAnswer_en": "natural",
+    "correctAnswer_ru": "природный"
+  }
+  // ... 5 more sentences
+]
+
+# Step 2: Run the script
+node scripts/create-fitb-audio.js <material_id> <sentences_json_file>
+
+# Example:
+node scripts/create-fitb-audio.js 481 sentences-481.json
+```
+
+The script automatically:
+- Fetches material from DB to get language
+- Selects correct voice (Ekaterina for ru, Sébas for fr)
+- Generates audio for each sentence
+- Uploads to R2 with correct path
+- Creates exercise in database
+
+**Component detection:**
+The `AudioDictation` component is automatically used when:
+- Exercise type is `fill_in_blank` AND
+- First sentence has `audioUrl` property
+
+```javascript
+// In ExerciseSection.jsx
+{activeExercise.type === 'fill_in_blank' && (
+  activeExercise.data?.sentences?.[0]?.audioUrl ? (
+    <AudioDictation exercise={activeExercise} onComplete={handleExerciseComplete} />
+  ) : (
+    <FillInTheBlank exercise={activeExercise} onComplete={handleExerciseComplete} />
+  )
+)}
+```
+
+**Key features of AudioDictation component:**
+- Russian text normalization: `е` and `ё` are treated as equivalent
+- Inline display: Number + Play button + Sentence on same line
+- Play/pause audio controls with visual feedback
+- Small input field for single word answer
+- Real-time validation and feedback
+
+### Creating Drag and Drop (Association de vocabulaire) Exercises
+
+**IMPORTANT: Drag and Drop exercises MUST have exactly 6 vocabulary pairs.**
+
+**Exercise title display:**
+- Title MUST be displayed in user's browser language (not material language)
+- French: "Association de vocabulaire"
+- English: "Vocabulary Association"
+- Russian: "Ассоциация слов"
+
+**Format:**
+- Extract **6 key vocabulary words** from the material text
+- Each pair consists of a word in the material language (left) and its translation (right)
+- Pairs include all 3 language translations for UI flexibility
+
+**Data structure:**
+```json
+{
+  "type": "drag_and_drop",
+  "material_id": 481,
+  "title": "Association de vocabulaire",
+  "level": "intermediate",
+  "lang": "fr",  // Must match material language
+  "xp_reward": 10,
+  "data": {
+    "questions": [{
+      "pairs": [
+        {
+          "id": 1,
+          "left": {
+            "en": "lavandin",
+            "fr": "lavandin",
+            "ru": "lavandin"
+          },
+          "right": {
+            "en": "lavender",
+            "fr": "lavande",
+            "ru": "лаванда"
+          }
+        }
+        // ... 5 more pairs (6 TOTAL REQUIRED)
+      ]
+    }]
+  }
+}
+```
+
+**Field naming rules:**
+- **Left side**: Word in material language, REPEATED in all locales
+  - For FR material: `left: { en: "mot", fr: "mot", ru: "mot" }`
+  - For RU material: `left: { en: "слово", fr: "слово", ru: "слово" }`
+- **Right side**: Translations in all locales
+  - Component displays the translation matching user's browser locale
+- Each side has all 3 locales: `fr`, `en`, `ru`
+
+**Example pairs for French material:**
+```javascript
+const pairs = [
+  {
+    id: 1,
+    left: { en: "lavandin", fr: "lavandin", ru: "lavandin" },  // FR word repeated
+    right: { en: "lavender", fr: "lavande", ru: "лаванда" }     // Translations
+  },
+  {
+    id: 2,
+    left: { en: "truffe", fr: "truffe", ru: "truffe" },
+    right: { en: "truffle", fr: "truffe", ru: "трюфель" }
+  },
+  {
+    id: 3,
+    left: { en: "altitude", fr: "altitude", ru: "altitude" },
+    right: { en: "altitude", fr: "hauteur", ru: "высота" }
+  },
+  {
+    id: 4,
+    left: { en: "patrimoine", fr: "patrimoine", ru: "patrimoine" },
+    right: { en: "heritage", fr: "héritage", ru: "наследие" }
+  },
+  {
+    id: 5,
+    left: { en: "archéologique", fr: "archéologique", ru: "archéologique" },
+    right: { en: "archaeological", fr: "archéologique", ru: "археологический" }
+  },
+  {
+    id: 6,
+    left: { en: "orageux", fr: "orageux", ru: "orageux" },
+    right: { en: "stormy", fr: "orageux", ru: "грозовой" }
+  }
+]
+```
+
+**How it displays to users:**
+- **FR material + RU browser**: Left shows "lavandin" (FR) → Right shows "лаванда" (RU)
+- **FR material + EN browser**: Left shows "lavandin" (FR) → Right shows "lavender" (EN)
+- **RU material + FR browser**: Left shows "гора" (RU) → Right shows "montagne" (FR)
+- **RU material + EN browser**: Left shows "гора" (RU) → Right shows "mountain" (EN)
+
+**Automated script (RECOMMENDED):**
+
+Use the reusable script `scripts/create-dragdrop.js`:
+
+```bash
+# Step 1: Create a JSON file with your 6 vocabulary pairs
+# Example: pairs-481.json
+[
+  {
+    "word": "lavandin",
+    "translations": {
+      "en": "lavender",
+      "fr": "lavande",
+      "ru": "лаванда"
+    }
+  },
+  {
+    "word": "truffe",
+    "translations": {
+      "en": "truffle",
+      "fr": "truffe",
+      "ru": "трюфель"
+    }
+  }
+  // ... 4 more pairs (6 total)
+]
+
+# Step 2: Run the script
+node scripts/create-dragdrop.js <material_id> <pairs_json_file>
+
+# Example:
+node scripts/create-dragdrop.js 481 pairs-481.json
+```
+
+The script automatically:
+- Fetches material from DB to get language
+- Structures left side (material word repeated in all locales)
+- Structures right side (translations in all locales)
+- Determines exercise title based on material language
+- Creates exercise in database with correct format
+
+**Manual creation (if needed):**
+```javascript
+const { data, error } = await supabase
+  .from('exercises')
+  .insert({
+    material_id: 481,
+    type: 'drag_and_drop',
+    title: 'Association de vocabulaire',
+    lang: 'fr',  // Material language
+    level: 'intermediate',
+    xp_reward: 10,
+    data: {
+      questions: [{
+        pairs: pairs  // MUST be 6 pairs
+      }]
+    }
+  })
+```
+
+**Reference exercises:**
+- **Exercise ID 13** (Material 121 "Эльбрус", RU): Complete example with Russian material
+  - Left: `{ en: "гора", fr: "гора", ru: "гора" }` (RU word repeated)
+  - Right: `{ en: "mountain", fr: "montagne", ru: "гора" }` (Translations)
+- **Exercise ID 74** (Material 481 "Le plateau de Valensole", FR): Complete example with French material
+  - Left: `{ en: "lavandin", fr: "lavandin", ru: "lavandin" }` (FR word repeated)
+  - Right: `{ en: "lavender", fr: "lavande", ru: "лаванда" }` (Translations)
+
+### Creating Multiple Choice Questions (MCQ) - Text Comprehension
+
+**IMPORTANT: MCQ exercises MUST have exactly 6 questions with 4 options each.**
+
+**Exercise title display:**
+- Title MUST be displayed in user's browser language (not material language)
+- French: "Compréhension du texte"
+- English: "Text Comprehension"
+- Russian: "Понимание текста"
+
+**Format:**
+- Create **6 comprehension questions** about the material text
+- Each question has **exactly 4 options** (A, B, C, D)
+- Questions must be **well-thought and relevant** to test understanding
+- **Questions**: Translated for display in user's browser language
+- **Answer options**: ALWAYS in material language (no translations)
+
+**Data structure:**
+```json
+{
+  "type": "mcq",
+  "material_id": 481,
+  "title": "Compréhension du texte",
+  "level": "beginner",
+  "lang": "fr",  // Must match material language
+  "xp_reward": 15,
+  "data": {
+    "questions": [
+      {
+        "id": 1,
+        "question": "Dans quelle région se trouve le plateau de Valensole ?",
+        "question_en": "In which region is the Valensole plateau located?",
+        "question_ru": "В каком регионе находится плато Валансоль?",
+        "options": [
+          { "key": "A", "text": "En Provence-Alpes-Côte d'Azur" },
+          { "key": "B", "text": "En Normandie" },
+          { "key": "C", "text": "En Bretagne" },
+          { "key": "D", "text": "En Alsace" }
+        ],
+        "correctAnswer": "A",
+        "explanation": "Le plateau de Valensole se trouve en Provence.",
+        "explanation_en": "The Valensole plateau is located in Provence.",
+        "explanation_ru": "Плато Валансоль расположено в Провансе."
+      }
+      // ... 5 more questions (6 TOTAL REQUIRED)
+    ]
+  }
+}
+```
+
+**Field naming rules:**
+- **question**: The question text in material language
+- **question_en**, **question_ru**: Question translations for UI
+- **options[].text**: Answer text in material language ONLY (no translations)
+- **correctAnswer**: The correct option key (A, B, C, or D)
+- **explanation**: Explanation in material language (optional)
+- **explanation_en**, **explanation_ru**: Explanation translations (optional)
+
+**How it displays to users:**
+- **FR material + RU browser**: Question shows Russian translation, options show French text
+- **FR material + EN browser**: Question shows English translation, options show French text
+- **RU material + FR browser**: Question shows French translation, options show Russian text
+- **RU material + EN browser**: Question shows English translation, options show Russian text
+
+**Question writing guidelines:**
+1. **Factual questions**: Test specific information from the text
+2. **Comprehension questions**: Test understanding of concepts
+3. **Inference questions**: Test ability to draw conclusions
+4. **Vocabulary questions**: Test understanding of key terms
+5. **Detail questions**: Test attention to important details
+6. **Main idea questions**: Test overall understanding
+
+**Automated script (RECOMMENDED):**
+
+Use the reusable script `scripts/create-mcq.js`:
+
+```bash
+# Step 1: Create a JSON file with your 6 questions
+# Example: questions-481.json
+[
+  {
+    "question": "Dans quelle région se trouve le plateau de Valensole ?",
+    "question_translations": {
+      "en": "In which region is the Valensole plateau located?",
+      "ru": "В каком регионе находится плато Валансоль?"
+    },
+    "options": [
+      "En Provence-Alpes-Côte d'Azur",
+      "En Normandie",
+      "En Bretagne",
+      "En Alsace"
+    ],
+    "correctAnswer": "A",
+    "explanation": "Le plateau de Valensole se trouve en Provence.",
+    "explanation_translations": {
+      "en": "The Valensole plateau is located in Provence.",
+      "ru": "Плато Валансоль расположено в Провансе."
+    }
+  }
+  // ... 5 more questions (6 total)
+]
+
+# Step 2: Run the script
+node scripts/create-mcq.js <material_id> <questions_json_file>
+
+# Example:
+node scripts/create-mcq.js 481 questions-481.json
+```
+
+The script automatically:
+- Fetches material from DB to get language
+- Structures questions with material language + translations
+- Structures options in material language ONLY (no translations)
+- Determines exercise title based on material language
+- Validates 6 questions with 4 options each
+- Creates exercise in database
+
+**Reference exercise:**
+- **Exercise ID 70** (Material 481 "Le plateau de Valensole", FR): Complete MCQ example
+  - 5 questions (older format, should be 6 now)
+  - Questions have FR + EN + RU translations
+  - Options have translations (legacy format - new format has no option translations)
 
 ## Common Development Patterns
 

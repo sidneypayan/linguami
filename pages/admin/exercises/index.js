@@ -131,9 +131,21 @@ const ExercisesAdmin = () => {
 	// Filter and sort exercises
 	const filteredAndSortedExercises = useMemo(() => {
 		let filtered = exercises.filter(exercise => {
-			// Search filter
-			if (searchQuery && !exercise.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-				return false
+			// Search filter - searches in material title and IDs
+			if (searchQuery) {
+				const query = searchQuery.toLowerCase()
+				const materialTitle = exercise.materials?.title?.toLowerCase() || ''
+				const exerciseId = exercise.id.toString()
+				const materialId = exercise.materials?.id?.toString() || ''
+
+				const matchesSearch =
+					materialTitle.includes(query) ||
+					exerciseId.includes(query) ||
+					materialId.includes(query)
+
+				if (!matchesSearch) {
+					return false
+				}
 			}
 
 			// Type filter
@@ -319,7 +331,7 @@ const ExercisesAdmin = () => {
 							<TextField
 								fullWidth
 								size="small"
-								placeholder="Rechercher par titre..."
+								placeholder="Rechercher par titre de matériel ou ID..."
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 								InputProps={{

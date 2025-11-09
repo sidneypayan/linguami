@@ -46,8 +46,18 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 			fr: "Compréhension de l'audio"
 		},
 		"Association de vocabulaire": {
-			en: "Vocabulary matching",
-			ru: "Словарные пары",
+			en: "Vocabulary Association",
+			ru: "Ассоциация слов",
+			fr: "Association de vocabulaire"
+		},
+		"Vocabulary Association": {
+			en: "Vocabulary Association",
+			ru: "Ассоциация слов",
+			fr: "Association de vocabulaire"
+		},
+		"Ассоциация слов": {
+			en: "Vocabulary Association",
+			ru: "Ассоциация слов",
 			fr: "Association de vocabulaire"
 		}
 	}
