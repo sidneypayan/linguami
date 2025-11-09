@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useSelector, useDispatch } from 'react-redux'
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
@@ -53,16 +53,16 @@ const Translation = ({ coordinates, materialId, userId }) => {
 	const MAX_TRANSLATION_LENGTH = 100
 
 	// Fonction pour recharger le compteur de mots
-	const reloadGuestWordsCount = () => {
+	const reloadGuestWordsCount = useCallback(() => {
 		if (!isUserLoggedIn && typeof window !== 'undefined') {
 			setGuestWordsCount(getGuestWordsCount())
 		}
-	}
+	}, [isUserLoggedIn])
 
 	// Mettre à jour le compteur de mots pour invités
 	useEffect(() => {
 		reloadGuestWordsCount()
-	}, [isUserLoggedIn, isTranslationOpen])
+	}, [isUserLoggedIn, isTranslationOpen, reloadGuestWordsCount])
 
 	// Écouter les événements d'ajout/suppression de mots
 	useEffect(() => {
@@ -75,7 +75,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 				window.removeEventListener('guestWordDeleted', reloadGuestWordsCount)
 			}
 		}
-	}, [isUserLoggedIn])
+	}, [isUserLoggedIn, reloadGuestWordsCount])
 
 	const sanitizeInput = (input) => {
 		// Supprimer les caractères potentiellement dangereux

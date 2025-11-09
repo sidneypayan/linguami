@@ -126,7 +126,7 @@ const ExerciseSection = ({ materialId }) => {
 		}
 
 		loadData()
-	}, [materialId, isUserLoggedIn, user])
+	}, [materialId, isUserLoggedIn, user, supabase])
 
 	// Handle exercise completion
 	const handleExerciseComplete = async (result) => {

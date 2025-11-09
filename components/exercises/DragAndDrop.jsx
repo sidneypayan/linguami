@@ -77,7 +77,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 			setIsChecked(false)
 			setIsCorrect(false)
 		}
-	}, [currentQuestionIndex]) // Only depend on index, not currentQuestion
+	}, [currentQuestion])
 
 	// Drag handlers
 	const handleDragStart = (e, item) => {
