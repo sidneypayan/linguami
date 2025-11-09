@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import {
 	Container,
@@ -16,8 +16,16 @@ import {
 	IconButton,
 	Alert,
 	useTheme,
+	TextField,
+	InputAdornment,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	Grid,
+	TableSortLabel,
 } from '@mui/material'
-import { Add, Edit, Delete, Visibility } from '@mui/icons-material'
+import { Add, Edit, Delete, Visibility, Search, FilterList } from '@mui/icons-material'
 import { useUserContext } from '../../../context/user'
 import { createBrowserClient } from '../../../lib/supabase'
 import toast from '../../../utils/toast'
@@ -36,6 +44,16 @@ const ExercisesAdmin = () => {
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
+
+	// Filters and sorting
+	const [searchQuery, setSearchQuery] = useState('')
+	const [typeFilter, setTypeFilter] = useState('all')
+	const [levelFilter, setLevelFilter] = useState('all')
+	const [langFilter, setLangFilter] = useState('all')
+	const [materialFilter, setMaterialFilter] = useState('all')
+	const [sectionFilter, setSectionFilter] = useState('all')
+	const [orderBy, setOrderBy] = useState('created_at')
+	const [order, setOrder] = useState('desc')
 
 	// Load exercises
 	useEffect(() => {
@@ -102,6 +120,121 @@ const ExercisesAdmin = () => {
 		}
 	}
 
+	// Get unique sections from exercises
+	const uniqueSections = useMemo(() => {
+		const sections = exercises
+			.filter(ex => ex.materials?.section)
+			.map(ex => ex.materials.section)
+		return [...new Set(sections)].sort()
+	}, [exercises])
+
+	// Filter and sort exercises
+	const filteredAndSortedExercises = useMemo(() => {
+		let filtered = exercises.filter(exercise => {
+			// Search filter
+			if (searchQuery && !exercise.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+				return false
+			}
+
+			// Type filter
+			if (typeFilter !== 'all' && exercise.type !== typeFilter) {
+				return false
+			}
+
+			// Level filter
+			if (levelFilter !== 'all' && exercise.level !== levelFilter) {
+				return false
+			}
+
+			// Language filter
+			if (langFilter !== 'all' && exercise.lang !== langFilter) {
+				return false
+			}
+
+			// Material filter
+			if (materialFilter === 'linked' && !exercise.materials) {
+				return false
+			}
+			if (materialFilter === 'unlinked' && exercise.materials) {
+				return false
+			}
+
+			// Section filter
+			if (sectionFilter !== 'all' && exercise.materials?.section !== sectionFilter) {
+				return false
+			}
+
+			return true
+		})
+
+		// Sort
+		filtered.sort((a, b) => {
+			let aValue, bValue
+
+			switch (orderBy) {
+				case 'id':
+					aValue = a.id
+					bValue = b.id
+					break
+				case 'title':
+					aValue = a.title.toLowerCase()
+					bValue = b.title.toLowerCase()
+					break
+				case 'type':
+					aValue = a.type
+					bValue = b.type
+					break
+				case 'level':
+					const levelOrder = { beginner: 1, intermediate: 2, advanced: 3 }
+					aValue = levelOrder[a.level] || 0
+					bValue = levelOrder[b.level] || 0
+					break
+				case 'lang':
+					aValue = a.lang
+					bValue = b.lang
+					break
+				case 'questions':
+					aValue = a.data?.questions?.length || 0
+					bValue = b.data?.questions?.length || 0
+					break
+				case 'xp':
+					aValue = a.xp_reward
+					bValue = b.xp_reward
+					break
+				case 'created_at':
+				default:
+					aValue = new Date(a.created_at)
+					bValue = new Date(b.created_at)
+					break
+			}
+
+			if (aValue < bValue) return order === 'asc' ? -1 : 1
+			if (aValue > bValue) return order === 'asc' ? 1 : -1
+			return 0
+		})
+
+		return filtered
+	}, [exercises, searchQuery, typeFilter, levelFilter, langFilter, materialFilter, sectionFilter, orderBy, order])
+
+	// Handle sort request
+	const handleRequestSort = (property) => {
+		const isAsc = orderBy === property && order === 'asc'
+		setOrder(isAsc ? 'desc' : 'asc')
+		setOrderBy(property)
+	}
+
+	// Reset all filters
+	const handleResetFilters = () => {
+		setSearchQuery('')
+		setTypeFilter('all')
+		setLevelFilter('all')
+		setLangFilter('all')
+		setMaterialFilter('all')
+		setSectionFilter('all')
+		setOrderBy('created_at')
+		setOrder('desc')
+	}
+
 	// Show nothing while bootstrapping
 	if (isBootstrapping) {
 		return null
@@ -124,10 +257,10 @@ const ExercisesAdmin = () => {
 
 			<AdminNavbar activePage="exercises" />
 
-			<Container maxWidth="lg" sx={{ pt: { xs: '2rem', md: '4rem' }, pb: 4 }}>
+			<Container maxWidth="xl" sx={{ pt: { xs: '2rem', md: '4rem' }, pb: 4 }}>
 				<Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
 					<Typography variant="h4" sx={{ fontWeight: 700 }}>
-						{t('title')}
+						{t('title')} ({filteredAndSortedExercises.length})
 					</Typography>
 					<Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
 						<Button
@@ -163,6 +296,135 @@ const ExercisesAdmin = () => {
 					</Box>
 				</Box>
 
+				{/* Filters Section */}
+				<Paper
+					elevation={0}
+					sx={{
+						p: 3,
+						mb: 3,
+						borderRadius: 3,
+						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
+						background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+					}}>
+					<Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+						<FilterList />
+						<Typography variant="h6" sx={{ fontWeight: 600 }}>
+							Filtres et recherche
+						</Typography>
+					</Box>
+
+					<Grid container spacing={2}>
+						{/* Search */}
+						<Grid item xs={12} md={6} lg={3}>
+							<TextField
+								fullWidth
+								size="small"
+								placeholder="Rechercher par titre..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">
+											<Search />
+										</InputAdornment>
+									),
+								}}
+							/>
+						</Grid>
+
+						{/* Type Filter */}
+						<Grid item xs={12} sm={6} md={3} lg={2}>
+							<FormControl fullWidth size="small">
+								<InputLabel>Type</InputLabel>
+								<Select
+									value={typeFilter}
+									label="Type"
+									onChange={(e) => setTypeFilter(e.target.value)}>
+									<MenuItem value="all">Tous</MenuItem>
+									<MenuItem value="mcq">QCM</MenuItem>
+									<MenuItem value="fill_in_blank">Texte à trous</MenuItem>
+									<MenuItem value="drag_and_drop">Glisser-déposer</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+
+						{/* Level Filter */}
+						<Grid item xs={12} sm={6} md={3} lg={2}>
+							<FormControl fullWidth size="small">
+								<InputLabel>Niveau</InputLabel>
+								<Select
+									value={levelFilter}
+									label="Niveau"
+									onChange={(e) => setLevelFilter(e.target.value)}>
+									<MenuItem value="all">Tous</MenuItem>
+									<MenuItem value="beginner">Débutant</MenuItem>
+									<MenuItem value="intermediate">Intermédiaire</MenuItem>
+									<MenuItem value="advanced">Avancé</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+
+						{/* Language Filter */}
+						<Grid item xs={12} sm={6} md={3} lg={1.5}>
+							<FormControl fullWidth size="small">
+								<InputLabel>Langue</InputLabel>
+								<Select
+									value={langFilter}
+									label="Langue"
+									onChange={(e) => setLangFilter(e.target.value)}>
+									<MenuItem value="all">Toutes</MenuItem>
+									<MenuItem value="fr">FR</MenuItem>
+									<MenuItem value="ru">RU</MenuItem>
+									<MenuItem value="en">EN</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+
+						{/* Material Filter */}
+						<Grid item xs={12} sm={6} md={3} lg={1.5}>
+							<FormControl fullWidth size="small">
+								<InputLabel>Matériau</InputLabel>
+								<Select
+									value={materialFilter}
+									label="Matériau"
+									onChange={(e) => setMaterialFilter(e.target.value)}>
+									<MenuItem value="all">Tous</MenuItem>
+									<MenuItem value="linked">Liés</MenuItem>
+									<MenuItem value="unlinked">Non liés</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+
+						{/* Section Filter */}
+						<Grid item xs={12} sm={6} md={3} lg={2}>
+							<FormControl fullWidth size="small">
+								<InputLabel>Section</InputLabel>
+								<Select
+									value={sectionFilter}
+									label="Section"
+									onChange={(e) => setSectionFilter(e.target.value)}>
+									<MenuItem value="all">Toutes</MenuItem>
+									{uniqueSections.map(section => (
+										<MenuItem key={section} value={section}>
+											{section}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Grid>
+					</Grid>
+
+					{/* Reset Button */}
+					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+						<Button
+							size="small"
+							onClick={handleResetFilters}
+							sx={{ textTransform: 'none' }}>
+							Réinitialiser les filtres
+						</Button>
+					</Box>
+				</Paper>
+
 				{exercises.length === 0 ? (
 					<Alert severity="info">
 						{t('noExercises')}
@@ -184,19 +446,68 @@ const ExercisesAdmin = () => {
 										backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.05)'
 									}}
 								>
-									<TableCell sx={{ fontWeight: 700 }}>{t('id')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('exerciseTitle')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('type')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('level')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('language')}</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'id'}
+											direction={orderBy === 'id' ? order : 'asc'}
+											onClick={() => handleRequestSort('id')}>
+											{t('id')}
+										</TableSortLabel>
+									</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'title'}
+											direction={orderBy === 'title' ? order : 'asc'}
+											onClick={() => handleRequestSort('title')}>
+											{t('exerciseTitle')}
+										</TableSortLabel>
+									</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'type'}
+											direction={orderBy === 'type' ? order : 'asc'}
+											onClick={() => handleRequestSort('type')}>
+											{t('type')}
+										</TableSortLabel>
+									</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'level'}
+											direction={orderBy === 'level' ? order : 'asc'}
+											onClick={() => handleRequestSort('level')}>
+											{t('level')}
+										</TableSortLabel>
+									</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'lang'}
+											direction={orderBy === 'lang' ? order : 'asc'}
+											onClick={() => handleRequestSort('lang')}>
+											{t('language')}
+										</TableSortLabel>
+									</TableCell>
 									<TableCell sx={{ fontWeight: 700 }}>{t('material')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('questions')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('xp')}</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'questions'}
+											direction={orderBy === 'questions' ? order : 'asc'}
+											onClick={() => handleRequestSort('questions')}>
+											{t('questions')}
+										</TableSortLabel>
+									</TableCell>
+									<TableCell sx={{ fontWeight: 700 }}>
+										<TableSortLabel
+											active={orderBy === 'xp'}
+											direction={orderBy === 'xp' ? order : 'asc'}
+											onClick={() => handleRequestSort('xp')}>
+											{t('xp')}
+										</TableSortLabel>
+									</TableCell>
 									<TableCell sx={{ fontWeight: 700 }} align="right">{t('actions')}</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{exercises.map((exercise) => (
+								{filteredAndSortedExercises.map((exercise) => (
 									<TableRow key={exercise.id} hover>
 										<TableCell>#{exercise.id}</TableCell>
 										<TableCell>

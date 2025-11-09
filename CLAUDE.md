@@ -95,6 +95,8 @@ function Component() {
 - `common` - Global UI strings (navbar, footer, buttons)
 - `materials` - Materials page
 - `words` - Dictionary page
+- `exercises` - Exercise components and pages
+- `admin` - Admin panel
 - `register` - Auth pages
 - `home` - Homepage
 
@@ -124,6 +126,7 @@ export default async function handler(req, res) {
 - `GET /api/xp/profile` - Get user XP stats
 - `GET /api/statistics/index` - User learning statistics
 - `GET /api/leaderboard/index` - Global leaderboard
+- `POST /api/exercises/submit` - Submit exercise completion and award XP
 
 ### Component Organization
 
@@ -134,8 +137,14 @@ export default async function handler(req, res) {
 
 **Components:** `/components/`
 - **Layouts:** Navbar, Footer, BottomNav, UserMenu
-- **Feature-based:** materials/, dictionary/, admin/, blog/, auth/
-- **Shared:** LoadingSpinner, ThemeToggle, etc.
+- **Feature-based:**
+  - materials/ - Material cards, content display
+  - dictionary/ - Word lookup and management
+  - exercises/ - MCQ, FillInTheBlank, DragAndDrop, ExerciseSection
+  - admin/ - Admin panel, exercise creation/editing
+  - blog/ - Blog posts and content
+  - auth/ - Authentication forms
+- **Shared:** LoadingSpinner, ThemeToggle, AchievementNotification, etc.
 
 **Component pattern:**
 ```javascript
@@ -187,6 +196,8 @@ function MaterialList() {
 - `user_materials` - User's study progress
 - `user_words` - User's dictionary words
 - `user_words_cards` - SRS flashcard data
+- `exercises` - Interactive exercises (MCQ, fill-in-blank, drag-drop)
+- `user_exercise_progress` - User's exercise scores and attempts
 - `xp_rewards_config` - XP reward amounts
 - `xp_transactions` - XP transaction history
 
@@ -217,6 +228,40 @@ function MaterialList() {
 - Authenticated users: unlimited
 - Caching in Redux state
 - Click-to-translate on learning materials
+
+**4. Interactive Exercise System**
+- Location: `/components/exercises/`
+- Three exercise types:
+  1. **Multiple Choice (MCQ)** - Questions with 2-6 options
+  2. **Fill in the Blank** - Text with `___` placeholders
+  3. **Drag and Drop** - Match pairs between two columns
+- Features:
+  - Multilingual support (questions can have translations in fr, ru, en)
+  - XP rewards for 100% completion (first time only)
+  - Progress tracking in `user_exercise_progress` table
+  - Explanations shown after each answer
+  - Mobile-responsive drag-and-drop interface
+- Exercise data structure in DB:
+  ```json
+  {
+    "type": "mcq|fill_in_blank|drag_and_drop",
+    "material_id": 123,
+    "title": "Exercise title",
+    "level": "beginner|intermediate|advanced",
+    "lang": "fr|ru|en",
+    "xp_reward": 10,
+    "data": {
+      "questions": [
+        // Question objects vary by type
+      ]
+    }
+  }
+  ```
+- Admin pages: `/pages/admin/exercises/` for creating/editing exercises
+- API endpoints:
+  - `POST /api/exercises/submit` - Submit exercise completion
+  - Validates 100% score for XP rewards
+  - Tracks first-time completion for XP eligibility
 
 ## Common Development Patterns
 
@@ -264,8 +309,9 @@ if (!isUserAdmin) {
 
 ### Showing Notifications
 
+**Using Sonner (recommended):**
 ```javascript
-import { toast } from 'react-toastify'
+import toast from '@/utils/toast'
 
 toast.success('Success message')
 toast.error('Error message')
@@ -273,12 +319,52 @@ toast.warning('Warning message')
 toast.info('Info message')
 ```
 
-For i18n messages, use `utils/toastMessages.js`:
+**Legacy approach (still works):**
 ```javascript
-import { useToastMessages } from '@/utils/toastMessages'
+import { toast } from 'react-toastify'
+// Same API as above
+```
 
-const toastMessages = useToastMessages()
-toast.success(toastMessages.wordAdded())
+**Note:** The project uses a custom toast wrapper in `utils/toast.js` that currently uses Sonner. Import from `@/utils/toast` for consistency.
+
+### Creating Exercises with Multilingual Support
+
+**Exercise data with translations:**
+```javascript
+// Questions can have translations for all supported locales
+const question = {
+  id: 1,
+  question: "Quelle est la capitale de la France?",  // Default (fr)
+  question_en: "What is the capital of France?",     // English translation
+  question_ru: "Какая столица Франции?",             // Russian translation
+  options: [
+    { key: 'A', text: 'Paris', text_en: 'Paris', text_ru: 'Париж' },
+    { key: 'B', text: 'Londres', text_en: 'London', text_ru: 'Лондон' }
+  ],
+  correctAnswer: 'A',
+  explanation: "Paris est la capitale de la France.",
+  explanation_en: "Paris is the capital of France.",
+  explanation_ru: "Париж - столица Франции."
+}
+```
+
+**Retrieving localized content:**
+```javascript
+import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
+
+// In component
+const locale = router.locale || 'fr'
+const localizedQuestion = getLocalizedQuestion(question, locale)
+// Returns question with locale-specific fields
+```
+
+**Exercise component integration:**
+```javascript
+// ExerciseSection.jsx automatically loads exercises for a material
+import ExerciseSection from '@/components/exercises/ExerciseSection'
+
+// In material page
+<ExerciseSection materialId={material.id} />
 ```
 
 ## Important Notes
