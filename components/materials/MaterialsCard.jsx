@@ -2,7 +2,7 @@ import Link from 'next/link'
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Typography, Chip } from '@mui/material'
 import { PlayCircleOutline } from '@mui/icons-material'
-import { getMaterialImageUrl } from '../../utils/mediaUrls'
+import { getMaterialImageUrl } from '@/utils/mediaUrls'
 
 const MaterialsCard = ({ material }) => {
 	const { t } = useTranslation('materials')

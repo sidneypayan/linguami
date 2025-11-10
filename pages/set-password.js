@@ -1,6 +1,6 @@
 // /pages/set-password.js
 import useTranslation from 'next-translate/useTranslation'
-import toast from '../utils/toast'
+import toast from '@/utils/toast'
 import { useRouter } from 'next/router'
 import { useEffect, useState, useMemo } from 'react'
 import {
@@ -20,8 +20,8 @@ import {
 	CheckCircleRounded,
 	CancelRounded,
 } from '@mui/icons-material'
-import { useUserContext } from '../context/user'
-import { supabase } from '../lib/supabase' // ⬅️ important
+import { useUserContext } from '@/context/user'
+import { supabase } from '@/lib/supabase' // ⬅️ important
 
 const AskPassword = () => {
 	const { t } = useTranslation('register')

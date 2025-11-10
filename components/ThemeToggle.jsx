@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconButton, Tooltip, Box } from '@mui/material'
 import { LightMode, DarkMode } from '@mui/icons-material'
-import { useThemeMode } from '../context/ThemeContext'
+import { useThemeMode } from '@/context/ThemeContext'
 
 const ThemeToggle = ({ variant = 'icon' }) => {
 	const { mode, toggleTheme, isDark } = useThemeMode()

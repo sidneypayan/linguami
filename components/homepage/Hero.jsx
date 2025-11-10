@@ -1,8 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
 import Link from 'next/link'
-import { primaryButton } from '../../utils/buttonStyles'
-import { getUIImageUrl } from '../../utils/mediaUrls'
+import { primaryButton } from '@/utils/buttonStyles'
+import { getUIImageUrl } from '@/utils/mediaUrls'
 
 const Hero = () => {
 	const { t, lang } = useTranslation('home')

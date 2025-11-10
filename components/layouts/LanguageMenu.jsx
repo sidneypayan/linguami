@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { ExpandMoreRounded, SchoolRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
-import { useUserContext } from '../../context/user.js'
+import { useUserContext } from '@/context/user.js'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (

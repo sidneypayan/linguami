@@ -1,8 +1,8 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import toast from '../../utils/toast'
-import { mergeUserMaterial } from '../../utils/helpers'
-import { getToastMessage } from '../../utils/toastMessages'
+import toast from '@/utils/toast'
+import { mergeUserMaterial } from '@/utils/helpers'
+import { getToastMessage } from '@/utils/toastMessages'
 
 const initialState = {
 	materials: [],

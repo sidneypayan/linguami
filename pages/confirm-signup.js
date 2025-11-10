@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Stack, Box, Button, Typography, useTheme } from '@mui/material'
 import { MarkEmailReadRounded } from '@mui/icons-material'
-import AuthLayout from '../components/auth/AuthLayout'
+import AuthLayout from '@/components/auth/AuthLayout'
 import Head from 'next/head'
 
 

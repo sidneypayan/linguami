@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { supabase } from '../../lib/supabase'
-import toast from '../../utils/toast'
-import { getaddWordsToUserDictionaryMessage } from '../../utils/helpers'
-import { calculateNextReview, initializeCard, getDueCards } from '../../utils/spacedRepetition'
+import { supabase } from '@/lib/supabase'
+import toast from '@/utils/toast'
+import { getaddWordsToUserDictionaryMessage } from '@/utils/helpers'
+import { calculateNextReview, initializeCard, getDueCards } from '@/utils/spacedRepetition'
 // Les limites de traduction sont maintenant gérées côté serveur via cookie HttpOnly
 
 const initialState = {

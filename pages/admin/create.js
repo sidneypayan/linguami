@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import loadNamespaces from 'next-translate/loadNamespaces'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import {
 	Box,
 	Container,
@@ -14,14 +14,14 @@ import {
 	Chip,
 	LinearProgress,
 } from '@mui/material'
-import { CreatePostForm, CreateMaterialForm } from '../../components'
+import { CreatePostForm, CreateMaterialForm } from '@/components'
 import {
 	createContent,
 	updateContent,
 	toggleContentType,
-} from '../../features/content/contentSlice'
+} from '@/features/content/contentSlice'
 import { useRouter } from 'next/router'
-import { materialData, postData } from '../../utils/constants'
+import { materialData, postData } from '@/utils/constants'
 import { createServerClient } from '@supabase/ssr'
 import {
 	ArrowBack,
@@ -31,7 +31,7 @@ import {
 	Save,
 } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import AdminNavbar from '../../components/admin/AdminNavbar'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 
 const CreateMaterial = () => {
 	const { t } = useTranslation('admin')

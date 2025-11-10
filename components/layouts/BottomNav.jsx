@@ -8,7 +8,7 @@ import {
 	BookmarksRounded,
 	LocalLibraryRounded,
 } from '@mui/icons-material'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 
 const BottomNav = () => {
 	const router = useRouter()

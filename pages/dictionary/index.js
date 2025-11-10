@@ -1,17 +1,17 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useSelector, useDispatch } from 'react-redux'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import {
 	getAllUserWords,
 	deleteUserWord,
-} from '../../features/words/wordsSlice'
-import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
+} from '@/features/words/wordsSlice'
+import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
 import Link from 'next/link'
-import SEO from '../../components/SEO'
-import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
-import toast from '../../utils/toast'
+import SEO from '@/components/SEO'
+import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
+import toast from '@/utils/toast'
 import {
 	Box,
 	Button,
@@ -37,8 +37,8 @@ import {
 	AutoStoriesRounded,
 	BookmarkAddRounded,
 } from '@mui/icons-material'
-import AddWordModal from '../../components/dictionary/AddWordModal'
-import LoadingSpinner from '../../components/LoadingSpinner'
+import AddWordModal from '@/components/dictionary/AddWordModal'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 const Dictionary = () => {
 	const { t, lang } = useTranslation('common')

@@ -7,7 +7,7 @@ import {
 	CloseRounded,
 	MenuBookRounded,
 } from '@mui/icons-material'
-import { getBookChapters } from '../../features/materials/materialsSlice'
+import { getBookChapters } from '@/features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import {
@@ -26,7 +26,7 @@ import {
 import {
 	getUserMaterialsStatus,
 	getUserMaterialStatus,
-} from '../../features/materials/materialsSlice'
+} from '@/features/materials/materialsSlice'
 
 const BookMenu = ({ bookId }) => {
 	const { chapters, user_materials_status } = useSelector(

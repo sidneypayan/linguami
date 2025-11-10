@@ -26,12 +26,12 @@ import {
 	TableSortLabel,
 } from '@mui/material'
 import { Add, Edit, Delete, Visibility, Search, FilterList } from '@mui/icons-material'
-import { useUserContext } from '../../../context/user'
-import { createBrowserClient } from '../../../lib/supabase'
-import toast from '../../../utils/toast'
+import { useUserContext } from '@/context/user'
+import { createBrowserClient } from '@/lib/supabase'
+import toast from '@/utils/toast'
 import Head from 'next/head'
-import LoadingSpinner from '../../../components/LoadingSpinner'
-import AdminNavbar from '../../../components/admin/AdminNavbar'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 import useTranslation from 'next-translate/useTranslation'
 
 const ExercisesAdmin = () => {

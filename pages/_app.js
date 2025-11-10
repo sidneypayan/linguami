@@ -1,15 +1,15 @@
 import 'normalize.css'
 import '../styles/globals.css'
-import Layout from '../components/Layout'
+import Layout from '@/components/Layout'
 import { Toaster } from 'sonner'
-import UserProvider from '../context/user.js'
-import { ThemeModeProvider, useThemeMode } from '../context/ThemeContext'
-import { store } from '../features/store'
+import UserProvider from '@/context/user.js'
+import { ThemeModeProvider, useThemeMode } from '@/context/ThemeContext'
+import { store } from '@/features/store'
 import { Provider } from 'react-redux'
-import { AchievementProvider } from '../components/AchievementProvider'
+import { AchievementProvider } from '@/components/AchievementProvider'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import * as gtm from '../lib/gtm'
+import * as gtm from '@/lib/gtm'
 
 // Composant interne pour avoir accès au thème
 function AppContent({ Component, pageProps }) {

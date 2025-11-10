@@ -2,8 +2,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import useTranslation from 'next-translate/useTranslation'
-import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
-import { useUserContext } from '../context/user'
+import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
+import { useUserContext } from '@/context/user'
 import {
 	Table,
 	TableBody,
@@ -27,7 +27,7 @@ import {
 	MenuBook,
 } from '@mui/icons-material'
 import { sections } from '../data/sections'
-import { getImageUrl } from '../utils/imageUtils'
+import { getImageUrl } from '@/utils/imageUtils'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const { t } = useTranslation('materials')

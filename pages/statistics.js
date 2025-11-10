@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { getUIImageUrl } from '../utils/mediaUrls'
+import { getUIImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,
 	Container,
@@ -76,8 +76,8 @@ import {
 import { IoWater, IoWaterOutline } from 'react-icons/io5'
 import { GiWaterDrop, GiWaveSurfer } from 'react-icons/gi'
 import useTranslation from 'next-translate/useTranslation'
-import SEO from '../components/SEO'
-import { useUserContext } from '../context/user'
+import SEO from '@/components/SEO'
+import { useUserContext } from '@/context/user'
 import Head from 'next/head'
 
 const StatisticsPage = () => {

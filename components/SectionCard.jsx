@@ -1,8 +1,8 @@
 import React from 'react'
 import { sections } from '../data/sections'
 import { useDispatch } from 'react-redux'
-import styles from '../styles/sections/SectionCard.module.css'
-import { getMaterialImageUrl } from '../utils/mediaUrls'
+import styles from '@/styles/sections/SectionCard.module.css'
+import { getMaterialImageUrl } from '@/utils/mediaUrls'
 import {
 	Movie,
 	MusicNote,
@@ -11,7 +11,7 @@ import {
 	Schedule,
 } from '@mui/icons-material'
 import { useRouter } from 'next/router'
-import { getFirstChapterOfBook } from '../features/materials/materialsSlice'
+import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
 import {
 	Box,
 	Card,
@@ -21,7 +21,7 @@ import {
 	useTheme,
 } from '@mui/material'
 import Link from 'next/link'
-import { useUserContext } from '../context/user'
+import { useUserContext } from '@/context/user'
 import useTranslation from 'next-translate/useTranslation'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {

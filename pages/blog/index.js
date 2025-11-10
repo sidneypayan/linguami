@@ -1,13 +1,12 @@
 import useTranslation from 'next-translate/useTranslation'
-import BlogCard from '../../components/blog/BlogCard'
-import SEO from '../../components/SEO'
-import { sortPostsByDate } from '../../utils/helpers'
+import BlogCard from '@/components/blog/BlogCard'
+import SEO from '@/components/SEO'
+import { sortPostsByDate } from '@/utils/helpers'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { Container, Typography, Box, useTheme } from '@mui/material'
-import { RssFeedRounded } from '@mui/icons-material'
-import { getBlogImageUrl } from '../../utils/mediaUrls'
+import { getBlogImageUrl } from '@/utils/mediaUrls'
 
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
@@ -55,88 +54,29 @@ const Blog = ({ posts }) => {
 			{/* Hero Section */}
 			<Box
 				sx={{
-					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-					pt: { xs: '6rem', md: '7rem' },
-					pb: { xs: '5rem', md: '6rem' },
-					position: 'relative',
-					overflow: 'hidden',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
-					'&::after': {
-						content: '""',
-						position: 'absolute',
-						bottom: 0,
-						left: 0,
-						right: 0,
-						height: '60px',
-						background: isDark ? '#0f172a' : '#ffffff',
-						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-					},
+					pt: { xs: '5rem', md: '6rem' },
+					pb: { xs: '3rem', md: '4rem' },
 				}}>
-				<Container
-					maxWidth='lg'
-					sx={{
-						position: 'relative',
-						zIndex: 1,
-						pb: { xs: 2, md: 3 },
-					}}>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							gap: 2,
-							mb: { xs: 2.5, md: 3 },
-						}}>
-						<RssFeedRounded
-							sx={{
-								fontSize: { xs: '2.5rem', md: '3rem' },
-								color: '#06b6d4',
-								filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))',
-							}}
-						/>
-						<Typography
-							variant='h1'
-							sx={{
-								fontWeight: 800,
-								fontSize: { xs: '2.25rem', sm: '3rem', md: '3.5rem' },
-								background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								backgroundSize: '200% 200%',
-								animation: 'gradientShift 8s ease infinite',
-								'@keyframes gradientShift': {
-									'0%, 100%': {
-										backgroundPosition: '0% 50%',
-									},
-									'50%': {
-										backgroundPosition: '100% 50%',
-									},
-								},
-							}}>
-							{t('pagetitle')}
-						</Typography>
-					</Box>
+				<Container maxWidth='lg'>
 					<Typography
-						variant='h6'
-						align='center'
+						variant='h1'
 						sx={{
-							color: 'rgba(255, 255, 255, 0.9)',
-							fontWeight: 500,
-							fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-							maxWidth: '800px',
-							mx: 'auto',
-							lineHeight: 1.7,
-							px: { xs: 2, sm: 0 },
+							fontWeight: 700,
+							fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+							color: 'text.primary',
+							mb: 2,
+							letterSpacing: '-0.02em',
+							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+						}}>
+						{t('pagetitle')}
+					</Typography>
+					<Typography
+						variant='body1'
+						sx={{
+							color: 'text.secondary',
+							fontSize: { xs: '1rem', sm: '1.125rem' },
+							maxWidth: '700px',
+							lineHeight: 1.6,
 						}}>
 						{t('description')}
 					</Typography>
@@ -146,15 +86,17 @@ const Blog = ({ posts }) => {
 			<Container
 				maxWidth='lg'
 				sx={{
-					py: { xs: 4, md: 6 },
-					px: { xs: 2, sm: 3, md: 4 },
+					py: { xs: 3, md: 4 },
+					px: { xs: 2, sm: 3 },
 				}}>
 				{/* Blog Posts */}
 				<Box
 					sx={{
 						display: 'flex',
 						flexDirection: 'column',
-						gap: { xs: 3, sm: 4, md: 5 },
+						gap: { xs: 2.5, sm: 3 },
+						maxWidth: '800px',
+						mx: 'auto',
 					}}>
 					{posts.map((post, index) => (
 						<BlogCard key={index} post={post} />
@@ -165,21 +107,35 @@ const Blog = ({ posts }) => {
 	)
 }
 
-export const getStaticProps = async () => {
-	const files = fs.readdirSync(path.join('posts'))
+export const getStaticProps = async ({ locale }) => {
+	// Déterminer le dossier de posts selon la langue
+	const postsDirectory = path.join('posts', locale)
 
-	const posts = files.map(filename => {
-		const slug = filename.replace('.mdx', '')
+	// Vérifier si le dossier existe
+	if (!fs.existsSync(postsDirectory)) {
+		return {
+			props: {
+				posts: [],
+			},
+		}
+	}
 
-		const markdownWithMeta = fs.readFileSync(
-			path.join('posts', filename),
-			'utf-8'
-		)
+	const files = fs.readdirSync(postsDirectory)
 
-		const { data: frontmatter } = matter(markdownWithMeta)
+	const posts = files
+		.filter(filename => filename.endsWith('.mdx'))
+		.map(filename => {
+			const slug = filename.replace('.mdx', '')
 
-		return { slug, frontmatter }
-	})
+			const markdownWithMeta = fs.readFileSync(
+				path.join(postsDirectory, filename),
+				'utf-8'
+			)
+
+			const { data: frontmatter } = matter(markdownWithMeta)
+
+			return { slug, frontmatter }
+		})
 
 	return {
 		props: {

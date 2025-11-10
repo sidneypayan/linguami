@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Alert, Button, Box, CircularProgress } from '@mui/material'
 import { MailOutline, Close } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import { useUserContext } from '../../context/user'
-import { resendVerificationEmail } from '../../lib/emailVerification'
+import { useUserContext } from '@/context/user'
+import { resendVerificationEmail } from '@/lib/emailVerification'
 import { useRouter } from 'next/router'
-import { getEmailLanguage } from '../../lib/emailService'
-import toast from '../../utils/toast'
+import { getEmailLanguage } from '@/lib/emailService'
+import toast from '@/utils/toast'
 
 /**
  * Bannière d'avertissement pour les utilisateurs dont l'email n'est pas vérifié

@@ -19,9 +19,9 @@ import {
 	Autocomplete,
 } from '@mui/material'
 import { Add, Delete, ArrowBack } from '@mui/icons-material'
-import { useUserContext } from '../../../context/user'
-import { createBrowserClient } from '../../../lib/supabase'
-import toast from '../../../utils/toast'
+import { useUserContext } from '@/context/user'
+import { createBrowserClient } from '@/lib/supabase'
+import toast from '@/utils/toast'
 import Head from 'next/head'
 import useTranslation from 'next-translate/useTranslation'
 

@@ -7,7 +7,7 @@ import { ExpandMoreRounded, RecordVoiceOverRounded, CheckCircleRounded } from '@
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (

@@ -1,9 +1,9 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
-import { useUserContext } from '../context/user'
-import AuthLayout from '../components/auth/AuthLayout'
-import OAuthButtons from '../components/auth/OAuthButtons'
-import MagicLinkDialog from '../components/auth/MagicLinkDialog'
+import { useUserContext } from '@/context/user'
+import AuthLayout from '@/components/auth/AuthLayout'
+import OAuthButtons from '@/components/auth/OAuthButtons'
+import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import Head from 'next/head'
 import Link from 'next/link'
 import {

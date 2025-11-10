@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { validateWordPair } from '../../../utils/validation'
+import { validateWordPair } from '@/utils/validation'
 
 export default async function handler(req, res) {
 	// Seulement accepter POST

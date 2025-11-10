@@ -3,7 +3,7 @@ import { Box, Typography, Button, Paper, Alert, useTheme, Grid, Chip } from '@mu
 import { CheckCircle, Cancel, DragIndicator, CompareArrows, EmojiEvents, Refresh } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
-import { getLocalizedQuestion } from '../../utils/exerciseHelpers'
+import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
 
 /**
  * Matching/Pairing Exercise Component

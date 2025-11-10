@@ -2,7 +2,7 @@ import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
 import { Apple, EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import { getUIImageUrl } from '../../utils/mediaUrls'
+import { getUIImageUrl } from '@/utils/mediaUrls'
 
 const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')

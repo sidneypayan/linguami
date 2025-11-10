@@ -7,8 +7,8 @@ import {
 	Chip,
 	Alert,
 } from '@mui/material'
-import { FormRow, FormRowSelect } from '../components'
-import { lang } from '../utils/constants'
+import { FormRow, FormRowSelect } from '@/components'
+import { lang } from '@/utils/constants'
 import {
 	Article,
 	Image as ImageIcon,

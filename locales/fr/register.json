@@ -1,4 +1,10 @@
 {
+	"signupPagetitle": "Créer un Compte Linguami | Apprendre le Russe Gratuitement",
+	"signupDescription": "Créez votre compte gratuit Linguami pour accéder à nos cours de russe, exercices interactifs, dictionnaire personnel et système de répétition espacée. Commencez à apprendre aujourd'hui.",
+	"signupKeywords": "créer compte linguami, inscription russe, compte gratuit, apprendre russe, s'inscrire linguami",
+	"loginPagetitle": "Connexion Linguami | Accédez à Vos Cours de Russe",
+	"loginDescription": "Connectez-vous à votre compte Linguami pour continuer votre apprentissage du russe. Accédez à votre dictionnaire, vos matériels et suivez votre progression.",
+	"loginKeywords": "connexion linguami, se connecter, login russe, accès compte linguami",
 	"or": "ou",
 	"signInWithFacebook": "Se connecter avec Facebook",
 	"signInWithGoogle": "Se connecter avec Google",

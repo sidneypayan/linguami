@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { changePage } from '../../features/materials/materialsSlice'
+import { changePage } from '@/features/materials/materialsSlice'
 import { Box, IconButton, Button, Stack, useTheme, useMediaQuery } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 

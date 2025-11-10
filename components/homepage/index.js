@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { useState, useMemo, useEffect } from 'react'
 import Hero from './Hero'
 import Link from 'next/link'
-import { getUIImageUrl } from '../../utils/mediaUrls'
+import { getUIImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,
 	Button,
@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 
 import { Stack } from '@mui/system'
-import { primaryButton } from '../../utils/buttonStyles'
+import { primaryButton } from '@/utils/buttonStyles'
 import { PlayArrow, AutoAwesome, Close, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Autoplay } from 'swiper'

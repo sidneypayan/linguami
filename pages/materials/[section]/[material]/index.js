@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { supabase } from '../../../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -11,24 +11,24 @@ import {
 	getUserMaterialStatus,
 	getUserMaterialsStatus,
 	addMaterialToStudied,
-} from '../../../../features/materials/materialsSlice'
+} from '@/features/materials/materialsSlice'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
-} from '../../../../features/words/wordsSlice'
-import BookMenu from '../../../../components/material/BookMenu'
-import Translation from '../../../../components/material/Translation'
-import Words from '../../../../components/material/Words'
-import WordsContainer from '../../../../components/material/WordsContainer'
-import VideoPlayer from '../../../../components/material/VideoPlayer'
-import EditMaterialModal from '../../../../components/admin/EditMaterialModal'
-import ExerciseSection from '../../../../components/exercises/ExerciseSection'
-import { useUserContext } from '../../../../context/user'
+} from '@/features/words/wordsSlice'
+import BookMenu from '@/components/material/BookMenu'
+import Translation from '@/components/material/Translation'
+import Words from '@/components/material/Words'
+import WordsContainer from '@/components/material/WordsContainer'
+import VideoPlayer from '@/components/material/VideoPlayer'
+import EditMaterialModal from '@/components/admin/EditMaterialModal'
+import ExerciseSection from '@/components/exercises/ExerciseSection'
+import { useUserContext } from '@/context/user'
 import { sections } from '../../../../data/sections'
 
-import Player from '../../../../components/Player'
-import { getAudioUrl, getMaterialImageUrl } from '../../../../utils/mediaUrls'
-import { editContent } from '../../../../features/content/contentSlice'
+import Player from '@/components/Player'
+import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
+import { editContent } from '@/features/content/contentSlice'
 import {
 	Box,
 	Button,
@@ -55,7 +55,7 @@ import {
 	warningButton,
 	tertiaryButton,
 	successButton,
-} from '../../../../utils/buttonStyles'
+} from '@/utils/buttonStyles'
 
 const Material = ({ material: single_material }) => {
 	const { t, lang } = useTranslation('materials')

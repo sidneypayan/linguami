@@ -2,14 +2,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
-import LessonsMenu from '../../components/lessons/LessonsMenu'
-import Lesson from '../../components/lessons/Lesson'
-import SEO from '../../components/SEO'
+import LessonsMenu from '@/components/lessons/LessonsMenu'
+import Lesson from '@/components/lessons/Lesson'
+import SEO from '@/components/SEO'
 import { Stack } from '@mui/material'
 import {
 	getLessons,
 	getUserLessonStatus,
-} from '../../features/lessons/lessonsSlice'
+} from '@/features/lessons/lessonsSlice'
 
 const Lessons = () => {
 	const router = useRouter()

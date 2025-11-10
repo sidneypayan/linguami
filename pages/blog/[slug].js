@@ -1,19 +1,43 @@
-import SEO from '../../components/SEO'
-import Image from 'next/image'
+import SEO from '@/components/SEO'
 import Link from 'next/link'
 import matter from 'gray-matter'
 import { marked } from 'marked'
 import fs from 'fs'
 import path from 'path'
 import useTranslation from 'next-translate/useTranslation'
-import { Box, Container, Typography, IconButton, Chip, useTheme } from '@mui/material'
-import { ArrowBack, CalendarTodayRounded } from '@mui/icons-material'
-import { getBlogImageUrl } from '../../utils/mediaUrls'
+import { Box, Container, Typography, IconButton, Chip, useTheme, Grid } from '@mui/material'
+import { ArrowBack, CalendarTodayRounded, AccessTimeRounded } from '@mui/icons-material'
+import { getBlogImageUrl } from '@/utils/mediaUrls'
+import ReadingProgress from '@/components/blog/ReadingProgress'
+import TableOfContents from '@/components/blog/TableOfContents'
+import SocialShareButtons from '@/components/blog/SocialShareButtons'
+import StickySignupWidget from '@/components/blog/StickySignupWidget'
+import RelatedArticles from '@/components/blog/RelatedArticles'
+import { calculateReadingTime, formatReadingTime } from '@/utils/readingTime'
+import { sortPostsByDate } from '@/utils/helpers'
+import { slugify } from '@/utils/slugify'
 
-const Post = ({ frontmatter: { title, date, img, description }, slug, content }) => {
-	const { lang } = useTranslation()
+const Post = ({ frontmatter: { title, date, img, description }, slug, content, allPosts }) => {
+	const { t, lang } = useTranslation('blog')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+
+	// Calculer le temps de lecture
+	const readingTime = calculateReadingTime(content)
+	const readingTimeText = formatReadingTime(readingTime, lang)
+
+	// Configurer marked pour ajouter des IDs aux titres H2
+	marked.use({
+		renderer: {
+			heading(text, level) {
+				if (level === 2) {
+					const id = slugify(text)
+					return `<h${level} id="${id}">${text}</h${level}>`
+				}
+				return `<h${level}>${text}</h${level}>`
+			}
+		}
+	})
 
 	// Générer une description si elle n'existe pas dans le frontmatter
 	const pageDescription = description || `${title} - Article publié le ${date} sur le blog Linguami`
@@ -56,114 +80,131 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 				jsonLd={jsonLd}
 			/>
 
-			{/* Hero Section with Image */}
-			<Box
-				sx={{
-					position: 'relative',
-					width: '100%',
-					height: { xs: '400px', sm: '500px', md: '600px' },
-					overflow: 'hidden',
-					pt: { xs: '56px', sm: '64px' },
-					'&::after': {
-						content: '""',
-						position: 'absolute',
-						bottom: 0,
-						left: 0,
-						right: 0,
-						height: '50%',
-						background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-						zIndex: 1,
-					},
-				}}>
-				<Image
-					fill
-					style={{ objectFit: 'cover' }}
-					quality={100}
-					priority
-					src={getBlogImageUrl({ img })}
-					alt={title}
-				/>
-
-				{/* Back Button */}
-				<Link href="/blog" style={{ textDecoration: 'none' }}>
-					<IconButton
-						sx={{
-							position: 'absolute',
-							top: { xs: 16, sm: 24 },
-							left: { xs: 16, sm: 24 },
-							zIndex: 2,
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
-							backdropFilter: 'blur(10px)',
-							border: '1px solid rgba(139, 92, 246, 0.3)',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-							transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-							'&:hover': {
-								background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%)',
-								transform: 'scale(1.05)',
-								boxShadow: '0 6px 30px rgba(139, 92, 246, 0.5)',
-							},
-							'&:active': {
-								transform: 'scale(0.95)',
-							},
-						}}>
-						<ArrowBack sx={{ color: 'white' }} />
-					</IconButton>
-				</Link>
-
-				{/* Title and Date Overlay */}
-				<Container
-					maxWidth="md"
-					sx={{
-						position: 'absolute',
-						bottom: { xs: 24, sm: 40 },
-						left: '50%',
-						transform: 'translateX(-50%)',
-						zIndex: 2,
-						px: { xs: 2, sm: 3 },
-					}}>
-					<Typography
-						variant="h1"
-						sx={{
-							color: 'white',
-							fontWeight: 800,
-							fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-							lineHeight: 1.2,
-							mb: 2,
-							textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-						}}>
-						{title}
-					</Typography>
-
-					<Chip
-						icon={<CalendarTodayRounded sx={{ fontSize: '1rem' }} />}
-						label={date}
-						sx={{
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(6, 182, 212, 0.95) 100%)',
-							backdropFilter: 'blur(10px)',
-							color: 'white',
-							border: '1px solid rgba(255, 255, 255, 0.3)',
-							fontWeight: 700,
-							fontSize: '0.95rem',
-							padding: '20px 8px',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-							'& .MuiChip-icon': {
-								color: 'white',
-							},
-						}}
-					/>
-				</Container>
-			</Box>
-
-			{/* Content Section */}
+			{/* Header Section */}
 			<Container
 				maxWidth="md"
+				sx={{
+					pt: { xs: '72px', sm: '88px' },
+					pb: { xs: 4, sm: 5 },
+				}}>
+				{/* Back Button */}
+				<Link href="/blog" style={{ textDecoration: 'none' }}>
+					<Box
+						sx={{
+							display: 'inline-flex',
+							alignItems: 'center',
+							gap: 1,
+							mb: 4,
+							color: isDark ? 'text.secondary' : 'text.secondary',
+							transition: 'all 0.2s ease',
+							cursor: 'pointer',
+							'&:hover': {
+								color: isDark ? 'primary.light' : 'primary.main',
+								transform: 'translateX(-4px)',
+							},
+						}}>
+						<ArrowBack sx={{ fontSize: '1.25rem' }} />
+						<Typography
+							sx={{
+								fontSize: '0.95rem',
+								fontWeight: 500,
+							}}>
+							{t('backToBlog')}
+						</Typography>
+					</Box>
+				</Link>
+
+				{/* Title */}
+				<Typography
+					variant="h1"
+					sx={{
+						fontWeight: 700,
+						fontSize: { xs: '1.875rem', sm: '2.5rem', md: '3rem' },
+						lineHeight: 1.15,
+						mb: 3,
+						color: 'text.primary',
+						letterSpacing: '-0.025em',
+						fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+					}}>
+					{title}
+				</Typography>
+
+				{/* Meta information */}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: 2.5,
+						flexWrap: 'wrap',
+						mb: 5,
+						pb: 4,
+						borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+					}}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+						<CalendarTodayRounded
+							sx={{
+								fontSize: '1rem',
+								color: 'text.secondary',
+							}}
+						/>
+						<Typography
+							sx={{
+								fontSize: '0.9rem',
+								color: 'text.secondary',
+								fontWeight: 400,
+							}}>
+							{date}
+						</Typography>
+					</Box>
+					<Box
+						sx={{
+							width: '4px',
+							height: '4px',
+							borderRadius: '50%',
+							bgcolor: 'text.secondary',
+							opacity: 0.4,
+						}}
+					/>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+						<AccessTimeRounded
+							sx={{
+								fontSize: '1rem',
+								color: 'text.secondary',
+							}}
+						/>
+						<Typography
+							sx={{
+								fontSize: '0.9rem',
+								color: 'text.secondary',
+								fontWeight: 400,
+							}}>
+							{readingTimeText}
+						</Typography>
+					</Box>
+				</Box>
+			</Container>
+
+			{/* Reading Progress Bar */}
+			<ReadingProgress />
+
+			{/* Content Section with Sidebar */}
+			<Container
+				maxWidth="xl"
 				sx={{
 					py: { xs: 4, sm: 6, md: 8 },
 					px: { xs: 2, sm: 3 },
 				}}>
-				<Box
-					component="article"
-					sx={{
+				<Grid container spacing={4}>
+					{/* Sidebar gauche - Table des matières (desktop seulement) */}
+					<Grid item xs={0} lg={3} sx={{ display: { xs: 'none', lg: 'block' } }}>
+						<TableOfContents content={content} />
+					</Grid>
+
+					{/* Contenu principal */}
+					<Grid item xs={12} lg={9}>
+						<Box
+							component="article"
+							sx={{
 						color: isDark ? '#f1f5f9' : '#2d3748',
 						fontSize: { xs: '1rem', sm: '1.0625rem' },
 						lineHeight: 1.8,
@@ -174,24 +215,31 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 							color: isDark ? '#cbd5e1' : '#4a5568',
 						},
 
-						// Titres
+						// Titres - même style que le titre principal de l'article
 						'& h1, & h2, & h3, & h4, & h5, & h6': {
 							fontWeight: 700,
-							color: isDark ? '#f1f5f9' : '#2d3748',
+							color: 'text.primary',
 							marginTop: 4,
 							marginBottom: 2,
-							lineHeight: 1.3,
+							lineHeight: 1.15,
+							letterSpacing: '-0.025em',
+							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 						},
 						'& h1': { fontSize: { xs: '2rem', md: '2.5rem' } },
 						'& h2': {
-							fontSize: { xs: '1.75rem', md: '2rem' },
-							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
+							fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+							mt: 6,
+							mb: 3,
 						},
-						'& h3': { fontSize: { xs: '1.5rem', md: '1.75rem' } },
-						'& h4': { fontSize: { xs: '1.25rem', md: '1.5rem' } },
+						'& h3': {
+							fontSize: { xs: '1.25rem', sm: '1.375rem', md: '1.5rem' },
+							mt: 5,
+							mb: 2.5,
+						},
+						'& h4': {
+							fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
+							mt: 4,
+						},
 
 						// Listes
 						'& ul, & ol': {
@@ -307,19 +355,52 @@ const Post = ({ frontmatter: { title, date, img, description }, slug, content })
 						},
 					}}
 					dangerouslySetInnerHTML={{ __html: marked(content) }}></Box>
+
+						{/* Boutons de partage social */}
+						<SocialShareButtons
+							title={title}
+							url={`https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog/${slug}`}
+						/>
+
+						{/* Articles suggérés */}
+						<RelatedArticles
+							currentSlug={slug}
+							allPosts={allPosts}
+							maxItems={3}
+						/>
+					</Grid>
+				</Grid>
 			</Container>
+
+			{/* Sticky Signup Widget */}
+			<StickySignupWidget />
 		</>
 	)
 }
 
 export async function getStaticPaths() {
-	const files = fs.readdirSync(path.join('posts'))
+	const locales = ['fr', 'ru', 'en']
+	const paths = []
 
-	const paths = files.map(filename => ({
-		params: {
-			slug: filename.replace('.mdx', ''),
-		},
-	}))
+	locales.forEach(locale => {
+		const postsDirectory = path.join('posts', locale)
+
+		// Vérifier si le dossier existe
+		if (fs.existsSync(postsDirectory)) {
+			const files = fs.readdirSync(postsDirectory)
+
+			files
+				.filter(filename => filename.endsWith('.mdx'))
+				.forEach(filename => {
+					paths.push({
+						params: {
+							slug: filename.replace('.mdx', ''),
+						},
+						locale: locale,
+					})
+				})
+		}
+	})
 
 	return {
 		paths,
@@ -327,19 +408,35 @@ export async function getStaticPaths() {
 	}
 }
 
-export async function getStaticProps({ params: { slug } }) {
+export async function getStaticProps({ params: { slug }, locale }) {
+	const postsDirectory = path.join('posts', locale)
 	const markdownWithMeta = fs.readFileSync(
-		path.join('posts', slug + '.mdx'),
+		path.join(postsDirectory, slug + '.mdx'),
 		'utf-8'
 	)
 
 	const { data: frontmatter, content } = matter(markdownWithMeta)
+
+	// Récupérer tous les articles pour les suggestions (dans la même langue)
+	const files = fs.readdirSync(postsDirectory)
+	const allPosts = files
+		.filter(filename => filename.endsWith('.mdx'))
+		.map(filename => {
+			const postSlug = filename.replace('.mdx', '')
+			const markdownWithMeta = fs.readFileSync(
+				path.join(postsDirectory, filename),
+				'utf-8'
+			)
+			const { data: frontmatter } = matter(markdownWithMeta)
+			return { slug: postSlug, frontmatter }
+		})
 
 	return {
 		props: {
 			frontmatter,
 			slug,
 			content,
+			allPosts: allPosts.sort(sortPostsByDate),
 		},
 	}
 }

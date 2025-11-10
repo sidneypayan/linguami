@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { useUserContext } from '../../context/user.js'
+import { useUserContext } from '@/context/user.js'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import UserMenu from './UserMenu'

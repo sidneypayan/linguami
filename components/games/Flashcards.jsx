@@ -1,21 +1,21 @@
 import { useSelector, useDispatch } from 'react-redux'
-import styles from '../../styles/FlashCards.module.css'
+import styles from '@/styles/FlashCards.module.css'
 import { useState, useEffect, useMemo } from 'react'
-import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
-import { updateWordReview, initializeWordSRS, suspendCard } from '../../features/words/wordsSlice'
+import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
+import { updateWordReview, initializeWordSRS, suspendCard } from '@/features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
-import toast from '../../utils/toast'
-import { useUserContext } from '../../context/user'
+import toast from '@/utils/toast'
+import { useUserContext } from '@/context/user'
 import { useAchievementContext } from '../AchievementProvider'
-import { getGuestWordsByLanguage, updateGuestWord } from '../../utils/guestDictionary'
+import { getGuestWordsByLanguage, updateGuestWord } from '@/utils/guestDictionary'
 import {
 	getDueCards,
 	getButtonIntervals,
 	calculateNextReview,
 	BUTTON_TYPES,
 	CARD_STATES
-} from '../../utils/spacedRepetition'
+} from '@/utils/spacedRepetition'
 import {
 	CloseRounded,
 	SwapHorizRounded,
