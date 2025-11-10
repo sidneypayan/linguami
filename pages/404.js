@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import useTranslation from 'next-translate/useTranslation'
-import SEO from '../components/SEO'
+import SEO from '@/components/SEO'
 import { Box, Container, Typography, Button } from '@mui/material'
 import { HomeRounded, SearchOffRounded, ErrorOutlineRounded } from '@mui/icons-material'
 

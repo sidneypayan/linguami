@@ -5,11 +5,11 @@ import {
 	toggleTranslationContainer,
 	cleanTranslation,
 	addWordToDictionary,
-} from '../../features/words/wordsSlice'
+} from '@/features/words/wordsSlice'
 import Link from 'next/link'
-import { useUserContext } from '../../context/user'
-import { addGuestWord, getGuestWordsCount, GUEST_DICTIONARY_CONFIG } from '../../utils/guestDictionary'
-import toast from '../../utils/toast'
+import { useUserContext } from '@/context/user'
+import { addGuestWord, getGuestWordsCount, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
+import toast from '@/utils/toast'
 import {
 	Box,
 	Paper,
@@ -27,7 +27,7 @@ import {
 	useTheme,
 } from '@mui/material'
 import { Add, Close, Translate } from '@mui/icons-material'
-import { primaryButton, secondaryButton } from '../../utils/buttonStyles'
+import { primaryButton, secondaryButton } from '@/utils/buttonStyles'
 
 const Translation = ({ coordinates, materialId, userId }) => {
 	const { t, lang } = useTranslation('words')

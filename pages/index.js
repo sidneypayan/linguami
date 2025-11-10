@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Homepage from '../components/homepage'
+import Homepage from '@/components/homepage'
 
 export default function Home() {
 	const { t, lang } = useTranslation('home')

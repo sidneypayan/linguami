@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useUserContext } from '../context/user'
+import { useUserContext } from '@/context/user'
 import useTranslation from 'next-translate/useTranslation'
-import toast from '../utils/toast'
-import { AVATARS, getAvatarUrl } from '../utils/avatars'
+import toast from '@/utils/toast'
+import { AVATARS, getAvatarUrl } from '@/utils/avatars'
 import {
 	Container,
 	Box,

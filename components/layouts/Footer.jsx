@@ -18,12 +18,8 @@ const Footer = () => {
 				mt: 'auto',
 				position: 'relative',
 				overflow: 'hidden',
-				pt: { xs: 'calc(1.5rem + 40px)', md: '80px' },
+				pt: { xs: 4, md: 6 },
 				pb: { xs: 'calc(72px + 32px)', md: 6 },
-				clipPath: {
-					xs: 'polygon(0 40px, 100% 0, 100% 100%, 0 100%)',
-					md: 'polygon(0 80px, 100% 0, 100% 100%, 0 100%)',
-				},
 				'&::before': {
 					content: '""',
 					position: 'absolute',

@@ -1,4 +1,4 @@
-import materialsSlice from '../features/materials/materialsSlice'
+import materialsSlice from '@/features/materials/materialsSlice'
 
 export const sortPostsByDate = (a, b) => {
 	return new Date(b.frontmatter.date) - new Date(a.frontmatter.date)

@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import { Close, Save } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	const { t } = useTranslation('admin')

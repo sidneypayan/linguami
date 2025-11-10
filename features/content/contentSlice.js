@@ -1,10 +1,10 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import toast from '../../utils/toast'
-import { getToastMessage } from '../../utils/toastMessages'
-import { sanitizeObject, sanitizeFilename, validateFileType } from '../../utils/sanitize'
-import { optimizeImage } from '../../utils/imageOptimizer'
-import { convertAudioToM4a } from '../../utils/audioConverter'
+import toast from '@/utils/toast'
+import { getToastMessage } from '@/utils/toastMessages'
+import { sanitizeObject, sanitizeFilename, validateFileType } from '@/utils/sanitize'
+import { optimizeImage } from '@/utils/imageOptimizer'
+import { convertAudioToM4a } from '@/utils/audioConverter'
 
 const initialState = {
 	editingContent: {},

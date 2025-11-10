@@ -1,8 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useUserContext } from '../../context/user.js'
+import { useUserContext } from '@/context/user.js'
 import { useState, useMemo } from 'react'
 import { styled, alpha, useTheme } from '@mui/material/styles'
-import { getAvatarUrl } from '../../utils/avatars.js'
+import { getAvatarUrl } from '@/utils/avatars.js'
 import {
 	Box,
 	Divider,
@@ -26,7 +26,7 @@ import {
 } from '@mui/icons-material'
 import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
-import { cleanUserMaterialStatus } from '../../features/materials/materialsSlice.js'
+import { cleanUserMaterialStatus } from '@/features/materials/materialsSlice.js'
 
 const StyledMenu = styled(props => (
 	<Menu

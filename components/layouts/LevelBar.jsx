@@ -4,11 +4,11 @@ import {
 	filterMaterials,
 	showAllMaterials,
 	filterMaterialsByStatus,
-} from '../../features/materials/materialsSlice'
+} from '@/features/materials/materialsSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { searchMaterial } from '../../features/materials/materialsSlice'
+import { searchMaterial } from '@/features/materials/materialsSlice'
 import { Box, TextField, IconButton, Chip, Stack, Tooltip, InputAdornment } from '@mui/material'
 
 const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = false }) => {

@@ -5,7 +5,7 @@ import EmailVerificationBanner from './auth/EmailVerificationBanner'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { getLessons } from '../features/lessons/lessonsSlice'
+import { getLessons } from '@/features/lessons/lessonsSlice'
 import FlashCards from './games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 

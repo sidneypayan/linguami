@@ -1,8 +1,8 @@
 import useTranslation from "next-translate/useTranslation";
-import SectionCard from "../../../components/SectionCard";
-import MaterialsTable from "../../../components/MaterialsTable";
-import MaterialsFilterBar from "../../../components/MaterialsFilterBar";
-import Pagination from "../../../components/layouts/Pagination";
+import SectionCard from '@/components/SectionCard';
+import MaterialsTable from '@/components/MaterialsTable';
+import MaterialsFilterBar from '@/components/MaterialsFilterBar';
+import Pagination from '@/components/layouts/Pagination';
 import { useSelector, useDispatch } from "react-redux";
 import {
   getBooks,
@@ -13,16 +13,16 @@ import {
   showAllMaterials,
   filterMaterialsByStatus,
   filterMaterialsByLevelAndStatus,
-} from "../../../features/materials/materialsSlice";
-import { selectMaterialsData } from "../../../features/materials/materialsSelectors";
+} from '@/features/materials/materialsSlice';
+import { selectMaterialsData } from '@/features/materials/materialsSelectors';
 
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import { Box, Container, IconButton, Typography } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import SEO from "../../../components/SEO";
-import { useUserContext } from "../../../context/user";
-import LoadingSpinner from "../../../components/LoadingSpinner";
+import SEO from '@/components/SEO';
+import { useUserContext } from '@/context/user';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Section = () => {
   const { t, lang } = useTranslation("materials");

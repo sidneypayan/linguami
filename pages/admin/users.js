@@ -27,7 +27,7 @@ import {
 } from '@mui/material'
 import { Search, Person, AdminPanelSettings, ArrowUpward, ArrowDownward, UnfoldMore } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import AdminNavbar from '../../components/admin/AdminNavbar'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 
 const UsersPage = ({ users }) => {
 	const { t } = useTranslation('admin')

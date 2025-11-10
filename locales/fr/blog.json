@@ -1,4 +1,8 @@
 {
-	"pagetitle": "Blog",
-	"description": "Retrouvez des articles sur la langue, l'histoire et la culture russe. En complément de nos matériels d'apprentissage, nous rédigeons régulièrement des articles afin de vous immerger dans le monde russe et ses particularités."
+	"pagetitle": "Blog Linguami | Apprendre le Russe : Conseils, Méthodes et Culture",
+	"description": "Articles pour apprendre le russe efficacement : méthodes d'apprentissage, conseils pratiques, grammaire russe, culture et histoire de la Russie. Ressources pour tous les niveaux.",
+	"keywords": "blog russe, apprendre le russe, méthodes russe, grammaire russe, culture russe, conseils apprentissage russe, ressources russe",
+	"backToBlog": "Retour au blog",
+	"tableOfContents": "Sommaire",
+	"readMore": "Lire la suite"
 }

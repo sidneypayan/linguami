@@ -12,7 +12,7 @@ import {
 	Button,
 } from '@mui/material'
 import useTranslation from 'next-translate/useTranslation'
-import SEO from '../../components/SEO'
+import SEO from '@/components/SEO'
 import { CheckCircle } from '@mui/icons-material'
 
 const Premium = () => {

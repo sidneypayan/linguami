@@ -7,12 +7,12 @@ import {
 	createContext,
 	useContext,
 } from 'react'
-import { supabase } from '../lib/supabase' // client navigateur (@supabase/ssr)
+import { supabase } from '@/lib/supabase' // client navigateur (@supabase/ssr)
 import { useRouter } from 'next/router'
-import toast from '../utils/toast'
-import { createToastMessages } from '../utils/toastMessages'
-import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '../lib/emailService'
-import { sendVerificationEmail, isEmailVerified } from '../lib/emailVerification'
+import toast from '@/utils/toast'
+import { createToastMessages } from '@/utils/toastMessages'
+import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'
+import { sendVerificationEmail, isEmailVerified } from '@/lib/emailVerification'
 
 // --------------------------------------------------------
 // Helper: Déterminer la langue d'apprentissage par défaut

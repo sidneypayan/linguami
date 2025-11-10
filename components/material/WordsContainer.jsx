@@ -1,16 +1,16 @@
 import React from 'react'
 import useTranslation from 'next-translate/useTranslation'
 import { useSelector, useDispatch } from 'react-redux'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 import {
 	getUserMaterialWords,
 	deleteUserWord,
-} from '../../features/words/wordsSlice'
+} from '@/features/words/wordsSlice'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { toggleFlashcardsContainer } from '../../features/cards/cardsSlice'
-import { getGuestWords, deleteGuestWord } from '../../utils/guestDictionary'
-import toast from '../../utils/toast'
+import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
+import { getGuestWords, deleteGuestWord } from '@/utils/guestDictionary'
+import toast from '@/utils/toast'
 import {
 	Box,
 	Button,

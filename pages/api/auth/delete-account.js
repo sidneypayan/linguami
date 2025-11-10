@@ -1,4 +1,4 @@
-import { createServerClient } from '../../../lib/supabase-server'
+import { createServerClient } from '@/lib/supabase-server'
 
 export default async function handler(req, res) {
 	if (req.method !== 'DELETE') {

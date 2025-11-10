@@ -10,10 +10,10 @@ import {
 	Chip,
 } from '@mui/material'
 import { School, ExpandMore, ExpandLess, LockOpen, EmojiEvents, TrendingUp } from '@mui/icons-material'
-import { createBrowserClient } from '../../lib/supabase'
-import { useUserContext } from '../../context/user'
+import { createBrowserClient } from '@/lib/supabase'
+import { useUserContext } from '@/context/user'
 import { useRouter } from 'next/router'
-import toast from '../../utils/toast'
+import toast from '@/utils/toast'
 import useTranslation from 'next-translate/useTranslation'
 import FillInTheBlank from './FillInTheBlank'
 import MultipleChoice from './MultipleChoice'

@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useMemo } from 'react'
-import toast from '../utils/toast'
+import toast from '@/utils/toast'
 import {
 	Box,
 	Button,
@@ -20,8 +20,8 @@ import {
 	CheckCircleRounded,
 	CancelRounded,
 } from '@mui/icons-material'
-import { useUserContext } from '../context/user'
-import { supabase } from '../lib/supabase'
+import { useUserContext } from '@/context/user'
+import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 const initialState = {

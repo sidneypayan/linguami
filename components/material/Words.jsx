@@ -1,14 +1,14 @@
 import React from 'react'
-import styles from '../../styles/materials/Material.module.css'
+import styles from '@/styles/materials/Material.module.css'
 import { useDispatch } from 'react-redux'
 import {
 	translateWord,
 	toggleTranslationContainer,
 	cleanTranslation,
-} from '../../features/words/wordsSlice'
+} from '@/features/words/wordsSlice'
 import { useMemo, useCallback } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 
 // Définir les regex en dehors du composant pour éviter recréations
 const REGEX_CONFIG = {

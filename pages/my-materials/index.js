@@ -2,12 +2,12 @@ import useTranslation from 'next-translate/useTranslation'
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUserMaterials } from '../../features/materials/materialsSlice'
-import SectionCard from '../../components/SectionCard'
-import MaterialsTable from '../../components/MaterialsTable'
-import MaterialsFilterBar from '../../components/MaterialsFilterBar'
+import { getUserMaterials } from '@/features/materials/materialsSlice'
+import SectionCard from '@/components/SectionCard'
+import MaterialsTable from '@/components/MaterialsTable'
+import MaterialsFilterBar from '@/components/MaterialsFilterBar'
 import Head from 'next/head'
-import LoadingSpinner from '../../components/LoadingSpinner'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import {
 	Box,
 	Container,
@@ -15,7 +15,7 @@ import {
 	Typography,
 } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
-import { useUserContext } from '../../context/user'
+import { useUserContext } from '@/context/user'
 
 const UserMaterials = () => {
 	const { t, lang } = useTranslation('materials')

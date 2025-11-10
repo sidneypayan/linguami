@@ -1,18 +1,18 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import useTranslation from 'next-translate/useTranslation'
 import {
 	Box,
 	Card,
 	CardContent,
 	Typography,
-	Button,
-	Chip,
 	useTheme,
 } from '@mui/material'
-import { ArrowForwardRounded, CalendarTodayRounded } from '@mui/icons-material'
-import { getBlogImageUrl } from '../../utils/mediaUrls'
+import { ArrowForwardRounded } from '@mui/icons-material'
+import { getBlogImageUrl } from '@/utils/mediaUrls'
 
 const BlogCard = ({ post }) => {
+	const { t } = useTranslation('blog')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
@@ -21,78 +21,45 @@ const BlogCard = ({ post }) => {
 			<Card
 				sx={{
 					display: 'flex',
-					flexDirection: { xs: 'column', md: 'row' },
-					borderRadius: 4,
+					flexDirection: { xs: 'column', sm: 'row' },
+					borderRadius: 2,
 					overflow: 'hidden',
-					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-					boxShadow: isDark
-						? '0 4px 20px rgba(139, 92, 246, 0.25)'
-						: '0 4px 20px rgba(139, 92, 246, 0.15)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-					position: 'relative',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: '-100%',
-						width: '100%',
-						height: '100%',
-						background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
-						transition: 'left 0.5s ease',
-						pointerEvents: 'none',
-					},
+					transition: 'all 0.2s ease',
+					bgcolor: 'background.paper',
+					boxShadow: 'none',
+					border: '1px solid',
+					borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
 					'&:hover': {
-						transform: 'translateY(-8px)',
-						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
-						borderColor: 'rgba(139, 92, 246, 0.4)',
-						'&::before': {
-							left: '100%',
-						},
+						borderColor: isDark ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.3)',
+						boxShadow: isDark
+							? '0 4px 12px rgba(0, 0, 0, 0.3)'
+							: '0 4px 12px rgba(0, 0, 0, 0.08)',
 						'& .blog-image': {
-							transform: 'scale(1.05)',
+							opacity: 0.85,
 						},
-						'& .read-more-btn': {
-							background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-							transform: 'translateX(8px)',
-							boxShadow: '0 6px 25px rgba(139, 92, 246, 0.4)',
-							'& .arrow-icon': {
-								transform: 'translateX(4px)',
-							},
-							'&::before': {
-								left: '100%',
-							},
+						'& .read-more-arrow': {
+							transform: 'translateX(4px)',
 						},
 					},
 				}}>
 				{/* Image Section */}
 				<Box
 					sx={{
-						width: { xs: '100%', md: '40%' },
-						height: { xs: '250px', md: 'auto' },
+						width: { xs: '100%', sm: '240px' },
+						height: { xs: '200px', sm: 'auto' },
+						flexShrink: 0,
 						position: 'relative',
 						overflow: 'hidden',
-						minHeight: { md: '300px' },
 					}}>
-					<Box
+					<Image
 						className='blog-image'
-						sx={{
-							position: 'relative',
-							width: '100%',
-							height: '100%',
-							transition: 'transform 0.4s ease',
-						}}>
-						<Image
-							fill
-							style={{ objectFit: 'cover' }}
-							sizes='(max-width: 900px) 100vw, 40vw'
-							quality={90}
-							src={getBlogImageUrl(post)}
-							alt={post.frontmatter.title}
-						/>
-					</Box>
+						fill
+						style={{ objectFit: 'cover', transition: 'opacity 0.2s ease' }}
+						sizes='(max-width: 600px) 100vw, 240px'
+						quality={85}
+						src={getBlogImageUrl(post)}
+						alt={post.frontmatter.title}
+					/>
 				</Box>
 
 				{/* Content Section */}
@@ -101,100 +68,75 @@ const BlogCard = ({ post }) => {
 						flex: 1,
 						display: 'flex',
 						flexDirection: 'column',
-						padding: { xs: 3, sm: 4 },
-						gap: 2,
+						padding: { xs: 2.5, sm: 3 },
+						'&:last-child': { pb: { xs: 2.5, sm: 3 } },
 					}}>
-					{/* Date Badge */}
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-						<Chip
-							icon={<CalendarTodayRounded sx={{ fontSize: '0.9rem' }} />}
-							label={post.frontmatter.date}
-							sx={{
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								color: '#8b5cf6',
-								fontWeight: 600,
-								fontSize: '0.875rem',
-								backdropFilter: 'blur(10px)',
-								'& .MuiChip-icon': {
-									color: '#8b5cf6',
-								},
-							}}
-						/>
-					</Box>
+					{/* Date */}
+					<Typography
+						variant='caption'
+						sx={{
+							color: 'text.secondary',
+							fontSize: '0.875rem',
+							mb: 1.5,
+							display: 'block',
+						}}>
+						{post.frontmatter.date}
+					</Typography>
 
 					{/* Title */}
 					<Typography
-						variant='h4'
+						variant='h3'
 						sx={{
-							fontWeight: 700,
-							fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+							fontWeight: 600,
+							fontSize: { xs: '1.25rem', sm: '1.375rem' },
 							lineHeight: 1.3,
-							color: isDark ? '#f1f5f9' : '#2d3748',
-							transition: 'color 0.2s ease',
-							'&:hover': {
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							},
+							color: 'text.primary',
+							mb: 1.5,
+							display: '-webkit-box',
+							WebkitLineClamp: 2,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
+							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+							letterSpacing: '-0.01em',
 						}}>
 						{post.frontmatter.title}
 					</Typography>
 
 					{/* Excerpt */}
 					<Typography
-						variant='body1'
+						variant='body2'
 						sx={{
-							color: isDark ? '#94a3b8' : '#718096',
-							fontSize: { xs: '0.95rem', sm: '1rem' },
-							lineHeight: 1.7,
-							flex: 1,
+							color: 'text.secondary',
+							fontSize: '0.9375rem',
+							lineHeight: 1.6,
+							mb: 2,
+							display: '-webkit-box',
+							WebkitLineClamp: 2,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
 						}}>
 						{post.frontmatter.excerpt}
 					</Typography>
 
-					{/* Read More Button */}
-					<Box sx={{ display: 'flex', alignItems: 'center', marginTop: 'auto' }}>
-						<Button
-							className='read-more-btn'
-							endIcon={
-								<ArrowForwardRounded
-									className='arrow-icon'
-									sx={{
-										transition: 'transform 0.3s ease',
-									}}
-								/>
-							}
+					{/* Read More Link */}
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: 0.5,
+							color: 'primary.main',
+							fontSize: '0.9375rem',
+							fontWeight: 500,
+							mt: 'auto',
+						}}>
+						<span>{t('readMore') || 'Lire la suite'}</span>
+						<ArrowForwardRounded
+							className='read-more-arrow'
 							sx={{
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								color: 'white',
-								fontWeight: 700,
-								fontSize: { xs: '0.9rem', sm: '1rem' },
-								padding: '0.75rem 2rem',
-								borderRadius: 3,
-								textTransform: 'none',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:active': {
-									transform: 'scale(0.98)',
-								},
-							}}>
-							Lire l&apos;article
-						</Button>
+								fontSize: '1.125rem',
+								transition: 'transform 0.2s ease',
+							}}
+						/>
 					</Box>
 				</CardContent>
 			</Card>

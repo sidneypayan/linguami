@@ -7,8 +7,8 @@ import {
 	addLessonToStudied,
 	getUserLessonsStatus,
 	getUserLessonStatus,
-} from '../../features/lessons/lessonsSlice'
-import { useUserContext } from '../../context/user'
+} from '@/features/lessons/lessonsSlice'
+import { useUserContext } from '@/context/user'
 
 const Lesson = ({ lesson }) => {
 	const { t } = useTranslation('lessons')

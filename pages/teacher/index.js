@@ -1,8 +1,8 @@
 import useTranslation from 'next-translate/useTranslation'
 import { FaEnvelope, FaMicrosoft } from 'react-icons/fa'
-import SEO from '../../components/SEO'
-import { useUserContext } from '../../context/user'
-import { getUIImageUrl } from '../../utils/mediaUrls'
+import SEO from '@/components/SEO'
+import { useUserContext } from '@/context/user'
+import { getUIImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,
 	Button,

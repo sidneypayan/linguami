@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { getUserLessonsStatus } from '../../features/lessons/lessonsSlice'
+import { getUserLessonsStatus } from '@/features/lessons/lessonsSlice'
 import {
 	Box,
 	List,

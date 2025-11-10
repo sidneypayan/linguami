@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { Box, Typography, CircularProgress, Button, Card, Container } from '@mui/material'
 import { CheckCircleOutline, ErrorOutline, HomeRounded } from '@mui/icons-material'
 import Link from 'next/link'
-import { verifyEmail } from '../../lib/emailVerification'
+import { verifyEmail } from '@/lib/emailVerification'
 
 const VerifyEmail = () => {
 	const router = useRouter()

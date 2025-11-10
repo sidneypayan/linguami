@@ -1,4 +1,10 @@
 {
+	"signupPagetitle": "Create Linguami Account | Learn Russian & French for Free",
+	"signupDescription": "Create your free Linguami account to access language courses, interactive exercises, personal dictionary, and spaced repetition system. Start learning today.",
+	"signupKeywords": "create linguami account, sign up, free account, learn russian, learn french, register linguami",
+	"loginPagetitle": "Login to Linguami | Access Your Language Courses",
+	"loginDescription": "Log in to your Linguami account to continue learning. Access your dictionary, materials, and track your progress.",
+	"loginKeywords": "linguami login, sign in, language learning login, access account",
 	"or": "or",
 	"signInWithFacebook": "Sign in with Facebook",
 	"signInWithGoogle": "Sign in with Google",

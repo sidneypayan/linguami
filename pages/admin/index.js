@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createServerClient } from '@supabase/ssr'
 import loadNamespaces from 'next-translate/loadNamespaces'
-import { sectionsForAdmin } from '../../utils/constants'
+import { sectionsForAdmin } from '@/utils/constants'
 import { useState, useEffect } from 'react'
 import {
 	Box,
@@ -46,7 +46,7 @@ import {
 	OpenInNew,
 } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import AdminNavbar from '../../components/admin/AdminNavbar'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 
 const Admin = ({
 	materialsCountByLang,
