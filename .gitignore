@@ -38,3 +38,6 @@ next-env.d.ts
 
 # image optimization temp folder
 .temp-images
+
+# Windows-specific files (created by incorrect redirections)
+nul

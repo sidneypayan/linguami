@@ -29,6 +29,7 @@ import {
 	RssFeedRounded,
 	DensityMediumRounded,
 	AdminPanelSettings,
+	School,
 } from '@mui/icons-material'
 
 import LanguageMenu from './LanguageMenu.jsx'
@@ -52,6 +53,11 @@ const Navbar = props => {
 			name: t('material'),
 			icon: <AutoStoriesRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/materials',
+		},
+		{
+			name: t('methode'),
+			icon: <School style={{ fontSize: '1.5rem' }} />,
+			href: '/method',
 		},
 		{
 			name: t('teacher'),
@@ -90,6 +96,13 @@ const Navbar = props => {
 	const isActivePath = (href) => {
 		if (href === '/') return router.pathname === '/'
 		return router.pathname.startsWith(href)
+	}
+
+	// Check if user is currently on a lesson page
+	const isOnLessonPage = () => {
+		const pathSegments = router.pathname.split('/').filter(Boolean)
+		// Check if path is /method/[level]/[lessonSlug] (3 segments)
+		return router.pathname.startsWith('/method/') && pathSegments.length === 3
 	}
 
 	const drawer = (
@@ -650,8 +663,8 @@ const Navbar = props => {
 							</Link>
 						)}
 
-						{/* Theme toggle and Language buttons - only show when not in material/blog detail */}
-						{isMounted && !router.query.material && !router.query.slug && (
+						{/* Theme toggle and Language buttons - only show when not in material/blog detail or in lesson */}
+						{isMounted && !router.query.material && !router.query.slug && !isOnLessonPage() && (
 							<>
 								<ThemeToggle />
 								<InterfaceLanguageMenu />

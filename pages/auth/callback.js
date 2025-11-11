@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
 import { Box, CircularProgress, Typography } from '@mui/material'
@@ -7,11 +7,13 @@ import { Box, CircularProgress, Typography } from '@mui/material'
  * Page de callback OAuth et de confirmation d'email
  * Cette page gère les redirections après :
  * - Confirmation d'email
- * - Connexion OAuth (Google, Facebook)
+ * - Connexion OAuth (Google, Facebook, Apple)
+ * - Magic Link
  * - Reset de mot de passe
  */
 const AuthCallback = () => {
 	const router = useRouter()
+	const [statusMessage, setStatusMessage] = useState('Vérification de votre compte...')
 
 	useEffect(() => {
 		const handleCallback = async () => {
@@ -26,29 +28,54 @@ const AuthCallback = () => {
 				const refreshToken = hashParams.get('refresh_token')
 
 				if (accessToken && refreshToken) {
+					setStatusMessage('Connexion en cours...')
+
 					// Définir la session avec les tokens
-					const { error } = await supabase.auth.setSession({
+					const { error: sessionError } = await supabase.auth.setSession({
 						access_token: accessToken,
 						refresh_token: refreshToken,
 					})
 
-					if (error) {
-						console.error('Error setting session:', error)
+					if (sessionError) {
+						console.error('Error setting session:', sessionError)
 						// Rediriger vers login en cas d'erreur
 						router.replace('/login?error=session')
 						return
 					}
 
-					// Succès - rediriger vers la page d'accueil
-					if (type === 'signup') {
-						// Nouvel utilisateur confirmé
-						router.replace('/?welcome=true')
-					} else if (type === 'recovery') {
-						// Reset de mot de passe
-						router.replace('/update-password')
-					} else {
-						// Connexion OAuth ou autre
-						router.replace('/')
+					// Vérifier si l'utilisateur a un profil
+					const { data: { user } } = await supabase.auth.getUser()
+
+					if (user) {
+						// Vérifier si le profil existe
+						const { data: profile } = await supabase
+							.from('users_profile')
+							.select('id, learning_language')
+							.eq('id', user.id)
+							.maybeSingle()
+
+						// Si le profil existe déjà (cas normal)
+						if (profile) {
+							setStatusMessage('Redirection...')
+
+							// Succès - rediriger vers la page d'accueil
+							if (type === 'signup') {
+								// Nouvel utilisateur confirmé
+								router.replace('/?welcome=true')
+							} else if (type === 'recovery') {
+								// Reset de mot de passe
+								router.replace('/update-password')
+							} else {
+								// Connexion OAuth ou Magic Link
+								router.replace('/')
+							}
+						} else {
+							// Profil pas encore créé (rare car trigger auto)
+							// Attendre un peu et réessayer
+							setStatusMessage('Finalisation de votre profil...')
+							await new Promise(resolve => setTimeout(resolve, 1000))
+							router.replace('/')
+						}
 					}
 				} else {
 					// Pas de tokens valides - rediriger vers login
@@ -88,7 +115,7 @@ const AuthCallback = () => {
 					textAlign: 'center',
 					px: 3,
 				}}>
-				Vérification de votre compte...
+				{statusMessage}
 			</Typography>
 			<Typography
 				variant="body1"

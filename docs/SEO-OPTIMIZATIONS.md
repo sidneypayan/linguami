@@ -239,7 +239,7 @@ gtm.trackLessonComplete('lesson-1', 'Les bases', router.locale)
    ```javascript
    // Exemples d'intégration recommandée :
 
-   // Dans pages/signin.js après inscription réussie :
+   // Dans pages/signup.js après inscription réussie :
    import * as gtm from '../lib/gtm'
    gtm.trackSignup(method, router.locale)
 
