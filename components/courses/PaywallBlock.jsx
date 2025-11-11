@@ -112,7 +112,7 @@ const PaywallBlock = ({ isLoggedIn }) => {
 			{/* CTA Buttons */}
 			<Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
 				{!isLoggedIn && (
-					<Link href="/register" passHref legacyBehavior>
+					<Link href="/signup" passHref legacyBehavior>
 						<Button
 							variant="contained"
 							size="large"

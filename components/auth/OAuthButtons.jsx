@@ -5,13 +5,16 @@ import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import VkIdButton from './VkIdButton'
+import { useUserContext } from '@/context/user'
 
 const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')
 	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const showVkId = router.locale === 'ru'
+	const { isUserAdmin } = useUserContext()
+	const showVkId = router.locale === 'ru' && isUserAdmin
+	const showFacebook = isUserAdmin
 
 	const buttonStyles = {
 		py: { xs: 1.75, sm: 1.75 },
@@ -113,22 +116,24 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 					gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
 					gap: 2,
 				}}>
-				{providers.map((provider) => (
-					<Button
-						key={provider.id}
-						variant="outlined"
-						fullWidth
-						onClick={provider.onClick}
-						sx={buttonStyles}
-						aria-label={provider.labelLong}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
-							{provider.icon}
-							<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
-								{provider.labelShort}
-							</Typography>
-						</Box>
-					</Button>
-				))}
+				{providers
+					.filter(provider => provider.id !== 'facebook' || showFacebook)
+					.map((provider) => (
+						<Button
+							key={provider.id}
+							variant="outlined"
+							fullWidth
+							onClick={provider.onClick}
+							sx={buttonStyles}
+							aria-label={provider.labelLong}>
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
+								{provider.icon}
+								<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
+									{provider.labelShort}
+								</Typography>
+							</Box>
+						</Button>
+					))}
 			</Box>
 		</Box>
 	)

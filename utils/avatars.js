@@ -1,7 +1,7 @@
 import { getUIImageUrl } from './mediaUrls'
 
 // Numéro de version pour forcer le rechargement des avatars (incrémenter quand les images changent)
-const AVATAR_VERSION = '2'
+const AVATAR_VERSION = '3'
 
 // Liste complète des avatars disponibles
 // Note: les noms sont des clés de traduction (voir locales/*/register.json)
@@ -58,13 +58,13 @@ export const AVATARS = [
 	},
 	{
 		id: 'avatar11',
-		nameKey: 'avatarWizardFemale',
-		url: `${getUIImageUrl('wizard_female.webp')}?v=${AVATAR_VERSION}`,
+		nameKey: 'avatarHumanFemale',
+		url: `${getUIImageUrl('human_female.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar12',
-		nameKey: 'avatarWizardMale',
-		url: `${getUIImageUrl('wizard_male.webp')}?v=${AVATAR_VERSION}`,
+		nameKey: 'avatarHumanMale',
+		url: `${getUIImageUrl('human_male.webp')}?v=${AVATAR_VERSION}`,
 	},
 	{
 		id: 'avatar13',
@@ -97,8 +97,8 @@ export const getAvatarBorderColor = avatarId => {
 		avatar8: '#d97706', // Ambre foncé pour tauren mâle
 		avatar9: '#ec4899', // Rose pour gnome mâle
 		avatar10: '#db2777', // Rose foncé pour gnome femelle
-		avatar11: '#8b5cf6', // Violet pour magicienne
-		avatar12: '#7c3aed', // Violet foncé pour magicien
+		avatar11: '#8b5cf6', // Violet pour humaine
+		avatar12: '#7c3aed', // Violet foncé pour humain
 		avatar13: '#10b981', // Vert pour orc mâle
 		avatar14: '#059669', // Vert foncé pour orc femelle
 	}

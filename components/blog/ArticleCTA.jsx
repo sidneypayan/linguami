@@ -25,7 +25,7 @@ export default function ArticleCTA({ type = 'start-learning', className = '' }) 
 			title: "Prêt à commencer votre apprentissage ?",
 			subtitle: "Rejoignez Linguami et accédez à des centaines de ressources pour apprendre le russe ou le français efficacement.",
 			buttonText: "Commencer gratuitement",
-			href: "/register",
+			href: "/signup",
 			color: '#8b5cf6'
 		},
 		'materials': {

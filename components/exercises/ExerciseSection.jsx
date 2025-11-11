@@ -433,7 +433,7 @@ const ExerciseSection = ({ materialId }) => {
 										<Button
 											variant="contained"
 											size="large"
-											onClick={() => router.push('/register')}
+											onClick={() => router.push('/signup')}
 											sx={{
 												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 												color: 'white',

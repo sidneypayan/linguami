@@ -130,7 +130,7 @@ export default function StickySignupWidget() {
 					fontSize: '1.25rem',
 					color: isDark ? '#f1f5f9' : '#2d3748',
 				}}>
-				Commencez votre apprentissage !
+				{t('signup_widget_title', 'Commencez votre apprentissage !')}
 			</Typography>
 
 			<Typography
@@ -143,7 +143,7 @@ export default function StickySignupWidget() {
 				{t('signup_widget_message')}
 			</Typography>
 
-			<Link href="/register" style={{ textDecoration: 'none' }}>
+			<Link href="/signup" style={{ textDecoration: 'none' }}>
 				<Button
 					onClick={handleClick}
 					fullWidth
@@ -163,20 +163,9 @@ export default function StickySignupWidget() {
 							boxShadow: '0 12px 28px rgba(139, 92, 246, 0.4)',
 						},
 					}}>
-					Inscription gratuite
+					{t('signup_widget_button', 'Inscription gratuite')}
 				</Button>
 			</Link>
-
-			<Typography
-				variant="caption"
-				sx={{
-					display: 'block',
-					mt: 1.5,
-					textAlign: 'center',
-					color: isDark ? '#94a3b8' : '#94a3b8',
-				}}>
-				Aucune carte bancaire requise
-			</Typography>
 		</Box>
 	)
 }

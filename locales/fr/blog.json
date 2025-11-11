@@ -5,5 +5,7 @@
 	"backToBlog": "Retour au blog",
 	"tableOfContents": "Sommaire",
 	"readMore": "Lire la suite",
-	"signup_widget_message": "Rejoignez des milliers d'apprenants et accédez gratuitement à nos ressources."
+	"signup_widget_title": "Commencez votre apprentissage !",
+	"signup_widget_message": "Rejoignez des milliers d'apprenants et accédez gratuitement à nos ressources.",
+	"signup_widget_button": "Inscription gratuite"
 }

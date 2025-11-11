@@ -5,5 +5,7 @@
 	"backToBlog": "Back to blog",
 	"tableOfContents": "Table of Contents",
 	"readMore": "Read more",
-	"signup_widget_message": "Join thousands of learners and access our resources for free."
+	"signup_widget_title": "Start your learning journey!",
+	"signup_widget_message": "Join thousands of learners and access our resources for free.",
+	"signup_widget_button": "Sign up for free"
 }
