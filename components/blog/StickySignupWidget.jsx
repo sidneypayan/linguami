@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { useUserContext } from '@/context/user'
 import * as gtm from '@/lib/gtm'
 import { useRouter } from 'next/router'
+import useTranslation from 'next-translate/useTranslation'
 
 /**
  * Widget sticky qui apparaît après un certain scroll
  * Disparaît si l'utilisateur est connecté
  */
 export default function StickySignupWidget() {
+	const { t } = useTranslation('blog')
 	const [visible, setVisible] = useState(false)
 	const [dismissed, setDismissed] = useState(false)
 	const { isUserLoggedIn } = useUserContext()
@@ -138,7 +140,7 @@ export default function StickySignupWidget() {
 					color: isDark ? '#cbd5e1' : '#64748b',
 					lineHeight: 1.6,
 				}}>
-				Rejoignez des milliers d'apprenants et accédez gratuitement à nos ressources.
+				{t('signup_widget_message')}
 			</Typography>
 
 			<Link href="/register" style={{ textDecoration: 'none' }}>

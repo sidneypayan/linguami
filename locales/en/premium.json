@@ -1,4 +1,11 @@
 {
 	"pagetitle": "Premium",
-	"description": "Support Linguami and unlock unlimited access to language learning features. Premium membership helps us create more content and improve the platform."
+	"description": "Support Linguami and unlock unlimited access to language learning features. Premium membership helps us create more content and improve the platform.",
+	"feature_unlimited_translation": "Unlimited word translation",
+	"feature_unlimited_dictionary": "Unlimited word addition to your personal dictionary",
+	"feature_flashcards": "Flashcard system to review your vocabulary",
+	"support_content_creation": "Dedicate more time to creating content for the site",
+	"support_interactive_activities": "Dedicate more time to developing interactive activities for learning words or testing your knowledge",
+	"support_hosting_costs": "Finance part of the site hosting costs and use of paid services like the translator, server, etc.",
+	"support_appreciation": "Be happy to see that you appreciate our work and find it useful."
 }

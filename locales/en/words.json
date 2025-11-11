@@ -100,5 +100,6 @@
 	"dictionary_limit_title": "Word limit reached",
 	"dictionary_limit_message": "You have reached the limit of 20 words in your dictionary. Create an account to increase this limit and access all features.",
 	"translation_limit_title": "Translation limit reached",
-	"translation_limit_message": "You have reached the limit of 20 translations. Create a free account to increase the number of translations and access all features!"
+	"translation_limit_message": "You have reached the limit of 20 translations. Create a free account to increase the number of translations and access all features!",
+	"guest_dictionary_message": "You can save up to 20 words for free and review them with flashcards. Create an account for unlimited access!"
 }

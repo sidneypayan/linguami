@@ -100,5 +100,6 @@
 	"dictionary_limit_title": "Limite de mots atteinte",
 	"dictionary_limit_message": "Vous avez atteint la limite de 20 mots dans votre dictionnaire. Créez un compte pour augmenter cette limite et accéder à toutes les fonctionnalités.",
 	"translation_limit_title": "Limite de traductions atteinte",
-	"translation_limit_message": "Vous avez atteint la limite de 20 traductions. Créez un compte gratuit pour augmenter le nombre de traductions et accéder à toutes les fonctionnalités !"
+	"translation_limit_message": "Vous avez atteint la limite de 20 traductions. Créez un compte gratuit pour augmenter le nombre de traductions et accéder à toutes les fonctionnalités !",
+	"guest_dictionary_message": "Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !"
 }
