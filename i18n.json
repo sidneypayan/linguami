@@ -28,6 +28,7 @@
 		"/admin/exercises/create-mcq": ["common", "admin", "exercises"],
 		"/admin/exercises/create-drag-drop": ["common", "admin", "exercises"],
 		"/admin/exercises/preview/[id]": ["common", "admin", "exercises"],
-		"/admin/exercises/edit/[id]": ["common", "admin", "exercises"]
+		"/admin/exercises/edit/[id]": ["common", "admin", "exercises"],
+		"/privacy": ["privacy"]
 	}
 }
