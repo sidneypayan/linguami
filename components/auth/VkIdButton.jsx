@@ -113,7 +113,7 @@ const VkIdButton = ({ buttonStyles }) => {
 			window.VKIDSDK.Config.init({
 				app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID),
 				redirectUrl: `${window.location.origin}/auth/callback`,
-				mode: window.VKIDSDK.ConfigAuthMode.Redirect,
+				mode: window.VKIDSDK.ConfigAuthMode.InNewTab, // Use popup mode instead of redirect
 			})
 
 			setSdkReady(true)
@@ -135,9 +135,13 @@ const VkIdButton = ({ buttonStyles }) => {
 
 		try {
 			console.log('🔐 Starting VK ID authentication...')
+			console.log('SDK Ready:', sdkReady)
+			console.log('VKIDSDK:', window.VKIDSDK)
 
 			// Trigger VK ID authentication popup
 			const authResult = await window.VKIDSDK.Auth.login()
+
+			console.log('Auth result:', authResult)
 
 			if (!authResult || !authResult.token) {
 				throw new Error('No token received from VK ID')
@@ -145,6 +149,8 @@ const VkIdButton = ({ buttonStyles }) => {
 
 			console.log('✅ VK ID authentication successful')
 			const { token, type } = authResult
+
+			console.log('Token type:', type)
 
 			if (type !== 'silent_token' && type !== 'oauth_token') {
 				throw new Error('Invalid token type')
@@ -199,6 +205,12 @@ const VkIdButton = ({ buttonStyles }) => {
 			await router.replace('/')
 		} catch (error) {
 			console.error('❌ VK ID login error:', error)
+			console.error('Error details:', {
+				message: error.message,
+				code: error.code,
+				name: error.name,
+				stack: error.stack
+			})
 
 			// Check if user closed the popup
 			if (error.message?.includes('closed') || error.code === 'access_denied') {
