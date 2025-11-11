@@ -1642,7 +1642,7 @@ const Homepage = () => {
 								},
 							},
 						}}>
-						Vos outils d&apos;apprentissage
+						Vos outils d'apprentissage
 					</Typography>
 
 					<Typography
@@ -1657,7 +1657,7 @@ const Homepage = () => {
 							lineHeight: 1.6,
 							letterSpacing: '0.01em',
 						}}>
-						Découvrez nos outils interactifs conçus pour enrichir votre expérience d&apos;apprentissage
+						Découvrez nos outils interactifs conçus pour enrichir votre expérience d'apprentissage
 					</Typography>
 					</Box>
 				</Box>

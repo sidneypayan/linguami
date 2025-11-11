@@ -235,7 +235,7 @@ const Dictionary = () => {
 								mb: 4,
 								fontWeight: 500,
 							}}>
-							Vous pouvez sauvegarder jusqu&apos;à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !
+							Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !
 						</Typography>
 
 						<Box

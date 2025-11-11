@@ -138,7 +138,7 @@ export default function StickySignupWidget() {
 					color: isDark ? '#cbd5e1' : '#64748b',
 					lineHeight: 1.6,
 				}}>
-				Rejoignez des milliers d&apos;apprenants et accédez gratuitement à nos ressources.
+				Rejoignez des milliers d'apprenants et accédez gratuitement à nos ressources.
 			</Typography>
 
 			<Link href="/register" style={{ textDecoration: 'none' }}>
