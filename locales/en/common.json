@@ -185,5 +185,17 @@
 	"methode_exercise_score": "Score",
 	"methode_level_achieved": "Level {{level}} achieved!",
 	"methode_examples": "Examples",
-	"methode_category": "Category"
+	"methode_category": "Category",
+	"upsell_congratulations": "Congratulations! 🎉",
+	"upsell_first_lesson_complete": "You completed your first lesson!",
+	"upsell_enjoyed_lesson": "Did you enjoy this lesson?",
+	"upsell_unlock_message": "Unlock full access to {{levelName}} level and continue your learning!",
+	"upsell_feature_complete_access": "Full access to all lessons in the level",
+	"upsell_feature_flexible_pace": "Progress at your own pace, no time limit",
+	"upsell_feature_xp_title": "XP & Progress",
+	"upsell_feature_xp_desc": "Earn XP points and track your progress",
+	"upsell_full_access": "Full access to {{levelName}} level",
+	"upsell_unlock_now": "Unlock now",
+	"upsell_maybe_later": "Maybe later",
+	"upsell_trust_signals": "✓ Secure payment • ✓ Instant access • ✓ Money-back guarantee"
 }

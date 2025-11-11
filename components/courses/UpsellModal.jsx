@@ -34,17 +34,17 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 		{
 			icon: <AutoStories sx={{ fontSize: 32 }} />,
 			title: t('methode_interactive'),
-			desc: 'Accès complet à toutes les leçons du niveau',
+			desc: t('upsell_feature_complete_access'),
 		},
 		{
 			icon: <Speed sx={{ fontSize: 32 }} />,
 			title: t('methode_flexible'),
-			desc: 'Progression à votre rythme, sans limite de temps',
+			desc: t('upsell_feature_flexible_pace'),
 		},
 		{
 			icon: <EmojiEvents sx={{ fontSize: 32 }} />,
-			title: 'XP & Progression',
-			desc: 'Gagnez des points XP et suivez votre progression',
+			title: t('upsell_feature_xp_title'),
+			desc: t('upsell_feature_xp_desc'),
 		},
 	]
 
@@ -99,10 +99,10 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						WebkitTextFillColor: 'transparent',
 						mb: 1,
 					}}>
-					Félicitations ! 🎉
+					{t('upsell_congratulations')}
 				</Typography>
 				<Typography variant="body1" color="text.secondary">
-					Vous avez terminé votre première leçon !
+					{t('upsell_first_lesson_complete')}
 				</Typography>
 			</DialogTitle>
 
@@ -121,11 +121,10 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)',
 					}}>
 					<Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-						Vous avez aimé cette leçon ?
+						{t('upsell_enjoyed_lesson')}
 					</Typography>
 					<Typography variant="body2" color="text.secondary">
-						Débloquez l&apos;accès complet au niveau <strong>{levelName}</strong> et
-						continuez votre apprentissage !
+						{t('upsell_unlock_message', { levelName })}
 					</Typography>
 				</Box>
 
@@ -216,7 +215,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						</Typography>
 					)}
 					<Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-						Accès complet au niveau {levelName}
+						{t('upsell_full_access', { levelName })}
 					</Typography>
 				</Box>
 
@@ -241,7 +240,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 								boxShadow: '0 12px 32px rgba(16, 185, 129, 0.6)',
 							},
 						}}>
-						Débloquer maintenant
+						{t('upsell_unlock_now')}
 					</Button>
 
 					<Button
@@ -257,7 +256,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 								background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
 							},
 						}}>
-						Peut-être plus tard
+						{t('upsell_maybe_later')}
 					</Button>
 				</Box>
 
@@ -270,7 +269,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						color: 'text.secondary',
 						mt: 2,
 					}}>
-					✓ Paiement sécurisé • ✓ Accès immédiat • ✓ Garantie satisfait ou remboursé
+					{t('upsell_trust_signals')}
 				</Typography>
 			</DialogContent>
 		</Dialog>
