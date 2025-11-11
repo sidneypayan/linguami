@@ -138,8 +138,13 @@ const VkIdButton = ({ buttonStyles }) => {
 			console.log('SDK Ready:', sdkReady)
 			console.log('VKIDSDK:', window.VKIDSDK)
 
-			// Trigger VK ID authentication popup
-			const authResult = await window.VKIDSDK.Auth.login()
+			// Trigger VK ID authentication popup with timeout
+			console.log('📞 Calling window.VKIDSDK.Auth.login()...')
+
+			const authPromise = window.VKIDSDK.Auth.login()
+			console.log('⏳ Login promise created, waiting for result...')
+
+			const authResult = await authPromise
 
 			console.log('Auth result:', authResult)
 
