@@ -549,6 +549,27 @@ NEXT_PUBLIC_GTM_ID (Google Tag Manager)
 
 ## Code Style
 
+### JSX Text Content Rules
+
+**CRITICAL: Never use typographic apostrophes (') in JSX**
+
+When writing French or other text directly in JSX, ALWAYS use straight quotes/apostrophes:
+
+```javascript
+// ❌ WRONG - Typographic apostrophe causes build errors
+<div>Débloquez l'accès complet</div>
+
+// ✅ CORRECT - Straight apostrophe
+<div>Débloquez l'accès complet</div>
+
+// ✅ BEST - Use i18n for all user-facing text
+<div>{t('unlock_full_access')}</div>
+```
+
+**Why:** React's ESLint rule `react/no-unescaped-entities` flags typographic apostrophes (') as errors. They must be escaped as `&apos;` or `&#39;`, which is cumbersome and error-prone.
+
+**Solution:** Always use i18n for user-facing text. Add translations to `/locales/{fr,ru,en}/*.json` files instead of hardcoding strings in components.
+
 ### Material-UI sx Prop
 Prefer `sx` prop over inline styles or styled components:
 ```javascript
