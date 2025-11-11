@@ -214,7 +214,7 @@ Nous nous engageons à répondre dans les **30 jours** conformément au RGPD.`,
 						<Typography variant="body1" sx={{ lineHeight: 1.8 }}>
 							Chez <strong>Linguami</strong>, nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles.
 							Cette politique explique comment nous collectons, utilisons et protégeons vos informations conformément au
-							<strong> Règlement Général sur la Protection des Données (RGPD)</strong> de l'Union Européenne.
+							<strong> Règlement Général sur la Protection des Données (RGPD)</strong> de l&apos;Union Européenne.
 						</Typography>
 					</Box>
 
@@ -302,7 +302,7 @@ Nous nous engageons à répondre dans les **30 jours** conformément au RGPD.`,
 										textDecoration: 'underline',
 									},
 								}}>
-								Voir aussi nos Conditions Générales d'Utilisation →
+								Voir aussi nos Conditions Générales d&apos;Utilisation →
 							</Typography>
 						</Link>
 					</Box>
