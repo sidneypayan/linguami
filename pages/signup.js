@@ -265,9 +265,9 @@ const Signup = () => {
 				{/* Boutons OAuth */}
 				<OAuthButtons
 					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
-				onAppleClick={() => loginWithThirdPartyOAuth('apple')}
+					onAppleClick={() => loginWithThirdPartyOAuth('apple')}
 					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
-				onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
+					onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
 				/>
 
 				<Divider sx={{ my: { xs: 2.5, sm: 3.5 }, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>

@@ -2,12 +2,16 @@ import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
 import { EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
+import { useRouter } from 'next/router'
 import { getUIImageUrl } from '@/utils/mediaUrls'
+import VkIdButton from './VkIdButton'
 
 const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')
+	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+	const showVkId = router.locale === 'ru'
 
 	const buttonStyles = {
 		py: { xs: 1.75, sm: 1.75 },
@@ -93,26 +97,39 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 	return (
 		<Box
 			sx={{
-				display: 'grid',
-				gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 2,
 			}}>
-			{providers.map((provider) => (
-				<Button
-					key={provider.id}
-					variant="outlined"
-					fullWidth
-					onClick={provider.onClick}
-					sx={buttonStyles}
-					aria-label={provider.labelLong}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
-						{provider.icon}
-						<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
-							{provider.labelShort}
-						</Typography>
-					</Box>
-				</Button>
-			))}
+			{/* VK ID button (only for Russian interface) */}
+			{showVkId && (
+				<VkIdButton />
+			)}
+
+			{/* Other OAuth providers */}
+			<Box
+				sx={{
+					display: 'grid',
+					gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+					gap: 2,
+				}}>
+				{providers.map((provider) => (
+					<Button
+						key={provider.id}
+						variant="outlined"
+						fullWidth
+						onClick={provider.onClick}
+						sx={buttonStyles}
+						aria-label={provider.labelLong}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
+							{provider.icon}
+							<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
+								{provider.labelShort}
+							</Typography>
+						</Box>
+					</Button>
+				))}
+			</Box>
 		</Box>
 	)
 }
