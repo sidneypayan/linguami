@@ -19,6 +19,18 @@ export default async function handler(req, res) {
 		// Note: Make sure you have CASCADE DELETE set up in your database
 		// or manually delete from all related tables
 
+		// Delete course progress (Method system)
+		await supabase
+			.from('user_course_progress')
+			.delete()
+			.eq('user_id', user.id)
+
+		// Delete course access (Method system)
+		await supabase
+			.from('user_course_access')
+			.delete()
+			.eq('user_id', user.id)
+
 		// Delete user profile
 		await supabase
 			.from('users_profile')
