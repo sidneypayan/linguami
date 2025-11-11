@@ -124,7 +124,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						Vous avez aimé cette leçon ?
 					</Typography>
 					<Typography variant="body2" color="text.secondary">
-						Débloquez l'accès complet au niveau <strong>{levelName}</strong> et
+						Débloquez l&apos;accès complet au niveau <strong>{levelName}</strong> et
 						continuez votre apprentissage !
 					</Typography>
 				</Box>
