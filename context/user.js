@@ -13,6 +13,7 @@ import toast from '@/utils/toast'
 import { createToastMessages } from '@/utils/toastMessages'
 import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'
 import { sendVerificationEmail, isEmailVerified } from '@/lib/emailVerification'
+import { migrateLocalProgressToDatabase } from '@/utils/localCourseProgress'
 
 // --------------------------------------------------------
 // Helper: Déterminer la langue d'apprentissage par défaut
@@ -24,12 +25,12 @@ const getDefaultLearningLanguage = (currentLocale) => {
 	// Retirer la langue actuelle de l'interface des options
 	const options = availableLanguages.filter(lang => lang !== currentLocale)
 
-	// Priorité: français > russe
-	if (options.includes('fr')) return 'fr'
+	// Priorité: russe > français (sauf si interface en russe, alors français)
 	if (options.includes('ru')) return 'ru'
+	if (options.includes('fr')) return 'fr'
 
-	// Fallback: français si aucune autre option
-	return 'fr'
+	// Fallback: russe si aucune autre option
+	return 'ru'
 }
 
 // --------------------------------------------------------
@@ -131,6 +132,17 @@ const UserProvider = ({ children }) => {
 								.update({ learning_language: defaultLearningLang })
 								.eq('id', signedUser.id)
 						} catch {}
+					}
+
+					// Migrate local progress from localStorage to database
+					try {
+						const migrationResult = await migrateLocalProgressToDatabase()
+						if (migrationResult.success && migrationResult.migrated > 0) {
+							console.log(`✅ Migrated ${migrationResult.migrated} lesson(s) from localStorage to database`)
+						}
+					} catch (migrationError) {
+						console.error('Failed to migrate local progress:', migrationError)
+						// Don't block login if migration fails
 					}
 				} else {
 					// Pas de ligne dans users_profile : on garde le user "Auth"
@@ -332,10 +344,11 @@ const UserProvider = ({ children }) => {
 	)
 
 	const loginWithThirdPartyOAuth = useCallback(async provider => {
+		const baseUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider,
 			options: {
-				redirectTo: process.env.NEXT_PUBLIC_API_URL || window.location.origin,
+				redirectTo: `${baseUrl}/auth/callback`,
 			},
 		})
 		if (error) safeToastError(error)
@@ -343,10 +356,11 @@ const UserProvider = ({ children }) => {
 	}, [])
 
 	const sendMagicLink = useCallback(async email => {
+		const baseUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin
 		const { error } = await supabase.auth.signInWithOtp({
 			email,
 			options: {
-				emailRedirectTo: process.env.NEXT_PUBLIC_API_URL || window.location.origin,
+				emailRedirectTo: `${baseUrl}/auth/callback`,
 			},
 		})
 		if (error) {

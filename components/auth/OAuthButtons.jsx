@@ -1,6 +1,6 @@
 import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
-import { Apple, EmailRounded } from '@mui/icons-material'
+import { EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 
@@ -66,13 +66,6 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 					height={24}
 				/>
 			),
-		},
-		{
-			id: 'apple',
-			onClick: onAppleClick,
-			labelLong: t('signInWithApple'),
-			labelShort: t('apple'),
-			icon: <Apple sx={{ fontSize: '1.5rem' }} />,
 		},
 		{
 			id: 'facebook',

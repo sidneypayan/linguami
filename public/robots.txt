@@ -16,12 +16,8 @@ Disallow: /static/
 Disallow: /my-materials
 
 # Pages de connexion/inscription (pas utiles pour le SEO)
-Disallow: /signin
 Disallow: /login
 Disallow: /register
-Disallow: /confirm-signup
-Disallow: /set-password
-Disallow: /set-password-signin
 Disallow: /update-password
 
 # Configuration spécifique pour Googlebot
