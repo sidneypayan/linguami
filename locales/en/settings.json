@@ -65,7 +65,7 @@
 	"deleteAccount": "Delete my account",
 	"deleteAccountDesc": "Permanently delete your account and all your data",
 	"deleteAccountConfirm": "Are you sure you want to delete your account?",
-	"deleteAccountWarning": "This action is irreversible. All your data will be permanently deleted.",
+	"deleteAccountWarning": "This action is irreversible. You will permanently lose:\n• Your progress and statistics (XP, levels, streaks)\n• Your personal dictionary and flashcards\n• Your saved materials and notes\n• All completed exercises\n• Your entire learning history",
 	"accountDeleted": "Account deleted successfully",
 	"deleteAccountError": "Error deleting account",
 	"theme": "Theme",

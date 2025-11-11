@@ -40,6 +40,9 @@ import {
 	KeyboardArrowDownRounded,
 	KeyboardArrowUpRounded,
 	HowToRegRounded,
+	Visibility,
+	VisibilityOff,
+	TrendingUpRounded,
 } from '@mui/icons-material'
 
 const initialState = {
@@ -60,23 +63,52 @@ const Signup = () => {
 	const [values, setValues] = useState(initialState)
 	const [showAvatars, setShowAvatars] = useState(false)
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
+	const [showPassword, setShowPassword] = useState(false)
 
-	// Validation du mot de passe
+	// Liste de mots de passe communs à bloquer
+	const commonPasswords = useMemo(() => [
+		'password', 'password123', '123456', '12345678', '123456789',
+		'qwerty', 'azerty', 'admin', 'letmein', 'welcome', 'monkey',
+		'dragon', 'master', 'sunshine', 'princess', 'football',
+		'iloveyou', 'trustno1', 'abc123', '111111', '1234567890'
+	], [])
+
+	// Validation du mot de passe (approche moderne NIST)
 	const passwordValidation = useMemo(() => {
-		const { password } = values
+		const { password, username, email } = values
+		const lowerPassword = password.toLowerCase()
+		const lowerUsername = username.toLowerCase()
+		const emailLocal = email.split('@')[0].toLowerCase()
+
 		return {
-			minLength: password.length >= 8,
-			hasUpperCase: /[A-Z]/.test(password),
-			hasNumber: /[0-9]/.test(password),
-			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+			minLength: password.length >= 12,
+			maxLength: password.length <= 128,
+			notCommon: !commonPasswords.includes(lowerPassword),
+			notPersonal: !(
+				(lowerUsername && lowerPassword.includes(lowerUsername)) ||
+				(emailLocal && lowerPassword.includes(emailLocal))
+			),
 		}
-	}, [values.password])
+	}, [values.password, values.username, values.email, commonPasswords])
 
 	const passwordStrength = useMemo(() => {
-		const checks = Object.values(passwordValidation)
-		const passed = checks.filter(Boolean).length
-		return (passed / checks.length) * 100
-	}, [passwordValidation])
+		const { password } = values
+		if (password.length === 0) return 0
+
+		// Calcul de la force basé sur la longueur et la diversité
+		let score = 0
+
+		// Longueur (0-40 points)
+		score += Math.min(password.length * 2, 40)
+
+		// Diversité de caractères (0-60 points)
+		if (/[a-z]/.test(password)) score += 15
+		if (/[A-Z]/.test(password)) score += 15
+		if (/[0-9]/.test(password)) score += 15
+		if (/[^a-zA-Z0-9]/.test(password)) score += 15
+
+		return Math.min(score, 100)
+	}, [values.password])
 
 	const isPasswordValid = useMemo(() => {
 		return Object.values(passwordValidation).every(Boolean)
@@ -265,8 +297,6 @@ const Signup = () => {
 				{/* Boutons OAuth */}
 				<OAuthButtons
 					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
-					onAppleClick={() => loginWithThirdPartyOAuth('apple')}
-					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
 					onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
 				/>
 
@@ -328,7 +358,7 @@ const Signup = () => {
 						<TextField
 							fullWidth
 							onChange={handleChange}
-							type="password"
+							type={showPassword ? 'text' : 'password'}
 							label={t('password')}
 							name="password"
 							value={values.password}
@@ -339,6 +369,23 @@ const Signup = () => {
 								startAdornment: (
 									<InputAdornment position="start">
 										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
+									</InputAdornment>
+								),
+								endAdornment: (
+									<InputAdornment position="end">
+										<Button
+											onClick={() => setShowPassword(!showPassword)}
+											sx={{
+												minWidth: 'auto',
+												p: 1,
+												color: isDark ? '#94a3b8' : '#718096',
+												'&:hover': {
+													bgcolor: 'rgba(102, 126, 234, 0.1)',
+												},
+											}}
+											aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+											{showPassword ? <VisibilityOff /> : <Visibility />}
+										</Button>
 									</InputAdornment>
 								),
 							}}
@@ -368,10 +415,10 @@ const Signup = () => {
 								/>
 								<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
 									{[
-										{ key: 'minLength', label: t('passwordMinLength') },
-										{ key: 'hasUpperCase', label: t('passwordUpperCase') },
-										{ key: 'hasNumber', label: t('passwordNumber') },
-										{ key: 'hasSpecialChar', label: t('passwordSpecialChar') },
+										{ key: 'minLength', label: t('passwordMinLength12') },
+										{ key: 'maxLength', label: t('passwordMaxLength') },
+										{ key: 'notCommon', label: t('passwordNotCommon') },
+										{ key: 'notPersonal', label: t('passwordNotPersonal') },
 									].map(({ key, label }) => (
 										<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 											{passwordValidation[key] ? (
@@ -491,6 +538,11 @@ const Signup = () => {
 							value={values.languageLevel}
 							label={t('languageLevel')}
 							onChange={handleChange}
+							startAdornment={
+								<InputAdornment position="start">
+									<TrendingUpRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
+								</InputAdornment>
+							}
 							renderValue={(selected) => {
 								const levels = {
 									beginner: { icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, name: t('beginner') },

@@ -1,30 +1,50 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Box, Typography, useTheme } from '@mui/material'
-import { LoginRounded } from '@mui/icons-material'
+import { Button, Box, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
 
-const VkIdButton = () => {
+// VK Logo Component
+const VkLogo = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+		<circle cx="24" cy="24" r="24" fill="#0077FF"/>
+		<path d="M25.54 34h-2.18c-6.87 0-10.8-4.7-10.98-12.48h3.45c.12 5.88 2.7 8.37 4.77 8.88V21.52h3.24v5.1c2.04-.22 4.17-2.55 4.89-5.1h3.24c-.54 3.06-2.82 5.31-4.44 6.24 1.62.75 4.17 2.67 5.16 6.24h-3.57c-.75-2.37-2.61-4.2-5.1-4.44v4.44h-.48z" fill="white"/>
+	</svg>
+)
+
+// OK (Odnoklassniki) Logo Component
+const OkLogo = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+		<circle cx="24" cy="24" r="24" fill="#EE8208"/>
+		<path d="M24 13c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6zm0 15c5.52 0 10 4.48 10 10v1H14v-1c0-5.52 4.48-10 10-10z" fill="white"/>
+		<circle cx="24" cy="19" r="3" fill="#EE8208"/>
+		<path d="M24 28c-2.76 0-5 2.24-5 5h10c0-2.76-2.24-5-5-5z" fill="#EE8208"/>
+		<rect x="21" y="31" width="6" height="3" rx="1.5" fill="white"/>
+	</svg>
+)
+
+// Mail.ru Logo Component
+const MailLogo = ({ size = 24 }) => (
+	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
+		<circle cx="24" cy="24" r="24" fill="#168DE2"/>
+		<path d="M33 17H15c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V19c0-1.1-.9-2-2-2zm0 4l-9 5.62L15 21v-2l9 5.62L33 19v2z" fill="white"/>
+	</svg>
+)
+
+const VkIdButton = ({ buttonStyles }) => {
 	const router = useRouter()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const buttonRef = useRef(null)
 	const [isLoading, setIsLoading] = useState(false)
+	const [sdkReady, setSdkReady] = useState(false)
 	const sdkLoadedRef = useRef(false)
 	const sdkInitializedRef = useRef(false)
-
-	console.log('✅ VkIdButton component mounted')
 
 	useEffect(() => {
 		// Prevent loading SDK multiple times
 		if (sdkLoadedRef.current) {
-			console.log('⏭️ SDK already loaded, skipping...')
 			return
 		}
 
 		sdkLoadedRef.current = true
-		console.log('🚀 VK ID SDK loading...')
 
 		// Load VK ID SDK - Try multiple CDN sources
 		const cdnSources = [
@@ -46,7 +66,7 @@ const VkIdButton = () => {
 			script.async = true
 
 			script.onload = () => {
-				console.log('✅ VK ID SDK script loaded from:', cdnSources[currentCdnIndex])
+				console.log('✅ VK ID SDK script loaded')
 				initVkId()
 			}
 
@@ -78,15 +98,8 @@ const VkIdButton = () => {
 	const initVkId = () => {
 		// Prevent multiple initializations
 		if (sdkInitializedRef.current) {
-			console.log('⏭️ VK ID SDK already initialized, skipping...')
 			return
 		}
-
-		console.log('🔍 VK ID Debug:', {
-			sdkLoaded: !!window.VKIDSDK,
-			appId: process.env.NEXT_PUBLIC_VK_APP_ID,
-			hasAppId: !!process.env.NEXT_PUBLIC_VK_APP_ID
-		})
 
 		if (!window.VKIDSDK || !process.env.NEXT_PUBLIC_VK_APP_ID) {
 			console.error('❌ VK ID SDK not loaded or APP ID missing')
@@ -100,43 +113,38 @@ const VkIdButton = () => {
 			window.VKIDSDK.Config.init({
 				app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID),
 				redirectUrl: `${window.location.origin}/auth/callback`,
-				mode: window.VKIDSDK.ConfigAuthMode.InNewTab,
+				mode: window.VKIDSDK.ConfigAuthMode.Redirect,
 			})
 
-			// Create One Tap button
-			const oneTap = new window.VKIDSDK.OneTap()
-
-			// Render button
-			if (buttonRef.current) {
-				oneTap.render({
-					container: buttonRef.current,
-					scheme: isDark ? window.VKIDSDK.Scheme.DARK : window.VKIDSDK.Scheme.LIGHT,
-					lang: window.VKIDSDK.Languages.RUS,
-					styles: {
-						width: '100%',
-						height: 48,
-						borderRadius: 12,
-					},
-				})
-					.on(window.VKIDSDK.WidgetEvents.ERROR, handleError)
-					.on(window.VKIDSDK.OneTapInternalEvents.LOGIN_SUCCESS, handleSuccess)
-			}
+			setSdkReady(true)
+			console.log('✅ VK ID SDK initialized successfully')
 		} catch (error) {
 			console.error('Error initializing VK ID:', error)
 		}
 	}
 
-	const handleSuccess = async (payload) => {
-		// Prevent multiple simultaneous authentications
-		if (isLoading) {
-			console.log('⏭️ Authentication already in progress, skipping...')
+	const handleVkIdClick = async () => {
+		if (!sdkReady || isLoading) {
+			if (!sdkReady) {
+				toast.error('VK ID est en cours de chargement...')
+			}
 			return
 		}
 
 		setIsLoading(true)
+
 		try {
-			console.log('🔐 VK ID authentication started...')
-			const { token, type } = payload
+			console.log('🔐 Starting VK ID authentication...')
+
+			// Trigger VK ID authentication popup
+			const authResult = await window.VKIDSDK.Auth.login()
+
+			if (!authResult || !authResult.token) {
+				throw new Error('No token received from VK ID')
+			}
+
+			console.log('✅ VK ID authentication successful')
+			const { token, type } = authResult
 
 			if (type !== 'silent_token' && type !== 'oauth_token') {
 				throw new Error('Invalid token type')
@@ -188,107 +196,43 @@ const VkIdButton = () => {
 
 			// Success - redirect to home
 			toast.success('Connexion réussie !')
-
-			// Use replace instead of push to avoid navigation issues
 			await router.replace('/')
 		} catch (error) {
 			console.error('❌ VK ID login error:', error)
-			toast.error('Erreur lors de la connexion avec VK ID')
+
+			// Check if user closed the popup
+			if (error.message?.includes('closed') || error.code === 'access_denied') {
+				console.log('ℹ️ User closed VK ID popup')
+			} else {
+				toast.error('Erreur lors de la connexion avec VK ID')
+			}
+
 			setIsLoading(false)
 		}
-		// Don't set isLoading to false on success - let the redirect happen
-	}
-
-	const handleError = (error) => {
-		console.error('VK ID widget error:', error)
-	}
-
-	// Fallback button if SDK fails to load
-	const handleFallbackClick = () => {
-		toast.error('VK ID est temporairement indisponible')
-	}
-
-	const buttonStyles = {
-		py: { xs: 1.75, sm: 1.75 },
-		borderRadius: 2.5,
-		border: '2px solid',
-		borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
-		color: isDark ? '#cbd5e1' : '#4a5568',
-		textTransform: 'none',
-		fontWeight: 600,
-		fontSize: '0.95rem',
-		transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-		position: 'relative',
-		overflow: 'hidden',
-		background: isDark
-			? 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)'
-			: 'linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%)',
-		'&:hover': {
-			borderColor: '#667eea',
-			background: isDark
-				? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
-				: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
-			transform: 'translateY(-2px)',
-			boxShadow: isDark
-				? '0 8px 24px rgba(139, 92, 246, 0.35)'
-				: '0 8px 24px rgba(102, 126, 234, 0.25)',
-		},
 	}
 
 	return (
-		<Box
-			sx={{
-				position: 'relative',
-				width: '100%',
-				minHeight: '48px',
-			}}>
-			{/* VK ID SDK container */}
-			<div
-				ref={buttonRef}
-				style={{
-					width: '100%',
-					display: isLoading ? 'none' : 'block',
-				}}
-			/>
-
-			{/* Fallback button (shown if SDK doesn't load) */}
-			{!buttonRef.current && (
-				<Button
-					variant="outlined"
-					fullWidth
-					onClick={handleFallbackClick}
-					sx={buttonStyles}
-					disabled={isLoading}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
-						<LoginRounded sx={{ fontSize: '1.5rem', color: '#0077FF' }} />
-						<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
-							VK ID
-						</Typography>
-					</Box>
-				</Button>
-			)}
-
-			{/* Loading overlay */}
-			{isLoading && (
-				<Box
-					sx={{
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-						borderRadius: 2.5,
-					}}>
-					<Typography sx={{ color: '#667eea', fontWeight: 600 }}>
-						Connexion...
-					</Typography>
+		<Button
+			variant="outlined"
+			fullWidth
+			onClick={handleVkIdClick}
+			disabled={!sdkReady || isLoading}
+			sx={buttonStyles}
+			aria-label="Sign in with VK, Odnoklassniki or Mail.ru">
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
+				{/* Icons */}
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+					<VkLogo size={24} />
+					<OkLogo size={24} />
+					<MailLogo size={24} />
 				</Box>
-			)}
-		</Box>
+
+				{/* Text */}
+				<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
+					{isLoading ? 'Connexion...' : 'VK • OK • Mail.ru'}
+				</Typography>
+			</Box>
+		</Button>
 	)
 }
 

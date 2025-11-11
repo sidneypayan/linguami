@@ -7,7 +7,7 @@ import { Box, CircularProgress, Typography } from '@mui/material'
  * Page de callback OAuth et de confirmation d'email
  * Cette page gère les redirections après :
  * - Confirmation d'email
- * - Connexion OAuth (Google, Facebook, Apple)
+ * - Connexion OAuth (Google, VK ID)
  * - Magic Link
  * - Reset de mot de passe
  */

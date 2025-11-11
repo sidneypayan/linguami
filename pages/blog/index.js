@@ -7,11 +7,44 @@ import path from 'path'
 import matter from 'gray-matter'
 import { Container, Typography, Box, useTheme } from '@mui/material'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
+import { useUserContext } from '@/context/user'
+import { useMemo } from 'react'
 
 const Blog = ({ posts }) => {
 	const { t, lang } = useTranslation('blog')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+	const { userLearningLanguage } = useUserContext()
+
+	// Filter posts based on learning language for English blog
+	const filteredPosts = useMemo(() => {
+		if (lang !== 'en') {
+			return posts
+		}
+
+		// For English blog, filter based on learning language
+		const filtered = posts.filter(post => {
+			// Always exclude the comparison article
+			if (post.slug === 'french-vs-russian-which-to-learn') {
+				return false
+			}
+
+			// If learning French, show only "why-learn-french"
+			if (userLearningLanguage === 'fr') {
+				return post.slug !== 'why-learn-russian'
+			}
+
+			// If learning Russian, show only "why-learn-russian"
+			if (userLearningLanguage === 'ru') {
+				return post.slug !== 'why-learn-french'
+			}
+
+			// If no learning language set (guest or new user), show both
+			return true
+		})
+
+		return filtered
+	}, [posts, lang, userLearningLanguage])
 
 	// Mots-clés SEO par langue
 	const keywordsByLang = {
@@ -28,7 +61,7 @@ const Blog = ({ posts }) => {
 		description: t('description'),
 		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/blog`,
 		inLanguage: lang === 'fr' ? 'fr-FR' : lang === 'ru' ? 'ru-RU' : 'en-US',
-		blogPost: posts.slice(0, 5).map((post, index) => ({
+		blogPost: filteredPosts.slice(0, 5).map((post, index) => ({
 			'@type': 'BlogPosting',
 			headline: post.frontmatter.title,
 			datePublished: post.frontmatter.date,
@@ -98,7 +131,7 @@ const Blog = ({ posts }) => {
 						maxWidth: '800px',
 						mx: 'auto',
 					}}>
-					{posts.map((post, index) => (
+					{filteredPosts.map((post, index) => (
 						<BlogCard key={index} post={post} />
 					))}
 				</Box>

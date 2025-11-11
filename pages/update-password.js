@@ -19,6 +19,8 @@ import {
 	LockRounded,
 	CheckCircleRounded,
 	CancelRounded,
+	Visibility,
+	VisibilityOff,
 } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { supabase } from '@/lib/supabase'
@@ -36,24 +38,45 @@ const UpdatePassword = () => {
 	const [values, setValues] = useState(initialState)
 	const [isResetting, setIsResetting] = useState(false)
 	const [loading, setLoading] = useState(true)
+	const [showPassword, setShowPassword] = useState(false)
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 	const { updatePassword, setNewPassword } = useUserContext()
 
-	// Validation du mot de passe (mêmes règles que signup et settings)
+	// Liste de mots de passe communs à bloquer
+	const commonPasswords = useMemo(() => [
+		'password', 'password123', '123456', '12345678', '123456789',
+		'qwerty', 'azerty', 'admin', 'letmein', 'welcome', 'monkey',
+		'dragon', 'master', 'sunshine', 'princess', 'football',
+		'iloveyou', 'trustno1', 'abc123', '111111', '1234567890'
+	], [])
+
+	// Validation du mot de passe (approche moderne NIST)
 	const passwordValidation = useMemo(() => {
-		const { password } = values
+		const { password, email } = values
+		const lowerPassword = password.toLowerCase()
+		const emailLocal = email.split('@')[0].toLowerCase()
+
 		return {
-			minLength: password.length >= 8,
-			hasUpperCase: /[A-Z]/.test(password),
-			hasNumber: /[0-9]/.test(password),
-			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+			minLength: password.length >= 12,
+			maxLength: password.length <= 128,
+			notCommon: !commonPasswords.includes(lowerPassword),
+			notPersonal: !(emailLocal && lowerPassword.includes(emailLocal)),
 		}
-	}, [values.password])
+	}, [values.password, values.email, commonPasswords])
 
 	const passwordStrength = useMemo(() => {
-		const checks = Object.values(passwordValidation)
-		const passed = checks.filter(Boolean).length
-		return (passed / checks.length) * 100
-	}, [passwordValidation])
+		const { password } = values
+		if (password.length === 0) return 0
+
+		let score = 0
+		score += Math.min(password.length * 2, 40)
+		if (/[a-z]/.test(password)) score += 15
+		if (/[A-Z]/.test(password)) score += 15
+		if (/[0-9]/.test(password)) score += 15
+		if (/[^a-zA-Z0-9]/.test(password)) score += 15
+
+		return Math.min(score, 100)
+	}, [values.password])
 
 	const isPasswordValid = useMemo(() => {
 		return Object.values(passwordValidation).every(Boolean)
@@ -236,7 +259,7 @@ const UpdatePassword = () => {
 									<TextField
 										fullWidth
 										onChange={handleChange}
-										type='password'
+										type={showPassword ? 'text' : 'password'}
 										label={t('newPassword')}
 										name='password'
 										value={values.password}
@@ -246,6 +269,27 @@ const UpdatePassword = () => {
 											startAdornment: (
 												<InputAdornment position='start'>
 													<LockRounded sx={{ color: '#718096' }} />
+												</InputAdornment>
+											),
+											endAdornment: (
+												<InputAdornment position='end'>
+													<Button
+														onClick={() => setShowPassword(!showPassword)}
+														sx={{
+															minWidth: 'auto',
+															p: 0.5,
+															color: '#718096',
+															'&:hover': {
+																bgcolor: 'transparent',
+																color: '#667eea',
+															},
+														}}>
+														{showPassword ? (
+															<VisibilityOff sx={{ fontSize: '1.25rem' }} />
+														) : (
+															<Visibility sx={{ fontSize: '1.25rem' }} />
+														)}
+													</Button>
 												</InputAdornment>
 											),
 										}}
@@ -286,10 +330,10 @@ const UpdatePassword = () => {
 											/>
 											<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
 												{[
-													{ key: 'minLength', label: t('passwordMinLength') },
-													{ key: 'hasUpperCase', label: t('passwordUpperCase') },
-													{ key: 'hasNumber', label: t('passwordNumber') },
-													{ key: 'hasSpecialChar', label: t('passwordSpecialChar') },
+													{ key: 'minLength', label: t('passwordMinLength12') },
+													{ key: 'maxLength', label: t('passwordMaxLength') },
+													{ key: 'notCommon', label: t('passwordNotCommon') },
+													{ key: 'notPersonal', label: t('passwordNotPersonal') },
 												].map(({ key, label }) => (
 													<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 														{passwordValidation[key] ? (
@@ -311,7 +355,7 @@ const UpdatePassword = () => {
 								<TextField
 									fullWidth
 									onChange={handleChange}
-									type='password'
+									type={showConfirmPassword ? 'text' : 'password'}
 									label={t('confirmPassword')}
 									name='confirmPassword'
 									value={values.confirmPassword}
@@ -321,6 +365,27 @@ const UpdatePassword = () => {
 										startAdornment: (
 											<InputAdornment position='start'>
 												<LockRounded sx={{ color: '#718096' }} />
+											</InputAdornment>
+										),
+										endAdornment: (
+											<InputAdornment position='end'>
+												<Button
+													onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+													sx={{
+														minWidth: 'auto',
+														p: 0.5,
+														color: '#718096',
+														'&:hover': {
+															bgcolor: 'transparent',
+															color: '#667eea',
+														},
+													}}>
+													{showConfirmPassword ? (
+														<VisibilityOff sx={{ fontSize: '1.25rem' }} />
+													) : (
+														<Visibility sx={{ fontSize: '1.25rem' }} />
+													)}
+												</Button>
 											</InputAdornment>
 										),
 									}}

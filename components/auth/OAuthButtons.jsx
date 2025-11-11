@@ -2,29 +2,25 @@ import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
 import { EmailRounded } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import VkIdButton from './VkIdButton'
-import { useUserContext } from '@/context/user'
 
-const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLinkClick }) => {
+const OAuthButtons = ({ onGoogleClick, onMagicLinkClick }) => {
 	const { t } = useTranslation('register')
-	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { isUserAdmin } = useUserContext()
-	const showVkId = router.locale === 'ru' && isUserAdmin
-	const showFacebook = isUserAdmin
+	const showVkId = true
 
 	const buttonStyles = {
-		py: { xs: 1.75, sm: 1.75 },
+		py: { xs: 1.5, sm: 1.75 },
+		px: { xs: 2, sm: 3 },
 		borderRadius: 2.5,
 		border: '2px solid',
 		borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
 		color: isDark ? '#cbd5e1' : '#4a5568',
 		textTransform: 'none',
 		fontWeight: 600,
-		fontSize: '0.95rem',
+		fontSize: { xs: '0.875rem', sm: '0.95rem' },
 		transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 		position: 'relative',
 		overflow: 'hidden',
@@ -75,20 +71,6 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 			),
 		},
 		{
-			id: 'facebook',
-			onClick: onFacebookClick,
-			labelLong: t('signInWithFacebook'),
-			labelShort: t('facebook'),
-			icon: (
-				<Image
-					src={getUIImageUrl('facebook.webp')}
-					alt="Facebook"
-					width={24}
-					height={24}
-				/>
-			),
-		},
-		{
 			id: 'email',
 			onClick: onMagicLinkClick,
 			labelLong: t('signInWithEmail'),
@@ -104,37 +86,50 @@ const OAuthButtons = ({ onGoogleClick, onAppleClick, onFacebookClick, onMagicLin
 				flexDirection: 'column',
 				gap: 2,
 			}}>
-			{/* VK ID button (only for Russian interface) */}
+			{/* Google */}
+			{providers
+				.filter(provider => provider.id === 'google')
+				.map((provider) => (
+					<Button
+						key={provider.id}
+						variant="outlined"
+						fullWidth
+						onClick={provider.onClick}
+						sx={buttonStyles}
+						aria-label={provider.labelLong}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
+							{provider.icon}
+							<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
+								{provider.labelShort}
+							</Typography>
+						</Box>
+					</Button>
+				))}
+
+			{/* VK ID button */}
 			{showVkId && (
-				<VkIdButton />
+				<VkIdButton buttonStyles={buttonStyles} />
 			)}
 
-			{/* Other OAuth providers */}
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-					gap: 2,
-				}}>
-				{providers
-					.filter(provider => provider.id !== 'facebook' || showFacebook)
-					.map((provider) => (
-						<Button
-							key={provider.id}
-							variant="outlined"
-							fullWidth
-							onClick={provider.onClick}
-							sx={buttonStyles}
-							aria-label={provider.labelLong}>
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
-								{provider.icon}
-								<Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
-									{provider.labelShort}
-								</Typography>
-							</Box>
-						</Button>
-					))}
-			</Box>
+			{/* Email */}
+			{providers
+				.filter(provider => provider.id === 'email')
+				.map((provider) => (
+					<Button
+						key={provider.id}
+						variant="outlined"
+						fullWidth
+						onClick={provider.onClick}
+						sx={buttonStyles}
+						aria-label={provider.labelLong}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
+							{provider.icon}
+							<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
+								{provider.labelShort}
+							</Typography>
+						</Box>
+					</Button>
+				))}
 		</Box>
 	)
 }

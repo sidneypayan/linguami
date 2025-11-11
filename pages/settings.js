@@ -45,10 +45,12 @@ import {
 	CancelRounded,
 } from '@mui/icons-material'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 const Settings = () => {
 	const { t } = useTranslation('settings')
-	const { userProfile, updateUserProfile } = useUserContext()
+	const { userProfile, updateUserProfile, logout } = useUserContext()
+	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -276,8 +278,12 @@ const Settings = () => {
 			}
 
 			toast.success(t('accountDeleted'))
-			// Logout will be handled by the API
-			window.location.href = '/'
+
+			// Clear client-side session
+			await logout()
+
+			// Redirect to home page
+			router.push('/')
 		} catch (error) {
 			console.error('Error deleting account:', error)
 			toast.error(error.message || t('deleteAccountError'))
@@ -1890,7 +1896,7 @@ const Settings = () => {
 									border: '1px solid rgba(220, 38, 38, 0.3)',
 								}}>
 								<DeleteForeverRounded sx={{ fontSize: 40, color: '#dc2626' }} />
-								<Typography variant='body2' sx={{ color: '#fca5a5' }}>
+								<Typography variant='body2' sx={{ color: '#fca5a5', whiteSpace: 'pre-line' }}>
 									{t('deleteAccountWarning')}
 								</Typography>
 							</Box>

@@ -58,6 +58,8 @@ const Navbar = props => {
 			name: t('methode'),
 			icon: <School style={{ fontSize: '1.5rem' }} />,
 			href: '/method',
+			// Visible uniquement pour les admins
+			hideIf: !isUserAdmin,
 		},
 		{
 			name: t('teacher'),

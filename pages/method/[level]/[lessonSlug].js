@@ -46,13 +46,14 @@ const LessonPage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn, userProfile, userLearningLanguage } = useUserContext()
+	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin } = useUserContext()
 
-	// Redux state
+	// Redux state - MUST be before conditional return
 	const { levels, courses, courses_loading, courses_error, userProgress, userAccess } = useSelector(
 		(state) => state.courses
 	)
 
+	// State - MUST be before conditional return
 	const [lessonCompleted, setLessonCompleted] = useState(false)
 	const [showUpsellModal, setShowUpsellModal] = useState(false)
 
@@ -105,6 +106,18 @@ const LessonPage = () => {
 			setLessonCompleted(progress?.is_completed || false)
 		}
 	}, [currentLesson, userProgress])
+
+	// Redirect non-admins
+	useEffect(() => {
+		if (!isUserAdmin) {
+			router.replace('/')
+		}
+	}, [isUserAdmin, router])
+
+	// Don't render for non-admins
+	if (!isUserAdmin) {
+		return null
+	}
 
 	const handleMarkComplete = async () => {
 		if (!currentLesson) return

@@ -107,8 +107,6 @@ const Login = () => {
 				{/* Boutons OAuth */}
 				<OAuthButtons
 					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
-					onAppleClick={() => loginWithThirdPartyOAuth('apple')}
-					onFacebookClick={() => loginWithThirdPartyOAuth('facebook')}
 					onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
 				/>
 

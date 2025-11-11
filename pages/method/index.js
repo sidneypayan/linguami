@@ -35,12 +35,19 @@ const MethodePage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn } = useUserContext()
+	const { isUserLoggedIn, isUserAdmin } = useUserContext()
 
 	// Redux state
 	const { levels, levels_loading, userAccess, userAccess_loading } = useSelector(
 		(state) => state.courses
 	)
+
+	// Redirect non-admins
+	useEffect(() => {
+		if (!isUserAdmin) {
+			router.replace('/')
+		}
+	}, [isUserAdmin, router])
 
 	useEffect(() => {
 		dispatch(getLevels())
@@ -48,6 +55,11 @@ const MethodePage = () => {
 			dispatch(getUserAccess(lang))
 		}
 	}, [dispatch, isUserLoggedIn, lang])
+
+	// Don't render for non-admins
+	if (!isUserAdmin) {
+		return null
+	}
 
 
 	// Vérifier si l'utilisateur a accès à un niveau

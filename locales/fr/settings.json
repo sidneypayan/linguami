@@ -65,7 +65,7 @@
 	"deleteAccount": "Supprimer mon compte",
 	"deleteAccountDesc": "Supprimer définitivement votre compte et toutes vos données",
 	"deleteAccountConfirm": "Êtes-vous sûr de vouloir supprimer votre compte ?",
-	"deleteAccountWarning": "Cette action est irréversible. Toutes vos données seront définitivement supprimées.",
+	"deleteAccountWarning": "Cette action est irréversible. Vous perdrez définitivement :\n• Votre progression et statistiques (XP, niveaux, séries)\n• Votre dictionnaire personnel et flashcards\n• Vos matériaux sauvegardés et notes\n• Tous vos exercices complétés\n• Votre historique d'apprentissage",
 	"accountDeleted": "Compte supprimé avec succès",
 	"deleteAccountError": "Erreur lors de la suppression du compte",
 	"theme": "Thème",
