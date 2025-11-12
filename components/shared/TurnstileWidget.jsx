@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import { Box } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
@@ -12,9 +12,19 @@ import { useTheme } from '@mui/material/styles'
  * @param {function} onError - Callback called when an error occurs
  * @param {string} action - Optional action name for analytics (e.g., 'signup', 'login')
  */
-const TurnstileWidget = ({ onSuccess, onError, action = 'submit' }) => {
+const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, ref) => {
 	const theme = useTheme()
 	const turnstileRef = useRef(null)
+
+	// Expose reset method to parent
+	useImperativeHandle(ref, () => ({
+		reset: () => {
+			console.log('🔄 Resetting Turnstile widget...')
+			if (turnstileRef.current) {
+				turnstileRef.current.reset()
+			}
+		}
+	}))
 
 	const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
@@ -25,8 +35,13 @@ const TurnstileWidget = ({ onSuccess, onError, action = 'submit' }) => {
 
 	const handleSuccess = (token) => {
 		console.log('✅ Turnstile challenge completed')
+		console.log('Token received:', token ? 'YES' : 'NO')
+		console.log('Token length:', token?.length || 0)
 		if (onSuccess) {
+			console.log('Calling onSuccess callback...')
 			onSuccess(token)
+		} else {
+			console.error('❌ onSuccess callback is not defined!')
 		}
 	}
 
@@ -69,6 +84,8 @@ const TurnstileWidget = ({ onSuccess, onError, action = 'submit' }) => {
 			/>
 		</Box>
 	)
-}
+})
+
+TurnstileWidget.displayName = 'TurnstileWidget'
 
 export default TurnstileWidget

@@ -84,26 +84,46 @@ const UpdatePassword = () => {
 
 	// Détecter si on arrive depuis l'email avec un token
 	useEffect(() => {
-		const checkSession = async () => {
-			try {
-				// Vérifier si l'utilisateur a une session de récupération
-				const { data: { session }, error } = await supabase.auth.getSession()
+		let mounted = true
 
-				if (error) throw error
-
-				// Si une session existe, c'est qu'on vient de cliquer sur le lien de reset
-				if (session?.user) {
-					setIsResetting(true)
-				}
-			} catch (error) {
-				console.error('Error checking session:', error)
-			} finally {
-				setLoading(false)
-			}
+		// Vérifier les paramètres URL pour les erreurs
+		const { error, error_code } = router.query
+		if (error_code === 'otp_expired' || error === 'access_denied') {
+			toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
+			setIsResetting(false)
+			setLoading(false)
+			return
 		}
 
-		checkSession()
-	}, [])
+		// 1) Vérifier si une session de récupération existe déjà
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			if (!mounted) return
+			if (session?.user) {
+				console.log('✅ Recovery session found')
+				setIsResetting(true)
+			} else {
+				console.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
+				setIsResetting(false)
+			}
+			setLoading(false)
+		})
+
+		// 2) Écouter l'événement PASSWORD_RECOVERY au cas où il arrive après
+		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+			console.log('🔍 Auth event:', event)
+			if (event === 'PASSWORD_RECOVERY') {
+				console.log('✅ PASSWORD_RECOVERY event detected')
+				setIsResetting(true)
+				setLoading(false)
+			}
+		})
+
+		// Cleanup
+		return () => {
+			mounted = false
+			subscription?.unsubscribe()
+		}
+	}, [router.query, t])
 
 	const handleChange = e => {
 		const name = e.target.name

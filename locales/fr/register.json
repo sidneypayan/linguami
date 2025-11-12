@@ -56,6 +56,7 @@
 	"backToSignin": "Retour à la connexion",
 	"newPasswordSubtitle": "Choisissez un nouveau mot de passe sécurisé",
 	"invalidLinkMessage": "Ce lien ne permet plus de modifier le mot de passe. Relancez la procédure « Mot de passe oublié ».",
+	"resetLinkExpired": "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.",
 	"confirm": "Valider",
 	"fillAllFields": "Veuillez renseigner tous les champs",
 	"passwordMinLength": "Au moins 8 caractères",

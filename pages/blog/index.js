@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import BlogCard from '@/components/blog/BlogCard'
 import SEO from '@/components/SEO'
-import { sortPostsByDate } from '@/utils/helpers'
+import { sortPostsByDate } from '@/utils/blogHelpers'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'

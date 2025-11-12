@@ -28,5 +28,10 @@ export async function middleware(request) {
 	return response
 }
 
-// Optionnel : limiter les routes où le middleware s’exécute
-// export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] }
+// Limiter les routes où le middleware s'exécute
+// Exclure /reset-password pour permettre à Supabase de traiter les tokens PKCE côté client
+export const config = {
+	matcher: [
+		'/((?!_next/static|_next/image|favicon.ico|reset-password).*)'
+	]
+}

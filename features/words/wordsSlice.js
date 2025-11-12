@@ -2,9 +2,33 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import { getaddWordsToUserDictionaryMessage } from '@/utils/helpers'
 import { calculateNextReview, initializeCard, getDueCards } from '@/utils/spacedRepetition'
 // Les limites de traduction sont maintenant gérées côté serveur via cookie HttpOnly
+
+/**
+ * Fonction helper privée pour obtenir les messages d'ajout de mots au dictionnaire
+ * @param {string} code - Code du message (success_add_translation, duplicate_translation, unexpected_error)
+ * @param {string} lang - Langue du message ('fr', 'ru', 'en')
+ * @returns {string} - Message traduit
+ */
+const getaddWordsToUserDictionaryMessage = (code, lang = 'fr') => {
+	const messages = {
+		success_add_translation: {
+			fr: 'Traduction ajoutée avec succès.',
+			ru: 'Перевод успешно добавлен.',
+		},
+		duplicate_translation: {
+			fr: 'Cette traduction est déjà enregistrée.',
+			ru: 'Этот перевод уже существует.',
+		},
+		unexpected_error: {
+			fr: 'Une erreur inattendue est survenue.',
+			ru: 'An unexpected error occurred.',
+		},
+	}
+
+	return messages[code]?.[lang] || messages[code]?.['en'] || 'Unknown error'
+}
 
 const initialState = {
 	user_words: [],

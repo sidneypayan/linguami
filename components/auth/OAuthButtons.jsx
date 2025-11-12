@@ -92,7 +92,6 @@ const OAuthButtons = ({ onGoogleClick, onMagicLinkClick }) => {
 				.map((provider) => (
 					<Button
 						key={provider.id}
-						variant="outlined"
 						fullWidth
 						onClick={provider.onClick}
 						sx={buttonStyles}
@@ -117,7 +116,6 @@ const OAuthButtons = ({ onGoogleClick, onMagicLinkClick }) => {
 				.map((provider) => (
 					<Button
 						key={provider.id}
-						variant="outlined"
 						fullWidth
 						onClick={provider.onClick}
 						sx={buttonStyles}

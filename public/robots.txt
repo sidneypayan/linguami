@@ -18,7 +18,7 @@ Disallow: /my-materials
 # Pages de connexion/inscription (pas utiles pour le SEO)
 Disallow: /login
 Disallow: /register
-Disallow: /update-password
+Disallow: /reset-password
 
 # Configuration spécifique pour Googlebot
 User-agent: Googlebot

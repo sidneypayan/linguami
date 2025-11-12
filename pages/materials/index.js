@@ -51,7 +51,7 @@ const Material = () => {
 	const [viewMode, setViewMode] = useState('card') // 'card' ou 'list'
 
 	// Pagination
-	const materialsPerPage = 20
+	const materialsPerPage = 8
 
 	// Niveau de l'utilisateur
 	const userLevel = userProfile?.language_level || 'beginner'

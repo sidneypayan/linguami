@@ -41,3 +41,7 @@ next-env.d.ts
 
 # Windows-specific files (created by incorrect redirections)
 nul
+
+# Backup folders (should not be in repository)
+/backup
+/backups

@@ -1,8 +1,26 @@
 import { supabase } from '@/lib/supabase'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import toast from '@/utils/toast'
-import { mergeUserMaterial } from '@/utils/helpers'
 import { getToastMessage } from '@/utils/toastMessages'
+
+/**
+ * Fonction helper privée pour fusionner les données user_materials avec materials
+ * @param {Array} userMaterials - Tableau de matériaux utilisateur depuis Supabase
+ * @returns {Array} - Tableau de matériaux avec données fusionnées
+ */
+const mergeUserMaterial = userMaterials => {
+	const newUserMaterials = userMaterials.map(userMaterial => ({
+		is_being_studied: userMaterial.is_being_studied,
+		is_studied: userMaterial.is_studied,
+		id: userMaterial.material_id,
+		title: userMaterial.materials.title,
+		image: userMaterial.materials.image,
+		level: userMaterial.materials.level,
+		section: userMaterial.materials.section,
+	}))
+
+	return newUserMaterials
+}
 
 const initialState = {
 	materials: [],

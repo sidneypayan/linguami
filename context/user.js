@@ -381,7 +381,7 @@ const UserProvider = ({ children }) => {
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${
 				process.env.NEXT_PUBLIC_API_URL || window.location.origin
-			}/update-password`,
+			}/reset-password`,
 		})
 		if (error) return safeToastError(error)
 		toast.success(toastMessages.passwordResetEmailSent())

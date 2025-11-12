@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
 import { supabase } from '@/lib/supabase'
@@ -66,6 +66,7 @@ const Signup = () => {
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
 	const [turnstileToken, setTurnstileToken] = useState(null)
+	const turnstileRef = useRef(null)
 
 	// Liste de mots de passe communs à bloquer
 	const commonPasswords = useMemo(() => [
@@ -180,11 +181,17 @@ const Signup = () => {
 			return
 		}
 
+		console.log('📝 Signup form submitted')
+		console.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
+
 		// Verify Turnstile token
 		if (!turnstileToken) {
+			console.error('❌ No Turnstile token found in state')
 			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
 			return
 		}
+
+		console.log('🔐 Verifying token with backend...')
 
 		// Verify token with backend
 		try {
@@ -201,11 +208,14 @@ const Signup = () => {
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
 				setTurnstileToken(null)
+				turnstileRef.current?.reset()
 				return
 			}
 		} catch (error) {
 			console.error('Turnstile verification error:', error)
 			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
+			setTurnstileToken(null)
+			turnstileRef.current?.reset()
 			return
 		}
 
@@ -248,12 +258,19 @@ const Signup = () => {
 			return
 		}
 
-		// Enregistrer
-		return register({
-			...values,
-			spokenLanguage: mapLanguageToCode(spokenLanguage),
-			learningLanguage: mapLanguageToCode(learningLanguage),
-		})
+		// Enregistrer - reset turnstile on failure
+		try {
+			return await register({
+				...values,
+				spokenLanguage: mapLanguageToCode(spokenLanguage),
+				learningLanguage: mapLanguageToCode(learningLanguage),
+			})
+		} catch (error) {
+			console.error('Registration failed:', error)
+			setTurnstileToken(null)
+			turnstileRef.current?.reset()
+			throw error
+		}
 	}
 
 	const textFieldStyles = {
@@ -761,8 +778,16 @@ const Signup = () => {
 
 					{/* Turnstile Anti-Bot Widget */}
 					<TurnstileWidget
-						onSuccess={(token) => setTurnstileToken(token)}
-						onError={() => setTurnstileToken(null)}
+						ref={turnstileRef}
+						onSuccess={(token) => {
+							console.log('🔑 Signup page: Turnstile token received')
+							setTurnstileToken(token)
+						}}
+						onError={(error) => {
+							console.error('❌ Signup page: Turnstile error or expiration:', error)
+							setTurnstileToken(null)
+							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
+						}}
 						action="signup"
 					/>
 

@@ -129,10 +129,33 @@ const AuthCallback = () => {
 					}
 				}
 
-				// Vérifier si c'est un callback de confirmation d'email
+				// Vérifier si c'est un callback de confirmation d'email ou recovery
 				const type = searchParams.get('type')
 				const accessToken = hashParams.get('access_token')
 				const refreshToken = hashParams.get('refresh_token')
+
+				// Si type=recovery mais pas de tokens dans le hash, c'est PKCE
+				// Supabase va automatiquement échanger le token PKCE en session
+				if (type === 'recovery' && !accessToken) {
+					console.log('🔐 Password recovery with PKCE detected')
+					setStatusMessage('Vérification du lien de réinitialisation...')
+
+					// Attendre un peu que Supabase traite le token PKCE
+					await new Promise(resolve => setTimeout(resolve, 500))
+
+					// Vérifier si une session a été établie
+					const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+					if (sessionError || !session) {
+						console.error('❌ No session after PKCE exchange:', sessionError)
+						router.replace('/reset-password?error=access_denied&error_code=otp_expired')
+						return
+					}
+
+					console.log('✅ PKCE session established, redirecting to password reset')
+					router.replace('/reset-password')
+					return
+				}
 
 				if (accessToken && refreshToken) {
 					setStatusMessage('Connexion en cours...')
@@ -171,7 +194,7 @@ const AuthCallback = () => {
 								router.replace('/?welcome=true')
 							} else if (type === 'recovery') {
 								// Reset de mot de passe
-								router.replace('/update-password')
+								router.replace('/reset-password')
 							} else {
 								// Connexion OAuth ou Magic Link
 								router.replace('/')

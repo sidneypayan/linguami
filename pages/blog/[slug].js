@@ -14,7 +14,7 @@ import SocialShareButtons from '@/components/blog/SocialShareButtons'
 import StickySignupWidget from '@/components/blog/StickySignupWidget'
 import RelatedArticles from '@/components/blog/RelatedArticles'
 import { calculateReadingTime, formatReadingTime } from '@/utils/readingTime'
-import { sortPostsByDate } from '@/utils/helpers'
+import { sortPostsByDate } from '@/utils/blogHelpers'
 import { slugify } from '@/utils/slugify'
 
 const Post = ({ frontmatter: { title, date, img, description }, slug, content, allPosts }) => {

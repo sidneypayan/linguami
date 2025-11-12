@@ -1,5 +1,5 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
 import AuthLayout from '@/components/auth/AuthLayout'
@@ -21,6 +21,8 @@ import {
 	AlternateEmailRounded,
 	KeyRounded,
 	LoginRounded,
+	Visibility,
+	VisibilityOff,
 } from '@mui/icons-material'
 
 const Login = () => {
@@ -31,6 +33,8 @@ const Login = () => {
 	const [values, setValues] = useState({ email: '', password: '' })
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 	const [turnstileToken, setTurnstileToken] = useState(null)
+	const [showPassword, setShowPassword] = useState(false)
+	const turnstileRef = useRef(null)
 
 	const handleChange = e => {
 		setValues({ ...values, [e.target.name]: e.target.value })
@@ -39,11 +43,18 @@ const Login = () => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 
+		console.log('📝 Login form submitted')
+		console.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
+
 		// Verify Turnstile token
 		if (!turnstileToken) {
+			console.error('❌ No Turnstile token found in state')
 			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
 			return
 		}
+
+		console.log('🔐 Verifying token with backend...')
+		console.log('Token (first 20 chars):', turnstileToken.substring(0, 20) + '...')
 
 		// Verify token with backend
 		try {
@@ -60,15 +71,25 @@ const Login = () => {
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
 				setTurnstileToken(null)
+				turnstileRef.current?.reset()
 				return
 			}
 		} catch (error) {
 			console.error('Turnstile verification error:', error)
 			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
+			setTurnstileToken(null)
+			turnstileRef.current?.reset()
 			return
 		}
 
-		await login(values)
+		// Try to login - reset turnstile on failure
+		try {
+			await login(values)
+		} catch (error) {
+			console.error('Login failed:', error)
+			setTurnstileToken(null)
+			turnstileRef.current?.reset()
+		}
 	}
 
 	const textFieldStyles = {
@@ -176,7 +197,7 @@ const Login = () => {
 						<TextField
 							fullWidth
 							onChange={handleChange}
-							type="password"
+							type={showPassword ? 'text' : 'password'}
 							label={t('password')}
 							name="password"
 							value={values.password}
@@ -189,12 +210,29 @@ const Login = () => {
 										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
 									</InputAdornment>
 								),
+								endAdornment: (
+									<InputAdornment position="end">
+										<Button
+											onClick={() => setShowPassword(!showPassword)}
+											sx={{
+												minWidth: 'auto',
+												p: 1,
+												color: isDark ? '#94a3b8' : '#718096',
+												'&:hover': {
+													bgcolor: 'rgba(102, 126, 234, 0.1)',
+												},
+											}}
+											aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+											{showPassword ? <VisibilityOff /> : <Visibility />}
+										</Button>
+									</InputAdornment>
+								),
 							}}
 							sx={textFieldStyles}
 						/>
 
 						{/* Mot de passe oublié */}
-						<Link href="/update-password" style={{ textDecoration: 'none' }}>
+						<Link href="/reset-password" style={{ textDecoration: 'none' }}>
 							<Box
 								component="span"
 								sx={{
@@ -217,8 +255,18 @@ const Login = () => {
 
 					{/* Turnstile Anti-Bot Widget */}
 					<TurnstileWidget
-						onSuccess={(token) => setTurnstileToken(token)}
-						onError={() => setTurnstileToken(null)}
+						ref={turnstileRef}
+						onSuccess={(token) => {
+							console.log('🔑 Login page: Turnstile token received')
+							console.log('Token:', token?.substring(0, 20) + '...')
+							setTurnstileToken(token)
+							console.log('Token stored in state')
+						}}
+						onError={(error) => {
+							console.error('❌ Login page: Turnstile error or expiration:', error)
+							setTurnstileToken(null)
+							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
+						}}
 						action="login"
 					/>
 
