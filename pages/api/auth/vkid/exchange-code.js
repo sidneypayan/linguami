@@ -34,6 +34,7 @@ export default async function handler(req, res) {
 		console.log('🔧 [VK Exchange] Exchange parameters:')
 		console.log('App ID:', appId)
 		console.log('Redirect URI:', finalRedirectUri)
+		console.log('Using device_id as code_verifier:', deviceId ? deviceId.substring(0, 10) + '...' : 'undefined')
 
 		// Exchange code for access token using VK ID OAuth2 API
 		const tokenResponse = await fetch('https://id.vk.com/oauth2/auth', {
@@ -44,9 +45,8 @@ export default async function handler(req, res) {
 			body: new URLSearchParams({
 				grant_type: 'authorization_code',
 				code: code,
+				code_verifier: deviceId,
 				client_id: appId,
-				client_secret: clientSecret,
-				device_id: deviceId,
 				redirect_uri: finalRedirectUri,
 			}),
 		})
