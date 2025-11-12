@@ -29,6 +29,10 @@ const AuthCallback = () => {
 
 				if (vkCode && vkType === 'code_v2') {
 					console.log('🔐 VK ID callback detected, exchanging code for tokens...')
+					console.log('VK Code (first 10 chars):', vkCode.substring(0, 10) + '...')
+					console.log('Device ID (first 10 chars):', deviceId ? deviceId.substring(0, 10) + '...' : 'undefined')
+					console.log('Type:', vkType)
+					console.log('Redirect URI:', `${window.location.origin}/auth/callback`)
 					setStatusMessage('Connexion avec VK ID...')
 
 					try {
@@ -46,15 +50,18 @@ const AuthCallback = () => {
 							}),
 						})
 
+						console.log('Exchange response status:', exchangeResponse.status)
+
 						if (!exchangeResponse.ok) {
-							const errorData = await exchangeResponse.json()
+							const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
+							console.error('❌ Exchange failed with error:', errorData)
 							throw new Error(errorData.error || 'Failed to exchange code')
 						}
 
 						const { access_token, user } = await exchangeResponse.json()
 
 						console.log('✅ Token received from VK ID')
-						console.log('👤 User info:', user.first_name, user.last_name)
+						console.log('👤 User info:', user.first_name, user.last_name, user.email || '(no email)')
 
 						// Validate token and create/login user on our backend
 						console.log('🔄 Validating with backend...')
@@ -74,13 +81,17 @@ const AuthCallback = () => {
 							}),
 						})
 
-						const data = await response.json()
+						console.log('Validation response status:', response.status)
+
+						const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
 
 						if (!response.ok) {
+							console.error('❌ Validation failed with error:', data)
 							throw new Error(data.error || 'Authentication failed')
 						}
 
 						console.log('✅ Backend validation successful')
+						console.log('User ID:', data.userId)
 
 						// Set Supabase session with tokens
 						console.log('🔑 Setting Supabase session...')
@@ -101,13 +112,18 @@ const AuthCallback = () => {
 						return
 					} catch (vkError) {
 						console.error('❌ VK ID authentication error:', vkError)
+						console.error('Error name:', vkError.name)
 						console.error('Error message:', vkError.message)
 						console.error('Error stack:', vkError.stack)
+						console.error('Full error object:', JSON.stringify(vkError, null, 2))
 
 						// Wait 5 seconds before redirect to see the error
-						setStatusMessage(`Erreur: ${vkError.message}`)
+						const errorMessage = vkError.message || 'Erreur inconnue'
+						setStatusMessage(`Erreur VK ID: ${errorMessage}`)
+						console.log(`⏳ Waiting 5 seconds before redirecting to login...`)
 						await new Promise(resolve => setTimeout(resolve, 5000))
 
+						console.log('🔀 Redirecting to login page...')
 						router.replace('/login?error=vkid')
 						return
 					}

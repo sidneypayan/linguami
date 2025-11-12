@@ -1,49 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Box, Typography } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
-
-// VK Logo Component
-const VkLogo = ({ size = 24 }) => (
-	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-		<circle cx="24" cy="24" r="24" fill="#0077FF"/>
-		<path d="M25.54 34h-2.18c-6.87 0-10.8-4.7-10.98-12.48h3.45c.12 5.88 2.7 8.37 4.77 8.88V21.52h3.24v5.1c2.04-.22 4.17-2.55 4.89-5.1h3.24c-.54 3.06-2.82 5.31-4.44 6.24 1.62.75 4.17 2.67 5.16 6.24h-3.57c-.75-2.37-2.61-4.2-5.1-4.44v4.44h-.48z" fill="white"/>
-	</svg>
-)
-
-// OK (Odnoklassniki) Logo Component
-const OkLogo = ({ size = 24 }) => (
-	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-		<circle cx="24" cy="24" r="24" fill="#EE8208"/>
-		<path d="M24 13c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6zm0 15c5.52 0 10 4.48 10 10v1H14v-1c0-5.52 4.48-10 10-10z" fill="white"/>
-		<circle cx="24" cy="19" r="3" fill="#EE8208"/>
-		<path d="M24 28c-2.76 0-5 2.24-5 5h10c0-2.76-2.24-5-5-5z" fill="#EE8208"/>
-		<rect x="21" y="31" width="6" height="3" rx="1.5" fill="white"/>
-	</svg>
-)
-
-// Mail.ru Logo Component
-const MailLogo = ({ size = 24 }) => (
-	<svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-		<circle cx="24" cy="24" r="24" fill="#168DE2"/>
-		<path d="M33 17H15c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V19c0-1.1-.9-2-2-2zm0 4l-9 5.62L15 21v-2l9 5.62L33 19v2z" fill="white"/>
-	</svg>
-)
+import { useTheme } from '@mui/material/styles'
 
 const VkIdButton = ({ buttonStyles }) => {
 	const router = useRouter()
+	const theme = useTheme()
 	const [isLoading, setIsLoading] = useState(false)
 	const [sdkReady, setSdkReady] = useState(false)
+	const [widgetLoading, setWidgetLoading] = useState(true)
+	const [isLocalDev, setIsLocalDev] = useState(false)
 	const sdkLoadedRef = useRef(false)
 	const sdkInitializedRef = useRef(false)
+	const oneTapInstanceRef = useRef(null)
+	const containerRef = useRef(null)
 
 	useEffect(() => {
-		// Prevent loading SDK multiple times
-		if (sdkLoadedRef.current) {
+		// Check if we're in local development (HTTP)
+		// VK ID requires HTTPS, so skip initialization on plain HTTP
+		const isLocal = typeof window !== 'undefined' && window.location.protocol === 'http:'
+		setIsLocalDev(isLocal)
+
+		if (isLocal) {
+			console.warn('⚠️ VK ID OneTap requires HTTPS. Disabled in local HTTP environment.')
+			console.log('💡 VK ID will work in production (HTTPS) or with an HTTPS tunnel.')
+			setWidgetLoading(false)
 			return
 		}
 
+		// Prevent loading SDK multiple times
+		if (sdkLoadedRef.current) {
+			console.log('🔄 VK ID SDK already loading/loaded, skipping...')
+			return
+		}
+
+		console.log('📦 Loading VK ID SDK...')
 		sdkLoadedRef.current = true
 
 		// Load VK ID SDK - Try multiple CDN sources
@@ -58,24 +51,30 @@ const VkIdButton = ({ buttonStyles }) => {
 		const loadScript = () => {
 			if (currentCdnIndex >= cdnSources.length) {
 				console.error('❌ Failed to load VK ID SDK from all CDN sources')
+				toast.error('Impossible de charger VK ID. Veuillez réessayer.')
 				return
 			}
 
+			console.log(`🔗 Trying to load VK ID SDK from: ${cdnSources[currentCdnIndex]}`)
 			const script = document.createElement('script')
 			script.src = cdnSources[currentCdnIndex]
 			script.async = true
+			script.crossOrigin = 'anonymous'
 
 			script.onload = () => {
-				console.log('✅ VK ID SDK script loaded')
+				console.log(`✅ VK ID SDK script loaded successfully from: ${cdnSources[currentCdnIndex]}`)
 				initVkId()
 			}
 
 			script.onerror = (error) => {
-				console.warn(`⚠️ Failed to load from ${cdnSources[currentCdnIndex]}, trying next...`)
+				console.error(`❌ Failed to load from ${cdnSources[currentCdnIndex]}:`, error)
+				console.error('Error type:', error.type)
+				console.error('Error target:', error.target)
 				if (script.parentNode) {
 					script.parentNode.removeChild(script)
 				}
 				currentCdnIndex++
+				console.log(`⏭️ Trying next CDN source (${currentCdnIndex + 1}/${cdnSources.length})...`)
 				loadScript()
 			}
 
@@ -98,78 +97,258 @@ const VkIdButton = ({ buttonStyles }) => {
 	const initVkId = () => {
 		// Prevent multiple initializations
 		if (sdkInitializedRef.current) {
+			console.log('🔄 VK ID SDK already initialized, skipping...')
 			return
 		}
 
-		if (!window.VKIDSDK || !process.env.NEXT_PUBLIC_VK_APP_ID) {
-			console.error('❌ VK ID SDK not loaded or APP ID missing')
+		if (!window.VKIDSDK) {
+			console.error('❌ VK ID SDK not loaded (window.VKIDSDK is undefined)')
+			return
+		}
+
+		if (!process.env.NEXT_PUBLIC_VK_APP_ID) {
+			console.error('❌ NEXT_PUBLIC_VK_APP_ID is not defined')
+			toast.error('Configuration VK ID manquante')
 			return
 		}
 
 		try {
 			sdkInitializedRef.current = true
 
+			const appId = parseInt(process.env.NEXT_PUBLIC_VK_APP_ID)
+			const redirectUrl = `${window.location.origin}/auth/callback`
+
+			console.log('🔧 Initializing VK ID SDK with:')
+			console.log('  - App ID:', appId)
+			console.log('  - Redirect URL:', redirectUrl)
+			console.log('  - Origin:', window.location.origin)
+
 			// Initialize VK ID SDK
 			window.VKIDSDK.Config.init({
-				app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID),
-				redirectUrl: `${window.location.origin}/auth/callback`,
+				app: appId,
+				redirectUrl: redirectUrl,
 			})
 
-			setSdkReady(true)
 			console.log('✅ VK ID SDK initialized successfully')
+
+			// Create and render OneTap widget
+			renderOneTapWidget()
+
+			setSdkReady(true)
 		} catch (error) {
-			console.error('Error initializing VK ID:', error)
+			console.error('❌ Error initializing VK ID:', error)
+			console.error('Error message:', error.message)
+			console.error('Error stack:', error.stack)
+			toast.error('Erreur lors de l\'initialisation de VK ID')
+			setWidgetLoading(false)
 		}
 	}
 
-	const handleVkIdClick = async () => {
-		if (!sdkReady || isLoading) {
-			if (!sdkReady) {
-				toast.error('VK ID est en cours de chargement...')
-			}
+	const renderOneTapWidget = () => {
+		if (!containerRef.current || !window.VKIDSDK) {
+			console.error('❌ Container ref or VKIDSDK not available')
+			setWidgetLoading(false)
+			return
+		}
+
+		try {
+			console.log('🎨 Rendering VK ID OneTap widget...')
+
+			// Create OneTap instance
+			const oneTap = new window.VKIDSDK.OneTap()
+
+			// Determine color scheme based on theme
+			const scheme = theme.palette.mode === 'dark'
+				? window.VKIDSDK.Scheme.DARK
+				: window.VKIDSDK.Scheme.LIGHT
+
+			// Render the widget
+			oneTap
+				.render({
+					container: containerRef.current,
+					scheme: scheme,
+					lang: window.VKIDSDK.Languages.RUS,
+					styles: {
+						width: '100%',
+						height: 48,
+						borderRadius: 12,
+					},
+				})
+				.on(window.VKIDSDK.WidgetEvents.ERROR, (error) => {
+					console.error('❌ VK ID Widget Error:', error)
+					toast.error('Erreur lors du chargement du widget VK ID')
+					setWidgetLoading(false)
+				})
+				.on(window.VKIDSDK.OneTapInternalEvents.LOGIN_SUCCESS, async (payload) => {
+					console.log('✅ VK ID OneTap LOGIN_SUCCESS event received')
+					console.log('Payload:', payload)
+					await handleOneTapSuccess(payload)
+				})
+
+			oneTapInstanceRef.current = oneTap
+			setWidgetLoading(false)
+
+			console.log('✅ VK ID OneTap widget rendered successfully')
+		} catch (error) {
+			console.error('❌ Error rendering OneTap widget:', error)
+			console.error('Error message:', error.message)
+			console.error('Error stack:', error.stack)
+			toast.error('Erreur lors du rendu du widget VK ID')
+			setWidgetLoading(false)
+		}
+	}
+
+	const handleOneTapSuccess = async (payload) => {
+		if (isLoading) {
+			console.log('⚠️ Already processing authentication, skipping...')
 			return
 		}
 
 		setIsLoading(true)
 
 		try {
-			console.log('🔐 Starting VK ID authentication...')
-			console.log('Redirecting to VK ID login page...')
+			console.log('🔐 Processing VK ID OneTap authentication...')
+			console.log('Code (first 10 chars):', payload.code ? payload.code.substring(0, 10) + '...' : 'undefined')
+			console.log('Device ID (first 10 chars):', payload.device_id ? payload.device_id.substring(0, 10) + '...' : 'undefined')
 
-			// Trigger VK ID authentication - will redirect to VK, then back to /auth/callback
-			window.VKIDSDK.Auth.login()
+			// Exchange code for token via backend API
+			console.log('🔄 Exchanging code for token...')
+			const exchangeResponse = await fetch('/api/auth/vkid/exchange-code', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					code: payload.code,
+					deviceId: payload.device_id,
+					redirectUri: `${window.location.origin}/auth/callback`,
+				}),
+			})
 
-			// Note: The page will redirect, so no need to handle the response here
-			// The /auth/callback page will handle the code exchange and login
+			console.log('Exchange response status:', exchangeResponse.status)
+
+			if (!exchangeResponse.ok) {
+				const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
+				console.error('❌ Exchange failed with error:', errorData)
+				throw new Error(errorData.error || 'Failed to exchange code')
+			}
+
+			const { access_token, user } = await exchangeResponse.json()
+
+			console.log('✅ Token received from VK ID')
+			console.log('👤 User info:', user.first_name, user.last_name, user.email || '(no email)')
+
+			// Validate token and create/login user on our backend
+			console.log('🔄 Validating with backend...')
+			const response = await fetch('/api/auth/vkid/validate', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					token: access_token,
+					firstName: user.first_name,
+					lastName: user.last_name,
+					avatar: user.avatar,
+					email: user.email,
+					userId: user.user_id,
+					provider: 'vk',
+				}),
+			})
+
+			console.log('Validation response status:', response.status)
+
+			const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
+
+			if (!response.ok) {
+				console.error('❌ Validation failed with error:', data)
+				throw new Error(data.error || 'Authentication failed')
+			}
+
+			console.log('✅ Backend validation successful')
+			console.log('User ID:', data.userId)
+
+			// Set Supabase session with tokens
+			console.log('🔑 Setting Supabase session...')
+			const { error: sessionError } = await supabase.auth.setSession({
+				access_token: data.access_token,
+				refresh_token: data.refresh_token,
+			})
+
+			if (sessionError) {
+				console.error('❌ Session error:', sessionError)
+				throw sessionError
+			}
+
+			console.log('✅ VK ID authentication complete')
+			toast.success('Connexion réussie !')
+
+			// Redirect to home
+			router.push('/')
 		} catch (error) {
-			console.error('❌ VK ID login error:', error)
-			toast.error('Erreur lors de la connexion avec VK ID')
+			console.error('❌ VK ID authentication error:', error)
+			console.error('Error name:', error.name)
+			console.error('Error message:', error.message)
+			console.error('Error stack:', error.stack)
+			toast.error(`Erreur d'authentification: ${error.message}`)
 			setIsLoading(false)
 		}
 	}
 
-	return (
-		<Button
-			variant="outlined"
-			fullWidth
-			onClick={handleVkIdClick}
-			disabled={!sdkReady || isLoading}
-			sx={buttonStyles}
-			aria-label="Sign in with VK, Odnoklassniki or Mail.ru">
-			<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
-				{/* Icons */}
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-					<VkLogo size={24} />
-					<OkLogo size={24} />
-					<MailLogo size={24} />
-				</Box>
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			if (oneTapInstanceRef.current) {
+				try {
+					// Cleanup OneTap instance if it has a destroy method
+					if (typeof oneTapInstanceRef.current.destroy === 'function') {
+						oneTapInstanceRef.current.destroy()
+					}
+				} catch (error) {
+					console.error('Error cleaning up OneTap instance:', error)
+				}
+			}
+		}
+	}, [])
 
-				{/* Text */}
-				<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
-					{isLoading ? 'Connexion...' : 'VK • OK • Mail.ru'}
-				</Typography>
-			</Box>
-		</Button>
+	// Don't render anything in local HTTP environment
+	if (isLocalDev) {
+		return null
+	}
+
+	return (
+		<Box
+			sx={{
+				position: 'relative',
+				width: '100%',
+				minHeight: 48,
+				...buttonStyles,
+			}}
+		>
+			{/* Container for VK ID OneTap widget */}
+			<div ref={containerRef} id="vkid-onetap-container" style={{ width: '100%' }} />
+
+			{/* Loading indicator */}
+			{(widgetLoading || isLoading) && (
+				<Box
+					sx={{
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						bgcolor: 'rgba(255, 255, 255, 0.8)',
+						borderRadius: '12px',
+						zIndex: 1,
+					}}
+				>
+					<CircularProgress size={24} />
+				</Box>
+			)}
+		</Box>
 	)
 }
 

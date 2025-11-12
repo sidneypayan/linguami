@@ -11,6 +11,29 @@ VK ID est la solution d'authentification moderne de VK qui remplace l'ancien OAu
 - ✅ **UX moderne** : Widget élégant avec choix du provider
 - ✅ **Meilleure couverture** : Touche plus d'utilisateurs russes qu'un seul provider
 
+## 🚀 OneTap : La méthode d'authentification optimale
+
+Linguami utilise la méthode **OneTap** de VK ID, qui offre une expérience utilisateur supérieure :
+
+### Avantages de OneTap
+
+- ⚡ **Aucune redirection** : L'authentification se fait dans une popup, l'utilisateur reste sur votre page
+- 🎨 **Widget natif** : Design officiel VK ID qui s'adapte automatiquement au thème (clair/sombre)
+- 🔄 **Gestion automatique** : Le SDK gère l'OAuth flow, vous recevez directement le code d'autorisation
+- 📱 **Mobile-friendly** : Fonctionne parfaitement sur mobile avec une UX optimisée
+- 🛡️ **Sécurisé** : PKCE (Proof Key for Code Exchange) géré automatiquement par le SDK
+
+### Comparaison : Auth.login() vs OneTap
+
+| Aspect | Auth.login() (ancien) | OneTap (actuel) |
+|--------|----------------------|-----------------|
+| **Expérience** | Redirection complète vers VK | Popup sur place |
+| **Performance** | Lente (chargement de page) | Rapide (pas de reload) |
+| **UX** | Utilisateur quitte le site | Utilisateur reste sur le site |
+| **Mobile** | Correcte | Optimisée |
+| **Design** | Personnalisé | Natif VK ID |
+| **Complexité** | Gestion du callback manual | Événement LOGIN_SUCCESS |
+
 ## 📋 Prérequis
 
 - Un compte VK (VKontakte)
@@ -61,40 +84,47 @@ Le composant VK ID utilise le SDK officiel qui affiche automatiquement le logo e
 
 ## 🔄 Architecture de l'authentification
 
-### Flux d'authentification VK ID
+### Flux d'authentification VK ID OneTap
 
 ```
 1. User visite /ru/login (interface russe)
    ↓
-2. VK ID SDK se charge et affiche le bouton
+2. VK ID SDK se charge et affiche le widget OneTap
    ↓
-3. User clique sur le bouton VK ID
+3. User clique sur le widget OneTap
    ↓
-4. Widget VK ID s'ouvre (choix: VK, OK, ou Mail.ru)
+4. Popup VK ID s'ouvre (choix: VK, OK, ou Mail.ru)
    ↓
 5. User choisit son provider et s'authentifie
    ↓
-6. VK ID SDK retourne un token + user info
+6. VK ID SDK émet l'événement LOGIN_SUCCESS avec code + device_id
    ↓
-7. Envoi des données à /api/auth/vkid/validate
+7. Frontend envoie le code à /api/auth/vkid/exchange-code
    ↓
-8. Backend valide le token avec l'API VK ID
+8. Backend échange le code contre un access_token avec l'API VK ID
    ↓
-9. Création/connexion de l'utilisateur dans Supabase
+9. Backend récupère les infos utilisateur avec l'access_token
    ↓
-10. Génération de session Supabase
+10. Envoi des données à /api/auth/vkid/validate
    ↓
-11. Redirection vers la page d'accueil
+11. Backend valide et crée/connecte l'utilisateur dans Supabase
+   ↓
+12. Génération de session Supabase
+   ↓
+13. Redirection vers la page d'accueil
 ```
 
 ### Composants créés
 
 **Frontend :**
-- `components/auth/VkIdButton.jsx` - Bouton VK ID avec SDK intégré
+- `components/auth/VkIdButton.jsx` - Widget OneTap VK ID intégré (sans redirection)
 - `components/auth/OAuthButtons.jsx` - Intègre VK ID conditionnellement
 
 **Backend :**
+- `pages/api/auth/vkid/exchange-code.js` - Échange le code d'autorisation contre un access token
 - `pages/api/auth/vkid/validate.js` - Valide le token et crée/connecte l'utilisateur
+
+**Note :** La page `pages/auth/callback.js` gère toujours les redirections OAuth classiques pour compatibilité, mais OneTap évite cette étape en gérant tout côté client.
 
 ### Affichage conditionnel
 
