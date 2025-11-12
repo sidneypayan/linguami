@@ -32,41 +32,29 @@ const AuthCallback = () => {
 					setStatusMessage('Connexion avec VK ID...')
 
 					try {
-						// Load VK ID SDK if not already loaded
-						if (!window.VKIDSDK) {
-							console.log('📦 Loading VK ID SDK...')
-							await new Promise((resolve, reject) => {
-								const script = document.createElement('script')
-								script.src = 'https://unpkg.com/@vkid/sdk@3.0.0/dist-sdk/umd/index.js'
-								script.async = true
-								script.onload = resolve
-								script.onerror = reject
-								document.body.appendChild(script)
-							})
+						// Exchange code for token via backend API
+						console.log('🔄 Exchanging code for token...')
+						const exchangeResponse = await fetch('/api/auth/vkid/exchange-code', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								code: vkCode,
+								deviceId: deviceId,
+								redirectUri: `${window.location.origin}/auth/callback`,
+							}),
+						})
 
-							// Initialize SDK
-							window.VKIDSDK.Config.init({
-								app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID),
-								redirectUrl: `${window.location.origin}/auth/callback`,
-							})
+						if (!exchangeResponse.ok) {
+							const errorData = await exchangeResponse.json()
+							throw new Error(errorData.error || 'Failed to exchange code')
 						}
 
-						// Exchange code for token using VK ID SDK
-						console.log('🔄 Exchanging code for token...')
-						const authResult = await window.VKIDSDK.Auth.exchangeCode(vkCode, deviceId)
+						const { access_token, user } = await exchangeResponse.json()
 
 						console.log('✅ Token received from VK ID')
-
-						if (!authResult || !authResult.token) {
-							throw new Error('No token received from VK ID')
-						}
-
-						const { token } = authResult
-
-						// Get user info from VK ID
-						console.log('👤 Getting user info from VK ID...')
-						const userData = await window.VKIDSDK.Auth.getUserInfo(token)
-						console.log('✅ User info received:', userData.first_name, userData.last_name)
+						console.log('👤 User info:', user.first_name, user.last_name)
 
 						// Validate token and create/login user on our backend
 						console.log('🔄 Validating with backend...')
@@ -76,12 +64,12 @@ const AuthCallback = () => {
 								'Content-Type': 'application/json',
 							},
 							body: JSON.stringify({
-								token: token.access_token,
-								firstName: userData.first_name,
-								lastName: userData.last_name,
-								avatar: userData.avatar,
-								email: userData.email,
-								userId: userData.user_id,
+								token: access_token,
+								firstName: user.first_name,
+								lastName: user.last_name,
+								avatar: user.avatar,
+								email: user.email,
+								userId: user.user_id,
 								provider: 'vk',
 							}),
 						})
