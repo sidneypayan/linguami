@@ -113,6 +113,13 @@ const AuthCallback = () => {
 						return
 					} catch (vkError) {
 						console.error('❌ VK ID authentication error:', vkError)
+						console.error('Error message:', vkError.message)
+						console.error('Error stack:', vkError.stack)
+
+						// Wait 5 seconds before redirect to see the error
+						setStatusMessage(`Erreur: ${vkError.message}`)
+						await new Promise(resolve => setTimeout(resolve, 5000))
+
 						router.replace('/login?error=vkid')
 						return
 					}
