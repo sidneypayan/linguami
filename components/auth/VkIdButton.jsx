@@ -94,7 +94,24 @@ const VkIdButton = ({ buttonStyles }) => {
 		}
 	}, [])
 
-	const initVkId = () => {
+	// Generate PKCE code verifier and challenge
+	const generateCodeVerifier = () => {
+		const array = new Uint8Array(32)
+		crypto.getRandomValues(array)
+		return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+	}
+
+	const generateCodeChallenge = async (verifier) => {
+		const encoder = new TextEncoder()
+		const data = encoder.encode(verifier)
+		const digest = await crypto.subtle.digest('SHA-256', data)
+		return btoa(String.fromCharCode(...new Uint8Array(digest)))
+			.replace(/\+/g, '-')
+			.replace(/\//g, '_')
+			.replace(/=/g, '')
+	}
+
+	const initVkId = async () => {
 		// Prevent multiple initializations
 		if (sdkInitializedRef.current) {
 			console.log('🔄 VK ID SDK already initialized, skipping...')
@@ -118,18 +135,28 @@ const VkIdButton = ({ buttonStyles }) => {
 			const appId = parseInt(process.env.NEXT_PUBLIC_VK_APP_ID)
 			const redirectUrl = `${window.location.origin}/auth/callback`
 
+			// Generate PKCE parameters
+			const codeVerifier = generateCodeVerifier()
+			const codeChallenge = await generateCodeChallenge(codeVerifier)
+
+			// Store code verifier for later use
+			sessionStorage.setItem('vk_code_verifier', codeVerifier)
+
 			console.log('🔧 Initializing VK ID SDK with:')
 			console.log('  - App ID:', appId)
 			console.log('  - Redirect URL:', redirectUrl)
 			console.log('  - Origin:', window.location.origin)
+			console.log('  - Code Challenge (first 20 chars):', codeChallenge.substring(0, 20) + '...')
 
-			// Initialize VK ID SDK
+			// Initialize VK ID SDK with code challenge (workaround for PKCE bug)
 			window.VKIDSDK.Config.init({
 				app: appId,
 				redirectUrl: redirectUrl,
+				codeChallenge: codeChallenge,
+				responseMode: window.VKIDSDK.ConfigResponseMode.Callback,
 			})
 
-			console.log('✅ VK ID SDK initialized successfully')
+			console.log('✅ VK ID SDK initialized successfully with PKCE')
 
 			// Create and render OneTap widget
 			renderOneTapWidget()
@@ -211,32 +238,50 @@ const VkIdButton = ({ buttonStyles }) => {
 			console.log('Code (first 10 chars):', payload.code ? payload.code.substring(0, 10) + '...' : 'undefined')
 			console.log('Device ID (first 10 chars):', payload.device_id ? payload.device_id.substring(0, 10) + '...' : 'undefined')
 
-			// Exchange code for token via backend API
-			console.log('🔄 Exchanging code for token...')
-			const exchangeResponse = await fetch('/api/auth/vkid/exchange-code', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					code: payload.code,
-					deviceId: payload.device_id,
-					redirectUri: `${window.location.origin}/auth/callback`,
-				}),
-			})
-
-			console.log('Exchange response status:', exchangeResponse.status)
-
-			if (!exchangeResponse.ok) {
-				const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
-				console.error('❌ Exchange failed with error:', errorData)
-				throw new Error(errorData.error || 'Failed to exchange code')
+			// Get stored code verifier
+			const codeVerifier = sessionStorage.getItem('vk_code_verifier')
+			if (!codeVerifier) {
+				throw new Error('Code verifier not found in session storage')
 			}
 
-			const { access_token, user } = await exchangeResponse.json()
+			console.log('Code Verifier (first 20 chars):', codeVerifier.substring(0, 20) + '...')
 
-			console.log('✅ Token received from VK ID')
-			console.log('👤 User info:', user.first_name, user.last_name, user.email || '(no email)')
+			// Exchange code for token using VK ID SDK (client-side with PKCE)
+			console.log('🔄 Exchanging code for token using SDK...')
+			const tokenData = await window.VKIDSDK.Auth.exchangeCode(
+				payload.code,
+				payload.device_id,
+				codeVerifier
+			)
+
+			console.log('✅ Token exchange successful')
+			console.log('Has access_token:', !!tokenData.access_token)
+			console.log('Has refresh_token:', !!tokenData.refresh_token)
+
+			if (!tokenData.access_token) {
+				throw new Error('No access token received from SDK')
+			}
+
+			// Get user info using the access token
+			console.log('🔍 Fetching user info...')
+			const userInfoResponse = await fetch('https://id.vk.com/oauth2/user_info', {
+				headers: {
+					'Authorization': `Bearer ${tokenData.access_token}`,
+				},
+			})
+
+			if (!userInfoResponse.ok) {
+				const errorText = await userInfoResponse.text()
+				console.error('❌ Failed to get user info:', userInfoResponse.status)
+				console.error('Error response:', errorText)
+				throw new Error('Failed to get user info')
+			}
+
+			const userData = await userInfoResponse.json()
+			const user = userData.user
+
+			console.log('✅ User info received')
+			console.log('👤 User:', user.first_name, user.last_name, user.email || '(no email)')
 
 			// Validate token and create/login user on our backend
 			console.log('🔄 Validating with backend...')
@@ -246,7 +291,7 @@ const VkIdButton = ({ buttonStyles }) => {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					token: access_token,
+					token: tokenData.access_token,
 					firstName: user.first_name,
 					lastName: user.last_name,
 					avatar: user.avatar,
@@ -282,6 +327,9 @@ const VkIdButton = ({ buttonStyles }) => {
 
 			console.log('✅ VK ID authentication complete')
 			toast.success('Connexion réussie !')
+
+			// Clean up stored code verifier
+			sessionStorage.removeItem('vk_code_verifier')
 
 			// Redirect to home
 			router.push('/')
