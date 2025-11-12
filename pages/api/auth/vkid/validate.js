@@ -16,7 +16,13 @@ export default async function handler(req, res) {
 		}
 
 		// Verify token with VK ID API
-		const verifyResponse = await fetch('https://id.vk.com/oauth2/user_info', {
+		// VK ID API requires client_id as query parameter
+		const clientId = process.env.NEXT_PUBLIC_VK_APP_ID
+		const userInfoUrl = `https://id.vk.com/oauth2/user_info?client_id=${clientId}`
+
+		console.log('🔧 [VK Validate] Fetching from:', userInfoUrl)
+
+		const verifyResponse = await fetch(userInfoUrl, {
 			headers: {
 				'Authorization': `Bearer ${token}`,
 			}

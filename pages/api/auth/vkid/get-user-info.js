@@ -17,7 +17,13 @@ export default async function handler(req, res) {
 		}
 
 		// Get user info using the access token
-		const userInfoResponse = await fetch('https://id.vk.com/oauth2/user_info', {
+		// VK ID API requires client_id as query parameter
+		const clientId = process.env.NEXT_PUBLIC_VK_APP_ID
+		const userInfoUrl = `https://id.vk.com/oauth2/user_info?client_id=${clientId}`
+
+		console.log('🔧 [VK User Info] Fetching from:', userInfoUrl)
+
+		const userInfoResponse = await fetch(userInfoUrl, {
 			headers: {
 				'Authorization': `Bearer ${accessToken}`,
 			},
