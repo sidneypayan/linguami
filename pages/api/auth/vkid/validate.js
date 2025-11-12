@@ -29,9 +29,14 @@ export default async function handler(req, res) {
 
 		const vkUserData = await verifyResponse.json()
 
-		// Validate that the user ID matches
-		if (vkUserData.user.user_id !== userId.toString()) {
+		console.log('✅ [VK Validate] VK user data received:')
+		console.log('Raw response:', JSON.stringify(vkUserData, null, 2))
+
+		// Validate that the user ID matches (VK API returns data at root level)
+		if (vkUserData.user_id !== userId.toString()) {
 			console.error('User ID mismatch')
+			console.error('Expected:', userId.toString())
+			console.error('Received:', vkUserData.user_id)
 			return res.status(401).json({ error: 'User ID mismatch' })
 		}
 
