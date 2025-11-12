@@ -92,15 +92,16 @@ export default async function handler(req, res) {
 		const userData = await userInfoResponse.json()
 
 		console.log('✅ [VK Exchange] User info received:')
-		console.log('User ID:', userData.user?.user_id)
-		console.log('Name:', userData.user?.first_name, userData.user?.last_name)
-		console.log('Email:', userData.user?.email || '(none)')
+		console.log('Raw response:', JSON.stringify(userData, null, 2))
+		console.log('User ID:', userData.user_id)
+		console.log('Name:', userData.first_name, userData.last_name)
+		console.log('Email:', userData.email || '(none)')
 
-		// Return the token and user data
+		// Return the token and user data (VK API returns user data at root level)
 		return res.status(200).json({
 			success: true,
 			access_token: tokenData.access_token,
-			user: userData.user,
+			user: userData,
 		})
 
 	} catch (error) {
