@@ -283,7 +283,10 @@ const VkIdButton = ({ buttonStyles }) => {
 			const { user } = await userInfoResponse.json()
 
 			console.log('✅ User info received')
+			console.log('Raw user object:', JSON.stringify(user, null, 2))
 			console.log('👤 User:', user.first_name, user.last_name, user.email || '(no email)')
+			console.log('User ID:', user.user_id)
+			console.log('Avatar:', user.avatar)
 
 			// Validate token and create/login user on our backend
 			console.log('🔄 Validating with backend...')
