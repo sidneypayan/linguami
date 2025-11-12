@@ -113,7 +113,6 @@ const VkIdButton = ({ buttonStyles }) => {
 			window.VKIDSDK.Config.init({
 				app: parseInt(process.env.NEXT_PUBLIC_VK_APP_ID),
 				redirectUrl: `${window.location.origin}/auth/callback`,
-				mode: window.VKIDSDK.ConfigAuthMode.InNewTab, // Use popup mode instead of redirect
 			})
 
 			setSdkReady(true)
@@ -135,95 +134,16 @@ const VkIdButton = ({ buttonStyles }) => {
 
 		try {
 			console.log('🔐 Starting VK ID authentication...')
-			console.log('SDK Ready:', sdkReady)
-			console.log('VKIDSDK:', window.VKIDSDK)
+			console.log('Redirecting to VK ID login page...')
 
-			// Trigger VK ID authentication popup with timeout
-			console.log('📞 Calling window.VKIDSDK.Auth.login()...')
+			// Trigger VK ID authentication - will redirect to VK, then back to /auth/callback
+			window.VKIDSDK.Auth.login()
 
-			const authPromise = window.VKIDSDK.Auth.login()
-			console.log('⏳ Login promise created, waiting for result...')
-
-			const authResult = await authPromise
-
-			console.log('Auth result:', authResult)
-
-			if (!authResult || !authResult.token) {
-				throw new Error('No token received from VK ID')
-			}
-
-			console.log('✅ VK ID authentication successful')
-			const { token, type } = authResult
-
-			console.log('Token type:', type)
-
-			if (type !== 'silent_token' && type !== 'oauth_token') {
-				throw new Error('Invalid token type')
-			}
-
-			// Get user info from VK ID
-			console.log('👤 Getting user info from VK ID...')
-			const userData = await window.VKIDSDK.Auth.getUserInfo(token)
-			console.log('✅ User info received:', userData.first_name, userData.last_name)
-
-			// Validate token and create/login user on our backend
-			console.log('🔄 Validating with backend...')
-			const response = await fetch('/api/auth/vkid/validate', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					token: token.access_token,
-					firstName: userData.first_name,
-					lastName: userData.last_name,
-					avatar: userData.avatar,
-					email: userData.email,
-					userId: userData.user_id,
-					provider: userData.provider || 'vk', // vk, ok, or mail
-				}),
-			})
-
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data.error || 'Authentication failed')
-			}
-
-			console.log('✅ Backend validation successful')
-
-			// Set Supabase session with tokens
-			console.log('🔑 Setting Supabase session...')
-			const { error: sessionError } = await supabase.auth.setSession({
-				access_token: data.access_token,
-				refresh_token: data.refresh_token,
-			})
-
-			if (sessionError) {
-				throw sessionError
-			}
-
-			console.log('✅ Session created successfully')
-
-			// Success - redirect to home
-			toast.success('Connexion réussie !')
-			await router.replace('/')
+			// Note: The page will redirect, so no need to handle the response here
+			// The /auth/callback page will handle the code exchange and login
 		} catch (error) {
 			console.error('❌ VK ID login error:', error)
-			console.error('Error details:', {
-				message: error.message,
-				code: error.code,
-				name: error.name,
-				stack: error.stack
-			})
-
-			// Check if user closed the popup
-			if (error.message?.includes('closed') || error.code === 'access_denied') {
-				console.log('ℹ️ User closed VK ID popup')
-			} else {
-				toast.error('Erreur lors de la connexion avec VK ID')
-			}
-
+			toast.error('Erreur lors de la connexion avec VK ID')
 			setIsLoading(false)
 		}
 	}
