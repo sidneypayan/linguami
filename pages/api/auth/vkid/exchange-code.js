@@ -44,8 +44,8 @@ export default async function handler(req, res) {
 			body: new URLSearchParams({
 				grant_type: 'authorization_code',
 				code: code,
-				code_verifier: deviceId,
 				client_id: appId,
+				client_secret: clientSecret,
 				device_id: deviceId,
 				redirect_uri: finalRedirectUri,
 			}),
