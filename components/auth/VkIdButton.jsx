@@ -154,6 +154,7 @@ const VkIdButton = ({ buttonStyles }) => {
 				redirectUrl: redirectUrl,
 				codeChallenge: codeChallenge,
 				responseMode: window.VKIDSDK.ConfigResponseMode.Callback,
+				scope: 'email', // Request email permission
 			})
 
 			console.log('✅ VK ID SDK initialized successfully with PKCE')
@@ -203,6 +204,12 @@ const VkIdButton = ({ buttonStyles }) => {
 				})
 				.on(window.VKIDSDK.WidgetEvents.ERROR, (error) => {
 					console.error('❌ VK ID Widget Error:', error)
+					console.error('Error type:', typeof error)
+					console.error('Error details:', JSON.stringify(error, null, 2))
+					console.error('Error properties:', Object.keys(error))
+					if (error.message) console.error('Error message:', error.message)
+					if (error.code) console.error('Error code:', error.code)
+					if (error.description) console.error('Error description:', error.description)
 					toast.error('Erreur lors du chargement du widget VK ID')
 					setWidgetLoading(false)
 				})
@@ -288,22 +295,36 @@ const VkIdButton = ({ buttonStyles }) => {
 			console.log('User ID:', user.user_id)
 			console.log('Avatar:', user.avatar)
 
+			// Log all available fields to debug
+			console.log('🔍 Available user fields:', Object.keys(user))
+			console.log('First Name:', user.first_name)
+			console.log('Last Name:', user.last_name)
+			console.log('Email:', user.email)
+			console.log('User ID:', user.user_id)
+
+			// Prepare data for validation
+			const validationPayload = {
+				token: tokenData.access_token,
+				firstName: user.first_name,
+				lastName: user.last_name,
+				avatar: user.avatar,
+				email: user.email,
+				userId: user.user_id,
+				provider: 'vk',
+			}
+
 			// Validate token and create/login user on our backend
 			console.log('🔄 Validating with backend...')
+			console.log('Validation payload:', JSON.stringify(validationPayload, null, 2))
+			console.log('Token present:', !!validationPayload.token)
+			console.log('UserId present:', !!validationPayload.userId)
+
 			const response = await fetch('/api/auth/vkid/validate', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					token: tokenData.access_token,
-					firstName: user.first_name,
-					lastName: user.last_name,
-					avatar: user.avatar,
-					email: user.email,
-					userId: user.user_id,
-					provider: 'vk',
-				}),
+				body: JSON.stringify(validationPayload),
 			})
 
 			console.log('Validation response status:', response.status)

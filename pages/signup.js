@@ -7,6 +7,7 @@ import { AVATARS } from '@/utils/avatars'
 import AuthLayout from '@/components/auth/AuthLayout'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
+import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcons'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -64,6 +65,7 @@ const Signup = () => {
 	const [showAvatars, setShowAvatars] = useState(false)
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
+	const [turnstileToken, setTurnstileToken] = useState(null)
 
 	// Liste de mots de passe communs à bloquer
 	const commonPasswords = useMemo(() => [
@@ -175,6 +177,35 @@ const Signup = () => {
 		// Validation
 		if (!email || !password || !username || !spokenLanguage || !learningLanguage || !languageLevel) {
 			toast.error(t('fillAllFields'))
+			return
+		}
+
+		// Verify Turnstile token
+		if (!turnstileToken) {
+			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
+			return
+		}
+
+		// Verify token with backend
+		try {
+			const verifyResponse = await fetch('/api/verify-turnstile', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ token: turnstileToken }),
+			})
+
+			const verifyData = await verifyResponse.json()
+
+			if (!verifyData.success) {
+				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
+				setTurnstileToken(null)
+				return
+			}
+		} catch (error) {
+			console.error('Turnstile verification error:', error)
+			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
 			return
 		}
 
@@ -727,6 +758,13 @@ const Signup = () => {
 							</Box>
 						</Collapse>
 					</Box>
+
+					{/* Turnstile Anti-Bot Widget */}
+					<TurnstileWidget
+						onSuccess={(token) => setTurnstileToken(token)}
+						onError={() => setTurnstileToken(null)}
+						action="signup"
+					/>
 
 					{/* Bouton de soumission */}
 					<Button

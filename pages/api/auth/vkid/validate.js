@@ -38,11 +38,17 @@ export default async function handler(req, res) {
 		console.log('✅ [VK Validate] VK user data received:')
 		console.log('Raw response:', JSON.stringify(vkUserData, null, 2))
 
-		// Validate that the user ID matches (VK API returns data at root level)
-		if (vkUserData.user_id !== userId.toString()) {
+		// Extract user data from response (VK API returns data in 'user' object)
+		const vkUser = vkUserData.user || vkUserData
+
+		console.log('Extracted user_id:', vkUser.user_id)
+		console.log('Expected user_id:', userId.toString())
+
+		// Validate that the user ID matches
+		if (vkUser.user_id !== userId.toString()) {
 			console.error('User ID mismatch')
 			console.error('Expected:', userId.toString())
-			console.error('Received:', vkUserData.user_id)
+			console.error('Received:', vkUser.user_id)
 			return res.status(401).json({ error: 'User ID mismatch' })
 		}
 
@@ -55,8 +61,7 @@ export default async function handler(req, res) {
 		// Determine provider-specific fields
 		const providerPrefix = provider || 'vk' // vk, ok, or mail
 		const providerId = `${providerPrefix}_${userId}`
-		const fullName = `${firstName || ''} ${lastName || ''}`.trim()
-		const username = providerId
+		const fullName = `${firstName || ''} ${lastName || ''}`.trim() || providerId
 
 		// Check if user already exists with this provider ID
 		const { data: existingUsers } = await supabase.auth.admin.listUsers()
@@ -71,12 +76,16 @@ export default async function handler(req, res) {
 		}
 
 		let supabaseUser
+		let tempPassword = null
 
 		if (existingUser) {
-			// User exists - update metadata
+			// User exists - generate new temporary password and update
+			tempPassword = Math.random().toString(36).slice(-16) + Math.random().toString(36).slice(-16)
+
 			const { data: updatedUser, error: updateError } = await supabase.auth.admin.updateUserById(
 				existingUser.id,
 				{
+					password: tempPassword,
 					user_metadata: {
 						...existingUser.user_metadata,
 						[`${providerPrefix}_id`]: userId.toString(),
@@ -93,13 +102,28 @@ export default async function handler(req, res) {
 			}
 
 			supabaseUser = updatedUser?.user || existingUser
+
+			// Update user profile with latest info from VK
+			const { error: profileUpdateError } = await supabase
+				.from('users_profile')
+				.upsert({
+					id: supabaseUser.id,
+					name: fullName,
+					avatar_url: avatar,
+					email: email || supabaseUser.email,
+				})
+				.eq('id', supabaseUser.id)
+
+			if (profileUpdateError) {
+				console.error('Error updating user profile:', profileUpdateError)
+			}
 		} else {
 			// Create new user
-			const randomPassword = Math.random().toString(36).slice(-16) + Math.random().toString(36).slice(-16)
+			tempPassword = Math.random().toString(36).slice(-16) + Math.random().toString(36).slice(-16)
 
 			const { data: newUserData, error: createError } = await supabase.auth.admin.createUser({
 				email: email || `${providerId}@vkid-oauth.linguami.com`,
-				password: randomPassword,
+				password: tempPassword,
 				email_confirm: true,
 				user_metadata: {
 					[`${providerPrefix}_id`]: userId.toString(),
@@ -123,7 +147,7 @@ export default async function handler(req, res) {
 				.from('users_profile')
 				.upsert({
 					id: supabaseUser.id,
-					name: username,
+					name: fullName,
 					email: email || null,
 					avatar_url: avatar,
 					learning_language: 'fr', // Default learning language for Russian users
@@ -135,35 +159,31 @@ export default async function handler(req, res) {
 			}
 		}
 
-		// Step 2: Generate Supabase session token
-		const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
-			type: 'magiclink',
+		// Step 2: Sign in with password to get a real session with tokens
+		console.log('🔑 Creating session for user:', supabaseUser.email)
+		const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
 			email: supabaseUser.email,
-			options: {
-				redirectTo: process.env.NEXT_PUBLIC_API_URL || 'https://www.linguami.com'
-			}
+			password: tempPassword,
 		})
 
-		if (sessionError || !sessionData) {
-			console.error('Error generating session:', sessionError)
-			return res.status(500).json({ error: 'Failed to generate session' })
+		if (signInError || !signInData?.session) {
+			console.error('❌ Error signing in user:', signInError)
+			return res.status(500).json({ error: 'Failed to create session' })
 		}
 
-		// Extract the tokens from the magic link
-		const magicLinkUrl = new URL(sessionData.properties.action_link)
-		const accessToken = magicLinkUrl.searchParams.get('access_token')
-		const refreshToken = magicLinkUrl.searchParams.get('refresh_token')
+		console.log('✅ Session created successfully')
+		console.log('Access token present:', !!signInData.session.access_token)
+		console.log('Refresh token present:', !!signInData.session.refresh_token)
 
-		if (!accessToken || !refreshToken) {
-			console.error('Failed to extract tokens from magic link')
-			return res.status(500).json({ error: 'Failed to extract tokens' })
-		}
+		const accessToken = signInData.session.access_token
+		const refreshToken = signInData.session.refresh_token
 
 		// Return tokens to client
 		return res.status(200).json({
 			success: true,
 			access_token: accessToken,
 			refresh_token: refreshToken,
+			userId: supabaseUser.id,
 			user: {
 				id: supabaseUser.id,
 				email: supabaseUser.email,

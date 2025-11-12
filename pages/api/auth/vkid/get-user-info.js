@@ -42,14 +42,19 @@ export default async function handler(req, res) {
 
 		console.log('✅ [VK User Info] User info received')
 		console.log('Raw response:', JSON.stringify(userData, null, 2))
-		console.log('User ID:', userData.user_id)
-		console.log('Name:', userData.first_name, userData.last_name)
-		console.log('Email:', userData.email || '(none)')
 
-		// Return the user data (VK API returns user data at root level)
+		// Extract user data from response
+		// VK API returns data in 'user' object
+		const userInfo = userData.user || userData
+
+		console.log('User ID:', userInfo.user_id)
+		console.log('Name:', userInfo.first_name, userInfo.last_name)
+		console.log('Email:', userInfo.email || '(none)')
+
+		// Return the user data directly (without extra wrapping)
 		return res.status(200).json({
 			success: true,
-			user: userData,
+			user: userInfo,
 		})
 
 	} catch (error) {

@@ -1,9 +1,11 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useState } from 'react'
+import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
 import AuthLayout from '@/components/auth/AuthLayout'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
+import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import Head from 'next/head'
 import Link from 'next/link'
 import {
@@ -28,6 +30,7 @@ const Login = () => {
 	const isDark = theme.palette.mode === 'dark'
 	const [values, setValues] = useState({ email: '', password: '' })
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
+	const [turnstileToken, setTurnstileToken] = useState(null)
 
 	const handleChange = e => {
 		setValues({ ...values, [e.target.name]: e.target.value })
@@ -35,6 +38,36 @@ const Login = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault()
+
+		// Verify Turnstile token
+		if (!turnstileToken) {
+			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
+			return
+		}
+
+		// Verify token with backend
+		try {
+			const verifyResponse = await fetch('/api/verify-turnstile', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ token: turnstileToken }),
+			})
+
+			const verifyData = await verifyResponse.json()
+
+			if (!verifyData.success) {
+				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
+				setTurnstileToken(null)
+				return
+			}
+		} catch (error) {
+			console.error('Turnstile verification error:', error)
+			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
+			return
+		}
+
 		await login(values)
 	}
 
@@ -181,6 +214,13 @@ const Login = () => {
 							</Box>
 						</Link>
 					</Box>
+
+					{/* Turnstile Anti-Bot Widget */}
+					<TurnstileWidget
+						onSuccess={(token) => setTurnstileToken(token)}
+						onError={() => setTurnstileToken(null)}
+						action="login"
+					/>
 
 					<Button
 						fullWidth
