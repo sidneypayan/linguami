@@ -41,8 +41,8 @@ const VkIdButton = ({ buttonStyles }) => {
 
 		// Load VK ID SDK - Try multiple CDN sources
 		const cdnSources = [
-			'https://unpkg.com/@vkid/sdk@3.0.0/dist-sdk/umd/index.js',
-			'https://cdn.jsdelivr.net/npm/@vkid/sdk@3.0.0/dist-sdk/umd/index.js',
+			'https://unpkg.com/@vkid/sdk@2/dist-sdk/umd/index.js',
+			'https://cdn.jsdelivr.net/npm/@vkid/sdk@2/dist-sdk/umd/index.js',
 			'https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js'
 		]
 
