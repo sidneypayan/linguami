@@ -262,23 +262,25 @@ const VkIdButton = ({ buttonStyles }) => {
 				throw new Error('No access token received from SDK')
 			}
 
-			// Get user info using the access token
-			console.log('🔍 Fetching user info...')
-			const userInfoResponse = await fetch('https://id.vk.com/oauth2/user_info', {
+			// Get user info via backend API (to avoid CORS issues)
+			console.log('🔍 Fetching user info via backend...')
+			const userInfoResponse = await fetch('/api/auth/vkid/get-user-info', {
+				method: 'POST',
 				headers: {
-					'Authorization': `Bearer ${tokenData.access_token}`,
+					'Content-Type': 'application/json',
 				},
+				body: JSON.stringify({
+					accessToken: tokenData.access_token,
+				}),
 			})
 
 			if (!userInfoResponse.ok) {
-				const errorText = await userInfoResponse.text()
-				console.error('❌ Failed to get user info:', userInfoResponse.status)
-				console.error('Error response:', errorText)
-				throw new Error('Failed to get user info')
+				const errorData = await userInfoResponse.json().catch(() => ({ error: 'Failed to get user info' }))
+				console.error('❌ Failed to get user info:', errorData)
+				throw new Error(errorData.error || 'Failed to get user info')
 			}
 
-			const userData = await userInfoResponse.json()
-			const user = userData.user
+			const { user } = await userInfoResponse.json()
 
 			console.log('✅ User info received')
 			console.log('👤 User:', user.first_name, user.last_name, user.email || '(no email)')
