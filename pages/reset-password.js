@@ -104,31 +104,13 @@ const UpdatePassword = () => {
 				return
 			}
 
-			// Si on a un code dans l'URL, l'échanger contre une session
+			// Si on a un code dans l'URL, attendre que Supabase l'échange automatiquement
 			if (code && typeof code === 'string') {
-				console.log('🔑 Code détecté dans URL:', code.substring(0, 20) + '...')
-				console.log('🔄 Échange du code contre une session...')
-				try {
-					const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-					if (error) {
-						console.error('❌ Erreur échange de code:', error)
-						toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
-						setIsResetting(false)
-						setLoading(false)
-						return
-					}
-					if (data?.session) {
-						console.log('✅ Session de récupération créée avec succès!')
-						setIsResetting(true)
-						setLoading(false)
-						return
-					}
-				} catch (err) {
-					console.error('❌ Exception lors de l\'échange de code:', err)
-					setIsResetting(false)
-					setLoading(false)
-					return
-				}
+				console.log('🔑 Code de récupération détecté dans URL')
+				console.log('⏳ Attente de l\'événement SIGNED_IN de Supabase...')
+				// Ne rien faire ici - l'auth state listener détectera SIGNED_IN
+				// et déclenchera PASSWORD_RECOVERY automatiquement
+				return
 			}
 
 			// 1) Vérifier si une session de récupération existe déjà
@@ -147,9 +129,18 @@ const UpdatePassword = () => {
 
 		initResetFlow()
 
-		// 2) Écouter l'événement PASSWORD_RECOVERY au cas où il arrive après
+		// 2) Écouter les événements d'authentification
 		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
 			console.log('🔍 Auth event:', event)
+
+			// Détecter une connexion suite à un reset password
+			if (event === 'SIGNED_IN' && router.query.code) {
+				console.log('✅ SIGNED_IN détecté avec code de récupération')
+				setIsResetting(true)
+				setLoading(false)
+			}
+
+			// Détecter l'événement PASSWORD_RECOVERY (ancien flow)
 			if (event === 'PASSWORD_RECOVERY') {
 				console.log('✅ PASSWORD_RECOVERY event detected')
 				setIsResetting(true)
