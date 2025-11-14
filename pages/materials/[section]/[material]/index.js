@@ -146,13 +146,13 @@ const Material = ({ material: single_material }) => {
 	}
 
 	const displayAudioPlayer = (section, audio) => {
-		if (sections.audio.includes(section)) {
+		if (sections?.audio?.includes(section)) {
 			return <Player src={getAudioUrl(single_material)} />
 		}
 	}
 
 	const displayVideo = section => {
-		if (sections.music.includes(section) || sections.video.includes(section)) {
+		if (sections?.music?.includes(section) || sections?.video?.includes(section)) {
 			return (
 				<Box
 					sx={{
@@ -162,7 +162,7 @@ const Material = ({ material: single_material }) => {
 						marginTop: { xs: '1rem', sm: 0 },
 						marginBottom: '0.5rem',
 					}}>
-					<VideoPlayer videoUrl={single_material.video} />
+					<VideoPlayer videoUrl={single_material.video_url} />
 				</Box>
 			)
 		}
@@ -180,7 +180,7 @@ const Material = ({ material: single_material }) => {
 
 	// Vérifier si une vidéo est affichée pour ajuster la position du bouton
 	const isVideoDisplayed =
-		sections.music.includes(section) || sections.video.includes(section)
+		sections?.music?.includes(section) || sections?.video?.includes(section)
 
 	return (
 		single_material && (
