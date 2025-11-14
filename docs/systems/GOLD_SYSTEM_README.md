@@ -36,14 +36,9 @@ Le système d'or de Linguami complète le système XP en offrant une monnaie vir
 
 ## 🚀 Installation
 
-### Étape 1 : Exécuter la migration SQL
+### Étape 1 : Tables et colonnes
 
-1. Ouvrez Supabase Dashboard
-2. Allez dans **SQL Editor**
-3. Copiez le contenu de `database/migration_gold_system.sql`
-4. Exécutez le script
-
-Cela ajoutera les colonnes suivantes aux tables existantes :
+Le système Gold est déjà intégré en production avec les colonnes suivantes :
 - `user_xp_profile.total_gold` - Total d'or accumulé
 - `xp_rewards_config.gold_amount` - Quantité d'or pour chaque action
 - `xp_transactions.gold_earned` - Or gagné dans chaque transaction

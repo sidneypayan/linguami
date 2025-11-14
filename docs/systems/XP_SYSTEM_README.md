@@ -31,14 +31,9 @@ Le système XP de Linguami gamifie l'apprentissage en récompensant les utilisat
 
 ## 🚀 Installation
 
-### Étape 1 : Exécuter la migration SQL
+### Étape 1 : Tables de base de données
 
-1. Ouvrez Supabase Dashboard
-2. Allez dans **SQL Editor**
-3. Copiez le contenu de `database/migration_xp_system.sql`
-4. Exécutez le script
-
-Cela créera les tables suivantes :
+Le système XP utilise les tables suivantes (déjà créées en production) :
 - `xp_rewards_config` - Configuration des récompenses
 - `user_xp_profile` - Profil XP des utilisateurs
 - `xp_transactions` - Historique des gains XP
