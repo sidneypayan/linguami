@@ -197,5 +197,6 @@
 	"upsell_full_access": "Full access to {{levelName}} level",
 	"upsell_unlock_now": "Unlock now",
 	"upsell_maybe_later": "Maybe later",
-	"upsell_trust_signals": "✓ Secure payment • ✓ Instant access • ✓ Money-back guarantee"
+	"upsell_trust_signals": "✓ Secure payment • ✓ Instant access • ✓ Money-back guarantee",
+	"siteName": "Linguami"
 }

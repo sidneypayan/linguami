@@ -197,5 +197,6 @@
 	"upsell_full_access": "Accès complet au niveau {{levelName}}",
 	"upsell_unlock_now": "Débloquer maintenant",
 	"upsell_maybe_later": "Peut-être plus tard",
-	"upsell_trust_signals": "✓ Paiement sécurisé • ✓ Accès immédiat • ✓ Garantie satisfait ou remboursé"
+	"upsell_trust_signals": "✓ Paiement sécurisé • ✓ Accès immédiat • ✓ Garantie satisfait ou remboursé",
+	"siteName": "Linguami"
 }

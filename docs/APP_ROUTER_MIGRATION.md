@@ -7,7 +7,7 @@ Status : **En cours - Migration partielle réussie**
 
 Migration progressive de Linguami de Pages Router vers App Router de Next.js 15, tout en maintenant la compatibilité avec l'architecture existante (Redux, next-translate).
 
-## ✅ Pages migrées (13/40+)
+## ✅ Pages migrées (18/40+)
 
 ### Pages principales
 - ✅ `/` - Homepage avec SEO complet
@@ -26,6 +26,13 @@ Migration progressive de Linguami de Pages Router vers App Router de Next.js 15,
 - ✅ `/premium` - Page d'abonnement premium
 - ✅ `/my-materials` - Matériaux personnalisés de l'utilisateur
 
+### Routes dynamiques (Méthode & Matériaux)
+- ✅ `/method` - Liste des niveaux de la méthode
+- ✅ `/method/[level]` - Cours par niveau (ex: `/method/a1`)
+- ✅ `/method/[level]/[lessonSlug]` - Leçons individuelles (ex: `/method/a1/se-presenter`)
+- ✅ `/materials/[section]` - Sections de matériaux (ex: `/materials/story`)
+- ✅ `/materials/[section]/[material]` - Matériaux individuels avec exercices
+
 ## 🏗️ Infrastructure créée
 
 ### Fichiers App Router
@@ -37,7 +44,16 @@ app/
 │   ├── layout.js         # Layout pour les routes i18n
 │   ├── page.js           # Homepage
 │   ├── privacy/page.js
-│   ├── materials/page.js
+│   ├── materials/
+│   │   ├── page.js                        # Liste des matériaux
+│   │   └── [section]/
+│   │       ├── page.js                    # Section de matériaux
+│   │       └── [material]/page.js         # Matériau individuel
+│   ├── method/
+│   │   ├── page.js                        # Liste des niveaux
+│   │   └── [level]/
+│   │       ├── page.js                    # Cours du niveau
+│   │       └── [lessonSlug]/page.js       # Leçon individuelle
 │   ├── login/page.js
 │   ├── signup/page.js
 │   ├── dictionary/page.js
@@ -98,6 +114,36 @@ useEffect(() => {
 ### 3. Configuration i18n incompatible
 **Note :** Le warning "i18n configuration in next.config.js is unsupported in App Router" est normal. `next-translate` fonctionne toujours en mode hybride.
 
+### 4. Clé de traduction manquante `siteName`
+**Problème :** L'erreur `[next-translate] "common:siteName" is missing` apparaissait sur la page `/method`.
+
+**Solution :** Ajout de la clé `"siteName": "Linguami"` dans les 3 fichiers de traduction (`locales/fr/common.json`, `locales/en/common.json`, `locales/ru/common.json`).
+
+### 5. Migration des routes dynamiques avec `getStaticProps`
+**Problème :** La route `/materials/[section]/[material]` utilisait `getStaticProps` et `getStaticPaths` incompatibles avec les Client Components d'App Router.
+
+**Solution :** Remplacement par du client-side data fetching avec `useEffect` :
+```javascript
+// Dans App Router - Client Component
+const [currentMaterial, setCurrentMaterial] = useState(null)
+
+useEffect(() => {
+  const fetchMaterial = async () => {
+    const { data: material } = await supabase
+      .from('materials')
+      .select('*')
+      .eq('id', params.material)
+      .single()
+
+    if (material) setCurrentMaterial(material)
+  }
+
+  fetchMaterial()
+}, [params?.material])
+```
+
+**Note :** Dans la Phase 3, ces routes seront optimisées avec Server Components et ISR pour retrouver les performances du SSG.
+
 ## 📝 Pattern de migration
 
 Pour chaque page :
@@ -126,26 +172,26 @@ L'application fonctionne en **mode hybride** :
    - Fonctionne mais pas optimal pour App Router
    - Recommandation future : Migration vers React Query + Server Components
 
-3. **Routes dynamiques non migrées**
-   - `/method/[level]` - À migrer
-   - `/method/[level]/[courseSlug]` - À migrer
-   - `/materials/[section]` - À migrer
-   - `/materials/[section]/[material]` - À migrer
+3. **Routes dynamiques adaptées pour App Router**
+   - Client-side data fetching avec `useEffect` pour remplacer `getStaticProps`
+   - Paramètres de route accessibles via props `params` au lieu de `useRouter().query`
+   - Compatible avec le mode hybride (Pages Router continue de fonctionner)
 
 ## 📊 Statistiques
 
-- **Pages migrées :** 13
-- **Pages restantes :** ~27
+- **Pages migrées :** 18 (13 statiques + 5 dynamiques)
+- **Pages restantes :** ~22
 - **Erreurs critiques :** 0
 - **Warnings non-bloquants :** 1 (i18n config)
 - **Taux de réussite :** 100% des pages migrées fonctionnent
+- **Progression :** 45% (18/40)
 
 ## 🚀 Prochaines étapes recommandées
 
 ### Court terme
-1. Migrer les routes dynamiques (`/method/[level]`, `/method/[level]/[courseSlug]`, `/materials/[section]`, `/materials/[section]/[material]`)
-2. Migrer les pages admin (`/admin/*`)
-3. Migrer les pages restantes (blog, teacher, test, etc.)
+1. Migrer les pages admin (`/admin/*`)
+2. Migrer les pages restantes (blog, teacher, test, etc.)
+3. Tester un build de production pour détecter d'éventuels problèmes
 
 ### Moyen terme
 1. Refactoriser en Server Components + Client Components
@@ -176,23 +222,28 @@ Avant de considérer la migration terminée :
 - [ ] Build de production réussi
 - [ ] Tests E2E passent
 
-## 🎯 État actuel : Phase 1 complétée ✅
+## 🎯 État actuel : Phase 2 complétée ✅
 
-**Phase 1 (Terminée) :** Migration des pages statiques
+**Phase 1 (✅ Terminée) :** Migration des pages statiques
 - ✅ Infrastructure App Router en place
-- ✅ Hook de compatibilité fonctionnel
-- ✅ 13 pages migrées et testées (100% fonctionnelles)
+- ✅ Hook de compatibilité fonctionnel (`useRouterCompat`)
+- ✅ 13 pages statiques migrées et testées (100% fonctionnelles)
 - ✅ Aucune régression constatée
 - ✅ Pages utilisateur : dictionary, settings, reset-password, leaderboard, lessons, statistics, premium, my-materials
 - ✅ Pages principales : homepage, privacy, materials, login, signup
 
-**Phase 2 (En cours de planification) :** Migration des routes dynamiques
-- `/method/[level]` - Routes de cours par niveau
-- `/method/[level]/[courseSlug]` - Pages de leçons individuelles
-- `/materials/[section]` - Pages de sections de matériaux
-- `/materials/[section]/[material]` - Pages de matériaux individuels
+**Phase 2 (✅ Terminée) :** Migration des routes dynamiques
+- ✅ `/method` - Liste des niveaux de la méthode
+- ✅ `/method/[level]` - Routes de cours par niveau (ex: `/method/a1`)
+- ✅ `/method/[level]/[lessonSlug]` - Pages de leçons individuelles (ex: `/method/a1/se-presenter`)
+- ✅ `/materials/[section]` - Pages de sections de matériaux (ex: `/materials/story`)
+- ✅ `/materials/[section]/[material]` - Pages de matériaux individuels avec exercices
+- ✅ Adaptation de `getStaticProps` vers client-side fetching
+- ✅ Paramètres de route via props `params` au lieu de `useRouter().query`
+- ✅ 5 routes dynamiques fonctionnelles sans erreur
 
 **Phase 3 (À venir) :** Optimisation avec Server Components
 - Refactorisation des pages en Server + Client Components
 - Migration vers React Query pour le data fetching
 - Implémentation du streaming et Suspense
+- Restauration de l'ISR pour les routes dynamiques (ex: `/materials/[section]/[material]`)

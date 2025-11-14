@@ -197,5 +197,6 @@
 	"upsell_full_access": "Полный доступ к уровню {{levelName}}",
 	"upsell_unlock_now": "Разблокировать сейчас",
 	"upsell_maybe_later": "Возможно, позже",
-	"upsell_trust_signals": "✓ Безопасная оплата • ✓ Мгновенный доступ • ✓ Гарантия возврата денег"
+	"upsell_trust_signals": "✓ Безопасная оплата • ✓ Мгновенный доступ • ✓ Гарантия возврата денег",
+	"siteName": "Linguami"
 }
