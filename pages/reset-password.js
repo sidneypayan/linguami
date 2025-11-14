@@ -84,9 +84,17 @@ const UpdatePassword = () => {
 
 	// Détecter si on arrive depuis l'email avec un token
 	useEffect(() => {
+		// Attendre que le router soit prêt pour lire les query params
+		if (!router.isReady) {
+			console.log('⏳ Router not ready yet, waiting...')
+			return
+		}
+
 		let mounted = true
 
 		const initResetFlow = async () => {
+			console.log('🔍 Router query:', router.query)
+
 			// Vérifier les paramètres URL pour les erreurs
 			const { error, error_code, code } = router.query
 			if (error_code === 'otp_expired' || error === 'access_denied') {
@@ -98,7 +106,8 @@ const UpdatePassword = () => {
 
 			// Si on a un code dans l'URL, l'échanger contre une session
 			if (code && typeof code === 'string') {
-				console.log('🔑 Code détecté dans URL, échange en cours...')
+				console.log('🔑 Code détecté dans URL:', code.substring(0, 20) + '...')
+				console.log('🔄 Échange du code contre une session...')
 				try {
 					const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 					if (error) {
@@ -109,7 +118,7 @@ const UpdatePassword = () => {
 						return
 					}
 					if (data?.session) {
-						console.log('✅ Session de récupération créée')
+						console.log('✅ Session de récupération créée avec succès!')
 						setIsResetting(true)
 						setLoading(false)
 						return
@@ -153,7 +162,7 @@ const UpdatePassword = () => {
 			mounted = false
 			subscription?.unsubscribe()
 		}
-	}, [router.query, t])
+	}, [router.isReady, router.query, t])
 
 	const handleChange = e => {
 		const name = e.target.name
