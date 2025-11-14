@@ -6,6 +6,16 @@
  * - Images: image/materials/{filename}, image/blog/{filename}, image/ui/{filename}
  */
 
+// Fonction helper pour obtenir l'URL de base R2
+function getR2BaseUrl() {
+  const url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+  if (!url) {
+    console.error('NEXT_PUBLIC_R2_PUBLIC_URL is not defined in environment variables')
+    return ''
+  }
+  return url.replace(/\/+$/, '')
+}
+
 /**
  * Get audio URL for a material
  * @param {Object} material - Material object with lang and audio properties
@@ -17,11 +27,11 @@ export function getAudioUrl(material) {
     console.warn('getAudioUrl: material.lang is missing, audio may not load correctly')
     return null
   }
-  // Normaliser les slashes pour éviter les doubles slashes
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_AUDIO.replace(/\/+$/, '')
+  const baseUrl = getR2BaseUrl()
+  if (!baseUrl) return null
   const lang = material.lang.replace(/^\/+/, '')
   const audio = material.audio.replace(/^\/+/, '')
-  return `${baseUrl}/${lang}/${audio}`
+  return `${baseUrl}/audio/${lang}/${audio}`
 }
 
 /**
@@ -32,10 +42,10 @@ export function getAudioUrl(material) {
 export function getMaterialImageUrl(material) {
   const imageFile = material?.image || material?.img
   if (!imageFile) return null
-  // Normaliser les slashes pour éviter les doubles slashes
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const baseUrl = getR2BaseUrl()
+  if (!baseUrl) return null
   const file = imageFile.replace(/^\/+/, '')
-  return `${baseUrl}/materials/${file}`
+  return `${baseUrl}/image/materials/${file}`
 }
 
 /**
@@ -60,9 +70,10 @@ export function getBlogImageUrl(post) {
   }
 
   // Sinon, chercher sur R2
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const baseUrl = getR2BaseUrl()
+  if (!baseUrl) return null
   const file = imageFile.replace(/^\/+/, '')
-  return `${baseUrl}/blog/${file}`
+  return `${baseUrl}/image/blog/${file}`
 }
 
 /**
@@ -71,8 +82,8 @@ export function getBlogImageUrl(post) {
  * @returns {string} Full image URL
  */
 export function getUIImageUrl(filename) {
-  // Normaliser les slashes pour éviter les doubles slashes
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
+  const baseUrl = getR2BaseUrl()
+  if (!baseUrl) return null
   const file = filename.replace(/^\/+/, '')
-  return `${baseUrl}/ui/${file}`
+  return `${baseUrl}/image/ui/${file}`
 }

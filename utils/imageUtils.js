@@ -1,3 +1,13 @@
+// Fonction helper pour obtenir l'URL de base R2
+function getR2BaseUrl() {
+	const url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+	if (!url) {
+		console.error('NEXT_PUBLIC_R2_PUBLIC_URL is not defined in environment variables')
+		return ''
+	}
+	return url.replace(/\/+$/, '')
+}
+
 /**
  * Ajoute un paramètre de cache-busting à une URL d'image
  * pour forcer le navigateur à recharger l'image même si le nom est identique
@@ -7,15 +17,16 @@
 export const addCacheBuster = (imageUrl) => {
 	if (!imageUrl) return imageUrl
 
-	// Si c'est une URL complète du storage Supabase
-	if (imageUrl.includes(process.env.NEXT_PUBLIC_SUPABASE_IMAGE)) {
+	const baseUrl = getR2BaseUrl()
+	if (!baseUrl) return imageUrl
+
+	// Si c'est une URL complète du storage R2
+	if (imageUrl.includes(baseUrl)) {
 		const separator = imageUrl.includes('?') ? '&' : '?'
 		return `${imageUrl}${separator}t=${Date.now()}`
 	}
 
 	// Si c'est juste un nom de fichier, ajouter le préfixe et le cache-buster
-	// Normaliser les slashes pour éviter les doubles slashes
-	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
 	const path = imageUrl.replace(/^\/+/, '')
 	return `${baseUrl}/${path}?t=${Date.now()}`
 }
@@ -35,9 +46,9 @@ export const getImageUrl = (imagePath) => {
 	}
 
 	// Construire l'URL complète
-	// Normaliser les slashes pour éviter les doubles slashes
-	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '') // Retirer les / à la fin
-	const path = imagePath.replace(/^\/+/, '') // Retirer les / au début
+	const baseUrl = getR2BaseUrl()
+	if (!baseUrl) return ''
+	const path = imagePath.replace(/^\/+/, '')
 	return `${baseUrl}/${path}?t=${Date.now()}`
 }
 
@@ -70,9 +81,9 @@ export const getOptimizedImageUrl = (imageName, size = 'medium') => {
 	const baseName = imageName.replace(/\.[^/.]+$/, '')
 	const webpFileName = `${baseName}.webp`
 
-	// Normaliser les slashes pour éviter les doubles slashes
-	const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_IMAGE.replace(/\/+$/, '')
-	return `${baseUrl}/${folder}/${webpFileName}`
+	const baseUrl = getR2BaseUrl()
+	if (!baseUrl) return ''
+	return `${baseUrl}/image/${folder}/${webpFileName}`
 }
 
 /**

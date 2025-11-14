@@ -3,11 +3,16 @@ const nextTranslate = require('next-translate-plugin')
 
 const nextConfig = {
 	reactStrictMode: true,
-	swcMinify: true,
 
 	// Configuration des images
 	images: {
-		domains: ['psomseputtsdizmmqugy.supabase.co'],
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'psomseputtsdizmmqugy.supabase.co',
+				pathname: '**',
+			},
+		],
 		unoptimized: true, // Images déjà optimisées en WebP sur Supabase
 		formats: ['image/webp'], // Format préféré
 	},

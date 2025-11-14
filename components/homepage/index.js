@@ -1504,7 +1504,7 @@ const Homepage = () => {
 											display: 'block',
 											borderRadius: '12px',
 										}}
-										src={`${process.env.NEXT_PUBLIC_SUPABASE_VIDEO}${videoSrc}`}
+										src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/video/${videoSrc}`}
 									/>
 								</Box>
 							</Box>
