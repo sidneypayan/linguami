@@ -2,8 +2,10 @@
  * Helper functions to build media URLs for the new R2 bucket architecture
  *
  * New structure:
- * - Audio: audio/{lang}/{filename}
- * - Images: image/materials/{filename}, image/blog/{filename}, image/ui/{filename}
+ * - Audio materials: audios/materials/{lang}/{filename}
+ * - Audio courses: audios/courses/{lang}/{filename}
+ * - Audio exercises: audios/exercises/{lang}/{filename}
+ * - Images: images/materials/{filename}, images/blog/{filename}, images/ui/{filename}
  */
 
 // Fonction helper pour obtenir l'URL de base R2
@@ -31,7 +33,7 @@ export function getAudioUrl(material) {
   if (!baseUrl) return null
   const lang = material.lang.replace(/^\/+/, '')
   const audio = material.audio_filename.replace(/^\/+/, '')
-  return `${baseUrl}/audio/${lang}/${audio}`
+  return `${baseUrl}/audios/materials/${lang}/${audio}`
 }
 
 /**
@@ -45,7 +47,7 @@ export function getMaterialImageUrl(material) {
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null
   const file = imageFile.replace(/^\/+/, '')
-  return `${baseUrl}/image/materials/${file}`
+  return `${baseUrl}/images/materials/${file}`
 }
 
 /**
@@ -73,7 +75,7 @@ export function getBlogImageUrl(post) {
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null
   const file = imageFile.replace(/^\/+/, '')
-  return `${baseUrl}/image/blog/${file}`
+  return `${baseUrl}/images/blog/${file}`
 }
 
 /**
@@ -85,5 +87,5 @@ export function getUIImageUrl(filename) {
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null
   const file = filename.replace(/^\/+/, '')
-  return `${baseUrl}/image/ui/${file}`
+  return `${baseUrl}/images/ui/${file}`
 }
