@@ -16,12 +16,18 @@ async function loadFFmpeg() {
 	try {
 		ffmpegInstance = new FFmpeg()
 
-		// Charger les fichiers WASM depuis un CDN
-		const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+		// Charger les fichiers WASM depuis jsDelivr (plus fiable qu'unpkg)
+		// Version 0.12.6 est stable et testée
+		const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm'
+
+		console.log('🔧 Chargement de FFmpeg depuis', baseURL)
+
 		await ffmpegInstance.load({
 			coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
 			wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
 		})
+
+		console.log('✅ FFmpeg chargé avec succès')
 
 		ffmpegLoaded = true
 		return ffmpegInstance
