@@ -7,7 +7,7 @@ Status : **En cours - Migration partielle réussie**
 
 Migration progressive de Linguami de Pages Router vers App Router de Next.js 15, tout en maintenant la compatibilité avec l'architecture existante (Redux, next-translate).
 
-## ✅ Pages migrées (8/40+)
+## ✅ Pages migrées (13/40+)
 
 ### Pages principales
 - ✅ `/` - Homepage avec SEO complet
@@ -20,6 +20,11 @@ Migration progressive de Linguami de Pages Router vers App Router de Next.js 15,
 - ✅ `/dictionary` - Dictionnaire personnel
 - ✅ `/settings` - Paramètres du compte
 - ✅ `/reset-password` - Réinitialisation du mot de passe
+- ✅ `/leaderboard` - Classement des utilisateurs
+- ✅ `/lessons` - Liste des leçons disponibles
+- ✅ `/statistics` - Statistiques de progression
+- ✅ `/premium` - Page d'abonnement premium
+- ✅ `/my-materials` - Matériaux personnalisés de l'utilisateur
 
 ## 🏗️ Infrastructure créée
 
@@ -37,7 +42,12 @@ app/
 │   ├── signup/page.js
 │   ├── dictionary/page.js
 │   ├── settings/page.js
-│   └── reset-password/page.js
+│   ├── reset-password/page.js
+│   ├── leaderboard/page.js
+│   ├── lessons/page.js
+│   ├── statistics/page.js
+│   ├── premium/page.js
+│   └── my-materials/page.js
 ```
 
 ### Hooks de compatibilité
@@ -124,8 +134,8 @@ L'application fonctionne en **mode hybride** :
 
 ## 📊 Statistiques
 
-- **Pages migrées :** 8
-- **Pages restantes :** ~32
+- **Pages migrées :** 13
+- **Pages restantes :** ~27
 - **Erreurs critiques :** 0
 - **Warnings non-bloquants :** 1 (i18n config)
 - **Taux de réussite :** 100% des pages migrées fonctionnent
@@ -133,9 +143,9 @@ L'application fonctionne en **mode hybride** :
 ## 🚀 Prochaines étapes recommandées
 
 ### Court terme
-1. Migrer les routes dynamiques (`/method/[level]`, etc.)
-2. Migrer les pages admin
-3. Migrer les pages secondaires (blog, leaderboard, etc.)
+1. Migrer les routes dynamiques (`/method/[level]`, `/method/[level]/[courseSlug]`, `/materials/[section]`, `/materials/[section]/[material]`)
+2. Migrer les pages admin (`/admin/*`)
+3. Migrer les pages restantes (blog, teacher, test, etc.)
 
 ### Moyen terme
 1. Refactoriser en Server Components + Client Components
@@ -166,13 +176,23 @@ Avant de considérer la migration terminée :
 - [ ] Build de production réussi
 - [ ] Tests E2E passent
 
-## 🎯 État actuel : Phase 1 complétée
+## 🎯 État actuel : Phase 1 complétée ✅
 
-**Phase 1 (Terminée) :** Migration des pages statiques simples
+**Phase 1 (Terminée) :** Migration des pages statiques
 - ✅ Infrastructure App Router en place
 - ✅ Hook de compatibilité fonctionnel
-- ✅ Pages principales migrées et testées
+- ✅ 13 pages migrées et testées (100% fonctionnelles)
 - ✅ Aucune régression constatée
+- ✅ Pages utilisateur : dictionary, settings, reset-password, leaderboard, lessons, statistics, premium, my-materials
+- ✅ Pages principales : homepage, privacy, materials, login, signup
 
-**Phase 2 (À venir) :** Migration des routes dynamiques
+**Phase 2 (En cours de planification) :** Migration des routes dynamiques
+- `/method/[level]` - Routes de cours par niveau
+- `/method/[level]/[courseSlug]` - Pages de leçons individuelles
+- `/materials/[section]` - Pages de sections de matériaux
+- `/materials/[section]/[material]` - Pages de matériaux individuels
+
 **Phase 3 (À venir) :** Optimisation avec Server Components
+- Refactorisation des pages en Server + Client Components
+- Migration vers React Query pour le data fetching
+- Implémentation du streaming et Suspense
