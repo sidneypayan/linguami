@@ -4,7 +4,6 @@ import toast from '@/utils/toast'
 import { getToastMessage } from '@/utils/toastMessages'
 import { sanitizeObject, sanitizeFilename, validateFileType } from '@/utils/sanitize'
 import { optimizeImage } from '@/utils/imageOptimizer'
-import { convertAudioToM4a } from '@/utils/audioConverter'
 
 const initialState = {
 	editingContent: {},
@@ -26,7 +25,7 @@ export const createContent = createAsyncThunk(
 			// Map pour stocker les fichiers optimisés/convertis
 			const processedFilesMap = new Map()
 
-			// Si on a des fichiers, les optimiser/convertir AVANT l'insert
+			// Si on a des fichiers image, les optimiser AVANT l'insert
 			if (files && files.length > 0) {
 				for (const fileData of files) {
 					if (fileData.fileType === 'image') {
@@ -38,17 +37,8 @@ export const createContent = createAsyncThunk(
 
 						// Mettre à jour le nom du fichier dans le contenu (juste le nom, sans https://)
 						finalContent[fileData.fileType] = optimized.main.fileName
-
-					} else if (fileData.fileType === 'audio') {
-						// Convertir l'audio en m4a
-						const converted = await convertAudioToM4a(fileData.file)
-
-						// Stocker le fichier converti pour l'upload plus tard
-						processedFilesMap.set(fileData.fileName, { type: 'audio', data: converted })
-
-						// Mettre à jour le nom du fichier dans le contenu
-						finalContent[fileData.fileType] = converted.fileName
 					}
+					// Les fichiers audio sont uploadés tels quels (pas de conversion)
 				}
 			}
 
@@ -102,23 +92,6 @@ export const createContent = createAsyncThunk(
 						if (thumbError) {
 							console.error(`❌ Erreur upload thumbnail ${optimized.thumbnail.fileName}:`, thumbError)
 							throw thumbError
-						}
-
-					} else if (fileType === 'audio' && processedFilesMap.has(fileName)) {
-						// Si c'est un audio converti, uploader le fichier m4a
-						const converted = processedFilesMap.get(fileName).data
-
-						const { error } = await supabase.storage
-							.from('linguami')
-							.upload(`${fileType}/${converted.fileName}`, converted.file, {
-								cacheControl: '3600',
-								upsert: false,
-								contentType: 'audio/mp4',
-							})
-
-						if (error) {
-							console.error(`❌ Erreur upload ${converted.fileName}:`, error)
-							throw error
 						}
 
 					} else {
