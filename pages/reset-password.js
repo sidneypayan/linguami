@@ -86,27 +86,57 @@ const UpdatePassword = () => {
 	useEffect(() => {
 		let mounted = true
 
-		// Vérifier les paramètres URL pour les erreurs
-		const { error, error_code } = router.query
-		if (error_code === 'otp_expired' || error === 'access_denied') {
-			toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
-			setIsResetting(false)
-			setLoading(false)
-			return
+		const initResetFlow = async () => {
+			// Vérifier les paramètres URL pour les erreurs
+			const { error, error_code, code } = router.query
+			if (error_code === 'otp_expired' || error === 'access_denied') {
+				toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
+				setIsResetting(false)
+				setLoading(false)
+				return
+			}
+
+			// Si on a un code dans l'URL, l'échanger contre une session
+			if (code && typeof code === 'string') {
+				console.log('🔑 Code détecté dans URL, échange en cours...')
+				try {
+					const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+					if (error) {
+						console.error('❌ Erreur échange de code:', error)
+						toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
+						setIsResetting(false)
+						setLoading(false)
+						return
+					}
+					if (data?.session) {
+						console.log('✅ Session de récupération créée')
+						setIsResetting(true)
+						setLoading(false)
+						return
+					}
+				} catch (err) {
+					console.error('❌ Exception lors de l\'échange de code:', err)
+					setIsResetting(false)
+					setLoading(false)
+					return
+				}
+			}
+
+			// 1) Vérifier si une session de récupération existe déjà
+			supabase.auth.getSession().then(({ data: { session } }) => {
+				if (!mounted) return
+				if (session?.user) {
+					console.log('✅ Recovery session found')
+					setIsResetting(true)
+				} else {
+					console.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
+					setIsResetting(false)
+				}
+				setLoading(false)
+			})
 		}
 
-		// 1) Vérifier si une session de récupération existe déjà
-		supabase.auth.getSession().then(({ data: { session } }) => {
-			if (!mounted) return
-			if (session?.user) {
-				console.log('✅ Recovery session found')
-				setIsResetting(true)
-			} else {
-				console.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
-				setIsResetting(false)
-			}
-			setLoading(false)
-		})
+		initResetFlow()
 
 		// 2) Écouter l'événement PASSWORD_RECOVERY au cas où il arrive après
 		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
