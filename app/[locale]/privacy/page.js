@@ -4,11 +4,22 @@ import { Container, Box, Typography, useTheme } from '@mui/material'
 import { Shield } from '@mui/icons-material'
 import Link from 'next/link'
 import useTranslation from 'next-translate/useTranslation'
+import { useState, useEffect } from 'react'
 
 export default function PrivacyPolicy() {
 	const { t } = useTranslation('privacy')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
+	const [formattedDate, setFormattedDate] = useState('')
+
+	// Generate date only on client to avoid hydration mismatch
+	useEffect(() => {
+		setFormattedDate(new Date().toLocaleDateString('fr-FR', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		}))
+	}, [])
 
 	// Sections from translations
 	const sections = [
@@ -84,11 +95,7 @@ export default function PrivacyPolicy() {
 							mt: 2,
 							fontSize: '0.875rem',
 						}}>
-						{t('last_updated')} {new Date().toLocaleDateString('fr-FR', {
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric'
-						})}
+						{t('last_updated')} {formattedDate}
 					</Typography>
 				</Box>
 

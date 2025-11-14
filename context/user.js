@@ -8,7 +8,7 @@ import {
 	useContext,
 } from 'react'
 import { supabase } from '@/lib/supabase' // client navigateur (@supabase/ssr)
-import { useRouter } from 'next/router'
+import { useRouterCompat } from '@/hooks/useRouterCompat'
 import toast from '@/utils/toast'
 import { createToastMessages } from '@/utils/toastMessages'
 import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'
@@ -39,7 +39,7 @@ const getDefaultLearningLanguage = (currentLocale) => {
 const UserContext = createContext(undefined)
 
 const UserProvider = ({ children }) => {
-	const router = useRouter()
+	const router = useRouterCompat()
 
 	// ---- Etats
 	const [user, setUser] = useState(null)
