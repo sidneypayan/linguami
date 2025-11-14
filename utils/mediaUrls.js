@@ -18,11 +18,11 @@ function getR2BaseUrl() {
 
 /**
  * Get audio URL for a material
- * @param {Object} material - Material object with lang and audio properties
+ * @param {Object} material - Material object with lang and audio_filename properties
  * @returns {string|null} Full audio URL or null if no audio
  */
 export function getAudioUrl(material) {
-  if (!material?.audio) return null
+  if (!material?.audio_filename) return null
   if (!material?.lang) {
     console.warn('getAudioUrl: material.lang is missing, audio may not load correctly')
     return null
@@ -30,17 +30,17 @@ export function getAudioUrl(material) {
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null
   const lang = material.lang.replace(/^\/+/, '')
-  const audio = material.audio.replace(/^\/+/, '')
+  const audio = material.audio_filename.replace(/^\/+/, '')
   return `${baseUrl}/audio/${lang}/${audio}`
 }
 
 /**
  * Get image URL for a material
- * @param {Object} material - Material object with image or img property
+ * @param {Object} material - Material object with image_filename or img property
  * @returns {string|null} Full image URL or null if no image
  */
 export function getMaterialImageUrl(material) {
-  const imageFile = material?.image || material?.img
+  const imageFile = material?.image_filename || material?.img
   if (!imageFile) return null
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null

@@ -61,15 +61,18 @@ const CreateMaterial = () => {
 	const handleChange = e => {
 		let { name, value } = e.target
 
-		// Si c'est un upload de fichier (image ou audio)
-		if ((name === 'image' || name === 'audio') && e.target.files) {
+		// Si c'est un upload de fichier (image_filename ou audio_filename)
+		if ((name === 'image_filename' || name === 'audio_filename') && e.target.files) {
 			const file = e.target.files[0]
 			if (!file) return
 
 			value = file.name
 
+			// Garder le fileType comme 'image' ou 'audio' pour la logique d'upload
+			const fileType = name === 'image_filename' ? 'image' : 'audio'
+
 			setFiles(prev => {
-				return [...prev, { file, fileName: value, fileType: name }]
+				return [...prev, { file, fileName: value, fileType }]
 			})
 		}
 
@@ -94,8 +97,8 @@ const CreateMaterial = () => {
 				cleanedFormData = {
 					...formData,
 					// Garder les sauts de ligne natifs (\n) - meilleure pratique
-					body: formData.body || '',
-					body_accents: formData.body_accents || '',
+					content: formData.content || '',
+					content_accented: formData.content_accented || '',
 				}
 			}
 
@@ -125,12 +128,12 @@ const CreateMaterial = () => {
 				...editingContent,
 			}
 
-			if (contentType !== 'posts' && editingContent.body) {
+			if (contentType !== 'posts' && editingContent.content) {
 				// Conversion <br> → \n pour rétrocompatibilité (anciennes données)
 				// Après la migration DB, cette conversion ne sera plus nécessaire
-				formattedContent.body = editingContent.body.replace(/<br\s*\/?>/gi, '\n')
-				formattedContent.body_accents =
-					editingContent.body_accents?.replace(/<br\s*\/?>/gi, '\n') || ''
+				formattedContent.content = editingContent.content.replace(/<br\s*\/?>/gi, '\n')
+				formattedContent.content_accented =
+					editingContent.content_accented?.replace(/<br\s*\/?>/gi, '\n') || ''
 			}
 
 			setFormData(formattedContent)
@@ -153,9 +156,9 @@ const CreateMaterial = () => {
 			const hasLevel = !!formData.level
 			const hasSection = !!formData.section
 			const hasTitle = !!(formData.title && typeof formData.title === 'string' && formData.title.trim())
-			const hasBody = !!(formData.body && typeof formData.body === 'string' && formData.body.trim())
+			const hasContent = !!(formData.content && typeof formData.content === 'string' && formData.content.trim())
 
-			let basicValid = hasLang && hasLevel && hasSection && hasTitle && hasBody
+			let basicValid = hasLang && hasLevel && hasSection && hasTitle && hasContent
 
 			// Si book-chapters, vérifier book_id et chapter_number
 			if (formData.section === 'book-chapters') {
@@ -169,7 +172,7 @@ const CreateMaterial = () => {
 			}
 
 			// Pour les autres sections, au moins un média est requis
-			const hasMedia = !!(formData.image || formData.audio || formData.video)
+			const hasMedia = !!(formData.image_filename || formData.audio_filename || formData.video_url)
 			return basicValid && hasMedia
 		}
 	}
@@ -182,7 +185,7 @@ const CreateMaterial = () => {
 			return (filled / requiredFields.length) * 100
 		} else {
 			// Materials - base required fields
-			let requiredFieldsCount = 5 // lang, level, section, title, body
+			let requiredFieldsCount = 5 // lang, level, section, title, content
 			let filledCount = 0
 
 			// Vérifier les champs de base
@@ -190,7 +193,7 @@ const CreateMaterial = () => {
 			if (formData.level) filledCount++
 			if (formData.section) filledCount++
 			if (formData.title && formData.title.trim()) filledCount++
-			if (formData.body && formData.body.trim()) filledCount++
+			if (formData.content && formData.content.trim()) filledCount++
 
 			// Si book-chapters, ajouter book_id et chapter_number
 			if (formData.section === 'book-chapters') {
@@ -202,7 +205,7 @@ const CreateMaterial = () => {
 			} else {
 				// Pour les autres sections, ajouter le média requis
 				requiredFieldsCount += 1
-				const hasMedia = !!(formData.image || formData.audio || formData.video)
+				const hasMedia = !!(formData.image_filename || formData.audio_filename || formData.video_url)
 				if (hasMedia) filledCount++
 			}
 

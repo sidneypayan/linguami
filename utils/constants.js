@@ -409,11 +409,11 @@ export const materialData = {
 	chapter_number: '',
 	level: '',
 	title: '',
-	image: '',
-	audio: '',
-	video: '',
-	body: '',
-	body_accents: '',
+	image_filename: '',
+	audio_filename: '',
+	video_url: '',
+	content: '',
+	content_accented: '',
 }
 
 // Sections avec audio (text & audio)

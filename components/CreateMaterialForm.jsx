@@ -280,9 +280,9 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 								</Typography>
 								<FormRow
 									label=''
-									value={formData.body ?? ''}
+									value={formData.content ?? ''}
 									handleChange={handleChange}
-									name='body'
+									name='content'
 									multiline={true}
 									rows={20}
 									placeholder={formData.lang === 'ru' ? t('textWithoutAccentsPlaceholder') : t('textWithAccentsPlaceholder')}
@@ -295,9 +295,9 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									</Typography>
 									<FormRow
 										label=''
-										value={formData.body_accents ?? ''}
+										value={formData.content_accented ?? ''}
 										handleChange={handleChange}
-										name='body_accents'
+										name='content_accented'
 										multiline={true}
 										rows={20}
 										placeholder={t('textWithAccentsPlaceholder')}
@@ -327,8 +327,8 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 			</Box>
 			)}
 
-			{/* Media Section - Afficher si titre et body sont remplis */}
-			{formData.section && formData.title && formData.body && (
+			{/* Media Section - Afficher si titre et content sont remplis */}
+			{formData.section && formData.title && formData.content && (
 				<Box>
 			<Box sx={{ mb: 3 }}>
 				<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B', mb: 1 }}>
@@ -420,7 +420,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									variant='outlined'
 									startIcon={<CloudUpload />}
 									fullWidth
-									disabled={!!formData.image}
+									disabled={!!formData.image_filename}
 									sx={{
 										py: 2,
 										borderColor: '#667eea',
@@ -441,7 +441,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									{t('uploadImage')}
 									<input
 										onChange={handleChange}
-										name='image'
+										name='image_filename'
 										hidden
 										type='file'
 										accept='image/*'
@@ -461,8 +461,8 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 								<TextField
 									fullWidth
 									label={t('imageFileName')}
-									value={typeof formData.image === 'string' ? formData.image : ''}
-									onChange={(e) => handleChange({ target: { name: 'image', value: e.target.value } })}
+									value={typeof formData.image_filename === 'string' ? formData.image_filename : ''}
+									onChange={(e) => handleChange({ target: { name: 'image_filename', value: e.target.value } })}
 									placeholder="exemple: mon-image.jpg"
 									helperText={t('fileNameOnlyHelper')}
 									sx={{
@@ -470,10 +470,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									}}
 								/>
 
-								{formData.image && (
+								{formData.image_filename && (
 									<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
 										<Typography variant='caption' sx={{ fontWeight: 600 }}>
-											✓ {formData.image}
+											✓ {formData.image_filename}
 										</Typography>
 									</Alert>
 								)}
@@ -492,7 +492,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 										variant='outlined'
 										startIcon={<CloudUpload />}
 										fullWidth
-										disabled={!!formData.audio}
+										disabled={!!formData.audio_filename}
 										sx={{
 											py: 2,
 											borderColor: '#667eea',
@@ -513,7 +513,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 										{t('uploadAudio')}
 										<input
 											onChange={handleChange}
-											name='audio'
+											name='audio_filename'
 											hidden
 											type='file'
 											accept='audio/*'
@@ -533,8 +533,8 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									<TextField
 										fullWidth
 										label={t('audioFileName')}
-										value={typeof formData.audio === 'string' ? formData.audio : ''}
-										onChange={(e) => handleChange({ target: { name: 'audio', value: e.target.value } })}
+										value={typeof formData.audio_filename === 'string' ? formData.audio_filename : ''}
+										onChange={(e) => handleChange({ target: { name: 'audio_filename', value: e.target.value } })}
 										placeholder="exemple: mon-audio.mp3"
 										helperText={t('fileNameOnlyHelper')}
 										sx={{
@@ -542,10 +542,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 										}}
 									/>
 
-									{formData.audio && (
+									{formData.audio_filename && (
 										<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
 											<Typography variant='caption' sx={{ fontWeight: 600 }}>
-												✓ {formData.audio}
+												✓ {formData.audio_filename}
 											</Typography>
 										</Alert>
 									)}
@@ -577,9 +577,9 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						<CardContent sx={{ p: 3 }}>
 							<FormRow
 								label={t('youtubeLink')}
-								value={formData.video ?? ''}
+								value={formData.video_url ?? ''}
 								handleChange={handleChange}
-								name='video'
+								name='video_url'
 								placeholder='https://www.youtube.com/watch?v=...'
 							/>
 						</CardContent>

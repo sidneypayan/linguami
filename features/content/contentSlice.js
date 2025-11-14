@@ -58,17 +58,19 @@ export const createContent = createAsyncThunk(
 						processedFilesMap.set(fileData.fileName, { type: 'image', data: optimized })
 
 						// Mettre à jour le nom du fichier dans le contenu (juste le nom, sans https://)
-						finalContent[fileData.fileType] = optimized.main.fileName
+						finalContent['image_filename'] = optimized.main.fileName
+					} else if (fileData.fileType === 'audio') {
+						// Pour les fichiers audio, stocker le nom du fichier
+						finalContent['audio_filename'] = fileData.fileName
 					}
-					// Les fichiers audio sont uploadés tels quels (pas de conversion)
 				}
 			}
 
 			// Sanitize le contenu avant de l'insérer
 			const sanitizedContent = sanitizeObject(finalContent, {
-				urlFields: ['video'], // Seulement video est une URL complète
+				urlFields: ['video_url'], // Seulement video_url est une URL complète
 				numberFields: ['book_id', 'chapter_number'], // level n'est PAS un nombre, c'est une string (beginner, intermediate, advanced)
-				filenameFields: ['image', 'audio'], // Ce sont des noms de fichiers, pas des URLs
+				filenameFields: ['image_filename', 'audio_filename'], // Ce sont des noms de fichiers, pas des URLs
 			})
 
 			const { error } = await supabase.from(contentType).insert(sanitizedContent).select()
@@ -151,9 +153,9 @@ export const updateContent = createAsyncThunk(
 		try {
 			// Sanitize le contenu avant de le mettre à jour
 			const sanitizedContent = sanitizeObject(content, {
-				urlFields: ['video', 'img'], // Seulement les URLs complètes
+				urlFields: ['video_url', 'img'], // Seulement les URLs complètes
 				numberFields: ['book_id', 'chapter_number'], // level n'est PAS un nombre
-				filenameFields: ['image', 'audio'], // Ce sont des noms de fichiers
+				filenameFields: ['image_filename', 'audio_filename'], // Ce sont des noms de fichiers
 			})
 
 			const { error } = await supabase

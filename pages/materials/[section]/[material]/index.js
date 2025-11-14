@@ -481,7 +481,7 @@ const Material = ({ material: single_material }) => {
 										variant='body1'
 										onClick={e => getCoordinates(e)}>
 										<Words
-											content={single_material.body_accents}
+											content={single_material.content_accented}
 											materialId={single_material.id}
 											locale={lang}
 										/>
@@ -504,7 +504,7 @@ const Material = ({ material: single_material }) => {
 										variant='body1'
 										onClick={e => getCoordinates(e)}>
 										<Words
-											content={single_material.body}
+											content={single_material.content}
 											materialId={single_material.id}
 											locale={lang}
 										/>

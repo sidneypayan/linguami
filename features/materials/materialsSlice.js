@@ -14,7 +14,7 @@ const mergeUserMaterial = userMaterials => {
 		is_studied: userMaterial.is_studied,
 		id: userMaterial.material_id,
 		title: userMaterial.materials.title,
-		image: userMaterial.materials.image,
+		image_filename: userMaterial.materials.image_filename,
 		level: userMaterial.materials.level,
 		section: userMaterial.materials.section,
 	}))
@@ -93,26 +93,10 @@ export const getMaterials = createAsyncThunk(
 				.select('*')
 				.eq('lang', lang)
 				.eq('section', section)
+				.order('created_at', { ascending: false }) // Tri par date de création (plus récent en premier)
 
-			// Trier par titre puis par niveau
-			if (materials) {
-				// Définir l'ordre des niveaux
-				const levelOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 }
-
-				materials.sort((a, b) => {
-					// 1. Tri alphabétique par titre (priorité)
-					const titleCompare = (a.title || '').localeCompare(b.title || '', 'fr', { sensitivity: 'base' })
-
-					if (titleCompare !== 0) {
-						return titleCompare
-					}
-
-					// 2. Si même titre, tri par niveau (critère secondaire)
-					const levelA = levelOrder[a.level] || 999
-					const levelB = levelOrder[b.level] || 999
-					return levelA - levelB
-				})
-			}
+			// Note: Le tri est fait côté serveur par created_at DESC
+			// Pas besoin de tri côté client
 
 			return materials
 		} catch (error) {
@@ -126,7 +110,7 @@ export const getUserMaterials = createAsyncThunk(
 	async ({ lang, userId }, thunkAPI) => {
 		const { data: userMaterials, error } = await supabase
 			.from('user_materials')
-			.select('*, materials!inner(title, image, level, section)')
+			.select('*, materials!inner(title, image_filename, level, section)')
 			.eq('user_id', userId)
 			.eq('materials.lang', lang)
 
@@ -204,7 +188,7 @@ export const addBeingStudiedMaterial = createAsyncThunk(
 		// Fetch the full material data to add to user_materials
 		const { data: fullMaterial, error: fetchError } = await supabase
 			.from('user_materials')
-			.select('*, materials!inner(title, image, level, section)')
+			.select('*, materials!inner(title, image_filename, level, section)')
 			.eq('user_id', user.id)
 			.eq('material_id', param)
 			.single()
@@ -288,7 +272,7 @@ export const addMaterialToStudied = createAsyncThunk(
 		if (isNewMaterial) {
 			const { data: materialData, error: fetchError } = await supabase
 				.from('user_materials')
-				.select('*, materials!inner(title, image, level, section)')
+				.select('*, materials!inner(title, image_filename, level, section)')
 				.eq('user_id', user.id)
 				.eq('material_id', id)
 				.single()

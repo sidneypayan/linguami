@@ -153,8 +153,8 @@ const sanitizeObject = (obj, options = {}) => {
 			// Si des balises sont autorisées, on ne les échappe pas
 			if (allowedTags.length === 0) {
 				// Par défaut, échapper tout le HTML
-				// Sauf si le champ contient déjà des <br> (pour body et body_accents)
-				if (key === 'body' || key === 'body_accents') {
+				// Sauf si le champ contient déjà des <br> (pour content et content_accented)
+				if (key === 'content' || key === 'content_accented') {
 					// Garder les <br> mais échapper le reste
 					const parts = sanitized[key].split('<br>')
 					sanitized[key] = parts

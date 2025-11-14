@@ -20,13 +20,37 @@ import {
 	Divider,
 	Chip,
 } from '@mui/material'
-import { Close, Save } from '@mui/icons-material'
+import { Close, Save, CloudUpload } from '@mui/icons-material'
 import useTranslation from 'next-translate/useTranslation'
 import { supabase } from '@/lib/supabase'
+import { optimizeImage } from '@/utils/imageOptimizer'
+
+/**
+ * Upload un fichier vers R2 via l'API route
+ */
+async function uploadToR2(path, file, contentType) {
+	const formData = new FormData()
+	formData.append('file', file)
+	formData.append('path', path)
+	formData.append('contentType', contentType)
+
+	const response = await fetch('/api/upload-r2', {
+		method: 'POST',
+		body: formData,
+	})
+
+	if (!response.ok) {
+		const error = await response.json()
+		throw new Error(error.error || 'Erreur upload R2')
+	}
+
+	return response.json()
+}
 
 const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	const { t } = useTranslation('admin')
 	const [formData, setFormData] = useState({})
+	const [files, setFiles] = useState([]) // Fichiers à uploader
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState('')
 
@@ -39,12 +63,14 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				chapter_number: material.chapter_number || '',
 				level: material.level || '',
 				title: material.title || '',
-				image: material.image || '',
-				audio: material.audio || '',
-				video: material.video || '',
-				body: material.body?.replace(/<br\s*\/?>/gi, '\n') || '',
-				body_accents: material.body_accents?.replace(/<br\s*\/?>/gi, '\n') || '',
+				image_filename: material.image_filename || '',
+				audio_filename: material.audio_filename || '',
+				video_url: material.video_url || '',
+				content: material.content?.replace(/<br\s*\/?>/gi, '\n') || '',
+				content_accented: material.content_accented?.replace(/<br\s*\/?>/gi, '\n') || '',
 			})
+			// Réinitialiser les fichiers quand on ouvre le modal
+			setFiles([])
 		}
 	}, [material])
 
@@ -55,41 +81,112 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 		}))
 	}
 
+	// Gestion des uploads de fichiers
+	const handleFileUpload = (e, fileType) => {
+		const file = e.target.files?.[0]
+		if (!file) return
+
+		const fileName = file.name
+
+		// Ajouter le fichier à la liste des fichiers à uploader
+		setFiles(prev => {
+			// Supprimer l'ancien fichier du même type s'il existe
+			const filtered = prev.filter(f => f.fileType !== fileType)
+			return [...filtered, { file, fileName, fileType }]
+		})
+
+		// Mettre à jour le nom dans formData
+		const fieldName = fileType === 'image' ? 'image_filename' : 'audio_filename'
+		setFormData(prev => ({
+			...prev,
+			[fieldName]: fileName,
+		}))
+	}
+
 	const handleSave = async () => {
 		setSaving(true)
 		setError('')
 
 		try {
-			// Préparer les données pour la sauvegarde
+			// Map pour stocker les fichiers optimisés
+			const processedFilesMap = new Map()
+			let finalFormData = { ...formData }
+
+			// ÉTAPE 1: Optimiser les images si nécessaire
+			if (files && files.length > 0) {
+				for (const fileData of files) {
+					if (fileData.fileType === 'image') {
+						const optimized = await optimizeImage(fileData.file)
+
+						// Stocker les fichiers optimisés pour l'upload
+						processedFilesMap.set(fileData.fileName, { type: 'image', data: optimized })
+
+						// Mettre à jour le nom du fichier dans formData
+						finalFormData.image_filename = optimized.main.fileName
+					}
+				}
+			}
+
+			// ÉTAPE 2: Préparer les données pour la sauvegarde
 			const dataToUpdate = {
-				lang: formData.lang,
-				section: formData.section,
-				level: formData.level,
-				title: formData.title,
-				image: formData.image || null,
-				audio: formData.audio || null,
-				video: formData.video || null,
+				lang: finalFormData.lang,
+				section: finalFormData.section,
+				level: finalFormData.level,
+				title: finalFormData.title,
+				image_filename: finalFormData.image_filename || null,
+				audio_filename: finalFormData.audio_filename || null,
+				video_url: finalFormData.video_url || null,
 				// Garder les sauts de ligne natifs (\n) - meilleure pratique
-				body: formData.body || '',
-				body_accents: formData.body_accents || '',
+				content: finalFormData.content || '',
+				content_accented: finalFormData.content_accented || '',
 			}
 
 			// Ajouter les champs spécifiques pour book-chapters
-			if (formData.section === 'book-chapters') {
-				dataToUpdate.book_id = formData.book_id ? parseInt(formData.book_id) : null
-				dataToUpdate.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
+			if (finalFormData.section === 'book-chapters') {
+				dataToUpdate.book_id = finalFormData.book_id ? parseInt(finalFormData.book_id) : null
+				dataToUpdate.chapter_number = finalFormData.chapter_number ? parseInt(finalFormData.chapter_number) : null
 			} else {
 				dataToUpdate.book_id = null
 				dataToUpdate.chapter_number = null
 			}
 
-			// Mettre à jour dans Supabase
+			// ÉTAPE 3: Mettre à jour dans Supabase
 			const { error: updateError } = await supabase
 				.from('materials')
 				.update(dataToUpdate)
 				.eq('id', material.id)
 
 			if (updateError) throw updateError
+
+			// ÉTAPE 4: Uploader les fichiers vers R2 APRÈS la mise à jour réussie
+			if (files && files.length > 0) {
+				for (const fileData of files) {
+					if (fileData.fileType === 'image' && processedFilesMap.has(fileData.fileName)) {
+						const optimized = processedFilesMap.get(fileData.fileName).data
+
+						// Upload de la version principale
+						await uploadToR2(
+							`image/materials/${optimized.main.fileName}`,
+							optimized.main.file,
+							'image/webp'
+						)
+
+						// Upload du thumbnail
+						await uploadToR2(
+							`image/materials/thumbnails/${optimized.thumbnail.fileName}`,
+							optimized.thumbnail.file,
+							'image/webp'
+						)
+					} else if (fileData.fileType === 'audio') {
+						// Pour les fichiers audio, upload normal vers R2
+						const contentType = fileData.file.type || 'audio/mpeg'
+						const lang = finalFormData.lang || 'fr'
+						const path = `audio/${lang}/${fileData.fileName}`
+
+						await uploadToR2(path, fileData.file, contentType)
+					}
+				}
+			}
 
 			// Succès
 			if (onSuccess) {
@@ -305,30 +402,132 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					{/* Image */}
 					{needsImage && (
 						<Grid item xs={12}>
+							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
+								{t('image')}
+							</Typography>
+
+							{/* Option 1: Upload de fichier */}
+							<Button
+								component='label'
+								variant='outlined'
+								startIcon={<CloudUpload />}
+								fullWidth
+								sx={{
+									py: 2,
+									borderColor: '#667eea',
+									color: '#667eea',
+									fontWeight: 600,
+									borderStyle: 'dashed',
+									borderWidth: 2,
+									textTransform: 'none',
+									borderRadius: 2,
+									'&:hover': {
+										borderColor: '#5568d3',
+										bgcolor: 'rgba(102, 126, 234, 0.05)',
+									},
+								}}>
+								{t('uploadImage')}
+								<input
+									onChange={(e) => handleFileUpload(e, 'image')}
+									hidden
+									type='file'
+									accept='image/*'
+								/>
+							</Button>
+
+							{/* OU divider */}
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
+								<Divider sx={{ flex: 1 }} />
+								<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
+									{t('or')}
+								</Typography>
+								<Divider sx={{ flex: 1 }} />
+							</Box>
+
+							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
 								label={t('imageFileName')}
-								value={formData.image || ''}
-								onChange={(e) => handleChange('image', e.target.value)}
+								value={formData.image_filename || ''}
+								onChange={(e) => handleChange('image_filename', e.target.value)}
 								placeholder="exemple: mon-image.webp"
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-								helperText="Saisir uniquement le nom du fichier (ex: image.webp), pas l'URL complète"
+								helperText={t('fileNameOnlyHelper')}
 							/>
+
+							{formData.image_filename && (
+								<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
+									<Typography variant='caption' sx={{ fontWeight: 600 }}>
+										✓ {formData.image_filename}
+									</Typography>
+								</Alert>
+							)}
 						</Grid>
 					)}
 
 					{/* Audio */}
 					{needsAudio && (
 						<Grid item xs={12}>
+							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
+								{t('audio')}
+							</Typography>
+
+							{/* Option 1: Upload de fichier */}
+							<Button
+								component='label'
+								variant='outlined'
+								startIcon={<CloudUpload />}
+								fullWidth
+								sx={{
+									py: 2,
+									borderColor: '#667eea',
+									color: '#667eea',
+									fontWeight: 600,
+									borderStyle: 'dashed',
+									borderWidth: 2,
+									textTransform: 'none',
+									borderRadius: 2,
+									'&:hover': {
+										borderColor: '#5568d3',
+										bgcolor: 'rgba(102, 126, 234, 0.05)',
+									},
+								}}>
+								{t('uploadAudio')}
+								<input
+									onChange={(e) => handleFileUpload(e, 'audio')}
+									hidden
+									type='file'
+									accept='audio/*'
+								/>
+							</Button>
+
+							{/* OU divider */}
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
+								<Divider sx={{ flex: 1 }} />
+								<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
+									{t('or')}
+								</Typography>
+								<Divider sx={{ flex: 1 }} />
+							</Box>
+
+							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
 								label={t('audioFileName')}
-								value={formData.audio || ''}
-								onChange={(e) => handleChange('audio', e.target.value)}
+								value={formData.audio_filename || ''}
+								onChange={(e) => handleChange('audio_filename', e.target.value)}
 								placeholder="exemple: mon-audio.mp3"
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-								helperText="Saisir uniquement le nom du fichier (ex: audio.mp3), pas l'URL complète"
+								helperText={t('fileNameOnlyHelper')}
 							/>
+
+							{formData.audio_filename && (
+								<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
+									<Typography variant='caption' sx={{ fontWeight: 600 }}>
+										✓ {formData.audio_filename}
+									</Typography>
+								</Alert>
+							)}
 						</Grid>
 					)}
 
@@ -338,8 +537,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							<TextField
 								fullWidth
 								label={t('videoUrl')}
-								value={formData.video || ''}
-								onChange={(e) => handleChange('video', e.target.value)}
+								value={formData.video_url || ''}
+								onChange={(e) => handleChange('video_url', e.target.value)}
 								placeholder={t('videoUrlPlaceholder')}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 							/>
@@ -354,8 +553,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							minRows={12}
 							maxRows={25}
 							label={t('textWithoutAccents')}
-							value={formData.body || ''}
-							onChange={(e) => handleChange('body', e.target.value)}
+							value={formData.content || ''}
+							onChange={(e) => handleChange('content', e.target.value)}
 							placeholder={t('textWithoutAccentsPlaceholder')}
 							sx={{
 								'& .MuiOutlinedInput-root': {
@@ -378,8 +577,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								minRows={12}
 								maxRows={25}
 								label={t('textWithAccents')}
-								value={formData.body_accents || ''}
-								onChange={(e) => handleChange('body_accents', e.target.value)}
+								value={formData.content_accented || ''}
+								onChange={(e) => handleChange('content_accented', e.target.value)}
 								placeholder={t('textWithAccentsPlaceholder')}
 								sx={{
 									'& .MuiOutlinedInput-root': {
