@@ -5,6 +5,28 @@ import { getToastMessage } from '@/utils/toastMessages'
 import { sanitizeObject, sanitizeFilename, validateFileType } from '@/utils/sanitize'
 import { optimizeImage } from '@/utils/imageOptimizer'
 
+/**
+ * Upload un fichier vers R2 via l'API route
+ */
+async function uploadToR2(path, file, contentType) {
+	const formData = new FormData()
+	formData.append('file', file)
+	formData.append('path', path)
+	formData.append('contentType', contentType)
+
+	const response = await fetch('/api/upload-r2', {
+		method: 'POST',
+		body: formData,
+	})
+
+	if (!response.ok) {
+		const error = await response.json()
+		throw new Error(error.error || 'Erreur upload R2')
+	}
+
+	return response.json()
+}
+
 const initialState = {
 	editingContent: {},
 	contentType: 'materials',
@@ -61,55 +83,41 @@ export const createContent = createAsyncThunk(
 						throw new Error(`Type de fichier non autorisé pour ${fileName}`)
 					}
 
-					// Si c'est une image optimisée, uploader les versions optimisées
+					// Si c'est une image optimisée, uploader les versions optimisées vers R2
 					if (fileType === 'image' && processedFilesMap.has(fileName)) {
 						const optimized = processedFilesMap.get(fileName).data
 
+						// Upload de la version principale vers R2
+						await uploadToR2(
+							`image/materials/${optimized.main.fileName}`,
+							optimized.main.file,
+							'image/webp'
+						)
 
-						// Upload de la version principale
-						const { error: mainError } = await supabase.storage
-							.from('linguami')
-							.upload(`${fileType}/${optimized.main.fileName}`, optimized.main.file, {
-								cacheControl: '3600',
-								upsert: false,
-								contentType: 'image/webp',
-							})
-
-						if (mainError) {
-							console.error(`❌ Erreur upload principal ${optimized.main.fileName}:`, mainError)
-							throw mainError
-						}
-
-						// Upload du thumbnail
-						const { error: thumbError } = await supabase.storage
-							.from('linguami')
-							.upload(`${fileType}/thumbnails/${optimized.thumbnail.fileName}`, optimized.thumbnail.file, {
-								cacheControl: '3600',
-								upsert: false,
-								contentType: 'image/webp',
-							})
-
-						if (thumbError) {
-							console.error(`❌ Erreur upload thumbnail ${optimized.thumbnail.fileName}:`, thumbError)
-							throw thumbError
-						}
+						// Upload du thumbnail vers R2
+						await uploadToR2(
+							`image/materials/thumbnails/${optimized.thumbnail.fileName}`,
+							optimized.thumbnail.file,
+							'image/webp'
+						)
 
 					} else {
-						// Pour les fichiers non traités, upload normal
+						// Pour les fichiers non traités (audio, etc.), upload normal vers R2
 						const safeName = sanitizeFilename(fileName)
 
-						const { error } = await supabase.storage
-							.from('linguami')
-							.upload(`${fileType}/${safeName}`, file, {
-								cacheControl: '3600',
-								upsert: false,
-							})
-
-						if (error) {
-							console.error(`❌ Erreur upload ${safeName}:`, error)
-							throw error
+						// Déterminer le content type
+						let contentType = 'application/octet-stream'
+						if (fileType === 'audio') {
+							contentType = file.type || 'audio/mpeg'
 						}
 
+						// Utiliser la langue depuis le contenu pour l'audio
+						const lang = finalContent.lang || 'fr'
+						const path = fileType === 'audio'
+							? `audio/${lang}/${safeName}`
+							: `${fileType}/${safeName}`
+
+						await uploadToR2(path, file, contentType)
 					}
 				}
 

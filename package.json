@@ -32,6 +32,7 @@
 		"browser-image-compression": "^2.0.2",
 		"cookie": "^1.0.2",
 		"dotenv": "^17.2.3",
+		"formidable": "^3.5.4",
 		"gray-matter": "^4.0.3",
 		"isomorphic-dompurify": "^0.22.0",
 		"marked": "^4.2.3",
