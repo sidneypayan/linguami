@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -19,21 +22,20 @@ import {
 	RadioGroup,
 	FormControlLabel,
 	CircularProgress,
-	ListSubheader,
 	Autocomplete,
 } from '@mui/material'
 import { Add, Delete, ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import Head from 'next/head'
-import useTranslation from 'next-translate/useTranslation'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 
 const EditExercise = () => {
 	const router = useRouter()
-	const { id } = router.query
-	const { t } = useTranslation('exercises')
+	const params = useParams()
+	const locale = useLocale()
+	const id = params.id
+	const t = useTranslations('exercises')
 	const { isUserAdmin, userLearningLanguage, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
 
@@ -81,7 +83,7 @@ const EditExercise = () => {
 		} catch (error) {
 			console.error('Error loading exercise:', error)
 			toast.error(t('loadError'))
-			router.push('/admin/exercises')
+			router.push(`/${locale}/admin/exercises`)
 		} finally {
 			setLoadingExercise(false)
 		}
@@ -110,9 +112,9 @@ const EditExercise = () => {
 	// Redirect if not admin
 	useEffect(() => {
 		if (!isBootstrapping && !isUserAdmin) {
-			router.push('/')
+			router.push(`/${locale}`)
 		}
-	}, [isUserAdmin, isBootstrapping, router])
+	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	// Add new question
 	const addQuestion = () => {
@@ -371,7 +373,7 @@ const EditExercise = () => {
 			if (error) throw error
 
 			toast.success(t('updateSuccess'))
-			router.push('/admin/exercises')
+			router.push(`/${locale}/admin/exercises`)
 		} catch (error) {
 			console.error('Error updating exercise:', error)
 			toast.error(t('updateError'))
@@ -394,9 +396,6 @@ const EditExercise = () => {
 	if (loadingExercise) {
 		return (
 			<>
-				<Head>
-					<title>{t('loadingExercise')} | Linguami Admin</title>
-				</Head>
 				<AdminNavbar />
 				<Container maxWidth="lg" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
 					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -428,9 +427,6 @@ const EditExercise = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{pageTitle} | Linguami Admin</title>
-			</Head>
 			<AdminNavbar />
 
 			<Container maxWidth="lg" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
@@ -555,7 +551,7 @@ const EditExercise = () => {
 
 					<Divider sx={{ mb: 4 }} />
 
-					{/* Questions */}
+					{/* Questions - Rendered based on exercise type */}
 					<Box>
 						<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
 							<Typography variant="h6" sx={{ fontWeight: 600 }}>

@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -29,14 +32,13 @@ import { Add, Edit, Delete, Visibility, Search, FilterList } from '@mui/icons-ma
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import Head from 'next/head'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import AdminNavbar from '@/components/admin/AdminNavbar'
-import useTranslation from 'next-translate/useTranslation'
 
 const ExercisesAdmin = () => {
 	const router = useRouter()
-	const { t } = useTranslation('exercises')
+	const locale = useLocale()
+	const t = useTranslations('exercises')
 	const { isUserAdmin, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
 	const theme = useTheme()
@@ -88,9 +90,9 @@ const ExercisesAdmin = () => {
 	// Redirect if not admin
 	useEffect(() => {
 		if (!isBootstrapping && !isUserAdmin) {
-			router.push('/')
+			router.push(`/${locale}`)
 		}
-	}, [isUserAdmin, isBootstrapping, router])
+	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	// Delete exercise
 	const handleDelete = async (id) => {
@@ -263,10 +265,6 @@ const ExercisesAdmin = () => {
 
 	return (
 		<>
-			<Head>
-				<title>Exercices | Linguami Admin</title>
-			</Head>
-
 			<AdminNavbar activePage="exercises" />
 
 			<Container maxWidth="xl" sx={{ pt: { xs: '2rem', md: '4rem' }, pb: 4 }}>
@@ -278,7 +276,7 @@ const ExercisesAdmin = () => {
 						<Button
 							variant="contained"
 							startIcon={<Add />}
-							onClick={() => router.push('/admin/exercises/create-fitb')}
+							onClick={() => router.push(`/${locale}/admin/exercises/create-fitb`)}
 							sx={{
 								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								px: 3,
@@ -288,7 +286,7 @@ const ExercisesAdmin = () => {
 						<Button
 							variant="contained"
 							startIcon={<Add />}
-							onClick={() => router.push('/admin/exercises/create-mcq')}
+							onClick={() => router.push(`/${locale}/admin/exercises/create-mcq`)}
 							sx={{
 								background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
 								px: 3,
@@ -298,7 +296,7 @@ const ExercisesAdmin = () => {
 						<Button
 							variant="contained"
 							startIcon={<Add />}
-							onClick={() => router.push('/admin/exercises/create-drag-drop')}
+							onClick={() => router.push(`/${locale}/admin/exercises/create-drag-drop`)}
 							sx={{
 								background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
 								px: 3,
@@ -570,13 +568,13 @@ const ExercisesAdmin = () => {
 										<TableCell align="right">
 											<IconButton
 												size="small"
-												onClick={() => router.push(`/admin/exercises/preview/${exercise.id}`)}
+												onClick={() => router.push(`/${locale}/admin/exercises/preview/${exercise.id}`)}
 												title={t('preview')}>
 												<Visibility fontSize="small" />
 											</IconButton>
 											<IconButton
 												size="small"
-												onClick={() => router.push(`/admin/exercises/edit/${exercise.id}`)}
+												onClick={() => router.push(`/${locale}/admin/exercises/edit/${exercise.id}`)}
 												title={t('edit')}>
 												<Edit fontSize="small" />
 											</IconButton>

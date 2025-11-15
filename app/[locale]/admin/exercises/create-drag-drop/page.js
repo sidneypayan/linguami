@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -13,21 +16,19 @@ import {
 	MenuItem,
 	IconButton,
 	Alert,
-	Chip,
 	Divider,
-	ListSubheader,
 	Autocomplete,
 } from '@mui/material'
 import { Add, Delete, ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import Head from 'next/head'
-import useTranslation from 'next-translate/useTranslation'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 
-const CreateExercise = () => {
+const CreateDragDropExercise = () => {
 	const router = useRouter()
-	const { t } = useTranslation('exercises')
+	const locale = useLocale()
+	const t = useTranslations('exercises')
 	const { isUserAdmin, userLearningLanguage, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
 
@@ -40,9 +41,11 @@ const CreateExercise = () => {
 	const [questions, setQuestions] = useState([
 		{
 			id: 1,
-			title: '',
-			text: '',
-			blanks: [{ correctAnswers: [''], hint: '' }],
+			instruction: '',
+			pairs: [
+				{ id: 'pair-1', left: '', right: '' },
+				{ id: 'pair-2', left: '', right: '' }
+			],
 			explanation: ''
 		}
 	])
@@ -74,19 +77,22 @@ const CreateExercise = () => {
 	// Redirect if not admin
 	useEffect(() => {
 		if (!isBootstrapping && !isUserAdmin) {
-			router.push('/')
+			router.push(`/${locale}`)
 		}
-	}, [isUserAdmin, isBootstrapping, router])
+	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	// Add new question
 	const addQuestion = () => {
+		const newId = questions.length + 1
 		setQuestions([
 			...questions,
 			{
-				id: questions.length + 1,
-				title: '',
-				text: '',
-				blanks: [{ correctAnswers: [''], hint: '' }],
+				id: newId,
+				instruction: '',
+				pairs: [
+					{ id: `pair-${newId}-1`, left: '', right: '' },
+					{ id: `pair-${newId}-2`, left: '', right: '' }
+				],
 				explanation: ''
 			}
 		])
@@ -104,35 +110,39 @@ const CreateExercise = () => {
 		setQuestions(updated)
 	}
 
-	// Add blank to question
-	const addBlank = (questionIndex) => {
+	// Add pair to question
+	const addPair = (questionIndex) => {
 		const updated = [...questions]
-		updated[questionIndex].blanks.push({ correctAnswers: [''], hint: '' })
+		const pairCount = updated[questionIndex].pairs.length
+		const newId = `pair-${questionIndex}-${pairCount + 1}`
+		updated[questionIndex].pairs.push({
+			id: newId,
+			left: '',
+			right: ''
+		})
 		setQuestions(updated)
 	}
 
-	// Remove blank from question
-	const removeBlank = (questionIndex, blankIndex) => {
+	// Remove pair from question
+	const removePair = (questionIndex, pairIndex) => {
 		const updated = [...questions]
-		updated[questionIndex].blanks = updated[questionIndex].blanks.filter((_, i) => i !== blankIndex)
+		updated[questionIndex].pairs = updated[questionIndex].pairs
+			.filter((_, i) => i !== pairIndex)
 		setQuestions(updated)
 	}
 
-	// Update blank
-	const updateBlank = (questionIndex, blankIndex, field, value) => {
+	// Update pair left item
+	const updatePairLeft = (questionIndex, pairIndex, text) => {
 		const updated = [...questions]
-		if (field === 'correctAnswers') {
-			// Split by comma for multiple acceptable answers
-			updated[questionIndex].blanks[blankIndex][field] = value.split(',').map(a => a.trim()).filter(a => a)
-		} else {
-			updated[questionIndex].blanks[blankIndex][field] = value
-		}
+		updated[questionIndex].pairs[pairIndex].left = text
 		setQuestions(updated)
 	}
 
-	// Count blanks in text
-	const countBlanks = (text) => {
-		return (text.match(/___/g) || []).length
+	// Update pair right item
+	const updatePairRight = (questionIndex, pairIndex, text) => {
+		const updated = [...questions]
+		updated[questionIndex].pairs[pairIndex].right = text
+		setQuestions(updated)
 	}
 
 	// Validate form
@@ -144,25 +154,23 @@ const CreateExercise = () => {
 
 		for (let i = 0; i < questions.length; i++) {
 			const q = questions[i]
-			if (!q.text.trim()) {
-				toast.error(t('textRequired', { number: i + 1 }))
+			if (!q.instruction.trim()) {
+				toast.error(t('instructionRequired', { number: i + 1 }))
 				return false
 			}
 
-			const blankCount = countBlanks(q.text)
-			if (blankCount === 0) {
-				toast.error(t('useBlanksPlaceholder', { number: i + 1 }))
+			if (q.pairs.length < 2) {
+				toast.error(t('minPairsRequired', { number: i + 1 }))
 				return false
 			}
 
-			if (blankCount !== q.blanks.length) {
-				toast.error(t('blankCountMismatch', { number: i + 1, blankCount, answerCount: q.blanks.length }))
-				return false
-			}
-
-			for (let j = 0; j < q.blanks.length; j++) {
-				if (!q.blanks[j].correctAnswers || q.blanks[j].correctAnswers.length === 0 || !q.blanks[j].correctAnswers[0]) {
-					toast.error(t('blankAnswerRequired', { number: i + 1, blank: j + 1 }))
+			for (let j = 0; j < q.pairs.length; j++) {
+				if (!q.pairs[j].left.trim()) {
+					toast.error(t('leftItemRequired', { number: i + 1, pair: j + 1 }))
+					return false
+				}
+				if (!q.pairs[j].right.trim()) {
+					toast.error(t('rightItemRequired', { number: i + 1, pair: j + 1 }))
 					return false
 				}
 			}
@@ -184,7 +192,7 @@ const CreateExercise = () => {
 				.from('exercises')
 				.insert({
 					material_id: materialId || null,
-					type: 'fill_in_blank',
+					type: 'drag_and_drop',
 					title,
 					level,
 					lang,
@@ -196,7 +204,7 @@ const CreateExercise = () => {
 			if (error) throw error
 
 			toast.success(t('createSuccess'))
-			router.push('/admin/exercises')
+			router.push(`/${locale}/admin/exercises`)
 		} catch (error) {
 			console.error('Error creating exercise:', error)
 			toast.error(t('createError'))
@@ -217,9 +225,7 @@ const CreateExercise = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{t('createFillInBlankTitle')} | Linguami Admin</title>
-			</Head>
+			<AdminNavbar />
 
 			<Container maxWidth="lg" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
 				<Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -227,17 +233,17 @@ const CreateExercise = () => {
 						<ArrowBack />
 					</IconButton>
 					<Typography variant="h4" sx={{ fontWeight: 700 }}>
-						{t('createFillInBlankTitle')}
+						{t('createDragDropTitle')}
 					</Typography>
 				</Box>
 
 				<Alert severity="info" sx={{ mb: 3 }}>
-					<strong>{t('fillInBlankInfo')}</strong>
+					<strong>{t('dragDropInfo')}</strong>
 					<ul style={{ marginTop: '8px', marginBottom: 0 }}>
-						<li>{t('fillInBlankStep1')}</li>
-						<li>{t('fillInBlankStep2')}</li>
-						<li>{t('fillInBlankStep3')}</li>
-						<li>{t('fillInBlankStep4')}</li>
+						<li>{t('dragDropStep1')}</li>
+						<li>{t('dragDropStep2')}</li>
+						<li>{t('dragDropStep3')}</li>
+						<li>{t('dragDropStep4')}</li>
 					</ul>
 				</Alert>
 
@@ -347,13 +353,13 @@ const CreateExercise = () => {
 					<Box>
 						<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
 							<Typography variant="h6" sx={{ fontWeight: 600 }}>
-								Questions ({questions.length})
+								{t('questionsCount')} ({questions.length})
 							</Typography>
 							<Button
 								variant="outlined"
 								startIcon={<Add />}
 								onClick={addQuestion}>
-								Ajouter une question
+								{t('addQuestion')}
 							</Button>
 						</Box>
 
@@ -369,7 +375,7 @@ const CreateExercise = () => {
 								}}>
 								<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
 									<Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-										Question {qIndex + 1}
+										{t('question')} {qIndex + 1}
 									</Typography>
 									{questions.length > 1 && (
 										<IconButton
@@ -383,75 +389,77 @@ const CreateExercise = () => {
 
 								<TextField
 									fullWidth
-									label="Titre de la question (optionnel)"
-									value={question.title}
-									onChange={(e) => updateQuestion(qIndex, 'title', e.target.value)}
-									sx={{ mb: 2 }}
-								/>
-
-								<TextField
-									fullWidth
-									multiline
-									rows={6}
-									label="Texte avec blancs (utilisez ___)"
-									value={question.text}
-									onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
-									helperText={`Blancs détectés : ${countBlanks(question.text)}`}
-									sx={{ mb: 2 }}
+									label={t('instructionLabel')}
+									value={question.instruction}
+									onChange={(e) => updateQuestion(qIndex, 'instruction', e.target.value)}
+									sx={{ mb: 3 }}
 									required
+									helperText="Ex: 'Associez les mots avec leur traduction'"
 								/>
 
-								{/* Blanks */}
+								{/* Pairs */}
 								<Box sx={{ mb: 2 }}>
 									<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
 										<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-											Réponses pour les blancs ({question.blanks.length})
+											{t('pairsCount', { count: question.pairs.length })}
 										</Typography>
 										<Button
 											size="small"
 											startIcon={<Add />}
-											onClick={() => addBlank(qIndex)}>
-											Ajouter un blanc
+											onClick={() => addPair(qIndex)}>
+											{t('addPair')}
 										</Button>
 									</Box>
 
-									{question.blanks.map((blank, bIndex) => (
+									{question.pairs.map((pair, pIndex) => (
 										<Box
-											key={bIndex}
+											key={pair.id}
 											sx={{
-												p: 2,
 												mb: 2,
+												p: 2,
 												backgroundColor: 'rgba(139, 92, 246, 0.05)',
 												borderRadius: 2,
 											}}>
-											<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-												<Chip label={`Blanc ${bIndex + 1}`} size="small" color="primary" />
-												{question.blanks.length > 1 && (
+											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+												<Typography
+													variant="body2"
+													sx={{
+														fontWeight: 600,
+														minWidth: '80px',
+														color: '#8b5cf6'
+													}}>
+													{t('pairs')} {pIndex + 1}
+												</Typography>
+												{question.pairs.length > 2 && (
 													<IconButton
 														size="small"
 														color="error"
-														onClick={() => removeBlank(qIndex, bIndex)}>
+														onClick={() => removePair(qIndex, pIndex)}
+														sx={{ ml: 'auto' }}>
 														<Delete fontSize="small" />
 													</IconButton>
 												)}
 											</Box>
-
-											<TextField
-												fullWidth
-												label="Réponse(s) correcte(s)"
-												value={blank.correctAnswers.join(', ')}
-												onChange={(e) => updateBlank(qIndex, bIndex, 'correctAnswers', e.target.value)}
-												helperText="Séparez plusieurs réponses acceptées par des virgules (ex: vais, je vais)"
-												sx={{ mb: 1 }}
-												required
-											/>
-
-											<TextField
-												fullWidth
-												label="Indice (optionnel)"
-												value={blank.hint}
-												onChange={(e) => updateBlank(qIndex, bIndex, 'hint', e.target.value)}
-											/>
+											<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+												<TextField
+													fullWidth
+													label={t('leftItem', { number: pIndex + 1 })}
+													placeholder="Ex: Bonjour"
+													value={pair.left}
+													onChange={(e) => updatePairLeft(qIndex, pIndex, e.target.value)}
+													size="small"
+													required
+												/>
+												<TextField
+													fullWidth
+													label={t('rightItem', { number: pIndex + 1 })}
+													placeholder="Ex: Привет"
+													value={pair.right}
+													onChange={(e) => updatePairRight(qIndex, pIndex, e.target.value)}
+													size="small"
+													required
+												/>
+											</Box>
 										</Box>
 									))}
 								</Box>
@@ -460,10 +468,10 @@ const CreateExercise = () => {
 									fullWidth
 									multiline
 									rows={2}
-									label="Explication (optionnel)"
+									label={t('explanation')}
 									value={question.explanation}
 									onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
-									helperText="Affichée après la soumission de la question"
+									helperText={t('explanationHelper')}
 								/>
 							</Paper>
 						))}
@@ -475,7 +483,7 @@ const CreateExercise = () => {
 							variant="outlined"
 							onClick={() => router.back()}
 							disabled={loading}>
-							Annuler
+							{t('cancel')}
 						</Button>
 						<Button
 							type="submit"
@@ -485,7 +493,7 @@ const CreateExercise = () => {
 								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 								px: 4,
 							}}>
-							{loading ? 'Création...' : 'Créer l\'exercice'}
+							{loading ? t('creating') : t('createExercise')}
 						</Button>
 					</Box>
 				</Paper>
@@ -494,4 +502,4 @@ const CreateExercise = () => {
 	)
 }
 
-export default CreateExercise
+export default CreateDragDropExercise

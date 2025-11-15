@@ -1,11 +1,12 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Container, Box, Typography, IconButton, Alert } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
-import Head from 'next/head'
-import useTranslation from 'next-translate/useTranslation'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import FillInTheBlank from '@/components/exercises/FillInTheBlank'
@@ -14,8 +15,10 @@ import DragAndDrop from '@/components/exercises/DragAndDrop'
 
 const PreviewExercise = () => {
 	const router = useRouter()
-	const { id } = router.query
-	const { t } = useTranslation('exercises')
+	const params = useParams()
+	const locale = useLocale()
+	const id = params.id
+	const t = useTranslations('exercises')
 	const { isUserAdmin, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
 
@@ -50,9 +53,9 @@ const PreviewExercise = () => {
 	// Redirect if not admin
 	useEffect(() => {
 		if (!isBootstrapping && !isUserAdmin) {
-			router.push('/')
+			router.push(`/${locale}`)
 		}
-	}, [isUserAdmin, isBootstrapping, router])
+	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	// Handle completion (preview mode - no XP awarded)
 	const handleComplete = (result) => {
@@ -86,9 +89,6 @@ const PreviewExercise = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{t('previewTitle')} - {exercise.title} | Linguami Admin</title>
-			</Head>
 			<AdminNavbar />
 
 			<Container maxWidth="md" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>

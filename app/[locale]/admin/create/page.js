@@ -1,6 +1,9 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import loadNamespaces from 'next-translate/loadNamespaces'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { supabase } from '@/lib/supabase'
 import {
 	Box,
@@ -20,9 +23,7 @@ import {
 	updateContent,
 	toggleContentType,
 } from '@/features/content/contentSlice'
-import { useRouter } from 'next/router'
 import { materialData, postData } from '@/utils/constants'
-import { createServerClient } from '@supabase/ssr'
 import {
 	ArrowBack,
 	CheckCircle,
@@ -30,15 +31,17 @@ import {
 	LibraryBooks,
 	Save,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { useUserContext } from '@/context/user'
 
 const CreateMaterial = () => {
-	const { t } = useTranslation('admin')
+	const t = useTranslations('admin')
+	const locale = useLocale()
 	const [formData, setFormData] = useState(materialData)
 	const [files, setFiles] = useState([])
 
 	const router = useRouter()
+	const { isUserAdmin, isBootstrapping } = useUserContext()
 	const dispatch = useDispatch()
 	const {
 		contentType,
@@ -47,6 +50,13 @@ const CreateMaterial = () => {
 		create_content_error,
 		create_content_loading,
 	} = useSelector(store => store.content)
+
+	// Redirect if not admin
+	useEffect(() => {
+		if (!isBootstrapping && !isUserAdmin) {
+			router.push(`/${locale}`)
+		}
+	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	const toggleContent = (type) => {
 		dispatch(toggleContentType(type))
@@ -215,6 +225,11 @@ const CreateMaterial = () => {
 
 	const progress = calculateProgress()
 	const publishable = canPublish()
+
+	// Show nothing while bootstrapping or not admin
+	if (isBootstrapping || !isUserAdmin) {
+		return null
+	}
 
 	return (
 		<Box
@@ -430,62 +445,6 @@ const CreateMaterial = () => {
 			</Container>
 		</Box>
 	)
-}
-
-export const getServerSideProps = async ({ req, res }) => {
-	const supabase = createServerClient(
-		process.env.NEXT_PUBLIC_SUPABASE_URL,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-		{
-			cookies: {
-				get(name) {
-					return req.cookies[name]
-				},
-				set(name, value, options) {
-					res.setHeader('Set-Cookie', `${name}=${value}; Path=/; ${options}`)
-				},
-				remove(name, options) {
-					res.setHeader('Set-Cookie', `${name}=; Path=/; Max-Age=0`)
-				},
-			},
-		}
-	)
-
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser()
-
-	if (!user || authError) {
-		return {
-			redirect: {
-				destination: '/',
-				permanent: false,
-			},
-		}
-	}
-
-	const { data: userProfile, error } = await supabase
-		.from('users_profile')
-		.select('*')
-		.eq('id', user.id)
-		.single()
-
-	if (error || userProfile?.role !== 'admin') {
-		return {
-			redirect: {
-				destination: '/',
-				permanent: false,
-			},
-		}
-	}
-
-	return {
-		props: {
-			user: userProfile,
-			...(await loadNamespaces({ ...{ req, res }, pathname: '/admin/create', loaderName: 'getServerSideProps' })),
-		},
-	}
 }
 
 export default CreateMaterial
