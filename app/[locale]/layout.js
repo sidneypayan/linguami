@@ -1,7 +1,50 @@
+import 'normalize.css'
+import '../../styles/globals.css'
+import { Poppins } from 'next/font/google'
 import Script from 'next/script'
 import Providers from '../providers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+
+const poppins = Poppins({
+	weight: ['300', '400', '500', '600', '700', '800', '900'],
+	subsets: ['latin'],
+	display: 'swap',
+})
+
+export const viewport = {
+	themeColor: '#667eea',
+}
+
+export const metadata = {
+	metadataBase: new URL('https://linguami.com'),
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+			'max-video-preview': -1,
+		},
+	},
+	verification: {
+		google: 'oGTQDmJBuYy3iZHwHZO0Ri42PA6fdKSVvf_JgPNShg8',
+		yandex: 'c0eca412e0863312',
+		other: {
+			'msvalidate.01': '62BF48559C7FAA4B1AEBC63E61284ACB',
+		},
+	},
+	icons: {
+		icon: [
+			{ url: '/favicon.ico' },
+			{ url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+		],
+		apple: '/apple-touch-icon.png',
+	},
+	manifest: '/site.webmanifest',
+}
 
 export default async function LocaleLayout({ children, params }) {
 	const { locale } = await params
