@@ -110,8 +110,8 @@ export default function AuthCallback() {
 						console.log('✅ VK ID authentication complete')
 						setStatusMessage('Connection successful!')
 
-						// Redirect to home
-						router.replace('/')
+						// Redirect to materials page
+						router.replace('/materials')
 						return
 					} catch (vkError) {
 						console.error('❌ VK ID authentication error:', vkError)
@@ -200,7 +200,7 @@ export default function AuthCallback() {
 								router.replace('/reset-password')
 							} else {
 								// OAuth or Magic Link login
-								router.replace('/')
+								router.replace('/materials')
 							}
 						} else {
 							// Profile not yet created (rare because of auto trigger)
