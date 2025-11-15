@@ -1,6 +1,6 @@
 'use client'
 import { useTranslations, useLocale } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
 import toast from '@/utils/toast'
 import {
@@ -36,6 +36,7 @@ const initialState = {
 const UpdatePassword = () => {
 	const t = useTranslations('register')
 	const router = useRouter()
+	const searchParams = useSearchParams()
 	const [values, setValues] = useState(initialState)
 	const [isResetting, setIsResetting] = useState(false)
 	const [loading, setLoading] = useState(true)
@@ -85,19 +86,17 @@ const UpdatePassword = () => {
 
 	// Détecter si on arrive depuis l'email avec un token
 	useEffect(() => {
-		// Attendre que le router soit prêt pour lire les query params
-		if (!router.isReady) {
-			console.log('⏳ Router not ready yet, waiting...')
-			return
-		}
-
 		let mounted = true
 
 		const initResetFlow = async () => {
-			console.log('🔍 Router query:', router.query)
+			// Get URL parameters
+			const error = searchParams.get('error')
+			const error_code = searchParams.get('error_code')
+			const code = searchParams.get('code')
+
+			console.log('🔍 URL params:', { error, error_code, code })
 
 			// Vérifier les paramètres URL pour les erreurs
-			const { error, error_code, code } = router.query
 			if (error_code === 'otp_expired' || error === 'access_denied') {
 				toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
 				setIsResetting(false)
@@ -135,7 +134,7 @@ const UpdatePassword = () => {
 			console.log('🔍 Auth event:', event)
 
 			// Détecter une connexion suite à un reset password
-			if (event === 'SIGNED_IN' && router.query.code) {
+			if (event === 'SIGNED_IN' && searchParams.get('code')) {
 				console.log('✅ SIGNED_IN détecté avec code de récupération')
 				setIsResetting(true)
 				setLoading(false)
@@ -154,7 +153,7 @@ const UpdatePassword = () => {
 			mounted = false
 			subscription?.unsubscribe()
 		}
-	}, [router.isReady, router.query, t])
+	}, [searchParams, t])
 
 	const handleChange = e => {
 		const name = e.target.name
