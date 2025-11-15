@@ -87,9 +87,8 @@ const code = searchParams.get('code')
 
 ### ✅ Intentionally Not Migrated
 - All API routes (stay in `pages/api/`) - **These should NOT be migrated**
-- Special files: `_app.js`, `_document.js` - **Required by Next.js**
 
-**Note**: All user-facing pages have been successfully migrated to App Router. Only API routes and special Next.js files remain in the `pages/` directory, which is the expected final state.
+**Note**: All user-facing pages have been successfully migrated to App Router. The `_app.js` and `_document.js` files have been removed as their functionality was migrated to `app/layout.js` and `app/providers.js`. Only API routes remain in the `pages/` directory, which is the expected final state for a fully migrated App Router application.
 
 ## Environment Configuration
 
@@ -111,26 +110,28 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 ```
 linguami/
-├── app/[locale]/              # ✅ ALL user-facing pages migrated here (33 pages)
-│   ├── page.js               # Homepage
-│   ├── login/page.js
-│   ├── materials/[section]/page.js
-│   ├── admin/                # ✅ Admin pages migrated
-│   │   ├── page.js
-│   │   ├── users/page.js
-│   │   ├── create/page.js
-│   │   └── exercises/
-│   │       ├── page.js
-│   │       ├── create-mcq/page.js
-│   │       ├── create-fitb/page.js
-│   │       ├── create-drag-drop/page.js
-│   │       ├── edit/[id]/page.js
-│   │       └── preview/[id]/page.js
-│   └── ...
-├── pages/                     # ✅ Only API routes + special files remain
-│   ├── api/                  # ✅ Stays here (not migrated)
-│   ├── _app.js              # ✅ Required file
-│   └── _document.js         # ✅ Required file
+├── app/                       # ✅ App Router structure
+│   ├── layout.js             # ✅ Root layout (replaces _document.js)
+│   ├── providers.js          # ✅ All providers (replaces _app.js)
+│   └── [locale]/             # ✅ ALL user-facing pages migrated here (33 pages)
+│       ├── layout.js         # Locale-specific layout
+│       ├── page.js           # Homepage
+│       ├── login/page.js
+│       ├── materials/[section]/page.js
+│       ├── admin/            # ✅ Admin pages migrated
+│       │   ├── page.js
+│       │   ├── users/page.js
+│       │   ├── create/page.js
+│       │   └── exercises/
+│       │       ├── page.js
+│       │       ├── create-mcq/page.js
+│       │       ├── create-fitb/page.js
+│       │       ├── create-drag-drop/page.js
+│       │       ├── edit/[id]/page.js
+│       │       └── preview/[id]/page.js
+│       └── ...
+├── pages/                     # ✅ Only API routes remain
+│   └── api/                  # ✅ Stays here (not migrated)
 ├── messages/                  # ✅ NEW: next-intl translations
 │   ├── en.json
 │   ├── fr.json
