@@ -1,57 +1,58 @@
-'use client'
-
-import { useRouter } from 'next/navigation'
-import { Box, Typography, Button, Container } from '@mui/material'
-import { Home } from '@mui/icons-material'
+import Link from 'next/link'
 
 export default function NotFound() {
-	const router = useRouter()
-
 	return (
-		<Container maxWidth="md">
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					minHeight: '100vh',
-					textAlign: 'center',
-					gap: 3,
-				}}>
-				<Typography
-					variant="h1"
-					sx={{
-						fontSize: { xs: '4rem', md: '6rem' },
-						fontWeight: 700,
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						backgroundClip: 'text',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-					}}>
-					404
-				</Typography>
+		<div style={{
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'center',
+			minHeight: '100vh',
+			textAlign: 'center',
+			padding: '20px',
+			fontFamily: 'system-ui, -apple-system, sans-serif'
+		}}>
+			<h1 style={{
+				fontSize: '6rem',
+				fontWeight: 700,
+				background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+				backgroundClip: 'text',
+				WebkitBackgroundClip: 'text',
+				WebkitTextFillColor: 'transparent',
+				margin: '0 0 20px 0'
+			}}>
+				404
+			</h1>
 
-				<Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-					Page non trouvée
-				</Typography>
+			<h2 style={{
+				fontSize: '1.5rem',
+				fontWeight: 600,
+				margin: '0 0 10px 0'
+			}}>
+				Page non trouvée
+			</h2>
 
-				<Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-					La page que vous recherchez n'existe pas ou a été déplacée.
-				</Typography>
+			<p style={{
+				color: '#666',
+				marginBottom: '30px'
+			}}>
+				La page que vous recherchez n'existe pas ou a été déplacée.
+			</p>
 
-				<Button
-					variant="contained"
-					startIcon={<Home />}
-					onClick={() => router.push('/')}
-					sx={{
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						px: 4,
-						py: 1.5,
-					}}>
-					Retour à l'accueil
-				</Button>
-			</Box>
-		</Container>
+			<Link
+				href="/"
+				style={{
+					display: 'inline-block',
+					padding: '12px 32px',
+					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+					color: 'white',
+					textDecoration: 'none',
+					borderRadius: '8px',
+					fontWeight: 600
+				}}
+			>
+				Retour à l'accueil
+			</Link>
+		</div>
 	)
 }
