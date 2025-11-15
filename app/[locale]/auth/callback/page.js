@@ -136,7 +136,7 @@ export default function AuthCallback() {
 				const type = searchParams.get('type')
 				const accessToken = hashParams.get('access_token')
 				const refreshToken = hashParams.get('refresh_token')
-t		console.log('🔍 OAuth Callback Debug:', {
+					console.log('🔍 OAuth Callback Debug:', {
 				type,
 				hasAccessToken: !!accessToken,
 				hasRefreshToken: !!refreshToken,
