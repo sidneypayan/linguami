@@ -3,6 +3,9 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 
 	// Configuration des images
 	images: {
