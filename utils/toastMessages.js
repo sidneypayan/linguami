@@ -9,7 +9,7 @@ import commonEn from '../locales/en/common.json'
 const getBrowserLanguage = () => {
 	if (typeof window === 'undefined') return 'fr'
 
-	// 1. Essayer de lire depuis le cookie NEXT_LOCALE (utilisé par next-translate)
+	// 1. Essayer de lire depuis le cookie NEXT_LOCALE
 	try {
 		const cookies = document.cookie.split(';')
 		const localeCookie = cookies.find(c => c.trim().startsWith('NEXT_LOCALE='))

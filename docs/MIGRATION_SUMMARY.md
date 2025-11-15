@@ -1,24 +1,25 @@
 # Migration Pages Router → App Router - Summary
 
-**Date**: 2025-01-15
+**Date**: 2025-01-15 (Updated: 2025-01-15)
 **Branch**: `claude`
-**Status**: ✅ Completed (except admin exercises pages)
+**Status**: ✅ **FULLY COMPLETED** 🎉
 
 ## What Was Migrated
 
-### ✅ Pages Migrated to App Router (26 pages)
+### ✅ Pages Migrated to App Router (33 pages)
 - Homepage (`/`)
 - Authentication: `/login`, `/signup`, `/reset-password`, `/settings`, `/auth/callback`, `/auth/verify-email`
 - User pages: `/dictionary`, `/lessons`, `/my-materials`, `/premium`, `/statistics`, `/leaderboard`, `/privacy`, `/teacher`
 - Materials: `/materials`, `/materials/[section]`, `/materials/[section]/[material]`
 - Method: `/method`, `/method/[level]`, `/method/[level]/[lessonSlug]`
 - Blog: `/blog`, `/blog/[slug]`
-- Admin (partial): `/admin`, `/admin/users`
+- Admin: `/admin`, `/admin/users`, `/admin/create`, `/admin/exercises`, `/admin/exercises/create-mcq`, `/admin/exercises/create-fitb`, `/admin/exercises/create-drag-drop`, `/admin/exercises/edit/[id]`, `/admin/exercises/preview/[id]`
 
 ### ✅ Translation System Migrated
 - **From**: `next-translate` (Pages Router)
 - **To**: `next-intl` (App Router compatible)
 - **Files updated**: 45+ components
+- **Dependencies removed**: `next-translate`, `next-translate-plugin` uninstalled from package.json
 
 ### ✅ Components Updated (80+ files)
 - Changed `useRouter` from `next/router` → `next/navigation`
@@ -84,12 +85,11 @@ const code = searchParams.get('code')
 
 ## What Remains in Pages Router
 
-### ❌ Not Yet Migrated
-- Admin exercise pages (7 pages):
-  - `/admin/create`
-  - `/admin/exercises/*` (create-mcq, create-fitb, create-drag-drop, edit/[id], preview/[id], index)
-- All API routes (stay in `pages/api/`)
-- Special files: `_app.js`, `_document.js`
+### ✅ Intentionally Not Migrated
+- All API routes (stay in `pages/api/`) - **These should NOT be migrated**
+- Special files: `_app.js`, `_document.js` - **Required by Next.js**
+
+**Note**: All user-facing pages have been successfully migrated to App Router. Only API routes and special Next.js files remain in the `pages/` directory, which is the expected final state.
 
 ## Environment Configuration
 
@@ -111,14 +111,24 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 ```
 linguami/
-├── app/[locale]/              # ✅ All user-facing pages migrated here
+├── app/[locale]/              # ✅ ALL user-facing pages migrated here (33 pages)
 │   ├── page.js               # Homepage
 │   ├── login/page.js
 │   ├── materials/[section]/page.js
+│   ├── admin/                # ✅ Admin pages migrated
+│   │   ├── page.js
+│   │   ├── users/page.js
+│   │   ├── create/page.js
+│   │   └── exercises/
+│   │       ├── page.js
+│   │       ├── create-mcq/page.js
+│   │       ├── create-fitb/page.js
+│   │       ├── create-drag-drop/page.js
+│   │       ├── edit/[id]/page.js
+│   │       └── preview/[id]/page.js
 │   └── ...
-├── pages/                     # Only admin exercises + API routes remain
+├── pages/                     # ✅ Only API routes + special files remain
 │   ├── api/                  # ✅ Stays here (not migrated)
-│   ├── admin/exercises/      # ❌ To be migrated later
 │   ├── _app.js              # ✅ Required file
 │   └── _document.js         # ✅ Required file
 ├── messages/                  # ✅ NEW: next-intl translations
@@ -155,13 +165,20 @@ linguami/
    - Fixed infinite loading
    - Added useSearchParams
 
+3. `feat(app-router): migrate all admin exercises pages to App Router` (213beb7)
+   - Migrated 7 admin exercise pages
+   - Removed 9 duplicate/obsolete files
+   - All user-facing pages now in App Router
+   - Statistics: +1,054 lines, -3,059 lines (net -2,005 lines)
+
 ## Next Steps
 
-1. **Test thoroughly** in dev environment
-2. **Set up separate Supabase dev project** (recommended)
-3. **Migrate admin exercise pages** to App Router
-4. **Create PR** to merge `claude` → `develop` → `main`
-5. **Update production env vars** before deploying
+1. ✅ ~~Migrate admin exercise pages to App Router~~ **COMPLETED**
+2. ✅ ~~Remove next-translate dependencies~~ **COMPLETED**
+3. **Test thoroughly** in dev environment (all pages, especially admin exercises)
+4. **Set up separate Supabase dev project** (recommended for local testing)
+5. **Create PR** to merge `claude` → `develop` → `main`
+6. **Update production env vars** before deploying
 
 ## Breaking Changes
 

@@ -1,7 +1,15 @@
 # Migration vers App Router - Documentation
 
+> **⚠️ DOCUMENT OBSOLÈTE**
+>
+> Ce document est conservé pour référence historique. Pour la documentation à jour de la migration App Router, consultez **[MIGRATION_SUMMARY.md](./MIGRATION_SUMMARY.md)**.
+>
+> **Status final :** ✅ Migration 100% complète (33 pages migrées)
+
+---
+
 Date : 14 novembre 2025
-Status : **En cours - Migration partielle réussie**
+Status : **~~En cours - Migration partielle réussie~~** → **✅ COMPLÉTÉE le 15 janvier 2025**
 
 ## 📋 Résumé
 

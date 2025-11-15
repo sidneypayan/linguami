@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextTranslate = require('next-translate-plugin')
 const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
@@ -53,6 +52,5 @@ const nextConfig = {
 	},
 }
 
-// Apply both plugins: next-translate for Pages Router, next-intl for App Router
-// Apply next-intl only (next-translate disabled for now)
+// Apply next-intl plugin for App Router i18n
 module.exports = withNextIntl(nextConfig)
