@@ -41,7 +41,7 @@ const LevelLessonsPage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn, userProfile, userLearningLanguage } = useUserContext()
+	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin } = useUserContext()
 
 	// Redux state - MUST be before any conditional returns
 	const { levels, courses, courses_loading, courses_error, userProgress } = useSelector(
@@ -84,6 +84,18 @@ const LevelLessonsPage = () => {
 			dispatch(getUserProgressForCourse(currentCourse.id))
 		}
 	}, [currentCourse, isUserLoggedIn, dispatch])
+
+	// Redirect non-admins (temporary until courses are finalized)
+	useEffect(() => {
+		if (!isUserAdmin) {
+			router.replace('/')
+		}
+	}, [isUserAdmin, router])
+
+	// Don't render for non-admins
+	if (!isUserAdmin) {
+		return null
+	}
 
 	// Calculate progress
 	const completedLessons = userProgress.filter((p) => p.is_completed).length
