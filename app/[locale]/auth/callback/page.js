@@ -136,7 +136,36 @@ export default function AuthCallback() {
 				const type = searchParams.get('type')
 				const accessToken = hashParams.get('access_token')
 				const refreshToken = hashParams.get('refresh_token')
+t		console.log('🔍 OAuth Callback Debug:', {
+				type,
+				hasAccessToken: !!accessToken,
+				hasRefreshToken: !!refreshToken,
+				hash: window.location.hash,
+				search: window.location.search
+			})
 
+n			// Check if it's a Google OAuth callback with PKCE (no tokens in hash)
+			if (!accessToken && !refreshToken && !vkCode && !type) {
+				console.log('🔐 OAuth PKCE flow detected (Google/Facebook)')
+				setStatusMessage('Completing authentication...')
+
+				// Wait for Supabase to process the PKCE token
+				await new Promise(resolve => setTimeout(resolve, 500))
+
+				// Check if session was established
+				const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+				if (sessionError || !session) {
+					console.error('❌ No session after PKCE exchange:', sessionError)
+					router.replace('/login?error=auth_failed')
+					return
+				}
+
+				console.log('✅ OAuth PKCE session established')
+				setStatusMessage('Redirecting...')
+				router.replace('/materials')
+				return
+			}
 				// If type=recovery but no tokens in hash, it's PKCE
 				// Supabase will automatically exchange the PKCE token for a session
 				if (type === 'recovery' && !accessToken) {
