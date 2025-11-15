@@ -144,8 +144,9 @@ export default function AuthCallback() {
 				search: window.location.search
 			})
 
-			// Check if it's a Google OAuth callback with PKCE (no tokens in hash)
-				if (!accessToken && !refreshToken && !vkCode && !type) {
+			// Check if it's a Google OAuth callback with PKCE (has code but not VK type)
+			const isGooglePKCE = vkCode && (!vkType || vkType !== 'code_v2')
+			if (!accessToken && !refreshToken && isGooglePKCE) {
 					console.log('🔐 OAuth PKCE flow detected (Google/Facebook)')
 					setStatusMessage('Completing authentication...')
 
