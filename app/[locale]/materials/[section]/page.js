@@ -70,15 +70,13 @@ const Section = () => {
 
   // Filtrer localement les matériaux pour s'assurer qu'ils correspondent à la langue d'apprentissage
   // Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
-  const displayedMaterials = useMemo(() => {.map(m => ({ id: m.id, locale: m.locale, lang: m.lang }))
-    });
+  const displayedMaterials = useMemo(() => {
     if (!filtered_materials || !userLearningLanguage) return [];
     return filtered_materials.filter((material) => {
       // Vérifier que le matériel correspond à la langue d'apprentissage
       return material.lang === userLearningLanguage;
     });
-  }, [filtered_materials, userLearningLanguage]);.map(m => ({id: m.id, title: m.title, locale: m.locale}))
-  });
+  }, [filtered_materials, userLearningLanguage]);
 
   // Définir le nombre de matériaux par page selon le mode de vue
   const itemsPerPage = viewMode === 'card' ? 8 : 10;
