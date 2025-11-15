@@ -519,7 +519,7 @@ const UserProvider = ({ children }) => {
 			isUserLoggedIn: !!user,
 			isBootstrapping,
 			userLearningLanguage,
-			isEmailVerified: isEmailVerified(userProfile),
+			isEmailVerified: isEmailVerified(userProfile, user),
 
 			register,
 			login,
