@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react'
 import {
 	Box,
@@ -19,8 +21,8 @@ import {
 } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import toast from '@/utils/toast'
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
 
 /**
@@ -31,11 +33,13 @@ import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
  * @param {Function} onComplete - Callback when exercise is completed
  */
 const FillInTheBlank = ({ exercise, onComplete }) => {
-	const { t } = useTranslation('exercises')
+	const t = useTranslations('exercises')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { user } = useUserContext()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	// State
 	const [userAnswers, setUserAnswers] = useState({}) // { questionIndex: { blankIndex: value } }
@@ -46,7 +50,7 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
 	const [totalScore, setTotalScore] = useState(0)
 	const [isFirstCompletion, setIsFirstCompletion] = useState(false)
 
-	const locale = router.locale || 'fr'
+	const locale = params.locale || 'fr'
 	const rawQuestions = exercise?.data?.questions || []
 	// Localize all questions
 	const questions = rawQuestions.map(q => getLocalizedQuestion(q, locale))
@@ -70,7 +74,7 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
 
 	// Fonction pour obtenir le titre traduit
 	const getTranslatedTitle = () => {
-		const locale = router.locale || 'fr'
+		const locale = params.locale || 'fr'
 		const originalTitle = exercise?.title || ''
 
 		// Si une traduction existe pour ce titre

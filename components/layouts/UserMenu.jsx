@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
 import { useState, useMemo } from 'react'
 import { styled, alpha, useTheme } from '@mui/material/styles'
@@ -115,7 +115,8 @@ const StyledMenu = styled(props => (
 }))
 
 const UserMenu = () => {
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const { user, userProfile, logout } = useUserContext()
 	const dispatch = useDispatch()
 	const theme = useTheme()

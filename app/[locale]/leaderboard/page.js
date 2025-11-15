@@ -31,13 +31,13 @@ import {
 	ChevronRight,
 } from '@mui/icons-material'
 import { FaFire, FaCoins } from 'react-icons/fa'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import SEO from '@/components/SEO'
 import { useUserContext } from '@/context/user'
 import { getAvatarUrl, getAvatarBorderColor } from '@/utils/avatars'
 
 const LeaderboardPage = () => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const { user } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'

@@ -1,9 +1,9 @@
 'use client'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '@/context/user'
 import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import {
 	getAllUserWords,
 	deleteUserWord,
@@ -42,7 +42,8 @@ import AddWordModal from '@/components/dictionary/AddWordModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 const Dictionary = () => {
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const { t: tWords } = useTranslation('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -114,7 +115,7 @@ const Dictionary = () => {
 
 		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
-			const translation = word[`word_${lang}`]
+			const translation = word[`word_${locale}`]
 
 			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
 			return sourceWord && translation
@@ -126,14 +127,14 @@ const Dictionary = () => {
 			const dateB = new Date(b.created_at)
 			return dateB - dateA // Ordre décroissant (plus récent d'abord)
 		})
-	}, [user_words, guestWords, userLearningLanguage, lang, isUserLoggedIn])
+	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn])
 
 	// Fonction pour obtenir le mot source et la traduction selon les langues
 	const getWordDisplay = (word) => {
 		// Mot source : dans la langue qu'ils apprennent (userLearningLanguage)
 		const sourceWord = word[`word_${userLearningLanguage}`]
 		// Traduction : dans la langue de l'interface (lang)
-		const translation = word[`word_${lang}`]
+		const translation = word[`word_${locale}`]
 
 		return { sourceWord, translation }
 	}

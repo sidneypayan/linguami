@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations } from 'next-intl'
 import { useState, useMemo, useEffect } from 'react'
 import Hero from './Hero'
 import Link from 'next/link'
@@ -429,7 +429,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 }
 
 const Homepage = () => {
-	const { t } = useTranslation('home')
+	const t = useTranslations('home')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [open, setOpen] = useState(false)

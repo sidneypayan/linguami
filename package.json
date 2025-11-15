@@ -37,6 +37,7 @@
 		"isomorphic-dompurify": "^0.22.0",
 		"marked": "^4.2.3",
 		"next": "^15.5.0",
+		"next-intl": "^4.5.3",
 		"next-translate": "^2.5.2",
 		"normalize.css": "^8.0.1",
 		"react": "^19.0.0",

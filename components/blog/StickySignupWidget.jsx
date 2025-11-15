@@ -1,24 +1,28 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { Box, Typography, Button, IconButton, useTheme } from '@mui/material'
 import { CloseRounded, RocketLaunchRounded } from '@mui/icons-material'
 import Link from 'next/link'
 import { useUserContext } from '@/context/user'
 import * as gtm from '@/lib/gtm'
-import { useRouter } from 'next/router'
-import useTranslation from 'next-translate/useTranslation'
+import { useRouter, usePathname, useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 
 /**
  * Widget sticky qui apparaît après un certain scroll
  * Disparaît si l'utilisateur est connecté
  */
 export default function StickySignupWidget() {
-	const { t } = useTranslation('blog')
+	const t = useTranslations('blog')
 	const [visible, setVisible] = useState(false)
 	const [dismissed, setDismissed] = useState(false)
 	const { isUserLoggedIn } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	useEffect(() => {
 		// Vérifier si le widget a déjà été fermé dans cette session
@@ -45,7 +49,7 @@ export default function StickySignupWidget() {
 			event: 'blog_sticky_widget_dismissed',
 			category: 'Blog',
 			action: 'Sticky Widget Dismissed',
-			language: router.locale
+			language: params.locale
 		})
 	}
 
@@ -54,7 +58,7 @@ export default function StickySignupWidget() {
 			event: 'blog_sticky_widget_click',
 			category: 'Blog',
 			action: 'Sticky Widget Click',
-			language: router.locale
+			language: params.locale
 		})
 	}
 

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef } from 'react'
 import {
 	Box,
@@ -20,8 +22,8 @@ import {
 } from '@mui/icons-material'
 import { useUserContext } from '../../context/user'
 import toast from '../../utils/toast'
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getLocalizedField } from '../../utils/exerciseHelpers'
 
 /**
@@ -32,11 +34,13 @@ import { getLocalizedField } from '../../utils/exerciseHelpers'
  * @param {Function} onComplete - Callback when exercise is completed
  */
 const AudioDictation = ({ exercise, onComplete }) => {
-	const { t } = useTranslation('exercises')
+	const t = useTranslations('exercises')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { user } = useUserContext()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	// State
 	const [userAnswers, setUserAnswers] = useState({}) // { sentenceId: text }
@@ -47,9 +51,9 @@ const AudioDictation = ({ exercise, onComplete }) => {
 	const [isFirstCompletion, setIsFirstCompletion] = useState(false)
 	const [playingAudio, setPlayingAudio] = useState({}) // { sentenceId: boolean }
 
-	const locale = router.locale || 'fr'
+	const locale = params.locale || 'fr'
 	const sentences = exercise?.data?.sentences || []
-	const materialLang = exercise?.lang || 'ru' // Exercise language = Material language
+	const materialLang = exercise?.locale || 'ru' // Exercise language = Material language
 
 	const audioRefs = useRef({})
 

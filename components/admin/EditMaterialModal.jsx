@@ -21,7 +21,7 @@ import {
 	Chip,
 } from '@mui/material'
 import { Close, Save, CloudUpload } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { supabase } from '@/lib/supabase'
 import { optimizeImage } from '@/utils/imageOptimizer'
 
@@ -48,7 +48,7 @@ async function uploadToR2(path, file, contentType) {
 }
 
 const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
-	const { t } = useTranslation('admin')
+	const t = useTranslations('admin')
 	const [formData, setFormData] = useState({})
 	const [files, setFiles] = useState([]) // Fichiers à uploader
 	const [saving, setSaving] = useState(false)
@@ -57,7 +57,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	useEffect(() => {
 		if (material) {
 			setFormData({
-				lang: material.lang || '',
+				lang: material.locale || '',
 				section: material.section || '',
 				book_id: material.book_id || '',
 				chapter_number: material.chapter_number || '',
@@ -129,7 +129,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 
 			// ÉTAPE 2: Préparer les données pour la sauvegarde
 			const dataToUpdate = {
-				lang: finalFormData.lang,
+				lang: finalFormData.locale,
 				section: finalFormData.section,
 				level: finalFormData.level,
 				title: finalFormData.title,
@@ -180,8 +180,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					} else if (fileData.fileType === 'audio') {
 						// Pour les fichiers audio, upload normal vers R2
 						const contentType = fileData.file.type || 'audio/mpeg'
-						const lang = finalFormData.lang || 'fr'
-						const path = `audio/${lang}/${fileData.fileName}`
+						const locale = finalFormData.locale || 'fr'
+						const path = `audio/${locale}/${fileData.fileName}`
 
 						await uploadToR2(path, fileData.file, contentType)
 					}
@@ -291,7 +291,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 						<FormControl fullWidth>
 							<InputLabel>{t('language')}</InputLabel>
 							<Select
-								value={formData.lang || ''}
+								value={formData.locale || ''}
 								label={t('language')}
 								onChange={(e) => handleChange('lang', e.target.value)}
 								sx={{ borderRadius: 2 }}>
@@ -569,7 +569,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					</Grid>
 
 					{/* Texte avec accents - uniquement pour le russe */}
-					{formData.lang === 'ru' && (
+					{formData.locale === 'ru' && (
 						<Grid item xs={12}>
 							<TextField
 								fullWidth

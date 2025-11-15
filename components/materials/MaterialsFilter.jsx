@@ -1,9 +1,9 @@
 import { Box, Chip, Typography, useTheme } from '@mui/material'
 import { OndemandVideo } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const MaterialsFilter = ({ selectedCategory, onCategoryChange }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

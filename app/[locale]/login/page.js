@@ -1,6 +1,6 @@
 'use client'
 
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useState, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
@@ -8,7 +8,7 @@ import AuthLayout from '@/components/auth/AuthLayout'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
-import Head from 'next/head'
+// Head component not needed in App Router - use metadata in layout
 import Link from 'next/link'
 import {
 	Box,
@@ -28,7 +28,7 @@ import {
 } from '@mui/icons-material'
 
 const Login = () => {
-	const { t } = useTranslation('register')
+	const t = useTranslations('register')
 	const { login, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -126,11 +126,6 @@ const Login = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{`${t('signinTitle')} | Linguami`}</title>
-				<meta name="description" content={t('signinSubtitle')} />
-			</Head>
-
 			<AuthLayout icon={<LoginRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
 				{/* Titre */}
 				<Typography

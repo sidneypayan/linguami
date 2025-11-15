@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Box, Paper, Typography, useTheme, Button, IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { Forum, Visibility, VisibilityOff, PlayArrow, Pause, VolumeUp, Speed, Check } from '@mui/icons-material'
 
 const ConversationBlock = ({ block }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [revealedAnswers, setRevealedAnswers] = useState({})

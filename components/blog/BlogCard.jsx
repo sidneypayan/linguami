@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Box,
 	Card,
@@ -12,7 +12,7 @@ import { ArrowForwardRounded } from '@mui/icons-material'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
 
 const BlogCard = ({ post }) => {
-	const { t } = useTranslation('blog')
+	const t = useTranslations('blog')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

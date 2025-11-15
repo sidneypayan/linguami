@@ -1,6 +1,6 @@
 'use client'
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
 import toast from '@/utils/toast'
 import {
@@ -34,7 +34,7 @@ const initialState = {
 }
 
 const UpdatePassword = () => {
-	const { t } = useTranslation('register')
+	const t = useTranslations('register')
 	const router = useRouter()
 	const [values, setValues] = useState(initialState)
 	const [isResetting, setIsResetting] = useState(false)

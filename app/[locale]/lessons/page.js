@@ -1,8 +1,8 @@
 'use client'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import useTranslation from 'next-translate/useTranslation'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import LessonsMenu from '@/components/lessons/LessonsMenu'
 import Lesson from '@/components/lessons/Lesson'
 import SEO from '@/components/SEO'
@@ -17,7 +17,7 @@ const Lessons = () => {
 	const { slug } = router.query
 	const lang = router.locale
 
-	const { t } = useTranslation('lessons')
+	const t = useTranslations('lessons')
 	const dispatch = useDispatch()
 	const { lessons } = useSelector(store => store.lessons)
 
@@ -28,7 +28,7 @@ const Lessons = () => {
 	// 1. Récupération des données
 	useEffect(() => {
 		dispatch(getLessons({ lang }))
-	}, [dispatch, lang])
+	}, [dispatch, locale])
 
 	// 2. Traitement des données
 	useEffect(() => {
@@ -76,9 +76,9 @@ const Lessons = () => {
 			url: 'https://www.linguami.com'
 		},
 		courseMode: 'online',
-		inLanguage: lang === 'fr' ? ['ru-RU', 'fr-FR'] : lang === 'ru' ? ['fr-FR', 'ru-RU'] : ['ru-RU', 'fr-FR', 'en-US'],
+		inLanguage: locale === 'fr' ? ['ru-RU', 'fr-FR'] : locale === 'ru' ? ['fr-FR', 'ru-RU'] : ['ru-RU', 'fr-FR', 'en-US'],
 		educationalLevel: 'Beginner to Advanced',
-		url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/lessons`
+		url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/lessons`
 	}
 
 	return (
@@ -87,7 +87,7 @@ const Lessons = () => {
 				title={`${t('pagetitle')} | Linguami`}
 				description={t('description')}
 				path='/lessons'
-				keywords={keywordsByLang[lang]}
+				keywords={keywordsByLang[locale]}
 				jsonLd={jsonLd}
 			/>
 			<Stack

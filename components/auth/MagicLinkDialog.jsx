@@ -11,10 +11,10 @@ import {
 	useTheme,
 } from '@mui/material'
 import { EmailRounded, SendRounded } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const MagicLinkDialog = ({ open, onClose, onSend }) => {
-	const { t } = useTranslation('register')
+	const t = useTranslations('register')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [email, setEmail] = useState('')

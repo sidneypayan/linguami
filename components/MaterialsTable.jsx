@@ -1,7 +1,9 @@
+'use client'
+
 import React from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
 import { useUserContext } from '@/context/user'
 import {
@@ -30,13 +32,15 @@ import { sections } from '../data/sections'
 import { getImageUrl } from '@/utils/imageUtils'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-	const { section } = router.query
+	const { section } = params
 	const { userLearningLanguage } = useUserContext()
 
 	const handleRowClick = async (material) => {

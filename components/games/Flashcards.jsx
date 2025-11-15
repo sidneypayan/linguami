@@ -1,10 +1,12 @@
+'use client'
+
 import { useSelector, useDispatch } from 'react-redux'
 import styles from '@/styles/FlashCards.module.css'
 import { useState, useEffect, useMemo } from 'react'
 import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
 import { updateWordReview, initializeWordSRS, suspendCard } from '@/features/words/wordsSlice'
-import { useRouter } from 'next/router'
-import useTranslation from 'next-translate/useTranslation'
+import { useRouter, usePathname, useParams } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
 import { useAchievementContext } from '../AchievementProvider'
@@ -31,8 +33,11 @@ import {
 import { IconButton, useTheme } from '@mui/material'
 
 const FlashCards = () => {
-	const { t, lang } = useTranslation('words')
+	const t = useTranslations('words')
+	const locale = useLocale()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -84,9 +89,9 @@ const FlashCards = () => {
 			const allWords = getGuestWordsByLanguage(userLearningLanguage)
 
 			// Si on est sur une page material, filtrer par materialId
-			const materialId = router.query.material
+			const materialId = params?.material
 
-			if (materialId && router.pathname !== '/dictionary') {
+			if (materialId && pathname !== '/dictionary') {
 				const materialWords = allWords.filter(word =>
 					String(word.material_id) === String(materialId)
 				)
@@ -96,26 +101,26 @@ const FlashCards = () => {
 				setGuestWords(allWords)
 			}
 		}
-	}, [isUserLoggedIn, userLearningLanguage, router.query.material, router.pathname])
+	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
 
 	// Get appropriate word array based on current page and user status
 	const baseWordsArray = isUserLoggedIn
-		? (router.pathname === '/dictionary' ? user_words : user_material_words)
+		? (pathname === '/dictionary' ? user_words : user_material_words)
 		: guestWords
 
 	// Filter to only show words that have both source and translation in current context
 	const wordsArray = useMemo(() => {
-		if (!baseWordsArray || !userLearningLanguage || !lang) return []
+		if (!baseWordsArray || !userLearningLanguage || !locale) return []
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
-		if (userLearningLanguage === lang) return []
+		if (userLearningLanguage === locale) return []
 
 		return baseWordsArray.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
-			const translation = word[`word_${lang}`]
+			const translation = word[`word_${locale}`]
 			return sourceWord && translation
 		})
-	}, [baseWordsArray, userLearningLanguage, lang])
+	}, [baseWordsArray, userLearningLanguage, locale])
 
 	// Toggle reversed mode and save to localStorage
 	const toggleReversed = () => {
@@ -134,7 +139,7 @@ const FlashCards = () => {
 		}
 
 		// Réappliquer la limite à la session en cours
-		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && lang) {
+		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && locale) {
 			// Initialiser les cartes avec les valeurs SRS si nécessaires
 			const initializedCards = wordsArray.map(card => {
 				if (!card.card_state) {
@@ -165,7 +170,7 @@ const FlashCards = () => {
 
 	// Start a random practice session
 	const startRandomPractice = () => {
-		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && lang) {
+		if (wordsArray && wordsArray.length > 0 && userLearningLanguage && locale) {
 			// Initialize cards with SRS values if needed
 			const initializedCards = wordsArray.map(card => {
 				if (!card.card_state) {
@@ -207,7 +212,7 @@ const FlashCards = () => {
 
 		// Don't initialize if we don't have language data yet
 		// This prevents marking as initialized when wordsArray is empty due to missing language context
-		if (!userLearningLanguage || !lang) return
+		if (!userLearningLanguage || !locale) return
 
 		// For guest users, wait until guestWords are loaded before initializing
 		// This prevents initializing with an empty array due to race condition
@@ -247,14 +252,14 @@ const FlashCards = () => {
 		if (limitedCards.length > 0) {
 			setSessionCards(limitedCards)
 		}
-	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, lang, isUserLoggedIn, guestWords])
+	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, guestWords])
 
 	// Get current card (first in session queue)
 	const currentCard = sessionCards[0]
 
 	// Determine which words to show based on languages and reversed mode
 	const sourceWord = currentCard?.[`word_${userLearningLanguage}`]
-	const translationWord = currentCard?.[`word_${lang}`]
+	const translationWord = currentCard?.[`word_${locale}`]
 	const frontWord = isReversed ? translationWord : sourceWord
 	const backWord = isReversed ? sourceWord : translationWord
 

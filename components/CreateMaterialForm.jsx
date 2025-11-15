@@ -1,6 +1,6 @@
 import { Box, Button, Typography, TextField, MenuItem, Card, CardContent, Alert, Chip, Stack, ListSubheader, Divider } from '@mui/material'
 import { FormRow, FormRowSelect } from '.'
-import { lang, level, audioSections, videoSections } from '@/utils/constants'
+import { locale, level, audioSections, videoSections } from '@/utils/constants'
 import {
 	Image as ImageIcon,
 	AudioFile,
@@ -12,10 +12,10 @@ import {
 	CheckCircle,
 	CloudUpload,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const CreateMaterialForm = ({ formData, handleChange }) => {
-	const { t } = useTranslation('admin')
+	const t = useTranslations('admin')
 
 	return (
 		<Stack spacing={4}>
@@ -80,10 +80,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
 							<FormRowSelect
 								label={t('language')}
-								value={formData.lang ?? ''}
+								value={formData.locale ?? ''}
 								handleChange={handleChange}
 								name='lang'
-								list={lang}
+								list={locale}
 							/>
 							<FormRowSelect
 								label={t('difficultyLevel')}
@@ -173,7 +173,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 			</Box>
 
 			{/* Content Section - Afficher si langue, niveau et section sont sélectionnés */}
-			{formData.lang && formData.level && formData.section && (
+			{formData.locale && formData.level && formData.section && (
 				<Box>
 			<Box sx={{ mb: 3 }}>
 				<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B', mb: 1 }}>
@@ -273,10 +273,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						/>
 					</Box>
 					<CardContent sx={{ p: 3 }}>
-						<Box sx={{ display: 'grid', gridTemplateColumns: formData.lang === 'ru' ? { xs: '1fr', lg: 'repeat(2, 1fr)' } : '1fr', gap: 3 }}>
+						<Box sx={{ display: 'grid', gridTemplateColumns: formData.locale === 'ru' ? { xs: '1fr', lg: 'repeat(2, 1fr)' } : '1fr', gap: 3 }}>
 							<Box>
 								<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, mb: 1, display: 'block' }}>
-									{formData.lang === 'ru' ? t('textWithoutAccents') : t('materialText')}
+									{formData.locale === 'ru' ? t('textWithoutAccents') : t('materialText')}
 								</Typography>
 								<FormRow
 									label=''
@@ -285,10 +285,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									name='content'
 									multiline={true}
 									rows={20}
-									placeholder={formData.lang === 'ru' ? t('textWithoutAccentsPlaceholder') : t('textWithAccentsPlaceholder')}
+									placeholder={formData.locale === 'ru' ? t('textWithoutAccentsPlaceholder') : t('textWithAccentsPlaceholder')}
 								/>
 							</Box>
-							{formData.lang === 'ru' && (
+							{formData.locale === 'ru' && (
 								<Box>
 									<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, mb: 1, display: 'block' }}>
 										{t('textWithAccents')}
@@ -305,7 +305,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 								</Box>
 							)}
 						</Box>
-						{formData.lang === 'ru' && (
+						{formData.locale === 'ru' && (
 							<Alert
 								severity='info'
 								icon={<CheckCircle />}

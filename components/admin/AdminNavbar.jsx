@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { Box, Container, Typography, Button } from '@mui/material'
 import { Add, People, School } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const AdminNavbar = ({ activePage = 'dashboard' }) => {
-	const { t } = useTranslation('admin')
+	const t = useTranslations('admin')
 
 	const navButtons = [
 		{

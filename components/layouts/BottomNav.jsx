@@ -1,6 +1,8 @@
-import { useRouter } from 'next/router'
+'use client'
+
+import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Paper, BottomNavigation, BottomNavigationAction, Badge, useTheme } from '@mui/material'
 import {
 	HomeRounded,
@@ -11,8 +13,10 @@ import {
 import { useUserContext } from '@/context/user'
 
 const BottomNav = () => {
-	const router = useRouter()
-	const { t } = useTranslation('common')
+	const router = useNextRouter() // For navigation
+	const pathname = usePathname()
+	const params = useParams()
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { isUserLoggedIn, userLearningLanguage, isBootstrapping } = useUserContext()
@@ -23,7 +27,7 @@ const BottomNav = () => {
 
 	// Déterminer la valeur active basée sur le pathname
 	const getActiveValue = () => {
-		const path = router.pathname
+		const path = pathname
 		if (path === '/') return 'home'
 		if (path.startsWith('/materials')) return 'materials'
 		if (path.startsWith('/dictionary')) return 'dictionary'

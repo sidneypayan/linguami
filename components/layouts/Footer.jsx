@@ -1,10 +1,10 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import Link from 'next/link'
 import { Box, Container, Stack, Typography, IconButton, useTheme, useMediaQuery } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
 
 const Footer = () => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))

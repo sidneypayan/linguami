@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Box, Typography, Chip } from '@mui/material'
 import { PlayCircleOutline } from '@mui/icons-material'
 import { getMaterialImageUrl } from '@/utils/mediaUrls'
 
 const MaterialsCard = ({ material }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 
 	// Déterminer le niveau de difficulté
 	const getDifficultyColor = (level) => {

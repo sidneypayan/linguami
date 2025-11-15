@@ -1,11 +1,12 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
 import Link from 'next/link'
 import { primaryButton } from '@/utils/buttonStyles'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 
 const Hero = () => {
-	const { t, lang } = useTranslation('home')
+	const t = useTranslations('home')
+	const locale = useLocale()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

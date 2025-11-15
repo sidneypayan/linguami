@@ -1,9 +1,11 @@
+'use client'
+
 import { Box, Typography, Grid, Card, CardContent, CardMedia, useTheme, Chip } from '@mui/material'
 import { CalendarTodayRounded, AccessTimeRounded } from '@mui/icons-material'
 import Link from 'next/link'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
 import * as gtm from '@/lib/gtm'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 
 /**
  * Affiche des articles suggérés en fonction de l'article actuel
@@ -16,6 +18,8 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	// Filtrer l'article actuel et limiter le nombre
 	const relatedPosts = allPosts
@@ -28,7 +32,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 			category: 'Blog',
 			action: 'Related Article Click',
 			label: postSlug,
-			language: router.locale
+			language: params.locale
 		})
 	}
 

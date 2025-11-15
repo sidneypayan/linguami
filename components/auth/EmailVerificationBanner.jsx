@@ -1,10 +1,12 @@
+'use client'
+
 import { useState } from 'react'
 import { Alert, Button, Box, CircularProgress } from '@mui/material'
 import { MailOutline, Close } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user'
 import { resendVerificationEmail } from '@/lib/emailVerification'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getEmailLanguage } from '@/lib/emailService'
 import toast from '@/utils/toast'
 
@@ -13,7 +15,7 @@ import toast from '@/utils/toast'
  * Affiche un message et un bouton pour renvoyer l'email de vérification
  */
 const EmailVerificationBanner = () => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const router = useRouter()
 	const { user, isEmailVerified, isUserLoggedIn, isBootstrapping } = useUserContext()
 	const [isResending, setIsResending] = useState(false)

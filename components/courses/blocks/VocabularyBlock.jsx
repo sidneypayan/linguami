@@ -1,9 +1,9 @@
 import { Box, Paper, Typography, List, ListItem, useTheme } from '@mui/material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Book, VolumeUp } from '@mui/icons-material'
 
 const VocabularyBlock = ({ block }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

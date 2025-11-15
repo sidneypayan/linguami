@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Search, Refresh, GridView, ViewList,
 	SignalCellular1Bar, SignalCellular2Bar, SignalCellular3Bar,
@@ -45,7 +45,7 @@ const MaterialsFilterBar = ({
 	showSectionFilter = false,
 	translationNamespace = 'materials'
 }) => {
-	const { t } = useTranslation(translationNamespace)
+	const t = useTranslations(translationNamespace)
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

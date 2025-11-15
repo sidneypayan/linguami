@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { sections } from '../data/sections'
 import { useDispatch } from 'react-redux'
@@ -10,7 +12,7 @@ import {
 	CheckCircle,
 	Schedule,
 } from '@mui/icons-material'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
 import {
 	Box,
@@ -22,15 +24,17 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 import { useUserContext } from '@/context/user'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const { section } = router.query
+	const pathname = usePathname()
+	const params = useParams()
+	const { section } = params
 	const { userLearningLanguage } = useUserContext()
 
 	const handleClick = async () => {

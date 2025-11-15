@@ -1,6 +1,6 @@
 'use client'
 
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import MaterialsGrid from '@/components/materials/MaterialsGrid'
 import MaterialsFilter from '@/components/materials/MaterialsFilter'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'
@@ -17,7 +17,8 @@ import { getMaterials, getUserMaterialsStatus, changePage } from '@/features/mat
 import { School, Palette, Museum, Movie, MusicNote, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
 
 const Material = () => {
-	const { t, lang } = useTranslation('materials')
+	const t = useTranslations('materials')
+	const locale = useLocale()
 	const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -93,7 +94,7 @@ const Material = () => {
 		}
 
 		setMaterials(selectedMaterials)
-	}, [userLearningLanguage, lang])
+	}, [userLearningLanguage, locale])
 
 	// Charger tous les matériaux au passage en mode liste
 	useEffect(() => {
@@ -289,26 +290,26 @@ const Material = () => {
 	const jsonLd = {
 		'@context': 'https://schema.org',
 		'@type': 'ItemList',
-		name: lang === 'fr' ? 'Matériel pédagogique' : lang === 'ru' ? 'Учебные материалы' : 'Learning Materials',
+		name: locale === 'fr' ? 'Matériel pédagogique' : locale === 'ru' ? 'Учебные материалы' : 'Learning Materials',
 		description: t('description'),
 		itemListElement: [
 			{
 				'@type': 'ListItem',
 				position: 1,
 				name: t('practiceCategory'),
-				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#practice`
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/materials#practice`
 			},
 			{
 				'@type': 'ListItem',
 				position: 2,
 				name: t('cultureCategory'),
-				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#culture`
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/materials#culture`
 			},
 			{
 				'@type': 'ListItem',
 				position: 3,
 				name: t('literatureCategory'),
-				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/materials#literature`
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/materials#literature`
 			}
 		]
 	}
@@ -319,7 +320,7 @@ const Material = () => {
 				title={`${t('pagetitle')} | Linguami`}
 				description={t('description')}
 				path='/materials'
-				keywords={keywordsByLang[lang]}
+				keywords={keywordsByLang[locale]}
 				jsonLd={jsonLd}
 			/>
 

@@ -76,13 +76,14 @@ import {
 } from 'react-icons/fa'
 import { IoWater, IoWaterOutline } from 'react-icons/io5'
 import { GiWaterDrop, GiWaveSurfer } from 'react-icons/gi'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import SEO from '@/components/SEO'
 import { useUserContext } from '@/context/user'
-import Head from 'next/head'
+// Head removed - use metadata in App Router
+
 
 const StatisticsPage = () => {
-	const { t } = useTranslation('stats')
+	const t = useTranslations('stats')
 	const { user, userProfile } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -364,12 +365,6 @@ const StatisticsPage = () => {
 	return (
 		<>
 			<SEO title={t('pageTitle')} description={t('pageDescription')} />
-			<Head>
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-				<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-			</Head>
-
 			<Container maxWidth="xl" sx={{ pt: { xs: '5.5rem', md: '6rem' }, py: { xs: 3, md: 4 }, pb: 8 }}>
 				{/* XP Profile Card - Circular Design */}
 				{xpProfile && (

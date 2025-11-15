@@ -1,6 +1,8 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { Box, CircularProgress, Button, Typography } from '@mui/material'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import { useTheme } from '@mui/material/styles'

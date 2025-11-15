@@ -1,4 +1,6 @@
-import useTranslation from 'next-translate/useTranslation'
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
 import { styled, alpha, useTheme } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
@@ -6,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { ExpandMoreRounded, RecordVoiceOverRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
-import { useRouter } from 'next/router'
+import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useUserContext } from '@/context/user'
 
 // Composant drapeau français
@@ -121,8 +123,11 @@ const StyledMenu = styled(props => (
 }))
 
 const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
-	const { t, lang } = useTranslation('common')
-	const router = useRouter()
+	const t = useTranslations('common')
+	const locale = useLocale()
+	const router = useNextRouter() // For navigation
+	const pathname = usePathname()
+	const params = useParams()
 	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -186,7 +191,10 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 		}
 
 		// Changer la locale de Next.js
-		router.push(router.asPath, router.asPath, { locale: newLocale })
+		// Replace current locale in pathname with new locale
+		const currentLocale = params.locale || locale
+		const newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`)
+		router.push(newPath || `/${newLocale}`)
 
 		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
@@ -198,8 +206,8 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 		<Box>
 			{/* Version desktop - bouton complet */}
 			<Button
-				id='interface-lang-button'
-				aria-controls={open ? 'interface-lang-menu' : undefined}
+				id='interface-locale-button'
+				aria-controls={open ? 'interface-locale-menu' : undefined}
 				aria-haspopup='true'
 				aria-expanded={open ? 'true' : undefined}
 				variant='contained'
@@ -243,7 +251,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 					{t('speak')}
 				</Typography>
 
-				{lang && (
+				{locale && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -256,15 +264,15 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							border: '2px solid rgba(255, 255, 255, 0.3)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
 						}}>
-						{getFlag(lang, 26)}
+						{getFlag(locale, 26)}
 					</Box>
 				)}
 			</Button>
 
 			{/* Version mobile/tablette - IconButton compact avec drapeau */}
 			<IconButton
-				id='interface-lang-button-mobile'
-				aria-controls={open ? 'interface-lang-menu' : undefined}
+				id='interface-locale-button-mobile'
+				aria-controls={open ? 'interface-locale-menu' : undefined}
 				aria-haspopup='true'
 				aria-expanded={open ? 'true' : undefined}
 				onClick={handleClick}
@@ -286,7 +294,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						transform: 'scale(1.05)',
 					},
 				}}>
-				{lang && (
+				{locale && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -304,7 +312,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							border: '2px solid rgba(255, 255, 255, 0.4)',
 							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
 						}}>
-						{getFlag(lang, 28)}
+						{getFlag(locale, 28)}
 					</Box>
 				)}
 				<RecordVoiceOverRounded
@@ -323,19 +331,19 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 			</IconButton>
 
 			<StyledMenu
-				id='interface-lang-menu'
+				id='interface-locale-menu'
 				MenuListProps={{
-					'aria-labelledby': 'interface-lang-button',
+					'aria-labelledby': 'interface-locale-button',
 				}}
 				anchorEl={anchorEl}
 				open={open}
 				onClose={handleClose}>
 				{languages.map(language => {
-					const isSelected = lang === language.lang
+					const isSelected = locale === language.locale
 					return (
 						<MenuItem
-							key={language.lang}
-							onClick={() => handleLanguageChange(language.lang)}
+							key={language.locale}
+							onClick={() => handleLanguageChange(language.locale)}
 							disableRipple
 							sx={{
 								backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
@@ -363,7 +371,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 										: '0 1px 3px rgba(0, 0, 0, 0.1)',
 									transition: 'all 0.2s ease',
 								}}>
-								{getFlag(language.lang, 32)}
+								{getFlag(language.locale, 32)}
 							</Box>
 							<Typography
 								sx={{

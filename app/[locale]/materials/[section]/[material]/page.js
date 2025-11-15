@@ -1,6 +1,6 @@
 'use client'
 
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -51,7 +51,8 @@ import {
 	CheckCircleRounded,
 	EditRounded,
 } from '@mui/icons-material'
-import Head from 'next/head'
+// Head removed - use metadata in App Router
+
 import {
 	primaryButton,
 	warningButton,
@@ -60,7 +61,8 @@ import {
 } from '@/utils/buttonStyles'
 
 const Material = ({ params }) => {
-	const { t, lang } = useTranslation('materials')
+	const t = useTranslations('materials')
+	const locale = useLocale()
 	const dispatch = useDispatch()
 	const router = useRouterCompat()
 	const theme = useTheme()
@@ -209,11 +211,6 @@ const Material = ({ params }) => {
 
 	return (
 		<>
-			<Head>
-				<title>{`${currentMaterial.title} | Linguami`}</title>
-				<meta name='description' content={currentMaterial.title} />
-			</Head>
-
 			{/* Compact Header */}
 			<Box
 				sx={{
@@ -351,7 +348,7 @@ const Material = ({ params }) => {
 									<Box
 										component='span'
 										sx={{ display: { xs: 'inline', sm: 'none' } }}>
-										{lang === 'fr'
+										{locale === 'fr'
 											? 'Commencer à étudier'
 											: 'Начать изучение'}
 									</Box>
@@ -400,7 +397,7 @@ const Material = ({ params }) => {
 									<Box
 										component='span'
 										sx={{ display: { xs: 'inline', sm: 'none' } }}>
-										{lang === 'fr'
+										{locale === 'fr'
 											? 'Ne plus étudier'
 											: 'Отказаться от изучения'}
 									</Box>
@@ -507,7 +504,7 @@ const Material = ({ params }) => {
 									<Words
 										content={currentMaterial.content_accented}
 										materialId={currentMaterial.id}
-										locale={lang}
+										locale={locale}
 									/>
 								</Typography>
 							) : (
@@ -530,7 +527,7 @@ const Material = ({ params }) => {
 									<Words
 										content={currentMaterial.content}
 										materialId={currentMaterial.id}
-										locale={lang}
+										locale={locale}
 									/>
 								</Typography>
 							)}

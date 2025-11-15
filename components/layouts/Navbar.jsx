@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
-import { useRouter } from 'next/router'
+import { usePathname, useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import UserMenu from './UserMenu'
 import ThemeToggle from '../ThemeToggle'
@@ -38,9 +40,11 @@ import InterfaceLanguageMenu from './InterfaceLanguageMenu.jsx'
 const drawerWidth = '75%'
 
 const Navbar = props => {
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
-	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 	const { lessons, lessons_loading } = useSelector(store => store.lessons)
 
 	const allNavigationLinks = [
@@ -96,15 +100,16 @@ const Navbar = props => {
 	}
 
 	const isActivePath = (href) => {
-		if (href === '/') return router.pathname === '/'
-		return router.pathname.startsWith(href)
+		if (href === '/') return pathname === '/'
+		return pathname?.startsWith(href)
 	}
 
 	// Check if user is currently on a lesson page
 	const isOnLessonPage = () => {
-		const pathSegments = router.pathname.split('/').filter(Boolean)
+		if (!pathname) return false
+		const pathSegments = pathname.split('/').filter(Boolean)
 		// Check if path is /method/[level]/[lessonSlug] (3 segments)
-		return router.pathname.startsWith('/method/') && pathSegments.length === 3
+		return pathname.startsWith('/method/') && pathSegments.length === 3
 	}
 
 	const drawer = (
@@ -666,7 +671,7 @@ const Navbar = props => {
 						)}
 
 						{/* Theme toggle and Language buttons - only show when not in material/blog detail or in lesson */}
-						{isMounted && !router.query.material && !router.query.slug && !isOnLessonPage() && (
+						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && (
 							<>
 								<ThemeToggle />
 								<InterfaceLanguageMenu />

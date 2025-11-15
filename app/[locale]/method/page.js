@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -32,7 +32,8 @@ import { useUserContext } from '@/context/user'
 
 const MethodePage = () => {
 	const router = useRouterCompat()
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -56,7 +57,7 @@ const MethodePage = () => {
 		if (isUserLoggedIn) {
 			dispatch(getUserAccess(lang))
 		}
-	}, [dispatch, isUserLoggedIn, lang])
+	}, [dispatch, isUserLoggedIn, locale])
 
 	// Don't render for non-admins
 	if (!isUserAdmin) {
@@ -207,8 +208,8 @@ const MethodePage = () => {
 					{levels.map((level) => {
 						const hasAccess = hasAccessToLevel(level.id)
 						const colors = levelColors[level.slug] || levelColors.debutant
-						const nameKey = `name_${lang}`
-						const descKey = `description_${lang}`
+						const nameKey = `name_${locale}`
+						const descKey = `description_${locale}`
 
 						return (
 							<Grid item xs={12} md={4} key={level.id}>

@@ -1,9 +1,11 @@
+'use client'
+
 import { Box, Typography, Button, useTheme } from '@mui/material'
 import { RocketLaunchRounded, AutoStoriesRounded, HeadphonesRounded } from '@mui/icons-material'
 import Link from 'next/link'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import * as gtm from '@/lib/gtm'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 
 /**
  * Call-to-Actions contextuels à placer dans les articles
@@ -16,8 +18,10 @@ import { useRouter } from 'next/router'
 export default function ArticleCTA({ type = 'start-learning', className = '' }) {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	const ctaConfig = {
 		'start-learning': {
@@ -54,7 +58,7 @@ export default function ArticleCTA({ type = 'start-learning', className = '' }) 
 			category: 'Blog',
 			action: 'CTA Click',
 			label: type,
-			language: router.locale
+			language: params.locale
 		})
 	}
 

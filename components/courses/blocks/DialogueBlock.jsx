@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Box,
 	Paper,
@@ -36,7 +36,7 @@ import {
  * Inspiré du format Harrap's
  */
 const DialogueBlock = ({ block }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

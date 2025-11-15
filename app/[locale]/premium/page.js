@@ -13,12 +13,13 @@ import {
 	Divider,
 	Button,
 } from '@mui/material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import SEO from '@/components/SEO'
 import { CheckCircle } from '@mui/icons-material'
 
 const Premium = () => {
-	const { t, lang } = useTranslation('premium')
+	const t = useTranslations('premium')
+	const locale = useLocale()
 
 	// Mots-clés SEO par langue
 	const keywordsByLang = {
@@ -44,7 +45,7 @@ const Premium = () => {
 				price: '6.00',
 				priceCurrency: 'EUR',
 				availability: 'https://schema.org/InStock',
-				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/premium`,
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
 				priceValidUntil: '2026-12-31'
 			},
 			{
@@ -53,7 +54,7 @@ const Premium = () => {
 				price: '15.00',
 				priceCurrency: 'EUR',
 				availability: 'https://schema.org/InStock',
-				url: `https://www.linguami.com${lang === 'fr' ? '' : `/${lang}`}/premium`,
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
 				priceValidUntil: '2026-12-31'
 			}
 		]
@@ -71,7 +72,7 @@ const Premium = () => {
 				title={`${t('pagetitle')} | Linguami`}
 				description={t('description')}
 				path='/premium'
-				keywords={keywordsByLang[lang]}
+				keywords={keywordsByLang[locale]}
 				jsonLd={jsonLd}
 			/>
 		<Container sx={{ margin: '5rem auto', maxWidth: '100%', width: '800px' }}>

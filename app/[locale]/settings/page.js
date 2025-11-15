@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
 import { useUserContext } from '@/context/user'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import toast from '@/utils/toast'
 import { AVATARS, getAvatarUrl } from '@/utils/avatars'
 import {
@@ -45,11 +45,12 @@ import {
 	CheckCircleRounded,
 	CancelRounded,
 } from '@mui/icons-material'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
+// Head removed - use metadata in App Router
+
+import { useRouter } from 'next/navigation'
 
 const Settings = () => {
-	const { t } = useTranslation('settings')
+	const t = useTranslations('settings')
 	const { userProfile, updateUserProfile, logout } = useUserContext()
 	const router = useRouter()
 	const theme = useTheme()
@@ -586,9 +587,6 @@ const Settings = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{`${t('pageTitle')} - Linguami`}</title>
-			</Head>
 			<Box sx={{ bgcolor: 'background.paper', minHeight: '100vh', py: 4, pt: { xs: 12, md: 10 } }}>
 				<Container maxWidth='md'>
 					{/* Carte de personnage héroïque */}

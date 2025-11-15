@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import {
 	Box,
@@ -12,9 +14,9 @@ import {
 import { School, ExpandMore, ExpandLess, LockOpen, EmojiEvents, TrendingUp } from '@mui/icons-material'
 import { createBrowserClient } from '@/lib/supabase'
 import { useUserContext } from '@/context/user'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import toast from '@/utils/toast'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import FillInTheBlank from './FillInTheBlank'
 import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
@@ -28,12 +30,14 @@ import LoadingSpinner from '../LoadingSpinner'
  * @param {number} materialId - ID of the material
  */
 const ExerciseSection = ({ materialId }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { user, isUserLoggedIn, refreshUserProfile } = useUserContext()
 	const supabase = createBrowserClient()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
@@ -67,7 +71,7 @@ const ExerciseSection = ({ materialId }) => {
 
 	// Fonction pour obtenir le titre traduit
 	const getTranslatedTitle = (exerciseTitle) => {
-		const locale = router.locale || 'fr'
+		const locale = params.locale || 'fr'
 
 		// Si une traduction existe pour ce titre
 		if (titleTranslations[exerciseTitle]) {

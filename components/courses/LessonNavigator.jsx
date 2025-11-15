@@ -24,7 +24,7 @@ import {
 	ExpandMore,
 	AccessTime,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import BlockRenderer from './blocks/BlockRenderer'
 
 /**
@@ -34,7 +34,7 @@ import BlockRenderer from './blocks/BlockRenderer'
  * @param {Function} onComplete - Callback quand l'utilisateur termine la leçon
  */
 const LessonNavigator = ({ blocks = [], lessonId, onComplete }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

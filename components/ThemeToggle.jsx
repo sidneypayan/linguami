@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { IconButton, Tooltip, Box } from '@mui/material'
 import { LightMode, DarkMode } from '@mui/icons-material'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
@@ -9,7 +11,7 @@ import {
 } from '@mui/icons-material'
 import { getBookChapters } from '@/features/materials/materialsSlice'
 import { useDispatch } from 'react-redux'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import {
 	Box,
 	Button,
@@ -34,7 +36,9 @@ const BookMenu = ({ bookId }) => {
 	)
 
 	const router = useRouter()
-	const { section, material } = router.query
+	const pathname = usePathname()
+	const params = useParams()
+	const { section, material } = params
 
 	const dispatch = useDispatch()
 

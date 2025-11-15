@@ -1,12 +1,12 @@
 import { Button, Box, useTheme, Typography } from '@mui/material'
 import Image from 'next/image'
 import { EmailRounded } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import VkIdButton from './VkIdButton'
 
 const OAuthButtons = ({ onGoogleClick, onMagicLinkClick }) => {
-	const { t } = useTranslation('register')
+	const t = useTranslations('register')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const showVkId = true

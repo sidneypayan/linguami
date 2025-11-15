@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Box, Container, Typography, Button, Card } from '@mui/material'
@@ -11,7 +11,7 @@ import {
 import { useUserContext } from '@/context/user'
 
 const Lesson = ({ lesson }) => {
-	const { t } = useTranslation('lessons')
+	const t = useTranslations('lessons')
 	const dispatch = useDispatch()
 
 	const { user_lesson_status } = useSelector(store => store.lessons)

@@ -1,9 +1,9 @@
 import { Grid, Box, Typography } from '@mui/material'
 import MaterialsCard from './MaterialsCard'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const MaterialsGrid = ({ materials }) => {
-	const { t } = useTranslation('materials')
+	const t = useTranslations('materials')
 
 	if (!materials || materials.length === 0) {
 		return (

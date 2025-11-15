@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { styled, alpha, useTheme } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
@@ -120,7 +120,8 @@ const StyledMenu = styled(props => (
 }))
 
 const LanguageMenu = ({ variant = 'auto', onClose }) => {
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -138,7 +139,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	]
 
 	// Ne montrer que les langues différentes de la langue d'interface
-	const languages = allLanguages.filter(language => language.lang !== lang)
+	const languages = allLanguages.filter(language => language.locale !== locale)
 
 	// Si une seule langue disponible, on affiche juste le drapeau sans menu
 	const isSingleLanguage = languages.length === 1
@@ -157,7 +158,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const handleClick = event => {
 		// Si une seule langue disponible, changer directement sans ouvrir le menu
 		if (isSingleLanguage) {
-			changeLearningLanguage(languages[0].lang)
+			changeLearningLanguage(languages[0].locale)
 			if (onClose) {
 				setTimeout(() => onClose(), 100)
 			}
@@ -170,9 +171,9 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		setAnchorEl(null)
 	}
 
-	const handleLanguageChange = lang => {
+	const handleLanguageChange = locale => {
 		setAnchorEl(null)
-		changeLearningLanguage(lang)
+		changeLearningLanguage(locale)
 		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
 			setTimeout(() => onClose(), 100)
@@ -320,11 +321,11 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					open={open}
 					onClose={handleClose}>
 					{languages.map(language => {
-						const isSelected = userLearningLanguage === language.lang
+						const isSelected = userLearningLanguage === language.locale
 						return (
 							<MenuItem
-								key={language.lang}
-								onClick={() => handleLanguageChange(language.lang)}
+								key={language.locale}
+								onClick={() => handleLanguageChange(language.locale)}
 								disableRipple
 								sx={{
 									backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
@@ -352,7 +353,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 											: '0 1px 3px rgba(0, 0, 0, 0.1)',
 										transition: 'all 0.2s ease',
 									}}>
-									{getFlag(language.lang, 32)}
+									{getFlag(language.locale, 32)}
 								</Box>
 								<Typography
 									sx={{

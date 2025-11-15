@@ -8,17 +8,17 @@ import {
 	Alert,
 } from '@mui/material'
 import { FormRow, FormRowSelect } from '@/components'
-import { lang } from '@/utils/constants'
+import { locale } from '@/utils/constants'
 import {
 	Article,
 	Image as ImageIcon,
 	TextFields,
 	Info,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const CreatePostForm = ({ formData, handleChange }) => {
-	const { t } = useTranslation('admin')
+	const t = useTranslations('admin')
 	return (
 		<Stack spacing={4}>
 			{/* Header */}
@@ -67,10 +67,10 @@ const CreatePostForm = ({ formData, handleChange }) => {
 						}}>
 						<FormRowSelect
 							label={t('language')}
-							value={formData.lang ?? ''}
+							value={formData.locale ?? ''}
 							handleChange={handleChange}
 							name='lang'
-							list={lang}
+							list={locale}
 						/>
 						<FormRow
 							label={t('articleTitle')}

@@ -5,6 +5,7 @@ import { store } from '@/features/store'
 import UserProvider from '@/context/user.js'
 import { ThemeModeProvider } from '@/context/ThemeContext'
 import { AchievementProvider } from '@/components/AchievementProvider'
+import AppRouterLayout from '@/components/AppRouterLayout'
 import { Toaster } from 'sonner'
 import { useThemeMode } from '@/context/ThemeContext'
 import { useEffect } from 'react'
@@ -48,7 +49,9 @@ export default function Providers({ children }) {
 				<Provider store={store}>
 					<AchievementProvider>
 						<GTMTracking />
-						{children}
+						<AppRouterLayout>
+							{children}
+						</AppRouterLayout>
 						<ToasterWithTheme />
 					</AchievementProvider>
 				</Provider>

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextTranslate = require('next-translate-plugin')
+const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
@@ -13,15 +14,15 @@ const nextConfig = {
 				pathname: '**',
 			},
 		],
-		unoptimized: true, // Images déjà optimisées en WebP sur Supabase
-		formats: ['image/webp'], // Format préféré
+		unoptimized: true,
+		formats: ['image/webp'],
 	},
 
 	// Extensions de pages supportées
 	pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
 
 	// Optimisations de production
-	compress: true, // Activer la compression gzip
+	compress: true,
 
 	// Headers de sécurité et cache
 	async headers() {
@@ -40,7 +41,6 @@ const nextConfig = {
 
 	// Configuration webpack pour optimiser le bundle
 	webpack: (config, { isServer }) => {
-		// Optimiser les imports
 		if (!isServer) {
 			config.resolve.fallback = {
 				...config.resolve.fallback,
@@ -53,4 +53,6 @@ const nextConfig = {
 	},
 }
 
-module.exports = nextTranslate(nextConfig)
+// Apply both plugins: next-translate for Pages Router, next-intl for App Router
+// Apply next-intl only (next-translate disabled for now)
+module.exports = withNextIntl(nextConfig)

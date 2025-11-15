@@ -1,14 +1,15 @@
 'use client'
 
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserMaterials } from '@/features/materials/materialsSlice'
 import SectionCard from '@/components/SectionCard'
 import MaterialsTable from '@/components/MaterialsTable'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'
-import Head from 'next/head'
+// Head removed - use metadata in App Router
+
 import LoadingSpinner from '@/components/LoadingSpinner'
 import {
 	Box,
@@ -20,7 +21,8 @@ import { ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 
 const UserMaterials = () => {
-	const { t, lang } = useTranslation('materials')
+	const t = useTranslations('materials')
+	const locale = useLocale()
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const { user_materials, user_materials_loading } = useSelector(store => store.materials)
@@ -109,7 +111,7 @@ const UserMaterials = () => {
 		}
 
 		if (user && user_materials.length === 0) {
-			dispatch(getUserMaterials({ userId: userId, lang: userLearningLanguage }))
+			dispatch(getUserMaterials({ userId: userId, locale: userLearningLanguage }))
 		}
 	}, [
 		dispatch,
@@ -128,10 +130,6 @@ const UserMaterials = () => {
 
 	return (
 		<>
-			<Head>
-				<title>Linguami | {t('myMaterialsTitle')}</title>
-			</Head>
-
 			{/* Header Section - App Style */}
 			<Box
 				sx={{

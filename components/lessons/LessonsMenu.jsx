@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
@@ -62,7 +62,7 @@ const getLevelColor = level => {
 }
 
 const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
-	const { t } = useTranslation('lessons')
+	const t = useTranslations('lessons')
 	const [openLevels, setOpenLevels] = useState({})
 
 	const dispatch = useDispatch()

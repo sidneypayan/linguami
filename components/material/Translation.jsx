@@ -1,4 +1,4 @@
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRef, useEffect, useState, useCallback } from 'react'
 import {
@@ -30,7 +30,8 @@ import { Add, Close, Translate } from '@mui/icons-material'
 import { primaryButton, secondaryButton } from '@/utils/buttonStyles'
 
 const Translation = ({ coordinates, materialId, userId }) => {
-	const { t, lang } = useTranslation('words')
+	const t = useTranslations('words')
+	const locale = useLocale()
 
 	const dispatch = useDispatch()
 	const ref = useRef()
@@ -231,9 +232,9 @@ const Translation = ({ coordinates, materialId, userId }) => {
 					userId,
 					materialId,
 					word_sentence,
-					lang,
+					locale,
 					userLearningLanguage,
-					locale: lang,
+					locale: locale,
 				})
 			)
 		} else {
@@ -257,11 +258,11 @@ const Translation = ({ coordinates, materialId, userId }) => {
 			}
 
 			// La langue cible (de l'interface) détermine où va la traduction
-			if (lang === 'ru') {
+			if (locale === 'ru') {
 				wordData.word_ru = sanitizedTranslation
-			} else if (lang === 'fr') {
+			} else if (locale === 'fr') {
 				wordData.word_fr = sanitizedTranslation
-			} else if (lang === 'en') {
+			} else if (locale === 'en') {
 				wordData.word_en = sanitizedTranslation
 			}
 

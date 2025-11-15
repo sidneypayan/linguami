@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Box,
 	Paper,
@@ -14,7 +14,7 @@ import { useUserContext } from '@/context/user'
 import toast from '@/utils/toast'
 
 const ExerciseInlineBlock = ({ block }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { isUserLoggedIn } = useUserContext()

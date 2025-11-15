@@ -1,4 +1,6 @@
-import useTranslation from 'next-translate/useTranslation'
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
 import { Search, Refresh, GridView, ViewList } from '@mui/icons-material'
 import {
 	filterMaterials,
@@ -6,16 +8,18 @@ import {
 	filterMaterialsByStatus,
 } from '@/features/materials/materialsSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
+import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useState } from 'react'
 import { searchMaterial } from '@/features/materials/materialsSlice'
 import { Box, TextField, IconButton, Chip, Stack, Tooltip, InputAdornment } from '@mui/material'
 
 const LevelBar = ({ onViewChange, currentView = 'card', isMyMaterialsPage = false }) => {
-	const { t } = useTranslation('section')
+	const t = useTranslations('section')
 	const dispatch = useDispatch()
-	const router = useRouter()
-	const { section } = router.query
+	const router = useNextRouter() // For navigation
+	const pathname = usePathname()
+	const params = useParams()
+	const { section } = params
 	const [search, setSearch] = useState('')
 	const [selectedLevel, setSelectedLevel] = useState(null)
 	const [selectedStatus, setSelectedStatus] = useState(null)

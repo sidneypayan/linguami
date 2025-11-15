@@ -1,6 +1,6 @@
 'use client'
 
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations, useLocale } from "next-intl";
 import SectionCard from '@/components/SectionCard';
 import MaterialsTable from '@/components/MaterialsTable';
 import MaterialsFilterBar from '@/components/MaterialsFilterBar';
@@ -19,7 +19,7 @@ import {
 import { selectMaterialsData } from '@/features/materials/materialsSelectors';
 
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter, useParams } from "next/navigation";
 import { Box, Container, IconButton, Typography } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import SEO from '@/components/SEO';
@@ -27,10 +27,12 @@ import { useUserContext } from '@/context/user';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Section = () => {
-  const { t, lang } = useTranslation("materials");
+  const t = useTranslations('materials')
+	const locale = useLocale();
   const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext();
-  const router = useRouterCompat();
-  const { section } = router.query;
+  const router = useRouter();
+  const params = useParams();
+    const section = params.section;  
   const [viewMode, setViewMode] = useState("card");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -68,13 +70,15 @@ const Section = () => {
 
   // Filtrer localement les matériaux pour s'assurer qu'ils correspondent à la langue d'apprentissage
   // Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
-  const displayedMaterials = useMemo(() => {
+  const displayedMaterials = useMemo(() => {.map(m => ({ id: m.id, locale: m.locale, lang: m.lang }))
+    });
     if (!filtered_materials || !userLearningLanguage) return [];
     return filtered_materials.filter((material) => {
       // Vérifier que le matériel correspond à la langue d'apprentissage
       return material.lang === userLearningLanguage;
     });
-  }, [filtered_materials, userLearningLanguage]);
+  }, [filtered_materials, userLearningLanguage]);.map(m => ({id: m.id, title: m.title, locale: m.locale}))
+  });
 
   // Définir le nombre de matériaux par page selon le mode de vue
   const itemsPerPage = viewMode === 'card' ? 8 : 10;
@@ -236,9 +240,9 @@ const Section = () => {
   // Mots-clés SEO par section et langue
   const getSectionKeywords = () => {
     const sectionName = t(section || "materials");
-    if (lang === "fr") {
+    if (locale === "fr") {
       return `${sectionName} russe, matériel ${sectionName}, apprendre russe avec ${sectionName}`;
-    } else if (lang === "ru") {
+    } else if (locale === "ru") {
       return `${sectionName} французский, материалы ${sectionName}, учить французский`;
     } else {
       return `${sectionName} russian, ${sectionName} french, language learning ${sectionName}`;
@@ -252,8 +256,8 @@ const Section = () => {
         "@type": "CollectionPage",
         name: `${t(section)} | ${t("pagetitle")}`,
         description: t("description"),
-        url: `https://www.linguami.com${lang === "fr" ? "" : `/${lang}`}/materials/${section}`,
-        inLanguage: lang === "fr" ? "fr-FR" : lang === "ru" ? "ru-RU" : "en-US",
+        url: `https://www.linguami.com${locale === "fr" ? "" : `/${locale}`}/materials/${section}`,
+        inLanguage: locale === "fr" ? "fr-FR" : locale === "ru" ? "ru-RU" : "en-US",
         about: {
           "@type": "Thing",
           name: t(section),

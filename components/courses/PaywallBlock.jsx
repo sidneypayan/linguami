@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, Button, useTheme } from '@mui/material'
 import { Lock, Star, CheckCircle } from '@mui/icons-material'
 import Link from 'next/link'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 /**
  * PaywallBlock - Encourage users to sign up or purchase the method
@@ -9,7 +9,7 @@ import useTranslation from 'next-translate/useTranslation'
 const PaywallBlock = ({ isLoggedIn }) => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 
 	return (
 		<Paper

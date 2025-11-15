@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 /**
  * Composant SEO réutilisable pour optimiser le référencement multilingue
@@ -22,7 +22,7 @@ export default function SEO({
 	jsonLd,
 	noindex = false
 }) {
-	const { lang } = useTranslation()
+	const locale = useLocale()
 
 	// Configuration des langues et locales
 	const localeConfig = {
@@ -31,11 +31,11 @@ export default function SEO({
 		en: { og: 'en_US', lang: 'English' }
 	}
 
-	const currentLocale = localeConfig[lang] || localeConfig.fr
+	const currentLocale = localeConfig[locale] || localeConfig.fr
 
 	// Construction des URLs
 	const baseUrl = 'https://www.linguami.com'
-	const currentUrl = `${baseUrl}${lang === 'fr' ? '' : `/${lang}`}${path === '/' ? '' : path}`
+	const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}${path === '/' ? '' : path}`
 
 	// URLs alternatives pour hreflang
 	const frUrl = `${baseUrl}${path === '/' ? '' : path}`
@@ -80,7 +80,7 @@ export default function SEO({
 			{/* Métadonnées additionnelles */}
 			{keywords && <meta name='keywords' content={keywords} />}
 			<meta name='author' content='Linguami' />
-			<meta name='language' content={currentLocale.lang} />
+			<meta name='language' content={currentLocale.locale} />
 			<link rel='canonical' href={currentUrl} />
 
 			{/* Schema JSON-LD si fourni */}

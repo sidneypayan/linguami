@@ -1,7 +1,7 @@
 import { Box, Typography, List, ListItem, ListItemButton, useTheme } from '@mui/material'
 import { useRef } from 'react'
 import { slugify } from '@/utils/slugify'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 /**
  * Table des matières générée automatiquement à partir du contenu Markdown
@@ -10,7 +10,7 @@ import useTranslation from 'next-translate/useTranslation'
  * @param {string} content - Contenu markdown de l'article
  */
 export default function TableOfContents({ content }) {
-	const { t } = useTranslation('blog')
+	const t = useTranslations('blog')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const scrollTimeoutRef = useRef(null)

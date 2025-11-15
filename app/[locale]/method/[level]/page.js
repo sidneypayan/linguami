@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -33,7 +33,8 @@ import { useUserContext } from '@/context/user'
 const LevelLessonsPage = () => {
 	const router = useRouterCompat()
 	const { level: levelSlug } = router.query
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -57,9 +58,9 @@ const LevelLessonsPage = () => {
 	)
 
 	const lessons = currentCourse?.course_lessons || []
-	const titleKey = `title_${lang}`
-	const descriptionKey = `description_${lang}`
-	const levelName = currentLevel?.[`name_${lang}`] || levelSlug
+	const titleKey = `title_${locale}`
+	const descriptionKey = `description_${locale}`
+	const levelName = currentLevel?.[`name_${locale}`] || levelSlug
 
 	// Load levels if not loaded
 	useEffect(() => {
@@ -260,7 +261,7 @@ const LevelLessonsPage = () => {
 					{lessons.map((lesson, index) => {
 						const isCompleted = isLessonCompleted(lesson.id)
 						const lessonTitle = lesson[titleKey]
-						const objectivesKey = `objectives_${lang}`
+						const objectivesKey = `objectives_${locale}`
 						const lessonObjectives = lesson[objectivesKey] || lesson.objectives || lesson.objectives_fr || []
 
 						return (

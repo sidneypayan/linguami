@@ -1,8 +1,10 @@
+'use client'
+
 import { useState, useEffect, useMemo } from 'react'
 import { Box, Typography, Button, Paper, Alert, useTheme, Grid, Chip } from '@mui/material'
 import { CheckCircle, Cancel, DragIndicator, CompareArrows, EmojiEvents, Refresh } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
 
 /**
@@ -13,10 +15,12 @@ import { getLocalizedQuestion } from '@/utils/exerciseHelpers'
  * @param {Function} onComplete - Callback when exercise is completed
  */
 const DragAndDrop = ({ exercise, onComplete }) => {
-	const { t } = useTranslation('exercises')
+	const t = useTranslations('exercises')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 	const [rightItems, setRightItems] = useState([])
@@ -30,7 +34,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 	const [isFirstCompletion, setIsFirstCompletion] = useState(false)
 	const [questionResults, setQuestionResults] = useState([]) // Store results for each question
 
-	const locale = router.locale || 'fr'
+	const locale = params.locale || 'fr'
 
 	// Memoize the current question to avoid re-renders and flickering
 	const currentQuestion = useMemo(() => {
@@ -64,7 +68,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 
 	// Fonction pour obtenir le titre traduit
 	const getTranslatedTitle = () => {
-		const locale = router.locale || 'fr'
+		const locale = params.locale || 'fr'
 		const originalTitle = exercise?.title || ''
 
 		// Si une traduction existe pour ce titre

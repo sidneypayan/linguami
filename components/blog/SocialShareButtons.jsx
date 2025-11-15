@@ -1,8 +1,10 @@
+'use client'
+
 import { Box, IconButton, Typography, Tooltip, useTheme } from '@mui/material'
 import { FaFacebook, FaTwitter, FaLinkedin, FaWhatsapp, FaLink } from 'react-icons/fa'
 import { toast } from 'sonner'
 import * as gtm from '@/lib/gtm'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 
 /**
  * Boutons de partage social avec tracking GTM
@@ -14,6 +16,8 @@ export default function SocialShareButtons({ title, url }) {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 
 	const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '')
 	const shareTitle = title || 'Découvrez cet article sur Linguami'
@@ -25,7 +29,7 @@ export default function SocialShareButtons({ title, url }) {
 			category: 'Blog',
 			action: 'Share Article',
 			label: platform,
-			language: router.locale
+			language: params.locale
 		})
 
 		let shareLink = ''

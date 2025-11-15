@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
 	Box,
@@ -43,7 +43,8 @@ import toast from '@/utils/toast'
 const LessonPage = () => {
 	const router = useRouterCompat()
 	const { level: levelSlug, lessonSlug } = router.query
-	const { t, lang } = useTranslation('common')
+	const t = useTranslations('common')
+	const locale = useLocale()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -64,7 +65,7 @@ const LessonPage = () => {
 
 	// Get spoken language (for translations in lessons)
 	// Use interface language as fallback for non-authenticated users
-	const spokenLanguage = userProfile?.spoken_language || lang
+	const spokenLanguage = userProfile?.spoken_language || locale
 
 	// Find current level, course, and lesson
 	const currentLevel = levels.find((l) => l.slug === levelSlug)
@@ -92,7 +93,7 @@ const LessonPage = () => {
 		if (isUserLoggedIn) {
 			dispatch(getUserAccess(lang))
 		}
-	}, [isUserLoggedIn, lang, dispatch])
+	}, [isUserLoggedIn, locale, dispatch])
 
 	// Load local progress if not logged in
 	useEffect(() => {
@@ -197,10 +198,10 @@ const LessonPage = () => {
 		)
 	}
 
-	const titleKey = `title_${lang}`
-	const objectivesKey = `objectives_${lang}`
+	const titleKey = `title_${locale}`
+	const objectivesKey = `objectives_${locale}`
 	const blocksKey = `blocks_${spokenLanguage}` // Use spoken language for lesson content
-	const levelName = currentLevel?.[`name_${lang}`] || levelSlug
+	const levelName = currentLevel?.[`name_${locale}`] || levelSlug
 
 	// Get objectives in current language, fallback to objectives or objectives_fr
 	const objectives = currentLesson[objectivesKey] || currentLesson.objectives || currentLesson.objectives_fr || []
@@ -372,7 +373,7 @@ const LessonPage = () => {
 			<UpsellModal
 				open={showUpsellModal}
 				onClose={() => setShowUpsellModal(false)}
-				levelName={currentLevel?.[`name_${lang}`] || levelSlug}
+				levelName={currentLevel?.[`name_${locale}`] || levelSlug}
 				isPremium={isPremiumUser}
 				onPurchase={handlePurchase}
 			/>

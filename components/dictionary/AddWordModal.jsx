@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useUserContext } from '@/context/user'
@@ -5,8 +7,8 @@ import { getAllUserWords } from '@/features/words/wordsSlice'
 import { validateWordPair } from '@/utils/validation'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import {
 	Dialog,
 	DialogTitle,
@@ -23,13 +25,15 @@ import {
 import { Close, Add } from '@mui/icons-material'
 
 const AddWordModal = ({ open, onClose }) => {
-	const { t } = useTranslation('words')
+	const t = useTranslations('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const { user, userLearningLanguage } = useUserContext()
-	const lang = router.locale
+	const locale = params.locale
 
 	const [learningLangWord, setLearningLangWord] = useState('')
 	const [browserLangWord, setBrowserLangWord] = useState('')
@@ -43,7 +47,7 @@ const AddWordModal = ({ open, onClose }) => {
 	}
 
 	const getBrowserLanguageName = () => {
-		if (lang === 'fr') return t('language_fr')
+		if (locale === 'fr') return t('language_fr')
 		return t('language_ru')
 	}
 
@@ -90,7 +94,7 @@ const AddWordModal = ({ open, onClose }) => {
 					contextSentence: validation.sanitized.contextSentence || null,
 					materialId: null,
 					userLearningLanguage,
-					locale: lang, // Interface language for translation
+					locale: locale, // Interface language for translation
 				}),
 			})
 
@@ -293,7 +297,7 @@ const AddWordModal = ({ open, onClose }) => {
 										setErrors({ ...errors, browserLangWord: null })
 									}
 								}}
-								placeholder={`${t('example')}: ${lang === 'fr' ? 'bonjour' : 'привет'}`}
+								placeholder={`${t('example')}: ${locale === 'fr' ? 'bonjour' : 'привет'}`}
 								variant='outlined'
 								required
 								error={!!errors.browserLangWord}

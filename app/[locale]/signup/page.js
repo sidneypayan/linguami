@@ -1,5 +1,5 @@
 'use client'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
@@ -10,7 +10,8 @@ import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcons'
-import Head from 'next/head'
+// Head removed - use metadata in App Router
+
 import Link from 'next/link'
 import {
 	Box,
@@ -58,7 +59,7 @@ const initialState = {
 }
 
 const Signup = () => {
-	const { t } = useTranslation('register')
+	const t = useTranslations('register')
 	const { register, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -309,11 +310,6 @@ const Signup = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{`${t('signupTitle')} | Linguami`}</title>
-				<meta name="description" content={t('signupSubtitle')} />
-			</Head>
-
 			<AuthLayout icon={<HowToRegRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
 				{/* Titre */}
 				<Typography

@@ -3,11 +3,11 @@
 import { Container, Box, Typography, useTheme } from '@mui/material'
 import { Shield } from '@mui/icons-material'
 import Link from 'next/link'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useState, useEffect } from 'react'
 
 export default function PrivacyPolicy() {
-	const { t } = useTranslation('privacy')
+	const t = useTranslations('privacy')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [formattedDate, setFormattedDate] = useState('')

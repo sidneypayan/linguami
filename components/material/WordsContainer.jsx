@@ -1,12 +1,14 @@
+'use client'
+
 import React from 'react'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSelector, useDispatch } from 'react-redux'
 import { useUserContext } from '@/context/user'
 import {
 	getUserMaterialWords,
 	deleteUserWord,
 } from '@/features/words/wordsSlice'
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
 import { getGuestWords, deleteGuestWord } from '@/utils/guestDictionary'
@@ -31,8 +33,11 @@ import {
 import Link from 'next/link'
 
 const WordsContainer = ({ sx = {} }) => {
-	const { t, lang } = useTranslation('words')
+	const t = useTranslations('words')
+	const locale = useLocale()
 	const router = useRouter()
+	const pathname = usePathname()
+	const params = useParams()
 	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -42,7 +47,7 @@ const WordsContainer = ({ sx = {} }) => {
 	)
 	const [guestWords, setGuestWords] = useState([])
 
-	const materialId = router.query.material
+	const materialId = params?.material
 	const userId = user?.id
 
 	// Fonction pour charger les mots invités (mémorisée)
@@ -96,18 +101,18 @@ const WordsContainer = ({ sx = {} }) => {
 	const filteredWords = useMemo(() => {
 		// Pour les invités, utiliser guestWords
 		if (!isUserLoggedIn) {
-			if (!guestWords || !userLearningLanguage || !lang) {
+			if (!guestWords || !userLearningLanguage || !locale) {
 				return []
 			}
 
 			// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
-			if (userLearningLanguage === lang) {
+			if (userLearningLanguage === locale) {
 				return []
 			}
 
 			return guestWords.filter(word => {
 				const sourceWord = word[`word_${userLearningLanguage}`]
-				const translation = word[`word_${lang}`]
+				const translation = word[`word_${locale}`]
 
 				// N'afficher que les mots qui ont à la fois le mot source ET la traduction
 				return sourceWord && translation
@@ -115,26 +120,26 @@ const WordsContainer = ({ sx = {} }) => {
 		}
 
 		// Pour les utilisateurs connectés
-		if (!user_material_words || !userLearningLanguage || !lang) return []
+		if (!user_material_words || !userLearningLanguage || !locale) return []
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
-		if (userLearningLanguage === lang) return []
+		if (userLearningLanguage === locale) return []
 
 		return user_material_words.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
-			const translation = word[`word_${lang}`]
+			const translation = word[`word_${locale}`]
 
 			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
 			return sourceWord && translation
 		})
-	}, [isUserLoggedIn, guestWords, user_material_words, userLearningLanguage, lang])
+	}, [isUserLoggedIn, guestWords, user_material_words, userLearningLanguage, locale])
 
 	// Fonction pour obtenir le mot source et la traduction selon les langues
 	const getWordDisplay = (word) => {
 		// Mot source : dans la langue qu'ils apprennent (userLearningLanguage)
 		const sourceWord = word[`word_${userLearningLanguage}`]
-		// Traduction : dans la langue de l'interface (lang)
-		const translation = word[`word_${lang}`]
+		// Traduction : dans la langue de l'interface (locale)
+		const translation = word[`word_${locale}`]
 
 		return { sourceWord, translation }
 	}

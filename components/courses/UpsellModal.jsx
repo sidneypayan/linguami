@@ -18,10 +18,10 @@ import {
 	Speed,
 	Lock,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 

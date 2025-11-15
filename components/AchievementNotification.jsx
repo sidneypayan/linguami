@@ -7,7 +7,7 @@ import {
 	StarRounded,
 	TrendingUpRounded,
 } from '@mui/icons-material'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations, useLocale } from 'next-intl'
 
 // Animations
 const bounceIn = keyframes`
@@ -130,7 +130,7 @@ const getAchievementConfig = (type, data, t) => {
 }
 
 const AchievementNotification = ({ achievement, open, onClose }) => {
-	const { t } = useTranslation('common')
+	const t = useTranslations('common')
 	const [isVisible, setIsVisible] = useState(false)
 
 	useEffect(() => {
