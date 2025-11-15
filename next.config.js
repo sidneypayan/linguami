@@ -3,12 +3,6 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
-	typescript: {
-		ignoreBuildErrors: true,
-	},
 	experimental: {
 		missingSuspenseWithCSRBailout: false,
 	},
