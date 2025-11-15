@@ -55,7 +55,7 @@ const MethodePage = () => {
 	useEffect(() => {
 		dispatch(getLevels())
 		if (isUserLoggedIn) {
-			dispatch(getUserAccess(lang))
+			dispatch(getUserAccess(locale))
 		}
 	}, [dispatch, isUserLoggedIn, locale])
 
