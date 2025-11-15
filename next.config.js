@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
-// Temporarily disabled next-intl plugin to debug build issue
-// const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
+const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
@@ -63,6 +62,4 @@ const nextConfig = {
 }
 
 // Apply next-intl plugin for App Router i18n
-// Temporarily disabled to debug build issue
-// module.exports = withNextIntl(nextConfig)
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)
