@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslations, useLocale } from 'next-intl'
@@ -32,7 +33,8 @@ import { useUserContext } from '@/context/user'
 
 const LevelLessonsPage = () => {
 	const router = useRouterCompat()
-	const { level: levelSlug } = router.query
+	const params = useParams()
+	const levelSlug = params.level
 	const t = useTranslations('common')
 	const locale = useLocale()
 	const dispatch = useDispatch()

@@ -1,7 +1,7 @@
 'use client'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import LessonsMenu from '@/components/lessons/LessonsMenu'
 import Lesson from '@/components/lessons/Lesson'
@@ -14,8 +14,10 @@ import {
 
 const Lessons = () => {
 	const router = useRouter()
-	const { slug } = router.query
-	const lang = router.locale
+	const searchParams = useSearchParams()
+	const slug = searchParams.get('slug')
+	const locale = useLocale()
+	const lang = locale
 
 	const t = useTranslations('lessons')
 	const dispatch = useDispatch()

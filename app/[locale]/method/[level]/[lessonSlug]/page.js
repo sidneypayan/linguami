@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslations, useLocale } from 'next-intl'
@@ -42,7 +43,9 @@ import toast from '@/utils/toast'
 
 const LessonPage = () => {
 	const router = useRouterCompat()
-	const { level: levelSlug, lessonSlug } = router.query
+	const params = useParams()
+	const levelSlug = params.level
+	const lessonSlug = params.lessonSlug
 	const t = useTranslations('common')
 	const locale = useLocale()
 	const dispatch = useDispatch()
