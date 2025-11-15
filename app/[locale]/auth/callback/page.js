@@ -31,16 +31,13 @@ export default function AuthCallback() {
 				const deviceId = searchParams.get('device_id')
 
 				if (vkCode && vkType === 'code_v2') {
-					console.log('🔐 VK ID callback detected, exchanging code for tokens...')
-					console.log('VK Code (first 10 chars):', vkCode.substring(0, 10) + '...')
-					console.log('Device ID (first 10 chars):', deviceId ? deviceId.substring(0, 10) + '...' : 'undefined')
-					console.log('Type:', vkType)
-					console.log('Redirect URI:', `${window.location.origin}/auth/callback`)
+
+
 					setStatusMessage('Connecting with VK ID...')
 
 					try {
 						// Exchange code for token via backend API
-						console.log('🔄 Exchanging code for token...')
+
 						const exchangeResponse = await fetch('/api/auth/vkid/exchange-code', {
 							method: 'POST',
 							headers: {
@@ -53,8 +50,6 @@ export default function AuthCallback() {
 							}),
 						})
 
-						console.log('Exchange response status:', exchangeResponse.status)
-
 						if (!exchangeResponse.ok) {
 							const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
 							console.error('❌ Exchange failed with error:', errorData)
@@ -63,11 +58,9 @@ export default function AuthCallback() {
 
 						const { access_token, user } = await exchangeResponse.json()
 
-						console.log('✅ Token received from VK ID')
-						console.log('👤 User info:', user.first_name, user.last_name, user.email || '(no email)')
 
 						// Validate token and create/login user on our backend
-						console.log('🔄 Validating with backend...')
+
 						const response = await fetch('/api/auth/vkid/validate', {
 							method: 'POST',
 							headers: {
@@ -84,8 +77,6 @@ export default function AuthCallback() {
 							}),
 						})
 
-						console.log('Validation response status:', response.status)
-
 						const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
 
 						if (!response.ok) {
@@ -93,11 +84,8 @@ export default function AuthCallback() {
 							throw new Error(data.error || 'Authentication failed')
 						}
 
-						console.log('✅ Backend validation successful')
-						console.log('User ID:', data.userId)
-
 						// Set Supabase session with tokens
-						console.log('🔑 Setting Supabase session...')
+
 						const { error: sessionError } = await supabase.auth.setSession({
 							access_token: data.access_token,
 							refresh_token: data.refresh_token,
@@ -107,7 +95,6 @@ export default function AuthCallback() {
 							throw sessionError
 						}
 
-						console.log('✅ VK ID authentication complete')
 						setStatusMessage('Connection successful!')
 
 						// Redirect to materials page
@@ -123,10 +110,9 @@ export default function AuthCallback() {
 						// Wait 5 seconds before redirect to see the error
 						const errorMessage = vkError.message || 'Unknown error'
 						setStatusMessage(`Erreur VK ID: ${errorMessage}`)
-						console.log(`⏳ Waiting 5 seconds before redirecting to login...`)
+
 						await new Promise(resolve => setTimeout(resolve, 5000))
 
-						console.log('🔀 Redirecting to login page...')
 						router.replace('/login?error=vkid')
 						return
 					}
@@ -136,18 +122,10 @@ export default function AuthCallback() {
 				const type = searchParams.get('type')
 				const accessToken = hashParams.get('access_token')
 				const refreshToken = hashParams.get('refresh_token')
-					console.log('🔍 OAuth Callback Debug:', {
-				type,
-				hasAccessToken: !!accessToken,
-				hasRefreshToken: !!refreshToken,
-				hash: window.location.hash,
-				search: window.location.search
-			})
 
 			// Check if it's a Google OAuth callback with PKCE (has code but not VK type)
 			const isGooglePKCE = vkCode && (!vkType || vkType !== 'code_v2')
 			if (!accessToken && !refreshToken && isGooglePKCE) {
-					console.log('🔐 OAuth PKCE flow detected (Google/Facebook)')
 					setStatusMessage('Completing authentication...')
 
 					// Wait for Supabase to process the PKCE token
@@ -162,7 +140,6 @@ export default function AuthCallback() {
 						return
 					}
 
-					console.log('✅ OAuth PKCE session established')
 					setStatusMessage('Redirecting...')
 					router.replace('/materials')
 					return
@@ -170,7 +147,7 @@ export default function AuthCallback() {
 				// If type=recovery but no tokens in hash, it's PKCE
 				// Supabase will automatically exchange the PKCE token for a session
 				if (type === 'recovery' && !accessToken) {
-					console.log('🔐 Password recovery with PKCE detected')
+
 					setStatusMessage('Verifying reset link...')
 
 					// Wait for Supabase to process the PKCE token
@@ -185,7 +162,6 @@ export default function AuthCallback() {
 						return
 					}
 
-					console.log('✅ PKCE session established, redirecting to password reset')
 					router.replace('/reset-password')
 					return
 				}

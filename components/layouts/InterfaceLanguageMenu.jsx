@@ -128,7 +128,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const router = useNextRouter() // For navigation
 	const pathname = usePathname()
 	const params = useParams()
-	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
+	const { userLearningLanguage, changeLearningLanguage, updateUserProfile, isUserLoggedIn } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
@@ -169,32 +169,59 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const handleLanguageChange = async newLocale => {
 		setAnchorEl(null)
 
-		// Vérifier si la nouvelle langue d'interface est la même que la langue d'apprentissage
-		// Si oui, changer automatiquement la langue d'apprentissage
-		if (newLocale === userLearningLanguage) {
-			// Déterminer quelle langue alternative choisir
-			let newLearningLang
-			if (newLocale === 'fr') {
-				newLearningLang = 'ru' // Si on passe en français, apprendre le russe
-			} else if (newLocale === 'ru') {
-				newLearningLang = 'fr' // Si on passe en russe, apprendre le français
-			} else if (newLocale === 'en') {
-				// Si on passe en anglais, par défaut apprendre le russe
-				newLearningLang = 'ru'
+		// Update spoken_language in database for logged-in users
+		// OR save to localStorage for non-logged-in users
+		if (isUserLoggedIn) {
+			try {
+				await updateUserProfile({ spoken_language: newLocale })
+			} catch (error) {
+				console.error('Error updating spoken language:', error)
 			}
-
-			// Changer la langue d'apprentissage avant de changer la locale
-			// Attendre que la mise à jour soit complète avant de changer de locale
-			if (newLearningLang) {
-				await changeLearningLanguage(newLearningLang)
+		} else {
+			try {
+				localStorage.setItem('spoken_language', newLocale)
+			} catch (error) {
+				console.error('Error saving to localStorage:', error)
 			}
 		}
 
+		// Forcer la langue d'apprentissage selon la langue parlée :
+		// - spoken = 'fr' → learning = 'ru' (TOUJOURS)
+		// - spoken = 'ru' → learning = 'fr' (TOUJOURS)
+		// - spoken = 'en' → learning = 'fr' par défaut (peut être changé manuellement)
+		let newLearningLang = null
+		if (newLocale === 'fr') {
+			// Francophone apprend UNIQUEMENT le russe
+			newLearningLang = 'ru'
+		} else if (newLocale === 'ru') {
+			// Russophone apprend UNIQUEMENT le français
+			newLearningLang = 'fr'
+		} else if (newLocale === 'en') {
+			// Anglophone : français par défaut si pas déjà défini
+			if (!userLearningLanguage || userLearningLanguage === 'en') {
+				newLearningLang = 'fr'
+			}
+			// Sinon on garde la langue d'apprentissage actuelle (fr ou ru)
+		}
+
+		// Changer la langue d'apprentissage si nécessaire
+		if (newLearningLang && newLearningLang !== userLearningLanguage) {
+			await changeLearningLanguage(newLearningLang)
+		}
+
 		// Changer la locale de Next.js
-		// Replace current locale in pathname with new locale
 		const currentLocale = params.locale || locale
-		const newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`)
-		router.push(newPath || `/${newLocale}`)
+		let newPath
+
+		// If pathname starts with /[locale], replace the locale
+		if (pathname.startsWith(`/${currentLocale}`)) {
+			newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`)
+		} else {
+			// If no locale in pathname (e.g., root /), prepend the new locale
+			newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`
+		}
+
+		router.push(newPath)
 
 		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
@@ -339,11 +366,11 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 				open={open}
 				onClose={handleClose}>
 				{languages.map(language => {
-					const isSelected = locale === language.locale
+					const isSelected = locale === language.lang
 					return (
 						<MenuItem
-							key={language.locale}
-							onClick={() => handleLanguageChange(language.locale)}
+							key={language.lang}
+							onClick={() => handleLanguageChange(language.lang)}
 							disableRipple
 							sx={{
 								backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
@@ -371,7 +398,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 										: '0 1px 3px rgba(0, 0, 0, 0.1)',
 									transition: 'all 0.2s ease',
 								}}>
-								{getFlag(language.locale, 32)}
+								{getFlag(language.lang, 32)}
 							</Box>
 							<Typography
 								sx={{

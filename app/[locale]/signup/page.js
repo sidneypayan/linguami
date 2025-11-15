@@ -12,7 +12,7 @@ import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcons'
 // Head removed - use metadata in App Router
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import {
 	Box,
 	Button,

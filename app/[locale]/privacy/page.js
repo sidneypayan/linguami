@@ -2,7 +2,7 @@
 
 import { Container, Box, Typography, useTheme } from '@mui/material'
 import { Shield } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { useState, useEffect } from 'react'
 

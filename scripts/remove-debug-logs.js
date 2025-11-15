@@ -1,30 +1,38 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Removes console.log debug statements while keeping console.error and console.warn
+ */
 
 const files = [
-  path.join(__dirname, '..', 'app', '[locale]', 'materials', '[section]', 'page.js'),
-  path.join(__dirname, '..', 'app', '[locale]', 'materials', 'page.js')
-]
+  'app/[locale]/auth/callback/page.js',
+  'components/shared/TurnstileWidget.jsx',
+  'app/[locale]/login/page.js'
+];
 
 files.forEach(filePath => {
-  if (!fs.existsSync(filePath)) {
-    console.log(`⚠️  File not found: ${filePath}`)
-    return
+  const fullPath = path.join(process.cwd(), filePath);
+
+  if (!fs.existsSync(fullPath)) {
+    console.log(`⚠️  File not found: ${filePath}`);
+    return;
   }
 
-  let content = fs.readFileSync(filePath, 'utf-8')
+  let content = fs.readFileSync(fullPath, 'utf8');
+  const originalLines = content.split('\n').length;
 
-  // Remove all debug console.log statements
-  content = content.replace(/\s*console\.log\('🔍 DEBUG[^)]+\);?\n?/g, '')
-  content = content.replace(/\s*console\.log\('🔍 DEBUG[^}]+\}\);?\n?/g, '')
+  // Remove single line console.log statements
+  content = content.replace(/^\s*console\.log\([^)]*\)\s*$/gm, '');
 
-  // Clean up multiple empty lines
-  content = content.replace(/\n\n\n+/g, '\n\n')
+  // Remove empty lines that were left behind (but only consecutive ones)
+  content = content.replace(/\n{3,}/g, '\n\n');
 
-  fs.writeFileSync(filePath, content, 'utf-8')
+  const newLines = content.split('\n').length;
+  const removed = originalLines - newLines;
 
-  const fileName = path.basename(path.dirname(filePath)) + '/' + path.basename(filePath)
-  console.log(`✅ Removed debug logs from ${fileName}`)
-})
+  fs.writeFileSync(fullPath, content, 'utf8');
+  console.log(`✅ ${filePath}: Removed ${removed} lines of console.log`);
+});
 
-console.log('\n✨ All debug logs removed!')
+console.log('\n✨ Debug logs cleaned up!');

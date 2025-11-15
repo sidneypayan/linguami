@@ -1,6 +1,6 @@
 import { Box, Paper, Typography, Button, useTheme } from '@mui/material'
 import { Lock, Star, CheckCircle } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 
 /**

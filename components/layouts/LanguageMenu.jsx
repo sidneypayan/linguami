@@ -1,3 +1,5 @@
+'use client'
+
 import { useTranslations, useLocale } from 'next-intl'
 import { styled, alpha, useTheme } from '@mui/material/styles'
 import Button from '@mui/material/Button'
@@ -122,11 +124,24 @@ const StyledMenu = styled(props => (
 const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const { userLearningLanguage, changeLearningLanguage } = useUserContext()
+	const { userLearningLanguage, changeLearningLanguage, userProfile } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	// Langues disponibles pour l'apprentissage (anglais suspendu temporairement)
+	// Get spoken language from userProfile (DB) or localStorage
+	const getSpokenLanguage = () => {
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		if (typeof window !== 'undefined') {
+			const storedSpokenLang = localStorage.getItem('spoken_language')
+			if (storedSpokenLang) return storedSpokenLang
+		}
+		return locale // Fallback to interface locale
+	}
+	const spokenLanguage = getSpokenLanguage()
+
+	// Langues disponibles pour l'apprentissage
 	const allLanguages = [
 		{
 			lang: 'fr',
@@ -138,8 +153,16 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		},
 	]
 
-	// Ne montrer que les langues différentes de la langue d'interface
-	const languages = allLanguages.filter(language => language.locale !== locale)
+	// Filtrer selon la langue parlée :
+	// - Si spoken = 'fr' → apprend uniquement 'ru'
+	// - Si spoken = 'ru' → apprend uniquement 'fr'
+	// - Si spoken = 'en' → peut choisir entre 'fr' et 'ru'
+	const languages = allLanguages.filter(language => {
+		if (spokenLanguage === 'fr') return language.lang === 'ru'
+		if (spokenLanguage === 'ru') return language.lang === 'fr'
+		if (spokenLanguage === 'en') return true // Les deux langues disponibles
+		return language.lang !== spokenLanguage // Fallback
+	})
 
 	// Si une seule langue disponible, on affiche juste le drapeau sans menu
 	const isSingleLanguage = languages.length === 1
@@ -158,7 +181,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const handleClick = event => {
 		// Si une seule langue disponible, changer directement sans ouvrir le menu
 		if (isSingleLanguage) {
-			changeLearningLanguage(languages[0].locale)
+			changeLearningLanguage(languages[0].lang)
 			if (onClose) {
 				setTimeout(() => onClose(), 100)
 			}
@@ -321,11 +344,11 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					open={open}
 					onClose={handleClose}>
 					{languages.map(language => {
-						const isSelected = userLearningLanguage === language.locale
+						const isSelected = userLearningLanguage === language.lang
 						return (
 							<MenuItem
-								key={language.locale}
-								onClick={() => handleLanguageChange(language.locale)}
+								key={language.lang}
+								onClick={() => handleLanguageChange(language.lang)}
 								disableRipple
 								sx={{
 									backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
@@ -353,7 +376,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 											: '0 1px 3px rgba(0, 0, 0, 0.1)',
 										transition: 'all 0.2s ease',
 									}}>
-									{getFlag(language.locale, 32)}
+									{getFlag(language.lang, 32)}
 								</Box>
 								<Typography
 									sx={{

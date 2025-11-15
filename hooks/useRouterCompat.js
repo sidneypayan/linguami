@@ -21,19 +21,25 @@ export function useRouterCompat() {
 		if (routerType === 'pages' && pagesRouterContext?.locale) {
 			setLocale(pagesRouterContext.locale)
 		} else {
-			// App Router : récupérer depuis localStorage ou URL
+			// App Router : PRIORITÉ À L'URL, puis localStorage
 			if (typeof window !== 'undefined') {
 				try {
-					const storedLocale = localStorage.getItem('interface_language')
-					if (storedLocale && ['fr', 'ru', 'en'].includes(storedLocale)) {
-						setLocale(storedLocale)
+					// D'abord détecter depuis l'URL
+					const pathname = window.location.pathname
+					const match = pathname.match(/^\/(fr|ru|en)/)
+
+					if (match) {
+						// URL contient une locale valide → utiliser ça
+						setLocale(match[1])
+						localStorage.setItem('spoken_language', match[1])
 					} else {
-						// Détecter depuis l'URL
-						const pathname = window.location.pathname
-						const match = pathname.match(/^\/(fr|ru|en)/)
-						if (match) {
-							setLocale(match[1])
-							localStorage.setItem('interface_language', match[1])
+						// Pas de locale dans l'URL → fallback sur localStorage
+						const storedLocale = localStorage.getItem('spoken_language')
+						if (storedLocale && ['fr', 'ru', 'en'].includes(storedLocale)) {
+							setLocale(storedLocale)
+						} else {
+							// Fallback final : français
+							setLocale('fr')
 						}
 					}
 				} catch (e) {

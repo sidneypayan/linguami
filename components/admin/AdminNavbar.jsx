@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Box, Container, Typography, Button } from '@mui/material'
 import { Add, People, School } from '@mui/icons-material'
 import { useTranslations, useLocale } from 'next-intl'

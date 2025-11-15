@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { useState, useMemo, useEffect } from 'react'
 import Hero from './Hero'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,

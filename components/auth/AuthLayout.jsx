@@ -1,6 +1,6 @@
 import { Box, Container, Card, useTheme } from '@mui/material'
 import { LoginRounded } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 const AuthLayout = ({ children, icon }) => {
 	const theme = useTheme()

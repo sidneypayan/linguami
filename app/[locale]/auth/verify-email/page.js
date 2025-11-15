@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { Box, Typography, CircularProgress, Button, Card, Container } from '@mui/material'
 import { CheckCircleOutline, ErrorOutline, HomeRounded } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { verifyEmail } from '@/lib/emailVerification'
 
 export default function VerifyEmail() {

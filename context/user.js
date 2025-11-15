@@ -14,23 +14,20 @@ import { createToastMessages } from '@/utils/toastMessages'
 import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'
 import { sendVerificationEmail, isEmailVerified } from '@/lib/emailVerification'
 import { migrateLocalProgressToDatabase } from '@/utils/localCourseProgress'
-
 // --------------------------------------------------------
 // Helper: Déterminer la langue d'apprentissage par défaut
 // --------------------------------------------------------
 const getDefaultLearningLanguage = (currentLocale) => {
-	// Langues disponibles pour l'apprentissage (anglais suspendu temporairement)
-	const availableLanguages = ['fr', 'ru']
+	// Règles :
+	// - spoken = 'fr' → learning = 'ru'
+	// - spoken = 'ru' → learning = 'fr'
+	// - spoken = 'en' → learning = 'fr' (par défaut)
+	if (currentLocale === 'fr') return 'ru'
+	if (currentLocale === 'ru') return 'fr'
+	if (currentLocale === 'en') return 'fr'
 
-	// Retirer la langue actuelle de l'interface des options
-	const options = availableLanguages.filter(lang => lang !== currentLocale)
-
-	// Priorité: russe > français (sauf si interface en russe, alors français)
-	if (options.includes('ru')) return 'ru'
-	if (options.includes('fr')) return 'fr'
-
-	// Fallback: russe si aucune autre option
-	return 'ru'
+	// Fallback: français
+	return 'fr'
 }
 
 // --------------------------------------------------------
@@ -169,7 +166,20 @@ const UserProvider = ({ children }) => {
 				} else {
 					// invité : init langue depuis localStorage ou fallback basé sur locale
 					try {
-						const currentLocale = router?.locale || 'fr'
+						// Détecter la locale depuis l'URL directement (au cas où router.locale n'est pas encore défini)
+						let currentLocale = 'fr' // Fallback par défaut
+						if (typeof window !== 'undefined') {
+							const pathname = window.location.pathname
+							const match = pathname.match(/^\/(fr|ru|en)/)
+							if (match) {
+								currentLocale = match[1]
+							}
+						}
+						// Sinon utiliser router.locale si disponible
+						if (!currentLocale && router?.locale) {
+							currentLocale = router.locale
+						}
+
 						const stored = localStorage.getItem('learning_language')
 						const fallback = getDefaultLearningLanguage(currentLocale)
 
@@ -194,6 +204,45 @@ const UserProvider = ({ children }) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	// --------------------------------------------------------
+	// Synchroniser spoken_language avec la locale de l'URL
+	// --------------------------------------------------------
+	useEffect(() => {
+		if (!router?.locale || isBootstrapping) return
+
+		const currentLocale = router.locale
+
+		// Lire spoken_language depuis localStorage ou userProfile
+		let storedSpokenLang = null
+		if (userProfile?.spoken_language) {
+			storedSpokenLang = userProfile.spoken_language
+		} else if (typeof window !== 'undefined') {
+			storedSpokenLang = localStorage.getItem('spoken_language')
+		}
+
+		// Si la locale de l'URL est différente de spoken_language stocké, synchroniser
+		if (storedSpokenLang !== currentLocale) {
+			// Mettre à jour spoken_language
+			if (!user) {
+				// Non connecté : mettre à jour localStorage
+				try {
+					localStorage.setItem('spoken_language', currentLocale)
+				} catch {}
+			}
+			// Note: Pour les utilisateurs connectés, spoken_language sera mis à jour
+			// uniquement via InterfaceLanguageMenu (changement manuel)
+
+			// Forcer la langue d'apprentissage appropriée
+			const newLearningLang = getDefaultLearningLanguage(currentLocale)
+			if (newLearningLang !== userLearningLanguage) {
+				setUserLearningLanguage(newLearningLang)
+				try {
+					localStorage.setItem('learning_language', newLearningLang)
+				} catch {}
+			}
+		}
+	}, [router?.locale, isBootstrapping, userProfile, user, userLearningLanguage])
 
 	// --------------------------------------------------------
 	// Vérifier que la langue d'apprentissage est toujours différente de la locale

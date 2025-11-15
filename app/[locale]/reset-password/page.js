@@ -25,7 +25,7 @@ import {
 } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 const initialState = {
 	email: '',

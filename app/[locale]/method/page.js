@@ -38,19 +38,19 @@ const MethodePage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn, isUserAdmin } = useUserContext()
+	const { isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
 
 	// Redux state
 	const { levels, levels_loading, userAccess, userAccess_loading } = useSelector(
 		(state) => state.courses
 	)
 
-	// Redirect non-admins
+	// Redirect non-admins (temporary until courses are finalized)
 	useEffect(() => {
-		if (!isUserAdmin) {
+		if (!isBootstrapping && !isUserAdmin) {
 			router.replace('/')
 		}
-	}, [isUserAdmin, router])
+	}, [isBootstrapping, isUserAdmin, router])
 
 	useEffect(() => {
 		dispatch(getLevels())
@@ -58,6 +58,11 @@ const MethodePage = () => {
 			dispatch(getUserAccess(locale))
 		}
 	}, [dispatch, isUserLoggedIn, locale])
+
+	// Show loading while bootstrapping or if not admin
+	if (isBootstrapping) {
+		return <LoadingSpinner />
+	}
 
 	// Don't render for non-admins
 	if (!isUserAdmin) {

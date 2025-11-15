@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { marked } from 'marked'
 import { useTranslations, useLocale } from 'next-intl'
 import { Box, Container, Typography, Grid, useTheme } from '@mui/material'

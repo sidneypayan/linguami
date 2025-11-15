@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Box, Typography, Button, IconButton, useTheme } from '@mui/material'
 import { CloseRounded, RocketLaunchRounded } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useUserContext } from '@/context/user'
 import * as gtm from '@/lib/gtm'
 import { useRouter, usePathname, useParams } from 'next/navigation'

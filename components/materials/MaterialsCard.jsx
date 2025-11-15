@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { Box, Typography, Chip } from '@mui/material'
 import { PlayCircleOutline } from '@mui/icons-material'

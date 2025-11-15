@@ -30,7 +30,7 @@ import {
 	FlashOnRounded,
 	VolunteerActivismRounded,
 } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 const WordsContainer = ({ sx = {} }) => {
 	const t = useTranslations('words')

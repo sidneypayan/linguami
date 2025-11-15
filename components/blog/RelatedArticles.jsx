@@ -2,7 +2,7 @@
 
 import { Box, Typography, Grid, Card, CardContent, CardMedia, useTheme, Chip } from '@mui/material'
 import { CalendarTodayRounded, AccessTimeRounded } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
 import * as gtm from '@/lib/gtm'
 import { useRouter, usePathname, useParams } from 'next/navigation'

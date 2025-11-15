@@ -1,6 +1,6 @@
 import { useTranslations, useLocale } from 'next-intl'
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { primaryButton } from '@/utils/buttonStyles'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 

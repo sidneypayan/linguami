@@ -25,7 +25,7 @@ import {
 	ArrowBack,
 	NavigateNext,
 } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import SEO from '@/components/SEO'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { getCoursesByLevel, getLevels, getUserProgressForCourse } from '@/features/courses/coursesSlice'
@@ -41,7 +41,7 @@ const LevelLessonsPage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin } = useUserContext()
+	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin, isBootstrapping } = useUserContext()
 
 	// Redux state - MUST be before any conditional returns
 	const { levels, courses, courses_loading, courses_error, userProgress } = useSelector(
@@ -87,10 +87,15 @@ const LevelLessonsPage = () => {
 
 	// Redirect non-admins (temporary until courses are finalized)
 	useEffect(() => {
-		if (!isUserAdmin) {
+		if (!isBootstrapping && !isUserAdmin) {
 			router.replace('/')
 		}
-	}, [isUserAdmin, router])
+	}, [isBootstrapping, isUserAdmin, router])
+
+	// Show loading while bootstrapping or if not admin
+	if (isBootstrapping) {
+		return <LoadingSpinner />
+	}
 
 	// Don't render for non-admins
 	if (!isUserAdmin) {

@@ -9,7 +9,7 @@ import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
 // Head component not needed in App Router - use metadata in layout
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import {
 	Box,
 	Button,
@@ -44,18 +44,12 @@ const Login = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-
-		console.log('📝 Login form submitted')
-		console.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
-
 		// Verify Turnstile token
 		if (!turnstileToken) {
 			console.error('❌ No Turnstile token found in state')
 			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
 			return
 		}
-
-		console.log('🔐 Verifying token with backend...')
 		console.log('Token (first 20 chars):', turnstileToken.substring(0, 20) + '...')
 
 		// Verify token with backend
@@ -254,10 +248,8 @@ const Login = () => {
 					<TurnstileWidget
 						ref={turnstileRef}
 						onSuccess={(token) => {
-							console.log('🔑 Login page: Turnstile token received')
 							console.log('Token:', token?.substring(0, 20) + '...')
 							setTurnstileToken(token)
-							console.log('Token stored in state')
 						}}
 						onError={(error) => {
 							console.error('❌ Login page: Turnstile error or expiration:', error)

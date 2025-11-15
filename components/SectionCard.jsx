@@ -22,7 +22,7 @@ import {
 	Chip,
 	useTheme,
 } from '@mui/material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useUserContext } from '@/context/user'
 import { useTranslations, useLocale } from 'next-intl'
 

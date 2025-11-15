@@ -19,7 +19,6 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 	// Expose reset method to parent
 	useImperativeHandle(ref, () => ({
 		reset: () => {
-			console.log('🔄 Resetting Turnstile widget...')
 			if (turnstileRef.current) {
 				turnstileRef.current.reset()
 			}
@@ -34,11 +33,7 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 	}
 
 	const handleSuccess = (token) => {
-		console.log('✅ Turnstile challenge completed')
-		console.log('Token received:', token ? 'YES' : 'NO')
-		console.log('Token length:', token?.length || 0)
 		if (onSuccess) {
-			console.log('Calling onSuccess callback...')
 			onSuccess(token)
 		} else {
 			console.error('❌ onSuccess callback is not defined!')

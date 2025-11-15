@@ -24,7 +24,7 @@ import {
 	AccessTime,
 	NavigateNext,
 } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import SEO from '@/components/SEO'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import LessonNavigator from '@/components/courses/LessonNavigator'
@@ -52,7 +52,7 @@ const LessonPage = () => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
-	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin } = useUserContext()
+	const { isUserLoggedIn, userProfile, userLearningLanguage, isUserAdmin, isBootstrapping } = useUserContext()
 
 	// Redux state - MUST be before conditional return
 	const { levels, courses, courses_loading, courses_error, userProgress, userAccess } = useSelector(
@@ -67,8 +67,20 @@ const LessonPage = () => {
 	const learningLanguage = userLearningLanguage
 
 	// Get spoken language (for translations in lessons)
-	// Use interface language as fallback for non-authenticated users
-	const spokenLanguage = userProfile?.spoken_language || locale
+	// Priority: 1) userProfile.spoken_language (DB), 2) spoken_language (localStorage), 3) current locale
+	const getSpokenLanguage = () => {
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		// For non-authenticated users, check localStorage spoken_language
+		if (typeof window !== 'undefined') {
+			const storedSpokenLang = localStorage.getItem('spoken_language')
+			if (storedSpokenLang) return storedSpokenLang
+		}
+		// Fallback to current interface language (locale)
+		return locale
+	}
+	const spokenLanguage = getSpokenLanguage()
 
 	// Find current level, course, and lesson
 	const currentLevel = levels.find((l) => l.slug === levelSlug)
@@ -94,7 +106,7 @@ const LessonPage = () => {
 	// Load user access if logged in
 	useEffect(() => {
 		if (isUserLoggedIn) {
-			dispatch(getUserAccess(lang))
+			dispatch(getUserAccess(locale))
 		}
 	}, [isUserLoggedIn, locale, dispatch])
 
@@ -113,12 +125,17 @@ const LessonPage = () => {
 		}
 	}, [currentLesson, userProgress])
 
-	// Redirect non-admins
+	// Redirect non-admins (temporary until courses are finalized)
 	useEffect(() => {
-		if (!isUserAdmin) {
+		if (!isBootstrapping && !isUserAdmin) {
 			router.replace('/')
 		}
-	}, [isUserAdmin, router])
+	}, [isBootstrapping, isUserAdmin, router])
+
+	// Show loading while bootstrapping or if not admin
+	if (isBootstrapping) {
+		return <LoadingSpinner />
+	}
 
 	// Don't render for non-admins
 	if (!isUserAdmin) {
@@ -210,7 +227,13 @@ const LessonPage = () => {
 	const objectives = currentLesson[objectivesKey] || currentLesson.objectives || currentLesson.objectives_fr || []
 
 	// Get blocks in spoken language (user's native language for translations)
-	const blocks = currentLesson[blocksKey] || currentLesson.blocks || currentLesson.blocks_fr || []
+	// TEMPORARY: Prefer 'blocks' over blocksKey until data is fixed (blocks_fr has English translations)
+	// Check that blocks has content (not just an empty array)
+	const blocks = (currentLesson.blocks && currentLesson.blocks.length > 0)
+		? currentLesson.blocks
+		: (currentLesson[blocksKey] && currentLesson[blocksKey].length > 0)
+			? currentLesson[blocksKey]
+			: currentLesson.blocks_fr || []
 
 	// Check if user has access to this lesson
 	const isFreeLesson = currentLesson.is_free === true

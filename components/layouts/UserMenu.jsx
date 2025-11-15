@@ -24,7 +24,7 @@ import {
 	SettingsRounded,
 	VerifiedRounded,
 } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useSelector, useDispatch } from 'react-redux'
 import { cleanUserMaterialStatus } from '@/features/materials/materialsSlice.js'
 

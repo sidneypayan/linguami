@@ -6,7 +6,7 @@ import {
 	cleanTranslation,
 	addWordToDictionary,
 } from '@/features/words/wordsSlice'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useUserContext } from '@/context/user'
 import { addGuestWord, getGuestWordsCount, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'

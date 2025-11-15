@@ -2,7 +2,7 @@
 
 import { Box, Typography, Button, useTheme } from '@mui/material'
 import { RocketLaunchRounded, AutoStoriesRounded, HeadphonesRounded } from '@mui/icons-material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import * as gtm from '@/lib/gtm'
 import { useRouter, usePathname, useParams } from 'next/navigation'

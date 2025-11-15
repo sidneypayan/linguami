@@ -1,5 +1,5 @@
 import { useTranslations, useLocale } from 'next-intl'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Box, Container, Stack, Typography, IconButton, useTheme, useMediaQuery } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
 

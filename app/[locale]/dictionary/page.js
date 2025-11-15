@@ -9,7 +9,7 @@ import {
 	deleteUserWord,
 } from '@/features/words/wordsSlice'
 import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import SEO from '@/components/SEO'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'

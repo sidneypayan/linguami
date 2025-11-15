@@ -21,7 +21,7 @@ import {
 	ListItemText,
 	Toolbar,
 } from '@mui/material'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 import {
 	HomeRounded,
