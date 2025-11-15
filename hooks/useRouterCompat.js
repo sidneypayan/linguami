@@ -59,12 +59,28 @@ export function useRouterCompat() {
 		[routerType, pagesRouterContext]
 	)
 
+	// Fonction replace compatible
+	const replace = useCallback(
+		(path) => {
+			if (routerType === 'pages' && pagesRouterContext) {
+				return pagesRouterContext.replace(path)
+			} else {
+				// App Router : utiliser window.location.replace
+				if (typeof window !== 'undefined') {
+					window.location.replace(path)
+				}
+			}
+		},
+		[routerType, pagesRouterContext]
+	)
+
 	return useMemo(
 		() => ({
 			locale,
 			push,
+			replace,
 			routerType,
 		}),
-		[locale, push, routerType]
+		[locale, push, replace, routerType]
 	)
 }
