@@ -1,66 +1,28 @@
-'use client'
+import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
+import { Container, Typography, Box } from '@mui/material'
+import { getBlogPosts } from '@/lib/blog'
+import BlogList from '@/components/blog/BlogList'
 
-import { useState, useEffect, useMemo } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
-import BlogCard from '@/components/blog/BlogCard'
-import { sortPostsByDate } from '@/utils/blogHelpers'
-import { Container, Typography, Box, useTheme } from '@mui/material'
-import { getBlogImageUrl } from '@/utils/mediaUrls'
-import { useUserContext } from '@/context/user'
+// Metadata for SEO
+export async function generateMetadata({ params }) {
+	const { locale } = await params
+	const t = await getTranslations({ locale, namespace: 'blog' })
 
-export default function Blog() {
-	const t = useTranslations('blog')
-	const locale = useLocale()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const { userLearningLanguage } = useUserContext()
-	const [posts, setPosts] = useState([])
+	return {
+		title: t('pagetitle'),
+		description: t('description'),
+	}
+}
 
-	useEffect(() => {
-		const fetchPosts = async () => {
-			try {
-				const response = await fetch(`/api/blog/posts?locale=${locale}`)
-				if (response.ok) {
-					const data = await response.json()
-					setPosts(data.posts || [])
-				}
-			} catch (error) {
-				console.error('Error fetching blog posts:', error)
-			}
-		}
+export default async function BlogPage({ params }) {
+	const { locale } = await params
 
-		fetchPosts()
-	}, [locale])
+	// Fetch posts server-side - NO API route needed!
+	const posts = getBlogPosts(locale)
 
-	// Filter posts based on learning language for English blog
-	const filteredPosts = useMemo(() => {
-		if (locale !== 'en') {
-			return posts
-		}
-
-		// For English blog, filter based on learning language
-		const filtered = posts.filter(post => {
-			// Always exclude the comparison article
-			if (post.slug === 'french-vs-russian-which-to-learn') {
-				return false
-			}
-
-			// If learning French, show only French-related articles
-			if (userLearningLanguage === 'fr') {
-				return post.slug !== 'why-learn-russian' && post.slug !== 'how-to-learn-russian'
-			}
-
-			// If learning Russian, show only Russian-related articles
-			if (userLearningLanguage === 'ru') {
-				return post.slug !== 'why-learn-french' && post.slug !== 'how-to-learn-french'
-			}
-
-			// If no learning language set (guest or new user), show all
-			return true
-		})
-
-		return filtered
-	}, [posts, locale, userLearningLanguage])
+	// Get translations server-side
+	const t = await getTranslations({ locale, namespace: 'blog' })
 
 	return (
 		<>
@@ -102,19 +64,8 @@ export default function Blog() {
 					py: { xs: 3, md: 4 },
 					px: { xs: 2, sm: 3 },
 				}}>
-				{/* Blog Posts */}
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: { xs: 2.5, sm: 3 },
-						maxWidth: '800px',
-						mx: 'auto',
-					}}>
-					{filteredPosts.map((post, index) => (
-						<BlogCard key={index} post={post} />
-					))}
-				</Box>
+				{/* Blog Posts - Client Component for filtering */}
+				<BlogList posts={posts} locale={locale} />
 			</Container>
 		</>
 	)

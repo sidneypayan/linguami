@@ -11,9 +11,20 @@ const nextConfig = {
 				hostname: 'psomseputtsdizmmqugy.supabase.co',
 				pathname: '**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'images.unsplash.com',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'linguami-cdn.etreailleurs.workers.dev',
+				pathname: '**',
+			},
 		],
 		unoptimized: true,
 		formats: ['image/webp'],
+		qualities: [50, 75, 85, 90, 100], // Qualités autorisées pour Next.js 16+
 	},
 
 	// Extensions de pages supportées

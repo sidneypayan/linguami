@@ -181,7 +181,10 @@
     "readMore": "Читать далее",
     "signup_widget_title": "Начните обучение!",
     "signup_widget_message": "Присоединяйтесь к тысячам учащихся и получите бесплатный доступ к нашим ресурсам.",
-    "signup_widget_button": "Регистрация бесплатно"
+    "signup_widget_button": "Регистрация бесплатно",
+    "readingTime": "Время чтения",
+    "shareArticle": "Поделиться статьёй",
+    "relatedArticles": "Связанные статьи"
   },
   "common": {
     "learn": "Я учу",

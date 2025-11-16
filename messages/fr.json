@@ -181,7 +181,10 @@
     "readMore": "Lire la suite",
     "signup_widget_title": "Commencez votre apprentissage !",
     "signup_widget_message": "Rejoignez des milliers d'apprenants et accédez gratuitement à nos ressources.",
-    "signup_widget_button": "Inscription gratuite"
+    "signup_widget_button": "Inscription gratuite",
+    "readingTime": "Temps de lecture",
+    "shareArticle": "Partager l'article",
+    "relatedArticles": "Articles connexes"
   },
   "common": {
     "learn": "J'apprends",

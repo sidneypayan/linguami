@@ -1,13 +1,28 @@
-import { createServerClient } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
 
 export default async function handler(req, res) {
 	if (req.method !== 'GET') {
 		return res.status(405).json({ error: 'Method not allowed' })
 	}
 
-	// Create Supabase client to check authentication
-	const supabase = createServerClient(req, res)
+	// Create Supabase client to check authentication with proper cookie handling for Pages API
+	const supabase = createServerClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+		{
+			cookies: {
+				getAll() {
+					return Object.keys(req.cookies).map(name => ({ name, value: req.cookies[name] }))
+				},
+				setAll(cookiesToSet) {
+					cookiesToSet.forEach(({ name, value, options }) => {
+						res.setHeader('Set-Cookie', `${name}=${value}; Path=/; ${options?.maxAge ? `Max-Age=${options.maxAge};` : ''} ${options?.httpOnly ? 'HttpOnly;' : ''} ${options?.secure ? 'Secure;' : ''} ${options?.sameSite ? `SameSite=${options.sameSite};` : ''}`)
+					})
+				},
+			},
+		}
+	)
 	const { data: { user }, error: authError } = await supabase.auth.getUser()
 
 	if (!user || authError) {
