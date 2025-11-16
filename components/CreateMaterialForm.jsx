@@ -1,6 +1,6 @@
 import { Box, Button, Typography, TextField, MenuItem, Card, CardContent, Alert, Chip, Stack, ListSubheader, Divider } from '@mui/material'
 import { FormRow, FormRowSelect } from '.'
-import { locale, level, audioSections, videoSections } from '@/utils/constants'
+import { lang, level, audioSections, videoSections } from '@/utils/constants'
 import {
 	Image as ImageIcon,
 	AudioFile,
@@ -83,7 +83,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 								value={formData.locale ?? ''}
 								handleChange={handleChange}
 								name='lang'
-								list={locale}
+								list={lang}
 							/>
 							<FormRowSelect
 								label={t('difficultyLevel')}

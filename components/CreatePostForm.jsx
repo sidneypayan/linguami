@@ -8,7 +8,7 @@ import {
 	Alert,
 } from '@mui/material'
 import { FormRow, FormRowSelect } from '@/components'
-import { locale } from '@/utils/constants'
+import { lang } from '@/utils/constants'
 import {
 	Article,
 	Image as ImageIcon,
@@ -70,7 +70,7 @@ const CreatePostForm = ({ formData, handleChange }) => {
 							value={formData.locale ?? ''}
 							handleChange={handleChange}
 							name='lang'
-							list={locale}
+							list={lang}
 						/>
 						<FormRow
 							label={t('articleTitle')}
