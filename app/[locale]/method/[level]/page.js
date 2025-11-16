@@ -125,7 +125,7 @@ const LevelLessonsPage = () => {
 				<Button
 					variant="contained"
 					sx={{ mt: 2 }}
-					onClick={() => router.push('/method')}>
+					onClick={() => router.push(`/${locale}/method`)}>
 					{t('methode_back')}
 				</Button>
 			</Container>
@@ -139,7 +139,7 @@ const LevelLessonsPage = () => {
 				<Button
 					variant="contained"
 					sx={{ mt: 2 }}
-					onClick={() => router.push('/method')}>
+					onClick={() => router.push(`/${locale}/method`)}>
 					{t('methode_back')}
 				</Button>
 			</Container>
@@ -293,7 +293,7 @@ const LevelLessonsPage = () => {
 												: '0 8px 16px rgba(139, 92, 246, 0.2)',
 										},
 									}}
-									onClick={() => router.push(`/method/${levelSlug}/${lesson.slug}`)}>
+									onClick={() => router.push(`/${locale}/method/${levelSlug}/${lesson.slug}`)}>
 									<CardContent>
 										<Box
 											sx={{
@@ -402,7 +402,7 @@ const LevelLessonsPage = () => {
 					<Button
 						variant="outlined"
 						startIcon={<ArrowBack />}
-						onClick={() => router.push('/method')}>
+						onClick={() => router.push(`/${locale}/method`)}>
 						{t('methode_back')}
 					</Button>
 				</Box>

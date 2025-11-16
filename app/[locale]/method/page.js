@@ -105,7 +105,7 @@ const MethodePage = () => {
 
 	const handleLevelClick = (level) => {
 		// Option A: Direct navigation to level's lessons (single course per level)
-		router.push(`/method/${level.slug}`)
+		router.push(`/${locale}/method/${level.slug}`)
 	}
 
 	if (levels_loading || userAccess_loading) {

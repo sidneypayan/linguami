@@ -197,7 +197,7 @@ const LessonPage = () => {
 				<Button
 					variant="contained"
 					sx={{ mt: 2 }}
-					onClick={() => router.push('/method')}>
+					onClick={() => router.push(`/${locale}/method`)}>
 					{t('methode_back')}
 				</Button>
 			</Container>
@@ -211,7 +211,7 @@ const LessonPage = () => {
 				<Button
 					variant="contained"
 					sx={{ mt: 2 }}
-					onClick={() => router.push('/method')}>
+					onClick={() => router.push(`/${locale}/method`)}>
 					{t('methode_back')}
 				</Button>
 			</Container>
@@ -227,13 +227,12 @@ const LessonPage = () => {
 	const objectives = currentLesson[objectivesKey] || currentLesson.objectives || currentLesson.objectives_fr || []
 
 	// Get blocks in spoken language (user's native language for translations)
-	// TEMPORARY: Prefer 'blocks' over blocksKey until data is fixed (blocks_fr has English translations)
-	// Check that blocks has content (not just an empty array)
-	const blocks = (currentLesson.blocks && currentLesson.blocks.length > 0)
-		? currentLesson.blocks
-		: (currentLesson[blocksKey] && currentLesson[blocksKey].length > 0)
-			? currentLesson[blocksKey]
-			: currentLesson.blocks_fr || []
+	// Prefer blocks_fr/blocks_ru/blocks_en based on spoken language, fallback to blocks
+	const blocks = (currentLesson[blocksKey] && currentLesson[blocksKey].length > 0)
+		? currentLesson[blocksKey]
+		: (currentLesson.blocks && currentLesson.blocks.length > 0)
+			? currentLesson.blocks
+			: []
 
 	// Check if user has access to this lesson
 	const isFreeLesson = currentLesson.is_free === true
@@ -376,7 +375,7 @@ const LessonPage = () => {
 							<Button
 								variant="outlined"
 								startIcon={<ArrowBack />}
-								onClick={() => router.push(`/method/${levelSlug}`)}>
+								onClick={() => router.push(`/${locale}/method/${levelSlug}`)}>
 								{t('methode_back_to_course')}
 							</Button>
 
@@ -396,13 +395,15 @@ const LessonPage = () => {
 			</Container>
 
 			{/* Upsell Modal */}
-			<UpsellModal
-				open={showUpsellModal}
-				onClose={() => setShowUpsellModal(false)}
-				levelName={currentLevel?.[`name_${locale}`] || levelSlug}
-				isPremium={isPremiumUser}
-				onPurchase={handlePurchase}
-			/>
+			{showUpsellModal && currentLevel && (
+				<UpsellModal
+					open={showUpsellModal}
+					onClose={() => setShowUpsellModal(false)}
+					levelName={currentLevel[`name_${locale}`] || levelSlug}
+					isPremium={isPremiumUser}
+					onPurchase={handlePurchase}
+				/>
+			)}
 		</>
 	)
 }

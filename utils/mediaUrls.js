@@ -2,9 +2,9 @@
  * Helper functions to build media URLs for the new R2 bucket architecture
  *
  * New structure:
- * - Audio materials: audios/materials/{lang}/{filename}
- * - Audio courses: audios/courses/{lang}/{filename}
- * - Audio exercises: audios/exercises/{lang}/{filename}
+ * - Audio materials: audios/{lang}/materials/{filename}
+ * - Audio courses: audios/{lang}/courses/{filename}
+ * - Audio exercises: audios/{lang}/exercises/{filename}
  * - Images: images/materials/{filename}, images/blog/{filename}, images/ui/{filename}
  */
 
@@ -33,7 +33,7 @@ export function getAudioUrl(material) {
   if (!baseUrl) return null
   const lang = material.lang.replace(/^\/+/, '')
   const audio = material.audio_filename.replace(/^\/+/, '')
-  return `${baseUrl}/audios/materials/${lang}/${audio}`
+  return `${baseUrl}/audios/${lang}/materials/${audio}`
 }
 
 /**

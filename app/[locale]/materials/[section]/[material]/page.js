@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
@@ -60,7 +60,8 @@ import {
 	successButton,
 } from '@/utils/buttonStyles'
 
-const Material = ({ params }) => {
+const Material = ({ params: paramsPromise }) => {
+	const params = use(paramsPromise)
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const dispatch = useDispatch()

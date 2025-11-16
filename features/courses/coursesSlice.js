@@ -95,6 +95,7 @@ export const getCoursesByLevel = createAsyncThunk(
 						objectives_fr,
 						objectives_ru,
 						objectives_en,
+						blocks,
 						blocks_fr,
 						blocks_ru,
 						blocks_en,
