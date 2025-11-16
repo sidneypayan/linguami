@@ -13,11 +13,13 @@ import {
 	Stack,
 	Typography,
 	Avatar,
+	IconButton,
 	useTheme,
 } from '@mui/material'
-import { FormatQuote } from '@mui/icons-material'
+import { FormatQuote, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
+import { useState, useCallback, useEffect } from 'react'
 
 export default function Teacher() {
 	const t = useTranslations('teacher')
@@ -37,7 +39,7 @@ export default function Teacher() {
 		: getUIImageUrl('elf_male.webp')
 
 	// Embla Carousel setup
-	const [emblaRef] = useEmblaCarousel(
+	const [emblaRef, emblaApi] = useEmblaCarousel(
 		{
 			loop: false,
 			align: 'start',
@@ -45,6 +47,46 @@ export default function Teacher() {
 		},
 		[Autoplay({ delay: 5000, stopOnInteraction: false })]
 	)
+
+	const [canScrollPrev, setCanScrollPrev] = useState(false)
+	const [canScrollNext, setCanScrollNext] = useState(true)
+	const [selectedIndex, setSelectedIndex] = useState(0)
+
+	const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
+	const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
+	const scrollTo = useCallback((index) => emblaApi && emblaApi.scrollTo(index), [emblaApi])
+
+	const onSelect = useCallback(() => {
+		if (!emblaApi) return
+		setCanScrollPrev(emblaApi.canScrollPrev())
+		setCanScrollNext(emblaApi.canScrollNext())
+		setSelectedIndex(emblaApi.selectedScrollSnap())
+	}, [emblaApi])
+
+	useEffect(() => {
+		if (!emblaApi) return
+		onSelect()
+		emblaApi.on('select', onSelect)
+		emblaApi.on('reInit', onSelect)
+	}, [emblaApi, onSelect])
+
+	const reviews = [
+		{
+			name: 'David',
+			text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
+			color: '#8b5cf6',
+		},
+		{
+			name: 'Carole',
+			text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
+			color: '#06b6d4',
+		},
+		{
+			name: 'Daniel',
+			text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
+			color: '#8b5cf6',
+		},
+	]
 
 	return (
 		<>
@@ -288,12 +330,15 @@ export default function Teacher() {
 							{t('reviewsSubtitle')}
 						</Typography>
 
-						<Box sx={{ overflow: 'hidden', py: { xs: 3, md: 4 } }}>
+						<Box sx={{ py: { xs: 3, md: 4 }, mt: 2 }}>
 							<Box ref={emblaRef} sx={{ overflow: 'hidden' }}>
 								<Box
 									sx={{
 										display: 'flex',
+										alignItems: 'stretch',
 										gap: { xs: 2, sm: 3, md: 4 },
+										px: { xs: 0, md: 2 },
+										pt: 3,
 										'& > *': {
 											flex: '0 0 100%',
 											minWidth: 0,
@@ -305,30 +350,17 @@ export default function Teacher() {
 											},
 										},
 									}}>
-									{[
-								{
-									name: 'David',
-									text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
-									color: '#8b5cf6',
-								},
-								{
-									name: 'Carole',
-									text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
-									color: '#06b6d4',
-								},
-								{
-									name: 'Daniel',
-									text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
-									color: '#8b5cf6',
-								},
-							].map((review, index) => (
+									{reviews.map((review, index) => (
 										<Box key={review.name}>
 											<Card
 												sx={{
 													width: '100%',
+													height: { xs: '380px', sm: '420px', md: '460px' },
 													position: 'relative',
 													borderRadius: 4,
 													overflow: 'visible',
+													display: 'flex',
+													flexDirection: 'column',
 													background: isDark
 														? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
 														: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -364,7 +396,7 @@ export default function Teacher() {
 													}}>
 													<FormatQuote sx={{ color: 'white', fontSize: 28 }} />
 												</Box>
-												<CardContent sx={{ pt: 5, pb: 4, px: 3 }}>
+												<CardContent sx={{ pt: 5, pb: 4, px: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
 													<Typography
 														variant='h5'
 														align='center'
@@ -391,6 +423,89 @@ export default function Teacher() {
 										</Box>
 									))}
 								</Box>
+							</Box>
+
+							{/* Indicateurs de pagination (dots) */}
+							<Box
+								sx={{
+									display: 'flex',
+									justifyContent: 'center',
+									gap: 1,
+									mt: 4,
+									mb: 2,
+								}}>
+								{reviews.map((_, index) => (
+									<Box
+										key={index}
+										onClick={() => scrollTo(index)}
+										sx={{
+											width: selectedIndex === index ? '24px' : '10px',
+											height: '10px',
+											borderRadius: selectedIndex === index ? '5px' : '50%',
+											background: selectedIndex === index
+												? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
+												: 'rgba(139, 92, 246, 0.3)',
+											boxShadow: selectedIndex === index ? '0 2px 8px rgba(139, 92, 246, 0.4)' : 'none',
+											cursor: 'pointer',
+											transition: 'all 0.3s ease',
+											'&:hover': {
+												background: selectedIndex === index
+													? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
+													: 'rgba(139, 92, 246, 0.5)',
+											},
+										}}
+									/>
+								))}
+							</Box>
+
+							{/* Boutons de navigation */}
+							<Box
+								sx={{
+									display: 'flex',
+									justifyContent: 'center',
+									gap: 2,
+									mt: 1,
+								}}>
+								<IconButton
+									onClick={scrollPrev}
+									disabled={!canScrollPrev}
+									sx={{
+										width: 48,
+										height: 48,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										border: '2px solid rgba(139, 92, 246, 0.3)',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+											transform: 'scale(1.1)',
+											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+										},
+										'&.Mui-disabled': {
+											opacity: 0.3,
+										},
+									}}>
+									<ArrowBackIosNew sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
+								</IconButton>
+								<IconButton
+									onClick={scrollNext}
+									disabled={!canScrollNext}
+									sx={{
+										width: 48,
+										height: 48,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										border: '2px solid rgba(139, 92, 246, 0.3)',
+										transition: 'all 0.3s ease',
+										'&:hover': {
+											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
+											transform: 'scale(1.1)',
+											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+										},
+										'&.Mui-disabled': {
+											opacity: 0.3,
+										},
+									}}>
+									<ArrowForwardIos sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
+								</IconButton>
 							</Box>
 						</Box>
 					</Box>
