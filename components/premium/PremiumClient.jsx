@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { CheckCircle } from '@mui/icons-material'
 
-export default function PremiumClient({ translations }) {
+export default function PremiumClient({ translations, jsonLd }) {
 	const pricingCards = [
 		{
 			duration: '1 mois',
@@ -42,7 +42,14 @@ export default function PremiumClient({ translations }) {
 	]
 
 	return (
-		<Container sx={{ margin: '5rem auto', maxWidth: '100%', width: '800px' }}>
+		<>
+			{jsonLd && (
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				/>
+			)}
+			<Container sx={{ margin: '5rem auto', maxWidth: '100%', width: '800px' }}>
 			<Typography variant='h3' component='h1' textAlign='center' mb={5}>
 				Nos offres premium
 			</Typography>
@@ -142,5 +149,6 @@ export default function PremiumClient({ translations }) {
 				</List>
 			</Card>
 		</Container>
+		</>
 	)
 }

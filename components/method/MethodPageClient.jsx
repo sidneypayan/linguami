@@ -21,7 +21,6 @@ import {
 	CheckCircle,
 	ArrowForward,
 } from '@mui/icons-material'
-import SEO from '@/components/SEO'
 
 const MethodPageClient = ({ levels, userAccess }) => {
 	const router = useRouterCompat()
@@ -69,12 +68,6 @@ const MethodPageClient = ({ levels, userAccess }) => {
 
 	return (
 		<>
-			<SEO
-				title={`${t('methode_title')} | ${t('siteName')}`}
-				description={t('methode_description')}
-				path="/method"
-			/>
-
 			{/* Hero Section */}
 			<Box
 				sx={{

@@ -22,7 +22,6 @@ import {
 	NavigateNext,
 } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
-import SEO from '@/components/SEO'
 import LessonNavigator from '@/components/courses/LessonNavigator'
 import PaywallBlock from '@/components/courses/PaywallBlock'
 import UpsellModal from '@/components/courses/UpsellModal'
@@ -134,12 +133,6 @@ const LessonPageClient = ({
 
 	return (
 		<>
-			<SEO
-				title={`${lesson?.[titleKey]} | ${t('methode_title')}`}
-				description={`${t('methode_lesson')} ${lesson?.[titleKey]} - ${objectives.join(', ')}`}
-				path={`/method/${level?.slug}/${lesson?.slug}`}
-			/>
-
 			{/* Header */}
 			<Box
 				sx={{

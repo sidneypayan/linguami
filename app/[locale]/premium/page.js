@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server'
 import PremiumClient from '@/components/premium/PremiumClient'
-import SEO from '@/components/SEO'
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params
@@ -13,43 +12,47 @@ export async function generateMetadata({ params }) {
 		en: 'linguami premium, premium subscription, unlimited dictionary, flashcards, language learning premium, russian french premium'
 	}
 
-	// JSON-LD pour Product/Offer
-	const jsonLd = {
-		'@context': 'https://schema.org',
-		'@type': 'Product',
-		name: 'Linguami Premium',
-		description: t('description'),
-		brand: {
-			'@type': 'Brand',
-			name: 'Linguami'
-		},
-		offers: [
-			{
-				'@type': 'Offer',
-				name: '1 Month Premium',
-				price: '6.00',
-				priceCurrency: 'EUR',
-				availability: 'https://schema.org/InStock',
-				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
-				priceValidUntil: '2026-12-31'
-			},
-			{
-				'@type': 'Offer',
-				name: '3 Months Premium',
-				price: '15.00',
-				priceCurrency: 'EUR',
-				availability: 'https://schema.org/InStock',
-				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
-				priceValidUntil: '2026-12-31'
-			}
-		]
-	}
+	const baseUrl = 'https://www.linguami.com'
+	const path = '/premium'
+	const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}${path}`
+	const frUrl = `${baseUrl}${path}`
+	const ruUrl = `${baseUrl}/ru${path}`
+	const enUrl = `${baseUrl}/en${path}`
 
 	return {
 		title: `${t('pagetitle')} | Linguami`,
 		description: t('description'),
-		other: {
-			'schema:keywords': keywordsByLang[locale],
+		keywords: keywordsByLang[locale] || keywordsByLang.fr,
+		authors: [{ name: 'Linguami' }],
+		openGraph: {
+			type: 'website',
+			url: currentUrl,
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: [
+				{
+					url: 'https://www.linguami.com/og-image.jpg',
+					width: 1200,
+					height: 630,
+				},
+			],
+			siteName: 'Linguami',
+			locale: locale === 'fr' ? 'fr_FR' : locale === 'ru' ? 'ru_RU' : 'en_US',
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: ['https://www.linguami.com/og-image.jpg'],
+		},
+		alternates: {
+			canonical: currentUrl,
+			languages: {
+				fr: frUrl,
+				ru: ruUrl,
+				en: enUrl,
+				'x-default': frUrl,
+			},
 		},
 	}
 }
@@ -108,16 +111,5 @@ export default async function Premium({ params }) {
 		support_appreciation: t('support_appreciation'),
 	}
 
-	return (
-		<>
-			<SEO
-				title={`${t('pagetitle')} | Linguami`}
-				description={t('description')}
-				path='/premium'
-				keywords={keywordsByLang[locale]}
-				jsonLd={jsonLd}
-			/>
-			<PremiumClient translations={translations} />
-		</>
-	)
+	return <PremiumClient translations={translations} jsonLd={jsonLd} />
 }

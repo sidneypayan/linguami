@@ -4,15 +4,30 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { getStatistics, getGoals } from '@/lib/statistics'
 import StatisticsClient from '@/components/statistics/StatisticsClient'
-import SEO from '@/components/SEO'
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params
 	const t = await getTranslations({ locale, namespace: 'stats' })
 
+	const titles = {
+		fr: 'Mes Statistiques',
+		ru: 'Моя Статистика',
+		en: 'My Statistics',
+	}
+
+	const descriptions = {
+		fr: 'Suivez votre progression, vos objectifs et vos badges. Consultez vos statistiques de vocabulaire et de révision.',
+		ru: 'Отслеживайте свой прогресс, цели и значки. Просматривайте статистику по словарному запасу и повторениям.',
+		en: 'Track your progress, goals and badges. View your vocabulary and review statistics.',
+	}
+
 	return {
-		title: `${t('pageTitle')} | Linguami`,
-		description: t('pageDescription'),
+		title: `${titles[locale] || titles.fr} | Linguami`,
+		description: descriptions[locale] || descriptions.fr,
+		robots: {
+			index: false,
+			follow: false,
+		},
 	}
 }
 
@@ -110,17 +125,11 @@ export default async function StatisticsPage({ params }) {
 	}
 
 	return (
-		<>
-			<SEO
-				title={translations.pageTitle}
-				description={translations.pageDescription}
-			/>
-			<StatisticsClient
-				stats={stats}
-				xpProfile={xpProfile}
-				goals={goals}
-				t={(key) => translations[key] || key}
-			/>
-		</>
+		<StatisticsClient
+			stats={stats}
+			xpProfile={xpProfile}
+			goals={goals}
+			t={(key) => translations[key] || key}
+		/>
 	)
 }

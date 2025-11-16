@@ -1,6 +1,5 @@
 import Homepage from '@/components/homepage'
 import { getTranslations } from 'next-intl/server'
-import SEO from '@/components/SEO'
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params
@@ -15,11 +14,46 @@ export async function generateMetadata({ params }) {
 
 	const currentLocale = localeConfig[locale] || localeConfig.fr
 
+	const baseUrl = 'https://www.linguami.com'
+	const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}`
+	const frUrl = baseUrl
+	const ruUrl = `${baseUrl}/ru`
+	const enUrl = `${baseUrl}/en`
+
 	return {
 		title: `${t('pagetitle')} | Linguami`,
 		description: t('description'),
-		other: {
-			'schema:keywords': currentLocale.keywords,
+		keywords: currentLocale.keywords,
+		authors: [{ name: 'Linguami' }],
+		openGraph: {
+			type: 'website',
+			url: currentUrl,
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: [
+				{
+					url: 'https://www.linguami.com/og-image.jpg',
+					width: 1200,
+					height: 630,
+				},
+			],
+			siteName: 'Linguami',
+			locale: currentLocale.og,
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: ['https://www.linguami.com/og-image.jpg'],
+		},
+		alternates: {
+			canonical: currentUrl,
+			languages: {
+				fr: frUrl,
+				ru: ruUrl,
+				en: enUrl,
+				'x-default': frUrl,
+			},
 		},
 	}
 }
@@ -98,16 +132,5 @@ export default async function Home({ params }) {
 		viewDemo: t('viewDemo'),
 	}
 
-	return (
-		<>
-			<SEO
-				title={`${t('pagetitle')} | Linguami`}
-				description={t('description')}
-				path="/"
-				keywords={currentLocale.keywords}
-				jsonLd={jsonLd}
-			/>
-			<Homepage translations={translations} />
-		</>
-	)
+	return <Homepage translations={translations} jsonLd={jsonLd} />
 }

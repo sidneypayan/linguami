@@ -426,7 +426,7 @@ const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse
 	)
 }
 
-const Homepage = ({ translations }) => {
+const Homepage = ({ translations, jsonLd }) => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [open, setOpen] = useState(false)
@@ -521,6 +521,13 @@ const Homepage = ({ translations }) => {
 
 	return (
 		<>
+			{/* JSON-LD structured data */}
+			{jsonLd && (
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				/>
+			)}
 			<Hero />
 			<Box
 				sx={{

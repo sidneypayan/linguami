@@ -1,394 +1,95 @@
-'use client'
+import { getTranslations } from 'next-intl/server'
+import SectionPageClient from '@/components/materials/SectionPageClient'
 
-import { useTranslations, useLocale } from "next-intl";
-import SectionCard from '@/components/SectionCard';
-import MaterialsTable from '@/components/MaterialsTable';
-import MaterialsFilterBar from '@/components/MaterialsFilterBar';
-import Pagination from '@/components/layouts/Pagination';
-import { useSelector, useDispatch } from "react-redux";
-import {
-  getBooks,
-  getMaterials,
-  getUserMaterialsStatus,
-  filterMaterials,
-  searchMaterial,
-  showAllMaterials,
-  filterMaterialsByStatus,
-  filterMaterialsByLevelAndStatus,
-} from '@/features/materials/materialsSlice';
-import { selectMaterialsData } from '@/features/materials/materialsSelectors';
+export async function generateMetadata({ params }) {
+	const { locale, section } = await params
+	const t = await getTranslations({ locale, namespace: 'materials' })
 
-import { useEffect, useState, useMemo, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { Box, Container, IconButton, Typography } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
-import SEO from '@/components/SEO';
-import { useUserContext } from '@/context/user';
-import LoadingSpinner from '@/components/LoadingSpinner';
+	// SEO keywords by section and language
+	const sectionName = t(section || 'materials')
+	let keywords
+	if (locale === 'fr') {
+		keywords = `${sectionName} russe, matériel ${sectionName}, apprendre russe avec ${sectionName}`
+	} else if (locale === 'ru') {
+		keywords = `${sectionName} французский, материалы ${sectionName}, учить французский`
+	} else {
+		keywords = `${sectionName} russian, ${sectionName} french, language learning ${sectionName}`
+	}
 
-const Section = () => {
-  const t = useTranslations('materials')
-	const locale = useLocale();
-  const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext();
-  const router = useRouter();
-  const params = useParams();
-    const section = params.section;  
-  const [viewMode, setViewMode] = useState("card");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false);
+	const baseUrl = 'https://www.linguami.com'
+	const path = `/materials/${section || ''}`
+	const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}${path}`
+	const frUrl = `${baseUrl}${path}`
+	const ruUrl = `${baseUrl}/ru${path}`
+	const enUrl = `${baseUrl}/en${path}`
 
-  // Tracker le niveau précédent pour détecter les changements
-  const prevUserLevelRef = useRef(null);
+	return {
+		title: `${t(section || 'pagetitle')} | Linguami`,
+		description: t('description'),
+		keywords: keywords,
+		authors: [{ name: 'Linguami' }],
+		openGraph: {
+			type: 'website',
+			url: currentUrl,
+			title: `${t(section || 'pagetitle')} | Linguami`,
+			description: t('description'),
+			images: [
+				{
+					url: 'https://www.linguami.com/og-image.jpg',
+					width: 1200,
+					height: 630,
+				},
+			],
+			siteName: 'Linguami',
+			locale: locale === 'fr' ? 'fr_FR' : locale === 'ru' ? 'ru_RU' : 'en_US',
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title: `${t(section || 'pagetitle')} | Linguami`,
+			description: t('description'),
+			images: ['https://www.linguami.com/og-image.jpg'],
+		},
+		alternates: {
+			canonical: currentUrl,
+			languages: {
+				fr: frUrl,
+				ru: ruUrl,
+				en: enUrl,
+				'x-default': frUrl,
+			},
+		},
+	}
+}
 
-  const dispatch = useDispatch();
-  // Utiliser le sélecteur mémoïsé pour optimiser les performances
-  const {
-    materials_loading,
-    filtered_materials,
-    level,
-    sliceStart,
-    sliceEnd,
-    page,
-    materialsPerPage,
-  } = useSelector(selectMaterialsData);
+export default async function SectionPage({ params }) {
+	const { locale, section } = await params
+	const t = await getTranslations({ locale, namespace: 'materials' })
 
-  // Sélecteurs supplémentaires (non inclus dans selectMaterialsData)
-  const books_loading = useSelector((state) => state.materials.books_loading);
-  const user_materials_status = useSelector(
-    (state) => state.materials.user_materials_status,
-  );
+	// JSON-LD for CollectionPage
+	const jsonLd = section
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'CollectionPage',
+				name: `${t(section)} | ${t('pagetitle')}`,
+				description: t('description'),
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/materials/${section}`,
+				inLanguage: locale === 'fr' ? 'fr-FR' : locale === 'ru' ? 'ru-RU' : 'en-US',
+				about: {
+					'@type': 'Thing',
+					name: t(section),
+				},
+			}
+		: null
 
-  // Définir cette fonction avant de l'utiliser dans useMemo
-  const checkIfUserMaterialIsInMaterials = (id) => {
-    const matchingMaterials = user_materials_status.find(
-      (userMaterial) => userMaterial.material_id === id,
-    );
-    return matchingMaterials;
-  };
-
-  // Filtrer localement les matériaux pour s'assurer qu'ils correspondent à la langue d'apprentissage
-  // Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
-  const displayedMaterials = useMemo(() => {
-    if (!filtered_materials || !userLearningLanguage) return [];
-    return filtered_materials.filter((material) => {
-      // Vérifier que le matériel correspond à la langue d'apprentissage
-      return material.lang === userLearningLanguage;
-    });
-  }, [filtered_materials, userLearningLanguage]);
-
-  // Définir le nombre de matériaux par page selon le mode de vue
-  const itemsPerPage = viewMode === 'card' ? 8 : 10;
-
-  // Calculer le nombre de pages basé sur les matériaux réellement affichés
-  const numOfPages = Math.ceil(displayedMaterials.length / itemsPerPage);
-
-  // S'assurer que la page actuelle ne dépasse pas le nombre de pages disponibles
-  const currentPage = Math.min(page, Math.max(1, numOfPages));
-
-  // Calculer localement sliceStart et sliceEnd basés sur les matériaux réellement affichés
-  const localSliceStart = (currentPage - 1) * itemsPerPage;
-  const localSliceEnd = currentPage * itemsPerPage;
-
-  const handleViewChange = (view) => {
-    setViewMode(view);
-  };
-
-  const handleSearchChange = (value) => {
-    setSearchTerm(value);
-    dispatch(searchMaterial(value));
-  };
-
-  // Fonction helper pour appliquer les deux filtres ensemble
-  const applyBothFilters = (level, status) => {
-    // Si aucun filtre, tout afficher
-    if (!level && !status) {
-      dispatch(showAllMaterials());
-      return;
-    }
-
-    // Utiliser la nouvelle action qui gère les deux filtres ensemble
-    dispatch(
-      filterMaterialsByLevelAndStatus({
-        section,
-        level,
-        status,
-        userMaterialsStatus: user_materials_status,
-      }),
-    );
-  };
-
-  const handleLevelChange = (level) => {
-    setSelectedLevel(level);
-    // Garder le statut actuel et appliquer les deux filtres
-    applyBothFilters(level, selectedStatus);
-  };
-
-  const handleStatusChange = (status) => {
-    setSelectedStatus(status);
-    // Garder le niveau actuel et appliquer les deux filtres
-    applyBothFilters(selectedLevel, status);
-  };
-
-  const handleClear = () => {
-    setSearchTerm("");
-    setSelectedLevel(null);
-    setSelectedStatus(null);
-    // Réinitialiser tous les filtres
-    dispatch(showAllMaterials());
-  };
-
-  useEffect(() => {
-    if (!userLearningLanguage || !section) return;
-
-    // Réinitialiser le flag quand la section change
-    setHasAppliedDefaultFilter(false);
-    // Réinitialiser aussi le filtre de statut
-    setSelectedStatus(null);
-
-    if (section === "books") {
-      dispatch(getBooks({ userLearningLanguage }));
-    } else {
-      dispatch(getMaterials({ userLearningLanguage, section }));
-      dispatch(getUserMaterialsStatus());
-    }
-  }, [userLearningLanguage, section, dispatch]);
-
-  // Appliquer les filtres par défaut : niveau utilisateur + non étudiés
-  useEffect(() => {
-    if (
-      !materials_loading &&
-      userProfile?.language_level &&
-      section &&
-      section !== "books" &&
-      !hasAppliedDefaultFilter &&
-      user_materials_status // Attendre que le statut des matériaux soit chargé
-    ) {
-      const userLevel = userProfile.language_level;
-
-      // Mettre à jour l'état local
-      setSelectedLevel(userLevel);
-      setSelectedStatus("not_studied");
-
-      // Appliquer les deux filtres ensemble
-      dispatch(
-        filterMaterialsByLevelAndStatus({
-          section,
-          level: userLevel,
-          status: "not_studied",
-          userMaterialsStatus: user_materials_status,
-        }),
-      );
-
-      setHasAppliedDefaultFilter(true);
-      // Sauvegarder le niveau actuel comme référence
-      prevUserLevelRef.current = userLevel;
-    }
-  }, [
-    materials_loading,
-    userProfile?.language_level,
-    section,
-    hasAppliedDefaultFilter,
-    user_materials_status,
-    dispatch,
-  ]);
-
-  // Détecter et réagir aux changements de niveau utilisateur
-  useEffect(() => {
-    const currentUserLevel = userProfile?.language_level;
-    const previousUserLevel = prevUserLevelRef.current;
-
-    // Vérifier si le niveau a vraiment changé
-    if (
-      currentUserLevel &&
-      previousUserLevel &&
-      currentUserLevel !== previousUserLevel &&
-      section &&
-      section !== "books" &&
-      user_materials_status
-    ) {
-      // Le niveau a changé, réappliquer les filtres par défaut
-      setSelectedLevel(currentUserLevel);
-      setSelectedStatus("not_studied");
-
-      // Appliquer les deux filtres ensemble
-      dispatch(
-        filterMaterialsByLevelAndStatus({
-          section,
-          level: currentUserLevel,
-          status: "not_studied",
-          userMaterialsStatus: user_materials_status,
-        }),
-      );
-
-      // Mettre à jour la référence
-      prevUserLevelRef.current = currentUserLevel;
-    }
-  }, [userProfile?.language_level, section, user_materials_status, dispatch]);
-
-  // Note: Ce useEffect a été supprimé car il créait un conflit avec le filtre par défaut
-  // basé sur le niveau utilisateur. Le filtre est maintenant géré par les useEffect ci-dessus.
-
-  // Afficher le loader pendant le chargement
-  if (materials_loading && books_loading) {
-    return <LoadingSpinner />;
-  }
-
-  // Mots-clés SEO par section et langue
-  const getSectionKeywords = () => {
-    const sectionName = t(section || "materials");
-    if (locale === "fr") {
-      return `${sectionName} russe, matériel ${sectionName}, apprendre russe avec ${sectionName}`;
-    } else if (locale === "ru") {
-      return `${sectionName} французский, материалы ${sectionName}, учить французский`;
-    } else {
-      return `${sectionName} russian, ${sectionName} french, language learning ${sectionName}`;
-    }
-  };
-
-  // JSON-LD pour CollectionPage
-  const jsonLd = section
-    ? {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        name: `${t(section)} | ${t("pagetitle")}`,
-        description: t("description"),
-        url: `https://www.linguami.com${locale === "fr" ? "" : `/${locale}`}/materials/${section}`,
-        inLanguage: locale === "fr" ? "fr-FR" : locale === "ru" ? "ru-RU" : "en-US",
-        about: {
-          "@type": "Thing",
-          name: t(section),
-        },
-      }
-    : null;
-
-  return (
-    <>
-      <SEO
-        title={`${t(section || "pagetitle")} | Linguami`}
-        description={t("description")}
-        path={`/materials/${section || ""}`}
-        keywords={getSectionKeywords()}
-        jsonLd={jsonLd}
-      />
-
-      {/* Compact Header - Hidden on mobile/tablet */}
-      <Box
-        sx={{
-          display: { xs: "none", lg: "block" },
-          pt: { xs: "3.75rem", md: "6rem" },
-          pb: { xs: 2, md: 2.5 },
-          borderBottom: "1px solid rgba(139, 92, 246, 0.15)",
-          bgcolor: "background.paper",
-        }}
-      >
-        <Container maxWidth="lg">
-          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, md: 2 }, mb: { xs: 1.25, md: 1.5 } }}>
-            <IconButton
-              sx={{
-                background:
-                  "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)",
-                border: "1px solid rgba(139, 92, 246, 0.3)",
-                color: "#8b5cf6",
-                width: { xs: 40, md: 44 },
-                height: { xs: 40, md: 44 },
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  background:
-                    "linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)",
-                  transform: "scale(1.05)",
-                },
-              }}
-              aria-label="back"
-              onClick={() => router.back()}
-            >
-              <ArrowBack fontSize="medium" />
-            </IconButton>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                fontSize: { xs: "1.5rem", sm: "2rem" },
-                background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                flex: 1,
-              }}
-            >
-              {section && t(section)}
-            </Typography>
-          </Box>
-        </Container>
-      </Box>
-
-      <Container
-        maxWidth="lg"
-        sx={{ pt: { xs: "3.75rem", lg: 2.5 }, pb: { xs: 2.5, md: 4 }, px: { xs: 2, sm: 3 } }}
-      >
-        <Box sx={{ width: "100%", maxWidth: "100%" }}>
-          <MaterialsFilterBar
-            onSearchChange={handleSearchChange}
-            onLevelChange={handleLevelChange}
-            onStatusChange={handleStatusChange}
-            onClear={handleClear}
-            onViewChange={handleViewChange}
-            searchValue={searchTerm}
-            selectedLevel={selectedLevel}
-            selectedStatus={selectedStatus}
-            currentView={viewMode}
-            showNotStudiedFilter={true}
-            showStudiedFilter={isUserAdmin}
-            translationNamespace="materials"
-          />
-
-          {viewMode === "card" ? (
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                  lg: "repeat(4, 1fr)",
-                },
-                rowGap: { xs: 2, md: 3 },
-                columnGap: { xs: 2, md: 3 },
-                // Masquer temporairement pendant que displayedMaterials se met à jour
-                opacity: displayedMaterials.length > 0 ? 1 : 0,
-                transition: "opacity 0.15s ease-in",
-              }}
-            >
-              {displayedMaterials.length > 0 &&
-                displayedMaterials
-                  .slice(localSliceStart, localSliceEnd)
-                  .map((material) => (
-                    <SectionCard
-                      checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-                        material.id,
-                      )}
-                      key={material.id}
-                      material={material}
-                    />
-                  ))}
-            </Box>
-          ) : (
-            <MaterialsTable
-              materials={displayedMaterials.slice(
-                localSliceStart,
-                localSliceEnd,
-              )}
-              checkIfUserMaterialIsInMaterials={
-                checkIfUserMaterialIsInMaterials
-              }
-            />
-          )}
-
-          {numOfPages > 1 && <Pagination numOfPages={numOfPages} />}
-        </Box>
-      </Container>
-    </>
-  );
-};
-
-export default Section;
+	return (
+		<>
+			{jsonLd && (
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				/>
+			)}
+			<SectionPageClient />
+		</>
+	)
+}

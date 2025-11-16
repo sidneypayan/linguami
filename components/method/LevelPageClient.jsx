@@ -23,7 +23,6 @@ import {
 	NavigateNext,
 } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
-import SEO from '@/components/SEO'
 
 const LevelPageClient = ({
 	level,
@@ -54,12 +53,6 @@ const LevelPageClient = ({
 
 	return (
 		<>
-			<SEO
-				title={`${levelName} | Linguami`}
-				description={level?.[descriptionKey] || ''}
-				path={`/method/${level?.slug}`}
-			/>
-
 			{/* Header */}
 			<Box
 				sx={{

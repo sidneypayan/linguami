@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server'
 import DictionaryClient from '@/components/dictionary/DictionaryClient'
-import SEO from '@/components/SEO'
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params
@@ -21,6 +20,10 @@ export async function generateMetadata({ params }) {
 	return {
 		title: `${titles[locale] || titles.fr} | Linguami`,
 		description: descriptions[locale] || descriptions.fr,
+		robots: {
+			index: false,
+			follow: false,
+		},
 	}
 }
 
@@ -61,15 +64,5 @@ export default async function DictionaryPage({ params }) {
 		start: tCommon('start'),
 	}
 
-	return (
-		<>
-			<SEO
-				title={`${titles[locale] || titles.fr} | Linguami`}
-				description={descriptions[locale] || descriptions.fr}
-				path="/dictionary"
-				noindex={true}  // Page privée, ne pas indexer
-			/>
-			<DictionaryClient translations={translations} />
-		</>
-	)
+	return <DictionaryClient translations={translations} />
 }

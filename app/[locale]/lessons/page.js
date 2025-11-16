@@ -1,133 +1,131 @@
-'use client'
-import { useSelector, useDispatch } from 'react-redux'
-import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useTranslations, useLocale } from 'next-intl'
-import LessonsMenu from '@/components/lessons/LessonsMenu'
-import Lesson from '@/components/lessons/Lesson'
-import SEO from '@/components/SEO'
-import { Stack } from '@mui/material'
-import {
-	getLessons,
-	getUserLessonStatus,
-} from '@/features/lessons/lessonsSlice'
+import { getLessons } from '@/lib/lessons'
+import LessonsPageClient from '@/components/lessons/LessonsPageClient'
+import { getTranslations } from 'next-intl/server'
 
-const Lessons = () => {
-	const router = useRouter()
-	const searchParams = useSearchParams()
-	const slug = searchParams.get('slug')
-	const locale = useLocale()
-	const lang = locale
+export async function generateMetadata({ params, searchParams }) {
+	const { locale } = await params
+	const resolvedSearchParams = await searchParams
+	const slug = resolvedSearchParams?.slug
 
-	const t = useTranslations('lessons')
-	const dispatch = useDispatch()
-	const { lessons } = useSelector(store => store.lessons)
+	const t = await getTranslations({ locale, namespace: 'lessons' })
 
-	const [lessonsInfos, setLessonsInfos] = useState([])
-
-	const [selectedLesson, setSelectedLesson] = useState(null)
-
-	// 1. Récupération des données
-	useEffect(() => {
-		dispatch(getLessons({ lang }))
-	}, [dispatch, locale])
-
-	// 2. Traitement des données
-	useEffect(() => {
-		if (lessons.length > 0) {
-			const gatherLessonsInfos = lessons.map(lesson => ({
-				titleFr: lesson.title_fr,
-				titleRu: lesson.title_ru,
-				lessonLevel: lesson.level,
-				slug: lesson.slug,
-				id: lesson.id,
-			}))
-			setLessonsInfos(gatherLessonsInfos)
-		}
-	}, [lessons])
-
-	useEffect(() => {
-		if (slug && lessons.length > 0) {
-			const lesson = lessons.find(l => l.slug === slug)
-			setSelectedLesson(lesson)
-		}
-	}, [slug, lessons])
-
-	useEffect(() => {
-		if (selectedLesson) {
-			dispatch(getUserLessonStatus(selectedLesson.id))
-		}
-	}, [dispatch, selectedLesson])
-
-	// Mots-clés SEO par langue
+	// SEO keywords by language
 	const keywordsByLang = {
 		fr: 'leçons russe, cours russe, exercices russe, grammaire russe, apprendre russe en ligne, leçons interactives',
 		ru: 'уроки французского, курсы французского, упражнения французский, грамматика французского, учить французский онлайн',
-		en: 'russian lessons, french lessons, language courses, interactive lessons, learn russian online, learn french online'
+		en: 'russian lessons, french lessons, language courses, interactive lessons, learn russian online, learn french online',
 	}
 
-	// JSON-LD pour Course
-	const jsonLd = {
-		'@context': 'https://schema.org',
-		'@type': 'Course',
-		name: `${t('pagetitle')} | Linguami`,
+	const baseUrl = 'https://www.linguami.com'
+	const path = '/lessons'
+
+	// If a specific lesson is selected, generate metadata for that lesson
+	if (slug) {
+		const lessons = await getLessons(locale)
+		const lesson = lessons.find((l) => l.slug === slug)
+
+		if (lesson) {
+			const lessonTitle =
+				locale === 'fr'
+					? lesson.title_fr
+					: locale === 'ru'
+						? lesson.title_ru
+						: lesson.title_fr
+
+			const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}${path}?slug=${slug}`
+			const frUrl = `${baseUrl}${path}?slug=${slug}`
+			const ruUrl = `${baseUrl}/ru${path}?slug=${slug}`
+			const enUrl = `${baseUrl}/en${path}?slug=${slug}`
+
+			return {
+				title: `${lessonTitle} | ${t('pagetitle')}`,
+				description: `${t('pagetitle')} - ${lessonTitle}`,
+				keywords: keywordsByLang[locale] || keywordsByLang.fr,
+				authors: [{ name: 'Linguami' }],
+				openGraph: {
+					type: 'article',
+					url: currentUrl,
+					title: `${lessonTitle} | ${t('pagetitle')}`,
+					description: `${t('pagetitle')} - ${lessonTitle}`,
+					images: [
+						{
+							url: 'https://www.linguami.com/og-image.jpg',
+							width: 1200,
+							height: 630,
+						},
+					],
+					siteName: 'Linguami',
+					locale: locale === 'fr' ? 'fr_FR' : locale === 'ru' ? 'ru_RU' : 'en_US',
+				},
+				twitter: {
+					card: 'summary_large_image',
+					title: `${lessonTitle} | ${t('pagetitle')}`,
+					description: `${t('pagetitle')} - ${lessonTitle}`,
+					images: ['https://www.linguami.com/og-image.jpg'],
+				},
+				alternates: {
+					canonical: currentUrl,
+					languages: {
+						fr: frUrl,
+						ru: ruUrl,
+						en: enUrl,
+						'x-default': frUrl,
+					},
+				},
+			}
+		}
+	}
+
+	// Default metadata for lessons index page
+	const currentUrl = `${baseUrl}${locale === 'fr' ? '' : `/${locale}`}${path}`
+	const frUrl = `${baseUrl}${path}`
+	const ruUrl = `${baseUrl}/ru${path}`
+	const enUrl = `${baseUrl}/en${path}`
+
+	return {
+		title: `${t('pagetitle')} | Linguami`,
 		description: t('description'),
-		provider: {
-			'@type': 'Organization',
-			name: 'Linguami',
-			url: 'https://www.linguami.com'
+		keywords: keywordsByLang[locale] || keywordsByLang.fr,
+		authors: [{ name: 'Linguami' }],
+		openGraph: {
+			type: 'website',
+			url: currentUrl,
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: [
+				{
+					url: 'https://www.linguami.com/og-image.jpg',
+					width: 1200,
+					height: 630,
+				},
+			],
+			siteName: 'Linguami',
+			locale: locale === 'fr' ? 'fr_FR' : locale === 'ru' ? 'ru_RU' : 'en_US',
 		},
-		courseMode: 'online',
-		inLanguage: locale === 'fr' ? ['ru-RU', 'fr-FR'] : locale === 'ru' ? ['fr-FR', 'ru-RU'] : ['ru-RU', 'fr-FR', 'en-US'],
-		educationalLevel: 'Beginner to Advanced',
-		url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/lessons`
+		twitter: {
+			card: 'summary_large_image',
+			title: `${t('pagetitle')} | Linguami`,
+			description: t('description'),
+			images: ['https://www.linguami.com/og-image.jpg'],
+		},
+		alternates: {
+			canonical: currentUrl,
+			languages: {
+				fr: frUrl,
+				ru: ruUrl,
+				en: enUrl,
+				'x-default': frUrl,
+			},
+		},
 	}
-
-	return (
-		<>
-			<SEO
-				title={`${t('pagetitle')} | Linguami`}
-				description={t('description')}
-				path='/lessons'
-				keywords={keywordsByLang[locale]}
-				jsonLd={jsonLd}
-			/>
-			<Stack
-				direction={{ xs: 'column', md: 'row' }}
-				spacing={{ xs: 0, md: 4 }}
-				sx={{
-					width: {
-						xs: '100%',
-						lg: '85%',
-						xl: '80%',
-					},
-					margin: 'auto',
-					px: { xs: 0, md: 2 },
-					mt: {
-						xs: '6rem',
-						md: '8rem',
-					},
-					mb: {
-						xs: '6rem',
-						md: '8rem',
-					},
-					alignItems: 'flex-start',
-				}}>
-				<LessonsMenu
-					lessonSlug={slug}
-					lessonsInfos={lessonsInfos}
-					onSelectLesson={slug => {
-						router.push({
-							pathname: '/lessons',
-							query: { slug },
-						})
-					}}
-				/>
-
-				<Lesson lesson={selectedLesson} />
-			</Stack>
-		</>
-	)
 }
 
-export default Lessons
+export default async function LessonsPage({ params }) {
+	// Get locale from params
+	const { locale } = await params
+
+	// Fetch lessons from server
+	const lessons = await getLessons(locale)
+
+	return <LessonsPageClient initialLessons={lessons} />
+}
