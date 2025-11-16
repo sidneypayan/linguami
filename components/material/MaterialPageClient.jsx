@@ -26,7 +26,7 @@ import VideoPlayer from '@/components/material/VideoPlayer'
 import EditMaterialModal from '@/components/admin/EditMaterialModal'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import { useUserContext } from '@/context/user'
-import { sections } from '../../../../../data/sections'
+import { sections } from '@/data/sections'
 
 import Player from '@/components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'

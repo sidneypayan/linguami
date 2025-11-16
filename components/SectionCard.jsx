@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { sections } from '../data/sections'
+import { sections } from '@/data/sections'
 import { useDispatch } from 'react-redux'
 import styles from '@/styles/sections/SectionCard.module.css'
 import { getMaterialImageUrl } from '@/utils/mediaUrls'

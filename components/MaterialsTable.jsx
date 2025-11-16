@@ -28,7 +28,7 @@ import {
 	Schedule,
 	MenuBook,
 } from '@mui/icons-material'
-import { sections } from '../data/sections'
+import { sections } from '@/data/sections'
 import { getImageUrl } from '@/utils/imageUtils'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
