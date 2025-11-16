@@ -69,7 +69,7 @@ export default function StickySignupWidget() {
 		<Box
 			sx={{
 				position: 'fixed',
-				bottom: { xs: 16, md: 24 },
+				bottom: { xs: 80, md: 24 },
 				right: { xs: 16, md: 24 },
 				maxWidth: { xs: 'calc(100% - 32px)', sm: '380px' },
 				p: 3,

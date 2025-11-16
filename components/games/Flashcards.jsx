@@ -43,7 +43,7 @@ const FlashCards = () => {
 	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { showAchievements } = useAchievementContext()
-	const { user_material_words, user_words } = useSelector(store => store.words)
+	const { user_material_words, user_words, user_words_loading } = useSelector(store => store.words)
 	const [guestWords, setGuestWords] = useState([])
 	const [showAnswer, setShowAnswer] = useState(false)
 
@@ -104,22 +104,49 @@ const FlashCards = () => {
 	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
 
 	// Get appropriate word array based on current page and user status
+	// Check if pathname ends with /dictionary to handle locale prefixes (e.g., /fr/dictionary)
+	const isDictionaryPage = pathname?.endsWith('/dictionary')
 	const baseWordsArray = isUserLoggedIn
-		? (pathname === '/dictionary' ? user_words : user_material_words)
+		? (isDictionaryPage ? user_words : user_material_words)
 		: guestWords
+
+	console.log('📚 Base words source:', {
+		pathname,
+		isUserLoggedIn,
+		isDictionary: isDictionaryPage,
+		user_words_count: user_words?.length,
+		user_material_words_count: user_material_words?.length,
+		guestWords_count: guestWords?.length,
+		baseWordsArray_count: baseWordsArray?.length
+	})
 
 	// Filter to only show words that have both source and translation in current context
 	const wordsArray = useMemo(() => {
-		if (!baseWordsArray || !userLearningLanguage || !locale) return []
+		if (!baseWordsArray || !userLearningLanguage || !locale) {
+			console.log('⚠️  Cannot filter words:', { baseWordsArray: !!baseWordsArray, userLearningLanguage, locale })
+			return []
+		}
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
-		if (userLearningLanguage === locale) return []
+		if (userLearningLanguage === locale) {
+			console.log('⚠️  Learning language === interface language, no words to show')
+			return []
+		}
 
-		return baseWordsArray.filter(word => {
+		const filtered = baseWordsArray.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
 			const translation = word[`word_${locale}`]
-			return sourceWord && translation
+			const hasWords = sourceWord && translation
+
+			if (!hasWords) {
+				console.log('❌ Word filtered out:', word.id, { sourceWord, translation })
+			}
+
+			return hasWords
 		})
+
+		console.log('✅ Filtered words:', filtered.length, 'out of', baseWordsArray.length)
+		return filtered
 	}, [baseWordsArray, userLearningLanguage, locale])
 
 	// Toggle reversed mode and save to localStorage
@@ -204,19 +231,53 @@ const FlashCards = () => {
 
 	// Initialize session cards ONLY on first mount
 	useEffect(() => {
-		if (sessionInitialized) return // Don't reinitialize during session
+		console.log('🔍 Flashcards useEffect:', {
+			sessionInitialized,
+			wordsArrayLength: wordsArray?.length,
+			user_words_loading,
+			userLearningLanguage,
+			locale,
+			isUserLoggedIn
+		})
+
+		if (sessionInitialized) {
+			console.log('⏭️  Already initialized, skipping')
+			return // Don't reinitialize during session
+		}
 
 		// Wait for words to be loaded (check if we're still loading)
 		// If wordsArray is undefined or null, we're still loading
-		if (!wordsArray) return
+		if (!wordsArray) {
+			console.log('⏳ wordsArray is null/undefined, waiting...')
+			return
+		}
 
 		// Don't initialize if we don't have language data yet
 		// This prevents marking as initialized when wordsArray is empty due to missing language context
-		if (!userLearningLanguage || !locale) return
+		if (!userLearningLanguage || !locale) {
+			console.log('⏳ Missing language context, waiting...')
+			return
+		}
 
-		// For guest users, wait until guestWords are loaded before initializing
+		// For ALL users (logged in or guest), wait until words are loaded
 		// This prevents initializing with an empty array due to race condition
-		if (!isUserLoggedIn && guestWords.length === 0 && wordsArray.length === 0) return
+		// Don't mark as initialized if wordsArray is empty - wait for words to load
+		if (wordsArray.length === 0) {
+			// Only mark as initialized if we're sure there are truly no words
+			// Check if we're still loading from Redux
+			const isStillLoading = isUserLoggedIn ? user_words_loading : false
+
+			console.log('📭 wordsArray is empty, isStillLoading:', isStillLoading)
+
+			if (!isStillLoading) {
+				// We have confirmed there are no words at all
+				console.log('✅ Confirmed no words, marking as initialized')
+				setSessionInitialized(true)
+			}
+			return
+		}
+
+		console.log('🎴 Initializing cards from wordsArray:', wordsArray.length, 'words')
 
 		// Initialize any cards that don't have SRS fields
 		// Create deep copies to avoid reference issues
@@ -244,15 +305,21 @@ const FlashCards = () => {
 
 		// Filter for due cards and limit according to user preference
 		const dueCards = getDueCards(initializedCards)
-		const limitedCards = dueCards.slice(0, cardsLimit)
+		console.log('✅ Due cards:', dueCards.length, 'out of', initializedCards.length)
 
-		// Mark as initialized only when we have the language context loaded
+		const limitedCards = dueCards.slice(0, cardsLimit)
+		console.log('📊 Limited cards:', limitedCards.length, '(limit:', cardsLimit, ')')
+
+		// Mark as initialized only when we have the language context loaded AND have words
 		setSessionInitialized(true)
 
 		if (limitedCards.length > 0) {
 			setSessionCards(limitedCards)
+			console.log('🎯 Session cards set:', limitedCards.length, 'cards')
+		} else {
+			console.log('⚠️  No limited cards to set')
 		}
-	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, guestWords])
+	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, guestWords, user_words_loading])
 
 	// Get current card (first in session queue)
 	const currentCard = sessionCards[0]

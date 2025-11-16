@@ -4,7 +4,7 @@ import { getUIImageUrl } from './mediaUrls'
 const AVATAR_VERSION = '3'
 
 // Liste complète des avatars disponibles
-// Note: les noms sont des clés de traduction (voir locales/*/register.json)
+// Note: les noms sont des clés de traduction (voir messages/*.json, namespace "register")
 export const AVATARS = [
 	{
 		id: 'avatar1',

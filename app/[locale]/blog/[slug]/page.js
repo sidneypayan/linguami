@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { Link } from '@/i18n/navigation'
 import { marked } from 'marked'
 import { useTranslations, useLocale } from 'next-intl'
@@ -16,6 +16,10 @@ import { calculateReadingTime, formatReadingTime } from '@/utils/readingTime'
 import { slugify } from '@/utils/slugify'
 
 export default function Post({ params }) {
+	// Unwrap params Promise (Next.js 15+)
+	const unwrappedParams = use(params)
+	const { slug } = unwrappedParams
+
 	const t = useTranslations('blog')
 	const locale = useLocale()
 	const theme = useTheme()
@@ -26,7 +30,7 @@ export default function Post({ params }) {
 	useEffect(() => {
 		const fetchPost = async () => {
 			try {
-				const response = await fetch(`/api/blog/post?slug=${params.slug}&locale=${locale}`)
+				const response = await fetch(`/api/blog/post?slug=${slug}&locale=${locale}`)
 				if (response.ok) {
 					const data = await response.json()
 					setPostData(data)
@@ -39,13 +43,13 @@ export default function Post({ params }) {
 		}
 
 		fetchPost()
-	}, [params.slug, locale])
+	}, [slug, locale])
 
 	if (loading || !postData) {
 		return null
 	}
 
-	const { frontmatter, slug, content, allPosts } = postData
+	const { frontmatter, content, allPosts } = postData
 	const { title, date, img, description } = frontmatter
 
 	// Calculer le temps de lecture

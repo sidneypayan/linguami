@@ -42,10 +42,44 @@ const Words = ({ content, locale = 'fr' }) => {
 		return REGEX_CONFIG[userLearningLanguage] || REGEX_CONFIG.en
 	}, [userLearningLanguage])
 
+	// Helper function to extract the sentence containing the clicked word
+	const extractSentence = useCallback((fullText, word) => {
+		if (!fullText || !word) return fullText
+
+		// Find the word position in the full text
+		const wordIndex = fullText.toLowerCase().indexOf(word.toLowerCase())
+		if (wordIndex === -1) return fullText
+
+		// Sentence delimiters (period, exclamation, question mark, newline)
+		const sentenceDelimiters = /[.!?\n]/g
+
+		// Find sentence start (go backwards from word position)
+		let sentenceStart = 0
+		const textBeforeWord = fullText.substring(0, wordIndex)
+		const lastDelimiterMatch = textBeforeWord.match(/[.!?\n](?=[^.!?\n]*$)/)
+		if (lastDelimiterMatch) {
+			sentenceStart = textBeforeWord.lastIndexOf(lastDelimiterMatch[0]) + 1
+		}
+
+		// Find sentence end (go forward from word position)
+		let sentenceEnd = fullText.length
+		const textAfterWord = fullText.substring(wordIndex)
+		const nextDelimiterMatch = textAfterWord.match(/[.!?\n]/)
+		if (nextDelimiterMatch) {
+			sentenceEnd = wordIndex + textAfterWord.indexOf(nextDelimiterMatch[0]) + 1
+		}
+
+		// Extract and clean the sentence
+		return fullText.substring(sentenceStart, sentenceEnd).trim()
+	}, [])
+
 	const handleClick = useCallback(
 		e => {
 			const word = e.target.textContent
-			const sentence = e.target.parentElement.textContent
+			const fullText = e.target.parentElement.textContent
+
+			// Extract only the sentence containing the clicked word
+			const sentence = extractSentence(fullText, word)
 
 			// Dispatch custom event to pause video
 			if (typeof window !== 'undefined') {
@@ -64,7 +98,7 @@ const Words = ({ content, locale = 'fr' }) => {
 			dispatch(toggleTranslationContainer())
 			dispatch(cleanTranslation())
 		},
-		[dispatch, userLearningLanguage, locale, isUserLoggedIn]
+		[dispatch, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
 	)
 
 	const wrapWords = useCallback(

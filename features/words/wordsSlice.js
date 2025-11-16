@@ -463,8 +463,14 @@ const wordsSlice = createSlice({
 			})
 
 			// READS
+			.addCase(getAllUserWords.pending, state => {
+				state.user_words_loading = true
+			})
 			.addCase(getAllUserWords.fulfilled, (state, { payload }) => {
 				state.user_words = payload || []
+				state.user_words_loading = false
+			})
+			.addCase(getAllUserWords.rejected, state => {
 				state.user_words_loading = false
 			})
 			.addCase(getUserMaterialWords.fulfilled, (state, { payload }) => {

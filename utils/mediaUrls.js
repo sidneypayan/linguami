@@ -64,6 +64,10 @@ export function getBlogImageUrl(post) {
     '5-common-mistakes.jpg': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&h=630&fit=crop&q=80', // Livre ouvert - apprentissage
     'french-vs-russian.jpg': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&h=630&fit=crop&q=80', // Drapeaux/international
     'how-to-learn-french.jpg': 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=1200&h=630&fit=crop&q=80', // Tour Eiffel
+    'why-learn-french.jpg': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=630&fit=crop&q=80', // Paris - Arc de Triomphe
+    'why-learn-russian.jpg': 'https://images.unsplash.com/photo-1547448415-e9f5b28e570d?w=1200&h=630&fit=crop&q=80', // Cathédrale Basile-le-Bienheureux, Moscou
+    'how-to-learn.jpg': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&h=630&fit=crop&q=80', // Apprentissage - carnet
+    'the-russian-alphabet.jpg': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1200&h=630&fit=crop&q=80', // Lettres cyrilliques
   }
 
   // Si l'image a un fallback Unsplash, l'utiliser

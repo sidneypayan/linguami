@@ -28,6 +28,8 @@ import {
 	ToggleButton,
 	Card,
 	useTheme,
+	TextField,
+	InputAdornment,
 } from '@mui/material'
 import {
 	DeleteRounded,
@@ -37,6 +39,7 @@ import {
 	ChevronRight,
 	AutoStoriesRounded,
 	BookmarkAddRounded,
+	SearchRounded,
 } from '@mui/icons-material'
 import AddWordModal from '@/components/dictionary/AddWordModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -44,7 +47,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 const Dictionary = () => {
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const { t: tWords } = useTranslation('words')
+	const tWords = useTranslations('words')
 	const dispatch = useDispatch()
 	const router = useRouter()
 	const theme = useTheme()
@@ -62,6 +65,7 @@ const Dictionary = () => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [wordsPerPage, setWordsPerPage] = useState(20)
 	const [guestWords, setGuestWords] = useState([])
+	const [searchQuery, setSearchQuery] = useState('')
 
 	const handleCheck = e => {
 		if (e.target.checked) {
@@ -108,17 +112,27 @@ const Dictionary = () => {
 		// Utiliser guestWords pour les invités, user_words pour les utilisateurs connectés
 		const wordsSource = isUserLoggedIn ? user_words : guestWords
 
-		if (!wordsSource || !userLearningLanguage || !lang) return []
+		if (!wordsSource || !userLearningLanguage || !locale) return []
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
-		if (userLearningLanguage === lang) return []
+		if (userLearningLanguage === locale) return []
 
 		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
 			const translation = word[`word_${locale}`]
 
 			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
-			return sourceWord && translation
+			if (!sourceWord || !translation) return false
+
+			// Filtrer par recherche si une query est présente
+			if (searchQuery.trim()) {
+				const query = searchQuery.toLowerCase()
+				const sourceMatch = sourceWord.toLowerCase().includes(query)
+				const translationMatch = translation.toLowerCase().includes(query)
+				return sourceMatch || translationMatch
+			}
+
+			return true
 		})
 
 		// Trier par date de création, du plus récent au plus ancien
@@ -127,7 +141,7 @@ const Dictionary = () => {
 			const dateB = new Date(b.created_at)
 			return dateB - dateA // Ordre décroissant (plus récent d'abord)
 		})
-	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn])
+	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn, searchQuery])
 
 	// Fonction pour obtenir le mot source et la traduction selon les langues
 	const getWordDisplay = (word) => {
@@ -466,6 +480,43 @@ const Dictionary = () => {
 							spacing={2}
 							alignItems='center'
 							justifyContent='space-between'>
+							<TextField
+								placeholder={tWords('search_words')}
+								value={searchQuery}
+								onChange={(e) => {
+									setSearchQuery(e.target.value)
+									setCurrentPage(1)
+								}}
+								size='small'
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<SearchRounded sx={{ color: isDark ? '#8b5cf6' : '#7c3aed' }} />
+										</InputAdornment>
+									),
+								}}
+								sx={{
+									minWidth: { xs: '100%', sm: 250 },
+									'& .MuiOutlinedInput-root': {
+										background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
+										borderRadius: 2,
+										'& fieldset': {
+											borderColor: 'rgba(139, 92, 246, 0.2)',
+										},
+										'&:hover fieldset': {
+											borderColor: 'rgba(139, 92, 246, 0.4)',
+										},
+										'&.Mui-focused fieldset': {
+											borderColor: 'rgba(139, 92, 246, 0.6)',
+											boxShadow: '0 0 0 3px rgba(139, 92, 246, 0.1)',
+										},
+									},
+									'& .MuiInputBase-input': {
+										color: isDark ? '#e2e8f0' : '#1e293b',
+										fontSize: '0.9375rem',
+									},
+								}}
+							/>
 							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
 								<Typography
 									variant='body2'
@@ -482,6 +533,7 @@ const Dictionary = () => {
 									onChange={handleWordsPerPageChange}
 									size='small'
 									sx={{
+										gap: 1,
 										'& .MuiToggleButton-root': {
 											px: { xs: 1.5, sm: 2 },
 											py: { xs: 0.75, sm: 0.75 },
@@ -643,16 +695,29 @@ const Dictionary = () => {
 											</Typography>
 										</Box>
 										{word.word_sentence && (
-											<Typography
+											<Box
 												sx={{
-													fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-													color: isDark ? '#94a3b8' : '#718096',
-													fontStyle: 'italic',
-													lineHeight: 1.6,
-													pl: { xs: 0, sm: 1 },
+													mt: 1.5,
+													pl: 2,
+													py: 1,
+													borderLeft: '3px solid',
+													borderLeftColor: isDark
+														? 'rgba(139, 92, 246, 0.4)'
+														: 'rgba(139, 92, 246, 0.3)',
+													backgroundColor: isDark
+														? 'rgba(139, 92, 246, 0.05)'
+														: 'rgba(139, 92, 246, 0.03)',
+													borderRadius: '0 8px 8px 0',
 												}}>
-												&ldquo;{word.word_sentence}&rdquo;
-											</Typography>
+												<Typography
+													sx={{
+														fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+														color: isDark ? '#94a3b8' : '#718096',
+														lineHeight: 1.6,
+													}}>
+													&ldquo;{word.word_sentence}&rdquo;
+												</Typography>
+											</Box>
 										)}
 									</Box>
 									<IconButton

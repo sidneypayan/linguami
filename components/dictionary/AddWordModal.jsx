@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useUserContext } from '@/context/user'
 import { getAllUserWords } from '@/features/words/wordsSlice'
@@ -24,6 +24,8 @@ import {
 } from '@mui/material'
 import { Close, Add } from '@mui/icons-material'
 
+const STORAGE_KEY = 'addWordModal_formData'
+
 const AddWordModal = ({ open, onClose }) => {
 	const t = useTranslations('words')
 	const dispatch = useDispatch()
@@ -35,11 +37,44 @@ const AddWordModal = ({ open, onClose }) => {
 	const { user, userLearningLanguage } = useUserContext()
 	const locale = params.locale
 
-	const [learningLangWord, setLearningLangWord] = useState('')
-	const [browserLangWord, setBrowserLangWord] = useState('')
-	const [contextSentence, setContextSentence] = useState('')
+	// Charger les données depuis sessionStorage au montage
+	const loadFromStorage = () => {
+		if (typeof window === 'undefined') return { learningLangWord: '', browserLangWord: '', contextSentence: '' }
+
+		try {
+			const stored = sessionStorage.getItem(STORAGE_KEY)
+			if (stored) {
+				return JSON.parse(stored)
+			}
+		} catch (error) {
+			console.error('Error loading from sessionStorage:', error)
+		}
+		return { learningLangWord: '', browserLangWord: '', contextSentence: '' }
+	}
+
+	const initialData = loadFromStorage()
+	const [learningLangWord, setLearningLangWord] = useState(initialData.learningLangWord)
+	const [browserLangWord, setBrowserLangWord] = useState(initialData.browserLangWord)
+	const [contextSentence, setContextSentence] = useState(initialData.contextSentence)
 	const [errors, setErrors] = useState({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
+
+	// Sauvegarder dans sessionStorage à chaque changement
+	useEffect(() => {
+		if (typeof window === 'undefined') return
+
+		const formData = {
+			learningLangWord,
+			browserLangWord,
+			contextSentence,
+		}
+
+		try {
+			sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
+		} catch (error) {
+			console.error('Error saving to sessionStorage:', error)
+		}
+	}, [learningLangWord, browserLangWord, contextSentence])
 
 	// Déterminer les noms de langues à afficher
 	const getLearningLanguageName = () => {
@@ -49,6 +84,21 @@ const AddWordModal = ({ open, onClose }) => {
 	const getBrowserLanguageName = () => {
 		if (locale === 'fr') return t('language_fr')
 		return t('language_ru')
+	}
+
+	const clearFormData = () => {
+		setLearningLangWord('')
+		setBrowserLangWord('')
+		setContextSentence('')
+		setErrors({})
+		// Nettoyer sessionStorage
+		if (typeof window !== 'undefined') {
+			try {
+				sessionStorage.removeItem(STORAGE_KEY)
+			} catch (error) {
+				console.error('Error clearing sessionStorage:', error)
+			}
+		}
 	}
 
 	const handleSubmit = async e => {
@@ -118,11 +168,8 @@ const AddWordModal = ({ open, onClose }) => {
 			// Recharger la liste des mots
 			dispatch(getAllUserWords({ userId: user.id, userLearningLanguage }))
 
-			// Réinitialiser le formulaire
-			setLearningLangWord('')
-			setBrowserLangWord('')
-			setContextSentence('')
-			setErrors({})
+			// Réinitialiser le formulaire et nettoyer sessionStorage
+			clearFormData()
 			onClose()
 		} catch (error) {
 			console.error('Erreur:', error)
@@ -133,10 +180,7 @@ const AddWordModal = ({ open, onClose }) => {
 	}
 
 	const handleClose = () => {
-		setLearningLangWord('')
-		setBrowserLangWord('')
-		setContextSentence('')
-		setErrors({})
+		clearFormData()
 		onClose()
 	}
 

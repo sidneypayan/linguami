@@ -3,10 +3,6 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
-	experimental: {
-		missingSuspenseWithCSRBailout: false,
-	},
-
 	// Configuration des images
 	images: {
 		remotePatterns: [

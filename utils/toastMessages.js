@@ -1,9 +1,9 @@
 // Helper pour les messages toast traduits
 // Peut être utilisé même dans les contextes où useTranslation n'est pas disponible
 
-import commonFr from '../locales/fr/common.json'
-import commonRu from '../locales/ru/common.json'
-import commonEn from '../locales/en/common.json'
+import messagesFr from '../messages/fr.json'
+import messagesRu from '../messages/ru.json'
+import messagesEn from '../messages/en.json'
 
 // Détecte la langue du navigateur
 const getBrowserLanguage = () => {
@@ -44,9 +44,9 @@ const getBrowserLanguage = () => {
 export const getToastMessage = (key, locale = null) => {
 	const lang = locale || getBrowserLanguage()
 	let messages
-	if (lang === 'ru') messages = commonRu
-	else if (lang === 'en') messages = commonEn
-	else messages = commonFr
+	if (lang === 'ru') messages = messagesRu.common
+	else if (lang === 'en') messages = messagesEn.common
+	else messages = messagesFr.common
 	return messages[key] || messages.genericError || 'Une erreur est survenue'
 }
 

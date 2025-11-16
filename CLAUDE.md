@@ -13,6 +13,36 @@ npm run build        # Production build
 npm run lint         # Run ESLint
 ```
 
+
+## ⚠️ Important Rules
+
+### JAMAIS de commit avant test
+
+**RÈGLE ABSOLUE :** Ne JAMAIS commiter de changements avant que l'utilisateur les ait testés et validés.
+
+**Workflow correct :**
+1. Faire les modifications de code
+2. Expliquer les changements à l'utilisateur
+3. **ATTENDRE** que l'utilisateur teste
+4. **ATTENDRE** la confirmation explicite de l'utilisateur
+5. Seulement APRÈS validation → commit
+
+**❌ Ne PAS faire :**
+- Commit automatique après modifications
+- Proposer de commiter sans test préalable
+- Supposer que le code fonctionne sans validation
+
+**✅ Faire :**
+- Expliquer les changements
+- Inviter l'utilisateur à tester
+- Attendre confirmation explicite
+- Demander si l'utilisateur veut commiter
+
+---
+
+
+cat /tmp/rules_section.txt
+
 ## Documentation Structure
 
 All detailed documentation has been modularized. **Always consult the appropriate guide before working on a feature.**
@@ -73,6 +103,7 @@ Detailed feature documentation:
 ## Project Structure
 
 ```
+cat /tmp/rules_section.txt
 linguami/
 ├── pages/                  # Next.js pages (file-based routing)
 │   ├── api/               # API routes
@@ -107,6 +138,7 @@ linguami/
     ├── features/         # Feature-specific docs
     └── guides/           # Creation guides
 ```
+cat /tmp/rules_section.txt
 
 ## Common Development Patterns
 
@@ -157,6 +189,7 @@ function MyComponent() {
   )
 }
 ```
+cat /tmp/rules_section.txt
 
 ### API Route Pattern
 
@@ -175,6 +208,7 @@ export default async function handler(req, res) {
   res.json({ success: true })
 }
 ```
+cat /tmp/rules_section.txt
 
 ### Protected Route Pattern
 
@@ -190,6 +224,7 @@ if (!isUserAdmin) {
   return <div>Access denied</div>
 }
 ```
+cat /tmp/rules_section.txt
 
 ## Styling
 
@@ -204,6 +239,7 @@ if (!isUserAdmin) {
   '&:hover': { opacity: 0.8 }
 }}>
 ```
+cat /tmp/rules_section.txt
 
 ### Responsive Breakpoints
 
@@ -239,6 +275,7 @@ FACEBOOK_APP_SECRET=  # Required for Facebook data deletion callback
 # Analytics
 NEXT_PUBLIC_GTM_ID=
 ```
+cat /tmp/rules_section.txt
 
 ## Key Workflows
 
@@ -252,6 +289,7 @@ git commit -m "feat: description
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
+cat /tmp/rules_section.txt
 
 ### Creating Pull Requests
 
@@ -265,6 +303,7 @@ git log main..HEAD
 git push -u origin branch-name
 gh pr create --title "Title" --body "Description"
 ```
+cat /tmp/rules_section.txt
 
 ### Merge Strategy to Avoid Conflicts
 
@@ -283,6 +322,7 @@ git rebase develop
 git checkout develop
 git merge feature-branch  # Clean merge
 ```
+cat /tmp/rules_section.txt
 
 **Why this helps:**
 - Modular docs reduce conflict surface area
@@ -298,6 +338,7 @@ rm -rf .next node_modules
 npm install
 npm run build
 ```
+cat /tmp/rules_section.txt
 
 ### Database Issues
 
@@ -352,6 +393,7 @@ When writing French or other text directly in JSX, ALWAYS use straight quotes/ap
 // ✅ BEST - Use i18n for all user-facing text
 <div>{t('unlock_full_access')}</div>
 ```
+cat /tmp/rules_section.txt
 
 **Why:** React's ESLint rule `react/no-unescaped-entities` flags typographic apostrophes (') as errors. They must be escaped as `&apos;` or `&#39;`, which is cumbersome and error-prone.
 

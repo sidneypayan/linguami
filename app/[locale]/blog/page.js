@@ -45,17 +45,17 @@ export default function Blog() {
 				return false
 			}
 
-			// If learning French, show only "why-learn-french"
+			// If learning French, show only French-related articles
 			if (userLearningLanguage === 'fr') {
-				return post.slug !== 'why-learn-russian'
+				return post.slug !== 'why-learn-russian' && post.slug !== 'how-to-learn-russian'
 			}
 
-			// If learning Russian, show only "why-learn-russian"
+			// If learning Russian, show only Russian-related articles
 			if (userLearningLanguage === 'ru') {
-				return post.slug !== 'why-learn-french'
+				return post.slug !== 'why-learn-french' && post.slug !== 'how-to-learn-french'
 			}
 
-			// If no learning language set (guest or new user), show both
+			// If no learning language set (guest or new user), show all
 			return true
 		})
 
