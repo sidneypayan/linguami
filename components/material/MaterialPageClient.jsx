@@ -4,16 +4,13 @@ import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState, use } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
-import { useSelector, useDispatch } from 'react-redux'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
-	getUserMaterialStatus,
-	getUserMaterialsStatus,
 	addMaterialToStudied,
-} from '@/features/materials/materialsSlice'
+} from '@/app/actions/materials'
 import {
 	toggleTranslationContainer,
 	cleanTranslation,
@@ -27,6 +24,7 @@ import EditMaterialModal from '@/components/admin/EditMaterialModal'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
+import { useDispatch } from 'react-redux'
 
 import Player from '@/components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
@@ -51,7 +49,6 @@ import {
 	CheckCircleRounded,
 	EditRounded,
 } from '@mui/icons-material'
-// Head removed - use metadata in App Router
 
 import {
 	primaryButton,
@@ -60,7 +57,7 @@ import {
 	successButton,
 } from '@/utils/buttonStyles'
 
-const Material = ({ params: paramsPromise }) => {
+const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialStatus }) => {
 	const params = use(paramsPromise)
 	const t = useTranslations('materials')
 	const locale = useLocale()
@@ -68,51 +65,71 @@ const Material = ({ params: paramsPromise }) => {
 	const router = useRouterCompat()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } =
-		useUserContext()
+	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } = useUserContext()
+	const queryClient = useQueryClient()
 
-	// Dans App Router, les paramètres viennent via props
-	const [currentMaterial, setCurrentMaterial] = useState(null)
-	const [loading, setLoading] = useState(true)
+	// Local UI state
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
-	const { user_material_status } = useSelector(store => store.materials)
+	// React Query: Hydrate material data with SSR data
+	const { data: currentMaterial } = useQuery({
+		queryKey: ['material', params?.material],
+		queryFn: () => initialMaterial,
+		initialData: initialMaterial,
+		staleTime: Infinity,
+	})
 
-	const { is_being_studied, is_studied } = user_material_status
+	// React Query: Hydrate user material status
+	const { data: userMaterialStatus } = useQuery({
+		queryKey: ['userMaterialStatus', params?.material],
+		queryFn: () => initialUserMaterialStatus,
+		initialData: initialUserMaterialStatus,
+		staleTime: Infinity,
+	})
 
-	// Charger le matériel côté client
-	useEffect(() => {
-		const fetchMaterial = async () => {
-			if (!params?.material) return
+	const { is_being_studied, is_studied } = userMaterialStatus || { is_being_studied: false, is_studied: false }
 
-			setLoading(true)
-			const { data: material, error } = await supabase
-				.from('materials')
-				.select('*')
-				.eq('id', params.material)
-				.single()
+	// Mutation: Add material to studying
+	const addToStudyingMutation = useMutation({
+		mutationFn: addBeingStudiedMaterial,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: true,
+				is_studied: false,
+			})
+		},
+	})
 
-			if (!error && material) {
-				setCurrentMaterial(material)
-			}
-			setLoading(false)
-		}
+	// Mutation: Remove material from studying
+	const removeFromStudyingMutation = useMutation({
+		mutationFn: removeBeingStudiedMaterial,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: false,
+				is_studied: false,
+			})
+		},
+	})
 
-		fetchMaterial()
-	}, [params?.material])
-
-	useEffect(() => {
-		if (!currentMaterial?.id) return
-
-		dispatch(getUserMaterialStatus(currentMaterial.id))
-	}, [dispatch, currentMaterial])
+	// Mutation: Mark material as studied
+	const markAsStudiedMutation = useMutation({
+		mutationFn: addMaterialToStudied,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: false,
+				is_studied: true,
+			})
+		},
+	})
 
 	// Fermer la popup de traduction quand l'utilisateur change de matériel
 	useEffect(() => {
-		// Fermer la popup lors du changement de matériel
 		dispatch(toggleTranslationContainer(false))
 		dispatch(cleanTranslation())
 		setCoordinates({})
@@ -122,20 +139,12 @@ const Material = ({ params: paramsPromise }) => {
 		setEditModalOpen(true)
 	}
 
-	const handleEditSuccess = async () => {
-		// Recharger les données du matériel après la modification
-		const { data, error } = await supabase
-			.from('materials')
-			.select('*')
-			.eq('id', currentMaterial.id)
-			.single()
-
-		if (!error && data) {
-			setCurrentMaterial(data)
-		}
+	const handleEditSuccess = () => {
+		// Invalidate and refetch material data
+		queryClient.invalidateQueries(['material', params?.material])
 	}
 
-	const getImageRegardingSection = section => {
+		const getImageRegardingSection = section => {
 		if (section === 'place') {
 			return (
 				<Container
@@ -202,7 +211,7 @@ const Material = ({ params: paramsPromise }) => {
 	const isVideoDisplayed =
 		sections?.music?.includes(params?.section) || sections?.video?.includes(params?.section)
 
-	if (loading || !currentMaterial) {
+	if (!currentMaterial) {
 		return (
 			<Container maxWidth="lg" sx={{ pt: '8rem', textAlign: 'center' }}>
 				<Typography>Loading...</Typography>
@@ -311,13 +320,7 @@ const Material = ({ params: paramsPromise }) => {
 								<Button
 									variant='contained'
 									startIcon={<PlayArrowRounded />}
-									onClick={async () => {
-										await dispatch(
-											addBeingStudiedMaterial(currentMaterial.id)
-										)
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => addToStudyingMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
@@ -360,13 +363,7 @@ const Material = ({ params: paramsPromise }) => {
 								<Button
 									variant='contained'
 									startIcon={<PauseRounded />}
-									onClick={async () => {
-										await dispatch(
-											removeBeingStudiedMaterial(currentMaterial.id)
-										)
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => removeFromStudyingMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -552,11 +549,7 @@ const Material = ({ params: paramsPromise }) => {
 									variant='contained'
 									size='large'
 									startIcon={<CheckCircleRounded />}
-									onClick={async () => {
-										await dispatch(addMaterialToStudied(currentMaterial.id))
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => markAsStudiedMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #10b981 0%, #059669 100%)',
