@@ -7,7 +7,6 @@ import EmailVerificationBanner from './auth/EmailVerificationBanner'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { useLocale } from 'next-intl'
-import { getLessons } from '@/features/lessons/lessonsSlice'
 import FlashCards from './games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 
@@ -20,9 +19,6 @@ const AppRouterLayout = ({ children }) => {
 	// Charger les leçons au démarrage pour vérifier s'il y en a pour cette langue
 	useEffect(() => {
 		if (locale) {
-			dispatch(getLessons({ lang: locale }))
-		}
-	}, [dispatch, locale])
 
 	return isFlashcardsOpen ? (
 		<FlashCards />

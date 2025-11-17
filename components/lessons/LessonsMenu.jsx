@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { getUserLessonsStatus } from '@/features/lessons/lessonsSlice'
+// TODO: Migrate to React Query
 import {
 	Box,
 	List,
@@ -66,7 +66,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const [openLevels, setOpenLevels] = useState({})
 
 	const dispatch = useDispatch()
-	const { user_lessons_status } = useSelector(store => store.lessons)
+	const user_lessons_status = [] // TODO: Migrate to React Query
 
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
