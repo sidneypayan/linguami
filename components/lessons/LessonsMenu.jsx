@@ -1,5 +1,5 @@
 import { useTranslations, useLocale } from 'next-intl'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useUserContext } from '@/context/user'

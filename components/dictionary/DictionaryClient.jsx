@@ -5,9 +5,8 @@ import { useUserContext } from '@/context/user'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUserWords, deleteWord } from '@/lib/words-client'
-import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
+import { useFlashcards } from '@/context/flashcards'
 import { useDispatch } from 'react-redux'
-import { Link } from '@/i18n/navigation'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'
 import {
@@ -45,6 +44,7 @@ const DictionaryClient = ({ translations }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
 	const dispatch = useDispatch()
+const { openFlashcards } = useFlashcards()
 	const router = useRouter()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -378,7 +378,7 @@ const DictionaryClient = ({ translations }) => {
 							variant='contained'
 							size='large'
 							startIcon={<FlashOnRounded />}
-							onClick={() => dispatch(toggleFlashcardsContainer(true))}
+							onClick={() => openFlashcards()}
 							sx={{
 								flex: 1,
 								py: 2.5,

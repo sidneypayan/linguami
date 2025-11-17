@@ -3,10 +3,10 @@
 import React, { useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { useDispatch } from 'react-redux'
+import { // useDispatch removed } from 'react-redux'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
+import { useFlashcards } from '@/context/flashcards'
 import { deleteWord } from '@/lib/words-client'
 import { deleteGuestWord } from '@/utils/guestDictionary'
 import { filterWordsByLanguage } from '@/utils/wordMapping'
@@ -21,7 +21,7 @@ const WordsContainer = ({ sx = {} }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
 	const params = useParams()
-	const dispatch = useDispatch()
+	const { openFlashcards } = useFlashcards()
 	const queryClient = useQueryClient()
 	const { user, isUserLoggedIn, userLearningLanguage } = useUserContext()
 
@@ -86,7 +86,7 @@ const WordsContainer = ({ sx = {} }) => {
 				variant="contained"
 				size="large"
 				startIcon={<FlashOnRounded />}
-				onClick={() => dispatch(toggleFlashcardsContainer(true))}
+				onClick={() => openFlashcards()}
 				sx={{
 					py: 2.5,
 					borderRadius: 3,

@@ -38,6 +38,29 @@ npm run lint         # Run ESLint
 - Attendre confirmation explicite
 - Demander si l'utilisateur veut commiter
 
+### JAMAIS de push de la branche claude
+
+**RÈGLE ABSOLUE :** Ne JAMAIS créer ou push la branche `claude` sur GitHub.
+
+**Règles :**
+- La branche `claude` reste **uniquement en local** pour le travail de Claude Code
+- Ne JAMAIS faire `git push` de cette branche vers le dépôt distant
+- Pour partager du code, **toujours créer une nouvelle branche** avec un nom descriptif :
+  - `feature/nom-fonctionnalité`
+  - `fix/nom-bug`
+  - `refactor/nom-refactoring`
+  - etc.
+
+**❌ Ne PAS faire :**
+- `git push origin claude`
+- `git push -u origin claude`
+- Créer la branche `claude` sur GitHub
+
+**✅ Faire :**
+- Travailler sur `claude` en local
+- Créer une nouvelle branche descriptive pour les commits à partager
+- Push cette nouvelle branche (pas `claude`)
+
 ---
 
 

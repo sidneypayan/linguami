@@ -28,24 +28,55 @@ export async function markLessonAsStudied(lessonId) {
 	}
 
 	try {
-		// Use UPSERT for atomic operation (1 query instead of 2-3)
-		// PostgreSQL will automatically insert or update based on unique constraint
-		const { error } = await supabase.from('user_lessons').upsert(
-			{
-				user_id: user.id,
-				lesson_id: lessonId,
-				is_studied: true,
-			},
-			{
-				onConflict: 'user_id,lesson_id', // Specify the unique constraint
-			}
-		)
+		// First, check if a record already exists
+		const { data: existingRecord, error: selectError } = await supabase
+			.from('user_lessons')
+			.select('is_studied')
+			.match({ user_id: user.id, lesson_id: lessonId })
+			.single()
 
-		if (error) {
-			logger.error('Error upserting lesson status:', error)
+		if (selectError && selectError.code !== 'PGRST116') {
+			// PGRST116 = no rows returned, which is expected for new lessons
+			logger.error('Error checking existing lesson status:', selectError)
 			return {
 				success: false,
-				error: error.message,
+				error: selectError.message,
+			}
+		}
+
+		if (existingRecord) {
+			// Record exists - update if not already studied
+			if (!existingRecord.is_studied) {
+				const { error: updateError } = await supabase
+					.from('user_lessons')
+					.update({ is_studied: true })
+					.match({ user_id: user.id, lesson_id: lessonId })
+
+				if (updateError) {
+					logger.error('Error updating lesson status:', updateError)
+					return {
+						success: false,
+						error: updateError.message,
+					}
+				}
+			}
+			// If already studied, do nothing
+		} else {
+			// Record doesn't exist - insert new record
+			const { error: insertError } = await supabase
+				.from('user_lessons')
+				.insert({
+					user_id: user.id,
+					lesson_id: lessonId,
+					is_studied: true,
+				})
+
+			if (insertError) {
+				logger.error('Error inserting lesson status:', insertError)
+				return {
+					success: false,
+					error: insertError.message,
+				}
 			}
 		}
 
@@ -140,5 +171,32 @@ export async function getAllLessonStatuses() {
 	} catch (error) {
 		logger.error('Unexpected error in getAllLessonStatuses:', error)
 		return []
+	}
+}
+
+/**
+ * Check if there are any lessons available for a specific language
+ * @param {string} lang - Language code ('fr', 'ru', 'en')
+ * @returns {Promise<boolean>} True if lessons exist for this language
+ */
+export async function hasLessonsForLanguage(lang) {
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+
+	try {
+		const { count, error } = await supabase
+			.from('lessons')
+			.select('id', { count: 'exact', head: true })
+			.eq('lang', lang)
+
+		if (error) {
+			logger.error('Error checking lessons availability:', error)
+			return false
+		}
+
+		return count > 0
+	} catch (error) {
+		logger.error('Unexpected error in hasLessonsForLanguage:', error)
+		return false
 	}
 }

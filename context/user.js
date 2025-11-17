@@ -135,10 +135,10 @@ const UserProvider = ({ children }) => {
 					try {
 						const migrationResult = await migrateLocalProgressToDatabase()
 						if (migrationResult.success && migrationResult.migrated > 0) {
-							console.log(`✅ Migrated ${migrationResult.migrated} lesson(s) from localStorage to database`)
+							logger.log(`✅ Migrated ${migrationResult.migrated} lesson(s) from localStorage to database`)
 						}
 					} catch (migrationError) {
-						console.error('Failed to migrate local progress:', migrationError)
+						logger.error('Failed to migrate local progress:', migrationError)
 						// Don't block login if migration fails
 					}
 				} else {
@@ -352,7 +352,7 @@ const UserProvider = ({ children }) => {
 					)
 					toast.success(toastMessages.confirmationEmailSent())
 				} catch (error) {
-					console.error('Error sending verification email:', error)
+					logger.error('Error sending verification email:', error)
 					// Ne pas bloquer l'inscription si l'email échoue
 					toast.info('Compte créé ! Vous pourrez vérifier votre email plus tard.')
 				}
@@ -551,7 +551,7 @@ const UserProvider = ({ children }) => {
 				return profile
 			}
 		} catch (err) {
-			console.error('Error refreshing user profile:', err)
+			logger.error('Error refreshing user profile:', err)
 		}
 		return null
 	}, [user, fetchUserProfile])

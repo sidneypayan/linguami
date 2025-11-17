@@ -1,0 +1,36 @@
+--- components/method/LessonPageClient.jsx.original
++++ components/method/LessonPageClient.jsx
+@@ -25,6 +25,7 @@
+ import PaywallBlock from '@/components/courses/PaywallBlock'
+ import UpsellModal from '@/components/courses/UpsellModal'
+ import { useLessonProgress, useCompleteLesson } from '@/lib/courses-client'
++import { useAddXP } from '@/hooks/gamification/useAddXP'
+ import toast from '@/utils/toast'
+ import { logger } from '@/utils/logger'
+
+@@ -51,6 +52,9 @@
+ 	// React Query: Complete lesson mutation with optimistic updates
+ 	const { mutate: completeLesson, isPending: isCompleting } = useCompleteLesson(isUserLoggedIn)
+
++	// React Query: Add XP mutation
++	const { mutate: addXP } = useAddXP()
++
+ 	// Derived state: Is lesson completed?
+ 	const lessonCompleted = progressData?.is_completed || false
+
+@@ -61,6 +65,15 @@
+ 		completeLesson(lesson.id, {
+ 			onSuccess: () => {
+ 				toast.success(t('methode_lesson_completed_toast'))
++
++				// Award XP for completing the lesson (only for logged in users)
++				if (isUserLoggedIn) {
++					addXP({
++						actionType: 'material_completed', // Using existing action type
++						sourceId: `lesson-${lesson.id}`,
++						customXp: 50, // 50 XP for completing a lesson
++					})
++				}
+
+ 				// Check if we should show upsell modal
+ 				const isFirstLesson = course?.course_lessons?.[0]?.id === lesson.id

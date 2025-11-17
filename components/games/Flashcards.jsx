@@ -5,12 +5,11 @@
  * Reduced from 837 lines to ~230 lines (-72%)
  */
 
+import { useUserContext } from '@/context/user'
 import { useState, useCallback } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocale } from 'next-intl'
 import { useTheme } from '@mui/material'
-import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
-import { useUserContext } from '@/context/user'
+import { useFlashcards } from '@/context/flashcards'
 import { useAchievementContext } from '../AchievementProvider'
 import { CARD_STATES } from '@/utils/spacedRepetition'
 import { logger } from '@/utils/logger'
@@ -30,8 +29,8 @@ import { ReviewSettings } from '@/components/flashcards/ReviewSettings'
 
 const Flashcards = () => {
 	const locale = useLocale()
-	const dispatch = useDispatch()
 	const theme = useTheme()
+	const { closeFlashcards } = useFlashcards()
 	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { showAchievements } = useAchievementContext()
@@ -62,9 +61,9 @@ const Flashcards = () => {
 
 	// Handle close and cleanup
 	const handleClose = useCallback(() => {
-		dispatch(toggleFlashcardsContainer(false))
+		closeFlashcards()
 		resetSession()
-	}, [dispatch, resetSession])
+	}, [closeFlashcards, resetSession])
 
 	// Review completion callback
 	const handleReviewComplete = useCallback((updatedCard, buttonType) => {

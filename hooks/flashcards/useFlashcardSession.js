@@ -1,23 +1,100 @@
 /**
  * Hook to manage flashcard session state
  * Handles card initialization, filtering, and session queue
+ * ✅ MIGRATED to React Query - removed Redux dependency
+ * ✅ OPTIMIZED - extracted helper functions, Fisher-Yates shuffle, useMemo
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useParams, usePathname } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { getUserWords, getMaterialWords } from '@/lib/words-client'
 import { getDueCards, CARD_STATES } from '@/utils/spacedRepetition'
 import { getGuestWordsByLanguage } from '@/utils/guestDictionary'
 import { logger } from '@/utils/logger'
+
+// ==========================================
+// Helper Functions
+// ==========================================
+
+/**
+ * Fisher-Yates shuffle algorithm
+ * More efficient and unbiased than .sort(() => Math.random() - 0.5)
+ */
+const fisherYatesShuffle = (array) => {
+	const shuffled = [...array]
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+	}
+	return shuffled
+}
+
+/**
+ * Initialize card with default SRS fields if needed
+ */
+const initializeCardDefaults = (card) => {
+	if (card.card_state) return { ...card }
+	return {
+		...card,
+		card_state: CARD_STATES.NEW,
+		ease_factor: 2.5,
+		interval: 0,
+		learning_step: null,
+		next_review_date: null,
+		last_review_date: null,
+		reviews_count: 0,
+		lapses: 0,
+		is_suspended: false
+	}
+}
+
+/**
+ * Load and filter guest words by material ID
+ */
+const loadGuestWordsHelper = (userLearningLanguage, materialId, pathname) => {
+	if (!userLearningLanguage) return []
+	const allWords = getGuestWordsByLanguage(userLearningLanguage)
+	if (materialId && pathname !== '/dictionary') {
+		return allWords.filter(word => String(word.material_id) === String(materialId))
+	}
+	return allWords
+}
+
+
 
 export function useFlashcardSession({ cardsLimit, locale }) {
 	const { user, isUserLoggedIn, userLearningLanguage } = useUserContext()
 	const params = useParams()
 	const pathname = usePathname()
+	const userId = user?.id
 
-	// Redux state (temporary until full migration)
-	const { user_material_words, user_words, user_words_loading } = useSelector(store => store.words)
+	// Determine if we're on dictionary page or material page
+	// Memoize page type to avoid recalculations
+	const isDictionaryPage = useMemo(() => pathname?.endsWith("/dictionary"), [pathname])
+	const materialId = params?.material
+
+	// Query for all user words (dictionary page)
+	const { data: allUserWords = [], isLoading: isLoadingAllWords } = useQuery({
+		queryKey: ['userWords', userId, userLearningLanguage],
+		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		enabled: !!userId && !!userLearningLanguage && isDictionaryPage && isUserLoggedIn,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
+
+	// Query for material-specific words
+	const normalizedMaterialId = materialId ? String(materialId) : null
+	const { data: materialWords = [], isLoading: isLoadingMaterialWords } = useQuery({
+		queryKey: ['materialWords', normalizedMaterialId, userId],
+		queryFn: () => getMaterialWords({ materialId: normalizedMaterialId, userId }),
+		enabled: !!userId && !!normalizedMaterialId && !isDictionaryPage && isUserLoggedIn,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
+
+	// Select appropriate words and loading state based on page
+	const userWords = isDictionaryPage ? allUserWords : materialWords
+	const isLoadingWords = isDictionaryPage ? isLoadingAllWords : isLoadingMaterialWords
 
 	// Local state
 	const [guestWords, setGuestWords] = useState([])
@@ -29,17 +106,8 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	// Load guest words if not logged in
 	useEffect(() => {
 		if (!isUserLoggedIn && userLearningLanguage) {
-			const allWords = getGuestWordsByLanguage(userLearningLanguage)
-			const materialId = params?.material
-
-			if (materialId && pathname !== '/dictionary') {
-				const materialWords = allWords.filter(word =>
-					String(word.material_id) === String(materialId)
-				)
-				setGuestWords(materialWords)
-			} else {
-				setGuestWords(allWords)
-			}
+			const words = loadGuestWordsHelper(userLearningLanguage, params?.material, pathname)
+			setGuestWords(words)
 		}
 	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
 
@@ -47,19 +115,8 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	useEffect(() => {
 		if (!isUserLoggedIn && typeof window !== 'undefined') {
 			const loadGuestWords = () => {
-				if (userLearningLanguage) {
-					const allWords = getGuestWordsByLanguage(userLearningLanguage)
-					const materialId = params?.material
-
-					if (materialId && pathname !== '/dictionary') {
-						const materialWords = allWords.filter(word =>
-							String(word.material_id) === String(materialId)
-						)
-						setGuestWords(materialWords)
-					} else {
-						setGuestWords(allWords)
-					}
-				}
+				const words = loadGuestWordsHelper(userLearningLanguage, params?.material, pathname)
+				setGuestWords(words)
 			}
 
 			window.addEventListener('guestWordAdded', loadGuestWords)
@@ -73,10 +130,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
 
 	// Get appropriate word array based on page and user status
-	const isDictionaryPage = pathname?.endsWith('/dictionary')
-	const baseWordsArray = isUserLoggedIn
-		? (isDictionaryPage ? user_words : user_material_words)
-		: guestWords
+	const baseWordsArray = isUserLoggedIn ? userWords : guestWords
 
 	// Filter words by language pair
 	const filteredWords = useMemo(() => {
@@ -111,7 +165,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		}
 
 		if (filteredWords.length === 0) {
-			const isStillLoading = isUserLoggedIn ? user_words_loading : false
+			const isStillLoading = isUserLoggedIn ? isLoadingWords : false
 			if (!isStillLoading) {
 				setSessionInitialized(true)
 			}
@@ -119,23 +173,8 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		}
 
 		// Initialize cards with SRS fields if needed
-		const initializedCards = filteredWords.map(card => {
-			if (!card.card_state) {
-				return {
-					...card,
-					card_state: CARD_STATES.NEW,
-					ease_factor: 2.5,
-					interval: 0,
-					learning_step: null,
-					next_review_date: null,
-					last_review_date: null,
-					reviews_count: 0,
-					lapses: 0,
-					is_suspended: false
-				}
-			}
-			return { ...card }
-		})
+		// Initialize cards using helper function
+		const initializedCards = filteredWords.map(initializeCardDefaults)
 
 		// Filter for due cards and apply limit
 		const dueCards = getDueCards(initializedCards)
@@ -147,7 +186,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 			setSessionCards(limitedCards)
 			logger.log('[useFlashcardSession] Session initialized with', limitedCards.length, 'cards')
 		}
-	}, [filteredWords, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, user_words_loading])
+	}, [filteredWords, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, isLoadingWords])
 
 	// Reset session
 	const resetSession = useCallback(() => {
@@ -178,7 +217,8 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 			})
 
 			const activeCards = initializedCards.filter(card => !card.is_suspended)
-			const shuffled = [...activeCards].sort(() => Math.random() - 0.5)
+			// Use Fisher-Yates shuffle
+			const shuffled = fisherYatesShuffle(activeCards)
 			const selectedCards = shuffled.slice(0, Math.min(practiceCount, shuffled.length))
 
 			setSessionCards(selectedCards)

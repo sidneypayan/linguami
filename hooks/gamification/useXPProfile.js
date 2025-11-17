@@ -18,8 +18,8 @@ import { useUserContext } from '@/context/user'
  * if (error) return <div>Error: {error.message}</div>
  *
  * const { profile, stats, recentTransactions, achievements } = xpProfile
- * console.log('Level:', profile.currentLevel)
- * console.log('XP Today:', stats.xpToday)
+ * logger.log('Level:', profile.currentLevel)
+ * logger.log('XP Today:', stats.xpToday)
  */
 export function useXPProfile(options = {}) {
 	const { isUserLoggedIn } = useUserContext()

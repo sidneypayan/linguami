@@ -7,6 +7,7 @@ import { useState } from 'react'
 import UserProvider from '@/context/user.js'
 import { ThemeModeProvider } from '@/context/ThemeContext'
 import { TranslationProvider } from '@/context/translation'
+import { FlashcardsProvider } from '@/context/flashcards'
 import { AchievementProvider } from '@/components/AchievementProvider'
 import AppRouterLayout from '@/components/AppRouterLayout'
 import { Toaster } from 'sonner'
@@ -65,17 +66,19 @@ export default function Providers({ children }) {
 		<QueryClientProvider client={queryClient}>
 			<UserProvider>
 				<ThemeModeProvider>
-					<TranslationProvider>
-						<Provider store={store}>
-							<AchievementProvider>
-								<GTMTracking />
-								<AppRouterLayout>
-									{children}
-								</AppRouterLayout>
-								<ToasterWithTheme />
-							</AchievementProvider>
-						</Provider>
-					</TranslationProvider>
+					<FlashcardsProvider>
+						<TranslationProvider>
+							<Provider store={store}>
+								<AchievementProvider>
+									<GTMTracking />
+									<AppRouterLayout>
+										{children}
+									</AppRouterLayout>
+									<ToasterWithTheme />
+								</AchievementProvider>
+							</Provider>
+						</TranslationProvider>
+					</FlashcardsProvider>
 				</ThemeModeProvider>
 			</UserProvider>
 		</QueryClientProvider>

@@ -18,7 +18,7 @@ export async function getCourseLevels() {
 		if (error) throw error
 		return { data, error: null }
 	} catch (error) {
-		console.error('Error fetching course levels:', error)
+		logger.error('Error fetching course levels:', error)
 		return { data: null, error: error.message }
 	}
 }
@@ -69,7 +69,7 @@ export async function getCoursesByLevel(levelId) {
 
 		return { data: coursesWithSortedLessons, error: null }
 	} catch (error) {
-		console.error('Error fetching courses by level:', error)
+		logger.error('Error fetching courses by level:', error)
 		return { data: null, error: error.message }
 	}
 }
@@ -132,7 +132,7 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 
 		return { data, error: null }
 	} catch (error) {
-		console.error('Error fetching course by slug:', error)
+		logger.error('Error fetching course by slug:', error)
 		return { data: null, error: error.message }
 	}
 }
@@ -184,7 +184,7 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 		if (error) throw error
 		return { data, error: null }
 	} catch (error) {
-		console.error('Error fetching lesson by slug:', error)
+		logger.error('Error fetching lesson by slug:', error)
 		return { data: null, error: error.message }
 	}
 }
@@ -224,7 +224,7 @@ export async function getUserCourseAccess(lang) {
 		if (error) throw error
 		return { data: data || [], error: null }
 	} catch (error) {
-		console.error('Error fetching user course access:', error)
+		logger.error('Error fetching user course access:', error)
 		return { data: [], error: error.message }
 	}
 }
@@ -260,7 +260,7 @@ export async function getUserProgressForCourse(courseId) {
 		if (error) throw error
 		return { data: data || [], error: null }
 	} catch (error) {
-		console.error('Error fetching user progress:', error)
+		logger.error('Error fetching user progress:', error)
 		return { data: [], error: error.message }
 	}
 }
@@ -289,7 +289,7 @@ export async function getLessonProgress(lessonId) {
 		if (error) throw error
 		return { data, error: null }
 	} catch (error) {
-		console.error('Error fetching lesson progress:', error)
+		logger.error('Error fetching lesson progress:', error)
 		return { data: null, error: error.message }
 	}
 }
@@ -321,7 +321,7 @@ export async function completeLesson(lessonId) {
 
 		return { success: true, error: null }
 	} catch (error) {
-		console.error('Error completing lesson:', error)
+		logger.error('Error completing lesson:', error)
 		return { success: false, error: error.message }
 	}
 }
@@ -360,7 +360,7 @@ export async function updateLessonTimeSpent({ lessonId, secondsSpent }) {
 
 		return { success: true, error: null }
 	} catch (error) {
-		console.error('Error updating lesson time:', error)
+		logger.error('Error updating lesson time:', error)
 		return { success: false, error: error.message }
 	}
 }

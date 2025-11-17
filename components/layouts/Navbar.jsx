@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
 import { usePathname, useParams } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useHasLessonsForLanguage } from '@/lib/lessons-client'
 import UserMenu from './UserMenu'
 import ThemeToggle from '../ThemeToggle'
 import {
@@ -45,7 +45,8 @@ const Navbar = props => {
 	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
 	const pathname = usePathname()
 	const params = useParams()
-	const { lessons, lessons_loading } = useSelector(store => store.lessons)
+	// Check if lessons are available for current interface language
+	const { data: hasLessons = false, isLoading: isCheckingLessons } = useHasLessonsForLanguage(locale)
 
 	const allNavigationLinks = [
 		{
@@ -74,8 +75,7 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: <LocalLibraryRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/lessons',
-			// Cacher seulement si chargement terminé ET aucune leçon
-			hideIf: !lessons_loading && lessons?.length === 0,
+			hideIf: !isCheckingLessons && !hasLessons,
 		},
 		{
 			name: t('blog'),

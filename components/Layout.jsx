@@ -4,13 +4,12 @@ import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
 import BottomNav from './layouts/BottomNav'
 import EmailVerificationBanner from './auth/EmailVerificationBanner'
-import { useSelector } from 'react-redux'
-import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
+import { useFlashcards } from '@/context/flashcards'
 import FlashCards from './games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const Layout = ({ children }) => {
-	const router = useNextRouter() // For navigation
+	const { isFlashcardsOpen } = useFlashcards()
 	const pathname = usePathname()
 	const params = useParams()
 	const { isFlashcardsOpen } = useSelector(store => store.cards)

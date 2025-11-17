@@ -19,10 +19,10 @@ import { addXPAction } from '@/actions/gamification/xp-actions'
  * }, {
  *   onSuccess: (data) => {
  *     if (data.leveledUp) {
- *       console.log('Level up!', data.currentLevel)
+ *       logger.log('Level up!', data.currentLevel)
  *     }
  *     if (data.achievements.length > 0) {
- *       console.log('Achievements unlocked!', data.achievements)
+ *       logger.log('Achievements unlocked!', data.achievements)
  *     }
  *   }
  * })

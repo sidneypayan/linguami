@@ -4,13 +4,13 @@ import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
 import BottomNav from './layouts/BottomNav'
 import EmailVerificationBanner from './auth/EmailVerificationBanner'
-import { useSelector } from 'react-redux'
+import { useFlashcards } from '@/context/flashcards'
 import { useLocale } from 'next-intl'
 import FlashCards from './games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const AppRouterLayout = ({ children }) => {
-	const { isFlashcardsOpen } = useSelector(store => store.cards)
+	const { isFlashcardsOpen } = useFlashcards()
 	const locale = useLocale()
 	const theme = useTheme()
 
