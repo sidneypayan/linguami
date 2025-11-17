@@ -10,10 +10,6 @@ import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const Layout = ({ children }) => {
 	const { isFlashcardsOpen } = useFlashcards()
-	const pathname = usePathname()
-	const params = useParams()
-	const { isFlashcardsOpen } = useSelector(store => store.cards)
-	const lang = router.locale
 	const theme = useTheme()
 
 	return isFlashcardsOpen ? (
