@@ -24,6 +24,7 @@ import { Close, Save, CloudUpload } from '@mui/icons-material'
 import { useTranslations, useLocale } from 'next-intl'
 import { supabase } from '@/lib/supabase'
 import { optimizeImage } from '@/utils/imageOptimizer'
+import { logger } from '@/utils/logger'
 
 /**
  * Upload un fichier vers R2 via l'API route
@@ -194,7 +195,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			}
 			onClose()
 		} catch (err) {
-			console.error('Erreur lors de la sauvegarde:', err)
+			logger.error('Erreur lors de la sauvegarde:', err)
 			setError(err.message || 'Une erreur est survenue')
 		} finally {
 			setSaving(false)

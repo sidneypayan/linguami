@@ -1,5 +1,3 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { changePage } from '@/features/materials/materialsSlice'
 import { Box, IconButton, Button, Stack, useTheme, useMediaQuery } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
@@ -8,26 +6,17 @@ const Pagination = ({
 	currentPage: currentPageProp,
 	onPageChange,
 }) => {
-	// Try to use Redux if available (backward compatibility)
-	const materialsState = useSelector(store => store?.materials || {})
-	const { numOfPages: numOfPagesRedux, page: pageRedux } = materialsState
-	const dispatch = useDispatch()
-
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-	// Use props if provided, otherwise use Redux (backward compatibility)
-	const numOfPages = numOfPagesProp !== undefined ? numOfPagesProp : numOfPagesRedux
-	const page = currentPageProp !== undefined ? currentPageProp : pageRedux || 1
+	// Use props directly (Redux removed)
+	const numOfPages = numOfPagesProp
+	const page = currentPageProp || 1
 
 	const handlePageChange = (newPage) => {
 		if (onPageChange) {
-			// Use callback if provided (new way)
 			onPageChange(newPage)
-		} else if (dispatch) {
-			// Fallback to Redux (old way)
-			dispatch(changePage(newPage))
 		}
 	}
 

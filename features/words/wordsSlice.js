@@ -3,6 +3,7 @@ import axios from 'axios'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import { calculateNextReview, initializeCard, getDueCards } from '@/utils/spacedRepetition'
+import { logger } from '@/utils/logger'
 // Les limites de traduction sont maintenant gérées côté serveur via cookie HttpOnly
 
 /**
@@ -155,8 +156,8 @@ export const addWordToDictionary = createAsyncThunk(
 				.select('*') // v2: indispensable si on veut les lignes
 
 			if (error) {
-				console.error('❌ Supabase insert error:', error)
-				console.error('❌ Error details:', {
+				logger.error('❌ Supabase insert error:', error)
+				logger.error('❌ Error details:', {
 					code: error?.code,
 					message: error?.message,
 					details: error?.details,
@@ -179,7 +180,7 @@ export const addWordToDictionary = createAsyncThunk(
 
 			return { success: message, data: data || [] }
 		} catch (error) {
-			console.error('❌ Catch block error:', error)
+			logger.error('❌ Catch block error:', error)
 			const message = getaddWordsToUserDictionaryMessage(
 				'unexpected_error',
 				lang
@@ -454,7 +455,7 @@ const wordsSlice = createSlice({
 							sourceId: word.id?.toString() || '',
 							description: 'Added word to dictionary'
 						})
-					}).catch(err => console.error('Error adding XP:', err))
+					}).catch(err => logger.error('Error adding XP:', err))
 				})
 			})
 			.addCase(addWordToDictionary.rejected, (_, action) => {
@@ -519,7 +520,7 @@ const wordsSlice = createSlice({
 			})
 			.addCase(updateWordReview.rejected, (_, action) => {
 				// Error toast will be shown by the component
-				console.error(action.payload)
+				logger.error(action.payload)
 			})
 
 			// INITIALIZE SRS
@@ -529,7 +530,7 @@ const wordsSlice = createSlice({
 				state.user_material_words = state.user_material_words.map(updateWord)
 			})
 			.addCase(initializeWordSRS.rejected, (_, action) => {
-				console.error('Erreur lors de l\'initialisation SRS:', action.payload)
+				logger.error('Erreur lors de l\'initialisation SRS:', action.payload)
 			})
 
 			// SUSPEND CARD
@@ -541,7 +542,7 @@ const wordsSlice = createSlice({
 			})
 			.addCase(suspendCard.rejected, (_, action) => {
 				// Error toast will be shown by the component
-				console.error(action.payload)
+				logger.error(action.payload)
 			})
 	},
 })

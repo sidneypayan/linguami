@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -73,7 +74,7 @@ export default async function handler(req, res) {
 				.eq('id', existingProgress.id)
 
 			if (updateError) {
-				console.error('Error updating progress:', updateError)
+				logger.error('Error updating progress:', updateError)
 				return res.status(500).json({ error: 'Failed to update progress' })
 			}
 		} else {
@@ -91,7 +92,7 @@ export default async function handler(req, res) {
 				})
 
 			if (insertError) {
-				console.error('Error inserting progress:', insertError)
+				logger.error('Error inserting progress:', insertError)
 				return res.status(500).json({ error: 'Failed to save progress' })
 			}
 		}
@@ -159,14 +160,14 @@ export default async function handler(req, res) {
 
 				if (txError) throw txError
 
-				console.log(`✅ XP awarded: ${xpAwarded} XP, ${goldAwarded} Gold to user ${user.id}`)
+				logger.log(`✅ XP awarded: ${xpAwarded} XP, ${goldAwarded} Gold to user ${user.id}`)
 			} catch (xpError) {
-				console.error('❌ Error awarding XP:', xpError)
+				logger.error('❌ Error awarding XP:', xpError)
 				// Continue anyway, don't block the exercise completion
 			}
 		}
 
-		console.log(`📤 API Response: success=${true}, xpAwarded=${xpAwarded}, goldAwarded=${goldAwarded}, isFirstCompletion=${isPerfectScore && !hadPerfectScoreBefore}`)
+		logger.log(`📤 API Response: success=${true}, xpAwarded=${xpAwarded}, goldAwarded=${goldAwarded}, isFirstCompletion=${isPerfectScore && !hadPerfectScoreBefore}`)
 
 		return res.status(200).json({
 			success: true,
@@ -177,7 +178,7 @@ export default async function handler(req, res) {
 		})
 
 	} catch (error) {
-		console.error('Error submitting exercise:', error)
+		logger.error('Error submitting exercise:', error)
 		return res.status(500).json({ error: 'Internal server error' })
 	}
 }

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { parse, serialize } from 'cookie'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/utils/logger'
 
 const MAX_GUEST_TRANSLATIONS = 20
 const COOKIE_NAME = 'guest_trans_count'
@@ -39,9 +40,9 @@ async function checkAndIncrementServerCount(ipAddress) {
 			// PGRST116 = pas trouvé, c'est OK
 			// 42P01 = table n'existe pas
 			if (fetchError.code === '42P01') {
-				console.warn('guest_translation_tracking table does not exist, skipping server-side tracking')
+				logger.warn('guest_translation_tracking table does not exist, skipping server-side tracking')
 			} else {
-				console.error('Error fetching translation count:', fetchError)
+				logger.error('Error fetching translation count:', fetchError)
 			}
 			// Continuer sans bloquer l'utilisateur
 			return { count: 0, limitReached: false }
@@ -66,7 +67,7 @@ async function checkAndIncrementServerCount(ipAddress) {
 				.eq('ip_address', ipAddress)
 
 			if (updateError) {
-				console.error('Error updating translation count:', updateError)
+				logger.error('Error updating translation count:', updateError)
 			}
 
 			return {
@@ -83,7 +84,7 @@ async function checkAndIncrementServerCount(ipAddress) {
 				})
 
 			if (insertError) {
-				console.error('Error inserting translation count:', insertError)
+				logger.error('Error inserting translation count:', insertError)
 			}
 
 			return {
@@ -92,7 +93,7 @@ async function checkAndIncrementServerCount(ipAddress) {
 			}
 		}
 	} catch (error) {
-		console.error('Error in checkAndIncrementServerCount:', error)
+		logger.error('Error in checkAndIncrementServerCount:', error)
 		// En cas d'erreur, on ne bloque pas l'utilisateur
 		return { count: 0, limitReached: false }
 	}
@@ -158,7 +159,7 @@ export default async function handler(req, res) {
 		return res.status(200).json(translationResult)
 
 	} catch (error) {
-		console.error('Translation API error:', error)
+		logger.error('Translation API error:', error)
 		return res.status(500).json({
 			error: 'Internal server error',
 			message: error.message
@@ -193,7 +194,7 @@ async function performTranslation({ word, sentence, userLearningLanguage, locale
 
 	// Vérifier si la paire de langues est supportée
 	if (!supportedPairs.includes(langPair)) {
-		console.warn(`Unsupported language pair: ${langPair}`)
+		logger.warn(`Unsupported language pair: ${langPair}`)
 		// Retourner un résultat vide au lieu de crasher
 		return {
 			word: normalizedWord,
@@ -214,7 +215,7 @@ async function performTranslation({ word, sentence, userLearningLanguage, locale
 			`?key=${apiKey}` +
 			`&lang=${langPair}&text=${encodeURIComponent(normalizedWord)}&flags=004`
 
-		console.log(`Translating: "${normalizedWord}" from ${langPair}`)
+		logger.log(`Translating: "${normalizedWord}" from ${langPair}`)
 		const { data } = await axios.get(url)
 
 		return {
@@ -223,7 +224,7 @@ async function performTranslation({ word, sentence, userLearningLanguage, locale
 			sentence
 		}
 	} catch (error) {
-		console.error(`Yandex API error for ${langPair}:`, error.response?.data || error.message)
+		logger.error(`Yandex API error for ${langPair}:`, error.response?.data || error.message)
 
 		// Si l'API Yandex retourne une erreur, ne pas crasher complètement
 		return {

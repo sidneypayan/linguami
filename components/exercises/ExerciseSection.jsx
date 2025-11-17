@@ -22,6 +22,7 @@ import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
 import LoadingSpinner from '../LoadingSpinner'
+import { logger } from '@/utils/logger'
 
 /**
  * Exercise Section Component
@@ -97,7 +98,7 @@ const ExerciseSection = ({ materialId }) => {
 				.order('id', { ascending: true })
 
 			if (exercisesError) {
-				console.error('Error loading exercises:', exercisesError)
+				logger.error('Error loading exercises:', exercisesError)
 			} else {
 				setExercises(exercisesData || [])
 				// Auto-expand if there are exercises
@@ -189,7 +190,7 @@ const ExerciseSection = ({ materialId }) => {
 				return { isFirstCompletion: false, xpAwarded: 0 }
 			}
 		} catch (error) {
-			console.error('Error submitting exercise:', error)
+			logger.error('Error submitting exercise:', error)
 			toast.error(t('saveError'))
 			return { isFirstCompletion: false, xpAwarded: 0 }
 		}

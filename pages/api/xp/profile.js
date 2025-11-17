@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 /**
  * API endpoint pour récupérer le profil XP de l'utilisateur
@@ -160,7 +161,7 @@ export default async function handler(req, res) {
 			achievements: achievements || [],
 		})
 	} catch (error) {
-		console.error('Error fetching XP profile:', error)
+		logger.error('Error fetching XP profile:', error)
 		return res.status(500).json({ error: 'Failed to fetch XP profile' })
 	}
 }

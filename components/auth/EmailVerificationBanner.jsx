@@ -9,6 +9,7 @@ import { resendVerificationEmail } from '@/lib/emailVerification'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import { getEmailLanguage } from '@/lib/emailService'
 import toast from '@/utils/toast'
+import { logger } from '@/utils/logger'
 
 /**
  * Bannière d'avertissement pour les utilisateurs dont l'email n'est pas vérifié
@@ -44,7 +45,7 @@ const EmailVerificationBanner = () => {
 				toast.error(t('errorResendingEmail') || 'Erreur lors de l\'envoi de l\'email')
 			}
 		} catch (error) {
-			console.error('Error resending verification email:', error)
+			logger.error('Error resending verification email:', error)
 			toast.error(t('errorResendingEmail') || 'Erreur lors de l\'envoi de l\'email')
 		} finally {
 			setIsResending(false)

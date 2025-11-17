@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import formidable from 'formidable'
 import fs from 'fs'
+import { logger } from '@/utils/logger'
 
 // Disable bodyParser pour permettre formidable de parser
 export const config = {
@@ -59,11 +60,11 @@ export default async function handler(req, res) {
 		// Nettoyer le fichier temporaire
 		fs.unlinkSync(file.filepath)
 
-		console.log(`✅ Fichier uploadé vers R2: ${path}`)
+		logger.log(`✅ Fichier uploadé vers R2: ${path}`)
 
 		res.status(200).json({ success: true, path })
 	} catch (error) {
-		console.error('❌ Erreur upload R2:', error)
+		logger.error('❌ Erreur upload R2:', error)
 		res.status(500).json({ error: error.message })
 	}
 }

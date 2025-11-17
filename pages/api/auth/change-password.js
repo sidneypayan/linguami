@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -75,7 +76,7 @@ export default async function handler(req, res) {
 
 		return res.status(200).json({ success: true, message: 'Password changed successfully' })
 	} catch (error) {
-		console.error('Error changing password:', error)
+		logger.error('Error changing password:', error)
 		return res.status(500).json({ error: 'Failed to change password' })
 	}
 }

@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
+import { logger } from '@/utils/logger'
 
 /**
  * Data fetching functions for materials (Server Components)
@@ -25,7 +26,31 @@ export async function getMaterialsBySection(lang, section) {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching materials:', error)
+    logger.error('Error fetching materials:', error)
+    return []
+  }
+
+  return materials
+}
+
+/**
+ * Fetch all materials by language (all sections except books and book-chapters)
+ * @param {string} lang - Learning language (fr, ru, en)
+ * @returns {Promise<Array>} Materials array
+ */
+export async function getAllMaterialsByLanguage(lang) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data: materials, error } = await supabase
+    .from('materials')
+    .select('*')
+    .eq('lang', lang)
+    .not('section', 'in', '(books,book-chapters)')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    logger.error('Error fetching all materials:', error)
     return []
   }
 
@@ -48,7 +73,7 @@ export async function getBooksByLanguage(lang) {
     .order('id', { ascending: false })
 
   if (error) {
-    console.error('Error fetching books:', error)
+    logger.error('Error fetching books:', error)
     return []
   }
 
@@ -72,7 +97,7 @@ export async function getUserMaterialsByLanguage(lang, userId) {
     .eq('materials.lang', lang)
 
   if (error) {
-    console.error('Error fetching user materials:', error)
+    logger.error('Error fetching user materials:', error)
     return []
   }
 
@@ -103,7 +128,7 @@ export async function getUserMaterialsStatus(userId) {
     .eq('user_id', userId)
 
   if (error) {
-    console.error('Error fetching user materials status:', error)
+    logger.error('Error fetching user materials status:', error)
     return []
   }
 
@@ -127,7 +152,7 @@ export async function getUserMaterialStatus(materialId, userId) {
     .maybeSingle()
 
   if (error) {
-    console.error('Error fetching user material status:', error)
+    logger.error('Error fetching user material status:', error)
     return { is_being_studied: false, is_studied: false }
   }
 
@@ -153,7 +178,7 @@ export async function getFirstChapterOfBook(lang, bookId) {
     .limit(1)
 
   if (error) {
-    console.error('Error fetching first chapter:', error)
+    logger.error('Error fetching first chapter:', error)
     return null
   }
 
@@ -177,7 +202,7 @@ export async function getBookChapters(bookId) {
     .order('id')
 
   if (error) {
-    console.error('Error fetching chapters:', error)
+    logger.error('Error fetching chapters:', error)
     return []
   }
 

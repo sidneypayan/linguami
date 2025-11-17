@@ -26,6 +26,7 @@ import {
 import { useUserContext } from '@/context/user'
 import { supabase } from '@/lib/supabase'
 import { Link } from '@/i18n/navigation'
+import { logger } from '@/utils/logger'
 
 const initialState = {
 	email: '',
@@ -94,7 +95,7 @@ const UpdatePassword = () => {
 			const error_code = searchParams.get('error_code')
 			const code = searchParams.get('code')
 
-			console.log('🔍 URL params:', { error, error_code, code })
+			logger.log('🔍 URL params:', { error, error_code, code })
 
 			// Vérifier les paramètres URL pour les erreurs
 			if (error_code === 'otp_expired' || error === 'access_denied') {
@@ -106,8 +107,8 @@ const UpdatePassword = () => {
 
 			// Si on a un code dans l'URL, attendre que Supabase l'échange automatiquement
 			if (code && typeof code === 'string') {
-				console.log('🔑 Code de récupération détecté dans URL')
-				console.log('⏳ Attente de l\'événement SIGNED_IN de Supabase...')
+				logger.log('🔑 Code de récupération détecté dans URL')
+				logger.log('⏳ Attente de l\'événement SIGNED_IN de Supabase...')
 				// Ne rien faire ici - l'auth state listener détectera SIGNED_IN
 				// et déclenchera PASSWORD_RECOVERY automatiquement
 				return
@@ -117,10 +118,10 @@ const UpdatePassword = () => {
 			supabase.auth.getSession().then(({ data: { session } }) => {
 				if (!mounted) return
 				if (session?.user) {
-					console.log('✅ Recovery session found')
+					logger.log('✅ Recovery session found')
 					setIsResetting(true)
 				} else {
-					console.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
+					logger.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
 					setIsResetting(false)
 				}
 				setLoading(false)
@@ -131,18 +132,18 @@ const UpdatePassword = () => {
 
 		// 2) Écouter les événements d'authentification
 		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-			console.log('🔍 Auth event:', event)
+			logger.log('🔍 Auth event:', event)
 
 			// Détecter une connexion suite à un reset password
 			if (event === 'SIGNED_IN' && searchParams.get('code')) {
-				console.log('✅ SIGNED_IN détecté avec code de récupération')
+				logger.log('✅ SIGNED_IN détecté avec code de récupération')
 				setIsResetting(true)
 				setLoading(false)
 			}
 
 			// Détecter l'événement PASSWORD_RECOVERY (ancien flow)
 			if (event === 'PASSWORD_RECOVERY') {
-				console.log('✅ PASSWORD_RECOVERY event detected')
+				logger.log('✅ PASSWORD_RECOVERY event detected')
 				setIsResetting(true)
 				setLoading(false)
 			}

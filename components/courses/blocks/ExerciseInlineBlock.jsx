@@ -12,6 +12,7 @@ import {
 import { Edit, CheckCircle, Cancel } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import toast from '@/utils/toast'
+import { logger } from '@/utils/logger'
 
 const ExerciseInlineBlock = ({ block }) => {
 	const t = useTranslations('common')
@@ -73,7 +74,7 @@ const ExerciseInlineBlock = ({ block }) => {
 					}
 				}
 			} catch (error) {
-				console.error('Error awarding XP:', error)
+				logger.error('Error awarding XP:', error)
 			}
 		}
 	}

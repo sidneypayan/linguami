@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState, use, useMemo } from 'react'
 import { useRouterCompat } from '@/hooks/useRouterCompat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -74,12 +74,34 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
+	// Helper function to decode base64 UTF-8
+	const decodeBase64UTF8 = (base64String) => {
+		if (!base64String) return null
+		const binaryString = atob(base64String)
+		const bytes = new Uint8Array(binaryString.length)
+		for (let i = 0; i < binaryString.length; i++) {
+			bytes[i] = binaryString.charCodeAt(i)
+		}
+		return new TextDecoder('utf-8').decode(bytes)
+	}
+
+	// Decode base64-encoded text fields if they were encoded server-side
+	const decodedMaterial = initialMaterial && initialMaterial._encoded ? {
+		...initialMaterial,
+		content: decodeBase64UTF8(initialMaterial.content),
+		content_accented: decodeBase64UTF8(initialMaterial.content_accented),
+	} : initialMaterial
+
 	// React Query: Hydrate material data with SSR data
 	const { data: currentMaterial } = useQuery({
 		queryKey: ['material', params?.material],
-		queryFn: () => initialMaterial,
-		initialData: initialMaterial,
+		queryFn: () => decodedMaterial,
+		initialData: decodedMaterial,
 		staleTime: Infinity,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		enabled: false, // Never refetch, only use initial data
 	})
 
 	// React Query: Hydrate user material status
@@ -402,7 +424,51 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 								</Button>
 							)}
 
-							{/* Bouton "Montrer les accents" caché */}
+							{/* Bouton pour afficher/masquer les accents toniques (russe uniquement) */}
+							{currentMaterial.content_accented && (
+								<Button
+									variant='outlined'
+									startIcon={<VisibilityRounded />}
+									onClick={() => setShowAccents(!showAccents)}
+									sx={{
+										borderColor: showAccents ? '#10b981' : '#8b5cf6',
+										color: showAccents ? '#10b981' : '#8b5cf6',
+										fontWeight: 600,
+										fontSize: { xs: '0.9rem', sm: '1rem' },
+										padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
+										borderRadius: 3,
+										textTransform: 'none',
+										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+										borderWidth: '2px',
+										'&:hover': {
+											borderColor: showAccents ? '#10b981' : '#8b5cf6',
+											borderWidth: '2px',
+											background: showAccents
+												? 'rgba(16, 185, 129, 0.1)'
+												: 'rgba(139, 92, 246, 0.1)',
+											transform: 'translateY(-3px)',
+											boxShadow: showAccents
+												? '0 4px 20px rgba(16, 185, 129, 0.3)'
+												: '0 4px 20px rgba(139, 92, 246, 0.3)',
+										},
+										'&:active': {
+											transform: 'scale(0.98)',
+										},
+									}}>
+									<Box
+										component='span'
+										sx={{ display: { xs: 'none', sm: 'inline' } }}>
+										{showAccents ? t('hideaccents') : t('showaccents')}
+									</Box>
+									<Box
+										component='span'
+										sx={{ display: { xs: 'inline', sm: 'none' } }}>
+										{showAccents
+											? (locale === 'fr' ? 'Masquer' : locale === 'ru' ? 'Скрыть' : 'Hide')
+											: (locale === 'fr' ? 'Montrer' : locale === 'ru' ? 'Показать' : 'Show')}
+									</Box>
+								</Button>
+							)}
 
 							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
 							{isUserAdmin && (

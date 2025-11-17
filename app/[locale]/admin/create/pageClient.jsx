@@ -33,6 +33,7 @@ import {
 } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { useUserContext } from '@/context/user'
+import { logger } from '@/utils/logger'
 
 const CreateMaterial = () => {
 	const t = useTranslations('admin')
@@ -97,8 +98,8 @@ const CreateMaterial = () => {
 
 		// DEBUG: Vérifier la session utilisateur
 		const { data: { user } } = await supabase.auth.getUser()
-		console.log('🔍 DEBUG - User ID:', user?.id)
-		console.log('🔍 DEBUG - User Email:', user?.email)
+		logger.log('🔍 DEBUG - User ID:', user?.id)
+		logger.log('🔍 DEBUG - User Email:', user?.email)
 
 		try {
 			let cleanedFormData = { ...formData }
@@ -128,7 +129,7 @@ const CreateMaterial = () => {
 
 			router.back()
 		} catch (err) {
-			console.error('Erreur lors de l\'envoi du contenu:', err)
+			logger.error('Erreur lors de l\'envoi du contenu:', err)
 		}
 	}
 

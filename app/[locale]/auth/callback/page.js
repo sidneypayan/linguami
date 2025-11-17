@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Box, CircularProgress, Typography } from '@mui/material'
+import { logger } from '@/utils/logger'
 
 /**
  * OAuth callback and email confirmation page
@@ -52,7 +53,7 @@ export default function AuthCallback() {
 
 						if (!exchangeResponse.ok) {
 							const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
-							console.error('❌ Exchange failed with error:', errorData)
+							logger.error('❌ Exchange failed with error:', errorData)
 							throw new Error(errorData.error || 'Failed to exchange code')
 						}
 
@@ -80,7 +81,7 @@ export default function AuthCallback() {
 						const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
 
 						if (!response.ok) {
-							console.error('❌ Validation failed with error:', data)
+							logger.error('❌ Validation failed with error:', data)
 							throw new Error(data.error || 'Authentication failed')
 						}
 
@@ -101,11 +102,11 @@ export default function AuthCallback() {
 						router.replace('/materials')
 						return
 					} catch (vkError) {
-						console.error('❌ VK ID authentication error:', vkError)
-						console.error('Error name:', vkError.name)
-						console.error('Error message:', vkError.message)
-						console.error('Error stack:', vkError.stack)
-						console.error('Full error object:', JSON.stringify(vkError, null, 2))
+						logger.error('❌ VK ID authentication error:', vkError)
+						logger.error('Error name:', vkError.name)
+						logger.error('Error message:', vkError.message)
+						logger.error('Error stack:', vkError.stack)
+						logger.error('Full error object:', JSON.stringify(vkError, null, 2))
 
 						// Wait 5 seconds before redirect to see the error
 						const errorMessage = vkError.message || 'Unknown error'
@@ -135,7 +136,7 @@ export default function AuthCallback() {
 					const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
 					if (sessionError || !session) {
-						console.error('❌ No session after PKCE exchange:', sessionError)
+						logger.error('❌ No session after PKCE exchange:', sessionError)
 						router.replace('/login?error=auth_failed')
 						return
 					}
@@ -157,7 +158,7 @@ export default function AuthCallback() {
 					const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
 					if (sessionError || !session) {
-						console.error('❌ No session after PKCE exchange:', sessionError)
+						logger.error('❌ No session after PKCE exchange:', sessionError)
 						router.replace('/reset-password?error=access_denied&error_code=otp_expired')
 						return
 					}
@@ -176,7 +177,7 @@ export default function AuthCallback() {
 					})
 
 					if (sessionError) {
-						console.error('Error setting session:', sessionError)
+						logger.error('Error setting session:', sessionError)
 						// Redirect to login on error
 						router.replace('/login?error=session')
 						return
@@ -221,7 +222,7 @@ export default function AuthCallback() {
 					router.replace('/login')
 				}
 			} catch (error) {
-				console.error('Error in auth callback:', error)
+				logger.error('Error in auth callback:', error)
 				router.replace('/login?error=callback')
 			}
 		}

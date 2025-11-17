@@ -2,6 +2,7 @@
 // Validate VK ID token and create/login user in Supabase
 
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'POST') {
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
 		const clientId = process.env.NEXT_PUBLIC_VK_APP_ID
 		const userInfoUrl = `https://id.vk.com/oauth2/user_info?client_id=${clientId}`
 
-		console.log('🔧 [VK Validate] Fetching from:', userInfoUrl)
+		logger.log('🔧 [VK Validate] Fetching from:', userInfoUrl)
 
 		const verifyResponse = await fetch(userInfoUrl, {
 			headers: {
@@ -29,26 +30,26 @@ export default async function handler(req, res) {
 		})
 
 		if (!verifyResponse.ok) {
-			console.error('VK ID token verification failed')
+			logger.error('VK ID token verification failed')
 			return res.status(401).json({ error: 'Invalid token' })
 		}
 
 		const vkUserData = await verifyResponse.json()
 
-		console.log('✅ [VK Validate] VK user data received:')
-		console.log('Raw response:', JSON.stringify(vkUserData, null, 2))
+		logger.log('✅ [VK Validate] VK user data received:')
+		logger.log('Raw response:', JSON.stringify(vkUserData, null, 2))
 
 		// Extract user data from response (VK API returns data in 'user' object)
 		const vkUser = vkUserData.user || vkUserData
 
-		console.log('Extracted user_id:', vkUser.user_id)
-		console.log('Expected user_id:', userId.toString())
+		logger.log('Extracted user_id:', vkUser.user_id)
+		logger.log('Expected user_id:', userId.toString())
 
 		// Validate that the user ID matches
 		if (vkUser.user_id !== userId.toString()) {
-			console.error('User ID mismatch')
-			console.error('Expected:', userId.toString())
-			console.error('Received:', vkUser.user_id)
+			logger.error('User ID mismatch')
+			logger.error('Expected:', userId.toString())
+			logger.error('Received:', vkUser.user_id)
 			return res.status(401).json({ error: 'User ID mismatch' })
 		}
 
@@ -98,7 +99,7 @@ export default async function handler(req, res) {
 			)
 
 			if (updateError) {
-				console.error('Error updating user metadata:', updateError)
+				logger.error('Error updating user metadata:', updateError)
 			}
 
 			supabaseUser = updatedUser?.user || existingUser
@@ -115,7 +116,7 @@ export default async function handler(req, res) {
 				.eq('id', supabaseUser.id)
 
 			if (profileUpdateError) {
-				console.error('Error updating user profile:', profileUpdateError)
+				logger.error('Error updating user profile:', profileUpdateError)
 			}
 		} else {
 			// Create new user
@@ -136,7 +137,7 @@ export default async function handler(req, res) {
 			})
 
 			if (createError) {
-				console.error('Error creating user:', createError)
+				logger.error('Error creating user:', createError)
 				return res.status(500).json({ error: 'Failed to create user' })
 			}
 
@@ -155,25 +156,25 @@ export default async function handler(req, res) {
 				.eq('id', supabaseUser.id)
 
 			if (profileError) {
-				console.error('Error creating user profile:', profileError)
+				logger.error('Error creating user profile:', profileError)
 			}
 		}
 
 		// Step 2: Sign in with password to get a real session with tokens
-		console.log('🔑 Creating session for user:', supabaseUser.email)
+		logger.log('🔑 Creating session for user:', supabaseUser.email)
 		const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
 			email: supabaseUser.email,
 			password: tempPassword,
 		})
 
 		if (signInError || !signInData?.session) {
-			console.error('❌ Error signing in user:', signInError)
+			logger.error('❌ Error signing in user:', signInError)
 			return res.status(500).json({ error: 'Failed to create session' })
 		}
 
-		console.log('✅ Session created successfully')
-		console.log('Access token present:', !!signInData.session.access_token)
-		console.log('Refresh token present:', !!signInData.session.refresh_token)
+		logger.log('✅ Session created successfully')
+		logger.log('Access token present:', !!signInData.session.access_token)
+		logger.log('Refresh token present:', !!signInData.session.refresh_token)
 
 		const accessToken = signInData.session.access_token
 		const refreshToken = signInData.session.refresh_token
@@ -192,7 +193,7 @@ export default async function handler(req, res) {
 		})
 
 	} catch (error) {
-		console.error('Error in VK ID validation:', error)
+		logger.error('Error in VK ID validation:', error)
 		return res.status(500).json({ error: 'Internal server error' })
 	}
 }

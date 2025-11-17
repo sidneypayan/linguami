@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useUserContext } from '@/context/user'
+import { logger } from '@/utils/logger'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (
@@ -175,13 +176,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 			try {
 				await updateUserProfile({ spoken_language: newLocale })
 			} catch (error) {
-				console.error('Error updating spoken language:', error)
+				logger.error('Error updating spoken language:', error)
 			}
 		} else {
 			try {
 				localStorage.setItem('spoken_language', newLocale)
 			} catch (error) {
-				console.error('Error saving to localStorage:', error)
+				logger.error('Error saving to localStorage:', error)
 			}
 		}
 

@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'GET') {
@@ -52,7 +53,7 @@ export default async function handler(req, res) {
 		.order('id', { ascending: false })
 
 	if (error) {
-		console.error('Error fetching materials:', error)
+		logger.error('Error fetching materials:', error)
 		return res.status(500).json({ error: 'Failed to fetch materials' })
 	}
 
@@ -79,7 +80,7 @@ export default async function handler(req, res) {
 						status,
 					}
 				} catch (error) {
-					console.error(`Error checking video ${material.id}:`, error)
+					logger.error(`Error checking video ${material.id}:`, error)
 					return {
 						...material,
 						status: 'error',
@@ -162,23 +163,23 @@ async function checkVideoLink(url) {
 
 			// Log pour debug (seulement pour cette vidéo spécifique)
 			if (videoId === 'kLezFlhQook') {
-				console.log('=== DEBUG VIDEO kLezFlhQook ===')
-				console.log('Status:', embedResponse.status)
-				console.log('HTML length:', html.length)
+				logger.log('=== DEBUG VIDEO kLezFlhQook ===')
+				logger.log('Status:', embedResponse.status)
+				logger.log('HTML length:', html.length)
 
 				// Chercher le playabilityStatus
 				const playabilityMatch = html.match(/"playabilityStatus":\s*\{[^}]+\}/);
 				if (playabilityMatch) {
-					console.log('Playability found:', playabilityMatch[0])
+					logger.log('Playability found:', playabilityMatch[0])
 				} else {
-					console.log('No playabilityStatus found')
+					logger.log('No playabilityStatus found')
 				}
 
 				// Chercher d'autres indicateurs
-				if (html.includes('has been blocked')) console.log('Found: has been blocked')
-				if (html.includes('copyright')) console.log('Found: copyright')
-				if (html.includes('unavailable')) console.log('Found: unavailable')
-				if (html.includes('UNPLAYABLE')) console.log('Found: UNPLAYABLE')
+				if (html.includes('has been blocked')) logger.log('Found: has been blocked')
+				if (html.includes('copyright')) logger.log('Found: copyright')
+				if (html.includes('unavailable')) logger.log('Found: unavailable')
+				if (html.includes('UNPLAYABLE')) logger.log('Found: UNPLAYABLE')
 			}
 
 			// Chercher les données JSON embarquées dans la page
@@ -199,7 +200,7 @@ async function checkVideoLink(url) {
 					}
 				} catch (e) {
 					// Impossible de parser le JSON, continuer avec d'autres vérifications
-					console.error('Error parsing playabilityStatus:', e.message)
+					logger.error('Error parsing playabilityStatus:', e.message)
 				}
 			}
 
@@ -293,7 +294,7 @@ async function checkVideoLink(url) {
 		clearTimeout(otherTimeoutId)
 		return response.ok ? 'working' : 'broken'
 	} catch (error) {
-		console.error(`Error checking ${url}:`, error.message)
+		logger.error(`Error checking ${url}:`, error.message)
 		return 'broken'
 	}
 }

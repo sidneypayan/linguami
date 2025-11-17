@@ -12,6 +12,7 @@ import AdminNavbar from '@/components/admin/AdminNavbar'
 import FillInTheBlank from '@/components/exercises/FillInTheBlank'
 import MultipleChoice from '@/components/exercises/MultipleChoice'
 import DragAndDrop from '@/components/exercises/DragAndDrop'
+import { logger } from '@/utils/logger'
 
 const PreviewExercise = () => {
 	const router = useRouter()
@@ -38,7 +39,7 @@ const PreviewExercise = () => {
 				.single()
 
 			if (error) {
-				console.error('Error loading exercise:', error)
+				logger.error('Error loading exercise:', error)
 			} else {
 				setExercise(data)
 			}
@@ -59,7 +60,7 @@ const PreviewExercise = () => {
 
 	// Handle completion (preview mode - no XP awarded)
 	const handleComplete = (result) => {
-		console.log('Exercise completed (preview mode):', result)
+		logger.log('Exercise completed (preview mode):', result)
 	}
 
 	// Show nothing while bootstrapping

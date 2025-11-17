@@ -23,6 +23,7 @@ import {
 	useTheme,
 } from '@mui/material'
 import { Close, Add } from '@mui/icons-material'
+import { logger } from '@/utils/logger'
 
 const STORAGE_KEY = 'addWordModal_formData'
 
@@ -47,7 +48,7 @@ const AddWordModal = ({ open, onClose }) => {
 				return JSON.parse(stored)
 			}
 		} catch (error) {
-			console.error('Error loading from sessionStorage:', error)
+			logger.error('Error loading from sessionStorage:', error)
 		}
 		return { learningLangWord: '', browserLangWord: '', contextSentence: '' }
 	}
@@ -72,7 +73,7 @@ const AddWordModal = ({ open, onClose }) => {
 		try {
 			sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
 		} catch (error) {
-			console.error('Error saving to sessionStorage:', error)
+			logger.error('Error saving to sessionStorage:', error)
 		}
 	}, [learningLangWord, browserLangWord, contextSentence])
 
@@ -96,7 +97,7 @@ const AddWordModal = ({ open, onClose }) => {
 			try {
 				sessionStorage.removeItem(STORAGE_KEY)
 			} catch (error) {
-				console.error('Error clearing sessionStorage:', error)
+				logger.error('Error clearing sessionStorage:', error)
 			}
 		}
 	}
@@ -172,7 +173,7 @@ const AddWordModal = ({ open, onClose }) => {
 			clearFormData()
 			onClose()
 		} catch (error) {
-			console.error('Erreur:', error)
+			logger.error('Erreur:', error)
 			toast.error(t('server_error'))
 		} finally {
 			setIsSubmitting(false)

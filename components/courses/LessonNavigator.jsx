@@ -26,6 +26,7 @@ import {
 } from '@mui/icons-material'
 import { useTranslations, useLocale } from 'next-intl'
 import BlockRenderer from './blocks/BlockRenderer'
+import { logger } from '@/utils/logger'
 
 /**
  * LessonNavigator - Composant hybride avec mode guidé et mode vue d'ensemble
@@ -59,7 +60,7 @@ const LessonNavigator = ({ blocks = [], lessonId, onComplete }) => {
 					setCurrentSection(section || 0)
 					setCompletedSections(completed || new Array(blocks.length).fill(false))
 				} catch (e) {
-					console.error('Erreur lors du chargement de la progression', e)
+					logger.error('Erreur lors du chargement de la progression', e)
 				}
 			}
 		}

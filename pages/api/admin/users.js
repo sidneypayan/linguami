@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'GET') {
@@ -42,7 +43,7 @@ export default async function handler(req, res) {
 
 	// Create admin client with service role key
 	if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-		console.error('SUPABASE_SERVICE_ROLE_KEY is not defined')
+		logger.error('SUPABASE_SERVICE_ROLE_KEY is not defined')
 		return res.status(500).json({ error: 'Server configuration error' })
 	}
 
@@ -75,7 +76,7 @@ export default async function handler(req, res) {
 			.order('created_at', { ascending: false })
 
 		if (usersError) {
-			console.error('Error fetching users:', usersError)
+			logger.error('Error fetching users:', usersError)
 			return res.status(500).json({ error: 'Failed to fetch users' })
 		}
 
@@ -103,7 +104,7 @@ export default async function handler(req, res) {
 
 		return res.status(200).json({ users })
 	} catch (error) {
-		console.error('Error in /api/admin/users:', error)
+		logger.error('Error in /api/admin/users:', error)
 		return res.status(500).json({ error: 'Internal server error' })
 	}
 }

@@ -7,6 +7,7 @@ import ConversationBlock from './ConversationBlock'
 import SummaryBlock from './SummaryBlock'
 import ExerciseInlineBlock from './ExerciseInlineBlock'
 import { Box, Typography } from '@mui/material'
+import { logger } from '@/utils/logger'
 
 /**
  * BlockRenderer - Composant central qui rend le bon type de block
@@ -69,7 +70,7 @@ const BlockRenderer = ({ block, index }) => {
 			)
 
 		default:
-			console.warn(`Type de block inconnu: ${block.type}`)
+			logger.warn(`Type de block inconnu: ${block.type}`)
 			return (
 				<Box
 					key={index}

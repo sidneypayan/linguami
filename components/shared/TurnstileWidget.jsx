@@ -2,6 +2,7 @@ import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import { Box } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { logger } from '@/utils/logger'
 
 /**
  * Cloudflare Turnstile Widget Component
@@ -28,7 +29,7 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 	const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 	if (!siteKey) {
-		console.error('❌ NEXT_PUBLIC_TURNSTILE_SITE_KEY is not defined in environment variables')
+		logger.error('❌ NEXT_PUBLIC_TURNSTILE_SITE_KEY is not defined in environment variables')
 		return null
 	}
 
@@ -36,19 +37,19 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 		if (onSuccess) {
 			onSuccess(token)
 		} else {
-			console.error('❌ onSuccess callback is not defined!')
+			logger.error('❌ onSuccess callback is not defined!')
 		}
 	}
 
 	const handleError = (error) => {
-		console.error('❌ Turnstile error:', error)
+		logger.error('❌ Turnstile error:', error)
 		if (onError) {
 			onError(error)
 		}
 	}
 
 	const handleExpire = () => {
-		console.warn('⚠️ Turnstile token expired')
+		logger.warn('⚠️ Turnstile token expired')
 		if (onError) {
 			onError('Token expired')
 		}

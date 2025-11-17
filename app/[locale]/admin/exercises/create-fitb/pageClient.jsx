@@ -24,6 +24,7 @@ import { Add, Delete, ArrowBack } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
+import { logger } from '@/utils/logger'
 
 const CreateExercise = () => {
 	const router = useRouter()
@@ -199,7 +200,7 @@ const CreateExercise = () => {
 			toast.success(t('createSuccess'))
 			router.push(`/${locale}/admin/exercises`)
 		} catch (error) {
-			console.error('Error creating exercise:', error)
+			logger.error('Error creating exercise:', error)
 			toast.error(t('createError'))
 		} finally {
 			setLoading(false)

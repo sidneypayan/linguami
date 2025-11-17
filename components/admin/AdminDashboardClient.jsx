@@ -45,6 +45,7 @@ import {
 	OpenInNew,
 } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
 
 export default function AdminDashboardClient({ initialMaterialsData, initialBooksData }) {
 	const t = useTranslations('admin')
@@ -71,7 +72,7 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 			setBrokenVideos(data.brokenVideos || [])
 			setShowBrokenVideos(true)
 		} catch (error) {
-			console.error('Error loading broken videos:', error)
+			logger.error('Error loading broken videos:', error)
 		} finally {
 			setLoadingVideos(false)
 		}
@@ -107,11 +108,11 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 				setBrokenVideos(prev => prev.filter(v => v.id !== editVideoDialog.video.id))
 				handleCloseEditDialog()
 			} else {
-				console.error('Failed to update video')
+				logger.error('Failed to update video')
 				alert(t('errorUpdatingVideo'))
 			}
 		} catch (error) {
-			console.error('Error updating video:', error)
+			logger.error('Error updating video:', error)
 			alert(t('errorUpdatingVideo'))
 		} finally {
 			setSavingVideo(false)

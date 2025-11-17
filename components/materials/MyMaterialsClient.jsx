@@ -1,16 +1,13 @@
 'use client'
 
 import { useTranslations, useLocale } from 'next-intl'
-import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSelector, useDispatch } from 'react-redux'
-import { getUserMaterials } from '@/features/materials/materialsSlice'
+import { useQuery } from '@tanstack/react-query'
+import { useMaterialFilters } from '@/hooks/useMaterialFilters'
 import SectionCard from '@/components/SectionCard'
 import MaterialsTable from '@/components/MaterialsTable'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'
-// Head removed - use metadata in App Router
 
-import LoadingSpinner from '@/components/LoadingSpinner'
 import {
 	Box,
 	Container,
@@ -18,114 +15,45 @@ import {
 	Typography,
 } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
-import { useUserContext } from '@/context/user'
 
-const UserMaterials = () => {
+const UserMaterials = ({ initialMaterials = [] }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
-	const dispatch = useDispatch()
 	const router = useRouter()
-	const { user_materials, user_materials_loading } = useSelector(store => store.materials)
-	const { userLearningLanguage, user, isUserLoggedIn, isBootstrapping } = useUserContext()
-	const userId = user?.id
 
-	const [searchTerm, setSearchTerm] = useState('')
-	const [selectedLevel, setSelectedLevel] = useState(null)
-	const [selectedStatus, setSelectedStatus] = useState(null)
-	const [selectedSection, setSelectedSection] = useState(null)
-	const [viewMode, setViewMode] = useState('card')
+	// React Query: Hydrate user materials with SSR data
+	const { data: userMaterials = [] } = useQuery({
+		queryKey: ['userMaterials'],
+		queryFn: () => initialMaterials,
+		initialData: initialMaterials,
+		staleTime: Infinity,
+	})
 
-	// Filtrage des matériels
-	const filteredMaterials = useMemo(() => {
-		let filtered = [...user_materials]
-
-		// Exclure les books et book-chapters (ils ne sont pas dans "my materials")
-		filtered = filtered.filter(material =>
+	// Filter hook (without category mode, always in list mode)
+	const {
+		searchTerm,
+		selectedLevel,
+		selectedStatus,
+		selectedSection,
+		viewMode,
+		filteredMaterials,
+		handleSearchChange,
+		handleLevelChange,
+		handleStatusChange,
+		handleSectionChange,
+		handleViewModeChange,
+		clearFilters,
+	} = useMaterialFilters(
+		// Exclude books and book-chapters
+		userMaterials.filter(material =>
 			material.section !== 'books' && material.section !== 'book-chapters'
-		)
-
-		// Filtre par section
-		if (selectedSection) {
-			filtered = filtered.filter(material => material.section === selectedSection)
-		}
-
-		// Filtre par recherche
-		if (searchTerm) {
-			filtered = filtered.filter(material =>
-				material.title.toLowerCase().includes(searchTerm.toLowerCase())
-			)
-		}
-
-		// Filtre par niveau
-		if (selectedLevel) {
-			filtered = filtered.filter(material => material.level === selectedLevel)
-		}
-
-		// Filtre par statut
-		if (selectedStatus === 'is_being_studied') {
-			filtered = filtered.filter(material => material.is_being_studied)
-		} else if (selectedStatus === 'is_studied') {
-			filtered = filtered.filter(material => material.is_studied)
-		}
-
-		return filtered
-	}, [user_materials, searchTerm, selectedLevel, selectedStatus, selectedSection])
-
-	const handleSearchChange = (value) => {
-		setSearchTerm(value)
-	}
-
-	const handleSectionChange = (section) => {
-		setSelectedSection(section)
-	}
-
-	const handleLevelChange = (level) => {
-		setSelectedLevel(level)
-	}
-
-	const handleStatusChange = (status) => {
-		setSelectedStatus(status)
-	}
-
-	const handleClear = () => {
-		setSearchTerm('')
-		setSelectedLevel(null)
-		setSelectedStatus(null)
-		setSelectedSection(null)
-	}
-
-	const handleViewChange = (view) => {
-		setViewMode(view)
-	}
+		),
+		[], // No user status needed here (materials are already filtered by user)
+		null // No user level needed
+	)
 
 	const checkIfUserMaterialIsInMaterials = id => {
-		return user_materials.find(material => material.id === id)
-	}
-
-	useEffect(() => {
-		if (isBootstrapping) return
-
-		if (!isUserLoggedIn) {
-			router.push('/')
-			return
-		}
-
-		if (user && user_materials.length === 0) {
-			dispatch(getUserMaterials({ userId: userId, locale: userLearningLanguage }))
-		}
-	}, [
-		dispatch,
-		isUserLoggedIn,
-		isBootstrapping,
-		userLearningLanguage,
-		user_materials.length,
-		user,
-		userId,
-		router,
-	])
-
-	if (user_materials_loading) {
-		return <LoadingSpinner />
+		return userMaterials.find(material => material.id === id)
 	}
 
 	return (
@@ -225,8 +153,8 @@ const UserMaterials = () => {
 					onSectionChange={handleSectionChange}
 					onLevelChange={handleLevelChange}
 					onStatusChange={handleStatusChange}
-					onClear={handleClear}
-					onViewChange={handleViewChange}
+					onClear={clearFilters}
+					onViewChange={handleViewModeChange}
 					searchValue={searchTerm}
 					selectedSection={selectedSection}
 					selectedLevel={selectedLevel}

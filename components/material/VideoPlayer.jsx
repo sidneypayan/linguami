@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { logger } from '@/utils/logger'
 import {
 	Box,
 	IconButton,
@@ -96,7 +97,7 @@ const VideoPlayer = ({ videoUrl }) => {
 				try {
 					playerRef.current.pauseVideo()
 				} catch (error) {
-					console.error('Error pausing video:', error)
+					logger.error('Error pausing video:', error)
 				}
 			}
 		}
@@ -107,7 +108,7 @@ const VideoPlayer = ({ videoUrl }) => {
 				try {
 					playerRef.current.playVideo()
 				} catch (error) {
-					console.error('Error resuming video:', error)
+					logger.error('Error resuming video:', error)
 				}
 			}
 		}

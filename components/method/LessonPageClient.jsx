@@ -31,6 +31,7 @@ import {
 	completeLocalLessonAction,
 } from '@/features/courses/coursesSlice'
 import toast from '@/utils/toast'
+import { logger } from '@/utils/logger'
 
 const LessonPageClient = ({
 	level,
@@ -105,7 +106,7 @@ const LessonPageClient = ({
 
 	const handlePurchase = () => {
 		// TODO: Implement purchase flow
-		console.log('Purchase clicked')
+		logger.log('Purchase clicked')
 		toast.info('Fonctionnalité de paiement à venir !')
 		setShowUpsellModal(false)
 	}

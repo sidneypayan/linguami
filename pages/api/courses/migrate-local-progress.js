@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase-server'
+import { logger } from '@/utils/logger'
 
 /**
  * API route to migrate local progress from localStorage to database
@@ -51,18 +52,18 @@ export default async function handler(req, res) {
 			.select()
 
 		if (error) {
-			console.error('Error migrating progress:', error)
+			logger.error('Error migrating progress:', error)
 			return res.status(500).json({ error: 'Failed to migrate progress' })
 		}
 
-		console.log(`✅ Migrated ${localProgress.length} lesson(s) progress for user ${user.id}`)
+		logger.log(`✅ Migrated ${localProgress.length} lesson(s) progress for user ${user.id}`)
 
 		return res.status(200).json({
 			message: 'Progress migrated successfully',
 			migrated: localProgress.length,
 		})
 	} catch (error) {
-		console.error('Migration error:', error)
+		logger.error('Migration error:', error)
 		return res.status(500).json({ error: 'Internal server error' })
 	}
 }

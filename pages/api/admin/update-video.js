@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'PUT') {
@@ -59,7 +60,7 @@ export default async function handler(req, res) {
 		.single()
 
 	if (error) {
-		console.error('Error updating video:', error)
+		logger.error('Error updating video:', error)
 		return res.status(500).json({ error: 'Failed to update video' })
 	}
 

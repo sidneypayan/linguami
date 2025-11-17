@@ -2,9 +2,8 @@
 
 import React from 'react'
 import { useRouter, usePathname, useParams } from 'next/navigation'
-import { useDispatch } from 'react-redux'
 import { useTranslations, useLocale } from 'next-intl'
-import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
+import { getFirstChapterOfBook } from '@/lib/materials-client'
 import { useUserContext } from '@/context/user'
 import {
 	Table,
@@ -29,14 +28,14 @@ import {
 	MenuBook,
 } from '@mui/icons-material'
 import { sections } from '@/data/sections'
-import { getImageUrl } from '@/utils/imageUtils'
+import { getMaterialImageUrl } from '@/utils/mediaUrls'
+import { logger } from '@/utils/logger'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const t = useTranslations('materials')
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
-	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -46,15 +45,12 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const handleRowClick = async (material) => {
 		if (section === 'books') {
 			try {
-				const chapter = await dispatch(
-					getFirstChapterOfBook({
-						bookId: material.id,
-						userLearningLanguage,
-					})
-				).unwrap()
-				router.push(`/materials/books/${chapter.id}`)
+				const chapter = await getFirstChapterOfBook(userLearningLanguage, material.id)
+				if (chapter) {
+					router.push(`/materials/books/${chapter.id}`)
+				}
 			} catch (error) {
-				console.error('Erreur lors de la récupération du chapitre :', error)
+				logger.error('Erreur lors de la récupération du chapitre :', error)
 			}
 		} else {
 			router.push(`/materials/${material.section}/${material.id}`)
@@ -285,7 +281,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 								}}>
 								<Box
 									component='img'
-									src={getImageUrl(material.image)}
+									src={getMaterialImageUrl(material)}
 									alt={material.title}
 									sx={{
 										width: '100%',
@@ -532,7 +528,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									}}>
 									<Box
 										component='img'
-										src={getImageUrl(material.image)}
+										src={getMaterialImageUrl(material)}
 										alt={material.title}
 										sx={{
 											width: '100%',

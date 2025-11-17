@@ -25,8 +25,6 @@ import {
 	VerifiedRounded,
 } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
-import { useSelector, useDispatch } from 'react-redux'
-import { cleanUserMaterialStatus } from '@/features/materials/materialsSlice.js'
 
 const StyledMenu = styled(props => (
 	<Menu
@@ -118,7 +116,6 @@ const UserMenu = () => {
 	const t = useTranslations('common')
 	const locale = useLocale()
 	const { user, userProfile, logout } = useUserContext()
-	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
@@ -443,10 +440,7 @@ const UserMenu = () => {
 
 				<Box sx={{ mb: 1 }}>
 					<MenuItem
-						onClick={() => {
-							logout()
-							dispatch(cleanUserMaterialStatus())
-						}}>
+						onClick={() => logout()}>
 						<ListItemIcon>
 							<LogoutRounded />
 						</ListItemIcon>

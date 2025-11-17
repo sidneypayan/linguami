@@ -38,11 +38,11 @@ export function getAudioUrl(material) {
 
 /**
  * Get image URL for a material
- * @param {Object} material - Material object with image_filename or img property
+ * @param {Object} material - Material object with image_filename, image, or img property
  * @returns {string|null} Full image URL or null if no image
  */
 export function getMaterialImageUrl(material) {
-  const imageFile = material?.image_filename || material?.img
+  const imageFile = material?.image_filename || material?.image || material?.img
   if (!imageFile) return null
   const baseUrl = getR2BaseUrl()
   if (!baseUrl) return null

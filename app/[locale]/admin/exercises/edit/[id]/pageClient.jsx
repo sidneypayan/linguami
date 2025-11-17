@@ -29,6 +29,7 @@ import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
 
 const EditExercise = () => {
 	const router = useRouter()
@@ -81,7 +82,7 @@ const EditExercise = () => {
 				setQuestions(data.data?.questions || [])
 			}
 		} catch (error) {
-			console.error('Error loading exercise:', error)
+			logger.error('Error loading exercise:', error)
 			toast.error(t('loadError'))
 			router.push(`/${locale}/admin/exercises`)
 		} finally {
@@ -375,7 +376,7 @@ const EditExercise = () => {
 			toast.success(t('updateSuccess'))
 			router.push(`/${locale}/admin/exercises`)
 		} catch (error) {
-			console.error('Error updating exercise:', error)
+			logger.error('Error updating exercise:', error)
 			toast.error(t('updateError'))
 		} finally {
 			setLoading(false)

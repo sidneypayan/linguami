@@ -31,6 +31,7 @@ import {
 	SentimentVeryDissatisfiedRounded,
 } from '@mui/icons-material'
 import { IconButton, useTheme } from '@mui/material'
+import { logger } from '@/utils/logger'
 
 const FlashCards = () => {
 	const t = useTranslations('words')
@@ -110,7 +111,7 @@ const FlashCards = () => {
 		? (isDictionaryPage ? user_words : user_material_words)
 		: guestWords
 
-	console.log('📚 Base words source:', {
+	logger.log('📚 Base words source:', {
 		pathname,
 		isUserLoggedIn,
 		isDictionary: isDictionaryPage,
@@ -123,13 +124,13 @@ const FlashCards = () => {
 	// Filter to only show words that have both source and translation in current context
 	const wordsArray = useMemo(() => {
 		if (!baseWordsArray || !userLearningLanguage || !locale) {
-			console.log('⚠️  Cannot filter words:', { baseWordsArray: !!baseWordsArray, userLearningLanguage, locale })
+			logger.log('⚠️  Cannot filter words:', { baseWordsArray: !!baseWordsArray, userLearningLanguage, locale })
 			return []
 		}
 
 		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
 		if (userLearningLanguage === locale) {
-			console.log('⚠️  Learning language === interface language, no words to show')
+			logger.log('⚠️  Learning language === interface language, no words to show')
 			return []
 		}
 
@@ -139,13 +140,13 @@ const FlashCards = () => {
 			const hasWords = sourceWord && translation
 
 			if (!hasWords) {
-				console.log('❌ Word filtered out:', word.id, { sourceWord, translation })
+				logger.log('❌ Word filtered out:', word.id, { sourceWord, translation })
 			}
 
 			return hasWords
 		})
 
-		console.log('✅ Filtered words:', filtered.length, 'out of', baseWordsArray.length)
+		logger.log('✅ Filtered words:', filtered.length, 'out of', baseWordsArray.length)
 		return filtered
 	}, [baseWordsArray, userLearningLanguage, locale])
 
@@ -231,7 +232,7 @@ const FlashCards = () => {
 
 	// Initialize session cards ONLY on first mount
 	useEffect(() => {
-		console.log('🔍 Flashcards useEffect:', {
+		logger.log('🔍 Flashcards useEffect:', {
 			sessionInitialized,
 			wordsArrayLength: wordsArray?.length,
 			user_words_loading,
@@ -241,21 +242,21 @@ const FlashCards = () => {
 		})
 
 		if (sessionInitialized) {
-			console.log('⏭️  Already initialized, skipping')
+			logger.log('⏭️  Already initialized, skipping')
 			return // Don't reinitialize during session
 		}
 
 		// Wait for words to be loaded (check if we're still loading)
 		// If wordsArray is undefined or null, we're still loading
 		if (!wordsArray) {
-			console.log('⏳ wordsArray is null/undefined, waiting...')
+			logger.log('⏳ wordsArray is null/undefined, waiting...')
 			return
 		}
 
 		// Don't initialize if we don't have language data yet
 		// This prevents marking as initialized when wordsArray is empty due to missing language context
 		if (!userLearningLanguage || !locale) {
-			console.log('⏳ Missing language context, waiting...')
+			logger.log('⏳ Missing language context, waiting...')
 			return
 		}
 
@@ -267,17 +268,17 @@ const FlashCards = () => {
 			// Check if we're still loading from Redux
 			const isStillLoading = isUserLoggedIn ? user_words_loading : false
 
-			console.log('📭 wordsArray is empty, isStillLoading:', isStillLoading)
+			logger.log('📭 wordsArray is empty, isStillLoading:', isStillLoading)
 
 			if (!isStillLoading) {
 				// We have confirmed there are no words at all
-				console.log('✅ Confirmed no words, marking as initialized')
+				logger.log('✅ Confirmed no words, marking as initialized')
 				setSessionInitialized(true)
 			}
 			return
 		}
 
-		console.log('🎴 Initializing cards from wordsArray:', wordsArray.length, 'words')
+		logger.log('🎴 Initializing cards from wordsArray:', wordsArray.length, 'words')
 
 		// Initialize any cards that don't have SRS fields
 		// Create deep copies to avoid reference issues
@@ -305,19 +306,19 @@ const FlashCards = () => {
 
 		// Filter for due cards and limit according to user preference
 		const dueCards = getDueCards(initializedCards)
-		console.log('✅ Due cards:', dueCards.length, 'out of', initializedCards.length)
+		logger.log('✅ Due cards:', dueCards.length, 'out of', initializedCards.length)
 
 		const limitedCards = dueCards.slice(0, cardsLimit)
-		console.log('📊 Limited cards:', limitedCards.length, '(limit:', cardsLimit, ')')
+		logger.log('📊 Limited cards:', limitedCards.length, '(limit:', cardsLimit, ')')
 
 		// Mark as initialized only when we have the language context loaded AND have words
 		setSessionInitialized(true)
 
 		if (limitedCards.length > 0) {
 			setSessionCards(limitedCards)
-			console.log('🎯 Session cards set:', limitedCards.length, 'cards')
+			logger.log('🎯 Session cards set:', limitedCards.length, 'cards')
 		} else {
-			console.log('⚠️  No limited cards to set')
+			logger.log('⚠️  No limited cards to set')
 		}
 	}, [wordsArray, dispatch, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, guestWords, user_words_loading])
 
@@ -452,7 +453,7 @@ const FlashCards = () => {
 				}
 			} catch (error) {
 				// Silent fail - don't block user flow for XP errors
-				console.error('Error adding XP:', error)
+				logger.error('Error adding XP:', error)
 			}
 		}
 

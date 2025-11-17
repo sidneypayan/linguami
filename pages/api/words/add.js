@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { validateWordPair } from '@/utils/validation'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	// Seulement accepter POST
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
 		} = await supabase.auth.getUser()
 
 		if (authError || !user) {
-			console.error('Erreur auth:', authError)
+			logger.error('Erreur auth:', authError)
 			return res.status(401).json({ error: 'Non authentifié' })
 		}
 
@@ -116,7 +117,7 @@ export default async function handler(req, res) {
 				})
 			}
 
-			console.error('Erreur Supabase:', error.message, '- Code:', error.code)
+			logger.error('Erreur Supabase:', error.message, '- Code:', error.code)
 			return res.status(500).json({
 				error: "Erreur lors de l'ajout du mot",
 				details: error.message || 'Erreur inconnue',
@@ -130,7 +131,7 @@ export default async function handler(req, res) {
 			message: 'Mot ajouté avec succès',
 		})
 	} catch (error) {
-		console.error('Erreur serveur:', error)
+		logger.error('Erreur serveur:', error)
 		return res.status(500).json({
 			error: 'Erreur interne du serveur',
 		})

@@ -3,6 +3,7 @@
 import { createServerClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { logger } from '@/utils/logger'
 
 /**
  * Server Actions for materials mutations
@@ -34,7 +35,7 @@ export async function addBeingStudiedMaterial(materialId) {
     }])
 
   if (insertError) {
-    console.error('Error adding material to studying:', insertError)
+    logger.error('Error adding material to studying:', insertError)
     return { success: false, error: insertError.message }
   }
 
@@ -50,7 +51,7 @@ export async function addBeingStudiedMaterial(materialId) {
       })
     })
   } catch (err) {
-    console.error('Error adding XP:', err)
+    logger.error('Error adding XP:', err)
   }
 
   // Revalidate paths to refresh data
@@ -82,7 +83,7 @@ export async function removeBeingStudiedMaterial(materialId) {
     .match({ user_id: user.id, material_id: materialId })
 
   if (deleteError) {
-    console.error('Error removing material from studying:', deleteError)
+    logger.error('Error removing material from studying:', deleteError)
     return { success: false, error: deleteError.message }
   }
 
@@ -116,7 +117,7 @@ export async function addMaterialToStudied(materialId) {
     .maybeSingle()
 
   if (checkError) {
-    console.error('Error checking material:', checkError)
+    logger.error('Error checking material:', checkError)
     return { success: false, error: checkError.message }
   }
 
@@ -132,7 +133,7 @@ export async function addMaterialToStudied(materialId) {
       }])
 
     if (insertError) {
-      console.error('Error inserting studied material:', insertError)
+      logger.error('Error inserting studied material:', insertError)
       return { success: false, error: insertError.message }
     }
   } else {
@@ -143,7 +144,7 @@ export async function addMaterialToStudied(materialId) {
       .match({ user_id: user.id, material_id: materialId })
 
     if (updateError) {
-      console.error('Error updating material to studied:', updateError)
+      logger.error('Error updating material to studied:', updateError)
       return { success: false, error: updateError.message }
     }
   }
@@ -160,7 +161,7 @@ export async function addMaterialToStudied(materialId) {
       })
     })
   } catch (err) {
-    console.error('Error adding XP:', err)
+    logger.error('Error adding XP:', err)
   }
 
   // Revalidate paths to refresh data

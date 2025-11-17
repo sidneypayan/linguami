@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { logger } from '@/utils/logger'
 
 /**
  * API endpoint pour ajouter de l'XP à un utilisateur
@@ -166,7 +167,7 @@ export default async function handler(req, res) {
 		})
 		// Ignorer l'erreur si la fonction n'existe pas encore
 		if (weeklyError) {
-			console.error('❌ Weekly tracking update failed:', {
+			logger.error('❌ Weekly tracking update failed:', {
 				error: weeklyError,
 				message: weeklyError.message,
 				details: weeklyError.details,
@@ -174,7 +175,7 @@ export default async function handler(req, res) {
 				code: weeklyError.code,
 			})
 		} else {
-			console.log('✅ Weekly tracking updated successfully:', weeklyData)
+			logger.log('✅ Weekly tracking updated successfully:', weeklyData)
 		}
 
 		// 6.6. Mettre à jour le tracking mensuel
@@ -184,7 +185,7 @@ export default async function handler(req, res) {
 		})
 		// Ignorer l'erreur si la fonction n'existe pas encore
 		if (monthlyError) {
-			console.error('❌ Monthly tracking update failed:', {
+			logger.error('❌ Monthly tracking update failed:', {
 				error: monthlyError,
 				message: monthlyError.message,
 				details: monthlyError.details,
@@ -192,7 +193,7 @@ export default async function handler(req, res) {
 				code: monthlyError.code,
 			})
 		} else {
-			console.log('✅ Monthly tracking updated successfully:', monthlyData)
+			logger.log('✅ Monthly tracking updated successfully:', monthlyData)
 		}
 
 		// 7. Créer une transaction XP et Gold
@@ -334,7 +335,7 @@ export default async function handler(req, res) {
 				}
 			}
 		} catch (goalsError) {
-			console.error('Error checking goals for achievements:', goalsError)
+			logger.error('Error checking goals for achievements:', goalsError)
 			// Don't fail the whole request if goals check fails
 		}
 
@@ -352,7 +353,7 @@ export default async function handler(req, res) {
 			achievements,
 		})
 	} catch (error) {
-		console.error('Error adding XP:', error)
+		logger.error('Error adding XP:', error)
 		return res.status(500).json({ error: 'Failed to add XP' })
 	}
 }

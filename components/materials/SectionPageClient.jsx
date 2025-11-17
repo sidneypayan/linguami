@@ -18,6 +18,7 @@ import MaterialsFilterBar from '@/components/MaterialsFilterBar'
 import Pagination from '@/components/layouts/Pagination'
 import toast from '@/utils/toast'
 import { getToastMessage } from '@/utils/toastMessages'
+import { logger } from '@/utils/logger'
 
 export default function SectionPageClient({
   initialMaterials = [],
@@ -154,7 +155,7 @@ export default function SectionPageClient({
           setSearchTerm(search ?? '')
           setHasAppliedDefaultFilter(true)
         } catch (error) {
-          console.error('Error restoring filters:', error)
+          logger.error('Error restoring filters:', error)
         }
       } else if (!hasAppliedDefaultFilter) {
         setHasAppliedDefaultFilter(true)

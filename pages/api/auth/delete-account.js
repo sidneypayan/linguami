@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/utils/logger'
 
 export default async function handler(req, res) {
 	if (req.method !== 'DELETE') {
@@ -30,15 +31,15 @@ export default async function handler(req, res) {
 		const { data: { user }, error: authError } = await supabase.auth.getUser()
 
 		if (!user || authError) {
-			console.error('Auth error:', authError)
+			logger.error('Auth error:', authError)
 			return res.status(401).json({ error: 'Unauthorized' })
 		}
 
-		console.log('Deleting account for user:', user.id)
+		logger.log('Deleting account for user:', user.id)
 
 		// Verify environment variables
 		if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-			console.error('Missing environment variables')
+			logger.error('Missing environment variables')
 			return res.status(500).json({ error: 'Server configuration error' })
 		}
 
@@ -127,16 +128,16 @@ export default async function handler(req, res) {
 		const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
 
 		if (deleteError) {
-			console.error('Error deleting auth user:', deleteError)
+			logger.error('Error deleting auth user:', deleteError)
 			throw deleteError
 		}
 
-		console.log('Account deleted successfully for user:', user.id)
+		logger.log('Account deleted successfully for user:', user.id)
 
 		// Don't sign out here - let the client handle session cleanup
 		return res.status(200).json({ success: true, message: 'Account deleted successfully' })
 	} catch (error) {
-		console.error('Error deleting account:', error)
+		logger.error('Error deleting account:', error)
 		return res.status(500).json({
 			error: 'Failed to delete account',
 			details: error.message

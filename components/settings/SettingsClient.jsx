@@ -48,6 +48,7 @@ import {
 // Head removed - use metadata in App Router
 
 import { useRouter } from 'next/navigation'
+import { logger } from '@/utils/logger'
 
 const SettingsClient = ({ translations }) => {
 	const { userProfile, updateUserProfile, logout } = useUserContext()
@@ -153,7 +154,7 @@ const SettingsClient = ({ translations }) => {
 			await updateUserProfile({ [fieldMapping[field]]: newValue })
 			toast.success(translations.updateSuccess)
 		} catch (error) {
-			console.error('Error updating toggle:', error)
+			logger.error('Error updating toggle:', error)
 			toast.error(error.message || translations.updateError)
 			// Revert on error
 			setFormData({
@@ -192,7 +193,7 @@ const SettingsClient = ({ translations }) => {
 			toast.success(translations.updateSuccess)
 			toggleEditMode(field)
 		} catch (error) {
-			console.error('Error updating profile:', error)
+			logger.error('Error updating profile:', error)
 			toast.error(error.message || translations.updateError)
 		} finally {
 			setLoading(false)
@@ -258,7 +259,7 @@ const SettingsClient = ({ translations }) => {
 				confirmPassword: '',
 			})
 		} catch (error) {
-			console.error('Error changing password:', error)
+			logger.error('Error changing password:', error)
 			toast.error(error.message || translations.changePasswordError)
 		} finally {
 			setLoading(false)
@@ -286,7 +287,7 @@ const SettingsClient = ({ translations }) => {
 			// Redirect to home page
 			router.push('/')
 		} catch (error) {
-			console.error('Error deleting account:', error)
+			logger.error('Error deleting account:', error)
 			toast.error(error.message || translations.deleteAccountError)
 		} finally {
 			setLoading(false)
@@ -301,7 +302,7 @@ const SettingsClient = ({ translations }) => {
 			toast.success(translations.avatarUpdated)
 			setAvatarDialogOpen(false)
 		} catch (error) {
-			console.error('Error updating avatar:', error)
+			logger.error('Error updating avatar:', error)
 			toast.error(error.message || translations.updateError)
 		} finally {
 			setLoading(false)
@@ -1120,7 +1121,7 @@ const SettingsClient = ({ translations }) => {
 															await updateUserProfile({ daily_xp_goal: goal.value })
 															toast.success(translations.updateSuccess)
 														} catch (error) {
-															console.error('Error updating goal:', error)
+															logger.error('Error updating goal:', error)
 															toast.error(error.message || translations.updateError)
 														} finally {
 															setLoading(false)

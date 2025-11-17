@@ -86,10 +86,18 @@ export default async function MaterialPage({ params }) {
 		userMaterialStatus = await getUserMaterialStatus(material.id, user.id)
 	}
 
+	// Encode text fields to base64 to preserve UTF-8 encoding through Next.js serialization
+	const materialWithEncodedText = material ? {
+		...material,
+		content: material.content ? Buffer.from(material.content).toString('base64') : null,
+		content_accented: material.content_accented ? Buffer.from(material.content_accented).toString('base64') : null,
+		_encoded: true, // Flag to indicate fields are encoded
+	} : null
+
 	return (
 		<MaterialPageClient
 			params={params}
-			initialMaterial={material}
+			initialMaterial={materialWithEncodedText}
 			initialUserMaterialStatus={userMaterialStatus}
 		/>
 	)

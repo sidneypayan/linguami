@@ -29,6 +29,7 @@ import {
 } from '@mui/material'
 import { Search, Person, AdminPanelSettings, ArrowUpward, ArrowDownward, UnfoldMore } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
 
 const UsersPage = () => {
 	const t = useTranslations('admin')
@@ -70,7 +71,7 @@ const UsersPage = () => {
 					setUsers(data.users)
 				}
 			} catch (error) {
-				console.error('Error fetching users:', error)
+				logger.error('Error fetching users:', error)
 			} finally {
 				setLoading(false)
 			}

@@ -34,6 +34,7 @@ import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
 
 const ExercisesAdmin = () => {
 	const router = useRouter()
@@ -74,7 +75,7 @@ const ExercisesAdmin = () => {
 				.order('created_at', { ascending: false })
 
 			if (error) {
-				console.error('Error loading exercises:', error)
+				logger.error('Error loading exercises:', error)
 				toast.error(t('loadError'))
 			} else {
 				setExercises(data || [])
@@ -104,7 +105,7 @@ const ExercisesAdmin = () => {
 			.eq('id', id)
 
 		if (error) {
-			console.error('Error deleting exercise:', error)
+			logger.error('Error deleting exercise:', error)
 			toast.error(t('deleteError'))
 		} else {
 			toast.success(t('deleteSuccess'))
