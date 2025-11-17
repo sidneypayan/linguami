@@ -3,22 +3,40 @@ import { changePage } from '@/features/materials/materialsSlice'
 import { Box, IconButton, Button, Stack, useTheme, useMediaQuery } from '@mui/material'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
-const Pagination = ({ numOfPages: numOfPagesProp }) => {
-	const { numOfPages: numOfPagesRedux, page } = useSelector(store => store.materials)
+const Pagination = ({
+	numOfPages: numOfPagesProp,
+	currentPage: currentPageProp,
+	onPageChange,
+}) => {
+	// Try to use Redux if available (backward compatibility)
+	const materialsState = useSelector(store => store?.materials || {})
+	const { numOfPages: numOfPagesRedux, page: pageRedux } = materialsState
 	const dispatch = useDispatch()
+
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-	// Utiliser la prop si fournie, sinon utiliser la valeur Redux
+	// Use props if provided, otherwise use Redux (backward compatibility)
 	const numOfPages = numOfPagesProp !== undefined ? numOfPagesProp : numOfPagesRedux
+	const page = currentPageProp !== undefined ? currentPageProp : pageRedux || 1
+
+	const handlePageChange = (newPage) => {
+		if (onPageChange) {
+			// Use callback if provided (new way)
+			onPageChange(newPage)
+		} else if (dispatch) {
+			// Fallback to Redux (old way)
+			dispatch(changePage(newPage))
+		}
+	}
 
 	const nextPage = () => {
 		let newPage = page + 1
 		if (newPage > numOfPages) {
 			newPage = 1
 		}
-		dispatch(changePage(newPage))
+		handlePageChange(newPage)
 	}
 
 	const prevPage = () => {
@@ -26,7 +44,7 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 		if (newPage < 1) {
 			newPage = numOfPages
 		}
-		dispatch(changePage(newPage))
+		handlePageChange(newPage)
 	}
 
 	// Générer les numéros de page à afficher
@@ -156,7 +174,7 @@ const Pagination = ({ numOfPages: numOfPagesProp }) => {
 					return (
 						<Button
 							key={pageNumber}
-							onClick={() => dispatch(changePage(pageNumber))}
+							onClick={() => handlePageChange(pageNumber)}
 							variant={page === pageNumber ? 'contained' : 'outlined'}
 							sx={{
 								minWidth: { xs: '36px', sm: '44px' },

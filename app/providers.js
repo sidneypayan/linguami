@@ -2,6 +2,8 @@
 
 import { Provider } from 'react-redux'
 import { store } from '@/features/store'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState } from 'react'
 import UserProvider from '@/context/user.js'
 import { ThemeModeProvider } from '@/context/ThemeContext'
 import { AchievementProvider } from '@/components/AchievementProvider'
@@ -43,19 +45,36 @@ function GTMTracking() {
 }
 
 export default function Providers({ children }) {
+	// Create QueryClient inside component to avoid sharing between requests
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 60 * 1000, // 1 minute
+						gcTime: 5 * 60 * 1000, // 5 minutes (was cacheTime)
+						refetchOnWindowFocus: false,
+						retry: 1,
+					},
+				},
+			})
+	)
+
 	return (
-		<UserProvider>
-			<ThemeModeProvider>
-				<Provider store={store}>
-					<AchievementProvider>
-						<GTMTracking />
-						<AppRouterLayout>
-							{children}
-						</AppRouterLayout>
-						<ToasterWithTheme />
-					</AchievementProvider>
-				</Provider>
-			</ThemeModeProvider>
-		</UserProvider>
+		<QueryClientProvider client={queryClient}>
+			<UserProvider>
+				<ThemeModeProvider>
+					<Provider store={store}>
+						<AchievementProvider>
+							<GTMTracking />
+							<AppRouterLayout>
+								{children}
+							</AppRouterLayout>
+							<ToasterWithTheme />
+						</AchievementProvider>
+					</Provider>
+				</ThemeModeProvider>
+			</UserProvider>
+		</QueryClientProvider>
 	)
 }

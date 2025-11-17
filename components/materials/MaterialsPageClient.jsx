@@ -43,16 +43,9 @@ const Material = () => {
 	const [literature, setLiterature] = useState([])
 
 	// Mode d'affichage principal : 'category' (actuel) ou 'list' (filtres avancés)
-	// Initialiser directement depuis localStorage pour éviter le flash
-	const [displayMode, setDisplayMode] = useState(() => {
-		if (typeof window !== 'undefined') {
-			const saved = localStorage.getItem('materialsDisplayMode')
-			if (saved && (saved === 'category' || saved === 'list')) {
-				return saved
-			}
-		}
-		return 'category'
-	})
+	// Toujours initialiser avec la valeur par défaut pour éviter les problèmes d'hydratation
+	const [displayMode, setDisplayMode] = useState('category')
+	const [isDisplayModeLoaded, setIsDisplayModeLoaded] = useState(false)
 
 	// États pour le mode catégorie
 	const [selectedCategory, setSelectedCategory] = useState('all')
@@ -70,12 +63,21 @@ const Material = () => {
 	// Niveau de l'utilisateur
 	const userLevel = userProfile?.language_level || 'beginner'
 
+	// Charger la préférence depuis localStorage après l'hydratation
+	useEffect(() => {
+		const saved = localStorage.getItem('materialsDisplayMode')
+		if (saved && (saved === 'category' || saved === 'list')) {
+			setDisplayMode(saved)
+		}
+		setIsDisplayModeLoaded(true)
+	}, [])
+
 	// Sauvegarder la préférence de mode d'affichage dans le localStorage
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
+		if (isDisplayModeLoaded) {
 			localStorage.setItem('materialsDisplayMode', displayMode)
 		}
-	}, [displayMode])
+	}, [displayMode, isDisplayModeLoaded])
 
 	// Charger les sections (pour le mode catégorie)
 	useEffect(() => {

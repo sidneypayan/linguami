@@ -1,5 +1,16 @@
 import { getTranslations } from 'next-intl/server'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@/lib/supabase-server'
+import { getMaterialsBySection, getBooksByLanguage, getUserMaterialsStatus } from '@/app/data/materials'
 import SectionPageClient from '@/components/materials/SectionPageClient'
+
+// Helper: determine default learning language based on interface locale
+function getDefaultLearningLanguage(locale) {
+	if (locale === 'fr') return 'ru'
+	if (locale === 'ru') return 'fr'
+	if (locale === 'en') return 'fr'
+	return 'fr'
+}
 
 export async function generateMetadata({ params }) {
 	const { locale, section } = await params
@@ -65,6 +76,38 @@ export default async function SectionPage({ params }) {
 	const { locale, section } = await params
 	const t = await getTranslations({ locale, namespace: 'materials' })
 
+	// Get user and determine learning language
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+	const { data: { user } } = await supabase.auth.getUser()
+
+	let learningLanguage = getDefaultLearningLanguage(locale)
+	let userMaterialsStatus = []
+
+	// If authenticated, fetch user profile and materials status
+	if (user) {
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('learning_language')
+			.eq('id', user.id)
+			.maybeSingle()
+
+		if (profile?.learning_language) {
+			learningLanguage = profile.learning_language
+		}
+
+		// Fetch user materials status for filtering
+		userMaterialsStatus = await getUserMaterialsStatus(user.id)
+	}
+
+	// Fetch materials or books based on section
+	let materials = []
+	if (section === 'books') {
+		materials = await getBooksByLanguage(learningLanguage)
+	} else {
+		materials = await getMaterialsBySection(learningLanguage, section)
+	}
+
 	// JSON-LD for CollectionPage
 	const jsonLd = section
 		? {
@@ -89,7 +132,12 @@ export default async function SectionPage({ params }) {
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			)}
-			<SectionPageClient />
+			<SectionPageClient
+				initialMaterials={materials}
+				initialUserMaterialsStatus={userMaterialsStatus}
+				section={section}
+				learningLanguage={learningLanguage}
+			/>
 		</>
 	)
 }
