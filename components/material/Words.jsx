@@ -7,40 +7,17 @@ import {
 	cleanTranslation,
 } from '@/features/words/wordsSlice'
 import { useMemo, useCallback } from 'react'
-import DOMPurify from 'isomorphic-dompurify'
 import { useUserContext } from '@/context/user'
-
-// Définir les regex en dehors du composant pour éviter recréations
-const REGEX_CONFIG = {
-	fr: {
-		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
-		words: /[\w\u00C0-\u00FF]+/i, // Détection de mots (sans apostrophes pour éviter faux positifs)
-	},
-	ru: {
-		all: /[ \t….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi,
-		words: /[\u0430-\u044f\ё\е́]+/i,
-	},
-	en: {
-		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
-		words: /[\w]+/i, // Détection de mots
-	},
-}
 
 const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const dispatch = useDispatch()
 
-	// Mémoïser le sanitize pour éviter recalcul à chaque render
+	// Le contenu vient directement de la DB (source de confiance)
 	const clean = useMemo(() => {
 		if (!content) return ''
-		// Sanitize le contenu (les sauts de ligne sont déjà en \n dans la DB)
-		return DOMPurify.sanitize(content)
+		return content
 	}, [content])
-
-	// Sélectionner les regex selon la langue avec fallback sur 'en'
-	const regexConfig = useMemo(() => {
-		return REGEX_CONFIG[userLearningLanguage] || REGEX_CONFIG.en
-	}, [userLearningLanguage])
 
 	// Helper function to extract the sentence containing the clicked word
 	const extractSentence = useCallback((fullText, word) => {
@@ -49,9 +26,6 @@ const Words = ({ content, locale = 'fr' }) => {
 		// Find the word position in the full text
 		const wordIndex = fullText.toLowerCase().indexOf(word.toLowerCase())
 		if (wordIndex === -1) return fullText
-
-		// Sentence delimiters (period, exclamation, question mark, newline)
-		const sentenceDelimiters = /[.!?\n]/g
 
 		// Find sentence start (go backwards from word position)
 		let sentenceStart = 0
@@ -101,114 +75,101 @@ const Words = ({ content, locale = 'fr' }) => {
 		[dispatch, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
 	)
 
+	// Fonction pour vérifier si un caractère est de la ponctuation
+	const isPunctuation = useCallback((char) => {
+		// Ponctuation courante en français et russe
+		const punctuationRegex = /[\s….,;:?!–—«»"()\n\t]/
+		return punctuationRegex.test(char)
+	}, [])
+
+	// Fonction pour vérifier si un caractère est une apostrophe
+	const isApostrophe = useCallback((char) => {
+		const apostropheRegex = /['''`]/
+		return apostropheRegex.test(char)
+	}, [])
+
 	const wrapWords = useCallback(
 		sentence => {
-			// Sécurité : vérifier que la regex existe et que sentence est valide
-			if (!sentence || !regexConfig.all) {
-				return sentence
-			}
+			if (!sentence) return sentence
 
-			const matches = sentence.match(regexConfig.all)
+			// Segmenter le texte en graphèmes (caractères) pour gérer correctement Unicode
+			// On ne peut pas utiliser Intl.Segmenter avec granularity: 'word' car il ne gère pas bien
+			// la ponctuation collée aux mots. On va donc découper manuellement.
 
-			// Sécurité : vérifier que match() a retourné un résultat
-			if (!matches) {
-				return sentence
-			}
+			const result = []
+			let currentWord = ''
+			let key = 0
 
-			return matches.map((item, index) => {
-				if (!item) return null
+			for (let i = 0; i < sentence.length; i++) {
+				const char = sentence[i]
 
-				// Vérifier si c'est un mot (utiliser match au lieu de test pour éviter problèmes de lastIndex)
-				if (item.match(regexConfig.words)) {
-					// Vérifier si le mot est suivi de ponctuation (directement ou après un espace)
-					const nextItem = matches[index + 1]
-					const nextNextItem = matches[index + 2]
-
-					// Vérifier si le prochain élément est de la ponctuation
-					let isFollowedByPunctuation = false
-					if (nextItem) {
-						// Si le prochain élément est de la ponctuation directement
-						if (nextItem.trim() && !nextItem.match(regexConfig.words)) {
-							isFollowedByPunctuation = true
-						}
-						// Si le prochain élément est un espace, vérifier l'élément d'après
-						else if (!nextItem.trim() && nextNextItem && nextNextItem.trim() && !nextNextItem.match(regexConfig.words)) {
-							isFollowedByPunctuation = true
-						}
+				// Si c'est de la ponctuation (espaces, virgules, etc.)
+				if (isPunctuation(char)) {
+					// Terminer le mot en cours s'il existe
+					if (currentWord) {
+						result.push(
+							<span
+								key={key++}
+								className={styles.translate}
+								onClick={handleClick}>
+								{currentWord}
+							</span>
+						)
+						currentWord = ''
 					}
-
-					// Vérifier si le mot contient une apostrophe (j'étais, l'ami, etc.)
-					const apostropheRegex = /['''`\u2019]/
-					if (apostropheRegex.test(item)) {
-						// Découper le mot en parties autour des apostrophes
-						const parts = item.split(apostropheRegex)
-						const apostrophes = item.match(new RegExp(apostropheRegex, 'g'))
-
-						const elements = []
-						parts.forEach((part, i) => {
-							if (part) {
-								// Vérifier si c'est la dernière partie du mot
-								const isLastPart = i === parts.length - 1
-								// Vérifier si cette partie est suivie d'une apostrophe
-								const isFollowedByApostrophe = apostrophes && apostrophes[i]
-
-								// Appliquer .nospace si :
-								// - C'est la dernière partie et le mot est suivi de ponctuation
-								// - OU c'est suivi d'une apostrophe
-								const className = (isLastPart && isFollowedByPunctuation) || isFollowedByApostrophe
-									? `${styles.translate} ${styles.nospace}`
-									: styles.translate
-
-								// Partie du mot (cliquable)
-								elements.push(
-									<span
-										key={`${index}-${i}-word`}
-										className={className}
-										onClick={handleClick}>
-										{part}
-									</span>
-								)
-							}
-							// Ajouter l'apostrophe entre les parties (non cliquable)
-							if (apostrophes && apostrophes[i]) {
-								elements.push(
-									<span key={`${index}-${i}-apos`} className={styles.punctuation}>
-										{apostrophes[i]}
-									</span>
-								)
-							}
-						})
-
-						return <React.Fragment key={index}>{elements}</React.Fragment>
-					}
-
-					return (
-						<span
-							key={index}
-							className={`${styles.translate} ${isFollowedByPunctuation ? styles.nospace : ''}`}
-							onClick={handleClick}>
-							{item}
+					// Ajouter la ponctuation
+					result.push(
+						<span key={key++} className={styles.punctuation}>
+							{char}
 						</span>
 					)
 				}
+				// Si c'est une apostrophe (traitement spécial)
+				else if (isApostrophe(char)) {
+					// Terminer le mot en cours s'il existe
+					if (currentWord) {
+						result.push(
+							<span
+								key={key++}
+								className={`${styles.translate} ${styles.nospace}`}
+								onClick={handleClick}>
+								{currentWord}
+							</span>
+						)
+						currentWord = ''
+					}
+					// Ajouter l'apostrophe comme ponctuation
+					result.push(
+						<span key={key++} className={styles.punctuation}>
+							{char}
+						</span>
+					)
+				}
+				// Sinon c'est un caractère normal (lettre, chiffre, accent, etc.)
+				else {
+					currentWord += char
+				}
+			}
 
-				// Pour les espaces et la ponctuation, les wrapper dans un span aussi
-				// pour qu'ils héritent correctement de la taille de police
-				return (
-					<span key={index} className={styles.punctuation}>
-						{item}
+			// Terminer le dernier mot s'il existe
+			if (currentWord) {
+				result.push(
+					<span
+						key={key++}
+						className={styles.translate}
+						onClick={handleClick}>
+						{currentWord}
 					</span>
 				)
-			})
+			}
+
+			return result
 		},
-		[regexConfig, handleClick]
+		[handleClick, isPunctuation, isApostrophe]
 	)
 
 	const wrapSentences = useMemo(() => {
-		// Sécurité : vérifier que le texte existe
-		if (!clean) {
-			return clean
-		}
+		if (!clean) return clean
 
 		// Splitter sur les sauts de ligne pour traiter ligne par ligne
 		const lines = clean.split(/\r?\n/)
