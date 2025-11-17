@@ -3,7 +3,6 @@
 import React, { useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { // useDispatch removed } from 'react-redux'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useFlashcards } from '@/context/flashcards'
