@@ -4,21 +4,15 @@ import Navbar from './layouts/Navbar'
 import Footer from './layouts/Footer'
 import BottomNav from './layouts/BottomNav'
 import EmailVerificationBanner from './auth/EmailVerificationBanner'
-import { useSelector, useDispatch } from 'react-redux'
-import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { useLocale } from 'next-intl'
 import FlashCards from './games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const AppRouterLayout = ({ children }) => {
-	const dispatch = useDispatch()
 	const { isFlashcardsOpen } = useSelector(store => store.cards)
 	const locale = useLocale()
 	const theme = useTheme()
-
-	// Charger les leçons au démarrage pour vérifier s'il y en a pour cette langue
-	useEffect(() => {
-		if (locale) {
 
 	return isFlashcardsOpen ? (
 		<FlashCards />
