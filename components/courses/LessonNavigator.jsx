@@ -33,8 +33,9 @@ import { logger } from '@/utils/logger'
  * @param {Array} blocks - Les blocs de la leçon
  * @param {String} lessonId - ID de la leçon pour sauvegarder la progression
  * @param {Function} onComplete - Callback quand l'utilisateur termine la leçon
+ * @param {Boolean} isCompleting - Indique si une mutation de complétion est en cours
  */
-const LessonNavigator = ({ blocks = [], lessonId, onComplete }) => {
+const LessonNavigator = ({ blocks = [], lessonId, onComplete, isCompleting = false }) => {
 	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -280,6 +281,7 @@ const LessonNavigator = ({ blocks = [], lessonId, onComplete }) => {
 							variant="contained"
 							endIcon={isLastSection ? <CheckCircle /> : <ArrowForward />}
 							onClick={handleNext}
+							disabled={isCompleting}
 							sx={{
 								minWidth: 140,
 								background: isLastSection
@@ -291,7 +293,9 @@ const LessonNavigator = ({ blocks = [], lessonId, onComplete }) => {
 										: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
 								},
 							}}>
-							{isLastSection
+							{isCompleting
+								? t('methode_saving')
+								: isLastSection
 								? allCompleted
 									? t('methode_finish_lesson')
 									: t('methode_mark_complete')

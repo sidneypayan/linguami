@@ -2,8 +2,8 @@ import { configureStore, createSlice } from '@reduxjs/toolkit'
 import contentSlice from './content/contentSlice'
 // import wordsSlice from './words/wordsSlice' // ✅ MIGRATED to React Query + TranslationContext
 import cardsSlice from './cards/cardsSlice'
-import lessonsSlice from './lessons/lessonsSlice'
-import coursesSlice from './courses/coursesSlice'
+// import lessonsSlice from './lessons/lessonsSlice' // ✅ MIGRATED to React Query (lib/lessons-client.js)
+// import coursesSlice from './courses/coursesSlice' // ✅ MIGRATED to React Query (lib/courses-client.js)
 
 // Temporary minimal words slice for Flashcards compatibility
 // TODO: Remove when Phase 2 (Flashcards migration) is complete
@@ -34,7 +34,7 @@ export const store = configureStore({
 		content: contentSlice,
 		words: wordsSliceMinimal.reducer, // ⚠️ Temporary minimal slice for Flashcards
 		cards: cardsSlice, // 🔴 TODO: Migrate in Phase 2 (Flashcards SRS)
-		lessons: lessonsSlice, // 🔴 TODO: Migrate in Phase 3
-		courses: coursesSlice, // 🔴 TODO: Migrate in Phase 3
+		// ✅ lessons: MIGRATED to React Query (lib/lessons-client.js)
+		// ✅ courses: MIGRATED to React Query (lib/courses-client.js)
 	},
 })

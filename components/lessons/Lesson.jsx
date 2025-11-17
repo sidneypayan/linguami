@@ -1,21 +1,34 @@
-import { useTranslations, useLocale } from 'next-intl'
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useTranslations } from 'next-intl'
 import { Box, Container, Typography, Button, Card } from '@mui/material'
 import { CheckCircleRounded } from '@mui/icons-material'
-import {
-	addLessonToStudied,
-	getUserLessonsStatus,
-	getUserLessonStatus,
-} from '@/features/lessons/lessonsSlice'
+import { useLessonStatus, useMarkLessonAsStudied } from '@/lib/lessons-client'
 import { useUserContext } from '@/context/user'
+import toast from '@/utils/toast'
+import { getToastMessage } from '@/utils/toastMessages'
 
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
-	const dispatch = useDispatch()
+	const { isUserLoggedIn } = useUserContext()
 
-	const { user_lesson_status } = useSelector(store => store.lessons)
-	const isLessonStudied = user_lesson_status?.is_studied
+	// React Query: Get lesson status
+	const { data: lessonStatus } = useLessonStatus(lesson?.id, isUserLoggedIn)
+	const isLessonStudied = lessonStatus?.is_studied || false
+
+	// React Query: Mark lesson as studied mutation
+	const { mutate: markAsStudied, isPending: isMarking } = useMarkLessonAsStudied(isUserLoggedIn)
+
+	const handleMarkAsStudied = () => {
+		if (!lesson?.id) return
+
+		markAsStudied(lesson.id, {
+			onSuccess: () => {
+				toast.success(getToastMessage('congratsProgress'))
+			},
+			onError: (error) => {
+				toast.error(error.message || 'Failed to save progress')
+			},
+		})
+	}
 
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
@@ -218,11 +231,8 @@ const Lesson = ({ lesson }) => {
 						variant='contained'
 						size='large'
 						startIcon={<CheckCircleRounded />}
-						onClick={async () => {
-							await dispatch(addLessonToStudied(lesson.id))
-							dispatch(getUserLessonsStatus())
-							dispatch(getUserLessonStatus(lesson.id))
-						}}
+						onClick={handleMarkAsStudied}
+						disabled={isMarking}
 						sx={{
 							background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
 							color: 'white',
@@ -242,7 +252,7 @@ const Lesson = ({ lesson }) => {
 								transform: 'translateY(-1px)',
 							},
 						}}>
-						{t('lessonlearnt')}
+						{isMarking ? t('saving') || 'Saving...' : t('lessonlearnt')}
 					</Button>
 				</Box>
 			)}

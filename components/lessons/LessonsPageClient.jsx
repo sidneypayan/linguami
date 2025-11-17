@@ -2,11 +2,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { useDispatch } from 'react-redux'
 import LessonsMenu from '@/components/lessons/LessonsMenu'
 import Lesson from '@/components/lessons/Lesson'
 import { Stack } from '@mui/material'
-import { getUserLessonStatus } from '@/features/lessons/lessonsSlice'
 
 const LessonsPageClient = ({ initialLessons }) => {
 	const router = useRouter()
@@ -15,7 +13,6 @@ const LessonsPageClient = ({ initialLessons }) => {
 	const locale = useLocale()
 
 	const t = useTranslations('lessons')
-	const dispatch = useDispatch()
 
 	const [lessonsInfos, setLessonsInfos] = useState([])
 	const [selectedLesson, setSelectedLesson] = useState(null)
@@ -44,13 +41,6 @@ const LessonsPageClient = ({ initialLessons }) => {
 			setSelectedLesson(lesson)
 		}
 	}, [slug, lessons])
-
-	// Fetch user lesson status when lesson is selected
-	useEffect(() => {
-		if (selectedLesson) {
-			dispatch(getUserLessonStatus(selectedLesson.id))
-		}
-	}, [dispatch, selectedLesson])
 
 	// JSON-LD for Course
 	const jsonLd = {
