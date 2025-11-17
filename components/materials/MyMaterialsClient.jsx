@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { useMaterialFilters } from '@/hooks/useMaterialFilters'
+import { useMaterialFilters } from '@/hooks/materials/useMaterialFilters'
 import SectionCard from '@/components/SectionCard'
 import MaterialsTable from '@/components/MaterialsTable'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'

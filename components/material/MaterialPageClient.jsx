@@ -4,17 +4,14 @@ import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState, use, useMemo } from 'react'
-import { useRouterCompat } from '@/hooks/useRouterCompat'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
 	addMaterialToStudied,
 } from '@/app/actions/materials'
-import {
-	toggleTranslationContainer,
-	cleanTranslation,
-} from '@/features/words/wordsSlice'
+import { useTranslation } from '@/context/translation'
 import BookMenu from '@/components/material/BookMenu'
 import Translation from '@/components/material/Translation'
 import Words from '@/components/material/Words'
@@ -24,7 +21,6 @@ import EditMaterialModal from '@/components/admin/EditMaterialModal'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
-import { useDispatch } from 'react-redux'
 
 import Player from '@/components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
@@ -61,7 +57,7 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 	const params = use(paramsPromise)
 	const t = useTranslations('materials')
 	const locale = useLocale()
-	const dispatch = useDispatch()
+	const { closeTranslation, cleanTranslation } = useTranslation()
 	const router = useRouterCompat()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -123,6 +119,7 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 				is_being_studied: true,
 				is_studied: false,
 			})
+			// XP is now added server-side in addBeingStudiedMaterial action
 		},
 	})
 
@@ -147,15 +144,16 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 				is_being_studied: false,
 				is_studied: true,
 			})
+			// XP is now added server-side in addMaterialToStudied action
 		},
 	})
 
 	// Fermer la popup de traduction quand l'utilisateur change de matériel
 	useEffect(() => {
-		dispatch(toggleTranslationContainer(false))
-		dispatch(cleanTranslation())
+		closeTranslation()
+		cleanTranslation()
 		setCoordinates({})
-	}, [currentMaterial?.id, dispatch])
+	}, [currentMaterial?.id, closeTranslation, cleanTranslation])
 
 	const handleEditContent = () => {
 		setEditModalOpen(true)

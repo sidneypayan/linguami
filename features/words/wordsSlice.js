@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import { calculateNextReview, initializeCard, getDueCards } from '@/utils/spacedRepetition'
 import { logger } from '@/utils/logger'
+import { addXPAction } from '@/actions/gamification/xp-actions'
 // Les limites de traduction sont maintenant gérées côté serveur via cookie HttpOnly
 
 /**
@@ -447,14 +448,10 @@ const wordsSlice = createSlice({
 
 				// Add XP for each word added
 				rows.forEach(word => {
-					fetch('/api/xp/add', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							actionType: 'word_added',
-							sourceId: word.id?.toString() || '',
-							description: 'Added word to dictionary'
-						})
+					addXPAction({
+						actionType: 'word_added',
+						sourceId: word.id?.toString() || '',
+						description: 'Added word to dictionary'
 					}).catch(err => logger.error('Error adding XP:', err))
 				})
 			})

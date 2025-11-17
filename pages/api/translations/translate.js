@@ -107,6 +107,16 @@ export default async function handler(req, res) {
 	try {
 		const { word, sentence, userLearningLanguage, locale = 'fr', isAuthenticated = false } = req.body
 
+		// Debug: Log des paramètres reçus
+		logger.log('Translation API called with:', {
+			word,
+			wordType: typeof word,
+			wordLength: word?.length,
+			userLearningLanguage,
+			locale,
+			isAuthenticated
+		})
+
 		// Pour les utilisateurs connectés, pas de limite
 		if (isAuthenticated) {
 			const translationResult = await performTranslation({ word, sentence, userLearningLanguage, locale })
@@ -172,14 +182,39 @@ export default async function handler(req, res) {
  * Retourne les données (ne gère pas la réponse HTTP)
  */
 async function performTranslation({ word, sentence, userLearningLanguage, locale }) {
-	// Normalisation du mot (cyrillique uniquement pour le russe)
+	// Debug: Log du mot avant normalisation
+	logger.log('performTranslation called with:', {
+		word,
+		wordType: typeof word,
+		userLearningLanguage,
+		locale
+	})
+
+	// Normalisation du mot selon la langue
 	let normalizedWord = word
+
 	if (userLearningLanguage === 'ru') {
+		// Extraire uniquement les caractères cyrilliques
 		const matches = word.match(/[А-Яа-яЁё]+/gu)
+		normalizedWord = matches ? matches.join('') : ''
+	} else if (userLearningLanguage === 'fr') {
+		// Extraire uniquement les caractères latins + accents français
+		const matches = word.match(/[A-Za-zÀ-ÿ]+/gu)
+		normalizedWord = matches ? matches.join('') : ''
+	} else if (userLearningLanguage === 'en') {
+		// Extraire uniquement les caractères latins
+		const matches = word.match(/[A-Za-z]+/gu)
 		normalizedWord = matches ? matches.join('') : ''
 	}
 
-	if (!normalizedWord) {
+	// Debug: Log après normalisation
+	logger.log('After normalization:', {
+		original: word,
+		normalized: normalizedWord,
+		isEmpty: !normalizedWord || normalizedWord.trim() === ''
+	})
+
+	if (!normalizedWord || normalizedWord.trim() === '') {
 		throw new Error('Invalid word')
 	}
 

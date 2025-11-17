@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouterCompat } from '@/hooks/useRouterCompat'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,

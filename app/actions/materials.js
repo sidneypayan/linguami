@@ -4,12 +4,64 @@ import { createServerClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { logger } from '@/utils/logger'
+import { addXP } from '@/lib/xp-service' // Only used for material completion
 
 /**
- * Server Actions for materials mutations
- * These functions modify data and use 'use server' directive
- * They can be called from Client Components
+ * Server Actions for materials
+ * These functions can be called from Client Components
  */
+
+/**
+ * Fetch all materials by language (for client-side use with React Query)
+ * @param {string} lang - Learning language (fr, ru, en)
+ * @returns {Promise<Array>} Materials array
+ */
+export async function getMaterialsByLanguageAction(lang) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  // Define valid sections (excluding books and book-chapters)
+  const audioTextSections = [
+    'dialogues',
+    'culture',
+    'legends',
+    'slices-of-life',
+    'beautiful-places',
+    'podcasts',
+    'short-stories',
+  ]
+
+  const videoSectionsFr = [
+    'movie-trailers',
+    'movie-clips',
+    'cartoons',
+    'various-materials',
+    'rock',
+    'pop',
+    'folk',
+    'variety',
+    'kids',
+  ]
+
+  const videoSectionsRu = [...videoSectionsFr, 'eralash', 'galileo']
+
+  const videoSections = lang === 'ru' ? videoSectionsRu : videoSectionsFr
+  const validSections = [...audioTextSections, ...videoSections]
+
+  const { data: materials, error } = await supabase
+    .from('materials')
+    .select('*')
+    .eq('lang', lang)
+    .in('section', validSections)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    logger.error('Error fetching materials:', error)
+    return []
+  }
+
+  return materials || []
+}
 
 /**
  * Add material to "being studied" status
@@ -39,20 +91,7 @@ export async function addBeingStudiedMaterial(materialId) {
     return { success: false, error: insertError.message }
   }
 
-  // Add XP for starting a material
-  try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/xp/add`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        actionType: 'material_started',
-        sourceId: materialId.toString(),
-        description: 'Started new material'
-      })
-    })
-  } catch (err) {
-    logger.error('Error adding XP:', err)
-  }
+  // No XP awarded for starting a material (only for completion)
 
   // Revalidate paths to refresh data
   revalidatePath('/[locale]/my-materials', 'page')
@@ -151,14 +190,10 @@ export async function addMaterialToStudied(materialId) {
 
   // Add XP for completing a material
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/xp/add`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        actionType: 'material_completed',
-        sourceId: materialId.toString(),
-        description: 'Completed material'
-      })
+    await addXP({
+      actionType: 'material_completed',
+      sourceId: materialId.toString(),
+      description: 'Completed material'
     })
   } catch (err) {
     logger.error('Error adding XP:', err)

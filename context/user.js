@@ -8,7 +8,7 @@ import {
 	useContext,
 } from 'react'
 import { supabase } from '@/lib/supabase' // client navigateur (@supabase/ssr)
-import { useRouterCompat } from '@/hooks/useRouterCompat'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import toast from '@/utils/toast'
 import { createToastMessages } from '@/utils/toastMessages'
 import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'

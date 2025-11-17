@@ -7,7 +7,7 @@ let content = fs.readFileSync(filePath, 'utf8')
 // Remplacer l'import de useRouter
 content = content.replace(
 	"import { useRouter } from 'next/router'",
-	"import { useRouterCompat } from '@/hooks/useRouterCompat'"
+	"import { useRouterCompat } from '@/hooks/shared/useRouterCompat'"
 )
 
 // Remplacer l'utilisation de useRouter

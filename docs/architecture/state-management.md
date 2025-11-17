@@ -2,7 +2,165 @@
 
 ## Overview
 
-Linguami uses a **two-tier state architecture** combining Redux for global domain state and React Context for local UI state.
+Linguami uses a **modern data fetching architecture** combining:
+- **React Query** for server state (data fetching, caching, synchronization)
+- **Server Actions** for data mutations (Next.js App Router)
+- **Redux** (legacy) for some global domain state (being migrated to React Query)
+- **React Context** for local UI state (auth, theme)
+
+## ⚠️ IMPORTANT: React Query + Server Actions (Current Standard)
+
+**DO NOT create API routes (`pages/api/*`) for data fetching in App Router pages.**
+
+### The Modern Pattern
+
+When working with App Router (`app/` directory):
+
+1. **Server Components** (default) fetch data directly using Server Data Functions
+2. **Client Components** use React Query with Server Actions
+
+### ✅ Correct: Server Actions + React Query
+
+**Step 1: Create Server Action** (`app/actions/myFeature.js`)
+```javascript
+'use server'
+
+import { createServerClient } from '@/lib/supabase-server'
+import { cookies } from 'next/headers'
+
+export async function getDataByLanguage(lang) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data, error } = await supabase
+    .from('my_table')
+    .select('*')
+    .eq('lang', lang)
+
+  if (error) return []
+  return data
+}
+```
+
+**Step 2: Use in Client Component with React Query**
+```javascript
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { getDataByLanguage } from '@/app/actions/myFeature'
+import { useUserContext } from '@/context/user'
+
+function MyComponent({ initialData }) {
+  const { userLearningLanguage } = useUserContext()
+
+  // React Query automatically refetches when userLearningLanguage changes!
+  const { data } = useQuery({
+    queryKey: ['myData', userLearningLanguage],
+    queryFn: () => getDataByLanguage(userLearningLanguage),
+    initialData, // SSR hydration
+    enabled: !!userLearningLanguage,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+
+  return <div>{data.map(item => ...)}</div>
+}
+```
+
+**Step 3: Server Component provides initial data** (`app/[locale]/my-page/page.js`)
+```javascript
+import { getDataByLanguage } from '@/app/data/myFeature'
+import MyComponent from '@/components/MyComponent'
+
+export default async function MyPage() {
+  const initialData = await getDataByLanguage('fr')
+
+  return <MyComponent initialData={initialData} />
+}
+```
+
+### Why This Pattern?
+
+✅ **Automatic refetching** when queryKey dependencies change
+✅ **No page reload** needed (`window.location.reload()` is an anti-pattern)
+✅ **Type-safe** - Server Actions can be typed with TypeScript
+✅ **Better performance** - React Query handles caching, deduplication
+✅ **SSR hydration** - Initial data from server, then client takes over
+✅ **No HTTP overhead** - Server Actions are RPC, not REST endpoints
+
+### ❌ Wrong: API Routes + fetch
+
+**DON'T DO THIS:**
+```javascript
+// ❌ Don't create pages/api/my-data.js
+export default function handler(req, res) {
+  // This is the OLD pattern for Pages Router
+}
+
+// ❌ Don't fetch from your own API in Client Components
+const { data } = useQuery({
+  queryKey: ['myData'],
+  queryFn: () => fetch('/api/my-data').then(r => r.json())
+})
+```
+
+**Why it's wrong:**
+- Unnecessary HTTP round-trip (client → server API → server data)
+- Can't leverage Server Components
+- More code to maintain
+- Harder to type-check
+
+### ❌ Wrong: window.location.reload()
+
+**DON'T DO THIS:**
+```javascript
+// ❌ Don't reload the whole page when data changes
+useEffect(() => {
+  if (userLearningLanguage !== previousLang) {
+    window.location.reload() // ANTI-PATTERN!
+  }
+}, [userLearningLanguage])
+```
+
+**Why it's wrong:**
+- Loses all client state
+- Poor UX (full page flash)
+- Defeats the purpose of SPA
+- React Query already handles this automatically
+
+**DO THIS instead:**
+```javascript
+// ✅ Include dynamic dependencies in queryKey
+const { data } = useQuery({
+  queryKey: ['materials', userLearningLanguage], // ← Changes = auto refetch
+  queryFn: () => getMaterialsByLanguageAction(userLearningLanguage)
+})
+```
+
+### Example: Materials Page Migration
+
+**Before (wrong):**
+```javascript
+// Using window.location.reload() when language changes
+useEffect(() => {
+  if (userLearningLanguage !== learningLanguage) {
+    window.location.reload() // ❌
+  }
+}, [userLearningLanguage])
+```
+
+**After (correct):**
+```javascript
+// React Query automatically refetches
+const { data: materials } = useQuery({
+  queryKey: ['allMaterials', userLearningLanguage], // ✅
+  queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
+  initialData: initialMaterials,
+  enabled: !!userLearningLanguage,
+  staleTime: 5 * 60 * 1000,
+})
+```
+
+---
 
 ## Redux (Global Domain State)
 

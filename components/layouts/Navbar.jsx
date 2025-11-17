@@ -112,6 +112,17 @@ const Navbar = props => {
 		return pathname.startsWith('/method/') && pathSegments.length === 3
 	}
 
+	// Check if user is currently on a material section page (e.g., /materials/dialogues)
+	const isOnMaterialSectionPage = () => {
+		if (!pathname) return false
+		const pathSegments = pathname.split('/').filter(Boolean)
+		// Check if path is /materials/[section] (2 segments, or 3 with locale)
+		// e.g., /fr/materials/dialogues or /materials/dialogues
+		const isMaterialsPath = pathname.includes('/materials/')
+		const hasSection = params?.section && !params?.material
+		return isMaterialsPath && hasSection
+	}
+
 	const drawer = (
 		<Box
 			onClick={handleDrawerToggle}
@@ -670,8 +681,8 @@ const Navbar = props => {
 							</Link>
 						)}
 
-						{/* Theme toggle and Language buttons - only show when not in material/blog detail or in lesson */}
-						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && (
+						{/* Theme toggle and Language buttons - only show when not in material/blog detail, section page, or in lesson */}
+						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && !isOnMaterialSectionPage() && (
 							<>
 								<ThemeToggle />
 								<InterfaceLanguageMenu />

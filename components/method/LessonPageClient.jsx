@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouterCompat } from '@/hooks/useRouterCompat'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslations, useLocale } from 'next-intl'
 import {

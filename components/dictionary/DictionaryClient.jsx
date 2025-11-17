@@ -1,14 +1,12 @@
 'use client'
-import { useLocale } from 'next-intl'
-import { useSelector, useDispatch } from 'react-redux'
+import { useLocale, useTranslations } from 'next-intl'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-	getAllUserWords,
-	deleteUserWord,
-} from '@/features/words/wordsSlice'
+import { getUserWords, deleteWord } from '@/lib/words-client'
 import { toggleFlashcardsContainer } from '@/features/cards/cardsSlice'
+import { useDispatch } from 'react-redux'
 import { Link } from '@/i18n/navigation'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'
@@ -44,6 +42,7 @@ import AddWordModal from '@/components/dictionary/AddWordModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
 const DictionaryClient = ({ translations }) => {
+	const t = useTranslations('words')
 	const locale = useLocale()
 	const dispatch = useDispatch()
 	const router = useRouter()
@@ -51,18 +50,44 @@ const DictionaryClient = ({ translations }) => {
 	const isDark = theme.palette.mode === 'dark'
 	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
 	const userId = user?.id
-	const {
-		user_words,
-		user_words_loading,
-		user_words_pending,
-		user_material_words_pending,
-	} = useSelector(store => store.words)
+	const queryClient = useQueryClient()
+
 	const [checkedWords, setCheckedWords] = useState([])
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [wordsPerPage, setWordsPerPage] = useState(20)
 	const [guestWords, setGuestWords] = useState([])
 	const [searchQuery, setSearchQuery] = useState('')
+
+	// React Query: Fetch user words (only for logged-in users)
+	const { data: user_words = [], isLoading: user_words_loading } = useQuery({
+		queryKey: ['userWords', userId, userLearningLanguage],
+		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
+
+	// Temporary: Sync React Query data with Redux for components still using Redux (Flashcards)
+	useEffect(() => {
+		if (user_words_loading) {
+			dispatch({ type: 'words/getAllUserWords/pending' })
+		} else if (user_words && user_words.length >= 0) {
+			dispatch({ type: 'words/getAllUserWords/fulfilled', payload: user_words })
+		}
+	}, [user_words, user_words_loading, dispatch])
+
+	// React Query: Delete word mutation
+	const deleteWordMutation = useMutation({
+		mutationFn: deleteWord,
+		onSuccess: () => {
+			// Invalidate cache to refetch data
+			queryClient.invalidateQueries({ queryKey: ['userWords', userId, userLearningLanguage] })
+			toast.success(t('word_deleted') || 'Mot supprimé')
+		},
+		onError: () => {
+			toast.error(t('delete_error') || 'Erreur lors de la suppression')
+		}
+	})
 
 	const handleCheck = e => {
 		if (e.target.checked) {
@@ -86,10 +111,10 @@ const DictionaryClient = ({ translations }) => {
 		}
 	}
 
-	const handleDeleteWord = (wordId) => {
+	const handleDeleteWord = useCallback((wordId) => {
 		if (isUserLoggedIn) {
-			// Utilisateur connecté : utiliser Redux/Supabase
-			dispatch(deleteUserWord(wordId))
+			// Utilisateur connecté : utiliser React Query
+			deleteWordMutation.mutate(wordId)
 		} else {
 			// Invité : supprimer de localStorage
 			const success = deleteGuestWord(wordId)
@@ -102,7 +127,7 @@ const DictionaryClient = ({ translations }) => {
 				toast.error('Erreur lors de la suppression')
 			}
 		}
-	}
+	}, [isUserLoggedIn, deleteWordMutation, userLearningLanguage])
 
 	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
 	const filteredUserWords = useMemo(() => {
@@ -158,27 +183,15 @@ const DictionaryClient = ({ translations }) => {
 		: filteredUserWords.slice(indexOfFirstWord, indexOfLastWord)
 	const totalPages = Math.ceil(filteredUserWords.length / wordsPerPage)
 
+	// Load guest words from localStorage (React Query handles logged-in users)
 	useEffect(() => {
-		// Attendre que le bootstrap soit terminé
 		if (isBootstrapping) return
 
-		// Charger les mots seulement si l'utilisateur est connecté
-		if (isUserLoggedIn && userId && userLearningLanguage) {
-			dispatch(getAllUserWords({ userId, userLearningLanguage }))
-		} else if (!isUserLoggedIn && userLearningLanguage) {
-			// Charger les mots depuis localStorage pour les invités
+		if (!isUserLoggedIn && userLearningLanguage) {
 			const words = getGuestWordsByLanguage(userLearningLanguage)
 			setGuestWords(words)
 		}
-	}, [
-		dispatch,
-		isUserLoggedIn,
-		isBootstrapping,
-		userId,
-		userLearningLanguage,
-		user_words_pending,
-		user_material_words_pending,
-	])
+	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
 
 	if (user_words_loading) {
 		return <LoadingSpinner />

@@ -15,22 +15,27 @@ import { useUserContext } from '@/context/user'
 import { usePathname } from 'next/navigation'
 import { School, Museum, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
 import { logger } from '@/utils/logger'
+import { getMaterialsByLanguageAction } from '@/app/actions/materials'
 
 const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], learningLanguage = 'fr' }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const pathname = usePathname()
-	const { userProfile, isUserAdmin } = useUserContext()
+	const { userProfile, isUserAdmin, userLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const prevPathnameRef = useRef(pathname)
+	const prevLearningLanguageRef = useRef(userLearningLanguage)
 
-	// React Query: Hydrate materials with SSR data
+	// React Query: Fetch materials based on user's learning language
+	// When userLearningLanguage changes, React Query will automatically refetch
 	const { data: allLoadedMaterials = [] } = useQuery({
-		queryKey: ['allMaterials', learningLanguage],
-		queryFn: () => initialMaterials,
-		initialData: initialMaterials,
-		staleTime: Infinity,
+		queryKey: ['allMaterials', userLearningLanguage],
+		queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
+		// Only use initialData if the language matches, otherwise React Query will fetch fresh data
+		initialData: userLearningLanguage === learningLanguage ? initialMaterials : undefined,
+		enabled: !!userLearningLanguage,
+		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
 
 	// React Query: Hydrate user materials status
@@ -52,6 +57,9 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	const [displayMode, setDisplayMode] = useState('category')
 	const [isDisplayModeLoaded, setIsDisplayModeLoaded] = useState(false)
 
+	// État pour le filtre de catégorie (mode category)
+	const [selectedCategory, setSelectedCategory] = useState('all')
+
 	// États pour le mode liste
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedLevel, setSelectedLevel] = useState(null)
@@ -65,6 +73,23 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 
 	// Niveau de l'utilisateur
 	const userLevel = userProfile?.language_level || 'beginner'
+
+	// Réinitialiser les filtres quand la langue d'apprentissage change
+	useEffect(() => {
+		const prevLang = prevLearningLanguageRef.current
+
+		// Only reset filters if language actually changed (not on initial load)
+		if (prevLang && userLearningLanguage && prevLang !== userLearningLanguage && displayMode === 'list') {
+			// Clear filters to avoid showing empty results with filters from another language
+			setSearchTerm('')
+			setSelectedLevel(null)
+			setSelectedStatus(null)
+			setSelectedSection(null)
+			setCurrentPage(1)
+		}
+
+		prevLearningLanguageRef.current = userLearningLanguage
+	}, [userLearningLanguage, displayMode])
 
 	// Charger la préférence depuis localStorage après l'hydratation
 	useEffect(() => {
@@ -85,18 +110,18 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	// Charger les sections (pour le mode catégorie)
 	useEffect(() => {
 		let selectedMaterials = []
-		if (learningLanguage === 'ru') {
+		if (userLearningLanguage === 'ru') {
 			selectedMaterials = materials_ru
-		} else if (learningLanguage === 'fr') {
+		} else if (userLearningLanguage === 'fr') {
 			selectedMaterials = materials_fr
-		} else if (learningLanguage === 'en') {
+		} else if (userLearningLanguage === 'en') {
 			selectedMaterials = materials_en
 		} else {
 			selectedMaterials = materials_fr
 		}
 
 		setMaterials(selectedMaterials)
-	}, [learningLanguage, locale])
+	}, [userLearningLanguage, locale])
 
 	// Restaurer les filtres depuis localStorage quand on revient sur la page en mode liste
 	useEffect(() => {
@@ -215,6 +240,43 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		return result
 	}, [displayMode, allLoadedMaterials, selectedSection, selectedLevel, selectedStatus, searchTerm, user_materials_status])
 
+	// Filtrer les sections par catégorie de média (mode category)
+	const filteredPractice = useMemo(() => {
+		if (displayMode !== 'category') return []
+
+		let filtered = practice
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = practice.filter(material => material.category === selectedCategory)
+		}
+
+		return filtered
+	}, [displayMode, practice, selectedCategory])
+
+	const filteredCulture = useMemo(() => {
+		if (displayMode !== 'category') return []
+
+		let filtered = culture
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = culture.filter(material => material.category === selectedCategory)
+		}
+
+		return filtered
+	}, [displayMode, culture, selectedCategory])
+
+	const filteredLiterature = useMemo(() => {
+		if (displayMode !== 'category') return []
+
+		let filtered = literature
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = literature.filter(material => material.category === selectedCategory)
+		}
+
+		return filtered
+	}, [displayMode, literature, selectedCategory])
+
 	// Charger practice/culture/literature pour le mode catégorie
 	useEffect(() => {
 		if (displayMode !== 'category') return
@@ -283,8 +345,40 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 			// Mode catégorie - affichage par sections
 			return (
 				<>
+					{/* Filtre par catégorie de média */}
+					<MaterialsFilter
+						selectedCategory={selectedCategory}
+						onCategoryChange={setSelectedCategory}
+					/>
+
+					{/* Message si aucun matériau trouvé */}
+					{filteredPractice.length === 0 && filteredCulture.length === 0 && filteredLiterature.length === 0 && (
+						<Box
+							sx={{
+								py: 8,
+								textAlign: 'center',
+							}}>
+							<Typography
+								variant="h6"
+								sx={{
+									color: isDark ? '#94a3b8' : '#64748b',
+									fontWeight: 600,
+									mb: 1,
+								}}>
+								{t('noMaterialsFound')}
+							</Typography>
+							<Typography
+								variant="body2"
+								sx={{
+									color: isDark ? '#64748b' : '#94a3b8',
+								}}>
+								{t('noMaterialsInCategory')}
+							</Typography>
+						</Box>
+					)}
+
 					{/* Section Practice */}
-					{practice.length > 0 && (
+					{filteredPractice.length > 0 && (
 						<Box id='practice' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
 							<Box
 								sx={{
@@ -324,12 +418,12 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 									{t('practiceCategory')}
 								</Typography>
 							</Box>
-							<MaterialsGrid materials={practice} />
+							<MaterialsGrid materials={filteredPractice} />
 						</Box>
 					)}
 
 					{/* Section Culture */}
-					{culture.length > 0 && (
+					{filteredCulture.length > 0 && (
 						<Box id='culture' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
 							<Box
 								sx={{
@@ -369,12 +463,12 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 									{t('cultureCategory')}
 								</Typography>
 							</Box>
-							<MaterialsGrid materials={culture} />
+							<MaterialsGrid materials={filteredCulture} />
 						</Box>
 					)}
 
 					{/* Section Literature */}
-					{literature.length > 0 && (
+					{filteredLiterature.length > 0 && (
 						<Box id='literature' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
 							<Box
 								sx={{
@@ -414,7 +508,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 									{t('literatureCategory')}
 								</Typography>
 							</Box>
-							<MaterialsGrid materials={literature} />
+							<MaterialsGrid materials={filteredLiterature} />
 						</Box>
 					)}
 				</>

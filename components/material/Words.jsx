@@ -1,19 +1,16 @@
-import React from 'react'
+import React, { useMemo, useCallback } from 'react'
 import styles from '@/styles/materials/Material.module.css'
-import { useDispatch } from 'react-redux'
-import {
-	translateWord,
-	toggleTranslationContainer,
-	cleanTranslation,
-} from '@/features/words/wordsSlice'
-import { useMemo, useCallback } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
+import { useWordWrapping } from '@/hooks/words/useWordWrapping'
+import { translateWord } from '@/lib/words-client'
 
 const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
-	const dispatch = useDispatch()
+	const { openTranslation, cleanTranslation, setLoading, setError } = useTranslation()
 
-	// Le contenu vient directement de la DB (source de confiance)
+	// Content comes directly from DB (trusted source)
 	const clean = useMemo(() => {
 		if (!content) return ''
 		return content
@@ -47,6 +44,40 @@ const Words = ({ content, locale = 'fr' }) => {
 		return fullText.substring(sentenceStart, sentenceEnd).trim()
 	}, [])
 
+	// React Query: Translation mutation
+	const translationMutation = useMutation({
+		mutationFn: translateWord,
+		onMutate: () => {
+			setLoading(true)
+			cleanTranslation()
+		},
+		onSuccess: (response) => {
+			// Extract translations from Yandex API format
+			// Yandex returns: { def: [{ text: "word", tr: [{ text: "translation" }] }] }
+			// We need to flatten all translations from all definitions
+			const definitions = response.data?.def || []
+			const allTranslations = definitions.flatMap(def =>
+				(def.tr || []).map(tr => tr.text)
+			)
+
+			// Map API response format to expected format
+			const translationData = {
+				word: response.word,
+				definitions: allTranslations.length > 0 ? allTranslations : null,
+				sentence: response.sentence
+			}
+			openTranslation(translationData, response.sentence, {
+				x: window.event?.clientX || 0,
+				y: window.event?.clientY || 0
+			})
+			setLoading(false)
+		},
+		onError: (error) => {
+			setError(error.message)
+		}
+	})
+
+	// Handle word click
 	const handleClick = useCallback(
 		e => {
 			const word = e.target.textContent
@@ -60,127 +91,30 @@ const Words = ({ content, locale = 'fr' }) => {
 				window.dispatchEvent(new Event('word-clicked'))
 			}
 
-			dispatch(
-				translateWord({
-					word,
-					sentence,
-					userLearningLanguage,
-					locale,
-					isAuthenticated: isUserLoggedIn,
-				})
-			)
-			dispatch(toggleTranslationContainer())
-			dispatch(cleanTranslation())
+			translationMutation.mutate({
+				word,
+				sentence,
+				userLearningLanguage,
+				locale,
+				isAuthenticated: isUserLoggedIn,
+			})
 		},
-		[dispatch, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
+		[translationMutation, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
 	)
 
-	// Fonction pour vérifier si un caractère est de la ponctuation
-	const isPunctuation = useCallback((char) => {
-		// Ponctuation courante en français et russe
-		const punctuationRegex = /[\s….,;:?!–—«»"()\n\t]/
-		return punctuationRegex.test(char)
-	}, [])
+	// Use word wrapping hook
+	const wrapWords = useWordWrapping(handleClick, styles)
 
-	// Fonction pour vérifier si un caractère est une apostrophe
-	const isApostrophe = useCallback((char) => {
-		const apostropheRegex = /['''`]/
-		return apostropheRegex.test(char)
-	}, [])
-
-	const wrapWords = useCallback(
-		sentence => {
-			if (!sentence) return sentence
-
-			// Segmenter le texte en graphèmes (caractères) pour gérer correctement Unicode
-			// On ne peut pas utiliser Intl.Segmenter avec granularity: 'word' car il ne gère pas bien
-			// la ponctuation collée aux mots. On va donc découper manuellement.
-
-			const result = []
-			let currentWord = ''
-			let key = 0
-
-			for (let i = 0; i < sentence.length; i++) {
-				const char = sentence[i]
-
-				// Si c'est de la ponctuation (espaces, virgules, etc.)
-				if (isPunctuation(char)) {
-					// Terminer le mot en cours s'il existe
-					if (currentWord) {
-						result.push(
-							<span
-								key={key++}
-								className={styles.translate}
-								onClick={handleClick}>
-								{currentWord}
-							</span>
-						)
-						currentWord = ''
-					}
-					// Ajouter la ponctuation
-					result.push(
-						<span key={key++} className={styles.punctuation}>
-							{char}
-						</span>
-					)
-				}
-				// Si c'est une apostrophe (traitement spécial)
-				else if (isApostrophe(char)) {
-					// Terminer le mot en cours s'il existe
-					if (currentWord) {
-						result.push(
-							<span
-								key={key++}
-								className={`${styles.translate} ${styles.nospace}`}
-								onClick={handleClick}>
-								{currentWord}
-							</span>
-						)
-						currentWord = ''
-					}
-					// Ajouter l'apostrophe comme ponctuation
-					result.push(
-						<span key={key++} className={styles.punctuation}>
-							{char}
-						</span>
-					)
-				}
-				// Sinon c'est un caractère normal (lettre, chiffre, accent, etc.)
-				else {
-					currentWord += char
-				}
-			}
-
-			// Terminer le dernier mot s'il existe
-			if (currentWord) {
-				result.push(
-					<span
-						key={key++}
-						className={styles.translate}
-						onClick={handleClick}>
-						{currentWord}
-					</span>
-				)
-			}
-
-			return result
-		},
-		[handleClick, isPunctuation, isApostrophe]
-	)
-
+	// Wrap sentences with clickable words
 	const wrapSentences = useMemo(() => {
 		if (!clean) return clean
 
-		// Splitter sur les sauts de ligne pour traiter ligne par ligne
+		// Split on newlines to process line by line
 		const lines = clean.split(/\r?\n/)
 
 		return lines.map((line, index) => (
 			<React.Fragment key={index}>
-				{line && (
-					<span className={styles.sentence}>
-						{wrapWords(line)}
-					</span>
-				)}
+				{line && <span className={styles.sentence}>{wrapWords(line)}</span>}
 				{index < lines.length - 1 && <br />}
 			</React.Fragment>
 		))
@@ -189,5 +123,5 @@ const Words = ({ content, locale = 'fr' }) => {
 	return wrapSentences
 }
 
-// Mémoïser le composant pour éviter re-renders inutiles
+// Memoize component to avoid unnecessary re-renders
 export default React.memo(Words)

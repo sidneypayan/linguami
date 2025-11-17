@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import useAchievements from '../hooks/useAchievements'
+import useAchievements from '@/hooks/gamification/useAchievements'
 import AchievementNotification from './AchievementNotification'
 
 /**

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import {
@@ -12,7 +14,6 @@ import {
 import { Edit, CheckCircle, Cancel } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
 import toast from '@/utils/toast'
-import { logger } from '@/utils/logger'
 
 const ExerciseInlineBlock = ({ block }) => {
 	const t = useTranslations('common')
@@ -24,7 +25,6 @@ const ExerciseInlineBlock = ({ block }) => {
 	const [answers, setAnswers] = useState({})
 	const [submitted, setSubmitted] = useState(false)
 	const [results, setResults] = useState({})
-	const [xpAwarded, setXpAwarded] = useState(false)
 
 	const handleAnswerChange = (index, value) => {
 		setAnswers({ ...answers, [index]: value })
@@ -46,36 +46,11 @@ const ExerciseInlineBlock = ({ block }) => {
 		setResults(newResults)
 		setSubmitted(true)
 
-		// Award XP if 100% score on first try
+		// No XP awarded for exercises anymore
 		const score = Math.round((correctCount / questions.length) * 100)
 
-		if (score === 100 && !xpAwarded && isUserLoggedIn && xpReward) {
-			try {
-				const response = await fetch('/api/xp/add', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						actionType: 'exercise_completed',
-						customXp: xpReward,
-						description: `Exercice: ${title}`,
-					}),
-				})
-
-				if (response.ok) {
-					const data = await response.json()
-					setXpAwarded(true)
-					toast.success(`+${xpReward} XP!`)
-
-					// Check for level up
-					if (data.leveledUp) {
-						toast.success(`${t('methode_level_achieved', { level: data.currentLevel })} 🎉`)
-					}
-				}
-			} catch (error) {
-				logger.error('Error awarding XP:', error)
-			}
+		if (score === 100) {
+			toast.success(t('methode_exercise_perfect_score'))
 		}
 	}
 
@@ -182,7 +157,7 @@ const ExerciseInlineBlock = ({ block }) => {
 				) : (
 					<>
 						<Alert severity={score === 100 ? 'success' : score >= 50 ? 'warning' : 'error'}>
-							{t('methode_exercise_score')} : {score}% {xpReward && score === 100 && `(+${xpReward} XP)`}
+							{t('methode_exercise_score')} : {score}%
 						</Alert>
 						<Button variant="outlined" onClick={handleReset}>
 							{t('methode_exercise_retry')}

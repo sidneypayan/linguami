@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useQueryClient } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import { getAllUserWords } from '@/features/words/wordsSlice'
 import { validateWordPair } from '@/utils/validation'
 import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
@@ -29,7 +28,7 @@ const STORAGE_KEY = 'addWordModal_formData'
 
 const AddWordModal = ({ open, onClose }) => {
 	const t = useTranslations('words')
-	const dispatch = useDispatch()
+	const queryClient = useQueryClient()
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
@@ -166,8 +165,8 @@ const AddWordModal = ({ open, onClose }) => {
 			// Succès
 			toast.success(result.message || t('word_add_success'))
 
-			// Recharger la liste des mots
-			dispatch(getAllUserWords({ userId: user.id, userLearningLanguage }))
+			// Invalider la query pour recharger automatiquement la liste des mots
+			queryClient.invalidateQueries({ queryKey: ['userWords', user.id, userLearningLanguage] })
 
 			// Réinitialiser le formulaire et nettoyer sessionStorage
 			clearFormData()

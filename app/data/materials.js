@@ -42,11 +42,39 @@ export async function getAllMaterialsByLanguage(lang) {
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
+  // Define valid sections (excluding books and book-chapters)
+  const audioTextSections = [
+    'dialogues',
+    'culture',
+    'legends',
+    'slices-of-life',
+    'beautiful-places',
+    'podcasts',
+    'short-stories',
+  ]
+
+  const videoSectionsFr = [
+    'movie-trailers',
+    'movie-clips',
+    'cartoons',
+    'various-materials',
+    'rock',
+    'pop',
+    'folk',
+    'variety',
+    'kids',
+  ]
+
+  const videoSectionsRu = [...videoSectionsFr, 'eralash', 'galileo']
+
+  const videoSections = lang === 'ru' ? videoSectionsRu : videoSectionsFr
+  const validSections = [...audioTextSections, ...videoSections]
+
   const { data: materials, error } = await supabase
     .from('materials')
     .select('*')
     .eq('lang', lang)
-    .not('section', 'in', '(books,book-chapters)')
+    .in('section', validSections)
     .order('created_at', { ascending: false })
 
   if (error) {
