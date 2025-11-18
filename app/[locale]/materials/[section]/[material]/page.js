@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
-import { getUserMaterialStatus } from '@/app/data/materials'
+import { getUserMaterialStatus, getSiblingChapters, getUserMaterialsStatus } from '@/app/data/materials'
 import MaterialPageClient from '@/components/material/MaterialPageClient'
 
 export async function generateMetadata({ params }) {
@@ -81,9 +81,29 @@ export default async function MaterialPage({ params }) {
 	// Get user and fetch material status if authenticated
 	const { data: { user } } = await supabase.auth.getUser()
 	let userMaterialStatus = { is_being_studied: false, is_studied: false }
+	let userMaterialsStatus = []
 
 	if (user && material) {
 		userMaterialStatus = await getUserMaterialStatus(material.id, user.id)
+		userMaterialsStatus = await getUserMaterialsStatus(user.id)
+	}
+
+	// Fetch book and navigation data for book chapters
+	let book = null
+	let siblingChapters = { previousChapter: null, nextChapter: null }
+
+	if (material && material.book_id) {
+		// Fetch book info (use * to get all columns)
+		const { data: bookData } = await supabase
+			.from('books')
+			.select('*')
+			.eq('id', material.book_id)
+			.single()
+
+		book = bookData
+
+		// Fetch sibling chapters
+		siblingChapters = await getSiblingChapters(material.id, material.book_id)
 	}
 
 	// Encode text fields to base64 to preserve UTF-8 encoding through Next.js serialization
@@ -99,6 +119,10 @@ export default async function MaterialPage({ params }) {
 			params={params}
 			initialMaterial={materialWithEncodedText}
 			initialUserMaterialStatus={userMaterialStatus}
+			initialUserMaterialsStatus={userMaterialsStatus}
+			book={book}
+			previousChapter={siblingChapters.previousChapter}
+			nextChapter={siblingChapters.nextChapter}
 		/>
 	)
 }

@@ -12,7 +12,8 @@ import {
 	addMaterialToStudied,
 } from '@/app/actions/materials'
 import { useTranslation } from '@/context/translation'
-import BookMenu from '@/components/material/BookMenu'
+import ChapterBreadcrumb from '@/components/material/ChapterBreadcrumb'
+import ChapterNavigation from '@/components/material/ChapterNavigation'
 import Translation from '@/components/material/Translation'
 import Words from '@/components/material/Words'
 import WordsContainer from '@/components/material/WordsContainer'
@@ -24,7 +25,6 @@ import { sections } from '@/data/sections'
 
 import Player from '@/components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
-import { editContent } from '@/features/content/contentSlice'
 import {
 	Box,
 	Button,
@@ -53,7 +53,15 @@ import {
 	successButton,
 } from '@/utils/buttonStyles'
 
-const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialStatus }) => {
+const Material = ({
+	params: paramsPromise,
+	initialMaterial,
+	initialUserMaterialStatus,
+	initialUserMaterialsStatus = [],
+	book = null,
+	previousChapter = null,
+	nextChapter = null,
+}) => {
 	const params = use(paramsPromise)
 	const t = useTranslations('materials')
 	const locale = useLocale()
@@ -239,52 +247,71 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 		)
 	}
 
+	// Debug: Log pour voir si book est bien reçu
+	if (currentMaterial.book_id) {
+		console.log('📚 Book chapter detected:', {
+			materialId: currentMaterial.id,
+			bookId: currentMaterial.book_id,
+			bookReceived: !!book,
+			book: book
+		})
+	}
+
 	return (
 		<>
-			{/* Compact Header */}
-			<Box
-				sx={{
-					pt: { xs: '30px', md: '6rem' },
-					pb: { xs: '20px', md: 2.5 },
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: 'background.paper',
-				}}>
-				<Container maxWidth='lg'>
-					<Box
-						sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
-						<IconButton
-							sx={{
-								background:
-									'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								color: '#8b5cf6',
-								transition: 'all 0.3s ease',
-								'&:hover': {
+			{/* Chapter Breadcrumb Navigation (for book chapters) */}
+			{currentMaterial.book_id && book ? (
+				<ChapterBreadcrumb
+					book={book}
+					currentChapter={currentMaterial}
+					userMaterialsStatus={initialUserMaterialsStatus}
+				/>
+			) : (
+				/* Compact Header (for regular materials) */
+				<Box
+					sx={{
+						pt: { xs: '30px', md: '6rem' },
+						pb: { xs: '20px', md: 2.5 },
+						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+						bgcolor: 'background.paper',
+					}}>
+					<Container maxWidth='lg'>
+						<Box
+							sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+							<IconButton
+								sx={{
 									background:
-										'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
-									transform: 'scale(1.05)',
-								},
-							}}
-							aria-label='back'
-							onClick={() => typeof window !== 'undefined' && window.history.back()}>
-							<ArrowBack fontSize='medium' />
-						</IconButton>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
-								background:
-									'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								flex: 1,
-							}}>
-							{currentMaterial.title}
-						</Typography>
-					</Box>
-				</Container>
-			</Box>
+										'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.3)',
+									color: '#8b5cf6',
+									transition: 'all 0.3s ease',
+									'&:hover': {
+										background:
+											'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+										transform: 'scale(1.05)',
+									},
+								}}
+								aria-label='back'
+								onClick={() => typeof window !== 'undefined' && window.history.back()}>
+								<ArrowBack fontSize='medium' />
+							</IconButton>
+							<Typography
+								variant='h4'
+								sx={{
+									fontWeight: 700,
+									fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+									background:
+										'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									flex: 1,
+								}}>
+								{currentMaterial.title}
+							</Typography>
+						</Box>
+					</Container>
+				</Box>
+			)}
 
 			<Stack
 				sx={{
@@ -515,17 +542,6 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 							)}
 						</Box>
 
-						{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
-						{params?.section === 'books' && (
-							<Box
-								sx={{
-									position: 'relative',
-									zIndex: 100,
-									marginBottom: '2rem',
-								}}>
-								<BookMenu bookId={currentMaterial.book_id} />
-							</Box>
-						)}
 
 						{/* Afficher le texte avec ou sans accents en fonction de l'état de showAccents */}
 						<Paper
@@ -652,6 +668,15 @@ const Material = ({ params: paramsPromise, initialMaterial, initialUserMaterialS
 							}}>
 							{displayAudioPlayer(params?.section, currentMaterial.audio)}
 						</Box>
+
+						{/* Chapter Navigation (Previous/Next buttons) - Only for book chapters */}
+						{currentMaterial.book_id && (
+							<ChapterNavigation
+								previousChapter={previousChapter}
+								nextChapter={nextChapter}
+								userMaterialsStatus={initialUserMaterialsStatus}
+							/>
+						)}
 					</Box>
 				</Box>
 

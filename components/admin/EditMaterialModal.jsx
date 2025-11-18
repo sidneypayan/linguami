@@ -18,47 +18,33 @@ import {
 	CircularProgress,
 	ListSubheader,
 	Divider,
-	Chip,
 } from '@mui/material'
 import { Close, Save, CloudUpload } from '@mui/icons-material'
-import { useTranslations, useLocale } from 'next-intl'
-import { supabase } from '@/lib/supabase'
-import { optimizeImage } from '@/utils/imageOptimizer'
-import { logger } from '@/utils/logger'
+import { useTranslations } from 'next-intl'
+import { useUpdateMaterial } from '@/lib/admin-client'
 
 /**
- * Upload un fichier vers R2 via l'API route
+ * Modal optimisé pour l'édition de materials
+ * ✅ Utilise React Query + Server Actions
+ * ✅ Optimisation d'images côté serveur (Sharp)
+ * ✅ Validation Zod côté serveur
+ * ✅ Sécurisé (admin vérifié côté serveur)
  */
-async function uploadToR2(path, file, contentType) {
-	const formData = new FormData()
-	formData.append('file', file)
-	formData.append('path', path)
-	formData.append('contentType', contentType)
-
-	const response = await fetch('/api/upload-r2', {
-		method: 'POST',
-		body: formData,
-	})
-
-	if (!response.ok) {
-		const error = await response.json()
-		throw new Error(error.error || 'Erreur upload R2')
-	}
-
-	return response.json()
-}
-
 const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	const t = useTranslations('admin')
+
+	// React Query mutation
+	const updateMaterialMutation = useUpdateMaterial()
+
+	// Form state
 	const [formData, setFormData] = useState({})
 	const [files, setFiles] = useState([]) // Fichiers à uploader
-	const [saving, setSaving] = useState(false)
-	const [error, setError] = useState('')
 
+	// Charger les données du material quand le modal s'ouvre
 	useEffect(() => {
 		if (material) {
 			setFormData({
-				lang: material.locale || '',
+				lang: material.lang || '',
 				section: material.section || '',
 				book_id: material.book_id || '',
 				chapter_number: material.chapter_number || '',
@@ -67,13 +53,14 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				image_filename: material.image_filename || '',
 				audio_filename: material.audio_filename || '',
 				video_url: material.video_url || '',
+				// Convertir <br> en \n pour l'édition
 				content: material.content?.replace(/<br\s*\/?>/gi, '\n') || '',
 				content_accented: material.content_accented?.replace(/<br\s*\/?>/gi, '\n') || '',
 			})
-			// Réinitialiser les fichiers quand on ouvre le modal
+			// Réinitialiser les fichiers
 			setFiles([])
 		}
-	}, [material])
+	}, [material, open])
 
 	const handleChange = (field, value) => {
 		setFormData(prev => ({
@@ -96,7 +83,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			return [...filtered, { file, fileName, fileType }]
 		})
 
-		// Mettre à jour le nom dans formData
+		// Mettre à jour le nom dans formData (sera remplacé par le nom optimisé côté serveur)
 		const fieldName = fileType === 'image' ? 'image_filename' : 'audio_filename'
 		setFormData(prev => ({
 			...prev,
@@ -105,101 +92,50 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	}
 
 	const handleSave = async () => {
-		setSaving(true)
-		setError('')
-
-		try {
-			// Map pour stocker les fichiers optimisés
-			const processedFilesMap = new Map()
-			let finalFormData = { ...formData }
-
-			// ÉTAPE 1: Optimiser les images si nécessaire
-			if (files && files.length > 0) {
-				for (const fileData of files) {
-					if (fileData.fileType === 'image') {
-						const optimized = await optimizeImage(fileData.file)
-
-						// Stocker les fichiers optimisés pour l'upload
-						processedFilesMap.set(fileData.fileName, { type: 'image', data: optimized })
-
-						// Mettre à jour le nom du fichier dans formData
-						finalFormData.image_filename = optimized.main.fileName
-					}
-				}
-			}
-
-			// ÉTAPE 2: Préparer les données pour la sauvegarde
-			const dataToUpdate = {
-				lang: finalFormData.locale,
-				section: finalFormData.section,
-				level: finalFormData.level,
-				title: finalFormData.title,
-				image_filename: finalFormData.image_filename || null,
-				audio_filename: finalFormData.audio_filename || null,
-				video_url: finalFormData.video_url || null,
-				// Garder les sauts de ligne natifs (\n) - meilleure pratique
-				content: finalFormData.content || '',
-				content_accented: finalFormData.content_accented || '',
-			}
-
-			// Ajouter les champs spécifiques pour book-chapters
-			if (finalFormData.section === 'book-chapters') {
-				dataToUpdate.book_id = finalFormData.book_id ? parseInt(finalFormData.book_id) : null
-				dataToUpdate.chapter_number = finalFormData.chapter_number ? parseInt(finalFormData.chapter_number) : null
-			} else {
-				dataToUpdate.book_id = null
-				dataToUpdate.chapter_number = null
-			}
-
-			// ÉTAPE 3: Mettre à jour dans Supabase
-			const { error: updateError } = await supabase
-				.from('materials')
-				.update(dataToUpdate)
-				.eq('id', material.id)
-
-			if (updateError) throw updateError
-
-			// ÉTAPE 4: Uploader les fichiers vers R2 APRÈS la mise à jour réussie
-			if (files && files.length > 0) {
-				for (const fileData of files) {
-					if (fileData.fileType === 'image' && processedFilesMap.has(fileData.fileName)) {
-						const optimized = processedFilesMap.get(fileData.fileName).data
-
-						// Upload de la version principale
-						await uploadToR2(
-							`image/materials/${optimized.main.fileName}`,
-							optimized.main.file,
-							'image/webp'
-						)
-
-						// Upload du thumbnail
-						await uploadToR2(
-							`image/materials/thumbnails/${optimized.thumbnail.fileName}`,
-							optimized.thumbnail.file,
-							'image/webp'
-						)
-					} else if (fileData.fileType === 'audio') {
-						// Pour les fichiers audio, upload normal vers R2
-						const contentType = fileData.file.type || 'audio/mpeg'
-						const locale = finalFormData.locale || 'fr'
-						const path = `audio/${locale}/${fileData.fileName}`
-
-						await uploadToR2(path, fileData.file, contentType)
-					}
-				}
-			}
-
-			// Succès
-			if (onSuccess) {
-				onSuccess()
-			}
-			onClose()
-		} catch (err) {
-			logger.error('Erreur lors de la sauvegarde:', err)
-			setError(err.message || 'Une erreur est survenue')
-		} finally {
-			setSaving(false)
+		// Préparer les données
+		const materialData = {
+			lang: formData.lang,
+			section: formData.section,
+			level: formData.level,
+			title: formData.title,
+			content: formData.content || '',
+			content_accented: formData.content_accented || '',
+			video_url: formData.video_url || '',
 		}
+
+		// Ajouter les champs spécifiques pour book-chapters
+		if (formData.section === 'book-chapters') {
+			materialData.book_id = formData.book_id ? parseInt(formData.book_id) : null
+			materialData.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
+		} else {
+			materialData.book_id = null
+			materialData.chapter_number = null
+		}
+
+		// Si pas de nouveaux fichiers mais des noms de fichiers dans le form, les garder
+		if (!files.find(f => f.fileType === 'image') && formData.image_filename) {
+			materialData.image_filename = formData.image_filename
+		}
+		if (!files.find(f => f.fileType === 'audio') && formData.audio_filename) {
+			materialData.audio_filename = formData.audio_filename
+		}
+
+		// Appeler la mutation
+		updateMaterialMutation.mutate(
+			{
+				materialId: material.id,
+				materialData,
+				files,
+			},
+			{
+				onSuccess: () => {
+					if (onSuccess) {
+						onSuccess()
+					}
+					onClose()
+				},
+			}
+		)
 	}
 
 	// Déterminer quels champs afficher selon la section
@@ -227,6 +163,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 		'eralash',
 		'galileo',
 	].includes(formData.section)
+
+	const isLoading = updateMaterialMutation.isPending
 
 	return (
 		<Dialog
@@ -274,15 +212,15 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 						</Typography>
 					</Box>
 				</Box>
-				<IconButton onClick={onClose} size="small">
+				<IconButton onClick={onClose} size="small" disabled={isLoading}>
 					<Close />
 				</IconButton>
 			</DialogTitle>
 
 			<DialogContent sx={{ pt: 6, pb: 4, px: { xs: 2, sm: 3, md: 4 } }}>
-				{error && (
+				{updateMaterialMutation.isError && (
 					<Alert severity="error" sx={{ mb: 3 }}>
-						{error}
+						{updateMaterialMutation.error?.message || 'An error occurred'}
 					</Alert>
 				)}
 
@@ -292,13 +230,14 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 						<FormControl fullWidth>
 							<InputLabel>{t('language')}</InputLabel>
 							<Select
-								value={formData.locale || ''}
+								value={formData.lang || ''}
 								label={t('language')}
 								onChange={(e) => handleChange('lang', e.target.value)}
+								disabled={isLoading}
 								sx={{ borderRadius: 2 }}>
-								<MenuItem value="fr">{t('french')}</MenuItem>
-								<MenuItem value="ru">{t('russian')}</MenuItem>
-								<MenuItem value="en">{t('english')}</MenuItem>
+								<MenuItem value="fr">Français</MenuItem>
+								<MenuItem value="ru">Русский</MenuItem>
+								<MenuItem value="en">English</MenuItem>
 							</Select>
 						</FormControl>
 					</Grid>
@@ -311,6 +250,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								value={formData.level || ''}
 								label={t('level')}
 								onChange={(e) => handleChange('level', e.target.value)}
+								disabled={isLoading}
 								sx={{ borderRadius: 2 }}>
 								<MenuItem value="beginner">{t('beginner')}</MenuItem>
 								<MenuItem value="intermediate">{t('intermediate')}</MenuItem>
@@ -327,37 +267,38 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								value={formData.section || ''}
 								label={t('section')}
 								onChange={(e) => handleChange('section', e.target.value)}
+								disabled={isLoading}
 								sx={{ borderRadius: 2 }}>
 								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF' }}>
 									📝 {t('textAndAudio')}
 								</ListSubheader>
-								<MenuItem value="dialogues">{t('sectionDialogues')}</MenuItem>
-								<MenuItem value="culture">{t('sectionCulture')}</MenuItem>
-								<MenuItem value="legends">{t('sectionLegends')}</MenuItem>
-								<MenuItem value="slices-of-life">{t('sectionSlicesOfLife')}</MenuItem>
-								<MenuItem value="beautiful-places">{t('sectionBeautifulPlaces')}</MenuItem>
-								<MenuItem value="podcasts">{t('sectionPodcasts')}</MenuItem>
-								<MenuItem value="short-stories">{t('sectionShortStories')}</MenuItem>
-								<MenuItem value="book-chapters">{t('sectionBookChapters')}</MenuItem>
+								<MenuItem value="dialogues">Dialogues</MenuItem>
+								<MenuItem value="culture">Culture</MenuItem>
+								<MenuItem value="legends">Légendes</MenuItem>
+								<MenuItem value="slices-of-life">Tranches de vie</MenuItem>
+								<MenuItem value="beautiful-places">Beaux endroits</MenuItem>
+								<MenuItem value="podcasts">Podcasts</MenuItem>
+								<MenuItem value="short-stories">Nouvelles</MenuItem>
+								<MenuItem value="book-chapters">Chapitres de livre</MenuItem>
 
 								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF', mt: 1 }}>
-									🎬 {t('videoCategory')}
+									🎬 Vidéos
 								</ListSubheader>
-								<MenuItem value="movie-trailers">{t('sectionMovieTrailers')}</MenuItem>
-								<MenuItem value="movie-clips">{t('sectionMovieClips')}</MenuItem>
-								<MenuItem value="cartoons">{t('sectionCartoons')}</MenuItem>
-								<MenuItem value="eralash">{t('sectionEralash')}</MenuItem>
-								<MenuItem value="galileo">{t('sectionGalileo')}</MenuItem>
-								<MenuItem value="various-materials">{t('sectionVariousMaterials')}</MenuItem>
+								<MenuItem value="movie-trailers">Bandes-annonces</MenuItem>
+								<MenuItem value="movie-clips">Extraits de films</MenuItem>
+								<MenuItem value="cartoons">Dessins animés</MenuItem>
+								<MenuItem value="eralash">Eralash</MenuItem>
+								<MenuItem value="galileo">Galileo</MenuItem>
+								<MenuItem value="various-materials">Divers</MenuItem>
 
 								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF', mt: 1 }}>
-									🎵 {t('musicCategory')}
+									🎵 Musique
 								</ListSubheader>
-								<MenuItem value="rock">{t('sectionRock')}</MenuItem>
-								<MenuItem value="pop">{t('sectionPop')}</MenuItem>
-								<MenuItem value="folk">{t('sectionFolk')}</MenuItem>
-								<MenuItem value="variety">{t('sectionVariety')}</MenuItem>
-								<MenuItem value="kids">{t('sectionKids')}</MenuItem>
+								<MenuItem value="rock">Rock</MenuItem>
+								<MenuItem value="pop">Pop</MenuItem>
+								<MenuItem value="folk">Folk</MenuItem>
+								<MenuItem value="variety">Variété</MenuItem>
+								<MenuItem value="kids">Enfants</MenuItem>
 							</Select>
 						</FormControl>
 					</Grid>
@@ -370,6 +311,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							value={formData.title || ''}
 							onChange={(e) => handleChange('title', e.target.value)}
 							placeholder={t('materialTitlePlaceholder')}
+							disabled={isLoading}
 							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 						/>
 					</Grid>
@@ -384,6 +326,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 									label={t('bookId')}
 									value={formData.book_id || ''}
 									onChange={(e) => handleChange('book_id', e.target.value)}
+									disabled={isLoading}
 									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 								/>
 							</Grid>
@@ -394,6 +337,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 									label={t('chapterNumber')}
 									value={formData.chapter_number || ''}
 									onChange={(e) => handleChange('chapter_number', e.target.value)}
+									disabled={isLoading}
 									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 								/>
 							</Grid>
@@ -413,6 +357,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								variant='outlined'
 								startIcon={<CloudUpload />}
 								fullWidth
+								disabled={isLoading}
 								sx={{
 									py: 2,
 									borderColor: '#667eea',
@@ -433,6 +378,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 									hidden
 									type='file'
 									accept='image/*'
+									disabled={isLoading}
 								/>
 							</Button>
 
@@ -448,10 +394,11 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
-								label={t('imageFileName')}
+								label="Nom du fichier image"
 								value={formData.image_filename || ''}
 								onChange={(e) => handleChange('image_filename', e.target.value)}
 								placeholder="exemple: mon-image.webp"
+								disabled={isLoading}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 								helperText={t('fileNameOnlyHelper')}
 							/>
@@ -479,6 +426,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								variant='outlined'
 								startIcon={<CloudUpload />}
 								fullWidth
+								disabled={isLoading}
 								sx={{
 									py: 2,
 									borderColor: '#667eea',
@@ -499,6 +447,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 									hidden
 									type='file'
 									accept='audio/*'
+									disabled={isLoading}
 								/>
 							</Button>
 
@@ -514,10 +463,11 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							{/* Option 2: Saisie manuelle du nom de fichier */}
 							<TextField
 								fullWidth
-								label={t('audioFileName')}
+								label="Nom du fichier audio"
 								value={formData.audio_filename || ''}
 								onChange={(e) => handleChange('audio_filename', e.target.value)}
 								placeholder="exemple: mon-audio.mp3"
+								disabled={isLoading}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 								helperText={t('fileNameOnlyHelper')}
 							/>
@@ -540,7 +490,8 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								label={t('videoUrl')}
 								value={formData.video_url || ''}
 								onChange={(e) => handleChange('video_url', e.target.value)}
-								placeholder={t('videoUrlPlaceholder')}
+								placeholder="https://www.youtube.com/watch?v=..."
+								disabled={isLoading}
 								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
 							/>
 						</Grid>
@@ -557,6 +508,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							value={formData.content || ''}
 							onChange={(e) => handleChange('content', e.target.value)}
 							placeholder={t('textWithoutAccentsPlaceholder')}
+							disabled={isLoading}
 							sx={{
 								'& .MuiOutlinedInput-root': {
 									borderRadius: 2,
@@ -570,7 +522,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 					</Grid>
 
 					{/* Texte avec accents - uniquement pour le russe */}
-					{formData.locale === 'ru' && (
+					{formData.lang === 'ru' && (
 						<Grid item xs={12}>
 							<TextField
 								fullWidth
@@ -581,6 +533,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 								value={formData.content_accented || ''}
 								onChange={(e) => handleChange('content_accented', e.target.value)}
 								placeholder={t('textWithAccentsPlaceholder')}
+								disabled={isLoading}
 								sx={{
 									'& .MuiOutlinedInput-root': {
 										borderRadius: 2,
@@ -599,7 +552,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			<DialogActions sx={{ p: 3, pt: 2, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
 				<Button
 					onClick={onClose}
-					disabled={saving}
+					disabled={isLoading}
 					sx={{
 						textTransform: 'none',
 						fontWeight: 600,
@@ -610,9 +563,9 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				</Button>
 				<Button
 					onClick={handleSave}
-					disabled={saving}
+					disabled={isLoading}
 					variant="contained"
-					startIcon={saving ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Save />}
+					startIcon={isLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Save />}
 					sx={{
 						bgcolor: '#667eea',
 						color: 'white',
@@ -631,7 +584,7 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 							color: 'white',
 						},
 					}}>
-					{saving ? t('saving') : t('save')}
+					{isLoading ? t('saving') : t('save')}
 				</Button>
 			</DialogActions>
 		</Dialog>

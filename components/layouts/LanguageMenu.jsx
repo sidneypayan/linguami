@@ -178,10 +178,11 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
 
-	const handleClick = event => {
+	const handleClick = async event => {
 		// Si une seule langue disponible, changer directement sans ouvrir le menu
 		if (isSingleLanguage) {
-			changeLearningLanguage(languages[0].lang)
+			// ⚠️ AWAIT pour s'assurer que la DB est mise à jour
+			await changeLearningLanguage(languages[0].lang)
 			if (onClose) {
 				setTimeout(() => onClose(), 100)
 			}
@@ -194,9 +195,12 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		setAnchorEl(null)
 	}
 
-	const handleLanguageChange = locale => {
+	const handleLanguageChange = async locale => {
 		setAnchorEl(null)
-		changeLearningLanguage(locale)
+
+		// ⚠️ AWAIT pour s'assurer que la DB est mise à jour
+		await changeLearningLanguage(locale)
+
 		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
 			setTimeout(() => onClose(), 100)

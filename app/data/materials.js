@@ -173,17 +173,14 @@ export async function getUserMaterialStatus(materialId, userId) {
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
-  const { data: status, error } = await supabase
+  const { data: status } = await supabase
     .from('user_materials')
     .select('is_being_studied, is_studied')
     .match({ user_id: userId, material_id: materialId })
     .maybeSingle()
 
-  if (error) {
-    logger.error('Error fetching user material status:', error)
-    return { is_being_studied: false, is_studied: false }
-  }
-
+  // maybeSingle() is designed to return null without error when no rows found
+  // No need to check for errors
   return status || { is_being_studied: false, is_studied: false }
 }
 
@@ -235,4 +232,40 @@ export async function getBookChapters(bookId) {
   }
 
   return chapters
+}
+
+/**
+ * Fetch previous and next chapters for a given chapter
+ * @param {number} currentChapterId - Current chapter ID
+ * @param {number} bookId - Book ID
+ * @returns {Promise<Object>} Object with previousChapter and nextChapter
+ */
+export async function getSiblingChapters(currentChapterId, bookId) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  // Get all chapters for this book
+  const { data: chapters, error } = await supabase
+    .from('materials')
+    .select('id, title')
+    .eq('section', 'book-chapters')
+    .eq('book_id', bookId)
+    .order('id')
+
+  if (error) {
+    logger.error('Error fetching sibling chapters:', error)
+    return { previousChapter: null, nextChapter: null }
+  }
+
+  // Find current chapter index
+  const currentIndex = chapters.findIndex(ch => ch.id === currentChapterId)
+
+  if (currentIndex === -1) {
+    return { previousChapter: null, nextChapter: null }
+  }
+
+  return {
+    previousChapter: currentIndex > 0 ? chapters[currentIndex - 1] : null,
+    nextChapter: currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null,
+  }
 }

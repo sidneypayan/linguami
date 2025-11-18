@@ -153,9 +153,10 @@ export const exportLocalProgressForMigration = () => {
 
 /**
  * Migrate local progress to database after user login/signup
+ * @param {Function} migrationFn - Server Action function to call for migration
  * @returns {Promise<Object>} Result of migration
  */
-export const migrateLocalProgressToDatabase = async () => {
+export const migrateLocalProgressToDatabase = async (migrationFn) => {
 	const localProgress = getLocalProgress()
 
 	if (localProgress.length === 0) {
@@ -163,24 +164,16 @@ export const migrateLocalProgressToDatabase = async () => {
 	}
 
 	try {
-		const response = await fetch('/api/courses/migrate-local-progress', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ localProgress }),
-		})
+		const result = await migrationFn(localProgress)
 
-		const data = await response.json()
-
-		if (!response.ok) {
-			throw new Error(data.error || 'Migration failed')
+		if (!result.success) {
+			throw new Error(result.error || 'Migration failed')
 		}
 
 		// Clear local progress after successful migration
 		clearLocalProgress()
 
-		return { success: true, migrated: data.migrated }
+		return { success: true, migrated: result.migrated }
 	} catch (error) {
 		console.error('Error migrating local progress:', error)
 		return { success: false, error: error.message }

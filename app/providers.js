@@ -1,9 +1,7 @@
 'use client'
 
-import { Provider } from 'react-redux'
-import { store } from '@/features/store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import UserProvider from '@/context/user.js'
 import { ThemeModeProvider } from '@/context/ThemeContext'
 import { TranslationProvider } from '@/context/translation'
@@ -12,7 +10,6 @@ import { AchievementProvider } from '@/components/AchievementProvider'
 import AppRouterLayout from '@/components/AppRouterLayout'
 import { Toaster } from 'sonner'
 import { useThemeMode } from '@/context/ThemeContext'
-import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import * as gtm from '@/lib/gtm'
 
@@ -68,15 +65,13 @@ export default function Providers({ children }) {
 				<ThemeModeProvider>
 					<FlashcardsProvider>
 						<TranslationProvider>
-							<Provider store={store}>
-								<AchievementProvider>
-									<GTMTracking />
-									<AppRouterLayout>
-										{children}
-									</AppRouterLayout>
-									<ToasterWithTheme />
-								</AchievementProvider>
-							</Provider>
+							<AchievementProvider>
+								<GTMTracking />
+								<AppRouterLayout>
+									{children}
+								</AppRouterLayout>
+								<ToasterWithTheme />
+							</AchievementProvider>
 						</TranslationProvider>
 					</FlashcardsProvider>
 				</ThemeModeProvider>
