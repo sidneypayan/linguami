@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import { useTheme } from '@mui/material/styles'
 import { logger } from '@/utils/logger'
+import { getVkUserInfo, validateVkAuth } from '@/app/actions/vkauth'
 
 const VkIdButton = ({ buttonStyles }) => {
 	const router = useRouter()
@@ -270,25 +271,18 @@ const VkIdButton = ({ buttonStyles }) => {
 				throw new Error('No access token received from SDK')
 			}
 
-			// Get user info via backend API (to avoid CORS issues)
-			logger.log('🔍 Fetching user info via backend...')
-			const userInfoResponse = await fetch('/api/auth/vkid/get-user-info', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					accessToken: tokenData.access_token,
-				}),
+			// Get user info via Server Action (to avoid CORS issues)
+			logger.log('🔍 Fetching user info via Server Action...')
+			const userInfoResult = await getVkUserInfo({
+				accessToken: tokenData.access_token,
 			})
 
-			if (!userInfoResponse.ok) {
-				const errorData = await userInfoResponse.json().catch(() => ({ error: 'Failed to get user info' }))
-				logger.error('❌ Failed to get user info:', errorData)
-				throw new Error(errorData.error || 'Failed to get user info')
+			if (!userInfoResult.success) {
+				logger.error('❌ Failed to get user info:', userInfoResult.error)
+				throw new Error(userInfoResult.error || 'Failed to get user info')
 			}
 
-			const { user } = await userInfoResponse.json()
+			const { user } = userInfoResult
 
 			logger.log('✅ User info received')
 			logger.log('Raw user object:', JSON.stringify(user, null, 2))
@@ -320,20 +314,10 @@ const VkIdButton = ({ buttonStyles }) => {
 			logger.log('Token present:', !!validationPayload.token)
 			logger.log('UserId present:', !!validationPayload.userId)
 
-			const response = await fetch('/api/auth/vkid/validate', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(validationPayload),
-			})
+			const data = await validateVkAuth(validationPayload)
 
-			logger.log('Validation response status:', response.status)
-
-			const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
-
-			if (!response.ok) {
-				logger.error('❌ Validation failed with error:', data)
+			if (!data.success) {
+				logger.error('❌ Validation failed with error:', data.error)
 				throw new Error(data.error || 'Authentication failed')
 			}
 
