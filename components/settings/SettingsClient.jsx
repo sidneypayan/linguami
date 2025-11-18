@@ -655,7 +655,6 @@ const SettingsClient = ({ translations }) => {
 
 					</Grid>
 				</Container>
-				</Container>
 
 				{/* Dialog pour changer d'avatar */}
 				<Dialog
