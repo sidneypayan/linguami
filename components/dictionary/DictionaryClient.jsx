@@ -1,12 +1,12 @@
 'use client'
-import { useLocale, useTranslations, Link } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUserWords, deleteWord } from '@/lib/words-client'
 import { useFlashcards } from '@/context/flashcards'
-import { useDispatch } from 'react-redux'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'
 import {
@@ -43,7 +43,6 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 const DictionaryClient = ({ translations }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
-	const dispatch = useDispatch()
 const { openFlashcards } = useFlashcards()
 	const router = useRouter()
 	const theme = useTheme()
@@ -58,23 +57,18 @@ const { openFlashcards } = useFlashcards()
 	const [wordsPerPage, setWordsPerPage] = useState(20)
 	const [guestWords, setGuestWords] = useState([])
 	const [searchQuery, setSearchQuery] = useState('')
+	const [isMounted, setIsMounted] = useState(false)
 
 	// React Query: Fetch user words (only for logged-in users)
-	const { data: user_words = [], isLoading: user_words_loading } = useQuery({
+	const { data: user_words = [], isLoading: user_words_loading, isFetching: user_words_fetching } = useQuery({
 		queryKey: ['userWords', userId, userLearningLanguage],
 		queryFn: () => getUserWords({ userId, userLearningLanguage }),
 		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
 		staleTime: 5 * 60 * 1000, // 5 minutes
+		refetchOnWindowFocus: false, // Prevent flash when switching tabs
+		refetchOnMount: false, // Prevent flash on remount if data exists
 	})
 
-	// Temporary: Sync React Query data with Redux for components still using Redux (Flashcards)
-	useEffect(() => {
-		if (user_words_loading) {
-			dispatch({ type: 'words/getAllUserWords/pending' })
-		} else if (user_words && user_words.length >= 0) {
-			dispatch({ type: 'words/getAllUserWords/fulfilled', payload: user_words })
-		}
-	}, [user_words, user_words_loading, dispatch])
 
 	// React Query: Delete word mutation
 	const deleteWordMutation = useMutation({
@@ -183,6 +177,11 @@ const { openFlashcards } = useFlashcards()
 		: filteredUserWords.slice(indexOfFirstWord, indexOfLastWord)
 	const totalPages = Math.ceil(filteredUserWords.length / wordsPerPage)
 
+	// Set mounted state to prevent SSR flash
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
+
 	// Load guest words from localStorage (React Query handles logged-in users)
 	useEffect(() => {
 		if (isBootstrapping) return
@@ -193,12 +192,17 @@ const { openFlashcards } = useFlashcards()
 		}
 	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
 
-	if (user_words_loading) {
+	// Show loading while:
+	// 1. Not mounted yet (prevent SSR flash)
+	// 2. Bootstrapping auth
+	// 3. Logged in but no userId yet (auth still resolving)
+	// 4. Loading or fetching words
+	if (!isMounted || isBootstrapping || (isUserLoggedIn && !userId) || user_words_loading || user_words_fetching) {
 		return <LoadingSpinner />
 	}
 
 	// Guest user message - Si invité avec 0 mots
-	if (!isUserLoggedIn && !isBootstrapping && guestWords.length === 0) {
+	if (!isUserLoggedIn && guestWords.length === 0) {
 		return (
 			<>
 				<Container
