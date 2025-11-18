@@ -39,13 +39,17 @@ export function getAudioUrl(material) {
 /**
  * Get image URL for a material
  * @param {Object} material - Material object with image_filename, image, or img property
- * @returns {string|null} Full image URL or null if no image
+ * @returns {string} Full image URL or fallback placeholder
  */
 export function getMaterialImageUrl(material) {
   const imageFile = material?.image_filename || material?.image || material?.img
-  if (!imageFile) return null
   const baseUrl = getR2BaseUrl()
-  if (!baseUrl) return null
+
+  // Fallback image if no image is specified or baseUrl is missing
+  const fallbackImage = '/images/placeholder-material.jpg'
+
+  if (!imageFile || !baseUrl) return fallbackImage
+
   const file = imageFile.replace(/^\/+/, '')
   return `${baseUrl}/images/materials/${file}`
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
 	AutoStoriesRounded,
 	CheckCircleRounded,
@@ -8,7 +8,8 @@ import {
 	CloseRounded,
 	MenuBookRounded,
 } from '@mui/icons-material'
-import { getBookChapters, getUserMaterialsStatus } from '@/lib/materials-client'
+import { useBookChapters, useUserMaterialsStatus } from '@/lib/materials-client'
+import { useUserContext } from '@/context/user'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import {
 	Box,
@@ -25,23 +26,14 @@ import {
 } from '@mui/material'
 
 const BookMenu = ({ bookId }) => {
-	const [chapters, setChapters] = useState([])
-	const [userMaterialsStatus, setUserMaterialsStatus] = useState([])
+	const { isUserLoggedIn } = useUserContext()
+	const { data: chapters = [] } = useBookChapters(bookId)
+	const { data: userMaterialsStatus = [] } = useUserMaterialsStatus(isUserLoggedIn)
 
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
 	const { section, material } = params
-
-	useEffect(() => {
-		if (bookId) {
-			getBookChapters(bookId).then(setChapters)
-		}
-	}, [bookId])
-
-	useEffect(() => {
-		getUserMaterialsStatus().then(setUserMaterialsStatus)
-	}, [])
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		if (!userMaterialsStatus) return null

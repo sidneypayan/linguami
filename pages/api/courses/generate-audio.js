@@ -118,7 +118,7 @@ export default async function handler(req, res) {
 
 		// Ensure filename ends with .mp3 (but don't add it if already present)
 		const cleanFileName = fileName.endsWith('.mp3') ? fileName : `${fileName}.mp3`
-		const filePath = `audio/courses/${language}/${cleanFileName}`
+		const filePath = `audios/courses/${language}/${cleanFileName}`
 
 		try {
 			await s3Client.send(

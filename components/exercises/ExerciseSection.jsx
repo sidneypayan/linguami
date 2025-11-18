@@ -23,6 +23,7 @@ import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
 import LoadingSpinner from '../LoadingSpinner'
 import { logger } from '@/utils/logger'
+import { submitExercise } from '@/lib/exercises-client'
 
 /**
  * Exercise Section Component
@@ -142,17 +143,9 @@ const ExerciseSection = ({ materialId }) => {
 		}
 
 		try {
-			const response = await fetch('/api/exercises/submit', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(result),
-			})
+			const data = await submitExercise(result)
 
-			const data = await response.json()
-
-			if (response.ok && data.success) {
+			if (data.success) {
 				// Reload progress for this exercise
 				const { data: progressData } = await supabase
 					.from('user_exercise_progress')

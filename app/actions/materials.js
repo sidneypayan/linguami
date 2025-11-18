@@ -205,3 +205,80 @@ export async function addMaterialToStudied(materialId) {
 
   return { success: true }
 }
+
+/**
+ * Get first chapter of a book
+ * @param {Object} params
+ * @param {string} params.lang - Learning language
+ * @param {number} params.bookId - Book ID
+ * @returns {Promise<Object|null>} First chapter or null
+ */
+export async function getFirstChapterOfBook({ lang, bookId }) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data: chapters, error } = await supabase
+    .from('materials')
+    .select('*')
+    .eq('lang', lang)
+    .eq('book_id', bookId)
+    .order('chapter_number', { ascending: true })
+    .limit(1)
+
+  if (error) {
+    logger.error('Error fetching first chapter:', error)
+    return null
+  }
+
+  return chapters?.[0] || null
+}
+
+/**
+ * Get all chapters of a book
+ * @param {number} bookId - Book ID
+ * @returns {Promise<Array>} Chapters array
+ */
+export async function getBookChapters(bookId) {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data: chapters, error } = await supabase
+    .from('materials')
+    .select('id, title')
+    .eq('section', 'book-chapters')
+    .eq('book_id', bookId)
+    .order('id')
+
+  if (error) {
+    logger.error('Error fetching chapters:', error)
+    return []
+  }
+
+  return chapters || []
+}
+
+/**
+ * Get user materials status (being studied, completed)
+ * @returns {Promise<Array>} User materials status
+ */
+export async function getUserMaterialsStatus() {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('user_materials')
+    .select('*')
+    .eq('user_id', user.id)
+
+  if (error) {
+    logger.error('Error fetching user materials status:', error)
+    return []
+  }
+
+  return data || []
+}

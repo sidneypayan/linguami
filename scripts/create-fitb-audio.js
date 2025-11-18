@@ -57,7 +57,8 @@ async function generateAudio(text, voiceId, sentenceId) {
 }
 
 async function uploadToR2(audioBuffer, materialId, sentenceId, lang) {
-  const key = `audio/exercises/${lang}/material_${materialId}/sentence_${sentenceId}.m4a`
+  // ⚠️ Structure correcte: audios/LANG/exercises/material_ID/
+  const key = `audios/${lang}/exercises/material_${materialId}/sentence_${sentenceId}.m4a`
 
   console.log(`\n📤 Uploading to R2: ${key}`)
 
@@ -70,7 +71,7 @@ async function uploadToR2(audioBuffer, materialId, sentenceId, lang) {
 
   await r2.send(command)
 
-  const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`
+  const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`
   console.log(`   ✅ Uploaded: ${publicUrl}`)
   return publicUrl
 }

@@ -13,6 +13,7 @@ import {
   addMaterialToStudied,
 } from '@/app/actions/materials'
 import SectionCard from '@/components/SectionCard'
+import BookCard from '@/components/materials/BookCard'
 import MaterialsTable from '@/components/MaterialsTable'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'
 import Pagination from '@/components/layouts/Pagination'
@@ -296,20 +297,35 @@ export default function SectionPageClient({
                 transition: 'opacity 0.15s ease-in',
               }}
             >
-              {displayedMaterials.map(material => (
-                <SectionCard
-                  key={material.id}
-                  material={material}
-                  checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-                    material.id
-                  )}
-                />
-              ))}
+              {displayedMaterials.map(material => {
+                // Use BookCard for books section, SectionCard for materials
+                if (section === 'books') {
+                  return (
+                    <BookCard
+                      key={material.id}
+                      book={material}
+                      checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+                        material.id
+                      )}
+                    />
+                  )
+                }
+                return (
+                  <SectionCard
+                    key={material.id}
+                    material={material}
+                    checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+                      material.id
+                    )}
+                  />
+                )
+              })}
             </Box>
           ) : (
             <MaterialsTable
               materials={displayedMaterials}
               checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
+              section={section}
             />
           )}
 

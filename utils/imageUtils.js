@@ -83,7 +83,7 @@ export const getOptimizedImageUrl = (imageName, size = 'medium') => {
 
 	const baseUrl = getR2BaseUrl()
 	if (!baseUrl) return ''
-	return `${baseUrl}/image/${folder}/${webpFileName}`
+	return `${baseUrl}/images/${folder}/${webpFileName}`
 }
 
 /**

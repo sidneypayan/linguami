@@ -3,7 +3,6 @@
 import React from 'react'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { getFirstChapterOfBook } from '@/lib/materials-client'
 import { useUserContext } from '@/context/user'
 import {
 	Table,
@@ -42,19 +41,9 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const { section } = params
 	const { userLearningLanguage } = useUserContext()
 
-	const handleRowClick = async (material) => {
-		if (section === 'books') {
-			try {
-				const chapter = await getFirstChapterOfBook(userLearningLanguage, material.id)
-				if (chapter) {
-					router.push(`/materials/books/${chapter.id}`)
-				}
-			} catch (error) {
-				logger.error('Erreur lors de la récupération du chapitre :', error)
-			}
-		} else {
-			router.push(`/materials/${material.section}/${material.id}`)
-		}
+	const handleRowClick = (material) => {
+		// Navigate to the material detail page
+		router.push(`/materials/${material.section}/${material.id}`)
 	}
 
 	const getIcon = (section) => {

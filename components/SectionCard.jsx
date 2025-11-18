@@ -12,7 +12,6 @@ import {
 	Schedule,
 } from '@mui/icons-material'
 import { useRouter, usePathname, useParams } from 'next/navigation'
-import { getFirstChapterOfBook } from '@/lib/materials-client'
 import {
 	Box,
 	Card,
@@ -35,17 +34,6 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const params = useParams()
 	const { section } = params
 	const { userLearningLanguage } = useUserContext()
-
-	const handleClick = async () => {
-		try {
-			const chapter = await getFirstChapterOfBook(userLearningLanguage, material.id)
-			if (chapter) {
-				router.push(`/materials/books/${chapter.id}`)
-			}
-		} catch (error) {
-			logger.error('Erreur lors de la récupération du chapitre :', error)
-		}
-	}
 
 	const getDifficultyInfo = level => {
 		if (level === 'beginner') {
@@ -519,11 +507,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 			</Card>
 	)
 
-	return section === 'books' ? (
-		<button type="button" onClick={handleClick} className={styles.cardButton}>
-			<SectionCardContent />
-		</button>
-	) : (
+	return (
 		<Link href={`/materials/${material.section}/${material.id}`}>
 			<SectionCardContent />
 		</Link>

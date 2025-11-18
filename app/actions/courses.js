@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
+import { logger } from '@/utils/logger'
 
 /**
  * Get all course levels (Beginner, Intermediate, Advanced)
@@ -362,5 +363,73 @@ export async function updateLessonTimeSpent({ lessonId, secondsSpent }) {
 	} catch (error) {
 		logger.error('Error updating lesson time:', error)
 		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * Migrate local progress from localStorage to database
+ * Called after user login/signup
+ * @param {Array} localProgress - Array of lesson progress objects
+ * @returns {Promise<Object>} { success, migrated, error }
+ */
+export async function migrateLocalProgressAction(localProgress) {
+	try {
+		const supabase = createServerClient(await cookies())
+
+		// Check authentication
+		const {
+			data: { user },
+			error: authError,
+		} = await supabase.auth.getUser()
+
+		if (authError || !user) {
+			throw new Error('Unauthorized')
+		}
+
+		if (!localProgress || !Array.isArray(localProgress)) {
+			throw new Error('Invalid local progress data')
+		}
+
+		if (localProgress.length === 0) {
+			return { success: true, migrated: 0, error: null }
+		}
+
+		// Prepare data for insertion
+		const progressToInsert = localProgress.map((p) => ({
+			user_id: user.id,
+			lesson_id: p.lesson_id,
+			is_completed: p.is_completed || false,
+			completed_at: p.completed_at || null,
+			time_spent_seconds: p.time_spent_seconds || 0,
+		}))
+
+		// Use upsert to avoid duplicates
+		const { data, error } = await supabase
+			.from('user_course_progress')
+			.upsert(progressToInsert, {
+				onConflict: 'user_id,lesson_id',
+				ignoreDuplicates: false, // Update existing records
+			})
+			.select()
+
+		if (error) {
+			logger.error('Error migrating progress:', error)
+			throw new Error('Failed to migrate progress')
+		}
+
+		logger.log(`✅ Migrated ${localProgress.length} lesson(s) progress for user ${user.id}`)
+
+		return {
+			success: true,
+			migrated: localProgress.length,
+			error: null,
+		}
+	} catch (error) {
+		logger.error('Migration error:', error)
+		return {
+			success: false,
+			migrated: 0,
+			error: error.message,
+		}
 	}
 }
