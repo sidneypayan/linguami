@@ -433,3 +433,407 @@ export async function getMaterialForEdit(materialId) {
 		}
 	}
 }
+
+// ============================================================================
+// ACTION: Récupérer tous les utilisateurs (admin uniquement)
+// ============================================================================
+
+export async function getUsers() {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		await requireAdmin()
+
+		// 2. Créer un client Supabase avec service role pour accéder à tous les utilisateurs
+		const { createClient } = await import('@supabase/supabase-js')
+
+		if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+			throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured')
+		}
+
+		const supabaseAdmin = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL,
+			process.env.SUPABASE_SERVICE_ROLE_KEY,
+			{
+				auth: {
+					autoRefreshToken: false,
+					persistSession: false,
+				},
+			}
+		)
+
+		// 3. Récupérer les profils utilisateurs
+		const { data: usersProfile, error: usersError } = await supabaseAdmin
+			.from('users_profile')
+			.select(`
+				id,
+				name,
+				email,
+				role,
+				is_premium,
+				spoken_language,
+				language_level,
+				avatar_id,
+				created_at
+			`)
+			.order('created_at', { ascending: false })
+
+		if (usersError) {
+			logger.error('Error fetching users:', usersError)
+			throw new Error('Failed to fetch users')
+		}
+
+		// 4. Récupérer les profils XP
+		const { data: xpProfiles, error: xpError } = await supabaseAdmin
+			.from('user_xp_profile')
+			.select('user_id, total_xp, current_level')
+
+		const xpMap = {}
+		if (!xpError && xpProfiles) {
+			xpProfiles.forEach(xp => {
+				xpMap[xp.user_id] = {
+					total_xp: xp.total_xp,
+					current_level: xp.current_level,
+				}
+			})
+		}
+
+		// 5. Combiner les données
+		const users = usersProfile.map(user => ({
+			...user,
+			total_xp: xpMap[user.id]?.total_xp || 0,
+			current_level: xpMap[user.id]?.current_level || 1,
+		}))
+
+		return {
+			success: true,
+			users,
+		}
+
+	} catch (error) {
+		logger.error('Get users error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to fetch users',
+		}
+	}
+}
+
+// ============================================================================
+// ACTION: Vérifier les liens vidéo cassés (admin uniquement)
+// ============================================================================
+
+export async function checkBrokenVideos() {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Récupérer tous les matériels avec vidéo
+		const { data: materials, error } = await supabase
+			.from('materials')
+			.select('id, title, section, lang, video_url')
+			.not('video_url', 'is', null)
+			.order('id', { ascending: false })
+
+		if (error) {
+			logger.error('Error fetching materials:', error)
+			throw new Error('Failed to fetch materials')
+		}
+
+		// 3. Filtrer pour ne garder que les matériels avec une vraie URL vidéo
+		const materialsWithVideo = materials.filter(m => {
+			if (!m.video_url) return false
+			const trimmed = m.video_url.trim()
+			return trimmed.length > 0 && (trimmed.startsWith('http://') || trimmed.startsWith('https://'))
+		})
+
+		// 4. Vérifier chaque lien vidéo avec limite de concurrence
+		const BATCH_SIZE = 5
+		const checkedVideos = []
+
+		for (let i = 0; i < materialsWithVideo.length; i += BATCH_SIZE) {
+			const batch = materialsWithVideo.slice(i, i + BATCH_SIZE)
+			const batchResults = await Promise.allSettled(
+				batch.map(async (material) => {
+					try {
+						const status = await checkVideoLink(material.video_url)
+						return {
+							...material,
+							status,
+						}
+					} catch (error) {
+						logger.error(`Error checking video ${material.id}:`, error)
+						return {
+							...material,
+							status: 'error',
+						}
+					}
+				})
+			)
+
+			batchResults.forEach(result => {
+				if (result.status === 'fulfilled') {
+					checkedVideos.push(result.value)
+				}
+			})
+		}
+
+		// 5. Filtrer pour ne garder que les liens cassés
+		const brokenVideos = checkedVideos.filter(v => v.status === 'broken')
+
+		return {
+			success: true,
+			brokenVideos,
+			totalVideos: materialsWithVideo.length,
+			checked: checkedVideos.length,
+		}
+
+	} catch (error) {
+		logger.error('Check broken videos error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to check videos',
+		}
+	}
+}
+
+// ============================================================================
+// HELPER: Vérifier un lien vidéo
+// ============================================================================
+
+async function checkVideoLink(url) {
+	if (!url) return 'broken'
+
+	try {
+		// YouTube
+		if (url.includes('youtube.com') || url.includes('youtu.be')) {
+			const videoId = extractYouTubeId(url)
+			if (!videoId) return 'broken'
+
+			// Méthode 1: Vérifier avec l'API oEmbed (rapide)
+			try {
+				const controller = new AbortController()
+				const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+				const oembedResponse = await fetch(
+					`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+					{ method: 'GET', signal: controller.signal }
+				)
+
+				clearTimeout(timeoutId)
+
+				if (!oembedResponse.ok) {
+					return 'broken'
+				}
+			} catch (error) {
+				return 'broken'
+			}
+
+			// Méthode 2: Vérifier la page embed
+			const embedController = new AbortController()
+			const embedTimeoutId = setTimeout(() => embedController.abort(), 10000)
+
+			const embedResponse = await fetch(
+				`https://www.youtube.com/embed/${videoId}`,
+				{
+					method: 'GET',
+					signal: embedController.signal,
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+					},
+				}
+			)
+
+			clearTimeout(embedTimeoutId)
+
+			if (!embedResponse.ok) return 'broken'
+
+			const html = await embedResponse.text()
+
+			// Chercher les données JSON embarquées
+			const playabilityMatch = html.match(/"playabilityStatus":\s*\{[^}]+\}/)
+			if (playabilityMatch) {
+				try {
+					const jsonStr = playabilityMatch[0].replace('"playabilityStatus":', '')
+					const playabilityStatus = JSON.parse(jsonStr)
+
+					if (
+						playabilityStatus.status === 'ERROR' ||
+						playabilityStatus.status === 'UNPLAYABLE' ||
+						playabilityStatus.status === 'LOGIN_REQUIRED' ||
+						playabilityStatus.status === 'CONTENT_CHECK_REQUIRED'
+					) {
+						return 'broken'
+					}
+				} catch (e) {
+					logger.error('Error parsing playabilityStatus:', e.message)
+				}
+			}
+
+			// Indicateurs de vidéo indisponible
+			if (
+				html.includes('Video unavailable') ||
+				html.includes('This video is unavailable') ||
+				html.includes('This video isn\'t available') ||
+				html.includes('This video has been removed') ||
+				html.includes('Private video') ||
+				html.includes('has been blocked') ||
+				html.includes('This video contains content') ||
+				html.includes('who has blocked it') ||
+				html.includes('copyright grounds') ||
+				html.includes('blocked it in your country') ||
+				html.includes('"status":"ERROR"') ||
+				html.includes('"status":"UNPLAYABLE"') ||
+				html.includes('"status":"LOGIN_REQUIRED"') ||
+				html.includes('"reason":"Video unavailable"') ||
+				html.includes('CONTENT_NOT_AVAILABLE') ||
+				html.includes('playback on other websites has been disabled') ||
+				(html.includes('"isUnlisted":true') && html.includes('"isPrivate":true'))
+			) {
+				return 'broken'
+			}
+
+			return 'working'
+		}
+
+		// Odysee
+		if (url.includes('odysee.com')) {
+			const controller = new AbortController()
+			const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+			const response = await fetch(url, {
+				method: 'GET',
+				signal: controller.signal,
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+				},
+			})
+
+			clearTimeout(timeoutId)
+
+			if (!response.ok) return 'broken'
+
+			const html = await response.text()
+
+			// Vérifier différents indicateurs de vidéo cassée/indisponible
+			if (
+				html.includes('not found') ||
+				html.includes('404') ||
+				html.includes('Content not found') ||
+				html.includes('This content is unavailable') ||
+				html.includes('does not exist') ||
+				html.includes('has been removed') ||
+				html.includes('No stream available') ||
+				html.includes('404_NOT_FOUND') ||
+				html.includes('CONTENT_NOT_FOUND') ||
+				html.includes('"error"') && html.includes('"NOT_FOUND"')
+			) {
+				return 'broken'
+			}
+
+			return 'working'
+		}
+
+		// Rutube
+		if (url.includes('rutube.ru')) {
+			const controller = new AbortController()
+			const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+			const response = await fetch(url, {
+				method: 'GET',
+				signal: controller.signal,
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+				},
+			})
+
+			clearTimeout(timeoutId)
+
+			if (!response.ok) return 'broken'
+
+			const html = await response.text()
+			if (html.includes('Видео не найдено') || html.includes('404')) {
+				return 'broken'
+			}
+
+			return 'working'
+		}
+
+		// Autres liens
+		const controller = new AbortController()
+		const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+		const response = await fetch(url, {
+			method: 'HEAD',
+			signal: controller.signal,
+		})
+
+		clearTimeout(timeoutId)
+		return response.ok ? 'working' : 'broken'
+	} catch (error) {
+		logger.error(`Error checking ${url}:`, error.message)
+		return 'broken'
+	}
+}
+
+function extractYouTubeId(url) {
+	const patterns = [
+		/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+		/youtube\.com\/watch\?.*v=([^&\n?#]+)/,
+	]
+
+	for (const pattern of patterns) {
+		const match = url.match(pattern)
+		if (match && match[1]) return match[1]
+	}
+
+	return null
+}
+
+// ============================================================================
+// ACTION: Mettre à jour l'URL vidéo d'un material (admin uniquement)
+// ============================================================================
+
+export async function updateMaterialVideo(materialId, videoUrl) {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Valider les paramètres
+		if (!materialId || videoUrl === undefined) {
+			throw new Error('Material ID and video URL are required')
+		}
+
+		// 3. Mettre à jour le lien vidéo
+		const { data: material, error } = await supabase
+			.from('materials')
+			.update({ video_url: videoUrl })
+			.eq('id', materialId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating video:', error)
+			throw new Error(`Database error: ${error.message}`)
+		}
+
+		// 4. Revalider les caches
+		revalidatePath('/materials')
+		revalidatePath(`/materials/${material.section}`)
+		revalidatePath(`/materials/${material.section}/${material.id}`)
+		revalidatePath('/admin')
+
+		logger.info('Material video updated successfully:', materialId)
+
+		return {
+			success: true,
+			material,
+		}
+
+	} catch (error) {
+		logger.error('Update material video error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to update video',
+		}
+	}
+}

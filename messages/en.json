@@ -128,7 +128,7 @@
     "imageAndVideoRequired": "Image and video are both required for video sections",
     "brokenVideosTitle": "Broken Video Links",
     "brokenVideosDesc": "Check for broken YouTube, Odysee, or Rutube links",
-    "brokenVideosFound": "{{count}} broken video link(s) found",
+    "brokenVideosFound": "{count, plural, =0 {No broken links} one {# broken video link found} other {# broken video links found}}",
     "noBrokenVideos": "All video links are working!",
     "checkVideos": "Check Videos",
     "checking": "Checking...",

@@ -128,7 +128,7 @@
     "imageAndVideoRequired": "Изображение и видео обязательны для видео разделов",
     "brokenVideosTitle": "Неработающие ссылки на видео",
     "brokenVideosDesc": "Проверка неработающих ссылок YouTube, Odysee или Rutube",
-    "brokenVideosFound": "Найдено {{count}} неработающих ссылок на видео",
+    "brokenVideosFound": "{count, plural, =0 {Нет неработающих ссылок} one {Найдена # неработающая ссылка} few {Найдено # неработающие ссылки} other {Найдено # неработающих ссылок}}",
     "noBrokenVideos": "Все ссылки на видео работают!",
     "checkVideos": "Проверить видео",
     "checking": "Проверка...",

@@ -202,7 +202,7 @@ const Material = ({
 		}
 	}
 
-	const displayAudioPlayer = (section, audio) => {
+	const displayAudioPlayer = (section) => {
 		if (sections?.audio?.includes(section)) {
 			return <Player src={getAudioUrl(currentMaterial)} />
 		}
@@ -666,7 +666,7 @@ const Material = ({
 								marginTop: '3rem',
 								marginBottom: '3rem',
 							}}>
-							{displayAudioPlayer(params?.section, currentMaterial.audio)}
+							{displayAudioPlayer(params?.section)}
 						</Box>
 
 						{/* Chapter Navigation (Previous/Next buttons) - Only for book chapters */}

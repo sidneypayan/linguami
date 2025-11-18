@@ -27,6 +27,7 @@ import {
 	Visibility,
 	VisibilityOff,
 } from '@mui/icons-material'
+import { verifyTurnstile } from '@/app/actions/auth'
 
 const Login = () => {
 	const t = useTranslations('register')
@@ -55,15 +56,7 @@ const Login = () => {
 
 		// Verify token with backend
 		try {
-			const verifyResponse = await fetch('/api/verify-turnstile', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: turnstileToken }),
-			})
-
-			const verifyData = await verifyResponse.json()
+			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
