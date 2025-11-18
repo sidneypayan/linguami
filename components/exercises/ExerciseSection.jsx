@@ -22,6 +22,8 @@ import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
 import LoadingSpinner from '../LoadingSpinner'
+import { logger } from '@/utils/logger'
+import { submitExercise } from '@/lib/exercises-client'
 
 /**
  * Exercise Section Component
@@ -97,7 +99,7 @@ const ExerciseSection = ({ materialId }) => {
 				.order('id', { ascending: true })
 
 			if (exercisesError) {
-				console.error('Error loading exercises:', exercisesError)
+				logger.error('Error loading exercises:', exercisesError)
 			} else {
 				setExercises(exercisesData || [])
 				// Auto-expand if there are exercises
@@ -141,17 +143,9 @@ const ExerciseSection = ({ materialId }) => {
 		}
 
 		try {
-			const response = await fetch('/api/exercises/submit', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(result),
-			})
+			const data = await submitExercise(result)
 
-			const data = await response.json()
-
-			if (response.ok && data.success) {
+			if (data.success) {
 				// Reload progress for this exercise
 				const { data: progressData } = await supabase
 					.from('user_exercise_progress')
@@ -189,7 +183,7 @@ const ExerciseSection = ({ materialId }) => {
 				return { isFirstCompletion: false, xpAwarded: 0 }
 			}
 		} catch (error) {
-			console.error('Error submitting exercise:', error)
+			logger.error('Error submitting exercise:', error)
 			toast.error(t('saveError'))
 			return { isFirstCompletion: false, xpAwarded: 0 }
 		}

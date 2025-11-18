@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslations, useLocale } from 'next-intl'
 import { Paper, BottomNavigation, BottomNavigationAction, Badge, useTheme } from '@mui/material'
 import {
@@ -11,6 +11,9 @@ import {
 	LocalLibraryRounded,
 } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
+import { getUserWords } from '@/lib/words-client'
+import { useState, useEffect } from 'react'
+import { getGuestWordsByLanguage } from '@/utils/guestDictionary'
 
 const BottomNav = () => {
 	const router = useNextRouter() // For navigation
@@ -19,8 +22,28 @@ const BottomNav = () => {
 	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { isUserLoggedIn, userLearningLanguage, isBootstrapping } = useUserContext()
-	const { user_words } = useSelector(store => store.words)
+	const { isUserLoggedIn, userLearningLanguage, isBootstrapping, user } = useUserContext()
+	const userId = user?.id
+
+	// React Query: Fetch user words (only for logged-in users)
+	const { data: user_words = [] } = useQuery({
+		queryKey: ['userWords', userId, userLearningLanguage],
+		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
+		staleTime: 5 * 60 * 1000,
+	})
+
+	// Guest words count (from localStorage)
+	const [guestWordsCount, setGuestWordsCount] = useState(0)
+	useEffect(() => {
+		if (!isUserLoggedIn && userLearningLanguage) {
+			const guestWords = getGuestWordsByLanguage(userLearningLanguage)
+			setGuestWordsCount(guestWords.length)
+		}
+	}, [isUserLoggedIn, userLearningLanguage])
+
+	// Total words count (user or guest)
+	const wordsCount = isUserLoggedIn ? user_words.length : guestWordsCount
 
 	// Vérifier si des cours sont disponibles pour la langue choisie
 	const hasLessons = userLearningLanguage === 'fr'
@@ -150,9 +173,9 @@ const BottomNav = () => {
 					label={router.locale === 'fr' ? 'Dico' : 'Слова'}
 					value='dictionary'
 					icon={
-						!isBootstrapping && isUserLoggedIn && user_words.length > 0 ? (
+						!isBootstrapping && wordsCount > 0 ? (
 							<Badge
-								badgeContent={user_words.length}
+								badgeContent={wordsCount}
 								max={99}
 								sx={{
 									'& .MuiBadge-badge': {

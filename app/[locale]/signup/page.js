@@ -13,6 +13,8 @@ import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcon
 // Head removed - use metadata in App Router
 
 import { Link } from '@/i18n/navigation'
+import { logger } from '@/utils/logger'
+import { verifyTurnstile } from '@/app/actions/auth'
 import {
 	Box,
 	Button,
@@ -183,29 +185,21 @@ const Signup = () => {
 			return
 		}
 
-		console.log('📝 Signup form submitted')
-		console.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
+		logger.log('📝 Signup form submitted')
+		logger.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
 
 		// Verify Turnstile token
 		if (!turnstileToken) {
-			console.error('❌ No Turnstile token found in state')
+			logger.error('❌ No Turnstile token found in state')
 			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
 			return
 		}
 
-		console.log('🔐 Verifying token with backend...')
+		logger.log('🔐 Verifying token with backend...')
 
 		// Verify token with backend
 		try {
-			const verifyResponse = await fetch('/api/verify-turnstile', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: turnstileToken }),
-			})
-
-			const verifyData = await verifyResponse.json()
+			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
@@ -214,7 +208,7 @@ const Signup = () => {
 				return
 			}
 		} catch (error) {
-			console.error('Turnstile verification error:', error)
+			logger.error('Turnstile verification error:', error)
 			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
@@ -245,7 +239,7 @@ const Signup = () => {
 				.maybeSingle()
 
 			if (checkError && checkError.code !== 'PGRST116') {
-				console.error('Error checking username:', checkError)
+				logger.error('Error checking username:', checkError)
 				toast.error(t('errorCheckingUsername'))
 				return
 			}
@@ -255,7 +249,7 @@ const Signup = () => {
 				return
 			}
 		} catch (err) {
-			console.error('Error checking username:', err)
+			logger.error('Error checking username:', err)
 			toast.error(t('errorCheckingUsername'))
 			return
 		}
@@ -268,7 +262,7 @@ const Signup = () => {
 				learningLanguage: mapLanguageToCode(learningLanguage),
 			})
 		} catch (error) {
-			console.error('Registration failed:', error)
+			logger.error('Registration failed:', error)
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
 			throw error
@@ -777,11 +771,11 @@ const Signup = () => {
 					<TurnstileWidget
 						ref={turnstileRef}
 						onSuccess={(token) => {
-							console.log('🔑 Signup page: Turnstile token received')
+							logger.log('🔑 Signup page: Turnstile token received')
 							setTurnstileToken(token)
 						}}
 						onError={(error) => {
-							console.error('❌ Signup page: Turnstile error or expiration:', error)
+							logger.error('❌ Signup page: Turnstile error or expiration:', error)
 							setTurnstileToken(null)
 							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
 						}}

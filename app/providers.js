@@ -1,14 +1,15 @@
 'use client'
 
-import { Provider } from 'react-redux'
-import { store } from '@/features/store'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import UserProvider from '@/context/user.js'
 import { ThemeModeProvider } from '@/context/ThemeContext'
+import { TranslationProvider } from '@/context/translation'
+import { FlashcardsProvider } from '@/context/flashcards'
 import { AchievementProvider } from '@/components/AchievementProvider'
 import AppRouterLayout from '@/components/AppRouterLayout'
 import { Toaster } from 'sonner'
 import { useThemeMode } from '@/context/ThemeContext'
-import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import * as gtm from '@/lib/gtm'
 
@@ -43,19 +44,38 @@ function GTMTracking() {
 }
 
 export default function Providers({ children }) {
+	// Create QueryClient inside component to avoid sharing between requests
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 60 * 1000, // 1 minute
+						gcTime: 5 * 60 * 1000, // 5 minutes (was cacheTime)
+						refetchOnWindowFocus: false,
+						retry: 1,
+					},
+				},
+			})
+	)
+
 	return (
-		<UserProvider>
-			<ThemeModeProvider>
-				<Provider store={store}>
-					<AchievementProvider>
-						<GTMTracking />
-						<AppRouterLayout>
-							{children}
-						</AppRouterLayout>
-						<ToasterWithTheme />
-					</AchievementProvider>
-				</Provider>
-			</ThemeModeProvider>
-		</UserProvider>
+		<QueryClientProvider client={queryClient}>
+			<UserProvider>
+				<ThemeModeProvider>
+					<FlashcardsProvider>
+						<TranslationProvider>
+							<AchievementProvider>
+								<GTMTracking />
+								<AppRouterLayout>
+									{children}
+								</AppRouterLayout>
+								<ToasterWithTheme />
+							</AchievementProvider>
+						</TranslationProvider>
+					</FlashcardsProvider>
+				</ThemeModeProvider>
+			</UserProvider>
+		</QueryClientProvider>
 	)
 }

@@ -1,9 +1,9 @@
 import { useTranslations, useLocale } from 'next-intl'
-import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { getUserLessonsStatus } from '@/features/lessons/lessonsSlice'
+import { useUserContext } from '@/context/user'
+import { useAllLessonStatuses } from '@/lib/lessons-client'
 import {
 	Box,
 	List,
@@ -65,17 +65,20 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const t = useTranslations('lessons')
 	const [openLevels, setOpenLevels] = useState({})
 
-	const dispatch = useDispatch()
-	const { user_lessons_status } = useSelector(store => store.lessons)
+	// Get user authentication state
+	const { isUserLoggedIn } = useUserContext()
+
+	// Fetch all lesson statuses using React Query
+	const { data: userLessonStatuses = [], isLoading } = useAllLessonStatuses(isUserLoggedIn)
 
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
 	const checkIfUserLessonIsStudied = id => {
-		const matchingLessons = user_lessons_status.find(
-			userLesson => userLesson.lesson_id === id
+		const matchingLessons = userLessonStatuses.find(
+			userLesson => userLesson.lesson_id === id && userLesson.is_studied
 		)
-		return matchingLessons
+		return !!matchingLessons
 	}
 
 	const toggleLevel = level => {
@@ -93,10 +96,6 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const levelsWithLessons = CECR_LEVELS.filter(
 		level => lessonsByLevel[level].length > 0
 	)
-
-	useEffect(() => {
-		dispatch(getUserLessonsStatus())
-	}, [dispatch])
 
 	return (
 		<List
@@ -284,7 +283,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 											}}
 										/>
 
-										{checkIfUserLessonIsStudied(lesson.id) && (
+										{!isLoading && checkIfUserLessonIsStudied(lesson.id) && (
 											<CheckCircleIcon
 												sx={{
 													color: '#22c55e',

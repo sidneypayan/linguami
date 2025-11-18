@@ -48,13 +48,30 @@ import {
 // Head removed - use metadata in App Router
 
 import { useRouter } from 'next/navigation'
+import { logger } from '@/utils/logger'
+import { changePassword, deleteAccount } from '@/app/actions/auth'
 
 const SettingsClient = ({ translations }) => {
 	const { userProfile, updateUserProfile, logout } = useUserContext()
 	const router = useRouter()
 	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+	// Fix hydration mismatch: sync theme and media query only on client
+	const [isDark, setIsDark] = useState(false)
+	const [isMobile, setIsMobile] = useState(false)
+
+	useEffect(() => {
+		setIsDark(theme.palette.mode === 'dark')
+	}, [theme.palette.mode])
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 600px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = (e) => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	const [formData, setFormData] = useState({
 		username: '',
@@ -87,26 +104,36 @@ const SettingsClient = ({ translations }) => {
 		confirmPassword: '',
 	})
 
-	// Validation du mot de passe (mêmes règles que signup)
+	// Password validation (modern NIST approach: 12 characters minimum)
 	const passwordValidation = useMemo(() => {
 		const { newPassword } = passwordData
 		return {
-			minLength: newPassword.length >= 8,
-			hasUpperCase: /[A-Z]/.test(newPassword),
-			hasNumber: /[0-9]/.test(newPassword),
-			hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+			minLength: newPassword.length >= 12,
 		}
 	}, [passwordData.newPassword])
 
 	const passwordStrength = useMemo(() => {
-		const checks = Object.values(passwordValidation)
-		const passed = checks.filter(Boolean).length
-		return (passed / checks.length) * 100
-	}, [passwordValidation])
+		const { newPassword } = passwordData
+		if (newPassword.length === 0) return 0
+
+		// Calculate strength based on length and diversity
+		let score = 0
+
+		// Length (0-40 points)
+		score += Math.min(newPassword.length * 2, 40)
+
+		// Character diversity (0-60 points)
+		if (/[a-z]/.test(newPassword)) score += 15
+		if (/[A-Z]/.test(newPassword)) score += 15
+		if (/[0-9]/.test(newPassword)) score += 15
+		if (/[^a-zA-Z0-9]/.test(newPassword)) score += 15
+
+		return Math.min(score, 100)
+	}, [passwordData.newPassword])
 
 	const isPasswordValid = useMemo(() => {
-		return Object.values(passwordValidation).every(Boolean)
-	}, [passwordValidation])
+		return passwordData.newPassword.length >= 12
+	}, [passwordData.newPassword])
 
 	// Charger les données du profil utilisateur
 	useEffect(() => {
@@ -153,7 +180,7 @@ const SettingsClient = ({ translations }) => {
 			await updateUserProfile({ [fieldMapping[field]]: newValue })
 			toast.success(translations.updateSuccess)
 		} catch (error) {
-			console.error('Error updating toggle:', error)
+			logger.error('Error updating toggle:', error)
 			toast.error(error.message || translations.updateError)
 			// Revert on error
 			setFormData({
@@ -192,7 +219,7 @@ const SettingsClient = ({ translations }) => {
 			toast.success(translations.updateSuccess)
 			toggleEditMode(field)
 		} catch (error) {
-			console.error('Error updating profile:', error)
+			logger.error('Error updating profile:', error)
 			toast.error(error.message || translations.updateError)
 		} finally {
 			setLoading(false)
@@ -235,19 +262,14 @@ const SettingsClient = ({ translations }) => {
 
 		setLoading(true)
 		try {
-			const response = await fetch('/api/auth/change-password', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					currentPassword: passwordData.currentPassword,
-					newPassword: passwordData.newPassword,
-				}),
+			// Use Server Action instead of fetch()
+			const result = await changePassword({
+				currentPassword: passwordData.currentPassword,
+				newPassword: passwordData.newPassword,
 			})
 
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data.error || translations.changePasswordError)
+			if (!result.success) {
+				throw new Error(result.error || translations.changePasswordError)
 			}
 
 			toast.success(translations.passwordChanged)
@@ -258,7 +280,7 @@ const SettingsClient = ({ translations }) => {
 				confirmPassword: '',
 			})
 		} catch (error) {
-			console.error('Error changing password:', error)
+			logger.error('Error changing password:', error)
 			toast.error(error.message || translations.changePasswordError)
 		} finally {
 			setLoading(false)
@@ -268,14 +290,11 @@ const SettingsClient = ({ translations }) => {
 	const handleDeleteAccount = async () => {
 		setLoading(true)
 		try {
-			const response = await fetch('/api/auth/delete-account', {
-				method: 'DELETE',
-			})
+			// Use Server Action instead of fetch()
+			const result = await deleteAccount()
 
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data.error || translations.deleteAccountError)
+			if (!result.success) {
+				throw new Error(result.error || translations.deleteAccountError)
 			}
 
 			toast.success(translations.accountDeleted)
@@ -286,7 +305,7 @@ const SettingsClient = ({ translations }) => {
 			// Redirect to home page
 			router.push('/')
 		} catch (error) {
-			console.error('Error deleting account:', error)
+			logger.error('Error deleting account:', error)
 			toast.error(error.message || translations.deleteAccountError)
 		} finally {
 			setLoading(false)
@@ -301,7 +320,7 @@ const SettingsClient = ({ translations }) => {
 			toast.success(translations.avatarUpdated)
 			setAvatarDialogOpen(false)
 		} catch (error) {
-			console.error('Error updating avatar:', error)
+			logger.error('Error updating avatar:', error)
 			toast.error(error.message || translations.updateError)
 		} finally {
 			setLoading(false)
@@ -1120,7 +1139,7 @@ const SettingsClient = ({ translations }) => {
 															await updateUserProfile({ daily_xp_goal: goal.value })
 															toast.success(translations.updateSuccess)
 														} catch (error) {
-															console.error('Error updating goal:', error)
+															logger.error('Error updating goal:', error)
 															toast.error(error.message || translations.updateError)
 														} finally {
 															setLoading(false)
@@ -1803,10 +1822,7 @@ const SettingsClient = ({ translations }) => {
 										/>
 										<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
 											{[
-												{ key: 'minLength', label: translations.passwordMinLength },
-												{ key: 'hasUpperCase', label: translations.passwordUpperCase },
-												{ key: 'hasNumber', label: translations.passwordNumber },
-												{ key: 'hasSpecialChar', label: translations.passwordSpecialChar },
+												{ key: 'minLength', label: translations.passwordMinLength12 || 'At least 12 characters' },
 											].map(({ key, label }) => (
 												<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 													{passwordValidation[key] ? (

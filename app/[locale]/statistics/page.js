@@ -63,27 +63,33 @@ export default async function StatisticsPage({ params }) {
 		notFound()
 	}
 
-	// Fetch user profile for XP data
-	const { data: userProfile } = await supabase
-		.from('users_profile')
-		.select('xp, level, streak, longest_streak, gold, xp_in_current_level')
-		.eq('id', user.id)
+	// Fetch user XP profile data from the new user_xp_profile table
+	const { data: userXpProfile } = await supabase
+		.from('user_xp_profile')
+		.select('total_xp, current_level, xp_in_current_level, daily_streak, longest_streak, total_gold')
+		.eq('user_id', user.id)
 		.single()
 
 	// Calculate xpProfile format expected by the component
 	let xpProfile = null
-	if (userProfile && userProfile.xp !== undefined) {
-		const currentLevel = userProfile.level || 1
-		const xpForNextLevel = Math.ceil(100 * Math.pow(currentLevel, 1.5))
-		const xpInLevel = userProfile.xp_in_current_level || 0
+	if (userXpProfile) {
+		const currentLevel = userXpProfile.current_level || 1
+
+		// Calculate XP needed for next level using RPC function
+		const { data: nextLevelXpData } = await supabase.rpc('get_xp_for_level', {
+			level: currentLevel,
+		})
+
+		const xpForNextLevel = nextLevelXpData || Math.ceil(100 * Math.pow(currentLevel, 1.5))
+		const xpInLevel = userXpProfile.xp_in_current_level || 0
 		const progressPercent = Math.min(Math.floor((xpInLevel / xpForNextLevel) * 100), 100)
 
 		xpProfile = {
 			currentLevel: currentLevel,
-			totalXp: userProfile.xp || 0,
-			totalGold: userProfile.gold || 0,
-			dailyStreak: userProfile.streak || 0,
-			longestStreak: userProfile.longest_streak || userProfile.streak || 0,
+			totalXp: userXpProfile.total_xp || 0,
+			totalGold: userXpProfile.total_gold || 0,
+			dailyStreak: userXpProfile.daily_streak || 0,
+			longestStreak: userXpProfile.longest_streak || 0,
 			xpInCurrentLevel: xpInLevel,
 			xpForNextLevel: xpForNextLevel,
 			progressPercent: progressPercent,
@@ -129,7 +135,7 @@ export default async function StatisticsPage({ params }) {
 			stats={stats}
 			xpProfile={xpProfile}
 			goals={goals}
-			t={(key) => translations[key] || key}
+			translations={translations}
 		/>
 	)
 }

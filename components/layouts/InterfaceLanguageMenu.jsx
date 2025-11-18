@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useUserContext } from '@/context/user'
+import { logger } from '@/utils/logger'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (
@@ -128,7 +129,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const router = useNextRouter() // For navigation
 	const pathname = usePathname()
 	const params = useParams()
-	const { userLearningLanguage, changeLearningLanguage, updateUserProfile, isUserLoggedIn } = useUserContext()
+	const { changeSpokenLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
@@ -169,47 +170,15 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const handleLanguageChange = async newLocale => {
 		setAnchorEl(null)
 
-		// Update spoken_language in database for logged-in users
-		// OR save to localStorage for non-logged-in users
-		if (isUserLoggedIn) {
-			try {
-				await updateUserProfile({ spoken_language: newLocale })
-			} catch (error) {
-				console.error('Error updating spoken language:', error)
-			}
-		} else {
-			try {
-				localStorage.setItem('spoken_language', newLocale)
-			} catch (error) {
-				console.error('Error saving to localStorage:', error)
-			}
-		}
+		// ⚠️ IMPORTANT: Attendre que TOUTES les modifications DB soient terminées
+		// avant de naviguer (évite les race conditions)
 
-		// Forcer la langue d'apprentissage selon la langue parlée :
-		// - spoken = 'fr' → learning = 'ru' (TOUJOURS)
-		// - spoken = 'ru' → learning = 'fr' (TOUJOURS)
-		// - spoken = 'en' → learning = 'fr' par défaut (peut être changé manuellement)
-		let newLearningLang = null
-		if (newLocale === 'fr') {
-			// Francophone apprend UNIQUEMENT le russe
-			newLearningLang = 'ru'
-		} else if (newLocale === 'ru') {
-			// Russophone apprend UNIQUEMENT le français
-			newLearningLang = 'fr'
-		} else if (newLocale === 'en') {
-			// Anglophone : français par défaut si pas déjà défini
-			if (!userLearningLanguage || userLearningLanguage === 'en') {
-				newLearningLang = 'fr'
-			}
-			// Sinon on garde la langue d'apprentissage actuelle (fr ou ru)
-		}
+		// Utiliser la fonction centralisée qui gère :
+		// 1. Update spoken_language en DB ou localStorage
+		// 2. Force learning_language selon les règles métier
+		await changeSpokenLanguage(newLocale)
 
-		// Changer la langue d'apprentissage si nécessaire
-		if (newLearningLang && newLearningLang !== userLearningLanguage) {
-			await changeLearningLanguage(newLearningLang)
-		}
-
-		// Changer la locale de Next.js
+		// ⚠️ SEULEMENT MAINTENANT: naviguer après que toutes les modifs DB sont faites
 		const currentLocale = params.locale || locale
 		let newPath
 

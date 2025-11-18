@@ -8,12 +8,12 @@ import {
 	useContext,
 } from 'react'
 import { supabase } from '@/lib/supabase' // client navigateur (@supabase/ssr)
-import { useRouterCompat } from '@/hooks/useRouterCompat'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import toast from '@/utils/toast'
 import { createToastMessages } from '@/utils/toastMessages'
 import { sendConfirmationEmail, sendResetPasswordEmail, getEmailLanguage } from '@/lib/emailService'
 import { sendVerificationEmail, isEmailVerified } from '@/lib/emailVerification'
-import { migrateLocalProgressToDatabase } from '@/utils/localCourseProgress'
+import { migrateLocalProgress } from '@/lib/courses-client'
 // --------------------------------------------------------
 // Helper: Déterminer la langue d'apprentissage par défaut
 // --------------------------------------------------------
@@ -133,12 +133,12 @@ const UserProvider = ({ children }) => {
 
 					// Migrate local progress from localStorage to database
 					try {
-						const migrationResult = await migrateLocalProgressToDatabase()
+						const migrationResult = await migrateLocalProgress()
 						if (migrationResult.success && migrationResult.migrated > 0) {
-							console.log(`✅ Migrated ${migrationResult.migrated} lesson(s) from localStorage to database`)
+							logger.log(`✅ Migrated ${migrationResult.migrated} lesson(s) from localStorage to database`)
 						}
 					} catch (migrationError) {
-						console.error('Failed to migrate local progress:', migrationError)
+						logger.error('Failed to migrate local progress:', migrationError)
 						// Don't block login if migration fails
 					}
 				} else {
@@ -352,7 +352,7 @@ const UserProvider = ({ children }) => {
 					)
 					toast.success(toastMessages.confirmationEmailSent())
 				} catch (error) {
-					console.error('Error sending verification email:', error)
+					logger.error('Error sending verification email:', error)
 					// Ne pas bloquer l'inscription si l'email échoue
 					toast.info('Compte créé ! Vous pourrez vérifier votre email plus tard.')
 				}
@@ -478,6 +478,52 @@ const UserProvider = ({ children }) => {
 		[user]
 	)
 
+	const changeSpokenLanguage = useCallback(
+		async spokenLanguage => {
+			try {
+				// 1. Mettre à jour spoken_language
+				if (user) {
+					const { data, error } = await supabase
+						.from('users_profile')
+						.update({ spoken_language: spokenLanguage })
+						.eq('id', user.id)
+						.select()
+					if (error) throw error
+				} else {
+					try {
+						localStorage.setItem('spoken_language', spokenLanguage)
+					} catch {}
+				}
+
+				// 2. Calculer et forcer la learning_language appropriée
+				// Règles métier :
+				// - FR parle → apprend RU (toujours)
+				// - RU parle → apprend FR (toujours)
+				// - EN parle → apprend FR par défaut (peut changer manuellement)
+				let newLearningLang = null
+				if (spokenLanguage === 'fr') {
+					newLearningLang = 'ru'
+				} else if (spokenLanguage === 'ru') {
+					newLearningLang = 'fr'
+				} else if (spokenLanguage === 'en') {
+					// Anglophone : FR par défaut si pas défini ou si apprend sa propre langue
+					if (!userLearningLanguage || userLearningLanguage === 'en') {
+						newLearningLang = 'fr'
+					}
+					// Sinon on garde la langue actuelle (fr ou ru)
+				}
+
+				// 3. Appliquer le changement de learning_language si nécessaire
+				if (newLearningLang && newLearningLang !== userLearningLanguage) {
+					await changeLearningLanguage(newLearningLang)
+				}
+			} catch (err) {
+				safeToastError(err, toastMessages.languageUpdateError())
+			}
+		},
+		[user, userLearningLanguage, changeLearningLanguage]
+	)
+
 	const updateUserProfile = useCallback(
 		async (updateData) => {
 			if (!user) {
@@ -551,7 +597,7 @@ const UserProvider = ({ children }) => {
 				return profile
 			}
 		} catch (err) {
-			console.error('Error refreshing user profile:', err)
+			logger.error('Error refreshing user profile:', err)
 		}
 		return null
 	}, [user, fetchUserProfile])
@@ -578,6 +624,7 @@ const UserProvider = ({ children }) => {
 			updatePassword,
 			setNewPassword,
 			changeLearningLanguage,
+			changeSpokenLanguage,
 			updateUserProfile,
 			refreshUserProfile,
 		}),
@@ -596,6 +643,7 @@ const UserProvider = ({ children }) => {
 			updatePassword,
 			setNewPassword,
 			changeLearningLanguage,
+			changeSpokenLanguage,
 			updateUserProfile,
 			refreshUserProfile,
 		]

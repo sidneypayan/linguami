@@ -45,6 +45,8 @@ import {
 	OpenInNew,
 } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
+import { checkBrokenVideos, updateMaterialVideo } from '@/app/actions/admin'
 
 export default function AdminDashboardClient({ initialMaterialsData, initialBooksData }) {
 	const t = useTranslations('admin')
@@ -66,12 +68,11 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 	const loadBrokenVideos = async () => {
 		setLoadingVideos(true)
 		try {
-			const response = await fetch('/api/admin/check-videos')
-			const data = await response.json()
-			setBrokenVideos(data.brokenVideos || [])
+			const result = await checkBrokenVideos()
+			setBrokenVideos(result.brokenVideos || [])
 			setShowBrokenVideos(true)
 		} catch (error) {
-			console.error('Error loading broken videos:', error)
+			logger.error('Error loading broken videos:', error)
 		} finally {
 			setLoadingVideos(false)
 		}
@@ -79,7 +80,7 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 
 	const handleOpenEditDialog = (video) => {
 		setEditVideoDialog({ open: true, video })
-		setNewVideoUrl(video.video || '')
+		setNewVideoUrl(video.video_url || '')
 	}
 
 	const handleCloseEditDialog = () => {
@@ -92,26 +93,20 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 
 		setSavingVideo(true)
 		try {
-			const response = await fetch('/api/admin/update-video', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					materialId: editVideoDialog.video.id,
-					videoUrl: newVideoUrl.trim(),
-				}),
-			})
+			const result = await updateMaterialVideo(
+				editVideoDialog.video.id,
+				newVideoUrl.trim()
+			)
 
-			if (response.ok) {
+			if (result.success) {
 				setBrokenVideos(prev => prev.filter(v => v.id !== editVideoDialog.video.id))
 				handleCloseEditDialog()
 			} else {
-				console.error('Failed to update video')
+				logger.error('Failed to update video')
 				alert(t('errorUpdatingVideo'))
 			}
 		} catch (error) {
-			console.error('Error updating video:', error)
+			logger.error('Error updating video:', error)
 			alert(t('errorUpdatingVideo'))
 		} finally {
 			setSavingVideo(false)
@@ -507,7 +502,7 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 											<TableCell>
 												<Typography
 													component='a'
-													href={video.video}
+													href={video.video_url}
 													target='_blank'
 													rel='noopener noreferrer'
 													sx={{
@@ -523,7 +518,7 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 														textOverflow: 'ellipsis',
 														whiteSpace: 'nowrap',
 													}}>
-													{video.video}
+													{video.video_url}
 												</Typography>
 											</TableCell>
 											<TableCell align='right'>

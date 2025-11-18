@@ -29,6 +29,8 @@ import {
 } from '@mui/material'
 import { Search, Person, AdminPanelSettings, ArrowUpward, ArrowDownward, UnfoldMore } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
+import { getUsers } from '@/app/actions/admin'
 
 const UsersPage = () => {
 	const t = useTranslations('admin')
@@ -63,14 +65,14 @@ const UsersPage = () => {
 			setLoading(true)
 			try {
 				// Call API route to fetch users (needs service role key)
-				const response = await fetch('/api/admin/users')
-				const data = await response.json()
+				const result = await getUsers()
+				const data = result
 
-				if (data.users) {
+				if (data.success && data.users) {
 					setUsers(data.users)
 				}
 			} catch (error) {
-				console.error('Error fetching users:', error)
+				logger.error('Error fetching users:', error)
 			} finally {
 				setLoading(false)
 			}

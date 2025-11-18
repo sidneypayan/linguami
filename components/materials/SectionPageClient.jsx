@@ -1,351 +1,238 @@
 'use client'
 
-import { useTranslations, useLocale } from "next-intl";
-import SectionCard from '@/components/SectionCard';
-import MaterialsTable from '@/components/MaterialsTable';
-import MaterialsFilterBar from '@/components/MaterialsFilterBar';
-import Pagination from '@/components/layouts/Pagination';
-import { useSelector, useDispatch } from "react-redux";
+import { useTranslations, useLocale } from 'next-intl'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { useRouter, useParams, usePathname } from 'next/navigation'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Box, Container, IconButton, Typography } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
+import { useUserContext } from '@/context/user'
 import {
-  getBooks,
-  getMaterials,
-  getUserMaterialsStatus,
-  filterMaterials,
-  searchMaterial,
-  showAllMaterials,
-  filterMaterialsByStatus,
-  filterMaterialsByLevelAndStatus,
-} from '@/features/materials/materialsSlice';
-import { selectMaterialsData } from '@/features/materials/materialsSelectors';
+  addBeingStudiedMaterial,
+  removeBeingStudiedMaterial,
+  addMaterialToStudied,
+} from '@/app/actions/materials'
+import SectionCard from '@/components/SectionCard'
+import BookCard from '@/components/materials/BookCard'
+import MaterialsTable from '@/components/MaterialsTable'
+import MaterialsFilterBar from '@/components/MaterialsFilterBar'
+import Pagination from '@/components/layouts/Pagination'
+import toast from '@/utils/toast'
+import { getToastMessage } from '@/utils/toastMessages'
+import { logger } from '@/utils/logger'
 
-import { useEffect, useState, useMemo, useRef } from "react";
-import { useRouter, useParams, usePathname } from "next/navigation";
-import { Box, Container, IconButton, Typography } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
-import { useUserContext } from '@/context/user';
-import LoadingSpinner from '@/components/LoadingSpinner';
-
-const Section = () => {
+export default function SectionPageClient({
+  initialMaterials = [],
+  initialUserMaterialsStatus = [],
+  section,
+  learningLanguage,
+}) {
   const t = useTranslations('materials')
-	const locale = useLocale();
-  const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext();
-  const router = useRouter();
-  const params = useParams();
-  const pathname = usePathname();
-  const section = params.section;
-  const [viewMode, setViewMode] = useState("card");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false);
+  const locale = useLocale()
+  const { userProfile, isUserAdmin } = useUserContext()
+  const router = useRouter()
+  const pathname = usePathname()
+  const queryClient = useQueryClient()
 
-  // Tracker le niveau précédent pour détecter les changements
-  const prevUserLevelRef = useRef(null);
-  const prevPathnameRef = useRef(pathname);
+  // Local UI state
+  const [viewMode, setViewMode] = useState('card')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedLevel, setSelectedLevel] = useState(null)
+  const [selectedStatus, setSelectedStatus] = useState(null)
+  const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const dispatch = useDispatch();
-  // Utiliser le sélecteur mémoïsé pour optimiser les performances
-  const {
-    materials_loading,
-    filtered_materials,
-    level,
-    sliceStart,
-    sliceEnd,
-    page,
-    materialsPerPage,
-  } = useSelector(selectMaterialsData);
+  const prevPathnameRef = useRef(pathname)
 
-  // Sélecteurs supplémentaires (non inclus dans selectMaterialsData)
-  const books_loading = useSelector((state) => state.materials.books_loading);
-  const user_materials_status = useSelector(
-    (state) => state.materials.user_materials_status,
-  );
+  // React Query: Hydrate materials with SSR data
+  const { data: materials = [] } = useQuery({
+    queryKey: ['materials', section, learningLanguage],
+    queryFn: () => initialMaterials, // Won't refetch, uses initialData
+    initialData: initialMaterials,
+    staleTime: Infinity, // SSR data is fresh
+  })
 
-  // Définir cette fonction avant de l'utiliser dans useMemo
-  const checkIfUserMaterialIsInMaterials = (id) => {
-    const matchingMaterials = user_materials_status.find(
-      (userMaterial) => userMaterial.material_id === id,
-    );
-    return matchingMaterials;
-  };
+  // React Query: Hydrate user materials status
+  const { data: userMaterialsStatus = [] } = useQuery({
+    queryKey: ['userMaterialsStatus'],
+    queryFn: () => initialUserMaterialsStatus,
+    initialData: initialUserMaterialsStatus,
+    staleTime: Infinity,
+  })
 
-  // Filtrer localement les matériaux pour s'assurer qu'ils correspondent à la langue d'apprentissage
-  // Note: Le filtre par statut (is_studied) est maintenant géré au niveau Redux
-  const displayedMaterials = useMemo(() => {
-    if (!filtered_materials || !userLearningLanguage) return [];
-    return filtered_materials.filter((material) => {
-      // Vérifier que le matériel correspond à la langue d'apprentissage
-      return material.lang === userLearningLanguage;
-    });
-  }, [filtered_materials, userLearningLanguage]);
+  // Local filtering logic (client-side)
+  const filteredMaterials = useMemo(() => {
+    let result = [...materials]
 
-  // Définir le nombre de matériaux par page selon le mode de vue
-  const itemsPerPage = viewMode === 'card' ? 8 : 10;
+    // Filter by learning language
+    result = result.filter(m => m.lang === learningLanguage)
 
-  // Calculer le nombre de pages basé sur les matériaux réellement affichés
-  const numOfPages = Math.ceil(displayedMaterials.length / itemsPerPage);
-
-  // S'assurer que la page actuelle ne dépasse pas le nombre de pages disponibles
-  const currentPage = Math.min(page, Math.max(1, numOfPages));
-
-  // Calculer localement sliceStart et sliceEnd basés sur les matériaux réellement affichés
-  const localSliceStart = (currentPage - 1) * itemsPerPage;
-  const localSliceEnd = currentPage * itemsPerPage;
-
-  const handleViewChange = (view) => {
-    setViewMode(view);
-  };
-
-  const handleSearchChange = (value) => {
-    setSearchTerm(value);
-    dispatch(searchMaterial(value));
-  };
-
-  // Fonction helper pour appliquer les deux filtres ensemble
-  const applyBothFilters = (level, status) => {
-    // Si aucun filtre, tout afficher
-    if (!level && !status) {
-      dispatch(showAllMaterials());
-      return;
+    // Filter by level
+    if (selectedLevel && selectedLevel !== 'all') {
+      result = result.filter(m => m.level === selectedLevel)
     }
 
-    // Utiliser la nouvelle action qui gère les deux filtres ensemble
-    dispatch(
-      filterMaterialsByLevelAndStatus({
-        section,
-        level,
-        status,
-        userMaterialsStatus: user_materials_status,
-      }),
-    );
-  };
+    // Filter by status
+    if (selectedStatus) {
+      if (selectedStatus === 'not_studied') {
+        const materialIdsWithStatus = userMaterialsStatus
+          .filter(um => um.is_being_studied || um.is_studied)
+          .map(um => um.material_id)
+        result = result.filter(m => !materialIdsWithStatus.includes(m.id))
+      } else {
+        const materialIdsWithStatus = userMaterialsStatus
+          .filter(um => um[selectedStatus])
+          .map(um => um.material_id)
+        result = result.filter(m => materialIdsWithStatus.includes(m.id))
+      }
+    }
 
-  const handleLevelChange = (level) => {
-    setSelectedLevel(level);
-    // Garder le statut actuel et appliquer les deux filtres
-    applyBothFilters(level, selectedStatus);
-  };
+    // Filter by search
+    if (searchTerm) {
+      result = result.filter(m =>
+        m.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
 
-  const handleStatusChange = (status) => {
-    setSelectedStatus(status);
-    // Garder le niveau actuel et appliquer les deux filtres
-    applyBothFilters(selectedLevel, status);
-  };
+    return result
+  }, [materials, learningLanguage, selectedLevel, selectedStatus, searchTerm, userMaterialsStatus])
 
+  // Pagination
+  const itemsPerPage = viewMode === 'card' ? 8 : 10
+  const numOfPages = Math.ceil(filteredMaterials.length / itemsPerPage)
+  const safePage = Math.min(currentPage, Math.max(1, numOfPages)) || 1
+  const sliceStart = (safePage - 1) * itemsPerPage
+  const sliceEnd = safePage * itemsPerPage
+  const displayedMaterials = filteredMaterials.slice(sliceStart, sliceEnd)
+
+  // Helper to check if material has user status
+  const checkIfUserMaterialIsInMaterials = id => {
+    return userMaterialsStatus.find(um => um.material_id === id)
+  }
+
+  // Handlers
+  const handleViewChange = view => setViewMode(view)
+  const handleSearchChange = value => {
+    setSearchTerm(value)
+    setCurrentPage(1) // Reset to page 1 on search
+  }
+  const handleLevelChange = level => {
+    setSelectedLevel(level)
+    setCurrentPage(1)
+  }
+  const handleStatusChange = status => {
+    setSelectedStatus(status)
+    setCurrentPage(1)
+  }
   const handleClear = () => {
-    setSearchTerm("");
-    setSelectedLevel(null);
-    setSelectedStatus(null);
-    // Réinitialiser tous les filtres
-    dispatch(showAllMaterials());
-  };
+    setSearchTerm('')
+    setSelectedLevel(null)
+    setSelectedStatus(null)
+    setCurrentPage(1)
+  }
 
+  // Restore filters from localStorage on mount
   useEffect(() => {
-    if (!userLearningLanguage || !section) return;
+    if (!section || section === 'books') return
 
-    // Réinitialiser le flag quand la section change
-    setHasAppliedDefaultFilter(false);
-
-    if (section === "books") {
-      dispatch(getBooks({ userLearningLanguage }));
-    } else {
-      dispatch(getMaterials({ userLearningLanguage, section }));
-      dispatch(getUserMaterialsStatus());
-    }
-  }, [userLearningLanguage, section, dispatch]);
-
-  // Restaurer les filtres depuis localStorage quand on revient sur la page
-  useEffect(() => {
-    if (!section || section === "books") return;
-    if (!user_materials_status || materials_loading) return;
-
-    // Vérifier si on revient sur la page section depuis une page de matériel
-    const prevPath = prevPathnameRef.current || '';
+    const prevPath = prevPathnameRef.current || ''
     const isReturningFromMaterial =
       prevPath.includes(`/materials/${section}/`) &&
       prevPath !== pathname &&
       pathname.includes(`/materials/${section}`) &&
-      !pathname.includes(`/materials/${section}/`); // Ne pas avoir de slash après la section = page section, pas matériel
+      !pathname.includes(`/materials/${section}/`)
 
-    // Restaurer si c'est le premier chargement OU si on revient sur la page
-    const shouldRestore = !hasAppliedDefaultFilter || isReturningFromMaterial;
+    const shouldRestore = !hasAppliedDefaultFilter || isReturningFromMaterial
 
     if (shouldRestore) {
-      const storageKey = `materials_section_${section}_filters`;
-      const savedFilters = localStorage.getItem(storageKey);
+      const storageKey = `materials_section_${section}_filters`
+      const savedFilters = localStorage.getItem(storageKey)
 
       if (savedFilters) {
         try {
-          const { level, status, search } = JSON.parse(savedFilters);
-
-          // Restaurer les états locaux
-          setSelectedLevel(level ?? null);
-          setSelectedStatus(status ?? null);
-          setSearchTerm(search ?? "");
-
-          // Appliquer les filtres restaurés
-          if (!level && !status) {
-            dispatch(showAllMaterials());
-          } else {
-            dispatch(
-              filterMaterialsByLevelAndStatus({
-                section,
-                level,
-                status,
-                userMaterialsStatus: user_materials_status,
-              }),
-            );
-          }
-
-          if (search) {
-            dispatch(searchMaterial(search));
-          }
-
-          setHasAppliedDefaultFilter(true);
+          const { level, status, search } = JSON.parse(savedFilters)
+          setSelectedLevel(level ?? null)
+          setSelectedStatus(status ?? null)
+          setSearchTerm(search ?? '')
+          setHasAppliedDefaultFilter(true)
         } catch (error) {
-          console.error('Error restoring filters:', error);
+          logger.error('Error restoring filters:', error)
         }
       } else if (!hasAppliedDefaultFilter) {
-        // IMPORTANT: Mettre hasAppliedDefaultFilter à true même pour les invités
-        // sinon les filtres ne seront jamais sauvegardés dans localStorage
-        setHasAppliedDefaultFilter(true);
+        setHasAppliedDefaultFilter(true)
       }
     }
 
-    // Mettre à jour le pathname précédent
-    prevPathnameRef.current = pathname;
-  }, [section, user_materials_status, materials_loading, pathname, dispatch]);
+    prevPathnameRef.current = pathname
+  }, [section, pathname, hasAppliedDefaultFilter])
 
-  // Sauvegarder les filtres dans localStorage à chaque changement
+  // Save filters to localStorage
   useEffect(() => {
-    if (!section || section === "books" || !hasAppliedDefaultFilter) return;
+    if (!section || section === 'books' || !hasAppliedDefaultFilter) return
 
-    const storageKey = `materials_section_${section}_filters`;
+    const storageKey = `materials_section_${section}_filters`
     const filtersToSave = {
       level: selectedLevel,
       status: selectedStatus,
       search: searchTerm,
-    };
+    }
+    localStorage.setItem(storageKey, JSON.stringify(filtersToSave))
+  }, [section, selectedLevel, selectedStatus, searchTerm, hasAppliedDefaultFilter])
 
-    localStorage.setItem(storageKey, JSON.stringify(filtersToSave));
-  }, [section, selectedLevel, selectedStatus, searchTerm, hasAppliedDefaultFilter]);
-
-  // Appliquer les filtres par défaut : niveau utilisateur + non étudiés
-  // (seulement si aucun filtre n'a été restauré depuis localStorage)
+  // Apply default filters for authenticated users
   useEffect(() => {
     if (
-      !materials_loading &&
       userProfile?.language_level &&
       section &&
-      section !== "books" &&
-      !hasAppliedDefaultFilter &&
-      user_materials_status // Attendre que le statut des matériaux soit chargé
+      section !== 'books' &&
+      !hasAppliedDefaultFilter
     ) {
-      // Vérifier s'il n'y a pas de filtres sauvegardés dans localStorage
-      const storageKey = `materials_section_${section}_filters`;
-      const savedFilters = localStorage.getItem(storageKey);
+      const storageKey = `materials_section_${section}_filters`
+      const savedFilters = localStorage.getItem(storageKey)
 
-      // N'appliquer les filtres par défaut que s'il n'y a rien dans localStorage
       if (!savedFilters) {
-        const userLevel = userProfile.language_level;
-
-        // Mettre à jour l'état local
-        setSelectedLevel(userLevel);
-        setSelectedStatus("not_studied");
-
-        // Appliquer les deux filtres ensemble
-        dispatch(
-          filterMaterialsByLevelAndStatus({
-            section,
-            level: userLevel,
-            status: "not_studied",
-            userMaterialsStatus: user_materials_status,
-          }),
-        );
-
-        setHasAppliedDefaultFilter(true);
-        // Sauvegarder le niveau actuel comme référence
-        prevUserLevelRef.current = userLevel;
+        const userLevel = userProfile.language_level
+        setSelectedLevel(userLevel)
+        setSelectedStatus('not_studied')
+        setHasAppliedDefaultFilter(true)
       }
     }
-  }, [
-    materials_loading,
-    userProfile?.language_level,
-    section,
-    hasAppliedDefaultFilter,
-    user_materials_status,
-    dispatch,
-  ]);
-
-  // Détecter et réagir aux changements de niveau utilisateur
-  useEffect(() => {
-    const currentUserLevel = userProfile?.language_level;
-    const previousUserLevel = prevUserLevelRef.current;
-
-    // Vérifier si le niveau a vraiment changé
-    if (
-      currentUserLevel &&
-      previousUserLevel &&
-      currentUserLevel !== previousUserLevel &&
-      section &&
-      section !== "books" &&
-      user_materials_status
-    ) {
-      // Le niveau a changé, réappliquer les filtres par défaut
-      setSelectedLevel(currentUserLevel);
-      setSelectedStatus("not_studied");
-
-      // Appliquer les deux filtres ensemble
-      dispatch(
-        filterMaterialsByLevelAndStatus({
-          section,
-          level: currentUserLevel,
-          status: "not_studied",
-          userMaterialsStatus: user_materials_status,
-        }),
-      );
-
-      // Mettre à jour la référence
-      prevUserLevelRef.current = currentUserLevel;
-    }
-  }, [userProfile?.language_level, section, user_materials_status, dispatch]);
-
-  // Note: Ce useEffect a été supprimé car il créait un conflit avec le filtre par défaut
-  // basé sur le niveau utilisateur. Le filtre est maintenant géré par les useEffect ci-dessus.
-
-  // Afficher le loader pendant le chargement
-  if (materials_loading && books_loading) {
-    return <LoadingSpinner />;
-  }
+  }, [userProfile?.language_level, section, hasAppliedDefaultFilter])
 
   return (
     <>
-
       {/* Compact Header - Hidden on mobile/tablet */}
       <Box
         sx={{
-          display: { xs: "none", lg: "block" },
-          pt: { xs: "3.75rem", md: "6rem" },
+          display: { xs: 'none', lg: 'block' },
+          pt: { xs: '3.75rem', md: '6rem' },
           pb: { xs: 2, md: 2.5 },
-          borderBottom: "1px solid rgba(139, 92, 246, 0.15)",
-          bgcolor: "background.paper",
+          borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+          bgcolor: 'background.paper',
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, md: 2 }, mb: { xs: 1.25, md: 1.5 } }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: { xs: 1.5, md: 2 },
+              mb: { xs: 1.25, md: 1.5 },
+            }}
+          >
             <IconButton
               sx={{
                 background:
-                  "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)",
-                border: "1px solid rgba(139, 92, 246, 0.3)",
-                color: "#8b5cf6",
+                  'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                color: '#8b5cf6',
                 width: { xs: 40, md: 44 },
                 height: { xs: 40, md: 44 },
-                transition: "all 0.3s ease",
-                "&:hover": {
+                transition: 'all 0.3s ease',
+                '&:hover': {
                   background:
-                    "linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)",
-                  transform: "scale(1.05)",
+                    'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+                  transform: 'scale(1.05)',
                 },
               }}
               aria-label="back"
@@ -357,10 +244,10 @@ const Section = () => {
               variant="h4"
               sx={{
                 fontWeight: 700,
-                fontSize: { xs: "1.5rem", sm: "2rem" },
-                background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                fontSize: { xs: '1.5rem', sm: '2rem' },
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 flex: 1,
               }}
             >
@@ -372,9 +259,13 @@ const Section = () => {
 
       <Container
         maxWidth="lg"
-        sx={{ pt: { xs: "3.75rem", lg: 2.5 }, pb: { xs: 2.5, md: 4 }, px: { xs: 2, sm: 3 } }}
+        sx={{
+          pt: { xs: '3.75rem', lg: 2.5 },
+          pb: { xs: 2.5, md: 4 },
+          px: { xs: 2, sm: 3 },
+        }}
       >
-        <Box sx={{ width: "100%", maxWidth: "100%" }}>
+        <Box sx={{ width: '100%', maxWidth: '100%' }}>
           <MaterialsFilterBar
             onSearchChange={handleSearchChange}
             onLevelChange={handleLevelChange}
@@ -390,53 +281,63 @@ const Section = () => {
             translationNamespace="materials"
           />
 
-          {viewMode === "card" ? (
+          {viewMode === 'card' ? (
             <Box
               sx={{
-                display: "grid",
+                display: 'grid',
                 gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                  lg: "repeat(4, 1fr)",
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)',
+                  lg: 'repeat(4, 1fr)',
                 },
                 rowGap: { xs: 2, md: 3 },
                 columnGap: { xs: 2, md: 3 },
-                // Masquer temporairement pendant que displayedMaterials se met à jour
                 opacity: displayedMaterials.length > 0 ? 1 : 0,
-                transition: "opacity 0.15s ease-in",
+                transition: 'opacity 0.15s ease-in',
               }}
             >
-              {displayedMaterials.length > 0 &&
-                displayedMaterials
-                  .slice(localSliceStart, localSliceEnd)
-                  .map((material) => (
-                    <SectionCard
-                      checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
-                        material.id,
-                      )}
+              {displayedMaterials.map(material => {
+                // Use BookCard for books section, SectionCard for materials
+                if (section === 'books') {
+                  return (
+                    <BookCard
                       key={material.id}
-                      material={material}
+                      book={material}
+                      checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+                        material.id
+                      )}
                     />
-                  ))}
+                  )
+                }
+                return (
+                  <SectionCard
+                    key={material.id}
+                    material={material}
+                    checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(
+                      material.id
+                    )}
+                  />
+                )
+              })}
             </Box>
           ) : (
             <MaterialsTable
-              materials={displayedMaterials.slice(
-                localSliceStart,
-                localSliceEnd,
-              )}
-              checkIfUserMaterialIsInMaterials={
-                checkIfUserMaterialIsInMaterials
-              }
+              materials={displayedMaterials}
+              checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
+              section={section}
             />
           )}
 
-          {numOfPages > 1 && <Pagination numOfPages={numOfPages} />}
+          {numOfPages > 1 && (
+            <Pagination
+              numOfPages={numOfPages}
+              currentPage={safePage}
+              onPageChange={setCurrentPage}
+            />
+          )}
         </Box>
       </Container>
     </>
-  );
-};
-
-export default Section;
+  )
+}

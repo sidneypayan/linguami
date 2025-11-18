@@ -29,10 +29,13 @@ import {
 	FaCheckCircle,
 } from 'react-icons/fa'
 
-const StatisticsClient = ({ stats, xpProfile, goals, t }) => {
+const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const [expandedBadges, setExpandedBadges] = useState({})
+
+	// Helper function to get translation
+	const t = (key) => translations[key] || key
 
 	// Vocabulary cards
 	const vocabularyCards = [

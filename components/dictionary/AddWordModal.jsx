@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import { getAllUserWords } from '@/features/words/wordsSlice'
 import { validateWordPair } from '@/utils/validation'
-import { supabase } from '@/lib/supabase'
+import { addWord } from '@/lib/words-client'
 import toast from '@/utils/toast'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter, usePathname, useParams } from 'next/navigation'
@@ -23,12 +22,13 @@ import {
 	useTheme,
 } from '@mui/material'
 import { Close, Add } from '@mui/icons-material'
+import { logger } from '@/utils/logger'
 
 const STORAGE_KEY = 'addWordModal_formData'
 
 const AddWordModal = ({ open, onClose }) => {
 	const t = useTranslations('words')
-	const dispatch = useDispatch()
+	const queryClient = useQueryClient()
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
@@ -47,7 +47,7 @@ const AddWordModal = ({ open, onClose }) => {
 				return JSON.parse(stored)
 			}
 		} catch (error) {
-			console.error('Error loading from sessionStorage:', error)
+			logger.error('Error loading from sessionStorage:', error)
 		}
 		return { learningLangWord: '', browserLangWord: '', contextSentence: '' }
 	}
@@ -58,6 +58,26 @@ const AddWordModal = ({ open, onClose }) => {
 	const [contextSentence, setContextSentence] = useState(initialData.contextSentence)
 	const [errors, setErrors] = useState({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
+
+	// React Query mutation for adding words
+	const addWordMutation = useMutation({
+		mutationFn: addWord,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['userWords', user.id, userLearningLanguage] })
+			toast.success(t('word_add_success') || 'Traduction ajoutée avec succès.')
+			clearFormData()
+			onClose()
+		},
+		onError: (error) => {
+			logger.error('Error adding word:', error)
+			if (error.message === 'duplicate_translation') {
+				toast.error(t('duplicate_translation') || 'Cette traduction est déjà enregistrée.')
+			} else {
+				toast.error(t('word_add_error') || 'Une erreur inattendue est survenue.')
+			}
+		},
+	})
+
 
 	// Sauvegarder dans sessionStorage à chaque changement
 	useEffect(() => {
@@ -72,7 +92,7 @@ const AddWordModal = ({ open, onClose }) => {
 		try {
 			sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
 		} catch (error) {
-			console.error('Error saving to sessionStorage:', error)
+			logger.error('Error saving to sessionStorage:', error)
 		}
 	}, [learningLangWord, browserLangWord, contextSentence])
 
@@ -96,7 +116,7 @@ const AddWordModal = ({ open, onClose }) => {
 			try {
 				sessionStorage.removeItem(STORAGE_KEY)
 			} catch (error) {
-				console.error('Error clearing sessionStorage:', error)
+				logger.error('Error clearing sessionStorage:', error)
 			}
 		}
 	}
@@ -104,79 +124,29 @@ const AddWordModal = ({ open, onClose }) => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setErrors({})
-		setIsSubmitting(true)
 
-		try {
-			// Validation côté client
-			const validation = validateWordPair({
-				learningLangWord,
-				browserLangWord,
-				contextSentence,
-			})
+		// Validation côté client
+		const validation = validateWordPair({
+			learningLangWord,
+			browserLangWord,
+			contextSentence,
+		})
 
-			if (!validation.isValid) {
-				setErrors(validation.errors)
-				setIsSubmitting(false)
-				return
-			}
-
-			// Obtenir le token d'authentification
-			const {
-				data: { session },
-			} = await supabase.auth.getSession()
-
-			if (!session) {
-				toast.error(t('session_expired'))
-				setIsSubmitting(false)
-				return
-			}
-
-			// Appeler l'API sécurisée
-			const response = await fetch('/api/words/add', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${session.access_token}`,
-				},
-				body: JSON.stringify({
-					learningLangWord: validation.sanitized.learningLangWord,
-					browserLangWord: validation.sanitized.browserLangWord,
-					contextSentence: validation.sanitized.contextSentence || null,
-					materialId: null,
-					userLearningLanguage,
-					locale: locale, // Interface language for translation
-				}),
-			})
-
-			const result = await response.json()
-
-			if (!response.ok) {
-				if (result.errors) {
-					setErrors(result.errors)
-				}
-				const errorMsg = result.details
-					? `${result.error}: ${result.details}`
-					: result.error || t('word_add_error')
-				toast.error(errorMsg)
-				setIsSubmitting(false)
-				return
-			}
-
-			// Succès
-			toast.success(result.message || t('word_add_success'))
-
-			// Recharger la liste des mots
-			dispatch(getAllUserWords({ userId: user.id, userLearningLanguage }))
-
-			// Réinitialiser le formulaire et nettoyer sessionStorage
-			clearFormData()
-			onClose()
-		} catch (error) {
-			console.error('Erreur:', error)
-			toast.error(t('server_error'))
-		} finally {
-			setIsSubmitting(false)
+		if (!validation.isValid) {
+			setErrors(validation.errors)
+			return
 		}
+
+		// Call mutation with validated data
+		addWordMutation.mutate({
+			originalWord: validation.sanitized.learningLangWord,
+			translatedWord: validation.sanitized.browserLangWord,
+			userId: user.id,
+			materialId: null,
+			word_sentence: validation.sanitized.contextSentence || '',
+			userLearningLanguage,
+			locale,
+		})
 	}
 
 	const handleClose = () => {
@@ -278,7 +248,7 @@ const AddWordModal = ({ open, onClose }) => {
 								autoFocus
 								error={!!errors.learningLangWord}
 								helperText={errors.learningLangWord}
-								disabled={isSubmitting}
+								disabled={addWordMutation.isPending}
 								inputProps={{ maxLength: 200 }}
 								sx={{
 									'& .MuiOutlinedInput-root': {
@@ -346,7 +316,7 @@ const AddWordModal = ({ open, onClose }) => {
 								required
 								error={!!errors.browserLangWord}
 								helperText={errors.browserLangWord}
-								disabled={isSubmitting}
+								disabled={addWordMutation.isPending}
 								inputProps={{ maxLength: 200 }}
 								sx={{
 									'& .MuiOutlinedInput-root': {
@@ -424,7 +394,7 @@ const AddWordModal = ({ open, onClose }) => {
 								variant='outlined'
 								error={!!errors.contextSentence}
 								helperText={errors.contextSentence || t('context_sentence_helper')}
-								disabled={isSubmitting}
+								disabled={addWordMutation.isPending}
 								inputProps={{ maxLength: 500 }}
 								sx={{
 									'& .MuiOutlinedInput-root': {
@@ -481,7 +451,7 @@ const AddWordModal = ({ open, onClose }) => {
 						onClick={handleClose}
 						variant='outlined'
 						size='large'
-						disabled={isSubmitting}
+						disabled={addWordMutation.isPending}
 						sx={{
 							flex: { xs: 1, sm: 0 },
 							borderWidth: 2,
@@ -503,7 +473,7 @@ const AddWordModal = ({ open, onClose }) => {
 						type='submit'
 						variant='contained'
 						size='large'
-						disabled={isSubmitting}
+						disabled={addWordMutation.isPending}
 						sx={{
 							flex: { xs: 1, sm: 0 },
 							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -524,7 +494,7 @@ const AddWordModal = ({ open, onClose }) => {
 								color: 'white',
 							},
 						}}>
-						{isSubmitting ? (
+						{addWordMutation.isPending ? (
 							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 								<CircularProgress size={20} sx={{ color: 'white' }} />
 								{t('add')}...

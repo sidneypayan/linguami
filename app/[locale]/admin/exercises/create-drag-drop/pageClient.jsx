@@ -24,6 +24,7 @@ import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import AdminNavbar from '@/components/admin/AdminNavbar'
+import { logger } from '@/utils/logger'
 
 const CreateDragDropExercise = () => {
 	const router = useRouter()
@@ -206,7 +207,7 @@ const CreateDragDropExercise = () => {
 			toast.success(t('createSuccess'))
 			router.push(`/${locale}/admin/exercises`)
 		} catch (error) {
-			console.error('Error creating exercise:', error)
+			logger.error('Error creating exercise:', error)
 			toast.error(t('createError'))
 		} finally {
 			setLoading(false)

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
 import { usePathname, useParams } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useHasLessonsForLanguage } from '@/lib/lessons-client'
 import UserMenu from './UserMenu'
 import ThemeToggle from '../ThemeToggle'
 import {
@@ -45,7 +45,8 @@ const Navbar = props => {
 	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
 	const pathname = usePathname()
 	const params = useParams()
-	const { lessons, lessons_loading } = useSelector(store => store.lessons)
+	// Check if lessons are available for current interface language
+	const { data: hasLessons = false, isLoading: isCheckingLessons } = useHasLessonsForLanguage(locale)
 
 	const allNavigationLinks = [
 		{
@@ -74,8 +75,7 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: <LocalLibraryRounded style={{ fontSize: '1.5rem' }} />,
 			href: '/lessons',
-			// Cacher seulement si chargement terminé ET aucune leçon
-			hideIf: !lessons_loading && lessons?.length === 0,
+			hideIf: !isCheckingLessons && !hasLessons,
 		},
 		{
 			name: t('blog'),
@@ -110,6 +110,17 @@ const Navbar = props => {
 		const pathSegments = pathname.split('/').filter(Boolean)
 		// Check if path is /method/[level]/[lessonSlug] (3 segments)
 		return pathname.startsWith('/method/') && pathSegments.length === 3
+	}
+
+	// Check if user is currently on a material section page (e.g., /materials/dialogues)
+	const isOnMaterialSectionPage = () => {
+		if (!pathname) return false
+		const pathSegments = pathname.split('/').filter(Boolean)
+		// Check if path is /materials/[section] (2 segments, or 3 with locale)
+		// e.g., /fr/materials/dialogues or /materials/dialogues
+		const isMaterialsPath = pathname.includes('/materials/')
+		const hasSection = params?.section && !params?.material
+		return isMaterialsPath && hasSection
 	}
 
 	const drawer = (
@@ -670,8 +681,8 @@ const Navbar = props => {
 							</Link>
 						)}
 
-						{/* Theme toggle and Language buttons - only show when not in material/blog detail or in lesson */}
-						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && (
+						{/* Theme toggle and Language buttons - only show when not in material/blog detail, section page, or in lesson */}
+						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && !isOnMaterialSectionPage() && (
 							<>
 								<ThemeToggle />
 								<InterfaceLanguageMenu />

@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useState } from 'react'
 import {
 	AutoStoriesRounded,
 	CheckCircleRounded,
@@ -9,8 +8,8 @@ import {
 	CloseRounded,
 	MenuBookRounded,
 } from '@mui/icons-material'
-import { getBookChapters } from '@/features/materials/materialsSlice'
-import { useDispatch } from 'react-redux'
+import { useBookChapters, useUserMaterialsStatus } from '@/lib/materials-client'
+import { useUserContext } from '@/context/user'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import {
 	Box,
@@ -25,37 +24,20 @@ import {
 	Divider,
 	Chip,
 } from '@mui/material'
-import {
-	getUserMaterialsStatus,
-	getUserMaterialStatus,
-} from '@/features/materials/materialsSlice'
 
 const BookMenu = ({ bookId }) => {
-	const { chapters, user_materials_status } = useSelector(
-		store => store.materials
-	)
+	const { isUserLoggedIn } = useUserContext()
+	const { data: chapters = [] } = useBookChapters(bookId)
+	const { data: userMaterialsStatus = [] } = useUserMaterialsStatus(isUserLoggedIn)
 
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
 	const { section, material } = params
 
-	const dispatch = useDispatch()
-
-	useEffect(() => {
-		if (!section) return
-
-		dispatch(getUserMaterialsStatus())
-	}, [section, dispatch])
-
-	useEffect(() => {
-		if (bookId) {
-			dispatch(getBookChapters(bookId))
-		}
-	}, [dispatch, bookId])
-
 	const checkIfUserMaterialIsInMaterials = id => {
-		const matchingMaterials = user_materials_status.find(
+		if (!userMaterialsStatus) return null
+		const matchingMaterials = userMaterialsStatus.find(
 			userMaterial => userMaterial.material_id === id
 		)
 		return matchingMaterials

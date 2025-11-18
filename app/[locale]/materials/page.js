@@ -1,4 +1,7 @@
 import { getTranslations } from 'next-intl/server'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@/lib/supabase-server'
+import { getAllMaterialsByLanguage, getUserMaterialsStatus } from '@/app/data/materials'
 import MaterialsPageClient from '@/components/materials/MaterialsPageClient'
 
 export async function generateMetadata({ params }) {
@@ -61,6 +64,31 @@ export default async function MaterialsPage({ params }) {
 	const { locale } = await params
 	const t = await getTranslations({ locale, namespace: 'materials' })
 
+	// Get user and learning language
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+	const { data: { user } } = await supabase.auth.getUser()
+
+	let learningLanguage = 'fr' // Default
+	let userMaterialsStatus = []
+
+	if (user) {
+		// Get learning language from profile
+		const { data: profile } = await supabase
+			.from('profiles')
+			.select('learning_language')
+			.eq('user_id', user.id)
+			.single()
+
+		learningLanguage = profile?.learning_language || 'fr'
+
+		// Fetch user materials status for filtering
+		userMaterialsStatus = await getUserMaterialsStatus(user.id)
+	}
+
+	// Fetch all materials for this language
+	const allMaterials = await getAllMaterialsByLanguage(learningLanguage)
+
 	// JSON-LD for ItemList
 	const jsonLd = {
 		'@context': 'https://schema.org',
@@ -102,7 +130,11 @@ export default async function MaterialsPage({ params }) {
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			)}
-			<MaterialsPageClient />
+			<MaterialsPageClient
+				initialMaterials={allMaterials}
+				initialUserMaterialsStatus={userMaterialsStatus}
+				learningLanguage={learningLanguage}
+			/>
 		</>
 	)
 }

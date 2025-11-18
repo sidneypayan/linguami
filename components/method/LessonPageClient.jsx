@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouterCompat } from '@/hooks/useRouterCompat'
-import { useSelector, useDispatch } from 'react-redux'
+import { useState } from 'react'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import { useTranslations, useLocale } from 'next-intl'
 import {
 	Container,
@@ -25,12 +24,10 @@ import { Link } from '@/i18n/navigation'
 import LessonNavigator from '@/components/courses/LessonNavigator'
 import PaywallBlock from '@/components/courses/PaywallBlock'
 import UpsellModal from '@/components/courses/UpsellModal'
-import {
-	completeCourseLesson,
-	loadLocalProgress,
-	completeLocalLessonAction,
-} from '@/features/courses/coursesSlice'
+import { useLessonProgress, useCompleteLesson } from '@/lib/courses-client'
+import { useAddXP } from '@/hooks/gamification/useAddXP'
 import toast from '@/utils/toast'
+import { logger } from '@/utils/logger'
 
 const LessonPageClient = ({
 	level,
@@ -40,72 +37,61 @@ const LessonPageClient = ({
 	userHasAccess,
 	isPremium,
 	isUserLoggedIn,
-	initialProgress,
 }) => {
 	const router = useRouterCompat()
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const dispatch = useDispatch()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
 	// Local state
-	const [lessonCompleted, setLessonCompleted] = useState(false)
 	const [showUpsellModal, setShowUpsellModal] = useState(false)
 
-	// Redux state for progress tracking
-	const { userProgress } = useSelector((state) => state.courses)
+	// React Query: Get lesson progress (supports both logged in and guest users)
+	const { data: progressData } = useLessonProgress(lesson?.id, isUserLoggedIn)
 
-	// Load local progress for non-authenticated users
-	useEffect(() => {
-		if (!isUserLoggedIn) {
-			dispatch(loadLocalProgress())
-		}
-	}, [isUserLoggedIn, dispatch])
+	// React Query: Complete lesson mutation with optimistic updates
+	const { mutate: completeLesson, isPending: isCompleting } = useCompleteLesson(isUserLoggedIn)
 
-	// Check if lesson is completed
-	useEffect(() => {
-		if (lesson && userProgress) {
-			const progress = userProgress.find((p) => p.lesson_id === lesson.id)
-			setLessonCompleted(progress?.is_completed || false)
-		} else if (lesson && initialProgress) {
-			const progress = initialProgress.find((p) => p.lesson_id === lesson.id)
-			setLessonCompleted(progress?.is_completed || false)
-		}
-	}, [lesson, userProgress, initialProgress])
+	// React Query: Add XP mutation
+	const { mutate: addXP } = useAddXP()
 
-	const handleMarkComplete = async () => {
+	// Derived state: Is lesson completed?
+	const lessonCompleted = progressData?.is_completed || false
+
+	const handleMarkComplete = () => {
 		if (!lesson) return
 
-		try {
-			if (isUserLoggedIn) {
-				// Save to database for logged in users
-				await dispatch(completeCourseLesson(lesson.id)).unwrap()
-				setLessonCompleted(true)
+		// Optimistic update handled automatically by React Query
+		completeLesson(lesson.id, {
+			onSuccess: () => {
 				toast.success(t('methode_lesson_completed_toast'))
-			} else {
-				// Save to localStorage for non-logged in users
-				dispatch(completeLocalLessonAction(lesson.id))
-				setLessonCompleted(true)
-				toast.success(t('methode_lesson_completed_toast'))
-			}
+				// Award XP for completing the lesson (only for logged in users)
+				if (isUserLoggedIn) {
+					addXP({
+						actionType: 'course_lesson_completed',
+						sourceId: `lesson-${lesson.id}`,
+					})
+				}
 
-			// Check if we should show upsell modal
-			const isFirstLesson = course?.course_lessons?.[0]?.id === lesson.id
-			const levelIsFree = level?.is_free === true
+				// Check if we should show upsell modal
+				const isFirstLesson = course?.course_lessons?.[0]?.id === lesson.id
+				const levelIsFree = level?.is_free === true
 
-			// Show upsell modal if: 1st lesson + level not free + user doesn't have access
-			if (isFirstLesson && !levelIsFree && !userHasAccess) {
-				setShowUpsellModal(true)
-			}
-		} catch (error) {
-			toast.error(t('methode_save_error'))
-		}
+				// Show upsell modal if: 1st lesson + level not free + user doesn't have access
+				if (isFirstLesson && !levelIsFree && !userHasAccess) {
+					setShowUpsellModal(true)
+				}
+			},
+			onError: () => {
+				toast.error(t('methode_save_error'))
+			},
+		})
 	}
 
 	const handlePurchase = () => {
 		// TODO: Implement purchase flow
-		console.log('Purchase clicked')
+		logger.log('Purchase clicked')
 		toast.info('Fonctionnalité de paiement à venir !')
 		setShowUpsellModal(false)
 	}
@@ -117,10 +103,7 @@ const LessonPageClient = ({
 
 	// Get objectives in current language, fallback to objectives or objectives_fr
 	const objectives =
-		lesson?.[objectivesKey] ||
-		lesson?.objectives ||
-		lesson?.objectives_fr ||
-		[]
+		lesson?.[objectivesKey] || lesson?.objectives || lesson?.objectives_fr || []
 
 	// Get blocks in spoken language (user's native language for translations)
 	// Prefer blocks_fr/blocks_ru/blocks_en based on spoken language, fallback to blocks
@@ -245,6 +228,7 @@ const LessonPageClient = ({
 							blocks={blocks}
 							lessonId={lesson?.id}
 							onComplete={handleMarkComplete}
+							isCompleting={isCompleting}
 						/>
 
 						{/* Navigation */}

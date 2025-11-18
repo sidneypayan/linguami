@@ -10,6 +10,7 @@ import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
 // Head component not needed in App Router - use metadata in layout
 import { Link } from '@/i18n/navigation'
+import { logger } from '@/utils/logger'
 import {
 	Box,
 	Button,
@@ -26,6 +27,7 @@ import {
 	Visibility,
 	VisibilityOff,
 } from '@mui/icons-material'
+import { verifyTurnstile } from '@/app/actions/auth'
 
 const Login = () => {
 	const t = useTranslations('register')
@@ -46,23 +48,15 @@ const Login = () => {
 		e.preventDefault()
 		// Verify Turnstile token
 		if (!turnstileToken) {
-			console.error('❌ No Turnstile token found in state')
+			logger.error('❌ No Turnstile token found in state')
 			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
 			return
 		}
-		console.log('Token (first 20 chars):', turnstileToken.substring(0, 20) + '...')
+		logger.log('Token (first 20 chars):', turnstileToken.substring(0, 20) + '...')
 
 		// Verify token with backend
 		try {
-			const verifyResponse = await fetch('/api/verify-turnstile', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: turnstileToken }),
-			})
-
-			const verifyData = await verifyResponse.json()
+			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
@@ -71,7 +65,7 @@ const Login = () => {
 				return
 			}
 		} catch (error) {
-			console.error('Turnstile verification error:', error)
+			logger.error('Turnstile verification error:', error)
 			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
@@ -82,7 +76,7 @@ const Login = () => {
 		try {
 			await login(values)
 		} catch (error) {
-			console.error('Login failed:', error)
+			logger.error('Login failed:', error)
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
 		}
@@ -248,11 +242,11 @@ const Login = () => {
 					<TurnstileWidget
 						ref={turnstileRef}
 						onSuccess={(token) => {
-							console.log('Token:', token?.substring(0, 20) + '...')
+							logger.log('Token:', token?.substring(0, 20) + '...')
 							setTurnstileToken(token)
 						}}
 						onError={(error) => {
-							console.error('❌ Login page: Turnstile error or expiration:', error)
+							logger.error('❌ Login page: Turnstile error or expiration:', error)
 							setTurnstileToken(null)
 							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
 						}}

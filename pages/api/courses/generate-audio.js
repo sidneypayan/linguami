@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase-server'
+import { logger } from '@/utils/logger'
 
 /**
  * API route to generate audio using ElevenLabs and upload to R2
@@ -93,7 +94,7 @@ export default async function handler(req, res) {
 
 		if (!elevenLabsResponse.ok) {
 			const errorText = await elevenLabsResponse.text()
-			console.error('ElevenLabs API error:', errorText)
+			logger.error('ElevenLabs API error:', errorText)
 			return res.status(500).json({
 				error: 'Failed to generate audio',
 				details: errorText,
@@ -117,7 +118,7 @@ export default async function handler(req, res) {
 
 		// Ensure filename ends with .mp3 (but don't add it if already present)
 		const cleanFileName = fileName.endsWith('.mp3') ? fileName : `${fileName}.mp3`
-		const filePath = `audio/courses/${language}/${cleanFileName}`
+		const filePath = `audios/courses/${language}/${cleanFileName}`
 
 		try {
 			await s3Client.send(
@@ -129,7 +130,7 @@ export default async function handler(req, res) {
 				})
 			)
 		} catch (uploadError) {
-			console.error('R2 upload error:', uploadError)
+			logger.error('R2 upload error:', uploadError)
 			return res.status(500).json({
 				error: 'Failed to upload audio',
 				details: uploadError.message,
@@ -145,7 +146,7 @@ export default async function handler(req, res) {
 			path: filePath,
 		})
 	} catch (error) {
-		console.error('Error generating audio:', error)
+		logger.error('Error generating audio:', error)
 		return res.status(500).json({
 			error: 'Internal server error',
 			details: error.message,

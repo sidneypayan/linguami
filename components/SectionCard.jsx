@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { sections } from '@/data/sections'
-import { useDispatch } from 'react-redux'
 import styles from '@/styles/sections/SectionCard.module.css'
 import { getMaterialImageUrl } from '@/utils/mediaUrls'
 import {
@@ -13,7 +12,6 @@ import {
 	Schedule,
 } from '@mui/icons-material'
 import { useRouter, usePathname, useParams } from 'next/navigation'
-import { getFirstChapterOfBook } from '@/features/materials/materialsSlice'
 import {
 	Box,
 	Card,
@@ -25,33 +23,17 @@ import {
 import { Link } from '@/i18n/navigation'
 import { useUserContext } from '@/context/user'
 import { useTranslations, useLocale } from 'next-intl'
+import { logger } from '@/utils/logger'
 
 const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const t = useTranslations('materials')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const dispatch = useDispatch()
 	const router = useRouter()
 	const pathname = usePathname()
 	const params = useParams()
 	const { section } = params
 	const { userLearningLanguage } = useUserContext()
-
-	const handleClick = async () => {
-		try {
-			const chapter = await dispatch(
-				getFirstChapterOfBook({
-					bookId: material.id,
-					userLearningLanguage,
-				})
-			).unwrap()
-
-			router.push(`/materials/books/${chapter.id}`)
-		} catch (error) {
-			console.error('Erreur lors de la récupération du chapitre :', error)
-			// Tu peux afficher un message d'erreur ici si besoin
-		}
-	}
 
 	const getDifficultyInfo = level => {
 		if (level === 'beginner') {
@@ -525,11 +507,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 			</Card>
 	)
 
-	return section === 'books' ? (
-		<button type="button" onClick={handleClick} className={styles.cardButton}>
-			<SectionCardContent />
-		</button>
-	) : (
+	return (
 		<Link href={`/materials/${material.section}/${material.id}`}>
 			<SectionCardContent />
 		</Link>

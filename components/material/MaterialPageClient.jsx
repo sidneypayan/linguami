@@ -3,22 +3,17 @@
 import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useState, use } from 'react'
-import { supabase } from '@/lib/supabase'
-import { useRouterCompat } from '@/hooks/useRouterCompat'
-import { useSelector, useDispatch } from 'react-redux'
+import { useEffect, useState, use, useMemo } from 'react'
+import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
-	getUserMaterialStatus,
-	getUserMaterialsStatus,
 	addMaterialToStudied,
-} from '@/features/materials/materialsSlice'
-import {
-	toggleTranslationContainer,
-	cleanTranslation,
-} from '@/features/words/wordsSlice'
-import BookMenu from '@/components/material/BookMenu'
+} from '@/app/actions/materials'
+import { useTranslation } from '@/context/translation'
+import ChapterBreadcrumb from '@/components/material/ChapterBreadcrumb'
+import ChapterNavigation from '@/components/material/ChapterNavigation'
 import Translation from '@/components/material/Translation'
 import Words from '@/components/material/Words'
 import WordsContainer from '@/components/material/WordsContainer'
@@ -30,7 +25,6 @@ import { sections } from '@/data/sections'
 
 import Player from '@/components/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
-import { editContent } from '@/features/content/contentSlice'
 import {
 	Box,
 	Button,
@@ -51,7 +45,6 @@ import {
 	CheckCircleRounded,
 	EditRounded,
 } from '@mui/icons-material'
-// Head removed - use metadata in App Router
 
 import {
 	primaryButton,
@@ -60,82 +53,126 @@ import {
 	successButton,
 } from '@/utils/buttonStyles'
 
-const Material = ({ params: paramsPromise }) => {
+const Material = ({
+	params: paramsPromise,
+	initialMaterial,
+	initialUserMaterialStatus,
+	initialUserMaterialsStatus = [],
+	book = null,
+	previousChapter = null,
+	nextChapter = null,
+}) => {
 	const params = use(paramsPromise)
 	const t = useTranslations('materials')
 	const locale = useLocale()
-	const dispatch = useDispatch()
+	const { closeTranslation, cleanTranslation } = useTranslation()
 	const router = useRouterCompat()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } =
-		useUserContext()
+	const { user, isUserAdmin, userLearningLanguage, isUserLoggedIn } = useUserContext()
+	const queryClient = useQueryClient()
 
-	// Dans App Router, les paramètres viennent via props
-	const [currentMaterial, setCurrentMaterial] = useState(null)
-	const [loading, setLoading] = useState(true)
+	// Local UI state
 	const [showAccents, setShowAccents] = useState(false)
 	const [coordinates, setCoordinates] = useState({})
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
-	const { user_material_status } = useSelector(store => store.materials)
-
-	const { is_being_studied, is_studied } = user_material_status
-
-	// Charger le matériel côté client
-	useEffect(() => {
-		const fetchMaterial = async () => {
-			if (!params?.material) return
-
-			setLoading(true)
-			const { data: material, error } = await supabase
-				.from('materials')
-				.select('*')
-				.eq('id', params.material)
-				.single()
-
-			if (!error && material) {
-				setCurrentMaterial(material)
-			}
-			setLoading(false)
+	// Helper function to decode base64 UTF-8
+	const decodeBase64UTF8 = (base64String) => {
+		if (!base64String) return null
+		const binaryString = atob(base64String)
+		const bytes = new Uint8Array(binaryString.length)
+		for (let i = 0; i < binaryString.length; i++) {
+			bytes[i] = binaryString.charCodeAt(i)
 		}
+		return new TextDecoder('utf-8').decode(bytes)
+	}
 
-		fetchMaterial()
-	}, [params?.material])
+	// Decode base64-encoded text fields if they were encoded server-side
+	const decodedMaterial = initialMaterial && initialMaterial._encoded ? {
+		...initialMaterial,
+		content: decodeBase64UTF8(initialMaterial.content),
+		content_accented: decodeBase64UTF8(initialMaterial.content_accented),
+	} : initialMaterial
 
-	useEffect(() => {
-		if (!currentMaterial?.id) return
+	// React Query: Hydrate material data with SSR data
+	const { data: currentMaterial } = useQuery({
+		queryKey: ['material', params?.material],
+		queryFn: () => decodedMaterial,
+		initialData: decodedMaterial,
+		staleTime: Infinity,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		enabled: false, // Never refetch, only use initial data
+	})
 
-		dispatch(getUserMaterialStatus(currentMaterial.id))
-	}, [dispatch, currentMaterial])
+	// React Query: Hydrate user material status
+	const { data: userMaterialStatus } = useQuery({
+		queryKey: ['userMaterialStatus', params?.material],
+		queryFn: () => initialUserMaterialStatus,
+		initialData: initialUserMaterialStatus,
+		staleTime: Infinity,
+	})
+
+	const { is_being_studied, is_studied } = userMaterialStatus || { is_being_studied: false, is_studied: false }
+
+	// Mutation: Add material to studying
+	const addToStudyingMutation = useMutation({
+		mutationFn: addBeingStudiedMaterial,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: true,
+				is_studied: false,
+			})
+			// XP is now added server-side in addBeingStudiedMaterial action
+		},
+	})
+
+	// Mutation: Remove material from studying
+	const removeFromStudyingMutation = useMutation({
+		mutationFn: removeBeingStudiedMaterial,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: false,
+				is_studied: false,
+			})
+		},
+	})
+
+	// Mutation: Mark material as studied
+	const markAsStudiedMutation = useMutation({
+		mutationFn: addMaterialToStudied,
+		onSuccess: () => {
+			// Update local cache
+			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+				is_being_studied: false,
+				is_studied: true,
+			})
+			// XP is now added server-side in addMaterialToStudied action
+		},
+	})
 
 	// Fermer la popup de traduction quand l'utilisateur change de matériel
 	useEffect(() => {
-		// Fermer la popup lors du changement de matériel
-		dispatch(toggleTranslationContainer(false))
-		dispatch(cleanTranslation())
+		closeTranslation()
+		cleanTranslation()
 		setCoordinates({})
-	}, [currentMaterial?.id, dispatch])
+	}, [currentMaterial?.id, closeTranslation, cleanTranslation])
 
 	const handleEditContent = () => {
 		setEditModalOpen(true)
 	}
 
-	const handleEditSuccess = async () => {
-		// Recharger les données du matériel après la modification
-		const { data, error } = await supabase
-			.from('materials')
-			.select('*')
-			.eq('id', currentMaterial.id)
-			.single()
-
-		if (!error && data) {
-			setCurrentMaterial(data)
-		}
+	const handleEditSuccess = () => {
+		// Invalidate and refetch material data
+		queryClient.invalidateQueries(['material', params?.material])
 	}
 
-	const getImageRegardingSection = section => {
+		const getImageRegardingSection = section => {
 		if (section === 'place') {
 			return (
 				<Container
@@ -165,7 +202,7 @@ const Material = ({ params: paramsPromise }) => {
 		}
 	}
 
-	const displayAudioPlayer = (section, audio) => {
+	const displayAudioPlayer = (section) => {
 		if (sections?.audio?.includes(section)) {
 			return <Player src={getAudioUrl(currentMaterial)} />
 		}
@@ -202,7 +239,7 @@ const Material = ({ params: paramsPromise }) => {
 	const isVideoDisplayed =
 		sections?.music?.includes(params?.section) || sections?.video?.includes(params?.section)
 
-	if (loading || !currentMaterial) {
+	if (!currentMaterial) {
 		return (
 			<Container maxWidth="lg" sx={{ pt: '8rem', textAlign: 'center' }}>
 				<Typography>Loading...</Typography>
@@ -210,52 +247,71 @@ const Material = ({ params: paramsPromise }) => {
 		)
 	}
 
+	// Debug: Log pour voir si book est bien reçu
+	if (currentMaterial.book_id) {
+		console.log('📚 Book chapter detected:', {
+			materialId: currentMaterial.id,
+			bookId: currentMaterial.book_id,
+			bookReceived: !!book,
+			book: book
+		})
+	}
+
 	return (
 		<>
-			{/* Compact Header */}
-			<Box
-				sx={{
-					pt: { xs: '30px', md: '6rem' },
-					pb: { xs: '20px', md: 2.5 },
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: 'background.paper',
-				}}>
-				<Container maxWidth='lg'>
-					<Box
-						sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
-						<IconButton
-							sx={{
-								background:
-									'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								color: '#8b5cf6',
-								transition: 'all 0.3s ease',
-								'&:hover': {
+			{/* Chapter Breadcrumb Navigation (for book chapters) */}
+			{currentMaterial.book_id && book ? (
+				<ChapterBreadcrumb
+					book={book}
+					currentChapter={currentMaterial}
+					userMaterialsStatus={initialUserMaterialsStatus}
+				/>
+			) : (
+				/* Compact Header (for regular materials) */
+				<Box
+					sx={{
+						pt: { xs: '30px', md: '6rem' },
+						pb: { xs: '20px', md: 2.5 },
+						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
+						bgcolor: 'background.paper',
+					}}>
+					<Container maxWidth='lg'>
+						<Box
+							sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+							<IconButton
+								sx={{
 									background:
-										'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
-									transform: 'scale(1.05)',
-								},
-							}}
-							aria-label='back'
-							onClick={() => typeof window !== 'undefined' && window.history.back()}>
-							<ArrowBack fontSize='medium' />
-						</IconButton>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
-								background:
-									'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								flex: 1,
-							}}>
-							{currentMaterial.title}
-						</Typography>
-					</Box>
-				</Container>
-			</Box>
+										'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.3)',
+									color: '#8b5cf6',
+									transition: 'all 0.3s ease',
+									'&:hover': {
+										background:
+											'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+										transform: 'scale(1.05)',
+									},
+								}}
+								aria-label='back'
+								onClick={() => typeof window !== 'undefined' && window.history.back()}>
+								<ArrowBack fontSize='medium' />
+							</IconButton>
+							<Typography
+								variant='h4'
+								sx={{
+									fontWeight: 700,
+									fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+									background:
+										'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									flex: 1,
+								}}>
+								{currentMaterial.title}
+							</Typography>
+						</Box>
+					</Container>
+				</Box>
+			)}
 
 			<Stack
 				sx={{
@@ -311,13 +367,7 @@ const Material = ({ params: paramsPromise }) => {
 								<Button
 									variant='contained'
 									startIcon={<PlayArrowRounded />}
-									onClick={async () => {
-										await dispatch(
-											addBeingStudiedMaterial(currentMaterial.id)
-										)
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => addToStudyingMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
@@ -360,13 +410,7 @@ const Material = ({ params: paramsPromise }) => {
 								<Button
 									variant='contained'
 									startIcon={<PauseRounded />}
-									onClick={async () => {
-										await dispatch(
-											removeBeingStudiedMaterial(currentMaterial.id)
-										)
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => removeFromStudyingMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -405,7 +449,51 @@ const Material = ({ params: paramsPromise }) => {
 								</Button>
 							)}
 
-							{/* Bouton "Montrer les accents" caché */}
+							{/* Bouton pour afficher/masquer les accents toniques (russe uniquement) */}
+							{currentMaterial.content_accented && (
+								<Button
+									variant='outlined'
+									startIcon={<VisibilityRounded />}
+									onClick={() => setShowAccents(!showAccents)}
+									sx={{
+										borderColor: showAccents ? '#10b981' : '#8b5cf6',
+										color: showAccents ? '#10b981' : '#8b5cf6',
+										fontWeight: 600,
+										fontSize: { xs: '0.9rem', sm: '1rem' },
+										padding: { xs: '0.75rem 1.5rem', sm: '0.875rem 2rem' },
+										borderRadius: 3,
+										textTransform: 'none',
+										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+										borderWidth: '2px',
+										'&:hover': {
+											borderColor: showAccents ? '#10b981' : '#8b5cf6',
+											borderWidth: '2px',
+											background: showAccents
+												? 'rgba(16, 185, 129, 0.1)'
+												: 'rgba(139, 92, 246, 0.1)',
+											transform: 'translateY(-3px)',
+											boxShadow: showAccents
+												? '0 4px 20px rgba(16, 185, 129, 0.3)'
+												: '0 4px 20px rgba(139, 92, 246, 0.3)',
+										},
+										'&:active': {
+											transform: 'scale(0.98)',
+										},
+									}}>
+									<Box
+										component='span'
+										sx={{ display: { xs: 'none', sm: 'inline' } }}>
+										{showAccents ? t('hideaccents') : t('showaccents')}
+									</Box>
+									<Box
+										component='span'
+										sx={{ display: { xs: 'inline', sm: 'none' } }}>
+										{showAccents
+											? (locale === 'fr' ? 'Masquer' : locale === 'ru' ? 'Скрыть' : 'Hide')
+											: (locale === 'fr' ? 'Montrer' : locale === 'ru' ? 'Показать' : 'Show')}
+									</Box>
+								</Button>
+							)}
 
 							{/* Si l'user est admin, afficher le bouton permettant de modifier le matériel */}
 							{isUserAdmin && (
@@ -454,17 +542,6 @@ const Material = ({ params: paramsPromise }) => {
 							)}
 						</Box>
 
-						{/* Si le matériel a pour section book, afficher le menu des chapitres du livre */}
-						{params?.section === 'books' && (
-							<Box
-								sx={{
-									position: 'relative',
-									zIndex: 100,
-									marginBottom: '2rem',
-								}}>
-								<BookMenu bookId={currentMaterial.book_id} />
-							</Box>
-						)}
 
 						{/* Afficher le texte avec ou sans accents en fonction de l'état de showAccents */}
 						<Paper
@@ -552,11 +629,7 @@ const Material = ({ params: paramsPromise }) => {
 									variant='contained'
 									size='large'
 									startIcon={<CheckCircleRounded />}
-									onClick={async () => {
-										await dispatch(addMaterialToStudied(currentMaterial.id))
-										dispatch(getUserMaterialStatus(currentMaterial.id))
-										dispatch(getUserMaterialsStatus())
-									}}
+									onClick={() => markAsStudiedMutation.mutate(currentMaterial.id)}
 									sx={{
 										background:
 											'linear-gradient(135deg, #10b981 0%, #059669 100%)',
@@ -593,8 +666,17 @@ const Material = ({ params: paramsPromise }) => {
 								marginTop: '3rem',
 								marginBottom: '3rem',
 							}}>
-							{displayAudioPlayer(params?.section, currentMaterial.audio)}
+							{displayAudioPlayer(params?.section)}
 						</Box>
+
+						{/* Chapter Navigation (Previous/Next buttons) - Only for book chapters */}
+						{currentMaterial.book_id && (
+							<ChapterNavigation
+								previousChapter={previousChapter}
+								nextChapter={nextChapter}
+								userMaterialsStatus={initialUserMaterialsStatus}
+							/>
+						)}
 					</Box>
 				</Box>
 

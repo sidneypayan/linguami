@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { supabase } from '@/lib/supabase'
 import {
 	Box,
 	Container,
@@ -18,11 +16,7 @@ import {
 	LinearProgress,
 } from '@mui/material'
 import { CreatePostForm, CreateMaterialForm } from '@/components'
-import {
-	createContent,
-	updateContent,
-	toggleContentType,
-} from '@/features/content/contentSlice'
+import { useCreateMaterial } from '@/lib/admin-client'
 import { materialData, postData } from '@/utils/constants'
 import {
 	ArrowBack,
@@ -39,17 +33,11 @@ const CreateMaterial = () => {
 	const locale = useLocale()
 	const [formData, setFormData] = useState(materialData)
 	const [files, setFiles] = useState([])
+	const [contentType, setContentType] = useState('materials')
 
 	const router = useRouter()
 	const { isUserAdmin, isBootstrapping } = useUserContext()
-	const dispatch = useDispatch()
-	const {
-		contentType,
-		editingContent,
-		isEditingContent,
-		create_content_error,
-		create_content_loading,
-	} = useSelector(store => store.content)
+	const createMaterialMutation = useCreateMaterial()
 
 	// Redirect if not admin
 	useEffect(() => {
@@ -59,14 +47,10 @@ const CreateMaterial = () => {
 	}, [isUserAdmin, isBootstrapping, router, locale])
 
 	const toggleContent = (type) => {
-		dispatch(toggleContentType(type))
+		setContentType(type)
 		setFormData(type === 'materials' ? materialData : postData)
+		createMaterialMutation.reset() // Clear any previous errors
 	}
-
-	useEffect(() => {
-		if (!create_content_error)
-			setFormData(contentType === 'materials' ? materialData : postData)
-	}, [create_content_error, contentType])
 
 	const handleChange = e => {
 		let { name, value } = e.target
@@ -95,60 +79,39 @@ const CreateMaterial = () => {
 	const submitContent = async e => {
 		e.preventDefault()
 
-		// DEBUG: Vérifier la session utilisateur
-		const { data: { user } } = await supabase.auth.getUser()
-		console.log('🔍 DEBUG - User ID:', user?.id)
-		console.log('🔍 DEBUG - User Email:', user?.email)
+		if (contentType !== 'materials') {
+			// TODO: Handle posts creation when migrating posts
+			return
+		}
 
-		try {
-			let cleanedFormData = { ...formData }
+		// Prepare material data
+		const materialData = {
+			lang: formData.lang,
+			section: formData.section,
+			level: formData.level,
+			title: formData.title,
+			content: formData.content || '',
+			content_accented: formData.content_accented || '',
+			video_url: formData.video_url || '',
+		}
 
-			if (contentType !== 'posts') {
-				cleanedFormData = {
-					...formData,
-					// Garder les sauts de ligne natifs (\n) - meilleure pratique
-					content: formData.content || '',
-					content_accented: formData.content_accented || '',
+		// Add book-specific fields if needed
+		if (formData.section === 'book-chapters') {
+			materialData.book_id = formData.book_id ? parseInt(formData.book_id) : null
+			materialData.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
+		}
+
+		// Submit with mutation
+		createMaterialMutation.mutate(
+			{ materialData, files },
+			{
+				onSuccess: () => {
+					router.back()
 				}
 			}
-
-			if (!isEditingContent && contentType !== 'posts') {
-				await dispatch(
-					createContent({ content: cleanedFormData, contentType, files })
-				).unwrap()
-			} else if (!isEditingContent && contentType === 'posts') {
-				await dispatch(
-					createContent({ content: formData, contentType })
-				).unwrap()
-			} else if (isEditingContent) {
-				await dispatch(
-					updateContent({ content: cleanedFormData, contentType })
-				).unwrap()
-			}
-
-			router.back()
-		} catch (err) {
-			console.error('Erreur lors de l\'envoi du contenu:', err)
-		}
+		)
 	}
 
-	useEffect(() => {
-		if (Object.keys(editingContent).length > 0) {
-			const formattedContent = {
-				...editingContent,
-			}
-
-			if (contentType !== 'posts' && editingContent.content) {
-				// Conversion <br> → \n pour rétrocompatibilité (anciennes données)
-				// Après la migration DB, cette conversion ne sera plus nécessaire
-				formattedContent.content = editingContent.content.replace(/<br\s*\/?>/gi, '\n')
-				formattedContent.content_accented =
-					editingContent.content_accented?.replace(/<br\s*\/?>/gi, '\n') || ''
-			}
-
-			setFormData(formattedContent)
-		}
-	}, [editingContent, contentType])
 
 	// Validate all required fields for publishing
 	const canPublish = () => {
@@ -280,7 +243,7 @@ const CreateMaterial = () => {
 										color: '#1E293B',
 										letterSpacing: '-0.5px',
 									}}>
-									{isEditingContent ? t('editContent') : t('createContent')}
+									{t('createContent')}
 								</Typography>
 								<Typography variant='body2' sx={{ color: '#64748B' }}>
 									{contentType === 'materials' ? t('materialContent') : t('blogArticle')}
@@ -288,40 +251,38 @@ const CreateMaterial = () => {
 							</Box>
 						</Box>
 
-						{!isEditingContent && (
-							<Box sx={{ display: 'flex', gap: 1 }}>
-								<Chip
-									icon={<LibraryBooks fontSize='small' />}
-									label={t('material')}
-									onClick={() => toggleContent('materials')}
-									variant={contentType === 'materials' ? 'filled' : 'outlined'}
-									sx={{
-										bgcolor: contentType === 'materials' ? '#667eea' : 'transparent',
-										color: contentType === 'materials' ? 'white' : '#667eea',
-										borderColor: '#667eea',
-										fontWeight: 600,
-										'&:hover': {
-											bgcolor: contentType === 'materials' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
-										},
-									}}
-								/>
-								<Chip
-									icon={<Article fontSize='small' />}
-									label={t('article')}
-									onClick={() => toggleContent('posts')}
-									variant={contentType === 'posts' ? 'filled' : 'outlined'}
-									sx={{
-										bgcolor: contentType === 'posts' ? '#667eea' : 'transparent',
-										color: contentType === 'posts' ? 'white' : '#667eea',
-										borderColor: '#667eea',
-										fontWeight: 600,
-										'&:hover': {
-											bgcolor: contentType === 'posts' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
-										},
-									}}
-								/>
-							</Box>
-						)}
+						<Box sx={{ display: 'flex', gap: 1 }}>
+							<Chip
+								icon={<LibraryBooks fontSize='small' />}
+								label={t('material')}
+								onClick={() => toggleContent('materials')}
+								variant={contentType === 'materials' ? 'filled' : 'outlined'}
+								sx={{
+									bgcolor: contentType === 'materials' ? '#667eea' : 'transparent',
+									color: contentType === 'materials' ? 'white' : '#667eea',
+									borderColor: '#667eea',
+									fontWeight: 600,
+									'&:hover': {
+										bgcolor: contentType === 'materials' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
+									},
+								}}
+							/>
+							<Chip
+								icon={<Article fontSize='small' />}
+								label={t('article')}
+								onClick={() => toggleContent('posts')}
+								variant={contentType === 'posts' ? 'filled' : 'outlined'}
+								sx={{
+									bgcolor: contentType === 'posts' ? '#667eea' : 'transparent',
+									color: contentType === 'posts' ? 'white' : '#667eea',
+									borderColor: '#667eea',
+									fontWeight: 600,
+									'&:hover': {
+										bgcolor: contentType === 'posts' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
+									},
+								}}
+							/>
+						</Box>
 					</Box>
 
 					{/* Progress Bar */}
@@ -353,7 +314,7 @@ const CreateMaterial = () => {
 
 			<Container maxWidth="lg" sx={{ py: 4 }}>
 				{/* Error Alert */}
-				{create_content_error && (
+				{createMaterialMutation.error && (
 					<Fade in>
 						<Alert
 							severity='error'
@@ -363,7 +324,7 @@ const CreateMaterial = () => {
 								border: '1px solid',
 								borderColor: 'error.light',
 							}}>
-							{create_content_error}
+							{createMaterialMutation.error.message}
 						</Alert>
 					</Fade>
 				)}
@@ -402,8 +363,8 @@ const CreateMaterial = () => {
 								<Button
 									type='submit'
 									variant='contained'
-									disabled={create_content_loading || !publishable}
-									startIcon={isEditingContent ? <Save /> : <CheckCircle />}
+									disabled={createMaterialMutation.isPending || !publishable}
+									startIcon={<CheckCircle />}
 									sx={{
 										bgcolor: '#10B981',
 										color: 'white',
@@ -422,11 +383,7 @@ const CreateMaterial = () => {
 											color: 'white',
 										},
 									}}>
-									{create_content_loading
-										? t('saving')
-										: isEditingContent
-										? t('update')
-										: t('publish')}
+									{createMaterialMutation.isPending ? t('saving') : t('publish')}
 								</Button>
 							</Box>
 						</form>

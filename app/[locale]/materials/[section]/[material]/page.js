@@ -1,18 +1,16 @@
 import { getTranslations } from 'next-intl/server'
-import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@/lib/supabase-server'
+import { getUserMaterialStatus, getSiblingChapters, getUserMaterialsStatus } from '@/app/data/materials'
 import MaterialPageClient from '@/components/material/MaterialPageClient'
-
-// Créer un client Supabase pour les Server Components
-const supabase = createClient(
-	process.env.NEXT_PUBLIC_SUPABASE_URL,
-	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export async function generateMetadata({ params }) {
 	const { locale, section, material: materialId } = await params
 	const t = await getTranslations({ locale, namespace: 'materials' })
 
 	// Récupérer les infos du matériel pour les métadonnées
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
 	const { data: material } = await supabase
 		.from('materials')
 		.select('title, level')
@@ -67,6 +65,64 @@ export async function generateMetadata({ params }) {
 	}
 }
 
-export default function MaterialPage({ params }) {
-	return <MaterialPageClient params={params} />
+export default async function MaterialPage({ params }) {
+	const { material: materialId } = await params
+
+	// Fetch material data server-side
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+
+	const { data: material } = await supabase
+		.from('materials')
+		.select('*')
+		.eq('id', materialId)
+		.single()
+
+	// Get user and fetch material status if authenticated
+	const { data: { user } } = await supabase.auth.getUser()
+	let userMaterialStatus = { is_being_studied: false, is_studied: false }
+	let userMaterialsStatus = []
+
+	if (user && material) {
+		userMaterialStatus = await getUserMaterialStatus(material.id, user.id)
+		userMaterialsStatus = await getUserMaterialsStatus(user.id)
+	}
+
+	// Fetch book and navigation data for book chapters
+	let book = null
+	let siblingChapters = { previousChapter: null, nextChapter: null }
+
+	if (material && material.book_id) {
+		// Fetch book info (use * to get all columns)
+		const { data: bookData } = await supabase
+			.from('books')
+			.select('*')
+			.eq('id', material.book_id)
+			.single()
+
+		book = bookData
+
+		// Fetch sibling chapters
+		siblingChapters = await getSiblingChapters(material.id, material.book_id)
+	}
+
+	// Encode text fields to base64 to preserve UTF-8 encoding through Next.js serialization
+	const materialWithEncodedText = material ? {
+		...material,
+		content: material.content ? Buffer.from(material.content).toString('base64') : null,
+		content_accented: material.content_accented ? Buffer.from(material.content_accented).toString('base64') : null,
+		_encoded: true, // Flag to indicate fields are encoded
+	} : null
+
+	return (
+		<MaterialPageClient
+			params={params}
+			initialMaterial={materialWithEncodedText}
+			initialUserMaterialStatus={userMaterialStatus}
+			initialUserMaterialsStatus={userMaterialsStatus}
+			book={book}
+			previousChapter={siblingChapters.previousChapter}
+			nextChapter={siblingChapters.nextChapter}
+		/>
+	)
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations, useLocale } from 'next-intl'
+import { useQuery } from '@tanstack/react-query'
 import MaterialsGrid from '@/components/materials/MaterialsGrid'
 import MaterialsFilter from '@/components/materials/MaterialsFilter'
 import MaterialsFilterBar from '@/components/MaterialsFilterBar'
@@ -11,50 +12,52 @@ import { materials_ru, materials_fr, materials_en } from '@/utils/constants'
 import { Box, Typography, Container, useTheme, Button } from '@mui/material'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useUserContext } from '@/context/user'
-import { useSelector, useDispatch } from 'react-redux'
 import { usePathname } from 'next/navigation'
-import { getMaterials, getUserMaterialsStatus, changePage } from '@/features/materials/materialsSlice'
-import { School, Palette, Museum, Movie, MusicNote, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
+import { School, Museum, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
+import { logger } from '@/utils/logger'
+import { getMaterialsByLanguageAction } from '@/app/actions/materials'
 
-const Material = () => {
+const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], learningLanguage = 'fr' }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const pathname = usePathname()
-	const { userLearningLanguage, userProfile, isUserAdmin } = useUserContext()
+	const { userProfile, isUserAdmin, userLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const dispatch = useDispatch()
 	const prevPathnameRef = useRef(pathname)
+	const prevLearningLanguageRef = useRef(userLearningLanguage)
 
-	// Redux state
-	const materials_from_redux = useSelector(state => state.materials.materials || [])
-	const user_materials_status = useSelector(state => state.materials.user_materials_status || [])
-	const materials_loading = useSelector(state => state.materials.materials_loading)
-	const page = useSelector(state => state.materials.page)
+	// React Query: Fetch materials based on user's learning language
+	// When userLearningLanguage changes, React Query will automatically refetch
+	const { data: allLoadedMaterials = [] } = useQuery({
+		queryKey: ['allMaterials', userLearningLanguage],
+		queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
+		// Only use initialData if the language matches, otherwise React Query will fetch fresh data
+		initialData: userLearningLanguage === learningLanguage ? initialMaterials : undefined,
+		enabled: !!userLearningLanguage,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
 
-	// État local pour stocker tous les matériaux chargés
-	const [allLoadedMaterials, setAllLoadedMaterials] = useState([])
-	const [isLoadingAllMaterials, setIsLoadingAllMaterials] = useState(false)
+	// React Query: Hydrate user materials status
+	const { data: user_materials_status = [] } = useQuery({
+		queryKey: ['userMaterialsStatus'],
+		queryFn: () => initialUserMaterialsStatus,
+		initialData: initialUserMaterialsStatus,
+		staleTime: Infinity,
+	})
+
+	// État local
 	const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false)
-
 	const [materials, setMaterials] = useState([])
 	const [practice, setPractice] = useState([])
 	const [culture, setCulture] = useState([])
 	const [literature, setLiterature] = useState([])
 
 	// Mode d'affichage principal : 'category' (actuel) ou 'list' (filtres avancés)
-	// Initialiser directement depuis localStorage pour éviter le flash
-	const [displayMode, setDisplayMode] = useState(() => {
-		if (typeof window !== 'undefined') {
-			const saved = localStorage.getItem('materialsDisplayMode')
-			if (saved && (saved === 'category' || saved === 'list')) {
-				return saved
-			}
-		}
-		return 'category'
-	})
+	const [displayMode, setDisplayMode] = useState('category')
+	const [isDisplayModeLoaded, setIsDisplayModeLoaded] = useState(false)
 
-	// États pour le mode catégorie
+	// État pour le filtre de catégorie (mode category)
 	const [selectedCategory, setSelectedCategory] = useState('all')
 
 	// États pour le mode liste
@@ -62,7 +65,8 @@ const Material = () => {
 	const [selectedLevel, setSelectedLevel] = useState(null)
 	const [selectedStatus, setSelectedStatus] = useState(null)
 	const [selectedSection, setSelectedSection] = useState(null)
-	const [viewMode, setViewMode] = useState('card') // 'card' ou 'list'
+	const [viewMode, setViewMode] = useState('card')
+	const [currentPage, setCurrentPage] = useState(1)
 
 	// Pagination
 	const materialsPerPage = 8
@@ -70,252 +74,248 @@ const Material = () => {
 	// Niveau de l'utilisateur
 	const userLevel = userProfile?.language_level || 'beginner'
 
+	// Réinitialiser les filtres quand la langue d'apprentissage change
+	useEffect(() => {
+		const prevLang = prevLearningLanguageRef.current
+
+		// Only reset filters if language actually changed (not on initial load)
+		if (prevLang && userLearningLanguage && prevLang !== userLearningLanguage && displayMode === 'list') {
+			// Clear filters to avoid showing empty results with filters from another language
+			setSearchTerm('')
+			setSelectedLevel(null)
+			setSelectedStatus(null)
+			setSelectedSection(null)
+			setCurrentPage(1)
+		}
+
+		prevLearningLanguageRef.current = userLearningLanguage
+	}, [userLearningLanguage, displayMode])
+
+	// Charger la préférence depuis localStorage après l'hydratation
+	useEffect(() => {
+		const saved = localStorage.getItem('materialsDisplayMode')
+		if (saved && (saved === 'category' || saved === 'list')) {
+			setDisplayMode(saved)
+		}
+		setIsDisplayModeLoaded(true)
+	}, [])
+
 	// Sauvegarder la préférence de mode d'affichage dans le localStorage
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
+		if (isDisplayModeLoaded) {
 			localStorage.setItem('materialsDisplayMode', displayMode)
 		}
-	}, [displayMode])
+	}, [displayMode, isDisplayModeLoaded])
 
 	// Charger les sections (pour le mode catégorie)
 	useEffect(() => {
-		// Détermine quelle langue l'utilisateur apprend
-		const learningLang = userLearningLanguage || 'fr' // Par défaut français si non défini
-
 		let selectedMaterials = []
-		if (learningLang === 'ru') {
-			selectedMaterials = materials_ru // Apprendre le russe
-		} else if (learningLang === 'fr') {
-			selectedMaterials = materials_fr // Apprendre le français
-		} else if (learningLang === 'en') {
-			selectedMaterials = materials_en // Apprendre l'anglais (legacy - pour les utilisateurs existants)
+		if (userLearningLanguage === 'ru') {
+			selectedMaterials = materials_ru
+		} else if (userLearningLanguage === 'fr') {
+			selectedMaterials = materials_fr
+		} else if (userLearningLanguage === 'en') {
+			selectedMaterials = materials_en
 		} else {
-			// Par défaut : français
 			selectedMaterials = materials_fr
 		}
 
 		setMaterials(selectedMaterials)
 	}, [userLearningLanguage, locale])
 
-	// Charger tous les matériaux au passage en mode liste
-	useEffect(() => {
-		if (displayMode === 'list' && userLearningLanguage && allLoadedMaterials.length === 0) {
-			setIsLoadingAllMaterials(true)
-
-			// Charger tous les matériaux de toutes les sections
-			const sections = ['dialogues', 'slices-of-life', 'beautiful-places', 'legends', 'culture',
-				'podcasts', 'short-stories', 'movie-trailers', 'movie-clips', 'cartoons',
-				'eralash', 'galileo', 'various-materials', 'rock', 'pop', 'folk', 'variety', 'kids']
-
-			const loadAllMaterials = async () => {
-				const allPromises = sections.map(section =>
-					dispatch(getMaterials({ userLearningLanguage, section })).unwrap()
-				)
-
-				try {
-					const results = await Promise.all(allPromises)
-					const flattenedMaterials = results.flat()
-					setAllLoadedMaterials(flattenedMaterials)
-				} catch (error) {
-					console.error('Error loading materials:', error)
-				} finally {
-					setIsLoadingAllMaterials(false)
-				}
-			}
-
-			loadAllMaterials()
-			dispatch(getUserMaterialsStatus())
-		}
-	}, [displayMode, userLearningLanguage, dispatch])
-
 	// Restaurer les filtres depuis localStorage quand on revient sur la page en mode liste
 	useEffect(() => {
 		if (displayMode !== 'list') return
-		if (isLoadingAllMaterials || allLoadedMaterials.length === 0) return
+		if (allLoadedMaterials.length === 0) return
 
-		// Vérifier si on revient sur la page materials depuis une page de matériel
 		const isReturningToMaterials =
 			prevPathnameRef.current &&
 			prevPathnameRef.current.includes('/materials/') &&
 			prevPathnameRef.current !== pathname &&
 			(pathname === '/materials' || pathname.endsWith('/materials'))
 
-		// Restaurer si c'est le premier chargement OU si on revient sur la page
 		const shouldRestore = !hasAppliedDefaultFilter || isReturningToMaterials
 
 		if (shouldRestore) {
 			const storageKey = 'materials_list_filters'
 
-			// Pour les utilisateurs invités, ne PAS restaurer depuis localStorage
-			// Toujours commencer avec aucun filtre
-			if (!userProfile) {
-				setSelectedLevel(null)
-				setSelectedStatus(null)
-				setSearchTerm('')
-				setSelectedSection(null)
-				setHasAppliedDefaultFilter(true)
-			} else {
-				// Pour les utilisateurs connectés, restaurer depuis localStorage
+			try {
 				const savedFilters = localStorage.getItem(storageKey)
-
 				if (savedFilters) {
-					try {
-						const { level, status, search, section } = JSON.parse(savedFilters)
+					const filters = JSON.parse(savedFilters)
 
-						// Restaurer les états locaux
-						setSelectedLevel(level ?? null)
-						setSelectedStatus(status ?? null)
-						setSearchTerm(search ?? '')
-						setSelectedSection(section ?? null)
-
-						setHasAppliedDefaultFilter(true)
-					} catch (error) {
-						console.error('Error restoring materials filters:', error)
-					}
+					if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm)
+					if (filters.selectedLevel !== undefined) setSelectedLevel(filters.selectedLevel)
+					if (filters.selectedStatus !== undefined) setSelectedStatus(filters.selectedStatus)
+					if (filters.selectedSection !== undefined) setSelectedSection(filters.selectedSection)
+					if (filters.viewMode !== undefined) setViewMode(filters.viewMode)
+					if (filters.currentPage !== undefined) setCurrentPage(filters.currentPage)
 				} else if (!hasAppliedDefaultFilter) {
-					// Pas de filtres sauvegardés, appliquer les filtres par défaut pour users connectés
-					if (userLevel && user_materials_status) {
+					const isSameLevel = userLevel === selectedLevel
+					const noFiltersApplied = !searchTerm && !selectedStatus && !selectedSection
+
+					if (userLevel && !isSameLevel && noFiltersApplied) {
 						setSelectedLevel(userLevel)
-						setSelectedStatus('not_studied')
 					}
-					setHasAppliedDefaultFilter(true)
 				}
+			} catch (error) {
+				logger.error('Error parsing filters from localStorage:', error)
 			}
+
+			setHasAppliedDefaultFilter(true)
 		}
 
-		// Mettre à jour le pathname précédent
 		prevPathnameRef.current = pathname
-	}, [displayMode, isLoadingAllMaterials, allLoadedMaterials.length, hasAppliedDefaultFilter, userLevel, userProfile, user_materials_status, pathname])
+	}, [displayMode, allLoadedMaterials.length, hasAppliedDefaultFilter, pathname, userLevel])
 
-	// Sauvegarder les filtres dans localStorage à chaque changement (mode liste uniquement)
+	// Sauvegarder les filtres dans localStorage à chaque changement
 	useEffect(() => {
-		if (displayMode !== 'list' || !hasAppliedDefaultFilter) return
+		if (displayMode !== 'list') return
+		if (!hasAppliedDefaultFilter) return
 
 		const storageKey = 'materials_list_filters'
-		const filtersToSave = {
-			level: selectedLevel,
-			status: selectedStatus,
-			search: searchTerm,
-			section: selectedSection,
+		const filters = {
+			searchTerm,
+			selectedLevel,
+			selectedStatus,
+			selectedSection,
+			viewMode,
+			currentPage,
 		}
 
-		localStorage.setItem(storageKey, JSON.stringify(filtersToSave))
-	}, [displayMode, selectedLevel, selectedStatus, searchTerm, selectedSection, hasAppliedDefaultFilter])
-
-	// Réinitialiser le flag quand on change de mode d'affichage
-	useEffect(() => {
-		if (displayMode === 'category') {
-			setHasAppliedDefaultFilter(false)
+		try {
+			localStorage.setItem(storageKey, JSON.stringify(filters))
+		} catch (error) {
+			logger.error('Error saving filters to localStorage:', error)
 		}
-	}, [displayMode])
+	}, [
+		displayMode,
+		searchTerm,
+		selectedLevel,
+		selectedStatus,
+		selectedSection,
+		viewMode,
+		currentPage,
+		hasAppliedDefaultFilter,
+	])
 
-	// Réinitialiser la page à 1 quand les filtres changent
-	useEffect(() => {
-		dispatch(changePage(1))
-	}, [searchTerm, selectedLevel, selectedStatus, selectedSection, dispatch])
-
-	// Charger les matériaux d'une section spécifique si elle est sélectionnée
-	useEffect(() => {
-		if (displayMode === 'list' && userLearningLanguage && selectedSection) {
-			dispatch(getMaterials({ userLearningLanguage, section: selectedSection }))
-		}
-	}, [selectedSection, dispatch])
-
-	// Accumuler les matériaux chargés depuis Redux quand une section est sélectionnée
-	// Ne pas exécuter pendant le chargement initial de tous les matériaux
-	useEffect(() => {
-		if (materials_from_redux && materials_from_redux.length > 0 && selectedSection && !isLoadingAllMaterials) {
-			setAllLoadedMaterials(prevMaterials => {
-				// Filtrer les matériaux existants pour cette section
-				const withoutCurrentSection = prevMaterials.filter(m => m.section !== selectedSection)
-				// Ajouter les nouveaux matériaux
-				return [...withoutCurrentSection, ...materials_from_redux]
-			})
-		}
-	}, [materials_from_redux, selectedSection, isLoadingAllMaterials])
-
-	// Filtre les matériaux par catégorie (mode category)
-	useEffect(() => {
-		const filterMaterials = (category) => {
-			let filtered = materials.filter(material => material.newCategory === category)
-
-			if (selectedCategory !== 'all') {
-				filtered = filtered.filter(material => material.category === selectedCategory)
-			}
-
-			return filtered
-		}
-
-		setPractice(filterMaterials('practice'))
-		setCulture(filterMaterials('culture'))
-		setLiterature(filterMaterials('literature'))
-	}, [materials, selectedCategory])
-
-	// Fonction helper pour vérifier si un matériau correspond au statut utilisateur
-	const checkIfUserMaterialIsInMaterials = (id) => {
-		return user_materials_status.find(userMaterial => userMaterial.material_id === id)
-	}
-
-	// Filtre les matériaux pour le mode liste
-	const filteredMaterialsForList = useMemo(() => {
+	// Filtrage des matériaux pour le mode liste
+	const filteredMaterials = useMemo(() => {
 		if (displayMode !== 'list') return []
 
-		// Utiliser allLoadedMaterials ou materials_from_redux selon selectedSection
-		let materialsToFilter = selectedSection ? materials_from_redux : allLoadedMaterials
-		let filtered = [...materialsToFilter].filter(m => m.lang === userLearningLanguage)
+		let result = [...allLoadedMaterials]
 
-		// Filtre par recherche
-		if (searchTerm) {
-			filtered = filtered.filter(material =>
-				material.title.toLowerCase().includes(searchTerm.toLowerCase())
-			)
+		// Filtre par section
+		if (selectedSection) {
+			result = result.filter(m => m.section === selectedSection)
 		}
 
 		// Filtre par niveau
-		if (selectedLevel) {
-			filtered = filtered.filter(material => material.level === selectedLevel)
+		if (selectedLevel && selectedLevel !== 'all') {
+			result = result.filter(m => m.level === selectedLevel)
 		}
 
 		// Filtre par statut
 		if (selectedStatus) {
-			filtered = filtered.filter(material => {
-				const userMaterial = checkIfUserMaterialIsInMaterials(material.id)
-				if (selectedStatus === 'not_studied') {
-					return !userMaterial || (!userMaterial.is_being_studied && !userMaterial.is_studied)
-				} else if (selectedStatus === 'is_being_studied') {
-					return userMaterial?.is_being_studied
-				} else if (selectedStatus === 'is_studied') {
-					return userMaterial?.is_studied
-				}
-				return false
-			})
+			if (selectedStatus === 'not_studied') {
+				const materialIdsWithStatus = user_materials_status
+					.filter(um => um.is_being_studied || um.is_studied)
+					.map(um => um.material_id)
+				result = result.filter(m => !materialIdsWithStatus.includes(m.id))
+			} else {
+				const materialIdsWithStatus = user_materials_status
+					.filter(um => um[selectedStatus])
+					.map(um => um.material_id)
+				result = result.filter(m => materialIdsWithStatus.includes(m.id))
+			}
+		}
+
+		// Filtre par recherche
+		if (searchTerm) {
+			result = result.filter(m =>
+				m.title.toLowerCase().includes(searchTerm.toLowerCase())
+			)
+		}
+
+		return result
+	}, [displayMode, allLoadedMaterials, selectedSection, selectedLevel, selectedStatus, searchTerm, user_materials_status])
+
+	// Filtrer les sections par catégorie de média (mode category)
+	const filteredPractice = useMemo(() => {
+		if (displayMode !== 'category') return []
+
+		let filtered = practice
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = practice.filter(material => material.category === selectedCategory)
 		}
 
 		return filtered
-	}, [materials_from_redux, allLoadedMaterials, displayMode, selectedSection, searchTerm, selectedLevel, selectedStatus, userLearningLanguage, user_materials_status])
+	}, [displayMode, practice, selectedCategory])
 
-	// Calcul de la pagination
-	const totalMaterials = filteredMaterialsForList.length
-	const numOfPages = Math.ceil(totalMaterials / materialsPerPage)
-	const startIndex = (page - 1) * materialsPerPage
-	const endIndex = page * materialsPerPage
-	const paginatedMaterials = filteredMaterialsForList.slice(startIndex, endIndex)
+	const filteredCulture = useMemo(() => {
+		if (displayMode !== 'category') return []
 
-	// Handlers pour le mode liste
+		let filtered = culture
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = culture.filter(material => material.category === selectedCategory)
+		}
+
+		return filtered
+	}, [displayMode, culture, selectedCategory])
+
+	const filteredLiterature = useMemo(() => {
+		if (displayMode !== 'category') return []
+
+		let filtered = literature
+
+		if (selectedCategory && selectedCategory !== 'all') {
+			filtered = literature.filter(material => material.category === selectedCategory)
+		}
+
+		return filtered
+	}, [displayMode, literature, selectedCategory])
+
+	// Charger practice/culture/literature pour le mode catégorie
+	useEffect(() => {
+		if (displayMode !== 'category') return
+		if (!materials || materials.length === 0) return
+
+		const practiceList = materials.filter(m => m.newCategory === 'practice')
+		const cultureList = materials.filter(m => m.newCategory === 'culture')
+		const literatureList = materials.filter(m => m.newCategory === 'literature')
+
+		setPractice(practiceList)
+		setCulture(cultureList)
+		setLiterature(literatureList)
+	}, [materials, displayMode])
+
+	// Pagination pour le mode liste
+	const numOfPages = Math.ceil(filteredMaterials.length / materialsPerPage)
+	const sliceStart = (currentPage - 1) * materialsPerPage
+	const sliceEnd = sliceStart + materialsPerPage
+	const paginatedMaterials = filteredMaterials.slice(sliceStart, sliceEnd)
+
+	// Handlers
 	const handleSearchChange = (value) => {
 		setSearchTerm(value)
+		setCurrentPage(1)
 	}
 
 	const handleSectionChange = (section) => {
 		setSelectedSection(section)
+		setCurrentPage(1)
 	}
 
 	const handleLevelChange = (level) => {
 		setSelectedLevel(level)
+		setCurrentPage(1)
 	}
 
 	const handleStatusChange = (status) => {
 		setSelectedStatus(status)
+		setCurrentPage(1)
 	}
 
 	const handleClear = () => {
@@ -323,400 +323,218 @@ const Material = () => {
 		setSelectedLevel(null)
 		setSelectedStatus(null)
 		setSelectedSection(null)
+		setCurrentPage(1)
 	}
 
 	const handleViewChange = (view) => {
 		setViewMode(view)
+		setCurrentPage(1)
 	}
 
-	const toggleDisplayMode = () => {
-		setDisplayMode(displayMode === 'category' ? 'list' : 'category')
-		// Réinitialiser les filtres lors du changement de mode
+	const handlePageChange = (page) => {
+		setCurrentPage(page)
+	}
+
+	const checkIfUserMaterialIsInMaterials = (id) => {
+		return user_materials_status.find(m => m.material_id === id)
+	}
+
+	// Determine content based on display mode
+	const renderContent = () => {
 		if (displayMode === 'category') {
-			handleClear()
-		}
-	}
+			// Mode catégorie - affichage par sections
+			return (
+				<>
+					{/* Filtre par catégorie de média */}
+					<MaterialsFilter
+						selectedCategory={selectedCategory}
+						onCategoryChange={setSelectedCategory}
+					/>
 
-	return (
-		<>
-
-			<Container
-				maxWidth='lg'
-				sx={{
-					pt: { xs: '3.75rem', md: '7rem' },
-					pb: { xs: 2.5, md: 4 },
-					px: { xs: 2, sm: 3 },
-				}}>
-				{/* Bouton de toggle entre les modes */}
-				<Box
-					sx={{
-						display: 'flex',
-						justifyContent: 'center',
-						mb: { xs: 3, md: 4 },
-					}}>
-					<Box
-						sx={{
-							display: 'inline-flex',
-							gap: 1,
-							p: { xs: 0.5, md: 0.75 },
-							borderRadius: 4,
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							border: isDark ? '2px solid rgba(139, 92, 246, 0.3)' : '2px solid rgba(139, 92, 246, 0.2)',
-							boxShadow: isDark ? '0 4px 20px rgba(139, 92, 246, 0.25)' : '0 4px 20px rgba(139, 92, 246, 0.15)',
-						}}>
-						<Button
-							variant={displayMode === 'category' ? 'contained' : 'text'}
-							onClick={toggleDisplayMode}
-							startIcon={<ViewModule />}
-							sx={{
-								px: { xs: 1.5, sm: 3 },
-								py: { xs: 0.85, md: 1 },
-								borderRadius: 3,
-								fontWeight: 600,
-								fontSize: { xs: '0.85rem', sm: '0.95rem' },
-								background: displayMode === 'category'
-									? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-									: 'transparent',
-								color: displayMode === 'category' ? 'white' : isDark ? '#cbd5e1' : '#64748b',
-								boxShadow: displayMode === 'category' ? '0 4px 15px rgba(139, 92, 246, 0.4)' : 'none',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: displayMode === 'category'
-										? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)'
-										: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.05)',
-									transform: 'translateY(-2px)',
-									boxShadow: displayMode === 'category' ? '0 6px 20px rgba(139, 92, 246, 0.5)' : 'none',
-								},
-							}}>
-							<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-								{t('categoryView') || 'Vue par catégories'}
-							</Box>
-							<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-								{t('categories') || 'Catégories'}
-							</Box>
-						</Button>
-						<Button
-							variant={displayMode === 'list' ? 'contained' : 'text'}
-							onClick={toggleDisplayMode}
-							startIcon={<ViewListIcon />}
-							sx={{
-								px: { xs: 1.5, sm: 3 },
-								py: { xs: 0.85, md: 1 },
-								borderRadius: 3,
-								fontWeight: 600,
-								fontSize: { xs: '0.85rem', sm: '0.95rem' },
-								background: displayMode === 'list'
-									? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-									: 'transparent',
-								color: displayMode === 'list' ? 'white' : isDark ? '#cbd5e1' : '#64748b',
-								boxShadow: displayMode === 'list' ? '0 4px 15px rgba(139, 92, 246, 0.4)' : 'none',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: displayMode === 'list'
-										? 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)'
-										: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.05)',
-									transform: 'translateY(-2px)',
-									boxShadow: displayMode === 'list' ? '0 6px 20px rgba(139, 92, 246, 0.5)' : 'none',
-								},
-							}}>
-							<Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-								{t('listView') || 'Vue liste avec filtres'}
-							</Box>
-							<Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-								{t('materials') || 'Matériels'}
-							</Box>
-						</Button>
-					</Box>
-				</Box>
-
-				{/* Affichage conditionnel en fonction du mode */}
-				{displayMode === 'category' ? (
-					<>
-						{/* Mode catégorie - Affichage actuel */}
-						<MaterialsFilter
-							selectedCategory={selectedCategory}
-							onCategoryChange={setSelectedCategory}
-						/>
-
-						{/* Message si aucun matériau trouvé */}
-						{practice.length === 0 && culture.length === 0 && literature.length === 0 && (
-							<Box
-								sx={{
-									py: 8,
-									textAlign: 'center',
-								}}>
-								<Typography
-									variant="h6"
-									sx={{
-										color: isDark ? '#94a3b8' : '#64748b',
-										fontWeight: 600,
-									}}>
-									{t('noMaterialsFound')}
-								</Typography>
-							</Box>
-						)}
-
-						{/* Section Pratique de la langue */}
-						{practice.length > 0 && (
-							<Box id='practice' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: { xs: 1.5, md: 2 },
-										mb: { xs: 3, md: 4 },
-										pb: 2,
-										borderBottom: '2px solid',
-										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
-									}}>
-									<Box
-										sx={{
-											width: { xs: 48, md: 56 },
-											height: { xs: 48, md: 56 },
-											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-											backdropFilter: 'blur(10px)',
-											border: '1px solid rgba(139, 92, 246, 0.3)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
-										}}>
-										<School sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
-									</Box>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 800,
-											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-										}}>
-										{t('practiceCategory')}
-									</Typography>
-								</Box>
-								<MaterialsGrid materials={practice} />
-							</Box>
-						)}
-
-						{/* Section Culture & Divertissement */}
-						{culture.length > 0 && (
-							<Box id='culture' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
-								{/* Titre principal */}
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: { xs: 1.5, md: 2 },
-										mb: { xs: 3, md: 4 },
-										pb: 2,
-										borderBottom: '2px solid',
-										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
-									}}>
-									<Box
-										sx={{
-											width: { xs: 48, md: 56 },
-											height: { xs: 48, md: 56 },
-											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-											backdropFilter: 'blur(10px)',
-											border: '1px solid rgba(139, 92, 246, 0.3)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
-										}}>
-										<Palette sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
-									</Box>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 800,
-											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-										}}>
-										{t('cultureCategory')}
-									</Typography>
-								</Box>
-
-								{/* Sous-section : Culture & Patrimoine */}
-								{culture.filter(m => m.category === 'text & audio').length > 0 && (
-									<Box sx={{ mb: { xs: 3.5, md: 5 } }}>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1.5,
-												mb: { xs: 2.5, md: 3 },
-												pl: { xs: 0, md: 2 },
-											}}>
-											<Museum sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
-											<Typography
-												variant='h4'
-												sx={{
-													fontWeight: 700,
-													fontSize: { xs: '1.25rem', sm: '1.5rem' },
-													color: isDark ? '#cbd5e1' : '#475569',
-												}}>
-												{t('heritageCategory')}
-											</Typography>
-										</Box>
-										<Box sx={{ pl: { xs: 0, md: 4 } }}>
-											<MaterialsGrid materials={culture.filter(m => m.category === 'text & audio')} />
-										</Box>
-									</Box>
-								)}
-
-								{/* Sous-section : Cinéma & Vidéos */}
-								{culture.filter(m => m.category === 'video').length > 0 && (
-									<Box sx={{ mb: { xs: 3.5, md: 5 } }}>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1.5,
-												mb: { xs: 2.5, md: 3 },
-												pl: { xs: 0, md: 2 },
-											}}>
-											<Movie sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
-											<Typography
-												variant='h4'
-												sx={{
-													fontWeight: 700,
-													fontSize: { xs: '1.25rem', sm: '1.5rem' },
-													color: isDark ? '#cbd5e1' : '#475569',
-												}}>
-												{t('cinemaCategory')}
-											</Typography>
-										</Box>
-										<Box sx={{ pl: { xs: 0, md: 4 } }}>
-											<MaterialsGrid materials={culture.filter(m => m.category === 'video')} />
-										</Box>
-									</Box>
-								)}
-
-								{/* Sous-section : Musique */}
-								{culture.filter(m => m.category === 'music').length > 0 && (
-									<Box sx={{ mb: 0 }}>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1.5,
-												mb: { xs: 2.5, md: 3 },
-												pl: { xs: 0, md: 2 },
-											}}>
-											<MusicNote sx={{ fontSize: '1.5rem', color: isDark ? '#a78bfa' : '#8b5cf6' }} />
-											<Typography
-												variant='h4'
-												sx={{
-													fontWeight: 700,
-													fontSize: { xs: '1.25rem', sm: '1.5rem' },
-													color: isDark ? '#cbd5e1' : '#475569',
-												}}>
-												{t('songsCategory')}
-											</Typography>
-										</Box>
-										<Box sx={{ pl: { xs: 0, md: 4 } }}>
-											<MaterialsGrid materials={culture.filter(m => m.category === 'music')} />
-										</Box>
-									</Box>
-								)}
-							</Box>
-						)}
-
-						{/* Section Littérature & Histoires */}
-						{literature.length > 0 && (
-							<Box id='literature' sx={{ scrollMarginTop: '100px', mb: { xs: 2.5, md: 6 } }}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: { xs: 1.5, md: 2 },
-										mb: { xs: 3, md: 4 },
-										pb: 2,
-										borderBottom: '2px solid',
-										borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
-									}}>
-									<Box
-										sx={{
-											width: { xs: 48, md: 56 },
-											height: { xs: 48, md: 56 },
-											borderRadius: 3,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-											backdropFilter: 'blur(10px)',
-											border: '1px solid rgba(139, 92, 246, 0.3)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
-										}}>
-										<MenuBook sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
-									</Box>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 800,
-											fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-										}}>
-										{t('literatureCategory')}
-									</Typography>
-								</Box>
-								<MaterialsGrid materials={literature} />
-							</Box>
-						)}
-					</>
-				) : (
-					<>
-						{/* Mode liste - Avec filtres avancés */}
-						<MaterialsFilterBar
-							onSearchChange={handleSearchChange}
-							onSectionChange={handleSectionChange}
-							onLevelChange={handleLevelChange}
-							onStatusChange={handleStatusChange}
-							onClear={handleClear}
-							onViewChange={handleViewChange}
-							searchValue={searchTerm}
-							selectedSection={selectedSection}
-							selectedLevel={selectedLevel}
-							selectedStatus={selectedStatus}
-							currentView={viewMode}
-							showNotStudiedFilter={true}
-							showStudiedFilter={isUserAdmin}
-							showSectionFilter={true}
-							translationNamespace="materials"
-						/>
-
-					{/* Affichage des matériaux filtrés */}
-					{(materials_loading || isLoadingAllMaterials) ? (
+					{/* Message si aucun matériau trouvé */}
+					{filteredPractice.length === 0 && filteredCulture.length === 0 && filteredLiterature.length === 0 && (
 						<Box
 							sx={{
-								textAlign: 'center',
 								py: 8,
-								px: 2,
+								textAlign: 'center',
 							}}>
 							<Typography
-								variant='h5'
+								variant="h6"
 								sx={{
-									color: isDark ? '#a78bfa' : '#8b5cf6',
-									mb: 2,
+									color: isDark ? '#94a3b8' : '#64748b',
 									fontWeight: 600,
+									mb: 1,
 								}}>
-								⏳ Chargement des matériaux...
+								{t('noMaterialsFound')}
+							</Typography>
+							<Typography
+								variant="body2"
+								sx={{
+									color: isDark ? '#64748b' : '#94a3b8',
+								}}>
+								{t('noMaterialsInCategory')}
 							</Typography>
 						</Box>
-					) : filteredMaterialsForList.length === 0 ? (
+					)}
+
+					{/* Section Practice */}
+					{filteredPractice.length > 0 && (
+						<Box id='practice' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: { xs: 1.5, md: 2 },
+									mb: { xs: 3, md: 4 },
+									pb: 2,
+									borderBottom: '2px solid',
+									borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
+								}}>
+								<Box
+									sx={{
+										width: { xs: 48, md: 56 },
+										height: { xs: 48, md: 56 },
+										borderRadius: 3,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										backdropFilter: 'blur(10px)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
+									}}>
+									<School sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
+								</Box>
+								<Typography
+									variant='h3'
+									sx={{
+										fontWeight: 800,
+										fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+										background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+									}}>
+									{t('practiceCategory')}
+								</Typography>
+							</Box>
+							<MaterialsGrid materials={filteredPractice} />
+						</Box>
+					)}
+
+					{/* Section Culture */}
+					{filteredCulture.length > 0 && (
+						<Box id='culture' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: { xs: 1.5, md: 2 },
+									mb: { xs: 3, md: 4 },
+									pb: 2,
+									borderBottom: '2px solid',
+									borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
+								}}>
+								<Box
+									sx={{
+										width: { xs: 48, md: 56 },
+										height: { xs: 48, md: 56 },
+										borderRadius: 3,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										backdropFilter: 'blur(10px)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
+									}}>
+									<Museum sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
+								</Box>
+								<Typography
+									variant='h3'
+									sx={{
+										fontWeight: 800,
+										fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+										background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+									}}>
+									{t('cultureCategory')}
+								</Typography>
+							</Box>
+							<MaterialsGrid materials={filteredCulture} />
+						</Box>
+					)}
+
+					{/* Section Literature */}
+					{filteredLiterature.length > 0 && (
+						<Box id='literature' sx={{ scrollMarginTop: '100px', mb: { xs: 4, md: 8 } }}>
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: { xs: 1.5, md: 2 },
+									mb: { xs: 3, md: 4 },
+									pb: 2,
+									borderBottom: '2px solid',
+									borderImage: 'linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, transparent 100%) 1',
+								}}>
+								<Box
+									sx={{
+										width: { xs: 48, md: 56 },
+										height: { xs: 48, md: 56 },
+										borderRadius: 3,
+										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+										backdropFilter: 'blur(10px)',
+										border: '1px solid rgba(139, 92, 246, 0.3)',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										boxShadow: '0 4px 15px rgba(139, 92, 246, 0.2)',
+									}}>
+									<MenuBook sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, color: '#8b5cf6' }} />
+								</Box>
+								<Typography
+									variant='h3'
+									sx={{
+										fontWeight: 800,
+										fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+										background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+									}}>
+									{t('literatureCategory')}
+								</Typography>
+							</Box>
+							<MaterialsGrid materials={filteredLiterature} />
+						</Box>
+					)}
+				</>
+			)
+		} else {
+			// Mode liste avec filtres avancés
+			return (
+				<>
+					<MaterialsFilterBar
+						onSearchChange={handleSearchChange}
+						onSectionChange={handleSectionChange}
+						onLevelChange={handleLevelChange}
+						onStatusChange={handleStatusChange}
+						onClear={handleClear}
+						onViewChange={handleViewChange}
+						searchValue={searchTerm}
+						selectedSection={selectedSection}
+						selectedLevel={selectedLevel}
+						selectedStatus={selectedStatus}
+						currentView={viewMode}
+						showNotStudiedFilter={true}
+						showSectionFilter={true}
+						translationNamespace='materials'
+					/>
+
+					{filteredMaterials.length === 0 ? (
 						<Box
 							sx={{
 								textAlign: 'center',
@@ -737,46 +555,130 @@ const Material = () => {
 								sx={{
 									color: '#a0aec0',
 								}}>
-								{t('noMaterialsInCategory') || 'Aucun matériel trouvé dans cette catégorie'}
+								{t('noMaterialsInCategory')}
 							</Typography>
 						</Box>
-						) : viewMode === 'card' ? (
-							<>
-								<Box
-									sx={{
-										display: 'grid',
-										gridTemplateColumns: {
-											xs: '1fr',
-											sm: 'repeat(2, 1fr)',
-											md: 'repeat(3, 1fr)',
-											lg: 'repeat(4, 1fr)',
-										},
-										rowGap: 3,
-										columnGap: 3,
-									}}>
-									{paginatedMaterials.map(material => (
-										<SectionCard
-											key={material.id}
-											material={material}
-											checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
-										/>
-									))}
-								</Box>
-								{numOfPages > 1 && <Pagination numOfPages={numOfPages} />}
-							</>
-						) : (
-							<>
-								<MaterialsTable
-									materials={paginatedMaterials}
-									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
+					) : viewMode === 'card' ? (
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									xs: '1fr',
+									sm: 'repeat(2, 1fr)',
+									md: 'repeat(3, 1fr)',
+									lg: 'repeat(4, 1fr)',
+								},
+								rowGap: { xs: 2, md: 3 },
+								columnGap: { xs: 2, md: 3 },
+							}}>
+							{paginatedMaterials.map(material => (
+								<SectionCard
+									key={material.id}
+									material={material}
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
 								/>
-								{numOfPages > 1 && <Pagination numOfPages={numOfPages} />}
-							</>
-						)}
-					</>
-				)}
-			</Container>
-		</>
+							))}
+						</Box>
+					) : (
+						<MaterialsTable
+							materials={paginatedMaterials}
+							checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
+						/>
+					)}
+
+					{/* Pagination */}
+					{filteredMaterials.length > materialsPerPage && (
+						<Pagination
+							page={currentPage}
+							numOfPages={numOfPages}
+							onPageChange={handlePageChange}
+						/>
+					)}
+				</>
+			)
+		}
+	}
+
+	return (
+		<Container sx={{ pt: { xs: '3.75rem', lg: '6rem' }, pb: { xs: 2.5, md: 4 } }}>
+			{/* Header */}
+			<Box sx={{ mb: { xs: 2.5, md: 4 }, textAlign: 'center' }}>
+				<Typography
+					variant='h3'
+					sx={{
+						fontWeight: 700,
+						fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						mb: 1.5,
+					}}>
+					{t('pagetitle')}
+				</Typography>
+				<Typography
+					variant='body1'
+					sx={{
+						color: isDark ? '#cbd5e1' : '#64748b',
+						fontSize: { xs: '0.9375rem', sm: '1rem' },
+						maxWidth: '600px',
+						mx: 'auto',
+						mb: 3,
+					}}>
+					{t('description')}
+				</Typography>
+
+				{/* Toggle button */}
+				<Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5 }}>
+					<Button
+						onClick={() => setDisplayMode('category')}
+						variant={displayMode === 'category' ? 'contained' : 'outlined'}
+						startIcon={<ViewModule />}
+						sx={{
+							borderRadius: '10px',
+							textTransform: 'none',
+							px: 2.5,
+							py: 1,
+							...(displayMode === 'category'
+								? {
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									color: 'white',
+									border: 'none',
+								}
+								: {
+									color: isDark ? '#cbd5e1' : '#475569',
+									borderColor: 'rgba(139, 92, 246, 0.3)',
+								}),
+						}}>
+						{t('categoryView')}
+					</Button>
+					<Button
+						onClick={() => setDisplayMode('list')}
+						variant={displayMode === 'list' ? 'contained' : 'outlined'}
+						startIcon={<ViewListIcon />}
+						sx={{
+							borderRadius: '10px',
+							textTransform: 'none',
+							px: 2.5,
+							py: 1,
+							...(displayMode === 'list'
+								? {
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									color: 'white',
+									border: 'none',
+								}
+								: {
+									color: isDark ? '#cbd5e1' : '#475569',
+									borderColor: 'rgba(139, 92, 246, 0.3)',
+								}),
+						}}>
+						{t('listView')}
+					</Button>
+				</Box>
+			</Box>
+
+			{/* Content */}
+			{renderContent()}
+		</Container>
 	)
 }
 

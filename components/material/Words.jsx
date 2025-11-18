@@ -1,46 +1,20 @@
-import React from 'react'
+import React, { useMemo, useCallback } from 'react'
 import styles from '@/styles/materials/Material.module.css'
-import { useDispatch } from 'react-redux'
-import {
-	translateWord,
-	toggleTranslationContainer,
-	cleanTranslation,
-} from '@/features/words/wordsSlice'
-import { useMemo, useCallback } from 'react'
-import DOMPurify from 'isomorphic-dompurify'
+import { useMutation } from '@tanstack/react-query'
+import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
-
-// Définir les regex en dehors du composant pour éviter recréations
-const REGEX_CONFIG = {
-	fr: {
-		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
-		words: /[\w\u00C0-\u00FF]+/i, // Détection de mots (sans apostrophes pour éviter faux positifs)
-	},
-	ru: {
-		all: /[ \t….,;:?!–—«»"()]|[\w\u0430-\u044f\ё\е́\-]+/gi,
-		words: /[\u0430-\u044f\ё\е́]+/i,
-	},
-	en: {
-		all: /[ \t….,;:?!–—«»"()]|[^ \t….,;:?!–—«»"()]+/gi, // Capture espaces, ponctuation et mots
-		words: /[\w]+/i, // Détection de mots
-	},
-}
+import { useWordWrapping } from '@/hooks/words/useWordWrapping'
+import { translateWord } from '@/lib/words-client'
 
 const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
-	const dispatch = useDispatch()
+	const { openTranslation, cleanTranslation, setLoading, setError } = useTranslation()
 
-	// Mémoïser le sanitize pour éviter recalcul à chaque render
+	// Content comes directly from DB (trusted source)
 	const clean = useMemo(() => {
 		if (!content) return ''
-		// Sanitize le contenu (les sauts de ligne sont déjà en \n dans la DB)
-		return DOMPurify.sanitize(content)
+		return content
 	}, [content])
-
-	// Sélectionner les regex selon la langue avec fallback sur 'en'
-	const regexConfig = useMemo(() => {
-		return REGEX_CONFIG[userLearningLanguage] || REGEX_CONFIG.en
-	}, [userLearningLanguage])
 
 	// Helper function to extract the sentence containing the clicked word
 	const extractSentence = useCallback((fullText, word) => {
@@ -49,9 +23,6 @@ const Words = ({ content, locale = 'fr' }) => {
 		// Find the word position in the full text
 		const wordIndex = fullText.toLowerCase().indexOf(word.toLowerCase())
 		if (wordIndex === -1) return fullText
-
-		// Sentence delimiters (period, exclamation, question mark, newline)
-		const sentenceDelimiters = /[.!?\n]/g
 
 		// Find sentence start (go backwards from word position)
 		let sentenceStart = 0
@@ -73,6 +44,40 @@ const Words = ({ content, locale = 'fr' }) => {
 		return fullText.substring(sentenceStart, sentenceEnd).trim()
 	}, [])
 
+	// React Query: Translation mutation
+	const translationMutation = useMutation({
+		mutationFn: translateWord,
+		onMutate: () => {
+			setLoading(true)
+			cleanTranslation()
+		},
+		onSuccess: (response) => {
+			// Extract translations from Yandex API format
+			// Yandex returns: { def: [{ text: "word", tr: [{ text: "translation" }] }] }
+			// We need to flatten all translations from all definitions
+			const definitions = response.data?.def || []
+			const allTranslations = definitions.flatMap(def =>
+				(def.tr || []).map(tr => tr.text)
+			)
+
+			// Map API response format to expected format
+			const translationData = {
+				word: response.word,
+				definitions: allTranslations.length > 0 ? allTranslations : null,
+				sentence: response.sentence
+			}
+			openTranslation(translationData, response.sentence, {
+				x: window.event?.clientX || 0,
+				y: window.event?.clientY || 0
+			})
+			setLoading(false)
+		},
+		onError: (error) => {
+			setError(error.message)
+		}
+	})
+
+	// Handle word click
 	const handleClick = useCallback(
 		e => {
 			const word = e.target.textContent
@@ -86,140 +91,30 @@ const Words = ({ content, locale = 'fr' }) => {
 				window.dispatchEvent(new Event('word-clicked'))
 			}
 
-			dispatch(
-				translateWord({
-					word,
-					sentence,
-					userLearningLanguage,
-					locale,
-					isAuthenticated: isUserLoggedIn,
-				})
-			)
-			dispatch(toggleTranslationContainer())
-			dispatch(cleanTranslation())
-		},
-		[dispatch, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
-	)
-
-	const wrapWords = useCallback(
-		sentence => {
-			// Sécurité : vérifier que la regex existe et que sentence est valide
-			if (!sentence || !regexConfig.all) {
-				return sentence
-			}
-
-			const matches = sentence.match(regexConfig.all)
-
-			// Sécurité : vérifier que match() a retourné un résultat
-			if (!matches) {
-				return sentence
-			}
-
-			return matches.map((item, index) => {
-				if (!item) return null
-
-				// Vérifier si c'est un mot (utiliser match au lieu de test pour éviter problèmes de lastIndex)
-				if (item.match(regexConfig.words)) {
-					// Vérifier si le mot est suivi de ponctuation (directement ou après un espace)
-					const nextItem = matches[index + 1]
-					const nextNextItem = matches[index + 2]
-
-					// Vérifier si le prochain élément est de la ponctuation
-					let isFollowedByPunctuation = false
-					if (nextItem) {
-						// Si le prochain élément est de la ponctuation directement
-						if (nextItem.trim() && !nextItem.match(regexConfig.words)) {
-							isFollowedByPunctuation = true
-						}
-						// Si le prochain élément est un espace, vérifier l'élément d'après
-						else if (!nextItem.trim() && nextNextItem && nextNextItem.trim() && !nextNextItem.match(regexConfig.words)) {
-							isFollowedByPunctuation = true
-						}
-					}
-
-					// Vérifier si le mot contient une apostrophe (j'étais, l'ami, etc.)
-					const apostropheRegex = /['''`\u2019]/
-					if (apostropheRegex.test(item)) {
-						// Découper le mot en parties autour des apostrophes
-						const parts = item.split(apostropheRegex)
-						const apostrophes = item.match(new RegExp(apostropheRegex, 'g'))
-
-						const elements = []
-						parts.forEach((part, i) => {
-							if (part) {
-								// Vérifier si c'est la dernière partie du mot
-								const isLastPart = i === parts.length - 1
-								// Vérifier si cette partie est suivie d'une apostrophe
-								const isFollowedByApostrophe = apostrophes && apostrophes[i]
-
-								// Appliquer .nospace si :
-								// - C'est la dernière partie et le mot est suivi de ponctuation
-								// - OU c'est suivi d'une apostrophe
-								const className = (isLastPart && isFollowedByPunctuation) || isFollowedByApostrophe
-									? `${styles.translate} ${styles.nospace}`
-									: styles.translate
-
-								// Partie du mot (cliquable)
-								elements.push(
-									<span
-										key={`${index}-${i}-word`}
-										className={className}
-										onClick={handleClick}>
-										{part}
-									</span>
-								)
-							}
-							// Ajouter l'apostrophe entre les parties (non cliquable)
-							if (apostrophes && apostrophes[i]) {
-								elements.push(
-									<span key={`${index}-${i}-apos`} className={styles.punctuation}>
-										{apostrophes[i]}
-									</span>
-								)
-							}
-						})
-
-						return <React.Fragment key={index}>{elements}</React.Fragment>
-					}
-
-					return (
-						<span
-							key={index}
-							className={`${styles.translate} ${isFollowedByPunctuation ? styles.nospace : ''}`}
-							onClick={handleClick}>
-							{item}
-						</span>
-					)
-				}
-
-				// Pour les espaces et la ponctuation, les wrapper dans un span aussi
-				// pour qu'ils héritent correctement de la taille de police
-				return (
-					<span key={index} className={styles.punctuation}>
-						{item}
-					</span>
-				)
+			translationMutation.mutate({
+				word,
+				sentence,
+				userLearningLanguage,
+				locale,
+				isAuthenticated: isUserLoggedIn,
 			})
 		},
-		[regexConfig, handleClick]
+		[translationMutation, userLearningLanguage, locale, isUserLoggedIn, extractSentence]
 	)
 
-	const wrapSentences = useMemo(() => {
-		// Sécurité : vérifier que le texte existe
-		if (!clean) {
-			return clean
-		}
+	// Use word wrapping hook
+	const wrapWords = useWordWrapping(handleClick, styles)
 
-		// Splitter sur les sauts de ligne pour traiter ligne par ligne
+	// Wrap sentences with clickable words
+	const wrapSentences = useMemo(() => {
+		if (!clean) return clean
+
+		// Split on newlines to process line by line
 		const lines = clean.split(/\r?\n/)
 
 		return lines.map((line, index) => (
 			<React.Fragment key={index}>
-				{line && (
-					<span className={styles.sentence}>
-						{wrapWords(line)}
-					</span>
-				)}
+				{line && <span className={styles.sentence}>{wrapWords(line)}</span>}
 				{index < lines.length - 1 && <br />}
 			</React.Fragment>
 		))
@@ -228,5 +123,5 @@ const Words = ({ content, locale = 'fr' }) => {
 	return wrapSentences
 }
 
-// Mémoïser le composant pour éviter re-renders inutiles
+// Memoize component to avoid unnecessary re-renders
 export default React.memo(Words)

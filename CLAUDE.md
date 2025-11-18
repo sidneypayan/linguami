@@ -38,6 +38,29 @@ npm run lint         # Run ESLint
 - Attendre confirmation explicite
 - Demander si l'utilisateur veut commiter
 
+### JAMAIS de push de la branche claude
+
+**RÈGLE ABSOLUE :** Ne JAMAIS créer ou push la branche `claude` sur GitHub.
+
+**Règles :**
+- La branche `claude` reste **uniquement en local** pour le travail de Claude Code
+- Ne JAMAIS faire `git push` de cette branche vers le dépôt distant
+- Pour partager du code, **toujours créer une nouvelle branche** avec un nom descriptif :
+  - `feature/nom-fonctionnalité`
+  - `fix/nom-bug`
+  - `refactor/nom-refactoring`
+  - etc.
+
+**❌ Ne PAS faire :**
+- `git push origin claude`
+- `git push -u origin claude`
+- Créer la branche `claude` sur GitHub
+
+**✅ Faire :**
+- Travailler sur `claude` en local
+- Créer une nouvelle branche descriptive pour les commits à partager
+- Push cette nouvelle branche (pas `claude`)
+
 ---
 
 
@@ -140,13 +163,47 @@ linguami/
 ```
 cat /tmp/rules_section.txt
 
+## ⚠️ CRITICAL: Data Fetching Pattern (App Router)
+
+**ALWAYS use Server Actions + React Query for App Router pages. NEVER create API routes.**
+
+### ✅ Correct Pattern
+
+1. **Create Server Action** in `app/actions/myFeature.js`:
+```javascript
+'use server'
+export async function getData(lang) {
+  const supabase = createServerClient(await cookies())
+  const { data } = await supabase.from('table').select('*').eq('lang', lang)
+  return data
+}
+```
+
+2. **Use with React Query** in Client Component:
+```javascript
+const { data } = useQuery({
+  queryKey: ['myData', userLearningLanguage], // ← Auto refetch on change
+  queryFn: () => getData(userLearningLanguage)
+})
+```
+
+### ❌ DON'T DO THIS
+
+- ❌ Creating `pages/api/*` routes for App Router pages
+- ❌ Using `window.location.reload()` to refresh data
+- ❌ Fetching from your own API with `fetch('/api/...')`
+
+**See [State Management](docs/architecture/state-management.md) for full documentation.**
+
+---
+
 ## Common Development Patterns
 
 ### Adding a New Feature
 
 1. **Plan data model** → See [Database Architecture](docs/architecture/database.md)
-2. **Create Redux slice** (if needed) → See [State Management](docs/architecture/state-management.md)
-3. **Add API routes** → See [Authentication](docs/architecture/authentication.md) for auth
+2. **Create Server Actions** (not API routes!) → See [State Management](docs/architecture/state-management.md)
+3. **Use React Query** for client-side data fetching → See [State Management](docs/architecture/state-management.md)
 4. **Create components** → Follow MUI `sx` prop pattern
 5. **Add translations** → See [i18n System](docs/architecture/i18n.md)
 
