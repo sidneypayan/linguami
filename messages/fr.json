@@ -128,7 +128,7 @@
     "imageAndVideoRequired": "L'image et la vidéo sont tous les deux obligatoires pour les sections vidéo",
     "brokenVideosTitle": "Liens vidéo cassés",
     "brokenVideosDesc": "Vérifier les liens YouTube, Odysee ou Rutube cassés",
-    "brokenVideosFound": "{{count}} lien(s) vidéo cassé(s) trouvé(s)",
+    "brokenVideosFound": "{count, plural, =0 {Aucun lien cassé} one {# lien vidéo cassé trouvé} other {# liens vidéo cassés trouvés}}",
     "noBrokenVideos": "Tous les liens vidéo fonctionnent !",
     "checkVideos": "Vérifier les vidéos",
     "checking": "Vérification...",

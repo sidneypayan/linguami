@@ -14,6 +14,7 @@ import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcon
 
 import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
+import { verifyTurnstile } from '@/app/actions/auth'
 import {
 	Box,
 	Button,
@@ -198,15 +199,7 @@ const Signup = () => {
 
 		// Verify token with backend
 		try {
-			const verifyResponse = await fetch('/api/verify-turnstile', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: turnstileToken }),
-			})
-
-			const verifyData = await verifyResponse.json()
+			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
 				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')

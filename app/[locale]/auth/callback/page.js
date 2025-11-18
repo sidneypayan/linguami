@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Box, CircularProgress, Typography } from '@mui/material'
 import { logger } from '@/utils/logger'
+import { exchangeVkCode, validateVkAuth } from '@/app/actions/vkauth'
 
 /**
  * OAuth callback and email confirmation page
@@ -37,51 +38,36 @@ export default function AuthCallback() {
 					setStatusMessage('Connecting with VK ID...')
 
 					try {
-						// Exchange code for token via backend API
+						// Exchange code for token via Server Action
 
-						const exchangeResponse = await fetch('/api/auth/vkid/exchange-code', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								code: vkCode,
-								deviceId: deviceId,
-								redirectUri: `${window.location.origin}/auth/callback`,
-							}),
+						const exchangeResult = await exchangeVkCode({
+							code: vkCode,
+							deviceId: deviceId,
+							redirectUri: `${window.location.origin}/auth/callback`,
 						})
 
-						if (!exchangeResponse.ok) {
-							const errorData = await exchangeResponse.json().catch(() => ({ error: 'Unknown error' }))
-							logger.error('❌ Exchange failed with error:', errorData)
-							throw new Error(errorData.error || 'Failed to exchange code')
+						if (!exchangeResult.success) {
+							logger.error('❌ Exchange failed with error:', exchangeResult.error)
+							throw new Error(exchangeResult.error || 'Failed to exchange code')
 						}
 
-						const { access_token, user } = await exchangeResponse.json()
+						const { access_token, user } = exchangeResult
 
 
-						// Validate token and create/login user on our backend
+						// Validate token and create/login user via Server Action
 
-						const response = await fetch('/api/auth/vkid/validate', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								token: access_token,
-								firstName: user.first_name,
-								lastName: user.last_name,
-								avatar: user.avatar,
-								email: user.email,
-								userId: user.user_id,
-								provider: 'vk',
-							}),
+						const data = await validateVkAuth({
+							token: access_token,
+							firstName: user.first_name,
+							lastName: user.last_name,
+							avatar: user.avatar,
+							email: user.email,
+							userId: user.user_id,
+							provider: 'vk',
 						})
 
-						const data = await response.json().catch(() => ({ error: 'Failed to parse response' }))
-
-						if (!response.ok) {
-							logger.error('❌ Validation failed with error:', data)
+						if (!data.success) {
+							logger.error('❌ Validation failed with error:', data.error)
 							throw new Error(data.error || 'Authentication failed')
 						}
 
