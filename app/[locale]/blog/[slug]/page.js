@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
-import { getBlogPostBySlugAction, getPublishedBlogPostsAction } from '@/app/actions/blog'
+import { getBlogPostBySlugAction, getPublishedBlogPostsAction, getPublishedBlogPostsForBuildAction } from '@/app/actions/blog'
 import BlogPostClient from '@/components/blog/BlogPostClient'
 
 // Generate static params for all published blog posts (ISR)
@@ -9,7 +9,7 @@ export async function generateStaticParams() {
 	const params = []
 
 	for (const locale of locales) {
-		const posts = await getPublishedBlogPostsAction(locale)
+		const posts = await getPublishedBlogPostsForBuildAction(locale)
 		posts.forEach(post => {
 			params.push({
 				locale,

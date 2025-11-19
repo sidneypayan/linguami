@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, supabaseServer } from '@/lib/supabase-server'
 import { logger } from '@/utils/logger'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
@@ -70,6 +70,32 @@ export async function getAllBlogPostsAction({ lang } = {}) {
 	} catch (error) {
 		logger.error('Error fetching blog posts:', error)
 		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * Get published blog posts for build time (generateStaticParams)
+ * Uses service role key, no cookies required
+ * @param {string} lang - Language
+ * @returns {Promise<Array>} Published blog posts
+ */
+export async function getPublishedBlogPostsForBuildAction(lang) {
+	try {
+		const validLang = LanguageSchema.parse(lang)
+
+		const { data, error } = await supabaseServer
+			.from('blog_posts')
+			.select('id, title, slug, excerpt, img, published_at, lang')
+			.eq('lang', validLang)
+			.eq('is_published', true)
+			.order('published_at', { ascending: false })
+
+		if (error) throw error
+
+		return data || []
+	} catch (error) {
+		logger.error('Error fetching published blog posts for build:', error)
+		return []
 	}
 }
 

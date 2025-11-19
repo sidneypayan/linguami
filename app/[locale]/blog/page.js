@@ -1,4 +1,3 @@
-import { useTranslations } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Container, Typography, Box } from '@mui/material'
 import { getPublishedBlogPostsAction } from '@/app/actions/blog'
