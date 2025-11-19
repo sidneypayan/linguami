@@ -32,7 +32,7 @@ import { Add, Edit, Delete, Visibility, Search, FilterList } from '@mui/icons-ma
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
-import LoadingSpinner from '@/components/LoadingSpinner'
+import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
 

@@ -1,8 +1,8 @@
-import FormRow from './FormRow'
-import FormRowSelect from './FormRowSelect'
-import TextEditor from './TextEditor'
-import CreateMaterialForm from './CreateMaterialForm'
-import CreatePostForm from './CreatePostForm'
+import FormRow from './shared/FormRow'
+import FormRowSelect from './shared/FormRowSelect'
+import TextEditor from './shared/TextEditor'
+import CreateMaterialForm from './admin/CreateMaterialForm'
+import CreatePostForm from './admin/CreatePostForm'
 
 export {
 	FormRow,
