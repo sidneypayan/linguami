@@ -1,4 +1,5 @@
 import imageCompression from 'browser-image-compression'
+import { logger } from './logger'
 
 /**
  * Optimise une image et crée plusieurs versions
@@ -49,7 +50,7 @@ export async function optimizeImage(imageFile) {
 			savings: ((1 - (mainImage.size + thumbnailImage.size) / imageFile.size) * 100).toFixed(1),
 		}
 	} catch (error) {
-		console.error('Erreur lors de l\'optimisation de l\'image:', error)
+		logger.error('Erreur lors de l\'optimisation de l\'image:', error)
 		throw error
 	}
 }

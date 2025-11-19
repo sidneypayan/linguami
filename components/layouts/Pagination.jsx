@@ -1,4 +1,5 @@
 import { Box, IconButton, Button, Stack, useTheme, useMediaQuery } from '@mui/material'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 const Pagination = ({
@@ -7,8 +8,23 @@ const Pagination = ({
 	onPageChange,
 }) => {
 	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+	// Fix hydration mismatch: sync theme and media query only on client
+	const [isDark, setIsDark] = useState(false)
+	const [isMobile, setIsMobile] = useState(false)
+
+	useEffect(() => {
+		setIsDark(theme.palette.mode === 'dark')
+	}, [theme.palette.mode])
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 600px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = e => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	// Use props directly (Redux removed)
 	const numOfPages = numOfPagesProp

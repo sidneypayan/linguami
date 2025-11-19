@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
 import { useUserContext } from '@/context/user'
 import { useLocale } from 'next-intl'
@@ -50,6 +51,13 @@ import {
 import { useRouter } from 'next/navigation'
 import { logger } from '@/utils/logger'
 import { changePassword, deleteAccount } from '@/app/actions/auth'
+
+// Import section components
+import { ProfileSection } from './ProfileSection'
+import { LanguagePreferencesSection } from './LanguagePreferencesSection'
+import { GoalsSection } from './GoalsSection'
+import { NotificationsSection } from './NotificationsSection'
+import { SecuritySection } from './SecuritySection'
 
 const SettingsClient = ({ translations }) => {
 	const { userProfile, updateUserProfile, logout } = useUserContext()
@@ -216,6 +224,23 @@ const SettingsClient = ({ translations }) => {
 
 			await updateUserProfile(updateData)
 
+			// Clear materials filters from localStorage when language level changes
+			// This ensures filters are reset with the new level on next visit
+			if (field === 'languageLevel') {
+				try {
+					localStorage.removeItem('materials_list_filters')
+					// Also clear section filters
+					const storageKeys = Object.keys(localStorage)
+					storageKeys.forEach(key => {
+						if (key.startsWith('materials_section_')) {
+							localStorage.removeItem(key)
+						}
+					})
+				} catch (e) {
+					// Ignore localStorage errors
+				}
+			}
+
 			toast.success(translations.updateSuccess)
 			toggleEditMode(field)
 		} catch (error) {
@@ -327,281 +352,6 @@ const SettingsClient = ({ translations }) => {
 		}
 	}
 
-	const renderField = (field, label, icon, type = 'text', options = null) => {
-		const isEditing = editMode[field]
-		const value = formData[field]
-		const isEmailField = field === 'email' // Email non modifiable pour raisons de sécurité
-
-		// Déterminer les couleurs selon le type de champ - Dark Fantasy Theme
-		const isLanguageField = field === 'languageLevel'
-		const iconBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.2)' : 'rgba(139, 92, 246, 0.2)'
-		const iconColor = isLanguageField ? '#06b6d4' : '#8b5cf6'
-		const hoverBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.15)' : 'rgba(139, 92, 246, 0.15)'
-
-		// Traduire les valeurs affichées pour le niveau de langue
-		const getDisplayValue = () => {
-			if (!value) return '-'
-			if (field === 'languageLevel') {
-				return translations[value] // Traduit beginner/intermediate/advanced
-			}
-			return value
-		}
-
-		return (
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					py: 2.5,
-					px: 3,
-					borderBottom: `1px solid ${
-						isLanguageField
-							? isDark
-								? 'rgba(6, 182, 212, 0.25)'
-								: 'rgba(6, 182, 212, 0.15)'
-							: isDark
-							? 'rgba(139, 92, 246, 0.25)'
-							: 'rgba(139, 92, 246, 0.15)'
-					}`,
-					'&:last-child': {
-						borderBottom: 'none',
-					},
-					transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-					position: 'relative',
-					'&:hover': {
-						bgcolor: isLanguageField
-							? isDark
-								? 'rgba(6, 182, 212, 0.15)'
-								: 'rgba(6, 182, 212, 0.1)'
-							: isDark
-							? 'rgba(139, 92, 246, 0.15)'
-							: 'rgba(139, 92, 246, 0.1)',
-						'&::before': {
-							opacity: 1,
-						},
-					},
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						left: 0,
-						top: 0,
-						bottom: 0,
-						width: 3,
-						background: isLanguageField
-							? 'linear-gradient(180deg, #06b6d4 0%, #0891b2 100%)'
-							: 'linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%)',
-						opacity: 0,
-						transition: 'opacity 0.3s ease',
-						boxShadow: isLanguageField
-							? '0 0 10px rgba(6, 182, 212, 0.5)'
-							: '0 0 10px rgba(139, 92, 246, 0.5)',
-					},
-				}}>
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						width: 44,
-						height: 44,
-						borderRadius: '50%',
-						background: isLanguageField
-							? 'linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(8, 145, 178, 0.25) 100%)'
-							: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.25) 100%)',
-						border: `2px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.3)' : 'rgba(139, 92, 246, 0.3)'}`,
-						color: iconColor,
-						mr: 2,
-						boxShadow: isLanguageField
-							? '0 4px 12px rgba(6, 182, 212, 0.2)'
-							: '0 4px 12px rgba(139, 92, 246, 0.2)',
-						transition: 'all 0.3s ease',
-						'&:hover': {
-							transform: 'scale(1.1) rotate(5deg)',
-							boxShadow: isLanguageField
-								? '0 6px 20px rgba(6, 182, 212, 0.4)'
-								: '0 6px 20px rgba(139, 92, 246, 0.4)',
-						},
-					}}>
-					{icon}
-				</Box>
-
-				<Box sx={{ flex: 1, minWidth: 0 }}>
-					<Typography
-						variant='body2'
-						sx={{
-							color: isLanguageField
-								? isDark
-									? '#67e8f9'
-									: '#0891b2'
-								: isDark
-								? '#c4b5fd'
-								: '#7c3aed',
-							fontSize: '0.7rem',
-							fontWeight: 600,
-							mb: 0.5,
-							textTransform: 'uppercase',
-							letterSpacing: '0.08em',
-						}}>
-						{label}
-					</Typography>
-
-					{isEditing ? (
-						options ? (
-							<FormControl fullWidth size='small'>
-								<Select
-									value={value}
-									onChange={handleChange(field)}
-									sx={{
-										fontSize: '0.95rem',
-										color: isDark ? '#f1f5f9' : '#2d3748',
-										'& .MuiOutlinedInput-notchedOutline': {
-											borderColor: iconColor,
-										},
-										'&:hover .MuiOutlinedInput-notchedOutline': {
-											borderColor: iconColor,
-										},
-										'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-											borderColor: iconColor,
-											borderWidth: '2px',
-											boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
-										},
-										'& .MuiSvgIcon-root': {
-											color: iconColor,
-										},
-									}}>
-									{options.map(option => (
-										<MenuItem key={option.value} value={option.value}>
-											{option.label}
-										</MenuItem>
-									))}
-								</Select>
-							</FormControl>
-						) : (
-							<TextField
-								fullWidth
-								size='small'
-								type={type}
-								value={value}
-								onChange={handleChange(field)}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										fontSize: '0.95rem',
-										color: isDark ? '#f1f5f9' : '#2d3748',
-										'& fieldset': {
-											borderColor: iconColor,
-										},
-										'&:hover fieldset': {
-											borderColor: iconColor,
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: iconColor,
-											borderWidth: '2px',
-											boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
-										},
-									},
-								}}
-							/>
-						)
-					) : (
-						<>
-							<Typography
-								sx={{
-									fontSize: '0.95rem',
-									fontWeight: 600,
-									color: isDark ? '#f1f5f9' : '#2d3748',
-								}}>
-								{getDisplayValue()}
-							</Typography>
-							{isEmailField && (
-								<Typography
-									variant='caption'
-									sx={{
-										color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-										fontSize: '0.7rem',
-										fontStyle: 'italic',
-										mt: 0.5,
-									}}>
-									{translations.emailNotEditable}
-								</Typography>
-							)}
-						</>
-					)}
-				</Box>
-
-				<Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
-					{isEditing ? (
-						<>
-							<IconButton
-								size='small'
-								onClick={() => handleSave(field)}
-								disabled={loading}
-								sx={{
-									color: 'white',
-									background: isLanguageField
-										? 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)'
-										: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-									border: `1px solid ${iconColor}`,
-									boxShadow: isLanguageField
-										? '0 4px 12px rgba(6, 182, 212, 0.3)'
-										: '0 4px 12px rgba(139, 92, 246, 0.3)',
-									'&:hover': {
-										transform: 'scale(1.1)',
-										boxShadow: isLanguageField
-											? '0 6px 16px rgba(6, 182, 212, 0.5)'
-											: '0 6px 16px rgba(139, 92, 246, 0.5)',
-									},
-								}}>
-								<CheckRounded fontSize='small' />
-							</IconButton>
-							<IconButton
-								size='small'
-								onClick={() => handleCancel(field)}
-								disabled={loading}
-								sx={{
-									color: 'white',
-									background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-									border: '1px solid #ef4444',
-									boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
-									'&:hover': {
-										transform: 'scale(1.1)',
-										boxShadow: '0 6px 16px rgba(239, 68, 68, 0.5)',
-									},
-								}}>
-								<CloseRounded fontSize='small' />
-							</IconButton>
-						</>
-					) : (
-						!isEmailField && (
-							<IconButton
-								size='small'
-								onClick={() => toggleEditMode(field)}
-								sx={{
-									color: 'white',
-									background: isLanguageField
-										? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.3) 100%)'
-										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 100%)',
-									border: `1px solid ${iconColor}`,
-									boxShadow: isLanguageField
-										? '0 4px 12px rgba(6, 182, 212, 0.2)'
-										: '0 4px 12px rgba(139, 92, 246, 0.2)',
-									'&:hover': {
-										background: isLanguageField
-											? 'linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(8, 145, 178, 0.5) 100%)'
-											: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%)',
-										transform: 'scale(1.1) rotate(15deg)',
-										boxShadow: isLanguageField
-											? '0 6px 16px rgba(6, 182, 212, 0.4)'
-											: '0 6px 16px rgba(139, 92, 246, 0.4)',
-									},
-								}}>
-								<EditRounded fontSize='small' />
-							</IconButton>
-						)
-					)}
-				</Box>
-			</Box>
-		)
-	}
 
 	return (
 		<>
@@ -868,717 +618,57 @@ const SettingsClient = ({ translations }) => {
 
 					{/* Sections en grille */}
 					<Grid container spacing={{ xs: 3, md: 4 }}>
-						{/* Section Informations personnelles */}
-						<Grid item xs={12} md={6}>
-							<Paper
-								elevation={0}
-								sx={{
-									borderRadius: 4,
-									overflow: 'hidden',
-									height: '100%',
-									position: 'relative',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-									backdropFilter: 'blur(20px)',
-									border: '2px solid rgba(139, 92, 246, 0.2)',
-									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.05) inset',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-										background: 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)',
-										pointerEvents: 'none',
-										opacity: 0,
-										transition: 'opacity 0.4s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 48px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.3) inset',
-										borderColor: 'rgba(139, 92, 246, 0.4)',
-										'&::before': {
-											opacity: 1,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										px: 3,
-										py: 2.5,
-										background: 'linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(124, 58, 237, 0.85) 100%)',
-										borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
-										position: 'relative',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											bottom: -1,
-											left: '50%',
-											transform: 'translateX(-50%)',
-											width: '60%',
-											height: 2,
-											background: 'linear-gradient(90deg, transparent 0%, #8b5cf6 50%, transparent 100%)',
-											boxShadow: '0 0 10px rgba(139, 92, 246, 0.6)',
-										},
-									}}>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #fff 0%, #a78bfa 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontSize: '1rem',
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-											textAlign: 'center',
-											textShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
-										}}>
-										{translations.personalInfo}
-									</Typography>
-								</Box>
-								{renderField('username', translations.username, <PersonRounded fontSize='small' />)}
-								{renderField('email', translations.email, <EmailRounded fontSize='small' />, 'email')}
-								</Paper>
-						</Grid>
+						<ProfileSection
+							isDark={isDark}
+							translations={translations}
+							editMode={editMode}
+							formData={formData}
+							loading={loading}
+							handleChange={handleChange}
+							handleSave={handleSave}
+							handleCancel={handleCancel}
+							toggleEditMode={toggleEditMode}
+						/>
 
-						{/* Section Préférences linguistiques */}
-						<Grid item xs={12} md={6}>
-							<Paper
-								elevation={0}
-								sx={{
-									borderRadius: 4,
-									overflow: 'hidden',
-									height: '100%',
-									position: 'relative',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-									backdropFilter: 'blur(20px)',
-									border: '2px solid rgba(6, 182, 212, 0.2)',
-									boxShadow: '0 8px 32px rgba(6, 182, 212, 0.15), 0 0 0 1px rgba(6, 182, 212, 0.05) inset',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-										background: 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%)',
-										pointerEvents: 'none',
-										opacity: 0,
-										transition: 'opacity 0.4s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 48px rgba(6, 182, 212, 0.25), 0 0 0 1px rgba(6, 182, 212, 0.3) inset',
-										borderColor: 'rgba(6, 182, 212, 0.4)',
-										'&::before': {
-											opacity: 1,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										px: 3,
-										py: 2.5,
-										background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(8, 145, 178, 0.85) 100%)',
-										borderBottom: '1px solid rgba(6, 182, 212, 0.3)',
-										position: 'relative',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											bottom: -1,
-											left: '50%',
-											transform: 'translateX(-50%)',
-											width: '60%',
-											height: 2,
-											background: 'linear-gradient(90deg, transparent 0%, #06b6d4 50%, transparent 100%)',
-											boxShadow: '0 0 10px rgba(6, 182, 212, 0.6)',
-										},
-									}}>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #fff 0%, #67e8f9 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontSize: '1rem',
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-											textAlign: 'center',
-											textShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
-										}}>
-										{translations.languagePreferences}
-									</Typography>
-								</Box>
-								{renderField(
-									'languageLevel',
-									translations.languageLevel,
-									<LanguageRounded fontSize='small' />,
-									'select',
-									[
-										{ value: 'beginner', label: translations.beginner },
-										{ value: 'intermediate', label: translations.intermediate },
-										{ value: 'advanced', label: translations.advanced },
-									]
-								)}
-							</Paper>
-						</Grid>
+						<LanguagePreferencesSection
+							isDark={isDark}
+							translations={translations}
+							editMode={editMode}
+							formData={formData}
+							loading={loading}
+							handleChange={handleChange}
+							handleSave={handleSave}
+							handleCancel={handleCancel}
+							toggleEditMode={toggleEditMode}
+						/>
 
-						{/* Section Objectifs & Motivation */}
-						<Grid item xs={12} md={6}>
-							<Paper
-								elevation={0}
-								sx={{
-									borderRadius: 4,
-									overflow: 'hidden',
-									height: '100%',
-									position: 'relative',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-									backdropFilter: 'blur(20px)',
-									border: '2px solid rgba(245, 87, 108, 0.2)',
-									boxShadow: '0 8px 32px rgba(245, 87, 108, 0.15), 0 0 0 1px rgba(245, 87, 108, 0.05) inset',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-										background: 'radial-gradient(circle at 50% 0%, rgba(245, 87, 108, 0.08) 0%, transparent 50%)',
-										pointerEvents: 'none',
-										opacity: 0,
-										transition: 'opacity 0.4s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 48px rgba(245, 87, 108, 0.25), 0 0 0 1px rgba(245, 87, 108, 0.3) inset',
-										borderColor: 'rgba(245, 87, 108, 0.4)',
-										'&::before': {
-											opacity: 1,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										px: 3,
-										py: 2.5,
-										background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.85) 0%, rgba(190, 24, 93, 0.85) 100%)',
-										borderBottom: '1px solid rgba(245, 87, 108, 0.3)',
-										position: 'relative',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											bottom: -1,
-											left: '50%',
-											transform: 'translateX(-50%)',
-											width: '60%',
-											height: 2,
-											background: 'linear-gradient(90deg, transparent 0%, #f5576c 50%, transparent 100%)',
-											boxShadow: '0 0 10px rgba(245, 87, 108, 0.6)',
-										},
-									}}>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #fff 0%, #fda4af 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontSize: '1rem',
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-											textAlign: 'center',
-											textShadow: '0 0 20px rgba(245, 87, 108, 0.5)',
-										}}>
-										{translations.goalsAndMotivation}
-									</Typography>
-								</Box>
-								<Box sx={{ p: 2.5 }}>
-									<Typography
-										variant='body2'
-										sx={{
-											color: isDark ? '#fda4af' : '#e11d48',
-											fontSize: '0.75rem',
-											fontWeight: 600,
-											textTransform: 'uppercase',
-											letterSpacing: '0.08em',
-											mb: 2.5,
-											textAlign: 'center',
-										}}>
-										{translations.dailyXpGoal}
-									</Typography>
+						<GoalsSection
+							isDark={isDark}
+							translations={translations}
+							formData={formData}
+							setFormData={setFormData}
+							loading={loading}
+							setLoading={setLoading}
+							updateUserProfile={updateUserProfile}
+						/>
 
-									{/* Goal Cards */}
-									<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-										{[
-											{ value: 50, emoji: '🌱', label: translations.goalRelaxed, time: translations.goal5to10min, color: '#10b981' },
-											{ value: 100, emoji: '⭐', label: translations.goalRegular, time: translations.goal15to20min, color: '#f59e0b', recommended: true },
-											{ value: 200, emoji: '🔥', label: translations.goalMotivated, time: translations.goal30min, color: '#f97316' },
-											{ value: 300, emoji: '💪', label: translations.goalIntensive, time: translations.goal45minPlus, color: '#ef4444' },
-											{ value: 0, emoji: '🎯', label: translations.goalNone, time: translations.goalAtMyPace, color: '#8b5cf6' },
-										].map(goal => {
-											const isSelected = formData.dailyXpGoal === goal.value
-											return (
-												<Box
-													key={goal.value}
-													onClick={async () => {
-														setFormData({ ...formData, dailyXpGoal: goal.value })
-														// Auto-save
-														setLoading(true)
-														try {
-															await updateUserProfile({ daily_xp_goal: goal.value })
-															toast.success(translations.updateSuccess)
-														} catch (error) {
-															logger.error('Error updating goal:', error)
-															toast.error(error.message || translations.updateError)
-														} finally {
-															setLoading(false)
-														}
-													}}
-													sx={{
-														position: 'relative',
-														cursor: loading ? 'not-allowed' : 'pointer',
-														p: 1.75,
-														borderRadius: 2.5,
-														background: isSelected
-															? `linear-gradient(135deg, ${goal.color}15 0%, ${goal.color}25 100%)`
-															: isDark
-															? 'linear-gradient(135deg, rgba(30, 27, 75, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)'
-															: 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 250, 252, 0.6) 100%)',
-														border: isSelected ? `2.5px solid ${goal.color}` : `1.5px solid ${goal.color}40`,
-														opacity: loading ? 0.6 : 1,
-														transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-														boxShadow: isSelected
-															? `0 4px 16px ${goal.color}40, 0 0 24px ${goal.color}20`
-															: '0 2px 8px rgba(0, 0, 0, 0.1)',
-														'&:hover': loading ? {} : {
-															transform: 'translateX(4px)',
-															boxShadow: `0 6px 24px ${goal.color}50, 0 0 32px ${goal.color}30`,
-															borderColor: goal.color,
-															background: `linear-gradient(135deg, ${goal.color}20 0%, ${goal.color}30 100%)`,
-														},
-														'&::before': isSelected ? {
-															content: '""',
-															position: 'absolute',
-															left: 0,
-															top: 0,
-															bottom: 0,
-															width: 4,
-															background: `linear-gradient(180deg, ${goal.color} 0%, ${goal.color}dd 100%)`,
-															borderRadius: '2.5px 0 0 2.5px',
-															boxShadow: `0 0 12px ${goal.color}80`,
-														} : {},
-													}}>
-													{/* Recommended Badge */}
-													{goal.recommended && (
-														<Box
-															sx={{
-																position: 'absolute',
-																top: -8,
-																right: 8,
-																bgcolor: goal.color,
-																color: 'white',
-																px: 1.5,
-																py: 0.3,
-																borderRadius: 2,
-																fontSize: '0.65rem',
-																fontWeight: 700,
-																textTransform: 'uppercase',
-																letterSpacing: '0.05em',
-																boxShadow: `0 4px 12px ${goal.color}60`,
-															}}>
-															{translations.recommended}
-														</Box>
-													)}
+						<NotificationsSection
+							isDark={isDark}
+							translations={translations}
+							formData={formData}
+							loading={loading}
+							handleToggle={handleToggle}
+						/>
 
-													<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-														{/* Emoji Icon */}
-														<Box
-															sx={{
-																fontSize: '2rem',
-																lineHeight: 1,
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'center',
-																width: 50,
-																height: 50,
-																borderRadius: '50%',
-																background: `linear-gradient(135deg, ${goal.color}20 0%, ${goal.color}30 100%)`,
-																border: `2px solid ${goal.color}50`,
-																flexShrink: 0,
-																transition: 'transform 0.3s ease',
-																transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-															}}>
-															{goal.emoji}
-														</Box>
-
-														{/* Content */}
-														<Box sx={{ flex: 1, minWidth: 0 }}>
-															<Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.5 }}>
-																<Typography
-																	sx={{
-																		fontWeight: 700,
-																		fontSize: '0.95rem',
-																		color: isSelected ? goal.color : isDark ? '#f1f5f9' : '#2d3748',
-																		transition: 'color 0.3s ease',
-																	}}>
-																	{goal.label}
-																</Typography>
-																{goal.value > 0 && (
-																	<Typography
-																		sx={{
-																			fontSize: '0.75rem',
-																			fontWeight: 600,
-																			color: goal.color,
-																			opacity: 0.8,
-																		}}>
-																		{goal.value} XP
-																	</Typography>
-																)}
-															</Box>
-															<Typography
-																variant='caption'
-																sx={{
-																	color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-																	fontSize: '0.7rem',
-																	display: 'block',
-																}}>
-																{goal.time}
-															</Typography>
-														</Box>
-
-														{/* Check Icon */}
-														{isSelected && (
-															<Box
-																sx={{
-																	display: 'flex',
-																	alignItems: 'center',
-																	justifyContent: 'center',
-																	width: 28,
-																	height: 28,
-																	borderRadius: '50%',
-																	background: goal.color,
-																	color: 'white',
-																	boxShadow: `0 4px 12px ${goal.color}60`,
-																	flexShrink: 0,
-																}}>
-																<CheckRounded sx={{ fontSize: 18 }} />
-															</Box>
-														)}
-													</Box>
-												</Box>
-											)
-										})}
-									</Box>
-								</Box>
-							</Paper>
-						</Grid>
-
-						{/* Section Notifications */}
-						<Grid item xs={12} md={6}>
-							<Paper
-								elevation={0}
-								sx={{
-									borderRadius: 4,
-									overflow: 'hidden',
-									height: '100%',
-									position: 'relative',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-									backdropFilter: 'blur(20px)',
-									border: '2px solid rgba(251, 146, 60, 0.2)',
-									boxShadow: '0 8px 32px rgba(251, 146, 60, 0.15), 0 0 0 1px rgba(251, 146, 60, 0.05) inset',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-										background: 'radial-gradient(circle at 50% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%)',
-										pointerEvents: 'none',
-										opacity: 0,
-										transition: 'opacity 0.4s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 48px rgba(251, 146, 60, 0.25), 0 0 0 1px rgba(251, 146, 60, 0.3) inset',
-										borderColor: 'rgba(251, 146, 60, 0.4)',
-										'&::before': {
-											opacity: 1,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										px: 3,
-										py: 2.5,
-										background: 'linear-gradient(135deg, rgba(234, 88, 12, 0.85) 0%, rgba(194, 65, 12, 0.85) 100%)',
-										borderBottom: '1px solid rgba(251, 146, 60, 0.3)',
-										position: 'relative',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											bottom: -1,
-											left: '50%',
-											transform: 'translateX(-50%)',
-											width: '60%',
-											height: 2,
-											background: 'linear-gradient(90deg, transparent 0%, #fb923c 50%, transparent 100%)',
-											boxShadow: '0 0 10px rgba(251, 146, 60, 0.6)',
-										},
-									}}>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #fff 0%, #fdba74 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontSize: '1rem',
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-											textAlign: 'center',
-											textShadow: '0 0 20px rgba(251, 146, 60, 0.5)',
-										}}>
-										{translations.notifications}
-									</Typography>
-								</Box>
-								<Box sx={{ p: 3 }}>
-									<FormControlLabel
-										control={
-											<Switch
-												checked={formData.emailReminders}
-												onChange={handleToggle('emailReminders')}
-												disabled={loading}
-												sx={{
-													'& .MuiSwitch-switchBase.Mui-checked': {
-														color: '#fb923c',
-													},
-													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-														backgroundColor: '#fb923c',
-													},
-												}}
-											/>
-										}
-										label={
-											<Box>
-												<Typography variant='body2' sx={{ fontWeight: 600 }}>
-													{translations.emailReminders}
-												</Typography>
-												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-													{translations.emailRemindersDesc}
-												</Typography>
-											</Box>
-										}
-										sx={{ mb: 2 }}
-									/>
-									<FormControlLabel
-										control={
-											<Switch
-												checked={formData.streakReminders}
-												onChange={handleToggle('streakReminders')}
-												disabled={loading}
-												sx={{
-													'& .MuiSwitch-switchBase.Mui-checked': {
-														color: '#fb923c',
-													},
-													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-														backgroundColor: '#fb923c',
-													},
-												}}
-											/>
-										}
-										label={
-											<Box>
-												<Typography variant='body2' sx={{ fontWeight: 600 }}>
-													{translations.streakReminders}
-												</Typography>
-												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-													{translations.streakRemindersDesc}
-												</Typography>
-											</Box>
-										}
-										sx={{ mb: 2 }}
-									/>
-									<FormControlLabel
-										control={
-											<Switch
-												checked={formData.newContentNotifications}
-												onChange={handleToggle('newContentNotifications')}
-												disabled={loading}
-												sx={{
-													'& .MuiSwitch-switchBase.Mui-checked': {
-														color: '#fb923c',
-													},
-													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-														backgroundColor: '#fb923c',
-													},
-												}}
-											/>
-										}
-										label={
-											<Box>
-												<Typography variant='body2' sx={{ fontWeight: 600 }}>
-													{translations.newContentNotifications}
-												</Typography>
-												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-													{translations.newContentNotificationsDesc}
-												</Typography>
-											</Box>
-										}
-									/>
-								</Box>
-							</Paper>
-						</Grid>
-
-						{/* Section Confidentialité & Sécurité */}
-						<Grid item xs={12} md={6}>
-							<Paper
-								elevation={0}
-								sx={{
-									borderRadius: 4,
-									overflow: 'hidden',
-									height: '100%',
-									position: 'relative',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-									backdropFilter: 'blur(20px)',
-									border: '2px solid rgba(239, 68, 68, 0.2)',
-									boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.05) inset',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-										background: 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.08) 0%, transparent 50%)',
-										pointerEvents: 'none',
-										opacity: 0,
-										transition: 'opacity 0.4s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 48px rgba(239, 68, 68, 0.25), 0 0 0 1px rgba(239, 68, 68, 0.3) inset',
-										borderColor: 'rgba(239, 68, 68, 0.4)',
-										'&::before': {
-											opacity: 1,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										px: 3,
-										py: 2.5,
-										background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.85) 0%, rgba(185, 28, 28, 0.85) 100%)',
-										borderBottom: '1px solid rgba(239, 68, 68, 0.3)',
-										position: 'relative',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											bottom: -1,
-											left: '50%',
-											transform: 'translateX(-50%)',
-											width: '60%',
-											height: 2,
-											background: 'linear-gradient(90deg, transparent 0%, #ef4444 50%, transparent 100%)',
-											boxShadow: '0 0 10px rgba(239, 68, 68, 0.6)',
-										},
-									}}>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(135deg, #fff 0%, #fca5a5 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontSize: '1rem',
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-											textAlign: 'center',
-											textShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-										}}>
-										{translations.privacyAndSecurity}
-									</Typography>
-								</Box>
-								<Box sx={{ p: 3 }}>
-									<FormControlLabel
-										control={
-											<Switch
-												checked={formData.showInLeaderboard}
-												onChange={handleToggle('showInLeaderboard')}
-												disabled={loading}
-												sx={{
-													'& .MuiSwitch-switchBase.Mui-checked': {
-														color: '#10b981',
-													},
-													'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-														backgroundColor: '#10b981',
-													},
-												}}
-											/>
-										}
-										label={
-											<Box>
-												<Typography variant='body2' sx={{ fontWeight: 600 }}>
-													{translations.showInLeaderboard}
-												</Typography>
-												<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-													{translations.showInLeaderboardDesc}
-												</Typography>
-											</Box>
-										}
-										sx={{ mb: 3 }}
-									/>
-									<Button
-										fullWidth
-										variant='outlined'
-										startIcon={<LockRounded />}
-										onClick={() => setChangePasswordDialogOpen(true)}
-										sx={{
-											mb: 2,
-											borderColor: '#ef4444',
-											color: '#ef4444',
-											'&:hover': {
-												borderColor: '#dc2626',
-												bgcolor: 'rgba(239, 68, 68, 0.05)',
-											},
-										}}>
-										{translations.changePassword}
-									</Button>
-									<Button
-										fullWidth
-										variant='outlined'
-										startIcon={<DeleteForeverRounded />}
-										onClick={() => setDeleteAccountDialogOpen(true)}
-										sx={{
-											borderColor: '#dc2626',
-											color: '#dc2626',
-											'&:hover': {
-												borderColor: '#b91c1c',
-												bgcolor: 'rgba(220, 38, 38, 0.05)',
-											},
-										}}>
-										{translations.deleteAccount}
-									</Button>
-								</Box>
-							</Paper>
-						</Grid>
+						<SecuritySection
+							isDark={isDark}
+							translations={translations}
+							formData={formData}
+							loading={loading}
+							handleToggle={handleToggle}
+							setChangePasswordDialogOpen={setChangePasswordDialogOpen}
+							setDeleteAccountDialogOpen={setDeleteAccountDialogOpen}
+						/>
 
 
 					</Grid>
@@ -1944,4 +1034,4 @@ const SettingsClient = ({ translations }) => {
 	)
 }
 
-export default SettingsClient
+export default React.memo(SettingsClient)

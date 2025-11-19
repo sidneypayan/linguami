@@ -58,7 +58,7 @@ const BlogCard = ({ post }) => {
 						sizes='(max-width: 600px) 100vw, 240px'
 						quality={85}
 						src={getBlogImageUrl(post)}
-						alt={post.frontmatter.title}
+						alt={post.title || post.frontmatter?.title}
 					/>
 				</Box>
 
@@ -80,7 +80,7 @@ const BlogCard = ({ post }) => {
 							mb: 1.5,
 							display: 'block',
 						}}>
-						{post.frontmatter.date}
+						{post.published_at || post.frontmatter?.date}
 					</Typography>
 
 					{/* Title */}
@@ -99,7 +99,7 @@ const BlogCard = ({ post }) => {
 							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 							letterSpacing: '-0.01em',
 						}}>
-						{post.frontmatter.title}
+						{post.title || post.frontmatter?.title}
 					</Typography>
 
 					{/* Excerpt */}
@@ -115,7 +115,7 @@ const BlogCard = ({ post }) => {
 							WebkitBoxOrient: 'vertical',
 							overflow: 'hidden',
 						}}>
-						{post.frontmatter.excerpt}
+						{post.excerpt || post.frontmatter?.excerpt}
 					</Typography>
 
 					{/* Read More Link */}

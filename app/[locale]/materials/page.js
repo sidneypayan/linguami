@@ -75,9 +75,9 @@ export default async function MaterialsPage({ params }) {
 	if (user) {
 		// Get learning language from profile
 		const { data: profile } = await supabase
-			.from('profiles')
+			.from('users_profile')
 			.select('learning_language')
-			.eq('user_id', user.id)
+			.eq('id', user.id)
 			.single()
 
 		learningLanguage = profile?.learning_language || 'fr'

@@ -3,6 +3,36 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { logger } from '@/utils/logger'
+import { z } from 'zod'
+
+// Validation schemas
+const LevelIdSchema = z.number().int().positive('Level ID must be a positive integer')
+
+const SlugSchema = z.string()
+	.regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers and hyphens')
+	.min(1)
+	.max(100)
+
+const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+
+const CourseSlugParamsSchema = z.object({
+	levelSlug: SlugSchema,
+	courseSlug: SlugSchema,
+	lang: LanguageSchema
+})
+
+const LessonSlugParamsSchema = z.object({
+	courseSlug: SlugSchema,
+	lessonSlug: SlugSchema,
+	lang: LanguageSchema
+})
+
+const LessonIdSchema = z.number().int().positive('Lesson ID must be a positive integer')
+
+const TimeSpentSchema = z.object({
+	lessonId: LessonIdSchema,
+	secondsSpent: z.number().int().min(0).max(86400, 'Time spent must be between 0 and 24 hours (86400 seconds)')
+})
 
 /**
  * Get all course levels (Beginner, Intermediate, Advanced)
@@ -31,8 +61,11 @@ export async function getCourseLevels() {
  */
 export async function getCoursesByLevel(levelId) {
 	try {
+		// Validate levelId
+		const validLevelId = LevelIdSchema.parse(levelId)
+
 		const supabase = createServerClient(await cookies())
-		const { data, error } = await supabase
+		const { data, error} = await supabase
 			.from('courses')
 			.select(
 				`
@@ -54,7 +87,7 @@ export async function getCoursesByLevel(levelId) {
 				)
 			`
 			)
-			.eq('level_id', levelId)
+			.eq('level_id', validLevelId)
 			.eq('is_published', true)
 			.order('order_index', { ascending: true })
 
@@ -86,6 +119,9 @@ export async function getCoursesByLevel(levelId) {
  */
 export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 	try {
+		// Validate input parameters
+		const validParams = CourseSlugParamsSchema.parse({ levelSlug, courseSlug, lang })
+
 		const supabase = createServerClient(await cookies())
 
 		// Optimized: Single query with joins
@@ -118,9 +154,9 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 				)
 			`
 			)
-			.eq('course_levels.slug', levelSlug)
-			.eq('slug', courseSlug)
-			.eq('lang', lang)
+			.eq('course_levels.slug', validParams.levelSlug)
+			.eq('slug', validParams.courseSlug)
+			.eq('lang', validParams.lang)
 			.eq('is_published', true)
 			.single()
 
@@ -149,6 +185,9 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
  */
 export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 	try {
+		// Validate input parameters
+		const validParams = LessonSlugParamsSchema.parse({ courseSlug, lessonSlug, lang })
+
 		const supabase = createServerClient(await cookies())
 
 		// Optimized: Single query with nested joins
@@ -176,9 +215,9 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 				)
 			`
 			)
-			.eq('courses.slug', courseSlug)
-			.eq('courses.lang', lang)
-			.eq('slug', lessonSlug)
+			.eq('courses.slug', validParams.courseSlug)
+			.eq('courses.lang', validParams.lang)
+			.eq('slug', validParams.lessonSlug)
 			.eq('is_published', true)
 			.single()
 
@@ -303,6 +342,9 @@ export async function getLessonProgress(lessonId) {
  */
 export async function completeLesson(lessonId) {
 	try {
+		// Validate lessonId
+		const validLessonId = LessonIdSchema.parse(lessonId)
+
 		const supabase = createServerClient(await cookies())
 
 		const {
@@ -315,7 +357,7 @@ export async function completeLesson(lessonId) {
 		// Use PostgreSQL RPC function for atomic operation
 		const { error } = await supabase.rpc('complete_course_lesson', {
 			p_user_id: user.id,
-			p_lesson_id: lessonId,
+			p_lesson_id: validLessonId,
 		})
 
 		if (error) throw error
@@ -336,6 +378,9 @@ export async function completeLesson(lessonId) {
  */
 export async function updateLessonTimeSpent({ lessonId, secondsSpent }) {
 	try {
+		// Validate input parameters
+		const validParams = TimeSpentSchema.parse({ lessonId, secondsSpent })
+
 		const supabase = createServerClient(await cookies())
 
 		const {
@@ -348,8 +393,8 @@ export async function updateLessonTimeSpent({ lessonId, secondsSpent }) {
 		const { error } = await supabase.from('user_course_progress').upsert(
 			{
 				user_id: user.id,
-				lesson_id: lessonId,
-				time_spent_seconds: secondsSpent,
+				lesson_id: validParams.lessonId,
+				time_spent_seconds: validParams.secondsSpent,
 				last_visited_at: new Date().toISOString(),
 			},
 			{

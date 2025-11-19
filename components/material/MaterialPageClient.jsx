@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -23,7 +24,7 @@ import ExerciseSection from '@/components/exercises/ExerciseSection'
 import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
 
-import Player from '@/components/Player'
+import Player from '@/components/shared/Player'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,
@@ -245,16 +246,6 @@ const Material = ({
 				<Typography>Loading...</Typography>
 			</Container>
 		)
-	}
-
-	// Debug: Log pour voir si book est bien reçu
-	if (currentMaterial.book_id) {
-		console.log('📚 Book chapter detected:', {
-			materialId: currentMaterial.id,
-			bookId: currentMaterial.book_id,
-			bookReceived: !!book,
-			book: book
-		})
 	}
 
 	return (
@@ -810,4 +801,4 @@ const Material = ({
 	)
 }
 
-export default Material
+export default React.memo(Material)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
 	Box,
 	Typography,
@@ -668,4 +668,4 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
 	)
 }
 
-export default FillInTheBlank
+export default React.memo(FillInTheBlank)

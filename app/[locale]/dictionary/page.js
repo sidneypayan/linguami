@@ -1,5 +1,27 @@
+import dynamic from 'next/dynamic'
 import { getTranslations } from 'next-intl/server'
-import DictionaryClient from '@/components/dictionary/DictionaryClient'
+// Lazy load DictionaryClient for better performance
+const DictionaryClient = dynamic(() => import('@/components/dictionary/DictionaryClient'), {
+	loading: () => (
+		<div style={{
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			minHeight: '60vh',
+			padding: '2rem'
+		}}>
+			<div style={{
+				width: '40px',
+				height: '40px',
+				border: '4px solid #e2e8f0',
+				borderTop: '4px solid #8b5cf6',
+				borderRadius: '50%',
+				animation: 'spin 1s linear infinite'
+			}} />
+		</div>
+	),
+	ssr: true // Keep SSR for SEO
+})
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params

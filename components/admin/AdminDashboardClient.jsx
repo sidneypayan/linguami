@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { Link } from '@/i18n/navigation'
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
@@ -48,7 +49,7 @@ import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
 import { checkBrokenVideos, updateMaterialVideo } from '@/app/actions/admin'
 
-export default function AdminDashboardClient({ initialMaterialsData, initialBooksData }) {
+const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	const t = useTranslations('admin')
 	const locale = useLocale()
 	const theme = useTheme()
@@ -956,4 +957,6 @@ export default function AdminDashboardClient({ initialMaterialsData, initialBook
 		</Box>
 	)
 }
+
+export default React.memo(AdminDashboardClient)
 

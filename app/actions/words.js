@@ -6,7 +6,6 @@ import { logger } from '@/utils/logger'
 import { calculateNextReview } from '@/utils/spacedRepetition'
 import { addXPAction } from '@/actions/gamification/xp-actions'
 import { validateWordPair } from '@/utils/validation'
-import axios from 'axios'
 
 // ==========================================
 // Translation API
@@ -55,20 +54,23 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 
 		// Build Yandex Dictionary API request
 		const langPair = `${userLearningLanguage}-${locale}`
-		const apiUrl = 'https://dictionary.yandex.net/api/v1/dicservice.json/lookup'
+		const apiUrl = new URL('https://dictionary.yandex.net/api/v1/dicservice.json/lookup')
+		apiUrl.searchParams.append('key', process.env.YANDEX_DICT_API_KEY)
+		apiUrl.searchParams.append('lang', langPair)
+		apiUrl.searchParams.append('text', word)
 
-		const response = await axios.get(apiUrl, {
-			params: {
-				key: process.env.YANDEX_DICT_API_KEY,
-				lang: langPair,
-				text: word,
-			},
-		})
+		const response = await fetch(apiUrl.toString())
+
+		if (!response.ok) {
+			throw new Error(`Yandex API error: ${response.status} ${response.statusText}`)
+		}
+
+		const data = await response.json()
 
 		return {
 			success: true,
 			word,
-			data: response.data,
+			data,
 			sentence,
 		}
 	} catch (error) {

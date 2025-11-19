@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -38,7 +39,7 @@ import {
 	SearchRounded,
 } from '@mui/icons-material'
 import AddWordModal from '@/components/dictionary/AddWordModal'
-import LoadingSpinner from '@/components/LoadingSpinner'
+import LoadingSpinner from '@/components/shared/LoadingSpinner'
 
 const DictionaryClient = ({ translations }) => {
 	const t = useTranslations('words')
@@ -1004,4 +1005,4 @@ const { openFlashcards } = useFlashcards()
 	)
 }
 
-export default DictionaryClient
+export default React.memo(DictionaryClient)

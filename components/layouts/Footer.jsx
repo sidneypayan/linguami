@@ -1,4 +1,5 @@
 import { useTranslations, useLocale } from 'next-intl'
+import { useState, useEffect } from 'react'
 import { Link } from '@/i18n/navigation'
 import { Box, Container, Stack, Typography, IconButton, useTheme, useMediaQuery } from '@mui/material'
 import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
@@ -6,8 +7,23 @@ import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material
 const Footer = () => {
 	const t = useTranslations('common')
 	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+	// Fix hydration mismatch: sync theme and media query only on client
+	const [isDark, setIsDark] = useState(false)
+	const [isMobile, setIsMobile] = useState(false)
+
+	useEffect(() => {
+		setIsDark(theme.palette.mode === 'dark')
+	}, [theme.palette.mode])
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 600px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = e => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	return (
 		<Box

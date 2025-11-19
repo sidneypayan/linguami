@@ -96,6 +96,12 @@ Detailed feature documentation:
 - **[Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
 - **[Course Blocks Structure](docs/guides/COURSE_BLOCKS_STRUCTURE.md)** - All block types with schemas
 
+### ⚡ Performance & Best Practices
+
+Optimization guides and coding standards:
+
+- **[Performance Optimizations](docs/PERFORMANCE_OPTIMIZATIONS.md)** - React.memo, useMemo/useCallback, lazy loading, hydration fixes
+
 ## Three-Language System
 
 ⚠️ **CRITICAL:** Linguami uses THREE distinct language concepts - do NOT confuse them:

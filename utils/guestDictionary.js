@@ -3,6 +3,8 @@
  * Stockage dans localStorage avec limite de 20 mots
  */
 
+import { logger } from './logger'
+
 const GUEST_WORDS_KEY = 'guest_dictionary_words'
 const MAX_GUEST_WORDS = 20
 
@@ -17,7 +19,7 @@ export function getGuestWords() {
 		const stored = localStorage.getItem(GUEST_WORDS_KEY)
 		return stored ? JSON.parse(stored) : []
 	} catch (error) {
-		console.error('Error reading guest words:', error)
+		logger.error('Error reading guest words:', error)
 		return []
 	}
 }
@@ -111,7 +113,7 @@ export function addGuestWord(wordData) {
 			remainingWords: MAX_GUEST_WORDS - updatedWords.length
 		}
 	} catch (error) {
-		console.error('Error adding guest word:', error)
+		logger.error('Error adding guest word:', error)
 		return { success: false, error: 'storage_error' }
 	}
 }
@@ -135,7 +137,7 @@ export function deleteGuestWord(wordId) {
 		localStorage.setItem(GUEST_WORDS_KEY, JSON.stringify(filteredWords))
 		return true
 	} catch (error) {
-		console.error('Error deleting guest word:', error)
+		logger.error('Error deleting guest word:', error)
 		return false
 	}
 }
@@ -166,7 +168,7 @@ export function updateGuestWord(wordId, updates) {
 
 		return updatedWord
 	} catch (error) {
-		console.error('Error updating guest word:', error)
+		logger.error('Error updating guest word:', error)
 		return null
 	}
 }
@@ -217,7 +219,7 @@ export function clearGuestWords() {
 		localStorage.removeItem(GUEST_WORDS_KEY)
 		return true
 	} catch (error) {
-		console.error('Error clearing guest words:', error)
+		logger.error('Error clearing guest words:', error)
 		return false
 	}
 }

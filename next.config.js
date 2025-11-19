@@ -22,9 +22,10 @@ const nextConfig = {
 				pathname: '**',
 			},
 		],
-		unoptimized: true,
-		formats: ['image/webp'],
-		qualities: [50, 75, 85, 90, 100], // Qualités autorisées pour Next.js 16+
+		unoptimized: false,
+		formats: ['image/avif', 'image/webp'],
+		deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+		imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
 	},
 
 	// Extensions de pages supportées

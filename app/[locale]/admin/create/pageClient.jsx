@@ -27,6 +27,8 @@ import {
 } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { useUserContext } from '@/context/user'
+import { optimizeImage } from '@/utils/imageOptimizer'
+import { logger } from '@/utils/logger'
 
 const CreateMaterial = () => {
 	const t = useTranslations('admin')
@@ -52,7 +54,7 @@ const CreateMaterial = () => {
 		createMaterialMutation.reset() // Clear any previous errors
 	}
 
-	const handleChange = e => {
+	const handleChange = async e => {
 		let { name, value } = e.target
 
 		// Si c'est un upload de fichier (image_filename ou audio_filename)
@@ -60,14 +62,39 @@ const CreateMaterial = () => {
 			const file = e.target.files[0]
 			if (!file) return
 
-			value = file.name
-
 			// Garder le fileType comme 'image' ou 'audio' pour la logique d'upload
 			const fileType = name === 'image_filename' ? 'image' : 'audio'
 
-			setFiles(prev => {
-				return [...prev, { file, fileName: value, fileType }]
-			})
+			// Optimiser l'image côté client avant upload
+			if (fileType === 'image') {
+				try {
+					const optimized = await optimizeImage(file)
+					value = optimized.main.fileName
+
+					setFiles(prev => {
+						return [...prev, {
+							file: optimized.main.file,
+							fileName: optimized.main.fileName,
+							fileType
+						}]
+					})
+
+					logger.info(`Image optimized: ${file.name} (${(file.size / 1024).toFixed(0)}KB) → ${optimized.main.fileName} (${(optimized.main.size / 1024).toFixed(0)}KB)`)
+				} catch (error) {
+					logger.error('Image optimization failed, using original file:', error)
+					// Fallback : utiliser le fichier original
+					value = file.name
+					setFiles(prev => {
+						return [...prev, { file, fileName: value, fileType }]
+					})
+				}
+			} else {
+				// Audio : pas d'optimisation, utiliser le fichier original
+				value = file.name
+				setFiles(prev => {
+					return [...prev, { file, fileName: value, fileType }]
+				})
+			}
 		}
 
 		// Pour tous les cas (upload ou saisie manuelle), mettre à jour formData

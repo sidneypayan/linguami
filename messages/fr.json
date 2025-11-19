@@ -388,7 +388,11 @@
     "upsell_unlock_now": "Débloquer maintenant",
     "upsell_maybe_later": "Peut-être plus tard",
     "upsell_trust_signals": "✓ Paiement sécurisé • ✓ Accès immédiat • ✓ Garantie satisfait ou remboursé",
-    "siteName": "Linguami"
+    "siteName": "Linguami",
+    "errorMessage": "Un problème est survenu lors du chargement de cette page. Veuillez réessayer.",
+    "tryAgain": "Réessayer",
+    "accessDenied": "Accès refusé",
+    "accessDeniedMessage": "Cette page est réservée aux administrateurs. Vous n'avez pas les permissions nécessaires pour y accéder."
   },
   "exercises": {
     "title": "Gestion des exercices",

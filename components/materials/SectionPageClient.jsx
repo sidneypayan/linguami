@@ -12,10 +12,10 @@ import {
   removeBeingStudiedMaterial,
   addMaterialToStudied,
 } from '@/app/actions/materials'
-import SectionCard from '@/components/SectionCard'
+import SectionCard from '@/components/materials/SectionCard'
 import BookCard from '@/components/materials/BookCard'
-import MaterialsTable from '@/components/MaterialsTable'
-import MaterialsFilterBar from '@/components/MaterialsFilterBar'
+import MaterialsTable from '@/components/materials/MaterialsTable'
+import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
 import Pagination from '@/components/layouts/Pagination'
 import toast from '@/utils/toast'
 import { getToastMessage } from '@/utils/toastMessages'
