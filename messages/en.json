@@ -388,7 +388,11 @@
     "upsell_unlock_now": "Unlock now",
     "upsell_maybe_later": "Maybe later",
     "upsell_trust_signals": "✓ Secure payment • ✓ Instant access • ✓ Money-back guarantee",
-    "siteName": "Linguami"
+    "siteName": "Linguami",
+    "errorMessage": "A problem occurred while loading this page. Please try again.",
+    "tryAgain": "Try Again",
+    "accessDenied": "Access Denied",
+    "accessDeniedMessage": "This page is reserved for administrators. You do not have the necessary permissions to access it."
   },
   "exercises": {
     "title": "Exercise Management",
