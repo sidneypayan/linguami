@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
 import { useUserContext } from '@/context/user'
 import { useLocale } from 'next-intl'
@@ -222,6 +223,23 @@ const SettingsClient = ({ translations }) => {
 			updateData[fieldMapping[field]] = formData[field]
 
 			await updateUserProfile(updateData)
+
+			// Clear materials filters from localStorage when language level changes
+			// This ensures filters are reset with the new level on next visit
+			if (field === 'languageLevel') {
+				try {
+					localStorage.removeItem('materials_list_filters')
+					// Also clear section filters
+					const storageKeys = Object.keys(localStorage)
+					storageKeys.forEach(key => {
+						if (key.startsWith('materials_section_')) {
+							localStorage.removeItem(key)
+						}
+					})
+				} catch (e) {
+					// Ignore localStorage errors
+				}
+			}
 
 			toast.success(translations.updateSuccess)
 			toggleEditMode(field)
@@ -1016,4 +1034,4 @@ const SettingsClient = ({ translations }) => {
 	)
 }
 
-export default SettingsClient
+export default React.memo(SettingsClient)

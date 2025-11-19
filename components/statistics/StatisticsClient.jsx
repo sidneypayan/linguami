@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import Image from 'next/image'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import {
@@ -1725,4 +1725,4 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 	)
 }
 
-export default StatisticsClient
+export default React.memo(StatisticsClient)

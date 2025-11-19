@@ -1,9 +1,31 @@
+import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { getStatistics, getGoals } from '@/lib/statistics'
-import StatisticsClient from '@/components/statistics/StatisticsClient'
+// Lazy load StatisticsClient for better performance
+const StatisticsClient = dynamic(() => import('@/components/statistics/StatisticsClient'), {
+	loading: () => (
+		<div style={{
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			minHeight: '60vh',
+			padding: '2rem'
+		}}>
+			<div style={{
+				width: '40px',
+				height: '40px',
+				border: '4px solid #e2e8f0',
+				borderTop: '4px solid #8b5cf6',
+				borderRadius: '50%',
+				animation: 'spin 1s linear infinite'
+			}} />
+		</div>
+	),
+	ssr: true // Keep SSR for SEO
+})
 
 export async function generateMetadata({ params }) {
 	const { locale } = await params

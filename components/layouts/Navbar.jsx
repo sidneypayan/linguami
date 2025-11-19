@@ -6,7 +6,7 @@ import { useUserContext } from '@/context/user.js'
 import { usePathname, useParams } from 'next/navigation'
 import { useHasLessonsForLanguage } from '@/lib/lessons-client'
 import UserMenu from './UserMenu'
-import ThemeToggle from '../ThemeToggle'
+import ThemeToggle from './ThemeToggle'
 import {
 	AppBar,
 	Box,

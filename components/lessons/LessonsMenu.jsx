@@ -72,7 +72,17 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const { data: userLessonStatuses = [], isLoading } = useAllLessonStatuses(isUserLoggedIn)
 
 	const theme = useTheme()
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+	// Fix hydration mismatch: sync media query only on client
+	const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 900px)')
+		setIsSmallScreen(mediaQuery.matches)
+
+		const handler = e => setIsSmallScreen(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	const checkIfUserLessonIsStudied = id => {
 		const matchingLessons = userLessonStatuses.find(

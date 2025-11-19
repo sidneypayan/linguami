@@ -10,7 +10,7 @@ import { useState, useCallback } from 'react'
 import { useLocale } from 'next-intl'
 import { useTheme } from '@mui/material'
 import { useFlashcards } from '@/context/flashcards'
-import { useAchievementContext } from '../AchievementProvider'
+import { useAchievementContext } from '../gamification/AchievementProvider'
 import { CARD_STATES } from '@/utils/spacedRepetition'
 import { logger } from '@/utils/logger'
 

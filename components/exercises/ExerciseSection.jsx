@@ -21,7 +21,7 @@ import FillInTheBlank from './FillInTheBlank'
 import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
-import LoadingSpinner from '../LoadingSpinner'
+import LoadingSpinner from '../shared/LoadingSpinner'
 import { logger } from '@/utils/logger'
 import { submitExercise } from '@/lib/exercises-client'
 

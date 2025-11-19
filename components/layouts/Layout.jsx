@@ -1,11 +1,11 @@
 'use client'
 
-import Navbar from './layouts/Navbar'
-import Footer from './layouts/Footer'
-import BottomNav from './layouts/BottomNav'
-import EmailVerificationBanner from './auth/EmailVerificationBanner'
+import Navbar from './Navbar'
+import Footer from './Footer'
+import BottomNav from './BottomNav'
+import EmailVerificationBanner from '../auth/EmailVerificationBanner'
 import { useFlashcards } from '@/context/flashcards'
-import FlashCards from './games/Flashcards'
+import FlashCards from '../games/Flashcards'
 import { Box, useTheme, CssBaseline } from '@mui/material'
 
 const Layout = ({ children }) => {
