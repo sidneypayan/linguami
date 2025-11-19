@@ -22,6 +22,8 @@ import {
 import { Close, Save, CloudUpload } from '@mui/icons-material'
 import { useTranslations } from 'next-intl'
 import { useUpdateMaterial } from '@/lib/admin-client'
+import { optimizeImage } from '@/utils/imageOptimizer'
+import { logger } from '@/utils/logger'
 
 /**
  * Modal optimisé pour l'édition de materials
@@ -70,20 +72,37 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	}
 
 	// Gestion des uploads de fichiers
-	const handleFileUpload = (e, fileType) => {
+	const handleFileUpload = async (e, fileType) => {
 		const file = e.target.files?.[0]
 		if (!file) return
 
-		const fileName = file.name
+		let processedFile = file
+		let fileName = file.name
+
+		// Optimiser l'image côté client avant upload
+		if (fileType === 'image') {
+			try {
+				const optimized = await optimizeImage(file)
+				processedFile = optimized.main.file
+				fileName = optimized.main.fileName
+
+				logger.info(`Image optimized: ${file.name} (${(file.size / 1024).toFixed(0)}KB) → ${optimized.main.fileName} (${(optimized.main.size / 1024).toFixed(0)}KB)`)
+			} catch (error) {
+				logger.error('Image optimization failed, using original file:', error)
+				// Fallback : utiliser le fichier original
+				processedFile = file
+				fileName = file.name
+			}
+		}
 
 		// Ajouter le fichier à la liste des fichiers à uploader
 		setFiles(prev => {
 			// Supprimer l'ancien fichier du même type s'il existe
 			const filtered = prev.filter(f => f.fileType !== fileType)
-			return [...filtered, { file, fileName, fileType }]
+			return [...filtered, { file: processedFile, fileName, fileType }]
 		})
 
-		// Mettre à jour le nom dans formData (sera remplacé par le nom optimisé côté serveur)
+		// Mettre à jour le nom dans formData
 		const fieldName = fileType === 'image' ? 'image_filename' : 'audio_filename'
 		setFormData(prev => ({
 			...prev,

@@ -5,11 +5,17 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { logger } from '@/utils/logger'
 import { addXP } from '@/lib/xp-service' // Only used for material completion
+import { z } from 'zod'
 
 /**
  * Server Actions for materials
  * These functions can be called from Client Components
  */
+
+// Validation schemas
+const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+const MaterialIdSchema = z.number().int().positive('Material ID must be a positive integer')
+const BookIdSchema = z.number().int().positive('Book ID must be a positive integer')
 
 /**
  * Fetch all materials by language (for client-side use with React Query)
@@ -17,6 +23,9 @@ import { addXP } from '@/lib/xp-service' // Only used for material completion
  * @returns {Promise<Array>} Materials array
  */
 export async function getMaterialsByLanguageAction(lang) {
+  // Validate language
+  const validLang = LanguageSchema.parse(lang)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
@@ -45,13 +54,13 @@ export async function getMaterialsByLanguageAction(lang) {
 
   const videoSectionsRu = [...videoSectionsFr, 'eralash', 'galileo']
 
-  const videoSections = lang === 'ru' ? videoSectionsRu : videoSectionsFr
+  const videoSections = validLang === 'ru' ? videoSectionsRu : videoSectionsFr
   const validSections = [...audioTextSections, ...videoSections]
 
   const { data: materials, error } = await supabase
     .from('materials')
     .select('*')
-    .eq('lang', lang)
+    .eq('lang', validLang)
     .in('section', validSections)
     .order('created_at', { ascending: false })
 
@@ -69,6 +78,9 @@ export async function getMaterialsByLanguageAction(lang) {
  * @returns {Promise<Object>} Result with success status and message
  */
 export async function addBeingStudiedMaterial(materialId) {
+  // Validate materialId
+  const validMaterialId = MaterialIdSchema.parse(materialId)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
@@ -83,7 +95,7 @@ export async function addBeingStudiedMaterial(materialId) {
     .from('user_materials')
     .insert([{
       user_id: user.id,
-      material_id: materialId,
+      material_id: validMaterialId,
     }])
 
   if (insertError) {
@@ -106,6 +118,9 @@ export async function addBeingStudiedMaterial(materialId) {
  * @returns {Promise<Object>} Result with success status and message
  */
 export async function removeBeingStudiedMaterial(materialId) {
+  // Validate materialId
+  const validMaterialId = MaterialIdSchema.parse(materialId)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
@@ -119,7 +134,7 @@ export async function removeBeingStudiedMaterial(materialId) {
   const { error: deleteError } = await supabase
     .from('user_materials')
     .delete()
-    .match({ user_id: user.id, material_id: materialId })
+    .match({ user_id: user.id, material_id: validMaterialId })
 
   if (deleteError) {
     logger.error('Error removing material from studying:', deleteError)
@@ -139,6 +154,9 @@ export async function removeBeingStudiedMaterial(materialId) {
  * @returns {Promise<Object>} Result with success status and message
  */
 export async function addMaterialToStudied(materialId) {
+  // Validate materialId
+  const validMaterialId = MaterialIdSchema.parse(materialId)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
@@ -152,7 +170,7 @@ export async function addMaterialToStudied(materialId) {
   const { data: existing, error: checkError } = await supabase
     .from('user_materials')
     .select('material_id')
-    .match({ user_id: user.id, material_id: materialId })
+    .match({ user_id: user.id, material_id: validMaterialId })
     .maybeSingle()
 
   if (checkError) {
@@ -166,7 +184,7 @@ export async function addMaterialToStudied(materialId) {
       .from('user_materials')
       .insert([{
         user_id: user.id,
-        material_id: materialId,
+        material_id: validMaterialId,
         is_being_studied: false,
         is_studied: true,
       }])
@@ -180,7 +198,7 @@ export async function addMaterialToStudied(materialId) {
     const { error: updateError } = await supabase
       .from('user_materials')
       .update({ is_being_studied: false, is_studied: true })
-      .match({ user_id: user.id, material_id: materialId })
+      .match({ user_id: user.id, material_id: validMaterialId })
 
     if (updateError) {
       logger.error('Error updating material to studied:', updateError)
@@ -192,7 +210,7 @@ export async function addMaterialToStudied(materialId) {
   try {
     await addXP({
       actionType: 'material_completed',
-      sourceId: materialId.toString(),
+      sourceId: validMaterialId.toString(),
       description: 'Completed material'
     })
   } catch (err) {
@@ -214,14 +232,18 @@ export async function addMaterialToStudied(materialId) {
  * @returns {Promise<Object|null>} First chapter or null
  */
 export async function getFirstChapterOfBook({ lang, bookId }) {
+  // Validate inputs
+  const validLang = LanguageSchema.parse(lang)
+  const validBookId = BookIdSchema.parse(bookId)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
   const { data: chapters, error } = await supabase
     .from('materials')
     .select('*')
-    .eq('lang', lang)
-    .eq('book_id', bookId)
+    .eq('lang', validLang)
+    .eq('book_id', validBookId)
     .order('chapter_number', { ascending: true })
     .limit(1)
 
@@ -239,6 +261,9 @@ export async function getFirstChapterOfBook({ lang, bookId }) {
  * @returns {Promise<Array>} Chapters array
  */
 export async function getBookChapters(bookId) {
+  // Validate bookId
+  const validBookId = BookIdSchema.parse(bookId)
+
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
@@ -246,7 +271,7 @@ export async function getBookChapters(bookId) {
     .from('materials')
     .select('id, title')
     .eq('section', 'book-chapters')
-    .eq('book_id', bookId)
+    .eq('book_id', validBookId)
     .order('id')
 
   if (error) {

@@ -4,6 +4,11 @@ import { createServerClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import { logger } from '@/utils/logger'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+// Validation schemas
+const LessonIdSchema = z.number().int().positive('Lesson ID must be a positive integer')
+const LanguageSchema = z.enum(['fr', 'ru', 'en'])
 
 /**
  * Mark a lesson as studied (or create entry if doesn't exist)
@@ -11,6 +16,8 @@ import { revalidatePath } from 'next/cache'
  * @returns {Object} { success: boolean, error: string | null }
  */
 export async function markLessonAsStudied(lessonId) {
+	// Validate lessonId
+	const validLessonId = LessonIdSchema.parse(lessonId)
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
@@ -32,7 +39,7 @@ export async function markLessonAsStudied(lessonId) {
 		const { data: existingRecord, error: selectError } = await supabase
 			.from('user_lessons')
 			.select('is_studied')
-			.match({ user_id: user.id, lesson_id: lessonId })
+			.match({ user_id: user.id, lesson_id: validLessonId })
 			.single()
 
 		if (selectError && selectError.code !== 'PGRST116') {
@@ -50,7 +57,7 @@ export async function markLessonAsStudied(lessonId) {
 				const { error: updateError } = await supabase
 					.from('user_lessons')
 					.update({ is_studied: true })
-					.match({ user_id: user.id, lesson_id: lessonId })
+					.match({ user_id: user.id, lesson_id: validLessonId })
 
 				if (updateError) {
 					logger.error('Error updating lesson status:', updateError)
@@ -67,7 +74,7 @@ export async function markLessonAsStudied(lessonId) {
 				.from('user_lessons')
 				.insert({
 					user_id: user.id,
-					lesson_id: lessonId,
+					lesson_id: validLessonId,
 					is_studied: true,
 				})
 
@@ -102,6 +109,9 @@ export async function markLessonAsStudied(lessonId) {
  * @returns {Object} { is_studied: boolean } | { error: string }
  */
 export async function getLessonStatus(lessonId) {
+	// Validate lessonId
+	const validLessonId = LessonIdSchema.parse(lessonId)
+
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
@@ -120,7 +130,7 @@ export async function getLessonStatus(lessonId) {
 		const { data, error } = await supabase
 			.from('user_lessons')
 			.select('is_studied')
-			.match({ user_id: user.id, lesson_id: lessonId })
+			.match({ user_id: user.id, lesson_id: validLessonId })
 
 		if (error) {
 			logger.error('Error fetching lesson status:', error)
@@ -180,6 +190,9 @@ export async function getAllLessonStatuses() {
  * @returns {Promise<boolean>} True if lessons exist for this language
  */
 export async function hasLessonsForLanguage(lang) {
+	// Validate language
+	const validLang = LanguageSchema.parse(lang)
+
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
@@ -187,7 +200,7 @@ export async function hasLessonsForLanguage(lang) {
 		const { count, error } = await supabase
 			.from('lessons')
 			.select('id', { count: 'exact', head: true })
-			.eq('lang', lang)
+			.eq('lang', validLang)
 
 		if (error) {
 			logger.error('Error checking lessons availability:', error)

@@ -3,6 +3,8 @@
  * Used for non-authenticated users before they sign up/login
  */
 
+import { logger } from './logger'
+
 const LOCAL_PROGRESS_KEY = 'linguami_course_progress'
 
 /**
@@ -16,7 +18,7 @@ export const getLocalProgress = () => {
 		const stored = localStorage.getItem(LOCAL_PROGRESS_KEY)
 		return stored ? JSON.parse(stored) : []
 	} catch (error) {
-		console.error('Error reading local progress:', error)
+		logger.error('Error reading local progress:', error)
 		return []
 	}
 }
@@ -31,7 +33,7 @@ const saveLocalProgress = (progress) => {
 	try {
 		localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(progress))
 	} catch (error) {
-		console.error('Error saving local progress:', error)
+		logger.error('Error saving local progress:', error)
 	}
 }
 
@@ -125,7 +127,7 @@ export const clearLocalProgress = () => {
 	try {
 		localStorage.removeItem(LOCAL_PROGRESS_KEY)
 	} catch (error) {
-		console.error('Error clearing local progress:', error)
+		logger.error('Error clearing local progress:', error)
 	}
 }
 
@@ -175,7 +177,7 @@ export const migrateLocalProgressToDatabase = async (migrationFn) => {
 
 		return { success: true, migrated: result.migrated }
 	} catch (error) {
-		console.error('Error migrating local progress:', error)
+		logger.error('Error migrating local progress:', error)
 		return { success: false, error: error.message }
 	}
 }

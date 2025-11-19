@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { Box, Container, Typography, Button } from '@mui/material'
-import { Add, People, School } from '@mui/icons-material'
+import { Add, People, School, Article } from '@mui/icons-material'
 import { useTranslations, useLocale } from 'next-intl'
 
 const AdminNavbar = ({ activePage = 'dashboard' }) => {
@@ -18,6 +18,13 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			label: t('newContent'),
 			href: '/admin/create',
 			icon: <Add />,
+			variant: 'contained',
+		},
+		{
+			id: 'blog',
+			label: 'Blog',
+			href: '/admin/blog',
+			icon: <Article />,
 			variant: 'contained',
 		},
 		{

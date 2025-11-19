@@ -80,7 +80,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 									component="img"
 									height="180"
 									image={getBlogImageUrl(post)}
-									alt={post.frontmatter.title}
+									alt={post.title || post.frontmatter?.title}
 									sx={{
 										objectFit: 'cover',
 									}}
@@ -88,7 +88,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 								<CardContent sx={{ p: 2.5 }}>
 									<Chip
 										icon={<CalendarTodayRounded sx={{ fontSize: '0.875rem' }} />}
-										label={post.frontmatter.date}
+										label={post.published_at || post.frontmatter?.date}
 										size="small"
 										sx={{
 											mb: 1.5,
@@ -116,7 +116,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 											WebkitBoxOrient: 'vertical',
 											overflow: 'hidden',
 										}}>
-										{post.frontmatter.title}
+										{post.title || post.frontmatter?.title}
 									</Typography>
 
 									<Typography
@@ -129,7 +129,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 											WebkitBoxOrient: 'vertical',
 											overflow: 'hidden',
 										}}>
-										{post.frontmatter.excerpt}
+										{post.excerpt || post.frontmatter?.excerpt}
 									</Typography>
 								</CardContent>
 							</Card>

@@ -1,8 +1,10 @@
+import { logger } from './logger'
+
 // Fonction helper pour obtenir l'URL de base R2
 function getR2BaseUrl() {
 	const url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 	if (!url) {
-		console.error('NEXT_PUBLIC_R2_PUBLIC_URL is not defined in environment variables')
+		logger.error('NEXT_PUBLIC_R2_PUBLIC_URL is not defined in environment variables')
 		return ''
 	}
 	return url.replace(/\/+$/, '')

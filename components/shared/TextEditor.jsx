@@ -1,61 +1,46 @@
+'use client'
+
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
-const ReactQuill = dynamic(import('react-quill'), { ssr: false })
-import 'react-quill/dist/quill.snow.css'
+import { useThemeMode } from '@/context/ThemeContext'
+import '@uiw/react-md-editor/markdown-editor.css'
+import '@uiw/react-markdown-preview/markdown.css'
 
-const TextEditor = ({ value, setValue }) => {
-	const toolbarOptions = [
-		['bold', 'italic', 'underline'], // toggled buttons
-		['blockquote'],
+// Dynamic import to avoid SSR issues
+const MDEditor = dynamic(
+	() => import('@uiw/react-md-editor').then((mod) => mod.default),
+	{ ssr: false }
+)
 
-		[{ header: 1 }, { header: 2 }], // custom button values
-		[{ list: 'ordered' }, { list: 'bullet' }],
-		// [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-		[{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-		// [{ direction: 'rtl' }], // text direction
-
-		// [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-		[{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-		[{ color: [] }, { background: [] }], // dropdown with defaults from theme
-		// [{ font: [] }],
-		[{ align: [] }],
-		['link', 'image'],
-
-		['clean'], // remove formatting button
-	]
-
-	const modules = {
-		toolbar: toolbarOptions,
-	}
-
-	const formats = [
-		'header',
-		'bold',
-		'italic',
-		'underline',
-		'strike',
-		'blockquote',
-		'list',
-		'bullet',
-		'indent',
-		'link',
-		'image',
-	]
+/**
+ * Markdown editor component for blog posts
+ * Uses @uiw/react-md-editor for native Markdown editing with live preview
+ *
+ * @param {Object} props
+ * @param {string} props.value - Markdown content
+ * @param {Function} props.setValue - Callback to update markdown content
+ * @param {number} props.height - Editor height in pixels (default: 500)
+ * @param {string} props.preview - Preview mode: 'live' | 'edit' | 'preview' (default: 'live')
+ */
+const TextEditor = ({ value, setValue, height = 500, preview = 'live' }) => {
+	const { mode } = useThemeMode()
 
 	return (
-		<ReactQuill
-			style={{
-				flexBasis: '100%',
-				height: '500px',
-				backgroundColor: 'white',
-			}}
-			theme='snow'
-			value={value}
-			onChange={setValue}
-			modules={modules}
-			formats={formats}
-		/>
+		<div data-color-mode={mode}>
+			<MDEditor
+				value={value}
+				onChange={setValue}
+				height={height}
+				preview={preview}
+				visibleDragbar={false}
+				enableScroll={true}
+				textareaProps={{
+					placeholder: 'Écrivez votre article en Markdown...',
+				}}
+				previewOptions={{
+					rehypePlugins: [],
+				}}
+			/>
+		</div>
 	)
 }
 

@@ -248,16 +248,6 @@ const Material = ({
 		)
 	}
 
-	// Debug: Log pour voir si book est bien reçu
-	if (currentMaterial.book_id) {
-		console.log('📚 Book chapter detected:', {
-			materialId: currentMaterial.id,
-			bookId: currentMaterial.book_id,
-			bookReceived: !!book,
-			book: book
-		})
-	}
-
 	return (
 		<>
 			{/* Chapter Breadcrumb Navigation (for book chapters) */}

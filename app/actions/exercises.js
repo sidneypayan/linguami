@@ -3,6 +3,14 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { logger } from '@/utils/logger'
+import { z } from 'zod'
+
+// Validation schema for exercise submission
+const SubmitExerciseSchema = z.object({
+	exerciseId: z.number().int().positive('Exercise ID must be a positive integer'),
+	score: z.number().int().min(0).max(100, 'Score must be between 0 and 100'),
+	completed: z.boolean()
+})
 
 /**
  * Submit an exercise attempt
@@ -25,15 +33,25 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 			throw new Error('Unauthorized')
 		}
 
-		if (!exerciseId || score === undefined) {
-			throw new Error('Missing required fields')
+		// Validate inputs with Zod
+		const validationResult = SubmitExerciseSchema.safeParse({
+			exerciseId,
+			score,
+			completed
+		})
+
+		if (!validationResult.success) {
+			logger.error('Validation error in submitExerciseAction:', validationResult.error.errors)
+			throw new Error('Invalid exercise submission data: ' + validationResult.error.errors[0].message)
 		}
+
+		const { exerciseId: validExerciseId, score: validScore, completed: validCompleted } = validationResult.data
 
 		// Get exercise details
 		const { data: exercise, error: exerciseError } = await supabase
 			.from('exercises')
 			.select('*')
-			.eq('id', exerciseId)
+			.eq('id', validExerciseId)
 			.single()
 
 		if (exerciseError || !exercise) {
@@ -45,7 +63,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 			.from('user_exercise_progress')
 			.select('*')
 			.eq('user_id', user.id)
-			.eq('exercise_id', exerciseId)
+			.eq('exercise_id', validExerciseId)
 			.single()
 
 		const now = new Date().toISOString()
@@ -56,12 +74,12 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 			const { error: updateError } = await supabase
 				.from('user_exercise_progress')
 				.update({
-					score: Math.max(existingProgress.score || 0, score), // Keep best score
+					score: Math.max(existingProgress.score || 0, validScore), // Keep best score
 					attempts: existingProgress.attempts + 1,
-					completed: completed || existingProgress.completed,
+					completed: validCompleted || existingProgress.completed,
 					last_attempt_at: now,
 					completed_at:
-						completed && !existingProgress.completed
+						validCompleted && !existingProgress.completed
 							? now
 							: existingProgress.completed_at,
 				})
@@ -77,12 +95,12 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 				.from('user_exercise_progress')
 				.insert({
 					user_id: user.id,
-					exercise_id: exerciseId,
-					score,
+					exercise_id: validExerciseId,
+					score: validScore,
 					attempts: 1,
-					completed,
+					completed: validCompleted,
 					last_attempt_at: now,
-					completed_at: completed ? now : null,
+					completed_at: validCompleted ? now : null,
 				})
 
 			if (insertError) {
@@ -94,7 +112,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 		// Award XP if this is the first time achieving 100% score
 		let xpAwarded = 0
 		let goldAwarded = 0
-		const isPerfectScore = score === 100
+		const isPerfectScore = validScore === 100
 		const hadPerfectScoreBefore = existingProgress && existingProgress.score === 100
 
 		// Give XP if: perfect score AND never had perfect score before
@@ -146,7 +164,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 					xp_amount: xpAwarded,
 					gold_earned: goldAwarded,
 					source_type: 'exercise_completed',
-					source_id: exerciseId.toString(),
+					source_id: validExerciseId.toString(),
 					description: `Completed exercise: ${exercise.title || 'Untitled'}`,
 				})
 
@@ -167,7 +185,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 
 		return {
 			success: true,
-			score,
+			score: validScore,
 			xpAwarded,
 			goldAwarded,
 			isFirstCompletion: isPerfectScore && !hadPerfectScoreBefore,

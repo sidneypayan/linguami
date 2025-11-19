@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 import { Container, Typography, Box } from '@mui/material'
-import { getBlogPosts } from '@/lib/blog'
+import { getPublishedBlogPostsAction } from '@/app/actions/blog'
 import BlogList from '@/components/blog/BlogList'
 
 // Metadata for SEO
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }) {
 export default async function BlogPage({ params }) {
 	const { locale } = await params
 
-	// Fetch posts server-side - NO API route needed!
-	const posts = getBlogPosts(locale)
+	// Fetch published posts from Supabase
+	const posts = await getPublishedBlogPostsAction(locale)
 
 	// Get translations server-side
 	const t = await getTranslations({ locale, namespace: 'blog' })
