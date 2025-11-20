@@ -22,9 +22,14 @@ export function useClickOutside(ref, handler) {
 			}
 		}
 
-		document.addEventListener('mousedown', handleClickOutside)
+		// Use requestAnimationFrame to wait for next render before activating listener
+		// This prevents the click that opened the popup from immediately closing it
+		let rafId = requestAnimationFrame(() => {
+			document.addEventListener('mousedown', handleClickOutside)
+		})
 
 		return () => {
+			cancelAnimationFrame(rafId)
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [ref, memoizedHandler])

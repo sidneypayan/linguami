@@ -196,6 +196,23 @@ const { openFlashcards } = useFlashcards()
 		}
 	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
 
+	// Listen for guest dictionary updates
+	useEffect(() => {
+		if (isUserLoggedIn || isBootstrapping) return
+
+		const handleGuestDictionaryUpdate = () => {
+			if (userLearningLanguage) {
+				const words = getGuestWordsByLanguage(userLearningLanguage)
+				setGuestWords(words)
+			}
+		}
+
+		window.addEventListener('guestDictionaryUpdated', handleGuestDictionaryUpdate)
+		return () => {
+			window.removeEventListener('guestDictionaryUpdated', handleGuestDictionaryUpdate)
+		}
+	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
+
 	// Show loading while:
 	// 1. Not mounted yet (prevent SSR flash)
 	// 2. Bootstrapping auth
@@ -203,162 +220,6 @@ const { openFlashcards } = useFlashcards()
 	// 4. Loading or fetching words
 	if (!isMounted || isBootstrapping || (isUserLoggedIn && !userId) || user_words_loading || user_words_fetching) {
 		return <LoadingSpinner />
-	}
-
-	// Guest user message - Si invité avec 0 mots
-	if (!isUserLoggedIn && guestWords.length === 0) {
-		return (
-			<>
-				<Container
-					maxWidth='md'
-					sx={{
-						pt: { xs: '6.5rem', md: '7rem' },
-						pb: { xs: 4, md: 6 },
-					}}>
-					<Card
-						sx={{
-							p: { xs: 3, sm: 4, md: 5 },
-							borderRadius: 4,
-							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						}}>
-						<Typography
-							variant='h5'
-							align='center'
-							sx={{
-								fontWeight: 800,
-								mb: 2,
-								fontSize: { xs: '1.5rem', sm: '1.75rem' },
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							Testez gratuitement avec 20 mots !
-						</Typography>
-						<Typography
-							variant='body1'
-							align='center'
-							sx={{
-								color: isDark ? '#94a3b8' : '#718096',
-								fontSize: { xs: '0.9375rem', sm: '1rem' },
-								mb: 4,
-								fontWeight: 500,
-							}}>
-							{translations.guest_dictionary_message}
-						</Typography>
-
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								gap: 2.5,
-								mb: 4,
-								position: 'relative',
-								zIndex: 1,
-							}}>
-							{[
-								{ icon: BookmarkAddRounded, text: translations.feature_save_words },
-								{ icon: FlashOnRounded, text: translations.feature_flashcards },
-								{ icon: AddCircleRounded, text: translations.feature_add_manually },
-								{ icon: AutoStoriesRounded, text: translations.dictionary_disabled_benefit_access },
-							].map((item, index) => (
-								<Box
-									key={index}
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 2,
-										p: 2,
-										borderRadius: 2,
-										background:
-											'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.2)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											transform: 'translateX(8px)',
-											background:
-												'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											border: '1px solid rgba(139, 92, 246, 0.4)',
-											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-											'&::before': {
-												left: '100%',
-											},
-										},
-									}}>
-									<Box
-										sx={{
-											width: 44,
-											height: 44,
-											borderRadius: 2,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-											border: '1px solid rgba(139, 92, 246, 0.4)',
-										}}>
-										<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
-									</Box>
-									<Typography
-										sx={{
-											fontSize: { xs: '0.9375rem', sm: '1rem' },
-											color: isDark ? '#e2e8f0' : '#4a5568',
-											fontWeight: 600,
-										}}>
-										{item.text}
-									</Typography>
-								</Box>
-							))}
-						</Box>
-
-						<Link href='/login' style={{ textDecoration: 'none' }}>
-							<Button
-								variant='contained'
-								size='large'
-								fullWidth
-								sx={{
-									py: 2.5,
-									borderRadius: 3,
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.3)',
-									fontWeight: 700,
-									fontSize: '1.0625rem',
-									textTransform: 'none',
-									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&:hover': {
-										background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-										transform: 'translateY(-3px)',
-										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-										borderColor: 'rgba(139, 92, 246, 0.5)',
-									},
-									'&:active': {
-										transform: 'translateY(0)',
-									},
-								}}>
-								{translations.noaccount}
-							</Button>
-						</Link>
-					</Card>
-				</Container>
-			</>
-		)
 	}
 
 	return (

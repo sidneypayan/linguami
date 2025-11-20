@@ -4,6 +4,7 @@ import { Box, Typography, Grid, Card, CardContent, CardMedia, useTheme, Chip } f
 import { CalendarTodayRounded, AccessTimeRounded } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
+import { formatBlogDate } from '@/utils/blogHelpers'
 import * as gtm from '@/lib/gtm'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 
@@ -88,7 +89,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 								<CardContent sx={{ p: 2.5 }}>
 									<Chip
 										icon={<CalendarTodayRounded sx={{ fontSize: '0.875rem' }} />}
-										label={post.published_at || post.frontmatter?.date}
+										label={formatBlogDate(post.published_at || post.frontmatter?.date, params.locale)}
 										size="small"
 										sx={{
 											mb: 1.5,

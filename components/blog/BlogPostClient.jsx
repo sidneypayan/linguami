@@ -11,6 +11,7 @@ import StickySignupWidget from '@/components/blog/StickySignupWidget'
 import RelatedArticles from '@/components/blog/RelatedArticles'
 import { calculateReadingTime, formatReadingTime } from '@/utils/readingTime'
 import { slugify } from '@/utils/slugify'
+import { formatBlogDate } from '@/utils/blogHelpers'
 
 export default function BlogPostClient({ frontmatter, content, slug, allPosts, locale, translations }) {
 	const theme = useTheme()
@@ -110,7 +111,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 								color: 'text.secondary',
 								fontWeight: 400,
 							}}>
-							{date}
+							{formatBlogDate(date, locale)}
 						</Typography>
 					</Box>
 					<Box

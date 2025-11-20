@@ -110,6 +110,11 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	useEffect(() => {
 		if (!isUserLoggedIn && userLearningLanguage) {
 			const words = loadGuestWordsHelper(userLearningLanguage, params?.material, pathname)
+			console.log('[useFlashcardSession] Loading guest words:', {
+				userLearningLanguage,
+				wordsCount: words.length,
+				words
+			})
 			setGuestWords(words)
 		}
 	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
@@ -120,14 +125,14 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 			const loadGuestWords = () => {
 				const words = loadGuestWordsHelper(userLearningLanguage, params?.material, pathname)
 				setGuestWords(words)
+				// Reset session when guest words change to re-initialize with new words
+				setSessionInitialized(false)
 			}
 
-			window.addEventListener('guestWordAdded', loadGuestWords)
-			window.addEventListener('guestWordDeleted', loadGuestWords)
+			window.addEventListener('guestDictionaryUpdated', loadGuestWords)
 
 			return () => {
-				window.removeEventListener('guestWordAdded', loadGuestWords)
-				window.removeEventListener('guestWordDeleted', loadGuestWords)
+				window.removeEventListener('guestDictionaryUpdated', loadGuestWords)
 			}
 		}
 	}, [isUserLoggedIn, userLearningLanguage, params?.material, pathname])
@@ -138,25 +143,48 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	// Filter words by language pair
 	const filteredWords = useMemo(() => {
 		if (!baseWordsArray || !userLearningLanguage || !locale) {
+			console.log('[useFlashcardSession] Filtering failed - missing data:', {
+				hasBaseWords: !!baseWordsArray,
+				baseWordsCount: baseWordsArray?.length,
+				userLearningLanguage,
+				locale
+			})
 			return []
 		}
 
 		// Don't show words if learning language = interface language
 		if (userLearningLanguage === locale) {
+			console.log('[useFlashcardSession] Filtering failed - same language:', {
+				userLearningLanguage,
+				locale
+			})
 			return []
 		}
 
-		return baseWordsArray.filter(word => {
+		const filtered = baseWordsArray.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
 			const translation = word[`word_${locale}`]
 			return sourceWord && translation
 		})
+
+		console.log('[useFlashcardSession] Filtered words:', {
+			userLearningLanguage,
+			locale,
+			baseWordsCount: baseWordsArray.length,
+			filteredCount: filtered.length,
+			filtered
+		})
+
+		return filtered
 	}, [baseWordsArray, userLearningLanguage, locale])
 
 	// Initialize session cards
 	useEffect(() => {
-		if (sessionInitialized) {
-			return // Don't reinitialize during session
+		// Allow re-initialization if we previously had 0 words but now have words
+		const shouldReinitialize = sessionInitialized && filteredWords && filteredWords.length > 0
+
+		if (sessionInitialized && !shouldReinitialize) {
+			return // Don't reinitialize during session unless we have new words
 		}
 
 		if (!filteredWords) {
@@ -182,6 +210,15 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		// Filter for due cards and apply limit
 		const dueCards = getDueCards(initializedCards)
 		const limitedCards = dueCards.slice(0, cardsLimit)
+
+		console.log('[useFlashcardSession] Session initialization:', {
+			filteredWordsCount: filteredWords.length,
+			initializedCardsCount: initializedCards.length,
+			dueCardsCount: dueCards.length,
+			limitedCardsCount: limitedCards.length,
+			cardsLimit,
+			limitedCards
+		})
 
 		setSessionInitialized(true)
 

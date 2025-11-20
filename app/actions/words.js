@@ -58,6 +58,7 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 		apiUrl.searchParams.append('key', process.env.YANDEX_DICT_API_KEY)
 		apiUrl.searchParams.append('lang', langPair)
 		apiUrl.searchParams.append('text', word)
+		apiUrl.searchParams.append('flags', '004') // Enable morphological search (declined/conjugated forms)
 
 		const response = await fetch(apiUrl.toString())
 
@@ -66,6 +67,11 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 		}
 
 		const data = await response.json()
+
+		// Log API response for debugging
+		if (data.def?.length === 0) {
+			logger.warn(`[translateWordAction] No translations found for "${word}" (${langPair})`)
+		}
 
 		return {
 			success: true,
@@ -98,6 +104,57 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 			success: false,
 			error: error.message || 'Erreur lors de la traduction',
 			limitReached: false,
+		}
+	}
+}
+
+/**
+ * Get translation popularity statistics
+ * Returns how many times each translation has been chosen by users
+ * @param {Object} params - Parameters
+ * @param {string} params.originalWord - Original word to get stats for
+ * @param {string} params.sourceLang - Source language (ru, fr, en)
+ * @param {string} params.targetLang - Target language (ru, fr, en)
+ * @returns {Promise<Object>} Translation stats { "rouge": 127, "red": 45, ... }
+ */
+export async function getTranslationStatsAction({ originalWord, sourceLang, targetLang }) {
+	const supabase = createServerClient(await cookies())
+
+	try {
+		// Query user_words to count how many times each translation was chosen
+		const sourceColumn = `word_${sourceLang}`
+		const targetColumn = `word_${targetLang}`
+
+		const { data, error } = await supabase
+			.from('user_words')
+			.select(targetColumn)
+			.eq(sourceColumn, originalWord)
+			.eq('word_lang', sourceLang)
+			.not(targetColumn, 'is', null)
+
+		if (error) {
+			logger.error('[getTranslationStatsAction] Error:', error)
+			return { success: true, stats: {} } // Return empty stats instead of failing
+		}
+
+		// Count occurrences of each translation
+		const stats = {}
+		data.forEach(row => {
+			const translation = row[targetColumn]
+			if (translation) {
+				stats[translation] = (stats[translation] || 0) + 1
+			}
+		})
+
+		return {
+			success: true,
+			stats, // { "rouge": 127, "rougi": 5, "couperosé": 2 }
+		}
+	} catch (error) {
+		logger.error('[getTranslationStatsAction] Error:', error)
+		return {
+			success: true,
+			stats: {}, // Return empty stats on error to not break the UI
 		}
 	}
 }
