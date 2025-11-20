@@ -104,13 +104,15 @@ const Flashcards = () => {
 			updatedCard.card_state === CARD_STATES.RELEARNING) &&
 			updatedCard.interval < 10
 
-		if (shouldStayInSession) {
+		// Only re-add if there are OTHER cards to show first
+		// If this is the only card, let the session end instead of immediately re-showing it
+		if (shouldStayInSession && sessionCards.length > 1) {
 			// Create snapshot to isolate from future updates
 			const cardSnapshot = { ...updatedCard }
 			// Add to END of queue (other cards will be shown first)
 			addCardToSession(cardSnapshot)
 		}
-	}, [currentCard, incrementReviewedCount, removeCurrentCard, addCardToSession, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
+	}, [currentCard, sessionCards, incrementReviewedCount, removeCurrentCard, addCardToSession, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
 
 	// Suspend completion callback
 	const handleSuspendComplete = useCallback(() => {
