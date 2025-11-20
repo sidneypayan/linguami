@@ -7,7 +7,7 @@ import { addWordAction } from '@/app/actions/words'
 import { addGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import { buildWordData, getOriginalWord } from '@/utils/wordMapping'
 import toast from '@/utils/toast'
-import { Paper, Fade, useTheme } from '@mui/material'
+import { Paper, Fade, useTheme, Box, Typography } from '@mui/material'
 import { TranslationHeader } from '@/components/translation/TranslationHeader'
 import { TranslationContent } from '@/components/translation/TranslationContent'
 import { CustomTranslationForm } from '@/components/translation/CustomTranslationForm'
@@ -99,6 +99,7 @@ const Translation = ({ materialId, userId }) => {
 			const wordData = buildWordData(originalWord, translatedWord, userLearningLanguage, locale)
 			wordData.word_sentence = word_sentence || ''
 			wordData.material_id = materialId
+			wordData.word_lang = userLearningLanguage
 
 			const result = addGuestWord(wordData)
 
@@ -107,7 +108,7 @@ const Translation = ({ materialId, userId }) => {
 
 				// Emit event to notify other components
 				if (typeof window !== 'undefined') {
-					window.dispatchEvent(new Event('guestWordAdded'))
+					window.dispatchEvent(new CustomEvent('guestDictionaryUpdated'))
 				}
 			} else if (result.error === 'limit_reached') {
 				return // Handled in UI
@@ -198,7 +199,17 @@ const Translation = ({ materialId, userId }) => {
 							<GuestLimitMessage hasReachedLimit={hasDictionaryLimit} />
 						)}
 					</>
-				) : null}
+				) : (
+				/* No translation found - still show guest limit message if applicable */
+				!isUserLoggedIn && hasDictionaryLimit && (
+					<Box sx={{ p: 2 }}>
+						<Typography variant="body2" sx={{ mb: 2, color: 'text.secondary', textAlign: 'center' }}>
+							Aucune traduction trouvée
+						</Typography>
+						<GuestLimitMessage hasReachedLimit={true} />
+					</Box>
+				)
+			)}
 			</Paper>
 		</Fade>
 	)

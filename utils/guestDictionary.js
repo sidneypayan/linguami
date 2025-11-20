@@ -204,7 +204,37 @@ export function getRemainingGuestWords() {
  */
 export function getGuestWordsByLanguage(learningLanguage) {
 	const allWords = getGuestWords()
-	return allWords.filter(word => word.word_lang === learningLanguage)
+
+	// Migration automatique : ajouter word_lang aux mots qui n'en ont pas
+	let needsMigration = false
+	const migratedWords = allWords.map(word => {
+		if (!word.word_lang) {
+			needsMigration = true
+			// Détecter word_lang en fonction des champs remplis
+			// Si word_ru est rempli, c'est probablement la langue d'apprentissage
+			if (word.word_ru) {
+				return { ...word, word_lang: 'ru' }
+			} else if (word.word_fr) {
+				return { ...word, word_lang: 'fr' }
+			} else if (word.word_en) {
+				return { ...word, word_lang: 'en' }
+			}
+		}
+		return word
+	})
+
+	// Sauvegarder les mots migrés
+	if (needsMigration && typeof window !== 'undefined') {
+		try {
+			localStorage.setItem(GUEST_WORDS_KEY, JSON.stringify(migratedWords))
+			logger.info(`Migrated ${allWords.length} guest words to include word_lang field`)
+		} catch (error) {
+			logger.error('Error migrating guest words:', error)
+		}
+	}
+
+	// Filtrer par langue d'apprentissage
+	return migratedWords.filter(word => word.word_lang === learningLanguage)
 }
 
 /**

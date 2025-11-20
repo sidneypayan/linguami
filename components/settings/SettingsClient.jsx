@@ -39,7 +39,6 @@ import {
 	CheckRounded,
 	CloseRounded,
 	SettingsRounded,
-	NotificationsRounded,
 	LockRounded,
 	DeleteForeverRounded,
 	TrackChangesRounded,
@@ -56,7 +55,6 @@ import { changePassword, deleteAccount } from '@/app/actions/auth'
 import { ProfileSection } from './ProfileSection'
 import { LanguagePreferencesSection } from './LanguagePreferencesSection'
 import { GoalsSection } from './GoalsSection'
-import { NotificationsSection } from './NotificationsSection'
 import { SecuritySection } from './SecuritySection'
 
 const SettingsClient = ({ translations }) => {
@@ -87,9 +85,6 @@ const SettingsClient = ({ translations }) => {
 		languageLevel: '',
 		learningLanguage: '',
 		dailyXpGoal: 100,
-		emailReminders: true,
-		streakReminders: true,
-		newContentNotifications: true,
 		showInLeaderboard: true,
 	})
 
@@ -152,9 +147,6 @@ const SettingsClient = ({ translations }) => {
 				languageLevel: userProfile.language_level || '',
 				learningLanguage: userProfile.learning_language || 'fr',
 				dailyXpGoal: userProfile.daily_xp_goal || 100,
-				emailReminders: userProfile.email_reminders ?? true,
-				streakReminders: userProfile.streak_reminders ?? true,
-				newContentNotifications: userProfile.new_content_notifications ?? true,
 				showInLeaderboard: userProfile.show_in_leaderboard ?? true,
 			})
 			setSelectedAvatar(userProfile.avatar_id || 'avatar1')
@@ -179,9 +171,6 @@ const SettingsClient = ({ translations }) => {
 		setLoading(true)
 		try {
 			const fieldMapping = {
-				emailReminders: 'email_reminders',
-				streakReminders: 'streak_reminders',
-				newContentNotifications: 'new_content_notifications',
 				showInLeaderboard: 'show_in_leaderboard',
 			}
 
@@ -652,13 +641,6 @@ const SettingsClient = ({ translations }) => {
 							updateUserProfile={updateUserProfile}
 						/>
 
-						<NotificationsSection
-							isDark={isDark}
-							translations={translations}
-							formData={formData}
-							loading={loading}
-							handleToggle={handleToggle}
-						/>
 
 						<SecuritySection
 							isDark={isDark}

@@ -10,9 +10,11 @@ import {
 } from '@mui/material'
 import { ArrowForwardRounded } from '@mui/icons-material'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
+import { formatBlogDate } from '@/utils/blogHelpers'
 
 const BlogCard = ({ post }) => {
 	const t = useTranslations('blog')
+	const locale = useLocale()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 
@@ -80,7 +82,7 @@ const BlogCard = ({ post }) => {
 							mb: 1.5,
 							display: 'block',
 						}}>
-						{post.published_at || post.frontmatter?.date}
+						{formatBlogDate(post.published_at || post.frontmatter?.date, locale)}
 					</Typography>
 
 					{/* Title */}
