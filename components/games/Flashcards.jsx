@@ -38,6 +38,7 @@ const Flashcards = () => {
 	// Settings hook
 	const { isReversed, cardsLimit, toggleReversed, updateCardsLimit } = useFlashcardSettings()
 	const [showSettings, setShowSettings] = useState(false)
+	const [isProcessingReview, setIsProcessingReview] = useState(false)
 
 	// XP mutation
 	const addXPMutation = useAddXP()
@@ -55,6 +56,7 @@ const Flashcards = () => {
 		startRandomPractice,
 		removeCurrentCard,
 		addCardToSession,
+		requeueCurrentCard,
 		incrementReviewedCount,
 		setGuestWords
 	} = useFlashcardSession({ cardsLimit, locale })
@@ -67,8 +69,7 @@ const Flashcards = () => {
 
 	// Review completion callback
 	const handleReviewComplete = useCallback((updatedCard, buttonType) => {
-		// Update stats
-		incrementReviewedCount()
+		setIsProcessingReview(true)
 
 		// Add XP for the review (except for "again" button)
 		// Add XP only for logged-in users (async, don't block user flow)
@@ -95,24 +96,28 @@ const Flashcards = () => {
 		}
 
 
-		// Remove current card from queue FIRST
-		removeCurrentCard()
-
 		// Determine if card should stay in session
 		const shouldStayInSession =
 			(updatedCard.card_state === CARD_STATES.LEARNING ||
 			updatedCard.card_state === CARD_STATES.RELEARNING) &&
 			updatedCard.interval < 10
 
-		// Only re-add if there are OTHER cards to show first
-		// If this is the only card, let the session end instead of immediately re-showing it
-		if (shouldStayInSession && sessionCards.length > 1) {
-			// Create snapshot to isolate from future updates
-			const cardSnapshot = { ...updatedCard }
-			// Add to END of queue (other cards will be shown first)
-			addCardToSession(cardSnapshot)
+		// Create snapshot to isolate from future updates
+		const cardSnapshot = { ...updatedCard }
+
+		if (shouldStayInSession) {
+			// Atomically remove from front and add to back (prevents "session complete" flash)
+			requeueCurrentCard(cardSnapshot)
+		} else {
+			// Just remove the card from queue
+			removeCurrentCard()
 		}
-	}, [currentCard, sessionCards, incrementReviewedCount, removeCurrentCard, addCardToSession, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
+
+		// Update stats AFTER queue operations to prevent "session complete" flash
+		incrementReviewedCount()
+
+		setIsProcessingReview(false)
+	}, [currentCard, incrementReviewedCount, removeCurrentCard, requeueCurrentCard, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
 
 	// Suspend completion callback
 	const handleSuspendComplete = useCallback(() => {
@@ -146,8 +151,8 @@ const Flashcards = () => {
 		return <LoadingState onClose={handleClose} isDark={isDark} />
 	}
 
-	// Render session complete
-	if (isSessionComplete) {
+	// Render session complete (but not if we're still processing a review)
+	if (isSessionComplete && !isProcessingReview) {
 		return (
 			<SessionComplete
 				reviewedCount={reviewedCount}

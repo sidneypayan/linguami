@@ -183,11 +183,9 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 
 	// Initialize session cards
 	useEffect(() => {
-		// Allow re-initialization if we previously had 0 words but now have words
-		const shouldReinitialize = sessionInitialized && filteredWords && filteredWords.length > 0
-
-		if (sessionInitialized && !shouldReinitialize) {
-			return // Don't reinitialize during session unless we have new words
+		// Don't reinitialize if session is already active
+		if (sessionInitialized && sessionCards.length > 0) {
+			return // Don't reinitialize during active session
 		}
 
 		if (!filteredWords) {
@@ -279,6 +277,11 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		setSessionCards(prev => [...prev, card])
 	}, [])
 
+	// Requeue current card (remove from front, add to back) - atomic operation
+	const requeueCurrentCard = useCallback((card) => {
+		setSessionCards(prev => [...prev.slice(1), card])
+	}, [])
+
 	// Increment reviewed count
 	const incrementReviewedCount = useCallback(() => {
 		setReviewedCount(prev => prev + 1)
@@ -304,6 +307,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		startRandomPractice,
 		removeCurrentCard,
 		addCardToSession,
+		requeueCurrentCard,
 		incrementReviewedCount,
 		setGuestWords
 	}
