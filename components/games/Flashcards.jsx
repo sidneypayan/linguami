@@ -94,6 +94,10 @@ const Flashcards = () => {
 			})
 		}
 
+
+		// Remove current card from queue FIRST
+		removeCurrentCard()
+
 		// Determine if card should stay in session
 		const shouldStayInSession =
 			(updatedCard.card_state === CARD_STATES.LEARNING ||
@@ -103,11 +107,9 @@ const Flashcards = () => {
 		if (shouldStayInSession) {
 			// Create snapshot to isolate from future updates
 			const cardSnapshot = { ...updatedCard }
+			// Add to END of queue (other cards will be shown first)
 			addCardToSession(cardSnapshot)
 		}
-
-		// Remove current card from queue
-		removeCurrentCard()
 	}, [currentCard, incrementReviewedCount, removeCurrentCard, addCardToSession, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
 
 	// Suspend completion callback
