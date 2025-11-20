@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { getUserWords, deleteWord } from '@/lib/words-client'
+import { getUserWordsAction, deleteWordAction } from '@/app/actions/words'
 import { useFlashcards } from '@/context/flashcards'
 import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import toast from '@/utils/toast'
@@ -63,7 +63,10 @@ const { openFlashcards } = useFlashcards()
 	// React Query: Fetch user words (only for logged-in users)
 	const { data: user_words = [], isLoading: user_words_loading, isFetching: user_words_fetching } = useQuery({
 		queryKey: ['userWords', userId, userLearningLanguage],
-		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		queryFn: async () => {
+			const result = await getUserWordsAction({ userId, userLearningLanguage })
+			return result.success ? result.data : []
+		},
 		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		refetchOnWindowFocus: false, // Prevent flash when switching tabs
@@ -73,7 +76,7 @@ const { openFlashcards } = useFlashcards()
 
 	// React Query: Delete word mutation
 	const deleteWordMutation = useMutation({
-		mutationFn: deleteWord,
+		mutationFn: deleteWordAction,
 		onSuccess: () => {
 			// Invalidate cache to refetch data
 			queryClient.invalidateQueries({ queryKey: ['userWords', userId, userLearningLanguage] })

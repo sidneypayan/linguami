@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
-import { addWord } from '@/lib/words-client'
+import { addWordAction } from '@/app/actions/words'
 import { addGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import { buildWordData, getOriginalWord } from '@/utils/wordMapping'
 import toast from '@/utils/toast'
@@ -17,7 +17,7 @@ import { useClickOutside } from '@/hooks/shared/useClickOutside'
 import { useGuestWordsCount } from '@/hooks/translation/useGuestWordsCount'
 import { useTranslationPosition } from '@/hooks/translation/useTranslationPosition'
 
-const Translation = ({ coordinates, materialId, userId }) => {
+const Translation = ({ materialId, userId }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
 
@@ -32,6 +32,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 		translationLoading: translation_loading,
 		translationError: translation_error,
 		wordSentence: word_sentence,
+		coordinates,
 		closeTranslation,
 		cleanTranslation,
 	} = useTranslation()
@@ -44,7 +45,7 @@ const Translation = ({ coordinates, materialId, userId }) => {
 
 	// React Query mutation for adding words (logged-in users)
 	const addWordMutation = useMutation({
-		mutationFn: addWord,
+		mutationFn: addWordAction,
 		onSuccess: async () => {
 			// Normalize materialId to string for consistent queryKey
 			const normalizedMaterialId = materialId ? String(materialId) : null

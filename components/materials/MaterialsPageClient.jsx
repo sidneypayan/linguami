@@ -589,7 +589,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 					{/* Pagination */}
 					{filteredMaterials.length > materialsPerPage && (
 						<Pagination
-							page={currentPage}
+							currentPage={currentPage}
 							numOfPages={numOfPages}
 							onPageChange={handlePageChange}
 						/>

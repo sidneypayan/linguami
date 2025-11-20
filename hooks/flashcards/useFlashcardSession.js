@@ -9,7 +9,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useParams, usePathname } from 'next/navigation'
-import { getUserWords, getMaterialWords } from '@/lib/words-client'
+import { getUserWordsAction, getMaterialWordsAction } from '@/app/actions/words'
 import { getDueCards, CARD_STATES } from '@/utils/spacedRepetition'
 import { getGuestWordsByLanguage } from '@/utils/guestDictionary'
 import { logger } from '@/utils/logger'
@@ -78,7 +78,10 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	// Query for all user words (dictionary page)
 	const { data: allUserWords = [], isLoading: isLoadingAllWords } = useQuery({
 		queryKey: ['userWords', userId, userLearningLanguage],
-		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		queryFn: async () => {
+			const result = await getUserWordsAction({ userId, userLearningLanguage })
+			return result.success ? result.data : []
+		},
 		enabled: !!userId && !!userLearningLanguage && isDictionaryPage && isUserLoggedIn,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
@@ -87,7 +90,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	const normalizedMaterialId = materialId ? String(materialId) : null
 	const { data: materialWords = [], isLoading: isLoadingMaterialWords } = useQuery({
 		queryKey: ['materialWords', normalizedMaterialId, userId],
-		queryFn: () => getMaterialWords({ materialId: normalizedMaterialId, userId }),
+		queryFn: () => getMaterialWordsAction({ materialId: normalizedMaterialId, userId }),
 		enabled: !!userId && !!normalizedMaterialId && !isDictionaryPage && isUserLoggedIn,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
