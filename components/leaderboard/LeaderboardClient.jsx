@@ -35,7 +35,7 @@ import { FaFire, FaCoins } from 'react-icons/fa'
 import { useTranslations } from 'next-intl'
 import { getAvatarUrl, getAvatarBorderColor } from '@/utils/avatars'
 
-export default function LeaderboardClient({ leaderboardData }) {
+export default function LeaderboardClient({ leaderboardData, isGuest = false }) {
 	const t = useTranslations('common')
 	const theme = useTheme()
 	const [tabValue, setTabValue] = useState(0)
@@ -204,6 +204,52 @@ export default function LeaderboardClient({ leaderboardData }) {
 					mt: 0,
 				}}>
 				{/* User Stats Card - Compact version */}
+				{/* Guest Banner - Motivation to sign up */}
+				{isGuest && (
+					<Paper
+						elevation={0}
+						sx={{
+							borderRadius: { xs: 0, sm: 3 },
+							p: { xs: 2, sm: 3 },
+							mb: { xs: 1.5, sm: 4 },
+							background:
+								'linear-gradient(145deg, #4c1d95 0%, #2e1065 100%)',
+							border: { xs: 'none', sm: '2px solid #8b5cf6' },
+							position: 'relative',
+							overflow: 'hidden',
+							'&::before': {
+								content: '""',
+								position: 'absolute',
+								top: -2,
+								left: -2,
+								right: -2,
+								bottom: -2,
+								background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
+								zIndex: -1,
+							},
+						}}>
+						<Box sx={{ textAlign: 'center' }}>
+							<Typography
+								variant='h6'
+								sx={{
+									fontWeight: 700,
+									color: 'white',
+									mb: 1,
+								}}>
+								{t('guest_leaderboard_title')}
+							</Typography>
+							<Typography
+								variant='body2'
+								sx={{
+									color: 'rgba(255, 255, 255, 0.8)',
+									mb: 2,
+								}}>
+								{t('guest_leaderboard_description')}
+							</Typography>
+						</Box>
+					</Paper>
+				)}
+
 				{leaderboardData?.userStats && (
 					<Paper
 						elevation={0}

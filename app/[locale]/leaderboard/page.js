@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
+
 import { getTranslations } from 'next-intl/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
@@ -62,17 +62,12 @@ export default async function LeaderboardPage({ params }) {
 
 	const {
 		data: { user },
-		error: authError,
 	} = await supabase.auth.getUser()
 
-	// Redirect to login if not authenticated
-	if (!user || authError) {
-		notFound()
-	}
-
 	// Fetch leaderboard data server-side - NO API route needed!
-	const leaderboardData = await getLeaderboardData(user.id)
+	// Pass null for guests (they can view but won't have their own position)
+	const leaderboardData = await getLeaderboardData(user?.id || null)
 
 	// Pass everything to client component
-	return <LeaderboardClient leaderboardData={leaderboardData} />
+	return <LeaderboardClient leaderboardData={leaderboardData} isGuest={!user} />
 }
