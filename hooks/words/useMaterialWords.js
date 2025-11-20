@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getMaterialWords } from '@/lib/words-client'
+import { getMaterialWordsAction } from '@/app/actions/words'
 import { getGuestWords } from '@/utils/guestDictionary'
 
 export function useMaterialWords({ materialId, userId, isUserLoggedIn }) {
@@ -17,7 +17,10 @@ export function useMaterialWords({ materialId, userId, isUserLoggedIn }) {
 	// For logged-in users: React Query
 	const { data: userWords = [], isLoading } = useQuery({
 		queryKey: ['materialWords', normalizedMaterialId, userId],
-		queryFn: () => getMaterialWords({ materialId: normalizedMaterialId, userId }),
+		queryFn: async () => {
+			const result = await getMaterialWordsAction({ materialId: normalizedMaterialId, userId })
+			return result.success ? result.data : []
+		},
 		enabled: !!userId && !!normalizedMaterialId && isUserLoggedIn,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})

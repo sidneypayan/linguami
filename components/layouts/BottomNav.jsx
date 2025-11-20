@@ -11,7 +11,7 @@ import {
 	LocalLibraryRounded,
 } from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
-import { getUserWords } from '@/lib/words-client'
+import { getUserWordsAction } from '@/app/actions/words'
 import { useState, useEffect } from 'react'
 import { getGuestWordsByLanguage } from '@/utils/guestDictionary'
 
@@ -28,7 +28,10 @@ const BottomNav = () => {
 	// React Query: Fetch user words (only for logged-in users)
 	const { data: user_words = [] } = useQuery({
 		queryKey: ['userWords', userId, userLearningLanguage],
-		queryFn: () => getUserWords({ userId, userLearningLanguage }),
+		queryFn: async () => {
+			const result = await getUserWordsAction({ userId, userLearningLanguage })
+			return result.success ? result.data : []
+		},
 		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
 		staleTime: 5 * 60 * 1000,
 	})

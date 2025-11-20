@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useFlashcards } from '@/context/flashcards'
-import { deleteWord } from '@/lib/words-client'
+import { deleteWordAction } from '@/app/actions/words'
 import { deleteGuestWord } from '@/utils/guestDictionary'
 import { filterWordsByLanguage } from '@/utils/wordMapping'
 import { useMaterialWords } from '@/hooks/words/useMaterialWords'
@@ -37,7 +37,7 @@ const WordsContainer = ({ sx = {} }) => {
 
 	// Delete word mutation (for logged-in users)
 	const deleteMutation = useMutation({
-		mutationFn: deleteWord,
+		mutationFn: deleteWordAction,
 		onSuccess: () => {
 			// Normalize materialId to string for consistent queryKey
 			const normalizedMaterialId = materialId ? String(materialId) : null

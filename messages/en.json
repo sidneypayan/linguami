@@ -392,7 +392,12 @@
     "errorMessage": "A problem occurred while loading this page. Please try again.",
     "tryAgain": "Try Again",
     "accessDenied": "Access Denied",
-    "accessDeniedMessage": "This page is reserved for administrators. You do not have the necessary permissions to access it."
+    "accessDeniedMessage": "This page is reserved for administrators. You do not have the necessary permissions to access it.",
+    "guest_mode": "Guest Mode",
+    "guest_mode_description": "Create an account to save your progress!",
+    "guest_leaderboard_title": "Join the Competition!",
+    "guest_leaderboard_description": "Create an account to earn XP and gold, unlock rewards, climb the leaderboard, and challenge other learners!",
+    "create_account": "Create Account"
   },
   "exercises": {
     "title": "Exercise Management",
@@ -1132,6 +1137,7 @@
     "word_deleted": "Word deleted",
     "delete_error": "Error deleting word",
     "duplicate_translation": "This word already exists in your dictionary",
+    "guest_words_limit_reached": "Limit of 20 words reached! Create an account to add more words.",
     "unexpected_error": "An error occurred",
     "guest_no_words_yet_title": "No words yet",
     "guest_no_words_yet_description": "Start clicking on words in the text to translate and save them in your personal dictionary.",

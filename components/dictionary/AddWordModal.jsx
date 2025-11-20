@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { validateWordPair } from '@/utils/validation'
-import { addWord } from '@/lib/words-client'
+import { addWordAction } from '@/app/actions/words'
 import toast from '@/utils/toast'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter, usePathname, useParams } from 'next/navigation'
@@ -61,7 +61,7 @@ const AddWordModal = ({ open, onClose }) => {
 
 	// React Query mutation for adding words
 	const addWordMutation = useMutation({
-		mutationFn: addWord,
+		mutationFn: addWordAction,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['userWords', user.id, userLearningLanguage] })
 			toast.success(t('word_add_success') || 'Traduction ajoutée avec succès.')
