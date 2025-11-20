@@ -90,7 +90,10 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	const normalizedMaterialId = materialId ? String(materialId) : null
 	const { data: materialWords = [], isLoading: isLoadingMaterialWords } = useQuery({
 		queryKey: ['materialWords', normalizedMaterialId, userId],
-		queryFn: () => getMaterialWordsAction({ materialId: normalizedMaterialId, userId }),
+		queryFn: async () => {
+			const result = await getMaterialWordsAction({ materialId: normalizedMaterialId, userId })
+			return result.success ? result.data : []
+		},
 		enabled: !!userId && !!normalizedMaterialId && !isDictionaryPage && isUserLoggedIn,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
