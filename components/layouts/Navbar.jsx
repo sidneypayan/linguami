@@ -6,6 +6,7 @@ import { useUserContext } from '@/context/user.js'
 import { usePathname, useParams } from 'next/navigation'
 import { useHasLessonsForLanguage } from '@/lib/lessons-client'
 import UserMenu from './UserMenu'
+import GuestMenu from './GuestMenu'
 import ThemeToggle from './ThemeToggle'
 import {
 	AppBar,
@@ -717,112 +718,7 @@ const Navbar = props => {
 								) : isUserLoggedIn ? (
 									<UserMenu />
 								) : (
-									<Box
-										sx={{
-											display: 'none',
-											'@media (min-width: 1400px)': {
-												display: 'flex',
-											},
-											gap: 1.5,
-										}}>
-										<Link href={`/login`}>
-											<Button
-												variant='outlined'
-												sx={{
-													color: 'white',
-													fontWeight: 600,
-													textTransform: 'none',
-													px: 3,
-													py: 1,
-													borderRadius: 2,
-													border: '1px solid rgba(255, 255, 255, 0.3)',
-													transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-													position: 'relative',
-													overflow: 'hidden',
-													'&::before': {
-														content: '""',
-														position: 'absolute',
-														top: 0,
-														left: '-100%',
-														width: '100%',
-														height: '100%',
-														background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
-														transition: 'left 0.5s ease',
-													},
-													'&:hover': {
-														background: 'rgba(255, 255, 255, 0.1)',
-														border: '1px solid rgba(255, 255, 255, 0.5)',
-														transform: 'translateY(-2px)',
-														'&::before': {
-															left: '100%',
-														},
-													},
-													'&:active': {
-														transform: 'translateY(-1px)',
-													},
-												}}>
-												{t('signin')}
-											</Button>
-										</Link>
-										<Link href={`/signup`}>
-											<Button
-												variant='contained'
-												sx={{
-													background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%)',
-													backdropFilter: 'blur(10px)',
-													color: 'white',
-													fontWeight: 700,
-													textTransform: 'none',
-													px: 3.5,
-													py: 1,
-													borderRadius: 2,
-													boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)',
-													border: '1px solid rgba(139, 92, 246, 0.5)',
-													transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-													position: 'relative',
-													overflow: 'hidden',
-													'&::before': {
-														content: '""',
-														position: 'absolute',
-														top: 0,
-														left: '-100%',
-														width: '100%',
-														height: '100%',
-														background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-														transition: 'left 0.5s ease',
-													},
-													'&::after': {
-														content: '""',
-														position: 'absolute',
-														top: 0,
-														left: 0,
-														right: 0,
-														bottom: 0,
-														borderRadius: 2,
-														background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)',
-														opacity: 0,
-														transition: 'opacity 0.3s ease',
-													},
-													'&:hover': {
-														background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.6) 100%)',
-														transform: 'translateY(-3px) scale(1.05)',
-														boxShadow: '0 6px 30px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
-														border: '1px solid rgba(139, 92, 246, 0.8)',
-														'&::before': {
-															left: '100%',
-														},
-														'&::after': {
-															opacity: 1,
-														},
-													},
-													'&:active': {
-														transform: 'translateY(-1px) scale(1.02)',
-													},
-												}}>
-												{t('signup')}
-											</Button>
-										</Link>
-									</Box>
+									<GuestMenu />
 								)}
 							</>
 						)}

@@ -70,11 +70,8 @@ const BottomNav = () => {
 				router.push('/materials')
 				break
 			case 'dictionary':
-				if (isUserLoggedIn) {
-					router.push('/dictionary')
-				} else {
-					router.push('/login')
-				}
+				// Allow both guests and logged-in users to access dictionary
+				router.push('/dictionary')
 				break
 			case 'lessons':
 				router.push('/lessons')

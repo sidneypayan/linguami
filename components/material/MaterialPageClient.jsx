@@ -4,7 +4,7 @@ import React from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useState, use, useMemo } from 'react'
+import { useEffect, useState, use, useMemo, useRef } from 'react'
 import { useRouterCompat } from '@/hooks/shared/useRouterCompat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -75,7 +75,6 @@ const Material = ({
 
 	// Local UI state
 	const [showAccents, setShowAccents] = useState(false)
-	const [coordinates, setCoordinates] = useState({})
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
@@ -157,13 +156,6 @@ const Material = ({
 		},
 	})
 
-	// Fermer la popup de traduction quand l'utilisateur change de matériel
-	useEffect(() => {
-		closeTranslation()
-		cleanTranslation()
-		setCoordinates({})
-	}, [currentMaterial?.id, closeTranslation, cleanTranslation])
-
 	const handleEditContent = () => {
 		setEditModalOpen(true)
 	}
@@ -225,17 +217,6 @@ const Material = ({
 			)
 		}
 	}
-
-
-	const getCoordinates = e => {
-		// Utiliser les coordonnées du viewport (clientX/clientY)
-		// car le composant Translation utilise position: fixed
-		setCoordinates({
-			x: e.clientX,
-			y: e.clientY,
-		})
-	}
-
 	// Vérifier si une vidéo est affichée pour ajuster la position du bouton
 	const isVideoDisplayed =
 		sections?.music?.includes(params?.section) || sections?.video?.includes(params?.section)
@@ -335,7 +316,6 @@ const Material = ({
 							px: { xs: 0, sm: 1 },
 						}}>
 						<Translation
-							coordinates={coordinates}
 							materialId={currentMaterial.id}
 							userId={user && user.id}
 						/>
@@ -569,7 +549,7 @@ const Material = ({
 										},
 									}}
 									variant='body1'
-									onClick={e => getCoordinates(e)}>
+>
 									<Words
 										content={currentMaterial.content_accented}
 										materialId={currentMaterial.id}
@@ -592,7 +572,7 @@ const Material = ({
 										},
 									}}
 									variant='body1'
-									onClick={e => getCoordinates(e)}>
+>
 									<Words
 										content={currentMaterial.content}
 										materialId={currentMaterial.id}

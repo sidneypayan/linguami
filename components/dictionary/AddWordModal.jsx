@@ -5,6 +5,8 @@ import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { validateWordPair } from '@/utils/validation'
 import { addWordAction } from '@/app/actions/words'
+import { addGuestWord } from '@/utils/guestDictionary'
+import { buildWordData } from '@/utils/wordMapping'
 import toast from '@/utils/toast'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter, usePathname, useParams } from 'next/navigation'
@@ -124,6 +126,7 @@ const AddWordModal = ({ open, onClose }) => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setErrors({})
+		setIsSubmitting(true)
 
 		// Validation côté client
 		const validation = validateWordPair({
@@ -134,10 +137,50 @@ const AddWordModal = ({ open, onClose }) => {
 
 		if (!validation.isValid) {
 			setErrors(validation.errors)
+			setIsSubmitting(false)
 			return
 		}
 
-		// Call mutation with validated data
+		// Guest user: add to localStorage
+		if (!user) {
+			const wordData = buildWordData(
+				validation.sanitized.learningLangWord,
+				validation.sanitized.browserLangWord,
+				userLearningLanguage,
+				locale
+			)
+			wordData.word_sentence = validation.sanitized.contextSentence || ''
+			wordData.material_id = null
+			wordData.word_lang = userLearningLanguage
+
+			const result = addGuestWord(wordData)
+
+			if (result.success) {
+				toast.success(t('word_add_success') || 'Traduction ajoutée avec succès.')
+
+				// Emit event to notify DictionaryClient to reload guest words
+				if (typeof window !== 'undefined') {
+					window.dispatchEvent(new CustomEvent('guestDictionaryUpdated'))
+				}
+
+				clearFormData()
+				onClose()
+			} else if (result.error === 'limit_reached') {
+				toast.error(
+					t('guest_words_limit_reached') ||
+					`Limite de ${result.maxWords} mots atteinte. Créez un compte pour continuer.`
+				)
+			} else if (result.error === 'duplicate') {
+				toast.error(t('duplicate_translation') || 'Cette traduction est déjà enregistrée.')
+			} else {
+				toast.error(t('word_add_error') || 'Une erreur inattendue est survenue.')
+			}
+
+			setIsSubmitting(false)
+			return
+		}
+
+		// Authenticated user: call mutation with validated data
 		addWordMutation.mutate({
 			originalWord: validation.sanitized.learningLangWord,
 			translatedWord: validation.sanitized.browserLangWord,
@@ -147,6 +190,8 @@ const AddWordModal = ({ open, onClose }) => {
 			userLearningLanguage,
 			locale,
 		})
+
+		setIsSubmitting(false)
 	}
 
 	const handleClose = () => {
