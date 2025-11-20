@@ -10,14 +10,6 @@ const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage, isUserLoggedIn, isBootstrapping } = useUserContext()
 	const { openTranslation, cleanTranslation, setLoading, setError } = useTranslation()
 
-	console.log('[Words] Component rendered', {
-		locale,
-		userLearningLanguage,
-		isUserLoggedIn,
-		isBootstrapping,
-		hasContent: !!content
-	})
-
 	// Content comes directly from DB (trusted source)
 	const clean = useMemo(() => {
 		if (!content) return ''
@@ -132,12 +124,10 @@ const Words = ({ content, locale = 'fr' }) => {
 	const translationMutation = useMutation({
 		mutationFn: translateWord,
 		onMutate: () => {
-			console.log('[Words] Translation mutation started')
 			setLoading(true)
 			// Don't clean translation here - causes unnecessary re-renders
 		},
 		onSuccess: async (response) => {
-			console.log('[Words] Translation mutation SUCCESS', response)
 			// Extract translations from Yandex API format
 			// Yandex returns: { def: [{ text: "word", pos: "verb", tr: [{ text: "translation" }], asp: "несов" }] }
 			const def = response.data?.def || []
@@ -202,8 +192,6 @@ const Words = ({ content, locale = 'fr' }) => {
 			await processTranslationResult(wordInfos, response.word, response.sentence)
 		},
 		onError: (error) => {
-			console.log('[Words] Translation mutation ERROR', error)
-
 			// Open popup with error message so user can see what went wrong
 			openTranslation(
 				{ word: error.word || 'Unknown' },
@@ -226,14 +214,8 @@ const Words = ({ content, locale = 'fr' }) => {
 
 			// Don't process clicks while bootstrapping or if learning language not set
 			if (isBootstrapping || !userLearningLanguage) {
-				console.log('[Words] Click ignored - bootstrapping or no learning language', {
-					isBootstrapping,
-					userLearningLanguage
-				})
 				return
 			}
-
-			console.log('[Words] handleClick triggered', { target: e.target })
 
 			let word = e.target.textContent
 			const fullText = e.target.parentElement.textContent
@@ -257,8 +239,6 @@ const Words = ({ content, locale = 'fr' }) => {
 					}
 				}
 			}
-
-			console.log('[Words] Word clicked', { word, userLearningLanguage, locale })
 
 			// Extract only the sentence containing the clicked word
 			const sentence = extractSentence(fullText, word)
