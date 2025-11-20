@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
 import { useWordWrapping } from '@/hooks/words/useWordWrapping'
-import { translateWord, getTranslationStats } from '@/lib/words-client'
+import { translateWordAction, getTranslationStatsAction } from '@/app/actions/words'
 
 const Words = ({ content, locale = 'fr' }) => {
 	const { userLearningLanguage, isUserLoggedIn, isBootstrapping } = useUserContext()
@@ -55,11 +55,12 @@ const Words = ({ content, locale = 'fr' }) => {
 		// Get translation popularity stats (async, non-blocking)
 		let translationStats = {}
 		try {
-			translationStats = await getTranslationStats({
+			const statsResult = await getTranslationStatsAction({
 				originalWord: wordInfos.text || displayWord, // Use base form for stats
 				sourceLang: userLearningLanguage,
 				targetLang: locale,
 			})
+			translationStats = statsResult.success ? statsResult.stats : {}
 		} catch (error) {
 			// If stats fail, continue without them
 			console.warn('Failed to get translation stats:', error)
@@ -122,7 +123,7 @@ const Words = ({ content, locale = 'fr' }) => {
 
 	// React Query: Translation mutation
 	const translationMutation = useMutation({
-		mutationFn: translateWord,
+		mutationFn: translateWordAction,
 		onMutate: () => {
 			setLoading(true)
 			// Don't clean translation here - causes unnecessary re-renders
@@ -155,7 +156,7 @@ const Words = ({ content, locale = 'fr' }) => {
 
 					try {
 						// Retry translation with infinitive form
-						const retryResult = await translateWord({
+						const retryResult = await translateWordAction({
 							word: wordToTry,
 							sentence: response.sentence,
 							userLearningLanguage,
