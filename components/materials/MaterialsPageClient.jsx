@@ -109,6 +109,8 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 
 	// Charger les sections (pour le mode catégorie)
 	useEffect(() => {
+		if (!userLearningLanguage) return
+
 		let selectedMaterials = []
 		if (userLearningLanguage === 'ru') {
 			selectedMaterials = materials_ru
@@ -121,7 +123,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		}
 
 		setMaterials(selectedMaterials)
-	}, [userLearningLanguage, locale])
+	}, [userLearningLanguage])
 
 	// Restaurer les filtres depuis localStorage quand on revient sur la page en mode liste
 	useEffect(() => {
@@ -602,12 +604,14 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	return (
 		<Container sx={{ pt: { xs: '3.75rem', lg: '6rem' }, pb: { xs: 2.5, md: 4 } }}>
 			{/* Header */}
-			<Box sx={{ mb: { xs: 2.5, md: 4 }, textAlign: 'center' }}>
+			<Box sx={{ mb: { xs: 2, md: 4 }, textAlign: 'center' }}>
+				{/* Title - Hidden on mobile */}
 				<Typography
 					variant='h3'
 					sx={{
+						display: { xs: 'none', sm: 'block' },
 						fontWeight: 700,
-						fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+						fontSize: { sm: '2.5rem', md: '3rem' },
 						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
 						WebkitBackgroundClip: 'text',
 						WebkitTextFillColor: 'transparent',
@@ -615,11 +619,13 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 					}}>
 					{t('pagetitle')}
 				</Typography>
+				{/* Description - Hidden on mobile */}
 				<Typography
 					variant='body1'
 					sx={{
+						display: { xs: 'none', sm: 'block' },
 						color: isDark ? '#cbd5e1' : '#64748b',
-						fontSize: { xs: '0.9375rem', sm: '1rem' },
+						fontSize: { sm: '1rem' },
 						maxWidth: '600px',
 						mx: 'auto',
 						mb: 3,
