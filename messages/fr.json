@@ -392,7 +392,12 @@
     "errorMessage": "Un problème est survenu lors du chargement de cette page. Veuillez réessayer.",
     "tryAgain": "Réessayer",
     "accessDenied": "Accès refusé",
-    "accessDeniedMessage": "Cette page est réservée aux administrateurs. Vous n'avez pas les permissions nécessaires pour y accéder."
+    "accessDeniedMessage": "Cette page est réservée aux administrateurs. Vous n'avez pas les permissions nécessaires pour y accéder.",
+    "guest_mode": "Mode Invité",
+    "guest_mode_description": "Créez un compte pour sauvegarder vos progrès !",
+    "guest_leaderboard_title": "Rejoignez la compétition !",
+    "guest_leaderboard_description": "Créez un compte pour gagner de l'XP et de l'or, débloquer des récompenses, grimper dans le classement et défier d'autres apprenants !",
+    "create_account": "Créer un compte"
   },
   "exercises": {
     "title": "Gestion des exercices",
@@ -1132,6 +1137,7 @@
     "word_deleted": "Mot supprimé",
     "delete_error": "Erreur lors de la suppression",
     "duplicate_translation": "Ce mot existe déjà dans votre dictionnaire",
+    "guest_words_limit_reached": "Limite de 20 mots atteinte ! Créez un compte pour pouvoir ajouter plus de mots.",
     "unexpected_error": "Une erreur est survenue",
     "guest_no_words_yet_title": "Aucun mot encore",
     "guest_no_words_yet_description": "Commencez à cliquer sur des mots dans le texte pour les traduire et les sauvegarder dans votre dictionnaire personnel.",
