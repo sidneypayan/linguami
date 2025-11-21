@@ -455,15 +455,17 @@
 	}
 
 	.btnsContainer {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
 		gap: 0.5rem;
 		margin-top: 1rem;
+		width: 100%;
 	}
 
 	.btnsContainer button {
 		min-width: auto;
 		padding: 0.6rem 0.5rem;
 		font-size: 0.8rem;
-		flex: 1;
 	}
 
 	.btnLabel {

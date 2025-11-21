@@ -91,7 +91,7 @@ export function FlashcardReviewCard({
 	const displayedSentence = useMemo(() => {
 		if (!currentCard?.word_sentence) return null
 
-		if (!isReversed && !showAnswer) {
+		if (isReversed && !showAnswer) {
 			return getMaskedSentence(currentCard.word_sentence, sourceWord)
 		}
 
