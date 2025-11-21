@@ -84,6 +84,12 @@ export default async function MaterialsPage({ params }) {
 
 		// Fetch user materials status for filtering
 		userMaterialsStatus = await getUserMaterialsStatus(user.id)
+	} else {
+		// For guests, try to read learning language from cookie
+		const learningLangCookie = (await cookieStore).get('learning_language')
+		if (learningLangCookie?.value) {
+			learningLanguage = learningLangCookie.value
+		}
 	}
 
 	// Fetch all materials for this language

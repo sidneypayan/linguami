@@ -109,10 +109,11 @@ const UserProvider = ({ children }) => {
 					if (profile?.learning_language) {
 						setUserLearningLanguage(profile.learning_language)
 						try {
-							localStorage.setItem(
-								'learning_language',
-								profile.learning_language
-							)
+							localStorage.setItem('learning_language', profile.learning_language)
+							// Also save to cookie for SSR
+							if (typeof document !== 'undefined') {
+								document.cookie = `learning_language=${profile.learning_language}; path=/; max-age=31536000; SameSite=Lax`
+							}
 						} catch {}
 					} else {
 						// Si pas de langue d'apprentissage définie, en définir une différente de la locale
@@ -121,6 +122,10 @@ const UserProvider = ({ children }) => {
 						setUserLearningLanguage(defaultLearningLang)
 						try {
 							localStorage.setItem('learning_language', defaultLearningLang)
+							// Also save to cookie for SSR
+							if (typeof document !== 'undefined') {
+								document.cookie = `learning_language=${defaultLearningLang}; path=/; max-age=31536000; SameSite=Lax`
+							}
 						} catch {}
 						// Sauvegarder dans le profil
 						try {
@@ -191,6 +196,10 @@ const UserProvider = ({ children }) => {
 
 						setUserLearningLanguage(lang)
 						localStorage.setItem('learning_language', lang)
+						// Also save to cookie for SSR
+						if (typeof document !== 'undefined') {
+							document.cookie = `learning_language=${lang}; path=/; max-age=31536000; SameSite=Lax`
+						}
 					} catch {}
 				}
 			} finally {
@@ -236,6 +245,10 @@ const UserProvider = ({ children }) => {
 				setUserLearningLanguage(userProfile.learning_language)
 				try {
 					localStorage.setItem('learning_language', userProfile.learning_language)
+					// Also save to cookie for SSR
+					if (typeof document !== 'undefined') {
+						document.cookie = `learning_language=${userProfile.learning_language}; path=/; max-age=31536000; SameSite=Lax`
+					}
 				} catch {}
 			}
 			return // DB est prioritaire, ne pas aller plus loin
@@ -256,6 +269,10 @@ const UserProvider = ({ children }) => {
 			setUserLearningLanguage(targetLang)
 			try {
 				localStorage.setItem('learning_language', targetLang)
+				// Also save to cookie for SSR
+				if (typeof document !== 'undefined') {
+					document.cookie = `learning_language=${targetLang}; path=/; max-age=31536000; SameSite=Lax`
+				}
 			} catch {}
 		}
 	}, [user, userProfile?.learning_language, router?.locale, isBootstrapping, userLearningLanguage])
@@ -464,11 +481,19 @@ const UserProvider = ({ children }) => {
 					setUserLearningLanguage(lang)
 					try {
 						localStorage.setItem('learning_language', lang)
+						// Also save to cookie for SSR
+						if (typeof document !== 'undefined') {
+							document.cookie = `learning_language=${lang}; path=/; max-age=31536000; SameSite=Lax`
+						}
 					} catch {}
 				} else {
 					setUserLearningLanguage(learningLanguage)
 					try {
 						localStorage.setItem('learning_language', learningLanguage)
+						// Also save to cookie for SSR
+						if (typeof document !== 'undefined') {
+							document.cookie = `learning_language=${learningLanguage}; path=/; max-age=31536000; SameSite=Lax`
+						}
 					} catch {}
 				}
 			} catch (err) {

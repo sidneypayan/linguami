@@ -42,7 +42,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		queryKey: ['allMaterials', userLearningLanguage],
 		queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
 		// Always use SSR data - React Query will invalidate cache if queryKey changes
-		initialData: initialMaterials,
+		initialData: learningLanguage === userLearningLanguage ? initialMaterials : undefined,
 		enabled: !!userLearningLanguage,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
