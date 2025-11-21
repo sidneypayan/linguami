@@ -11,6 +11,7 @@ import {
   addBeingStudiedMaterial,
   removeBeingStudiedMaterial,
   addMaterialToStudied,
+  getMaterialsBySectionAction,
 } from '@/app/actions/materials'
 import SectionCard from '@/components/materials/SectionCard'
 import BookCard from '@/components/materials/BookCard'
@@ -29,7 +30,7 @@ export default function SectionPageClient({
 }) {
   const t = useTranslations('materials')
   const locale = useLocale()
-  const { userProfile, isUserAdmin } = useUserContext()
+  const { userProfile, isUserAdmin, userLearningLanguage, changeLearningLanguage } = useUserContext()
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
@@ -44,12 +45,23 @@ export default function SectionPageClient({
 
   const prevPathnameRef = useRef(pathname)
 
-  // React Query: Hydrate materials with SSR data
+  // Synchronize context with server language at mount to avoid mismatches
+  useEffect(() => {
+    // If server fetched with a different language than context has, sync context to match server
+    if (learningLanguage && userLearningLanguage && learningLanguage !== userLearningLanguage) {
+      changeLearningLanguage(learningLanguage)
+    }
+  }, []) // Only run once at mount
+
+  // React Query: Fetch materials based on user's learning language
+  // When userLearningLanguage changes, React Query will automatically refetch
   const { data: materials = [] } = useQuery({
-    queryKey: ['materials', section, learningLanguage],
-    queryFn: () => initialMaterials, // Won't refetch, uses initialData
+    queryKey: ['materials', section, userLearningLanguage],
+    queryFn: () => getMaterialsBySectionAction(userLearningLanguage, section),
+    // Always use SSR data - React Query will invalidate cache if queryKey changes
     initialData: initialMaterials,
-    staleTime: Infinity, // SSR data is fresh
+    enabled: !!userLearningLanguage,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
   // React Query: Hydrate user materials status
@@ -64,8 +76,8 @@ export default function SectionPageClient({
   const filteredMaterials = useMemo(() => {
     let result = [...materials]
 
-    // Filter by learning language
-    result = result.filter(m => m.lang === learningLanguage)
+    // Note: Materials are already filtered by language in the query (getMaterialsBySectionAction)
+    // No need to filter by language here
 
     // Filter by level
     if (selectedLevel && selectedLevel !== 'all') {
@@ -95,7 +107,7 @@ export default function SectionPageClient({
     }
 
     return result
-  }, [materials, learningLanguage, selectedLevel, selectedStatus, searchTerm, userMaterialsStatus])
+  }, [materials, selectedLevel, selectedStatus, searchTerm, userMaterialsStatus])
 
   // Pagination
   const itemsPerPage = viewMode === 'card' ? 8 : 10

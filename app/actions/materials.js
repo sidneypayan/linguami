@@ -16,6 +16,7 @@ import { z } from 'zod'
 const LanguageSchema = z.enum(['fr', 'ru', 'en'])
 const MaterialIdSchema = z.number().int().positive('Material ID must be a positive integer')
 const BookIdSchema = z.number().int().positive('Book ID must be a positive integer')
+const SectionSchema = z.string().min(1, 'Section must be a non-empty string')
 
 /**
  * Fetch all materials by language (for client-side use with React Query)
@@ -67,6 +68,52 @@ export async function getMaterialsByLanguageAction(lang) {
 
   if (error) {
     logger.error('Error fetching materials:', error)
+    return []
+  }
+
+  return materials || []
+}
+
+/**
+ * Fetch materials by section and language (for client-side use with React Query)
+ * @param {string} lang - Learning language (fr, ru, en)
+ * @param {string} section - Section name
+ * @returns {Promise<Array>} Materials array or books array
+ */
+export async function getMaterialsBySectionAction(lang, section) {
+  // Validate inputs
+  const validLang = LanguageSchema.parse(lang)
+  const validSection = SectionSchema.parse(section)
+
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  // If section is 'books', fetch from books table
+  if (validSection === 'books') {
+    const { data: books, error } = await supabase
+      .from('books')
+      .select('*')
+      .eq('lang', validLang)
+      .order('id', { ascending: false })
+
+    if (error) {
+      logger.error('Error fetching books:', error)
+      return []
+    }
+
+    return books || []
+  }
+
+  // Otherwise, fetch materials from materials table
+  const { data: materials, error } = await supabase
+    .from('materials')
+    .select('*')
+    .eq('lang', validLang)
+    .eq('section', validSection)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    logger.error('Error fetching materials by section:', error)
     return []
   }
 

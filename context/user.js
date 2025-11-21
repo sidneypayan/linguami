@@ -206,59 +206,59 @@ const UserProvider = ({ children }) => {
 	}, [])
 
 	// --------------------------------------------------------
-	// Synchroniser spoken_language avec la locale de l'URL
+	// Synchroniser spoken_language avec la locale de l'URL (pour invités uniquement)
 	// --------------------------------------------------------
 	useEffect(() => {
-		if (!router?.locale || isBootstrapping) return
+		if (!router?.locale || isBootstrapping || user) return
 
 		const currentLocale = router.locale
 
-		// Lire spoken_language depuis localStorage ou userProfile
-		let storedSpokenLang = null
-		if (userProfile?.spoken_language) {
-			storedSpokenLang = userProfile.spoken_language
-		} else if (typeof window !== 'undefined') {
-			storedSpokenLang = localStorage.getItem('spoken_language')
-		}
+		// Pour les invités uniquement : mettre à jour spoken_language dans localStorage
+		try {
+			localStorage.setItem('spoken_language', currentLocale)
+		} catch {}
 
-		// Si la locale de l'URL est différente de spoken_language stocké, synchroniser
-		if (storedSpokenLang !== currentLocale) {
-			// Mettre à jour spoken_language
-			if (!user) {
-				// Non connecté : mettre à jour localStorage
-				try {
-					localStorage.setItem('spoken_language', currentLocale)
-				} catch {}
-			}
-			// Note: Pour les utilisateurs connectés, spoken_language sera mis à jour
-			// uniquement via InterfaceLanguageMenu (changement manuel)
-
-			// Forcer la langue d'apprentissage appropriée
-			const newLearningLang = getDefaultLearningLanguage(currentLocale)
-			if (newLearningLang !== userLearningLanguage) {
-				setUserLearningLanguage(newLearningLang)
-				try {
-					localStorage.setItem('learning_language', newLearningLang)
-				} catch {}
-			}
-		}
-	}, [router?.locale, isBootstrapping, userProfile, user, userLearningLanguage])
+		// Note: Pour les utilisateurs connectés, spoken_language est géré par InterfaceLanguageMenu
+	}, [router?.locale, isBootstrapping, user])
 
 	// --------------------------------------------------------
-	// Vérifier que la langue d'apprentissage est toujours différente de la locale
+	// Synchroniser learning_language avec la source de vérité appropriée
 	// --------------------------------------------------------
 	useEffect(() => {
-		if (!router?.locale || !userLearningLanguage || isBootstrapping) return
+		if (isBootstrapping || !router?.locale) return
 
-		// Si la langue d'apprentissage est la même que la locale, la changer
-		if (userLearningLanguage === router.locale) {
-			const newLearningLang = getDefaultLearningLanguage(router.locale)
-			setUserLearningLanguage(newLearningLang)
+		const currentLocale = router.locale
+
+		// RÈGLE 1: Si utilisateur connecté, la DB (userProfile) est la source de vérité absolue
+		if (user && userProfile?.learning_language) {
+			// Ne jamais écraser la préférence de l'utilisateur stockée en DB
+			if (userLearningLanguage !== userProfile.learning_language) {
+				setUserLearningLanguage(userProfile.learning_language)
+				try {
+					localStorage.setItem('learning_language', userProfile.learning_language)
+				} catch {}
+			}
+			return // DB est prioritaire, ne pas aller plus loin
+		}
+
+		// RÈGLE 2: Pour les invités, utiliser localStorage ou fallback basé sur locale
+		const stored = localStorage.getItem('learning_language')
+		const fallback = getDefaultLearningLanguage(currentLocale)
+
+		// RÈGLE 3: S'assurer que learning_language ≠ locale (on ne peut pas apprendre sa propre langue)
+		let targetLang = stored || fallback
+		if (targetLang === currentLocale) {
+			targetLang = fallback
+		}
+
+		// Mettre à jour uniquement si différent
+		if (userLearningLanguage !== targetLang) {
+			setUserLearningLanguage(targetLang)
 			try {
-				localStorage.setItem('learning_language', newLearningLang)
+				localStorage.setItem('learning_language', targetLang)
 			} catch {}
 		}
-	}, [router?.locale, userLearningLanguage, isBootstrapping])
+	}, [user, userProfile?.learning_language, router?.locale, isBootstrapping, userLearningLanguage])
 
 	// --------------------------------------------------------
 	// Listener d'auth (UI uniquement — aucune redirection ici)

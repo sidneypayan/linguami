@@ -21,19 +21,28 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const pathname = usePathname()
-	const { userProfile, isUserAdmin, userLearningLanguage } = useUserContext()
+	const { userProfile, isUserAdmin, userLearningLanguage, changeLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
 	const prevPathnameRef = useRef(pathname)
 	const prevLearningLanguageRef = useRef(userLearningLanguage)
+
+	// Synchronize context with server language at mount to avoid double fetch
+	useEffect(() => {
+		// If server fetched with a different language than context has, sync context to match server
+		// This ensures initialData is used and prevents unnecessary refetch
+		if (learningLanguage && userLearningLanguage && learningLanguage !== userLearningLanguage) {
+			changeLearningLanguage(learningLanguage)
+		}
+	}, []) // Only run once at mount
 
 	// React Query: Fetch materials based on user's learning language
 	// When userLearningLanguage changes, React Query will automatically refetch
 	const { data: allLoadedMaterials = [] } = useQuery({
 		queryKey: ['allMaterials', userLearningLanguage],
 		queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
-		// Only use initialData if the language matches, otherwise React Query will fetch fresh data
-		initialData: userLearningLanguage === learningLanguage ? initialMaterials : undefined,
+		// Always use SSR data - React Query will invalidate cache if queryKey changes
+		initialData: initialMaterials,
 		enabled: !!userLearningLanguage,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
