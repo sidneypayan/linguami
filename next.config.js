@@ -5,11 +5,6 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 const nextConfig = {
 	reactStrictMode: true,
 
-	// Enable instrumentation for Sentry
-	experimental: {
-		instrumentationHook: true,
-	},
-
 	// Configuration des images
 	images: {
 		remotePatterns: [
@@ -78,17 +73,11 @@ const sentryWebpackPluginOptions = {
 	// For all available options, see:
 	// https://github.com/getsentry/sentry-webpack-plugin#options
 
-	org: 'linguami',
-	project: 'linguami',
-
 	// Only print logs for uploading source maps in CI
 	silent: !process.env.CI,
 
 	// For all available options, see:
 	// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-	// Upload a larger set of source maps for prettier stack traces (increases build time)
-	widenClientFileUpload: true,
 
 	// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
 	// This can increase your server load as well as your hosting bill.
@@ -102,11 +91,8 @@ const sentryWebpackPluginOptions = {
 	// Automatically tree-shake Sentry logger statements to reduce bundle size
 	disableLogger: true,
 
-	// Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-	// See the following for more information:
-	// https://docs.sentry.io/product/crons/
-	// https://vercel.com/docs/cron-jobs
-	automaticVercelMonitors: true,
+	// Disable telemetry
+	telemetry: false,
 }
 
 // Make sure adding Sentry options is the last code to run before exporting
