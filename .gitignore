@@ -46,3 +46,4 @@ nul
 # Backup folders (should not be in repository)
 /backup
 /backups
+.env.production

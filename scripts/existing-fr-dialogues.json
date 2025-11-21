@@ -1,0 +1,26 @@
+[
+  {
+    "id": 471,
+    "title": "Faire connaissance",
+    "level": "beginner",
+    "content": "— Mademoiselle !\n— Oui ?\n— Vous avez fait tomber votre écharpe.\n— Oh, merci.\n— Je vous en prie. Vous êtes étrangère ?\n— Oui, je suis Russe.\n— Vous êtes très jolie vous savez ?\n— Merci, vous êtes gentil.\n— Je m'appelle Jean.\n— Enchantée, je m'appelle Sacha.\n— C'est un très joli prénom. Qu'est-ce que vous faites dans la vie Sacha ?\n— J'enseigne le français en Russie.\n— Ah, voilà pourquoi vous parlez si bien français.\n— Merci, contente de l'entendre. Et vous Jean, vous travaillez dans quoi ?\n— Je suis journaliste.\n— Excusez-moi mais je dois partir, un taxi m'attend.\n— Bien sûr, au revoir Sacha."
+  },
+  {
+    "id": 488,
+    "title": "Dans le taxi",
+    "level": "beginner",
+    "content": "— Bonjour, vous allez où ?\n— Bonjour, je vais à l'hôtel Beauvallon.\n— Vous connaissez l'adresse ?\n— Attendez, je regarde sur mon téléphone. C'est au 12 avenue Jean-Jaurès.\n— Vous êtes touriste ?\n— Oui, j'ai toujours voulu visiter la France.\n— Vous êtes d'où ?\n— De Russie.\n— Vous parlez très bien français.\n— J'enseigne le français à Moscou.\n— D'accord, je comprends mieux maintenant. Et voilà, nous sommes arrivés.\n— Combien je vous dois ?\n— Vingt-cinq euros, s'il vous plaît.\n— Tenez trente, gardez la monnaie.\n— Merci, bonne journée à Nice.\n— Merci, au revoir."
+  },
+  {
+    "id": 489,
+    "title": "A l'hôtel",
+    "level": "beginner",
+    "content": "— Bonjour madame, est-ce que je peux vous aider ?\n— Oui, j'ai réservé une chambre au nom de Ivanova.\n— Je regarde tout de suite. En effet, une chambre simple pour deux semaines avec vue sur la mer.\n— C'est ça.\n— Le restaurant se trouve au rez-de-chaussée. Le bar est ouvert 24 heures sur 24. Vous trouverez aussi un mini-bar dans votre chambre.\n— Vous avez le wifi ?\n— Oui bien sûr, le mot de passe se trouve dans votre chambre. Vous y trouverez aussi un téléphone et une télévision.\n— Bien.\n— Veuillez signer ici s'il vous plaît. Voici les clés de votre chambre, c'est la 535 au cinquième étage.\n— Merci.\n— Je vous en prie. Nous allons prendre vos bagages. Bonne journée."
+  },
+  {
+    "id": 490,
+    "title": "Comment aller ?",
+    "level": "beginner",
+    "content": "— Excusez-moi, je suis dans votre ville pour la première fois. Savez-vous quel bus va jusqu'à l'avenue Jean-Médecin ?\n— Malheureusement le bus ne va pas là-bas.\n— Oh, et comment aller là-bas ?\n— Vous pouvez y aller en tramway.\n— Et où puis-je acheter un ticket de tramway ?\n— Vous devez traverser la rue, en face il y a une borne où vous pouvez acheter un billet. Pour aller sur l'Avenue Jean-Médecin, vous devez descendre à l'arrêt Thiers.\n— D'accord. Et combien de temps faut-il pour aller jusque là-bas ?\n— Environ 10 minutes. Vous devez descendre dans quatre stations et continuer à pieds.\n— Merci beaucoup pour votre aide !\n— Avec plaisir.\n— Bonne journée.\n— A vous aussi."
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "original_id": 69,
+    "title_fr": "Où est la banque ?",
+    "content_fr": "— Bonjour. Vous savez où est la banque ?\n— Oui. Vous voyez la boulangerie ?\n— Oui.\n— Allez tout droit. Tournez à gauche. Continuez 200 mètres. C'est là.\n— Merci !",
+    "section": "dialogues",
+    "level": "beginner",
+    "lang": "fr",
+    "video_url": null,
+    "author": null,
+    "slug": null
+  },
+  {
+    "original_id": 69,
+    "title_fr": "Où se trouve la banque ?",
+    "content_fr": "— Bonjour, excusez-moi, savez-vous où se trouve la banque la plus proche ?\n— Oui, bien sûr. Vous voyez la boulangerie en face ?\n— Oui, je la vois.\n— Allez tout droit dans cette rue, puis tournez à gauche. Vous verrez un magasin de sport. Continuez à marcher 200 mètres. La banque est là.\n— Merci beaucoup !\n— De rien, bonne journée !",
+    "section": "dialogues",
+    "level": "intermediate",
+    "lang": "fr",
+    "video_url": null,
+    "author": null,
+    "slug": null
+  },
+  {
+    "original_id": 69,
+    "title_fr": "Où se trouve la banque ?",
+    "content_fr": "— Bonjour mademoiselle, pourriez-vous m'indiquer où se trouve l'agence bancaire la plus proche ?\n— Bien sûr, avec plaisir. Apercevez-vous la boulangerie juste en face ?\n— Oui, je la vois.\n— Remontez cette rue jusqu'au bout, puis prenez à gauche. Vous ne pourrez pas manquer le magasin d'articles de sport. Poursuivez votre chemin sur environ 200 mètres. L'agence se situera sur votre droite.\n— Parfait, donc si j'ai bien compris, je vais tout droit jusqu'à la boulangerie, ensuite je tourne à droite.\n— Non, à gauche, pas à droite !\n— Ah oui, pardon ! Donc à gauche, et je continue 200 mètres après le magasin de sport.\n— Exactement, c'est ça.\n— Et savez-vous par hasard s'il y a un supermarché dans les parages ?\n— Justement oui, il y en a un juste à côté de la banque.\n— Formidable, je vous remercie infiniment.\n— Il n'y a pas de quoi, bonne journée à vous !",
+    "section": "dialogues",
+    "level": "advanced",
+    "lang": "fr",
+    "video_url": null,
+    "author": null,
+    "slug": null
+  }
+]

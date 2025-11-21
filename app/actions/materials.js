@@ -62,6 +62,7 @@ export async function getMaterialsByLanguageAction(lang) {
     .select('*')
     .eq('lang', validLang)
     .in('section', validSections)
+    .order('chapter_number', { ascending: true, nullsLast: true })
     .order('created_at', { ascending: false })
 
   if (error) {

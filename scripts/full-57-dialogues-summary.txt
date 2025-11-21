@@ -1,0 +1,27 @@
+=== GÉNÉRATION DES 57 DIALOGUES ===
+
+Stratégie :
+1. Pour chaque des 19 dialogues russes manquants
+2. Créer 3 versions françaises :
+   
+   BEGINNER:
+   - Vocabulaire simple (500-1000 mots les plus courants)
+   - Phrases courtes (5-10 mots)
+   - Présent de l'indicatif principalement
+   - Structures SVO simples
+   
+   INTERMEDIATE:  
+   - Vocabulaire courant (2000-3000 mots)
+   - Phrases de longueur moyenne
+   - Passé composé, futur proche
+   - Quelques pronoms relatifs
+   
+   ADVANCED:
+   - Vocabulaire riche (expressions idiomatiques)
+   - Phrases complexes, subordonnées
+   - Subjonctif, conditionnel, plus-que-parfait
+   - Registre soutenu
+
+Total: 19 × 3 = 57 dialogues français
+
+Temps estimé de génération: 10-15 minutes
