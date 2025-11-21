@@ -4,6 +4,12 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
+
+	// Enable instrumentation for Sentry
+	experimental: {
+		instrumentationHook: true,
+	},
+
 	// Configuration des images
 	images: {
 		remotePatterns: [
