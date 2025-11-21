@@ -38,28 +38,61 @@ npm run lint         # Run ESLint
 - Attendre confirmation explicite
 - Demander si l'utilisateur veut commiter
 
-### JAMAIS de push de la branche claude
+### Gestion des branches Git
 
-**RÈGLE ABSOLUE :** Ne JAMAIS créer ou push la branche `claude` sur GitHub.
+**RÈGLE ABSOLUE :** Ne JAMAIS push d'autres branches que `develop` et `main`.
 
-**Règles :**
+**Règles strictes :**
 - La branche `claude` reste **uniquement en local** pour le travail de Claude Code
-- Ne JAMAIS faire `git push` de cette branche vers le dépôt distant
-- Pour partager du code, **toujours créer une nouvelle branche** avec un nom descriptif :
-  - `feature/nom-fonctionnalité`
-  - `fix/nom-bug`
-  - `refactor/nom-refactoring`
-  - etc.
+- **SEULES** les branches `develop` et `main` peuvent être pushées vers GitHub
+- Ne JAMAIS créer ou pusher de branches feature/fix/refactor temporaires
+
+**Workflow de commit correct :**
+1. Travailler sur la branche `claude` en local
+2. Quand l'utilisateur demande de commiter et pusher :
+   - Créer le commit sur `claude`
+   - Merger `claude` vers `develop` localement
+   - Push `develop`
+   - Merger `develop` vers `main` localement
+   - Push `main`
 
 **❌ Ne PAS faire :**
 - `git push origin claude`
-- `git push -u origin claude`
-- Créer la branche `claude` sur GitHub
+- `git push origin feature/*`
+- `git push origin fix/*`
+- Créer des branches temporaires et les pusher
+- Créer des Pull Requests depuis des branches autres que develop
 
 **✅ Faire :**
-- Travailler sur `claude` en local
-- Créer une nouvelle branche descriptive pour les commits à partager
-- Push cette nouvelle branche (pas `claude`)
+- Travailler sur `claude` en local uniquement
+- Merger directement dans `develop` puis `main`
+- Push uniquement `develop` et `main`
+
+### TOUJOURS commiter TOUS les changements
+
+**RÈGLE ABSOLUE :** Quand l'utilisateur demande de commiter, TOUJOURS inclure TOUS les fichiers modifiés depuis le dernier commit.
+
+**Workflow correct :**
+1. Avant de commiter, **TOUJOURS** faire `git status` pour voir TOUS les fichiers modifiés
+2. Vérifier que TOUS les fichiers pertinents sont inclus dans le commit
+3. Si des fichiers modifiés ne sont pas stagés, les ajouter avec `git add`
+4. Ne JAMAIS laisser des modifications importantes non commitées
+
+**❌ Ne PAS faire :**
+- Commiter seulement une partie des fichiers modifiés
+- Oublier des fichiers critiques (Server Actions, composants, etc.)
+- Supposer que seuls certains fichiers sont pertinents
+- Laisser des fichiers modifiés en "Changes not staged for commit"
+
+**✅ Faire :**
+- `git status` AVANT chaque commit pour tout voir
+- Inclure TOUS les fichiers modifiés liés à la fonctionnalité
+- Vérifier que le commit est complet
+- Si doute, demander à l'utilisateur quels fichiers inclure
+
+**Exemple d'erreur à éviter :**
+- Commiter `MaterialsCard.jsx` mais oublier `app/actions/materials.js` qui fetch les données
+- Résultat : le frontend ne fonctionne pas en production car les données ne sont pas récupérées
 
 ---
 
