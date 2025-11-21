@@ -118,6 +118,8 @@ export async function getUserMaterialsByLanguage(lang, userId) {
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
+  logger.info(`Fetching user materials for userId: ${userId}, lang: ${lang}`)
+
   const { data: userMaterials, error } = await supabase
     .from('user_materials')
     .select('*, materials!inner(title, image_filename, level, section)')
@@ -128,6 +130,8 @@ export async function getUserMaterialsByLanguage(lang, userId) {
     logger.error('Error fetching user materials:', error)
     return []
   }
+
+  logger.info(`Found ${userMaterials?.length || 0} user materials`)
 
   // Merge user_material data with material data
   return userMaterials.map(um => ({

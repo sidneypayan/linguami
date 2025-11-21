@@ -1,12 +1,13 @@
 'use client'
 
+import { useState, useMemo, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { useMaterialFilters } from '@/hooks/materials/useMaterialFilters'
 import SectionCard from '@/components/materials/SectionCard'
 import MaterialsTable from '@/components/materials/MaterialsTable'
 import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
+import { getUserMaterialsByLanguageAction } from '@/app/actions/materials'
 
 import {
 	Box,
@@ -16,41 +17,96 @@ import {
 } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
 
-const UserMaterials = ({ initialMaterials = [] }) => {
+const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const router = useRouter()
 
-	// React Query: Hydrate user materials with SSR data
-	const { data: userMaterials = [] } = useQuery({
-		queryKey: ['userMaterials'],
-		queryFn: () => initialMaterials,
+	// React Query: Fetch user materials with refetching capability
+	const { data: userMaterials = [], isLoading } = useQuery({
+		queryKey: ['userMaterials', learningLanguage],
+		queryFn: () => getUserMaterialsByLanguageAction(learningLanguage),
 		initialData: initialMaterials,
-		staleTime: Infinity,
+		staleTime: 1000 * 60 * 5, // 5 minutes
 	})
 
-	// Filter hook (without category mode, always in list mode)
-	const {
-		searchTerm,
-		selectedLevel,
-		selectedStatus,
-		selectedSection,
-		viewMode,
-		filteredMaterials,
-		handleSearchChange,
-		handleLevelChange,
-		handleStatusChange,
-		handleSectionChange,
-		handleViewModeChange,
-		clearFilters,
-	} = useMaterialFilters(
-		// Exclude books and book-chapters
-		userMaterials.filter(material =>
+	console.log('[MyMaterialsClient] learningLanguage:', learningLanguage)
+	console.log('[MyMaterialsClient] initialMaterials:', initialMaterials)
+	console.log('[MyMaterialsClient] userMaterials:', userMaterials)
+	console.log('[MyMaterialsClient] isLoading:', isLoading)
+
+	// Local filter state (simpler than useMaterialFilters hook)
+	const [searchTerm, setSearchTerm] = useState('')
+	const [selectedLevel, setSelectedLevel] = useState(null)
+	const [selectedStatus, setSelectedStatus] = useState(null)
+	const [selectedSection, setSelectedSection] = useState(null)
+	const [viewMode, setViewMode] = useState('card')
+
+	// Filter materials (exclude books and book-chapters)
+	const filteredMaterials = useMemo(() => {
+		let filtered = userMaterials.filter(material =>
 			material.section !== 'books' && material.section !== 'book-chapters'
-		),
-		[], // No user status needed here (materials are already filtered by user)
-		null // No user level needed
-	)
+		)
+
+		// Search filter
+		if (searchTerm) {
+			const term = searchTerm.toLowerCase()
+			filtered = filtered.filter(material =>
+				material.title?.toLowerCase().includes(term)
+			)
+		}
+
+		// Level filter
+		if (selectedLevel) {
+			filtered = filtered.filter(material => material.level === selectedLevel)
+		}
+
+		// Section filter
+		if (selectedSection) {
+			filtered = filtered.filter(material => material.section === selectedSection)
+		}
+
+		// Status filter
+		if (selectedStatus) {
+			if (selectedStatus === 'being_studied') {
+				filtered = filtered.filter(material => material.is_being_studied === true)
+			} else if (selectedStatus === 'studied') {
+				filtered = filtered.filter(material => material.is_studied === true)
+			}
+		}
+
+		return filtered
+	}, [userMaterials, searchTerm, selectedLevel, selectedSection, selectedStatus])
+
+	// Handlers
+	const handleSearchChange = useCallback((value) => {
+		setSearchTerm(value)
+	}, [])
+
+	const handleLevelChange = useCallback((level) => {
+		setSelectedLevel(level)
+	}, [])
+
+	const handleStatusChange = useCallback((status) => {
+		setSelectedStatus(status)
+	}, [])
+
+	const handleSectionChange = useCallback((section) => {
+		setSelectedSection(section)
+	}, [])
+
+	const handleViewModeChange = useCallback((mode) => {
+		setViewMode(mode)
+	}, [])
+
+	const clearFilters = useCallback(() => {
+		setSearchTerm('')
+		setSelectedLevel(null)
+		setSelectedStatus(null)
+		setSelectedSection(null)
+	}, [])
+
+	console.log('[MyMaterialsClient] filteredMaterials:', filteredMaterials)
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		return userMaterials.find(material => material.id === id)

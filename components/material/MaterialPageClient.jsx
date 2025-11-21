@@ -127,6 +127,8 @@ const Material = ({
 				is_being_studied: true,
 				is_studied: false,
 			})
+			// Invalidate user materials list so my-materials page updates
+			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 			// XP is now added server-side in addBeingStudiedMaterial action
 		},
 	})
@@ -140,6 +142,8 @@ const Material = ({
 				is_being_studied: false,
 				is_studied: false,
 			})
+			// Invalidate user materials list so my-materials page updates
+			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 		},
 	})
 
@@ -152,6 +156,8 @@ const Material = ({
 				is_being_studied: false,
 				is_studied: true,
 			})
+			// Invalidate user materials list so my-materials page updates
+			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 			// XP is now added server-side in addMaterialToStudied action
 		},
 	})

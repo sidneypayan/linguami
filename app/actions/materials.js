@@ -91,12 +91,14 @@ export async function addBeingStudiedMaterial(materialId) {
     return { success: false, error: 'Not authenticated' }
   }
 
-  // Insert user_material
+  // Insert user_material with is_being_studied flag
   const { error: insertError } = await supabase
     .from('user_materials')
     .insert([{
       user_id: user.id,
       material_id: validMaterialId,
+      is_being_studied: true,
+      is_studied: false,
     }])
 
   if (insertError) {
@@ -307,4 +309,54 @@ export async function getUserMaterialsStatus() {
   }
 
   return data || []
+}
+
+/**
+ * Get user materials by language with full material data
+ * @param {string} lang - Learning language
+ * @returns {Promise<Array>} User materials with merged data
+ */
+export async function getUserMaterialsByLanguageAction(lang) {
+  // Validate language
+  const validLang = LanguageSchema.parse(lang)
+
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    logger.error('Auth error or no user:', authError)
+    return []
+  }
+
+  logger.info(`Fetching user materials for user ${user.id}, lang: ${validLang}`)
+
+  const { data: userMaterials, error } = await supabase
+    .from('user_materials')
+    .select('*, materials!inner(title, image_filename, level, section, lang)')
+    .eq('user_id', user.id)
+    .eq('materials.lang', validLang)
+
+  if (error) {
+    logger.error('Error fetching user materials:', error)
+    return []
+  }
+
+  logger.info(`Found ${userMaterials?.length || 0} user materials`)
+
+  if (userMaterials && userMaterials.length > 0) {
+    logger.info('Sample material:', JSON.stringify(userMaterials[0]))
+  }
+
+  // Merge user_material data with material data
+  return userMaterials.map(um => ({
+    is_being_studied: um.is_being_studied,
+    is_studied: um.is_studied,
+    id: um.material_id,
+    title: um.materials.title,
+    image_filename: um.materials.image_filename,
+    level: um.materials.level,
+    section: um.materials.section,
+  }))
 }

@@ -56,5 +56,5 @@ export default async function MyMaterialsPage({ params }) {
 	// Fetch user materials server-side
 	const userMaterials = await getUserMaterialsByLanguage(learningLanguage, user.id)
 
-	return <MyMaterialsClient initialMaterials={userMaterials} />
+	return <MyMaterialsClient initialMaterials={userMaterials} learningLanguage={learningLanguage} />
 }
