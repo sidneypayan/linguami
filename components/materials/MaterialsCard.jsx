@@ -6,6 +6,7 @@ import { getMaterialImageUrl } from '@/utils/mediaUrls'
 
 const MaterialsCard = ({ material }) => {
 	const t = useTranslations('materials')
+	const locale = useLocale()
 
 	// Déterminer le niveau de difficulté
 	const getDifficultyColor = (level) => {
@@ -22,6 +23,15 @@ const MaterialsCard = ({ material }) => {
 	}
 
 	const difficultyColors = getDifficultyColor(material.level)
+
+	// Get translated title based on interface locale
+	const getTranslatedTitle = () => {
+		if (locale === 'fr' && material.title_fr) return material.title_fr
+		if (locale === 'en' && material.title_en) return material.title_en
+		if (locale === 'ru' && material.title_ru) return material.title_ru
+		// Fallback to any available translation
+		return material.title_fr || material.title_en || material.title_ru || material.title
+	}
 
 	return (
 		<Link href={`/materials/${material.section}`}>
@@ -151,7 +161,7 @@ const MaterialsCard = ({ material }) => {
 							overflow: 'hidden',
 							flex: 1,
 						}}>
-						{t(material.section)}
+						{getTranslatedTitle()}
 					</Typography>
 
 					{/* Badge de difficulté */}
