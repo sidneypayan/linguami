@@ -68,9 +68,9 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 
 		// Status filter
 		if (selectedStatus) {
-			if (selectedStatus === 'being_studied') {
+			if (selectedStatus === 'is_being_studied') {
 				filtered = filtered.filter(material => material.is_being_studied === true)
-			} else if (selectedStatus === 'studied') {
+			} else if (selectedStatus === 'is_studied') {
 				filtered = filtered.filter(material => material.is_studied === true)
 			}
 		}
