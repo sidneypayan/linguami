@@ -27,7 +27,7 @@ export default function GlobalError({ error, reset }) {
 							Oops! Something went wrong
 						</Typography>
 						<Typography variant="body1" color="text.secondary">
-							We've been notified and are working on it.
+							We have been notified and are working on it.
 						</Typography>
 						<Button variant="contained" onClick={() => reset()}>
 							Try again
