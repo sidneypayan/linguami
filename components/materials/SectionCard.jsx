@@ -33,7 +33,22 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 	const pathname = usePathname()
 	const params = useParams()
 	const { section } = params
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, userProfile } = useUserContext()
+	const locale = useLocale()
+
+	// Get translated title based on user's spoken language
+	const getTranslatedTitle = () => {
+		const spokenLanguage = userProfile?.spoken_language || locale || 'fr'
+
+		if (spokenLanguage === 'fr') return material.title_fr
+		if (spokenLanguage === 'en') return material.title_en
+		if (spokenLanguage === 'ru') return material.title_ru
+
+		// Fallback
+		return material.title_fr || material.title_en || material.title
+	}
+
+	const translatedTitle = getTranslatedTitle()
 
 	const getDifficultyInfo = level => {
 		if (level === 'beginner') {
@@ -329,6 +344,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							: 'linear-gradient(to bottom, transparent 0%, rgba(16, 185, 129, 0.05) 100%)',
 					}}>
 					<Box sx={{ textAlign: 'center', mb: 0.5 }}>
+						{/* Original title (target language) - Large and bold */}
 						<Typography
 							className="card-title"
 							component='div'
@@ -345,7 +361,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 									: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #7c3aed 100%)',
 								WebkitBackgroundClip: 'text',
 								WebkitTextFillColor: 'transparent',
-								mb: 0.75,
+								mb: translatedTitle ? 0.25 : 0.75,
 								lineHeight: 1.3,
 								textTransform: 'uppercase',
 								letterSpacing: '0.3px',
@@ -360,6 +376,23 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 							}}>
 							{material.title}
 						</Typography>
+
+						{/* Translated title (spoken language) - Small and subtle */}
+						{translatedTitle && translatedTitle !== material.title && (
+							<Typography
+								component='div'
+								variant='caption'
+								sx={{
+									fontSize: { xs: '0.7rem', sm: '0.75rem' },
+									fontWeight: 500,
+									color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(100, 116, 139, 0.7)',
+									mb: 0.5,
+									lineHeight: 1.2,
+									opacity: 0.8,
+								}}>
+								{translatedTitle}
+							</Typography>
+						)}
 
 						<Box sx={{
 							display: 'flex',

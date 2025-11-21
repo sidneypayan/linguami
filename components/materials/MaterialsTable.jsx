@@ -37,7 +37,20 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const params = useParams()
 	const theme = useTheme()
 	const { section } = params
-	const { userLearningLanguage } = useUserContext()
+	const { userLearningLanguage, userProfile } = useUserContext()
+	const locale = useLocale()
+
+	// Get translated title based on user's spoken language
+	const getTranslatedTitle = (material) => {
+		const spokenLanguage = userProfile?.spoken_language || locale || 'fr'
+
+		if (spokenLanguage === 'fr') return material.title_fr
+		if (spokenLanguage === 'en') return material.title_en
+		if (spokenLanguage === 'ru') return material.title_ru
+
+		// Fallback
+		return material.title_fr || material.title_en || material.title
+	}
 
 	// Fix hydration mismatch: sync theme and media query only on client
 	const [isDark, setIsDark] = useState(false)
@@ -314,6 +327,7 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 										flexDirection: 'column',
 										justifyContent: 'space-between',
 									}}>
+									{/* Original title (target language) - Large and bold */}
 									<Typography
 										sx={{
 											fontSize: '0.95rem',
@@ -329,13 +343,29 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 											WebkitTextFillColor: 'transparent',
 											backgroundClip: 'text',
 											lineHeight: 1.3,
-											mb: 1,
+											mb: getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title ? 0.25 : 1,
 											textTransform: 'uppercase',
 											letterSpacing: '0.3px',
 											pr: 2,
 										}}>
 										{material.title}
 									</Typography>
+
+									{/* Translated title (spoken language) - Small and subtle */}
+									{getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title && (
+										<Typography
+											sx={{
+												fontSize: '0.75rem',
+												fontWeight: 500,
+												color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(100, 116, 139, 0.7)',
+												mb: 1,
+												lineHeight: 1.2,
+												opacity: 0.8,
+												pr: 2,
+											}}>
+											{getTranslatedTitle(material)}
+										</Typography>
+									)}
 
 									<Box>
 										<Box
@@ -602,18 +632,36 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 							<TableCell sx={{ py: 2 }}>
 								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
 									{getIcon(material.section)}
-									<Typography
-										sx={{
-											fontSize: '1rem',
-											fontWeight: 700,
-											background:
-												'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-										}}>
-										{material.title}
-									</Typography>
+									<Box>
+										{/* Original title (target language) - Large and bold */}
+										<Typography
+											sx={{
+												fontSize: '1rem',
+												fontWeight: 700,
+												background:
+													'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
+												WebkitBackgroundClip: 'text',
+												WebkitTextFillColor: 'transparent',
+												backgroundClip: 'text',
+												mb: getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title ? 0.25 : 0,
+											}}>
+											{material.title}
+										</Typography>
+
+										{/* Translated title (spoken language) - Small and subtle */}
+										{getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title && (
+											<Typography
+												sx={{
+													fontSize: '0.75rem',
+													fontWeight: 500,
+													color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(100, 116, 139, 0.7)',
+													lineHeight: 1.2,
+													opacity: 0.8,
+												}}>
+												{getTranslatedTitle(material)}
+											</Typography>
+										)}
+									</Box>
 								</Box>
 							</TableCell>
 

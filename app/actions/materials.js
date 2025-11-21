@@ -334,7 +334,7 @@ export async function getUserMaterialsByLanguageAction(lang) {
 
   const { data: userMaterials, error } = await supabase
     .from('user_materials')
-    .select('*, materials!inner(title, image_filename, level, section, lang)')
+    .select('*, materials!inner(title, image_filename, level, section, lang, title_fr, title_en, title_ru)')
     .eq('user_id', user.id)
     .eq('materials.lang', validLang)
 
@@ -355,6 +355,9 @@ export async function getUserMaterialsByLanguageAction(lang) {
     is_studied: um.is_studied,
     id: um.material_id,
     title: um.materials.title,
+    title_fr: um.materials.title_fr,
+    title_en: um.materials.title_en,
+    title_ru: um.materials.title_ru,
     image_filename: um.materials.image_filename,
     level: um.materials.level,
     section: um.materials.section,
