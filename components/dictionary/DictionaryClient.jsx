@@ -37,8 +37,10 @@ import {
 	AutoStoriesRounded,
 	BookmarkAddRounded,
 	SearchRounded,
+	EditRounded,
 } from '@mui/icons-material'
 import AddWordModal from '@/components/dictionary/AddWordModal'
+import EditWordModal from '@/components/dictionary/EditWordModal'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 
 const DictionaryClient = ({ translations }) => {
@@ -54,6 +56,8 @@ const { openFlashcards } = useFlashcards()
 
 	const [checkedWords, setCheckedWords] = useState([])
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
+	const [isEditWordModalOpen, setIsEditWordModalOpen] = useState(false)
+	const [wordToEdit, setWordToEdit] = useState(null)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [wordsPerPage, setWordsPerPage] = useState(20)
 	const [guestWords, setGuestWords] = useState([])
@@ -494,7 +498,7 @@ const { openFlashcards } = useFlashcards()
 										'&::before': {
 											left: '100%',
 										},
-										'& .delete-btn': {
+										'& .delete-btn, & .edit-btn': {
 											opacity: 1,
 										},
 									},
@@ -571,20 +575,39 @@ const { openFlashcards } = useFlashcards()
 											</Box>
 										)}
 									</Box>
-									<IconButton
-										className='delete-btn'
-										onClick={() => handleDeleteWord(word.id)}
-										sx={{
-											opacity: { xs: 1, md: 0 },
-											transition: 'all 0.3s ease',
-											color: '#ef4444',
-											'&:hover': {
-												background: 'rgba(239, 68, 68, 0.1)',
-												transform: 'scale(1.1)',
-											},
-										}}>
-										<DeleteRounded />
-									</IconButton>
+									<Box sx={{ display: 'flex', gap: 1 }}>
+										<IconButton
+											className='edit-btn'
+											onClick={() => {
+												setWordToEdit(word)
+												setIsEditWordModalOpen(true)
+											}}
+											sx={{
+												opacity: { xs: 1, md: 0 },
+												transition: 'all 0.3s ease',
+												color: '#667eea',
+												'&:hover': {
+													background: 'rgba(102, 126, 234, 0.1)',
+													transform: 'scale(1.1)',
+												},
+											}}>
+											<EditRounded />
+										</IconButton>
+										<IconButton
+											className='delete-btn'
+											onClick={() => handleDeleteWord(word.id)}
+											sx={{
+												opacity: { xs: 1, md: 0 },
+												transition: 'all 0.3s ease',
+												color: '#ef4444',
+												'&:hover': {
+													background: 'rgba(239, 68, 68, 0.1)',
+													transform: 'scale(1.1)',
+												},
+											}}>
+											<DeleteRounded />
+										</IconButton>
+									</Box>
 								</Box>
 							</Card>
 						)})}
@@ -671,6 +694,14 @@ const { openFlashcards } = useFlashcards()
 					<AddWordModal
 						open={isAddWordModalOpen}
 						onClose={() => setIsAddWordModalOpen(false)}
+					/>
+					<EditWordModal
+						open={isEditWordModalOpen}
+						onClose={() => {
+							setIsEditWordModalOpen(false)
+							setWordToEdit(null)
+						}}
+						word={wordToEdit}
 					/>
 				</Container>
 			) : (
