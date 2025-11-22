@@ -17,20 +17,49 @@ const r2 = new S3Client({
   },
 })
 
-// Voice configuration for "Au restaurant" dialogue
-const VOICES = {
-  SERVEUR: 'qNc8cbRJLnPqGTjuVcKa',  // Voice for waiter
-  SOPHIE: 'sANWqF1bCMzR6eyZbCGw',   // Marie - middle-aged, confident
-  MARC: '5jCmrHdxbpU36l1wb3Ke'      // Sébas - young, casual
+// French voices for ElevenLabs
+const FRENCH_VOICES = {
+  'PIERRE': '5jCmrHdxbpU36l1wb3Ke',     // Sébas - young male
+  'MARIE': 'sANWqF1bCMzR6eyZbCGw',      // Marie - female
+  'THOMAS': '5jCmrHdxbpU36l1wb3Ke',     // Sébas
+  'JULIE': 'sANWqF1bCMzR6eyZbCGw',      // Marie
+  'CLAIRE': 'sANWqF1bCMzR6eyZbCGw',     // Marie
+  'MARC': 'qNc8cbRJLnPqGTjuVcKa',       // Other male voice
+  'SOPHIE': 'sANWqF1bCMzR6eyZbCGw',     // Marie
+  'NICOLAS': '5jCmrHdxbpU36l1wb3Ke',    // Sébas
+  'JULIEN': 'qNc8cbRJLnPqGTjuVcKa',     // Other male voice
+  'ALEXANDRE': '5jCmrHdxbpU36l1wb3Ke',  // Sébas
+  'EMMA': 'sANWqF1bCMzR6eyZbCGw',       // Marie
+  'MAXIME': 'qNc8cbRJLnPqGTjuVcKa',     // Other male voice
+  'LAURA': 'sANWqF1bCMzR6eyZbCGw',      // Marie
+  'CHARLOTTE': 'sANWqF1bCMzR6eyZbCGw',  // Marie
+  'ANTOINE': '5jCmrHdxbpU36l1wb3Ke',    // Sébas
+  'LUCIE': 'sANWqF1bCMzR6eyZbCGw',      // Marie
+
+  // Roles
+  'CLIENT': '5jCmrHdxbpU36l1wb3Ke',     // Sébas
+  'EMPLOYÉ': 'qNc8cbRJLnPqGTjuVcKa',    // Professional male
+  'CAISSIER': 'qNc8cbRJLnPqGTjuVcKa',   // Professional male
+  'VENDEUR': 'qNc8cbRJLnPqGTjuVcKa',    // Professional male
+  'SERVEUR': 'qNc8cbRJLnPqGTjuVcKa',    // Professional male
+  'PASSAGER': '5jCmrHdxbpU36l1wb3Ke',   // Sébas
+  'PHARMACIEN': 'qNc8cbRJLnPqGTjuVcKa', // Professional male
+  'LIBRAIRE': 'qNc8cbRJLnPqGTjuVcKa',   // Professional male
+  'FLEURISTE': 'sANWqF1bCMzR6eyZbCGw',  // Marie
+  'PROFESSEUR': 'qNc8cbRJLnPqGTjuVcKa', // Professional male
+  'ÉLÈVE': 'sANWqF1bCMzR6eyZbCGw',      // Marie
+  'GRAND-MÈRE': 'sANWqF1bCMzR6eyZbCGw', // Marie
+  'ENFANT': 'sANWqF1bCMzR6eyZbCGw',     // Marie
+  'DOCTEUR': 'qNc8cbRJLnPqGTjuVcKa',    // Professional male
+  'PATIENT': '5jCmrHdxbpU36l1wb3Ke',    // Sébas
 }
 
 function parseDialogue(content) {
-  // Parse dialogue format: [CHARACTER_NAME] text
   const lines = content.split('\n').filter(line => line.trim())
   const dialogueLines = []
 
   lines.forEach(line => {
-    const match = line.match(/\[([A-ZÀ-ÿ\s]+)\]\s*(.+)/)
+    const match = line.match(/\[([A-ZÀ-ÿ\-\s]+)\]\s*(.+)/)
     if (match) {
       const character = match[1].trim()
       const text = match[2].trim()
@@ -41,10 +70,10 @@ function parseDialogue(content) {
   return dialogueLines
 }
 
-async function generateDialogueWithV3(materialId) {
-  console.log(`\n🎭 Generating dialogue audio with Eleven v3 Dialogue Mode\n`)
+async function generateDialogueAudio(materialId) {
+  console.log(`\n🎭 Generating audio for dialogue #${materialId}\n`)
 
-  // Get material from database
+  // Get dialogue from database
   const { data: material, error: materialError } = await supabase
     .from('materials')
     .select('*')
@@ -58,15 +87,15 @@ async function generateDialogueWithV3(materialId) {
 
   console.log(`📖 Dialogue: ${material.title}`)
   console.log(`   Language: ${material.lang}`)
-  console.log(`   Section: ${material.section}`)
+  console.log(`   Level: ${material.level}`)
 
   // Parse dialogue content
   const dialogueLines = parseDialogue(material.content)
-  console.log(`\n📝 Found ${dialogueLines.length} dialogue lines\n`)
+  console.log(`\n📝 Found ${dialogueLines.length} dialogue lines`)
 
-  // Build dialogue_inputs array for API
+  // Build inputs for ElevenLabs v3 Dialogue Mode
   const dialogueInputs = dialogueLines.map(({ character, text }) => {
-    const voiceId = VOICES[character]
+    const voiceId = FRENCH_VOICES[character]
     if (!voiceId) {
       console.warn(`⚠️  No voice configured for character: ${character}`)
       return null
@@ -78,7 +107,7 @@ async function generateDialogueWithV3(materialId) {
       text: text,
       voice_id: voiceId
     }
-  }).filter(Boolean) // Remove any null entries
+  }).filter(Boolean)
 
   console.log(`\n🎙️  Generating dialogue with ${dialogueInputs.length} turns...\n`)
 
@@ -106,8 +135,16 @@ async function generateDialogueWithV3(materialId) {
   const audioBuffer = Buffer.from(await response.arrayBuffer())
   console.log(`✅ Audio generated successfully (${audioBuffer.length} bytes)`)
 
+  // Create slug from title
+  const slug = material.title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
   // Upload to R2
-  const key = `audios/fr/dialogues/material_${materialId}/full_dialogue_v3.mp3`
+  const key = `audios/fr/dialogues/material_${materialId}/${slug}.mp3`
 
   console.log(`\n📤 Uploading to R2: ${key}`)
 
@@ -123,29 +160,24 @@ async function generateDialogueWithV3(materialId) {
   const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`
   console.log(`✅ Uploaded: ${publicUrl}`)
 
-  // Save metadata to JSON file
-  const fs = require('fs')
-  const metadata = {
-    materialId,
-    title: material.title,
-    model: 'eleven_v3',
-    dialogueMode: true,
-    speakers: Object.keys(VOICES),
-    audioUrl: publicUrl,
-    linesCount: dialogueInputs.length,
-    generatedAt: new Date().toISOString()
+  // Update database with audio filename
+  const { error: updateError } = await supabase
+    .from('materials')
+    .update({ audio_filename: `${slug}.mp3` })
+    .eq('id', materialId)
+
+  if (updateError) {
+    console.error(`❌ Error updating database:`, updateError)
+  } else {
+    console.log(`✅ Database updated with audio filename`)
   }
 
-  const outputFile = `dialogue-${materialId}-v3-metadata.json`
-  fs.writeFileSync(outputFile, JSON.stringify(metadata, null, 2))
-
-  console.log(`\n✅ Dialogue generation complete!`)
+  console.log(`\n✅ Dialogue audio generation complete!`)
   console.log(`\n📊 Summary:`)
-  console.log(`   Model: Eleven v3 (Dialogue Mode)`)
-  console.log(`   Speakers: ${Object.keys(VOICES).join(', ')}`)
+  console.log(`   ID: ${materialId}`)
+  console.log(`   Title: ${material.title}`)
   console.log(`   Lines: ${dialogueInputs.length}`)
   console.log(`   Audio URL: ${publicUrl}`)
-  console.log(`\n💾 Metadata saved to: ${outputFile}`)
 }
 
 // Main execution
@@ -153,15 +185,13 @@ if (require.main === module) {
   const materialId = parseInt(process.argv[2])
 
   if (!materialId) {
-    console.log('❌ Usage: node scripts/generate-dialogue-v3.js <material_id>')
+    console.log('❌ Usage: node scripts/generate-single-dialogue-audio.js <material_id>')
     console.log('\n📝 Example:')
-    console.log('   node scripts/generate-dialogue-v3.js 676')
-    console.log('\n✨ This uses ElevenLabs Eleven v3 Dialogue Mode to generate')
-    console.log('   a single, natural-flowing dialogue audio file with multiple speakers.')
+    console.log('   node scripts/generate-single-dialogue-audio.js 677')
     process.exit(1)
   }
 
-  generateDialogueWithV3(materialId).catch(error => {
+  generateDialogueAudio(materialId).catch(error => {
     console.error('❌ Fatal error:', error)
     process.exit(1)
   })
