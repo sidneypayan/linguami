@@ -128,6 +128,7 @@ Detailed feature documentation:
 - **[Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md)** - Rules for creating course lessons, translations, audio workflow
 - **[Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
 - **[Course Blocks Structure](docs/guides/COURSE_BLOCKS_STRUCTURE.md)** - All block types with schemas
+- **[Dialogue Audio Generation](docs/guides/DIALOGUE_AUDIO_GENERATION.md)** - Voice IDs, voice mapping, audio generation process for dialogues
 
 ### ⚡ Performance & Best Practices
 
@@ -506,6 +507,7 @@ Not sure where to look? Use this quick reference:
 - Add translations → [i18n System](docs/architecture/i18n.md)
 - Create exercises → [Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md) ⚠️ MUST READ
 - Create lessons → [Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md) ⚠️ MUST READ
+- Generate dialogue audio → [Dialogue Audio Generation](docs/guides/DIALOGUE_AUDIO_GENERATION.md) ⚠️ MUST READ
 - Understand exercises → [Interactive Exercises](docs/features/exercises.md)
 - Understand courses → [Method Courses](docs/features/method-courses.md)
 - Understand flashcards → [SRS Flashcards](docs/features/srs-flashcards.md)
