@@ -263,6 +263,62 @@ const Words = ({ content, locale = 'fr' }) => {
 	// Use word wrapping hook
 	const wrapWords = useWordWrapping(handleClick, styles)
 
+		// Helper function to parse character names markup [NAME]
+	const parseCharacterNames = useCallback((text) => {
+		if (!text) return text
+
+		// Common French names for gender detection
+		const maleNames = ['MARC', 'PIERRE', 'JEAN', 'LUC', 'PAUL', 'MICHEL', 'THOMAS', 'NICOLAS', 'JULIEN', 'ALEXANDRE', 'ANTOINE', 'MAXIME', 'SERVEUR', 'GARÇON', 'HOMME', 'MONSIEUR']
+		const femaleNames = ['SOPHIE', 'MARIE', 'JULIE', 'CLAIRE', 'EMMA', 'CAMILLE', 'LÉA', 'LAURA', 'SARAH', 'MANON', 'CHARLOTTE', 'LUCIE', 'SERVEUSE', 'FEMME', 'MADAME', 'MADEMOISELLE']
+
+		const detectGender = (name) => {
+			const upperName = name.toUpperCase().trim()
+			if (maleNames.includes(upperName)) return 'male'
+			if (femaleNames.includes(upperName)) return 'female'
+			return 'neutral'
+		}
+
+		// Regular expression to find [CHARACTER_NAME] patterns
+		const characterRegex = /\[([A-ZÀ-ÿ\s]+)\]/g
+		const parts = []
+		let lastIndex = 0
+		let match
+
+		while ((match = characterRegex.exec(text)) !== null) {
+			// Add text before the match
+			if (match.index > lastIndex) {
+				parts.push({
+					type: 'text',
+					content: text.substring(lastIndex, match.index)
+				})
+			}
+
+			// Add the character name with detected gender
+			parts.push({
+				type: 'character',
+				content: match[1], // The name without brackets
+				gender: detectGender(match[1])
+			})
+
+			lastIndex = match.index + match[0].length
+		}
+
+		// Add remaining text after last match
+		if (lastIndex < text.length) {
+			parts.push({
+				type: 'text',
+				content: text.substring(lastIndex)
+			})
+		}
+
+		// If no matches found, return original text wrapped
+		if (parts.length === 0) {
+			return text
+		}
+
+		return parts
+	}, [])
+
 	// Wrap sentences with clickable words
 	const wrapSentences = useMemo(() => {
 		if (!clean) return clean
@@ -270,13 +326,49 @@ const Words = ({ content, locale = 'fr' }) => {
 		// Split on newlines to process line by line
 		const lines = clean.split(/\r?\n/)
 
-		return lines.map((line, index) => (
-			<React.Fragment key={index}>
-				{line && <span className={styles.sentence}>{wrapWords(line)}</span>}
-				{index < lines.length - 1 && <br />}
-			</React.Fragment>
-		))
-	}, [clean, wrapWords])
+		return lines.map((line, lineIndex) => {
+			if (!line) return <span key={lineIndex} style={{ display: 'block', marginBottom: '0.5rem' }} />
+
+			// Parse character names in the line
+			const parts = parseCharacterNames(line)
+
+			// If no character names found, render normally
+			if (typeof parts === 'string') {
+				return (
+					<span key={lineIndex} style={{ display: 'block', marginBottom: '0.5rem' }}>
+						<span className={styles.sentence}>{wrapWords(line)}</span>
+					</span>
+				)
+			}
+
+			// Render line with styled character names
+			return (
+				<span key={lineIndex} style={{ display: 'block', marginBottom: '0.5rem' }}>
+					<span className={styles.sentence}>
+						{parts.map((part, partIndex) => {
+							if (part.type === 'character') {
+								// Format name: first letter uppercase, rest lowercase
+								const formattedName = part.content.charAt(0).toUpperCase() + part.content.slice(1).toLowerCase()
+								return (
+									<span
+										key={partIndex}
+										style={{
+											fontWeight: 600,
+											marginRight: '16px'
+										}}
+									>
+										{formattedName}
+									</span>
+								)
+							} else {
+								return wrapWords(part.content)
+							}
+						})}
+					</span>
+				</span>
+			)
+		})
+	}, [clean, wrapWords, parseCharacterNames])
 
 	return wrapSentences
 }

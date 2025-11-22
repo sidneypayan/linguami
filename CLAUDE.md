@@ -519,3 +519,4 @@ Not sure where to look? Use this quick reference:
 ---
 
 **Remember:** This is just an index. All detailed documentation is in the `docs/` folder. Always consult the appropriate guide before working on a feature to avoid conflicts and ensure consistency.
+- Les credentials de la DB prod du projet sont dans .env.production
