@@ -468,6 +468,21 @@ const UserProvider = ({ children }) => {
 	const changeLearningLanguage = useCallback(
 		async learningLanguage => {
 			try {
+				// 🛡️ VALIDATION: Bloquer si learning_language === spoken_language
+				const spokenLang = user
+					? userProfile?.spoken_language
+					: (typeof window !== 'undefined' ? localStorage.getItem('spoken_language') : null) || router?.locale
+
+				if (learningLanguage === spokenLang) {
+					const errorMessage = router?.locale === 'fr'
+						? 'Vous ne pouvez pas apprendre votre langue maternelle'
+						: router?.locale === 'ru'
+						? 'Вы не можете учить свой родной язык'
+						: 'You cannot learn your native language'
+					toast.error(errorMessage)
+					return // Bloquer silencieusement
+				}
+
 				if (user) {
 					const { data, error } = await supabase
 						.from('users_profile')
@@ -500,7 +515,7 @@ const UserProvider = ({ children }) => {
 				safeToastError(err, toastMessages.languageUpdateError())
 			}
 		},
-		[user]
+		[user, userProfile?.spoken_language, router?.locale]
 	)
 
 	const changeSpokenLanguage = useCallback(
