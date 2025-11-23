@@ -19,6 +19,7 @@ const BottomNav = () => {
 	const router = useNextRouter() // For navigation
 	const pathname = usePathname()
 	const params = useParams()
+	const locale = useLocale()
 	const t = useTranslations('common')
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -52,12 +53,15 @@ const BottomNav = () => {
 	const hasLessons = userLearningLanguage === 'fr'
 
 	// Déterminer la valeur active basée sur le pathname
+	// Paths include locale: /fr, /ru/materials, /en/dictionary, etc.
 	const getActiveValue = () => {
-		const path = pathname
-		if (path === '/') return 'home'
-		if (path.startsWith('/materials')) return 'materials'
-		if (path.startsWith('/dictionary')) return 'dictionary'
-		if (path.startsWith('/lessons') || path.startsWith('/teacher')) return 'lessons'
+		// Remove locale prefix from pathname (e.g., /fr/materials -> /materials)
+		const pathWithoutLocale = pathname.replace(/^\/(fr|ru|en)/, '') || '/'
+
+		if (pathWithoutLocale === '/') return 'home'
+		if (pathWithoutLocale.startsWith('/materials')) return 'materials'
+		if (pathWithoutLocale.startsWith('/dictionary')) return 'dictionary'
+		if (pathWithoutLocale.startsWith('/lessons') || pathWithoutLocale.startsWith('/teacher')) return 'lessons'
 		return 'home'
 	}
 
@@ -160,7 +164,7 @@ const BottomNav = () => {
 					},
 				}}>
 				<BottomNavigationAction
-					label={router.locale === 'fr' ? 'Accueil' : 'Главная'}
+					label={locale === 'fr' ? 'Accueil' : locale === 'en' ? 'Home' : 'Главная'}
 					value='home'
 					icon={<HomeRounded />}
 				/>
@@ -170,7 +174,7 @@ const BottomNav = () => {
 					icon={<AutoStoriesRounded />}
 				/>
 				<BottomNavigationAction
-					label={router.locale === 'fr' ? 'Dico' : 'Слова'}
+					label={locale === 'fr' ? 'Dico' : locale === 'en' ? 'Words' : 'Слова'}
 					value='dictionary'
 					icon={
 						!isBootstrapping && wordsCount > 0 ? (
