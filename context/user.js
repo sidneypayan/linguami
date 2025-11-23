@@ -106,13 +106,29 @@ const UserProvider = ({ children }) => {
 					setIsUserAdmin(profile?.role === 'admin') // ajuste selon ton schéma
 					setIsUserPremium(!!profile?.is_premium)
 
-					if (profile?.learning_language) {
-						setUserLearningLanguage(profile.learning_language)
+					// 🛡️ VALIDATION: Détecter et corriger les conflits learning_language === spoken_language
+					let learningLang = profile?.learning_language
+					const spokenLang = profile?.spoken_language || 'fr'
+
+					// Si conflit détecté, corriger automatiquement
+					if (learningLang && learningLang === spokenLang) {
+						learningLang = getDefaultLearningLanguage(spokenLang)
+						// Corriger en DB silencieusement
 						try {
-							localStorage.setItem('learning_language', profile.learning_language)
+							await supabase
+								.from('users_profile')
+								.update({ learning_language: learningLang })
+								.eq('id', signedUser.id)
+						} catch {}
+					}
+
+					if (learningLang) {
+						setUserLearningLanguage(learningLang)
+						try {
+							localStorage.setItem('learning_language', learningLang)
 							// Also save to cookie for SSR
 							if (typeof document !== 'undefined') {
-								document.cookie = `learning_language=${profile.learning_language}; path=/; max-age=31536000; SameSite=Lax`
+								document.cookie = `learning_language=${learningLang}; path=/; max-age=31536000; SameSite=Lax`
 							}
 						} catch {}
 					} else {
@@ -521,21 +537,7 @@ const UserProvider = ({ children }) => {
 	const changeSpokenLanguage = useCallback(
 		async spokenLanguage => {
 			try {
-				// 1. Mettre à jour spoken_language
-				if (user) {
-					const { data, error } = await supabase
-						.from('users_profile')
-						.update({ spoken_language: spokenLanguage })
-						.eq('id', user.id)
-						.select()
-					if (error) throw error
-				} else {
-					try {
-						localStorage.setItem('spoken_language', spokenLanguage)
-					} catch {}
-				}
-
-				// 2. Calculer et forcer la learning_language appropriée
+				// 1. Calculer la nouvelle learning_language AVANT de changer spoken_language
 				// Règles métier :
 				// - FR parle → apprend RU (toujours)
 				// - RU parle → apprend FR (toujours)
@@ -553,15 +555,53 @@ const UserProvider = ({ children }) => {
 					// Sinon on garde la langue actuelle (fr ou ru)
 				}
 
-				// 3. Appliquer le changement de learning_language si nécessaire
-				if (newLearningLang && newLearningLang !== userLearningLanguage) {
-					await changeLearningLanguage(newLearningLang)
+				// 2. Mettre à jour spoken_language ET learning_language en une seule requête
+				if (user) {
+					const updateData = { spoken_language: spokenLanguage }
+					if (newLearningLang) {
+						updateData.learning_language = newLearningLang
+					}
+
+					const { data, error } = await supabase
+						.from('users_profile')
+						.update(updateData)
+						.eq('id', user.id)
+						.select()
+					if (error) throw error
+
+					// 3. Rafraîchir le profil local
+					const updated = Array.isArray(data) ? data[0] : data
+					if (updated) {
+						setUserProfile(prev => ({ ...prev, ...updated }))
+
+						if (newLearningLang) {
+							setUserLearningLanguage(newLearningLang)
+							try {
+								localStorage.setItem('learning_language', newLearningLang)
+								if (typeof document !== 'undefined') {
+									document.cookie = `learning_language=${newLearningLang}; path=/; max-age=31536000; SameSite=Lax`
+								}
+							} catch {}
+						}
+					}
+				} else {
+					// Invité
+					try {
+						localStorage.setItem('spoken_language', spokenLanguage)
+						if (newLearningLang) {
+							setUserLearningLanguage(newLearningLang)
+							localStorage.setItem('learning_language', newLearningLang)
+							if (typeof document !== 'undefined') {
+								document.cookie = `learning_language=${newLearningLang}; path=/; max-age=31536000; SameSite=Lax`
+							}
+						}
+					} catch {}
 				}
 			} catch (err) {
 				safeToastError(err, toastMessages.languageUpdateError())
 			}
 		},
-		[user, userLearningLanguage, changeLearningLanguage]
+		[user, userLearningLanguage, toastMessages]
 	)
 
 	const updateUserProfile = useCallback(
