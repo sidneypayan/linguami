@@ -51,6 +51,7 @@ export function getOriginalWord(translation) {
 
 /**
  * Sanitize user input to prevent XSS and injection
+ * NOTE: Does not trim whitespace - trimming should be done at validation time
  * @param {string} input - User input string
  * @returns {string} Sanitized string
  */
@@ -62,7 +63,6 @@ export function sanitizeInput(input) {
 		.replace(/[{}]/g, '') // Prevent curly braces
 		.replace(/javascript:/gi, '') // Prevent javascript:
 		.replace(/on\w+=/gi, '') // Prevent event handlers
-		.trim()
 }
 
 /**
