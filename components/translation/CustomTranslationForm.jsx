@@ -34,20 +34,23 @@ export function CustomTranslationForm({ onSubmit }) {
 	const handleSubmit = (e) => {
 		e.preventDefault()
 
+		// Trim whitespace before validation and submission
+		const trimmedTranslation = personalTranslation.trim()
+
 		// Final validation before submit
-		if (!personalTranslation) {
+		if (!trimmedTranslation) {
 			setTranslationError('La traduction ne peut pas être vide')
 			return
 		}
 
-		const validation = validateTranslation(personalTranslation, MAX_TRANSLATION_LENGTH)
+		const validation = validateTranslation(trimmedTranslation, MAX_TRANSLATION_LENGTH)
 		if (!validation.isValid) {
 			setTranslationError(validation.error)
 			return
 		}
 
-		// Call parent submit handler with sanitized translation
-		onSubmit(personalTranslation)
+		// Call parent submit handler with trimmed translation
+		onSubmit(trimmedTranslation)
 
 		// Reset form
 		setPersonalTranslation('')
