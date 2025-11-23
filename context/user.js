@@ -132,9 +132,8 @@ const UserProvider = ({ children }) => {
 							}
 						} catch {}
 					} else {
-						// Si pas de langue d'apprentissage définie, en définir une différente de la locale
-						const currentLocale = router?.locale || 'fr'
-						const defaultLearningLang = getDefaultLearningLanguage(currentLocale)
+						// Si pas de langue d'apprentissage définie, en définir une différente de spoken_language
+						const defaultLearningLang = getDefaultLearningLanguage(spokenLang)
 						setUserLearningLanguage(defaultLearningLang)
 						try {
 							localStorage.setItem('learning_language', defaultLearningLang)
@@ -339,10 +338,10 @@ const UserProvider = ({ children }) => {
 		async ({ email, password, username, spokenLanguage, learningLanguage, languageLevel, selectedAvatar }) => {
 			// Utiliser la langue d'apprentissage du formulaire si fournie
 			const learningLang = learningLanguage || (() => {
-				const currentLocale = router?.locale || 'fr'
+				const spokenLang = spokenLanguage || 'fr'
 				let lang = userLearningLanguage
-				if (!lang || lang === currentLocale) {
-					lang = getDefaultLearningLanguage(currentLocale)
+				if (!lang || lang === spokenLang) {
+					lang = getDefaultLearningLanguage(spokenLang)
 				}
 				return lang
 			})()
