@@ -130,52 +130,70 @@ const Words = ({ content, locale = 'fr' }) => {
 
 			// Check if we have at least one definition
 			if (def.length === 0 || !def[0]) {
-				// Fallback: If word has French contraction (j', l', d', etc.), try to find infinitive
+				// Fallback: If word has French contraction (j', l', d', etc.), try without contraction
 				const word = response.word
 				if (/^[jldmtnsJLDMTNS]['']/.test(word)) {
-					// Remove the pronoun (e.g., "j'enseigne" → "enseigne")
-					let wordWithoutPronoun = word.replace(/^[jldmtnsJLDMTNS]['']/, '').toLowerCase()
-
-					// For French verbs, try to convert to infinitive
-					// For regular -er verbs: "enseigne" → "enseigner"
-					// For -ir verbs: "finis" → "finir" (already ends in 'r')
-					// For -re verbs: "rends" → "rendre" (need more complex logic)
-					let wordToTry = wordWithoutPronoun
-
-					// If it looks like a conjugated -er verb (ends in 'e'), try adding 'r'
-					if (wordWithoutPronoun.endsWith('e') && !wordWithoutPronoun.endsWith('re')) {
-						wordToTry = wordWithoutPronoun + 'r'
-						console.log('[Words] Converting to infinitive:', wordWithoutPronoun, '→', wordToTry)
-					}
+					// Remove the pronoun/article (e.g., "j'enseigne" → "enseigne", "d'apprentissage" → "apprentissage")
+					const wordWithoutPronoun = word.replace(/^[jldmtnsJLDMTNS]['']/, '').toLowerCase()
 
 					try {
-						// Retry translation with infinitive form
-						const retryResult = await translateWordAction({
-							word: wordToTry,
+						// FIRST ATTEMPT: Try the word without contraction as-is
+						// For nouns like "d'apprentissage" → "apprentissage", this should work
+						
+						let retryResult = await translateWordAction({
+							word: wordWithoutPronoun,
 							sentence: response.sentence,
 							userLearningLanguage,
 							locale,
 							isAuthenticated: isUserLoggedIn,
 						})
 
-						// If retry succeeds, process the result recursively
+						// If first attempt succeeds, use it
 						if (retryResult.data?.def?.length > 0) {
-							// Update the word to original form for display
 							retryResult.word = word
-							// Process this result (reuse the logic below)
 							const retryDef = retryResult.data.def[0]
-							// Use original coordinates for retry
 							await processTranslationResult(retryDef, word, response.sentence, coords)
 							return
 						}
+
+						// SECOND ATTEMPT: If it failed and looks like a verb, try infinitive form
+						// For verbs like "j'enseigne" → "enseigne" → "enseigner"
+						if (wordWithoutPronoun.endsWith('e') && !wordWithoutPronoun.endsWith('re')) {
+							const infinitiveForm = wordWithoutPronoun + 'r'
+							
+
+							retryResult = await translateWordAction({
+								word: infinitiveForm,
+								sentence: response.sentence,
+								userLearningLanguage,
+								locale,
+								isAuthenticated: isUserLoggedIn,
+							})
+
+							if (retryResult.data?.def?.length > 0) {
+								retryResult.word = word
+								const retryDef = retryResult.data.def[0]
+								await processTranslationResult(retryDef, word, response.sentence, coords)
+								return
+							}
+						}
 					} catch (error) {
-						console.warn('[Words] Fallback translation also failed:', error)
+						console.warn('[Words] Fallback translation failed:', error)
 					}
 				}
 
-				// If no fallback or fallback failed, show error
-				openTranslation({ word: response.word }, response.sentence, coords)
-				setError('Aucune traduction trouvée')
+				// If no fallback or fallback failed, show empty translation (no error)
+				// This allows the user to add their own translation
+				const emptyTranslation = {
+					word: response.word,
+					inf: null,
+					displayInf: null,
+					asp: null,
+					form: null,
+					definitions: [], // Empty array, not undefined
+					sentence: response.sentence
+				}
+				openTranslation(emptyTranslation, response.sentence, coords)
 				setLoading(false)
 				return
 			}

@@ -1101,6 +1101,7 @@
     "add": "Добавить",
     "add_word_btn": "Добавить слово вручную",
     "custom_translation": "Другой перевод",
+    "no_translation_found": "Перевод не найден",
     "translation": "Перевод",
     "words_per_page": "Показать на странице:",
     "words_total": "слово всего",

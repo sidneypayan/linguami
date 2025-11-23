@@ -145,7 +145,8 @@ const Translation = ({ materialId, userId }) => {
 	// Determine UI states
 	const hasDictionaryLimit = !isUserLoggedIn && guestWordsCount >= GUEST_DICTIONARY_CONFIG.MAX_WORDS
 	const isTranslationLimitError = translation_error?.includes('Limite de traductions atteinte')
-	const hasTranslation = translation?.word && translation?.definitions
+	const hasTranslation = translation?.word && translation?.definitions && translation.definitions.length > 0
+
 
 	return (
 		<Fade in={isTranslationOpen}>
@@ -189,26 +190,35 @@ const Translation = ({ materialId, userId }) => {
 							disabled={hasDictionaryLimit}
 						/>
 
-						{/* Custom translation form (logged-in users only) */}
-						{isUserLoggedIn && (
+						{/* Custom translation form (for all users if not at limit) */}
+						{(isUserLoggedIn || !hasDictionaryLimit) && (
 							<CustomTranslationForm onSubmit={handleCustomTranslationSubmit} />
 						)}
 
-						{/* Guest message (guests only) */}
-						{!isUserLoggedIn && (
-							<GuestLimitMessage hasReachedLimit={hasDictionaryLimit} />
+						{/* Guest message (only if at limit) */}
+						{!isUserLoggedIn && hasDictionaryLimit && (
+							<GuestLimitMessage hasReachedLimit={true} />
 						)}
 					</>
 				) : (
-				/* No translation found - still show guest limit message if applicable */
-				!isUserLoggedIn && hasDictionaryLimit && (
-					<Box sx={{ p: 2 }}>
-						<Typography variant="body2" sx={{ mb: 2, color: 'text.secondary', textAlign: 'center' }}>
-							Aucune traduction trouvée
+				/* No translation found - show message and allow custom translation */
+				<>
+					<Box sx={{ p: 2, textAlign: 'center' }}>
+						<Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+							{t('no_translation_found') || 'Aucune traduction trouvée'}
 						</Typography>
-						<GuestLimitMessage hasReachedLimit={true} />
 					</Box>
-				)
+
+					{/* Custom translation form (for all users if not at limit) */}
+					{(isUserLoggedIn || !hasDictionaryLimit) && (
+						<CustomTranslationForm onSubmit={handleCustomTranslationSubmit} />
+					)}
+
+					{/* Guest message (only if at limit) */}
+					{!isUserLoggedIn && hasDictionaryLimit && (
+						<GuestLimitMessage hasReachedLimit={true} />
+					)}
+				</>
 			)}
 			</Paper>
 		</Fade>

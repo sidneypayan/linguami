@@ -1101,6 +1101,7 @@
     "add": "Ajouter",
     "add_word_btn": "Ajouter un mot manuellement",
     "custom_translation": "Autre traduction",
+    "no_translation_found": "Aucune traduction trouvée",
     "translation": "Traduction",
     "words_per_page": "Afficher par page :",
     "words_total": "mot au total",
