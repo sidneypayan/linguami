@@ -1101,6 +1101,7 @@
     "add": "Add",
     "add_word_btn": "Add a word manually",
     "custom_translation": "Other translation",
+    "no_translation_found": "No translation found",
     "translation": "Translation",
     "words_per_page": "Display per page:",
     "words_total": "word total",
