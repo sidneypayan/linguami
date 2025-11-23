@@ -687,6 +687,8 @@ async function checkVideoLink(url) {
 				html.includes('"reason":"Video unavailable"') ||
 				html.includes('CONTENT_NOT_AVAILABLE') ||
 				html.includes('playback on other websites has been disabled') ||
+				html.includes('errorScreen') || // Détecte l'erreur 153 (embedding désactivé)
+				html.includes('"isEmbeddingAllowed":false') || // Embedding explicitement désactivé
 				(html.includes('"isUnlisted":true') && html.includes('"isPrivate":true'))
 			) {
 				return 'broken'
