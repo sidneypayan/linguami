@@ -29,6 +29,8 @@ const Player = ({ src }) => {
 	const [volume, setVolume] = useState(1)
 	const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 	const [playbackRate, setPlaybackRate] = useState(1)
+	const isSeekingRef = useRef(false)
+	const shouldResumeRef = useRef(false)
 
 	useEffect(() => {
 		const audio = audioRef.current
@@ -42,35 +44,124 @@ const Player = ({ src }) => {
 		// Fallback pour WebKit plus ancien
 		audio.webkitPreservesPitch = true
 
-		const updateTime = () => setCurrentTime(audio.currentTime)
-		const updateDuration = () => setDuration(audio.duration)
-		const handleEnded = () => setIsPlaying(false)
+		const updateTime = () => {
+			// Ne pas mettre à jour le temps si l'utilisateur est en train de seek
+			if (!isSeekingRef.current) {
+				setCurrentTime(audio.currentTime)
+			}
+		}
+		const updateDuration = () => {
+			if (!isNaN(audio.duration) && audio.duration > 0) {
+				setDuration(audio.duration)
+				} else {
+				}
+		}
+		const handleEnded = () => {
+			// Ne rien faire - laisser l'audio à la fin
+			// togglePlay gérera la remise à 0 si l'utilisateur clique sur play
+		}
 
 		audio.addEventListener('timeupdate', updateTime)
 		audio.addEventListener('loadedmetadata', updateDuration)
+		audio.addEventListener('durationchange', updateDuration)
+		
+		// Vérifier immédiatement si la durée est déjà disponible (audio en cache)
+		if (!isNaN(audio.duration) && audio.duration > 0) {
+			setDuration(audio.duration)
+		} else {
+		}
 		audio.addEventListener('ended', handleEnded)
+		const handlePlay = () => {
+			setIsPlaying(true)
+		}
+		const handlePause = () => {
+			setIsPlaying(false)
+		}
+		
+		audio.addEventListener('play', handlePlay)
+		audio.addEventListener('pause', handlePause)
+		
+		// Gérer le seeking
+		const handleSeeking = () => {
+			shouldResumeRef.current = !audio.paused
+		}
+		
+		const handleSeeked = () => {
+			const timeRemaining = audio.duration - audio.currentTime
+			
+			// Reprendre la lecture si nécessaire et s'il reste plus de 0.5s
+			if (shouldResumeRef.current && timeRemaining > 0.5) {
+				audio.play().catch(() => {})
+			}
+			shouldResumeRef.current = false
+		}
+		
+		const handleWaiting = () => {}
+		
+		const handleCanPlay = () => {}
+		
+		audio.addEventListener('seeking', handleSeeking)
+		audio.addEventListener('seeked', handleSeeked)
+		audio.addEventListener('waiting', handleWaiting)
+		audio.addEventListener('canplay', handleCanPlay)
 
 		return () => {
 			audio.removeEventListener('timeupdate', updateTime)
 			audio.removeEventListener('loadedmetadata', updateDuration)
+			audio.removeEventListener('durationchange', updateDuration)
 			audio.removeEventListener('ended', handleEnded)
+			audio.removeEventListener('play', handlePlay)
+			audio.removeEventListener('pause', handlePause)
+			audio.removeEventListener('seeking', handleSeeking)
+			audio.removeEventListener('seeked', handleSeeked)
+			audio.removeEventListener('waiting', handleWaiting)
+			audio.removeEventListener('canplay', handleCanPlay)
 		}
 	}, [])
 
 	const togglePlay = () => {
 		const audio = audioRef.current
-		if (isPlaying) {
-			audio.pause()
-		} else {
-			audio.play()
+		
+		// If audio not loaded yet, just toggle play/pause
+		if (isNaN(audio.duration)) {
+			if (audio.paused) {
+				audio.play()
+			} else {
+				audio.pause()
+			}
+			return
 		}
-		setIsPlaying(!isPlaying)
+		
+		// Reset to start only if very close to the end
+		const timeRemaining = audio.duration - audio.currentTime
+		if (timeRemaining < 0.5) {
+			audio.currentTime = 0
+			setCurrentTime(0)
+		}
+		
+		if (audio.paused) {
+			audio.play()
+		} else {
+			audio.pause()
+		}
+	}
+
+	const handleSeekStart = () => {
+		isSeekingRef.current = true
 	}
 
 	const handleSeek = (event, newValue) => {
+		setCurrentTime(newValue)
+	}
+
+	const handleSeekEnd = (event, newValue) => {
 		const audio = audioRef.current
+		if (!audio || isNaN(audio.duration)) return
+		
 		audio.currentTime = newValue
 		setCurrentTime(newValue)
+		
+		isSeekingRef.current = false
 	}
 
 	const handleVolumeChange = (event, newValue) => {
@@ -92,7 +183,11 @@ const Player = ({ src }) => {
 
 	const skip = (seconds) => {
 		const audio = audioRef.current
-		audio.currentTime = Math.max(0, Math.min(duration, audio.currentTime + seconds))
+		if (!audio || isNaN(audio.duration)) return
+		
+		const newTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds))
+		audio.currentTime = newTime
+		setCurrentTime(newTime)
 	}
 
 	const cyclePlaybackRate = () => {
@@ -254,6 +349,9 @@ const Player = ({ src }) => {
 						value={currentTime}
 						max={duration || 100}
 						onChange={handleSeek}
+						onChangeCommitted={handleSeekEnd}
+						onMouseDown={handleSeekStart}
+						onTouchStart={handleSeekStart}
 						sx={{
 							color: '#8b5cf6',
 							height: 4,
@@ -349,11 +447,12 @@ const Player = ({ src }) => {
 					onMouseLeave={() => setShowVolumeSlider(false)}>
 					<Box
 						sx={{
-							width: showVolumeSlider ? { xs: 0, sm: 80 } : 0,
+							width: showVolumeSlider ? { xs: 0, sm: 100 } : 0,
 							opacity: showVolumeSlider ? 1 : 0,
 							transition: 'all 0.3s ease',
-							overflow: 'hidden',
+							overflow: 'visible',
 							display: { xs: 'none', sm: 'block' },
+						marginRight: showVolumeSlider ? '12px' : 0,
 						}}>
 						<Slider
 							value={volume}
