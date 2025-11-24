@@ -839,3 +839,183 @@ export async function updateMaterialVideo(materialId, videoUrl) {
 		}
 	}
 }
+
+// ============================================================================
+// MATERIAL REPORTS MANAGEMENT
+// ============================================================================
+
+/**
+ * Get all material reports (admin only)
+ * @param {string} status - Filter by status (pending, in_progress, resolved, dismissed, all)
+ * @returns {Promise<Array>} Reports with material and user info
+ */
+export async function getMaterialReports(status = 'all') {
+	try {
+		const cookieStore = await cookies()
+		const supabase = createServerClient(cookieStore)
+
+		// Check if user is admin
+		const { data: { user } } = await supabase.auth.getUser()
+		if (!user) {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('role')
+			.eq('id', user.id)
+			.single()
+
+		if (profile?.role !== 'admin') {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		// Build query
+		let query = supabase
+			.from('material_reports')
+			.select(`
+				*,
+				materials (
+					id,
+					title,
+					title_fr,
+					title_en,
+					title_ru,
+					section,
+					lang,
+					video_url
+				)
+			`)
+			.order('created_at', { ascending: false })
+
+		if (status !== 'all') {
+			query = query.eq('status', status)
+		}
+
+		const { data: reports, error } = await query
+
+		if (error) {
+			logger.error('Error fetching material reports:', error)
+			return { success: false, error: error.message }
+		}
+
+		return { success: true, reports }
+
+	} catch (error) {
+		logger.error('Error in getMaterialReports:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * Update material report status (admin only)
+ * @param {number} reportId - Report ID
+ * @param {string} status - New status
+ * @returns {Promise<Object>} Result
+ */
+export async function updateReportStatus(reportId, status) {
+	try {
+		const ReportIdSchema = z.number().int().positive()
+		const validReportId = ReportIdSchema.parse(reportId)
+
+		const StatusSchema = z.enum(['pending', 'in_progress', 'resolved', 'dismissed'])
+		const validStatus = StatusSchema.parse(status)
+
+		const cookieStore = await cookies()
+		const supabase = createServerClient(cookieStore)
+
+		// Check if user is admin
+		const { data: { user } } = await supabase.auth.getUser()
+		if (!user) {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('role')
+			.eq('id', user.id)
+			.single()
+
+		if (profile?.role !== 'admin') {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		// Update report
+		const updateData = {
+			status: validStatus,
+			updated_at: new Date().toISOString(),
+		}
+
+		if (validStatus === 'resolved') {
+			updateData.resolved_at = new Date().toISOString()
+			updateData.resolved_by = user.id
+		}
+
+		const { data, error } = await supabase
+			.from('material_reports')
+			.update(updateData)
+			.eq('id', validReportId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating report status:', error)
+			return { success: false, error: error.message }
+		}
+
+		logger.info(`Report ${validReportId} status updated to ${validStatus} by admin ${user.id}`)
+		return { success: true, report: data }
+
+	} catch (error) {
+		logger.error('Error in updateReportStatus:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * Delete a material report (admin only)
+ * @param {number} reportId - Report ID
+ * @returns {Promise<Object>} Result
+ */
+export async function deleteReport(reportId) {
+	try {
+		const ReportIdSchema = z.number().int().positive()
+		const validReportId = ReportIdSchema.parse(reportId)
+
+		const cookieStore = await cookies()
+		const supabase = createServerClient(cookieStore)
+
+		// Check if user is admin
+		const { data: { user } } = await supabase.auth.getUser()
+		if (!user) {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('role')
+			.eq('id', user.id)
+			.single()
+
+		if (profile?.role !== 'admin') {
+			return { success: false, error: 'Unauthorized' }
+		}
+
+		const { error } = await supabase
+			.from('material_reports')
+			.delete()
+			.eq('id', validReportId)
+
+		if (error) {
+			logger.error('Error deleting report:', error)
+			return { success: false, error: error.message }
+		}
+
+		logger.info(`Report ${validReportId} deleted by admin ${user.id}`)
+		return { success: true }
+
+	} catch (error) {
+		logger.error('Error in deleteReport:', error)
+		return { success: false, error: error.message }
+	}
+}

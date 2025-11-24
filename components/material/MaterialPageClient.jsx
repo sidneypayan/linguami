@@ -21,6 +21,7 @@ import WordsContainer from '@/components/material/WordsContainer'
 import VideoPlayer from '@/components/material/VideoPlayer'
 import EditMaterialModal from '@/components/admin/EditMaterialModal'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
+import ReportButton from '@/components/material/ReportButton'
 import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
 
@@ -783,6 +784,17 @@ const Material = ({
 					onSuccess={handleEditSuccess}
 				/>
 			)}
+
+			{/* Floating Report Button - Bottom Right */}
+			<Box
+				sx={{
+					position: 'fixed',
+					bottom: { xs: 80, sm: 24 },
+					right: { xs: 16, sm: 24 },
+					zIndex: 1000,
+				}}>
+				<ReportButton materialId={currentMaterial.id} />
+			</Box>
 		</>
 	)
 }
