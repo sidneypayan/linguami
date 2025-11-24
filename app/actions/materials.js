@@ -410,3 +410,58 @@ export async function getUserMaterialsByLanguageAction(lang) {
     section: um.materials.section,
   }))
 }
+
+/**
+ * Report a material issue (broken link, inappropriate content, etc.)
+ * @param {number} materialId - Material ID
+ * @param {string} reportType - Type of report (broken_video, broken_link, etc.)
+ * @param {string|null} comment - Optional comment from user
+ * @returns {Promise<Object>} Result object
+ */
+export async function reportMaterialIssue(materialId, reportType, comment = null) {
+  try {
+    // Validate inputs
+    const validMaterialId = MaterialIdSchema.parse(materialId)
+    const ReportTypeSchema = z.enum([
+      'broken_video',
+      'broken_link',
+      'broken_audio',
+      'inappropriate_content',
+      'translation_error',
+      'other'
+    ])
+    const validReportType = ReportTypeSchema.parse(reportType)
+    const validComment = comment ? z.string().max(1000).parse(comment) : null
+
+    const cookieStore = await cookies()
+    const supabase = createServerClient(cookieStore)
+
+    // Get user (can be null for guest users)
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Insert report
+    const { data, error } = await supabase
+      .from('material_reports')
+      .insert({
+        material_id: validMaterialId,
+        user_id: user?.id || null,
+        report_type: validReportType,
+        comment: validComment,
+        status: 'pending'
+      })
+      .select()
+      .single()
+
+    if (error) {
+      logger.error('Error creating material report:', error)
+      return { success: false, error: error.message }
+    }
+
+    logger.info(`Material report created: ${data.id} for material ${validMaterialId}`)
+    return { success: true, data }
+
+  } catch (error) {
+    logger.error('Error in reportMaterialIssue:', error)
+    return { success: false, error: error.message }
+  }
+}

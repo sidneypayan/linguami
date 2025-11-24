@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { Box, Container, Typography, Button } from '@mui/material'
-import { Add, People, School, Article } from '@mui/icons-material'
+import { Add, People, School, Article, FlagOutlined } from '@mui/icons-material'
 import { useTranslations, useLocale } from 'next-intl'
 
 const AdminNavbar = ({ activePage = 'dashboard' }) => {
@@ -32,6 +32,13 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			label: t('exercises'),
 			href: '/admin/exercises',
 			icon: <School />,
+			variant: 'contained',
+		},
+		{
+			id: 'reports',
+			label: t('materialReports'),
+			href: '/admin/reports',
+			icon: <FlagOutlined />,
 			variant: 'contained',
 		},
 		{
