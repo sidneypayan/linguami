@@ -32,35 +32,12 @@ CREATE POLICY "Users can view their own reports"
   FOR SELECT
   USING (auth.uid() = user_id);
 
--- Policy: Admins can view all reports
-CREATE POLICY "Admins can view all reports"
+-- Policy: Service role can do everything (for Server Actions)
+-- Admin checks are done in Server Actions, not in RLS
+CREATE POLICY "Service role full access"
   ON material_reports
-  FOR SELECT
-  USING (
-    auth.uid() IN (
-      SELECT id FROM public.users_profile WHERE role = 'admin'
-    )
-  );
-
--- Policy: Admins can update reports (change status, add notes, etc.)
-CREATE POLICY "Admins can update reports"
-  ON material_reports
-  FOR UPDATE
-  USING (
-    auth.uid() IN (
-      SELECT id FROM public.users_profile WHERE role = 'admin'
-    )
-  );
-
--- Policy: Admins can delete reports
-CREATE POLICY "Admins can delete reports"
-  ON material_reports
-  FOR DELETE
-  USING (
-    auth.uid() IN (
-      SELECT id FROM public.users_profile WHERE role = 'admin'
-    )
-  );
+  FOR ALL
+  USING (auth.jwt()->>'role' = 'service_role');
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_material_reports_updated_at()
