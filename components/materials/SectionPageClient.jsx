@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { useRouter, useParams, usePathname } from 'next/navigation'
+import { useRouter, useParams, usePathname, useSearchParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Box, Container, IconButton, Typography } from '@mui/material'
 import { ArrowBack } from '@mui/icons-material'
@@ -33,6 +33,7 @@ export default function SectionPageClient({
   const { userProfile, isUserAdmin, userLearningLanguage, changeLearningLanguage } = useUserContext()
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const queryClient = useQueryClient()
 
   // Local UI state
@@ -41,7 +42,9 @@ export default function SectionPageClient({
   const [selectedLevel, setSelectedLevel] = useState(null)
   const [selectedStatus, setSelectedStatus] = useState(null)
   const [hasAppliedDefaultFilter, setHasAppliedDefaultFilter] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+
+  // Read page from URL query params
+  const currentPage = parseInt(searchParams.get('page') || '1', 10)
 
   const prevPathnameRef = useRef(pathname)
 
@@ -122,25 +125,37 @@ export default function SectionPageClient({
     return userMaterialsStatus.find(um => um.material_id === id)
   }
 
+  // Helper to update URL with page number
+  const updatePage = (page) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (page === 1) {
+      params.delete('page')
+    } else {
+      params.set('page', page.toString())
+    }
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    router.push(newUrl, { scroll: false })
+  }
+
   // Handlers
   const handleViewChange = view => setViewMode(view)
   const handleSearchChange = value => {
     setSearchTerm(value)
-    setCurrentPage(1) // Reset to page 1 on search
+    updatePage(1) // Reset to page 1 on search
   }
   const handleLevelChange = level => {
     setSelectedLevel(level)
-    setCurrentPage(1)
+    updatePage(1)
   }
   const handleStatusChange = status => {
     setSelectedStatus(status)
-    setCurrentPage(1)
+    updatePage(1)
   }
   const handleClear = () => {
     setSearchTerm('')
     setSelectedLevel(null)
     setSelectedStatus(null)
-    setCurrentPage(1)
+    updatePage(1)
   }
 
   // Restore filters from localStorage on mount
@@ -345,7 +360,7 @@ export default function SectionPageClient({
             <Pagination
               numOfPages={numOfPages}
               currentPage={safePage}
-              onPageChange={setCurrentPage}
+              onPageChange={updatePage}
             />
           )}
         </Box>

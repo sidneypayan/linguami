@@ -12,7 +12,7 @@ import { materials_ru, materials_fr, materials_en } from '@/utils/constants'
 import { Box, Typography, Container, useTheme, Button } from '@mui/material'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useUserContext } from '@/context/user'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { School, Museum, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
 import { logger } from '@/utils/logger'
 import { getMaterialsByLanguageAction } from '@/app/actions/materials'
@@ -21,6 +21,8 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const pathname = usePathname()
+	const router = useRouter()
+	const searchParams = useSearchParams()
 	const { userProfile, isUserAdmin, userLearningLanguage, changeLearningLanguage } = useUserContext()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
@@ -75,7 +77,9 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	const [selectedStatus, setSelectedStatus] = useState(null)
 	const [selectedSection, setSelectedSection] = useState(null)
 	const [viewMode, setViewMode] = useState('card')
-	const [currentPage, setCurrentPage] = useState(1)
+
+	// Read page from URL query params
+	const currentPage = parseInt(searchParams.get('page') || '1', 10)
 
 	// Pagination
 	const materialsPerPage = 8
@@ -94,7 +98,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 			setSelectedLevel(null)
 			setSelectedStatus(null)
 			setSelectedSection(null)
-			setCurrentPage(1)
+			updatePage(1)
 		}
 
 		prevLearningLanguageRef.current = userLearningLanguage
@@ -160,7 +164,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 					if (filters.selectedStatus !== undefined) setSelectedStatus(filters.selectedStatus)
 					if (filters.selectedSection !== undefined) setSelectedSection(filters.selectedSection)
 					if (filters.viewMode !== undefined) setViewMode(filters.viewMode)
-					if (filters.currentPage !== undefined) setCurrentPage(filters.currentPage)
+					// Note: currentPage is now persisted in URL params, not localStorage
 				} else if (!hasAppliedDefaultFilter) {
 					const isSameLevel = userLevel === selectedLevel
 					const noFiltersApplied = !searchTerm && !selectedStatus && !selectedSection
@@ -191,7 +195,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 			selectedStatus,
 			selectedSection,
 			viewMode,
-			currentPage,
+			// Note: currentPage is now persisted in URL params, not localStorage
 		}
 
 		try {
@@ -206,7 +210,6 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		selectedStatus,
 		selectedSection,
 		viewMode,
-		currentPage,
 		hasAppliedDefaultFilter,
 	])
 
@@ -308,25 +311,37 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 	const sliceEnd = sliceStart + materialsPerPage
 	const paginatedMaterials = filteredMaterials.slice(sliceStart, sliceEnd)
 
+	// Helper to update URL with page number
+	const updatePage = (page) => {
+		const params = new URLSearchParams(searchParams.toString())
+		if (page === 1) {
+			params.delete('page')
+		} else {
+			params.set('page', page.toString())
+		}
+		const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+		router.push(newUrl, { scroll: false })
+	}
+
 	// Handlers
 	const handleSearchChange = (value) => {
 		setSearchTerm(value)
-		setCurrentPage(1)
+		updatePage(1)
 	}
 
 	const handleSectionChange = (section) => {
 		setSelectedSection(section)
-		setCurrentPage(1)
+		updatePage(1)
 	}
 
 	const handleLevelChange = (level) => {
 		setSelectedLevel(level)
-		setCurrentPage(1)
+		updatePage(1)
 	}
 
 	const handleStatusChange = (status) => {
 		setSelectedStatus(status)
-		setCurrentPage(1)
+		updatePage(1)
 	}
 
 	const handleClear = () => {
@@ -334,16 +349,12 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		setSelectedLevel(null)
 		setSelectedStatus(null)
 		setSelectedSection(null)
-		setCurrentPage(1)
+		updatePage(1)
 	}
 
 	const handleViewChange = (view) => {
 		setViewMode(view)
-		setCurrentPage(1)
-	}
-
-	const handlePageChange = (page) => {
-		setCurrentPage(page)
+		updatePage(1)
 	}
 
 	const checkIfUserMaterialIsInMaterials = (id) => {
@@ -602,7 +613,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 						<Pagination
 							currentPage={currentPage}
 							numOfPages={numOfPages}
-							onPageChange={handlePageChange}
+							onPageChange={updatePage}
 						/>
 					)}
 				</>
