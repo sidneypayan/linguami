@@ -2,7 +2,7 @@
  * Flashcard review card component - displays the card and review buttons
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import {
 	CloseRounded,
@@ -68,6 +68,11 @@ export function FlashcardReviewCard({
 }) {
 	const t = useTranslations('words')
 	const [showAnswer, setShowAnswer] = useState(false)
+
+	// Reset showAnswer when card changes (e.g., after suspend)
+	useEffect(() => {
+		setShowAnswer(false)
+	}, [currentCard?.id])
 
 	const closeButtonStyle = {
 		position: 'absolute',
