@@ -108,6 +108,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	const [sessionInitialized, setSessionInitialized] = useState(false)
 	const [reviewedCount, setReviewedCount] = useState(0)
 	const [sessionStartTime] = useState(Date.now())
+	const [isSessionComplete, setIsSessionComplete] = useState(false)
 
 	// Load guest words if not logged in
 	useEffect(() => {
@@ -234,6 +235,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		setSessionInitialized(false)
 		setSessionCards([])
 		setReviewedCount(0)
+		setIsSessionComplete(false)
 	}, [])
 
 	// Start random practice session
@@ -267,9 +269,16 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		}
 	}, [filteredWords])
 
-	// Remove current card from session
+	// Remove current card from session and mark complete if it was the last one
 	const removeCurrentCard = useCallback(() => {
-		setSessionCards(prev => prev.slice(1))
+		setSessionCards(prev => {
+			const newCards = prev.slice(1)
+			// Mark session complete if this was the last card
+			if (newCards.length === 0) {
+				setIsSessionComplete(true)
+			}
+			return newCards
+		})
 	}, [])
 
 	// Add card back to session (for learning/relearning)
@@ -298,7 +307,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		currentCard: sessionCards[0] || null,
 		reviewedCount,
 		sessionDuration,
-		isSessionComplete: sessionCards.length === 0 && reviewedCount > 0,
+		isSessionComplete,
 		sessionInitialized,
 		filteredWords,
 

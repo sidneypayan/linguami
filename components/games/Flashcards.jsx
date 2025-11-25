@@ -69,7 +69,7 @@ const Flashcards = () => {
 
 	// Review completion callback
 	const handleReviewComplete = useCallback((updatedCard, buttonType) => {
-		setIsProcessingReview(true)
+		// Note: isProcessingReview is already true (set in handleReviewWithButton before async call)
 
 		// Add XP for the review (except for "again" button)
 		// Add XP only for logged-in users (async, don't block user flow)
@@ -97,10 +97,11 @@ const Flashcards = () => {
 
 
 		// Determine if card should stay in session
+		// RELEARNING_STEPS[0] is 10 minutes, so we use <= 10
 		const shouldStayInSession =
 			(updatedCard.card_state === CARD_STATES.LEARNING ||
 			updatedCard.card_state === CARD_STATES.RELEARNING) &&
-			updatedCard.interval < 10
+			updatedCard.interval <= 10
 
 		// Create snapshot to isolate from future updates
 		const cardSnapshot = { ...updatedCard }
@@ -133,6 +134,8 @@ const Flashcards = () => {
 
 	// Wrap review handler to pass button type
 	const handleReviewWithButton = useCallback(async (buttonType) => {
+		// Set processing flag BEFORE the async operation to prevent "session complete" flash
+		setIsProcessingReview(true)
 		await handleReview(currentCard, buttonType)
 	}, [handleReview, currentCard])
 
