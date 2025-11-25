@@ -15,7 +15,8 @@ import { useUserContext } from '@/context/user'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { School, Museum, MenuBook, ViewModule, ViewList as ViewListIcon } from '@mui/icons-material'
 import { logger } from '@/utils/logger'
-import { getMaterialsByLanguageAction } from '@/app/actions/materials'
+import { getMaterialsByLanguageAction, getBooksByLanguageAction } from '@/app/actions/materials'
+import BookCard from '@/components/materials/BookCard'
 
 const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], learningLanguage = 'fr' }) => {
 	const t = useTranslations('materials')
@@ -45,6 +46,14 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		queryFn: () => getMaterialsByLanguageAction(userLearningLanguage),
 		// Always use SSR data - React Query will invalidate cache if queryKey changes
 		initialData: learningLanguage === userLearningLanguage ? initialMaterials : undefined,
+		enabled: !!userLearningLanguage,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
+
+	// React Query: Fetch books for the audiobooks filter
+	const { data: allBooks = [] } = useQuery({
+		queryKey: ['allBooks', userLearningLanguage],
+		queryFn: () => getBooksByLanguageAction(userLearningLanguage),
 		enabled: !!userLearningLanguage,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	})
@@ -213,9 +222,14 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		hasAppliedDefaultFilter,
 	])
 
+	// Check if we're filtering on books (audiobooks)
+	const isBookFilter = selectedSection === 'book-chapters'
+
 	// Filtrage des matériaux pour le mode liste
 	const filteredMaterials = useMemo(() => {
 		if (displayMode !== 'list') return []
+		// Skip materials filtering when showing books
+		if (isBookFilter) return []
 
 		let result = [...allLoadedMaterials]
 
@@ -252,7 +266,29 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		}
 
 		return result
-	}, [displayMode, allLoadedMaterials, selectedSection, selectedLevel, selectedStatus, searchTerm, user_materials_status])
+	}, [displayMode, allLoadedMaterials, selectedSection, selectedLevel, selectedStatus, searchTerm, user_materials_status, isBookFilter])
+
+	// Filtrage des livres pour le mode liste (quand on filtre sur audiobooks)
+	const filteredBooks = useMemo(() => {
+		if (displayMode !== 'list') return []
+		if (!isBookFilter) return []
+
+		let result = [...allBooks]
+
+		// Filtre par niveau
+		if (selectedLevel && selectedLevel !== 'all') {
+			result = result.filter(b => b.level === selectedLevel)
+		}
+
+		// Filtre par recherche
+		if (searchTerm) {
+			result = result.filter(b =>
+				b.title.toLowerCase().includes(searchTerm.toLowerCase())
+			)
+		}
+
+		return result
+	}, [displayMode, allBooks, selectedLevel, searchTerm, isBookFilter])
 
 	// Filtrer les sections par catégorie de média (mode category)
 	const filteredPractice = useMemo(() => {
@@ -305,11 +341,12 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 		setLiterature(literatureList)
 	}, [materials, displayMode])
 
-	// Pagination pour le mode liste
-	const numOfPages = Math.ceil(filteredMaterials.length / materialsPerPage)
+	// Pagination pour le mode liste (handles both materials and books)
+	const itemsToDisplay = isBookFilter ? filteredBooks : filteredMaterials
+	const numOfPages = Math.ceil(itemsToDisplay.length / materialsPerPage)
 	const sliceStart = (currentPage - 1) * materialsPerPage
 	const sliceEnd = sliceStart + materialsPerPage
-	const paginatedMaterials = filteredMaterials.slice(sliceStart, sliceEnd)
+	const paginatedItems = itemsToDisplay.slice(sliceStart, sliceEnd)
 
 	// Helper to update URL with page number
 	const updatePage = (page) => {
@@ -556,7 +593,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 						translationNamespace='materials'
 					/>
 
-					{filteredMaterials.length === 0 ? (
+					{itemsToDisplay.length === 0 ? (
 						<Box
 							sx={{
 								textAlign: 'center',
@@ -580,6 +617,28 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 								{t('noMaterialsInCategory')}
 							</Typography>
 						</Box>
+					) : isBookFilter ? (
+						/* Display books when filtering on audiobooks */
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									xs: 'repeat(2, 1fr)',
+									sm: 'repeat(3, 1fr)',
+									md: 'repeat(4, 1fr)',
+									lg: 'repeat(5, 1fr)',
+								},
+								rowGap: { xs: 2, md: 3 },
+								columnGap: { xs: 2, md: 3 },
+							}}>
+							{paginatedItems.map(book => (
+								<BookCard
+									key={book.id}
+									book={book}
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(book.id)}
+								/>
+							))}
+						</Box>
 					) : viewMode === 'card' ? (
 						<Box
 							sx={{
@@ -593,7 +652,7 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 								rowGap: { xs: 2, md: 3 },
 								columnGap: { xs: 2, md: 3 },
 							}}>
-							{paginatedMaterials.map(material => (
+							{paginatedItems.map(material => (
 								<SectionCard
 									key={material.id}
 									material={material}
@@ -603,13 +662,13 @@ const Material = ({ initialMaterials = [], initialUserMaterialsStatus = [], lear
 						</Box>
 					) : (
 						<MaterialsTable
-							materials={paginatedMaterials}
+							materials={paginatedItems}
 							checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
 						/>
 					)}
 
 					{/* Pagination */}
-					{filteredMaterials.length > materialsPerPage && (
+					{itemsToDisplay.length > materialsPerPage && (
 						<Pagination
 							currentPage={currentPage}
 							numOfPages={numOfPages}

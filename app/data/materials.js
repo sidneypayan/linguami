@@ -42,7 +42,7 @@ export async function getAllMaterialsByLanguage(lang) {
   const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
-  // Define valid sections (including book-chapters for audiobooks)
+  // Define valid sections (excluding book-chapters - books are loaded separately)
   const audioTextSections = [
     'dialogues',
     'culture',
@@ -51,7 +51,6 @@ export async function getAllMaterialsByLanguage(lang) {
     'beautiful-places',
     'podcasts',
     'short-stories',
-    'book-chapters',
   ]
 
   const videoSectionsFr = [
