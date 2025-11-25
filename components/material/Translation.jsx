@@ -1,5 +1,5 @@
 import { useTranslations, useLocale } from 'next-intl'
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
@@ -37,7 +37,19 @@ const Translation = ({ materialId, userId }) => {
 		cleanTranslation,
 	} = useTranslation()
 
-	const { isUserLoggedIn, userLearningLanguage } = useUserContext()
+	const { isUserLoggedIn, userLearningLanguage, userProfile } = useUserContext()
+
+	// Get spoken language: DB for logged-in users, localStorage or locale for guests
+	const spokenLanguage = useMemo(() => {
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		if (typeof window !== 'undefined') {
+			const stored = localStorage.getItem('spoken_language')
+			if (stored) return stored
+		}
+		return locale
+	}, [userProfile?.spoken_language, locale])
 
 	// Use custom hooks
 	const guestWordsCount = useGuestWordsCount(isUserLoggedIn)
@@ -91,12 +103,12 @@ const Translation = ({ materialId, userId }) => {
 				materialId,
 				word_sentence,
 				userLearningLanguage,
-				locale,
+				locale: spokenLanguage,
 			})
 			// Modal will close in onSuccess callback
 		} else {
 			// For guests, use localStorage with utility function
-			const wordData = buildWordData(originalWord, translatedWord, userLearningLanguage, locale)
+			const wordData = buildWordData(originalWord, translatedWord, userLearningLanguage, spokenLanguage)
 			wordData.word_sentence = word_sentence || ''
 			wordData.material_id = materialId
 			wordData.word_lang = userLearningLanguage

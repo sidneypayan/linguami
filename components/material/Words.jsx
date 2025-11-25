@@ -7,7 +7,19 @@ import { useWordWrapping } from '@/hooks/words/useWordWrapping'
 import { translateWordAction, getTranslationStatsAction } from '@/app/actions/words'
 
 const Words = ({ content, locale = 'fr' }) => {
-	const { userLearningLanguage, isUserLoggedIn, isBootstrapping } = useUserContext()
+	const { userLearningLanguage, userProfile, isUserLoggedIn, isBootstrapping } = useUserContext()
+
+	// Get spoken language: DB for logged-in users, localStorage or locale for guests
+	const spokenLanguage = useMemo(() => {
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		if (typeof window !== 'undefined') {
+			const stored = localStorage.getItem('spoken_language')
+			if (stored) return stored
+		}
+		return locale
+	}, [userProfile?.spoken_language, locale])
 	const { openTranslation, cleanTranslation, setLoading, setError } = useTranslation()
 
 	// Content comes directly from DB (trusted source)
@@ -44,7 +56,7 @@ const Words = ({ content, locale = 'fr' }) => {
 			const statsResult = await getTranslationStatsAction({
 				originalWord: wordInfos.text || displayWord, // Use base form for stats
 				sourceLang: userLearningLanguage,
-				targetLang: locale,
+				targetLang: spokenLanguage,
 			})
 			translationStats = statsResult.success ? statsResult.stats : {}
 		} catch (error) {
@@ -75,7 +87,7 @@ const Words = ({ content, locale = 'fr' }) => {
 		// Use coordinates passed from handleClick
 		openTranslation(translationData, sentence, coordinates || { x: 0, y: 0 })
 		setLoading(false)
-	}, [userLearningLanguage, locale, openTranslation, setLoading])
+	}, [userLearningLanguage, spokenLanguage, openTranslation, setLoading])
 
 	// Helper function to extract the sentence containing the clicked word
 	const extractSentence = useCallback((fullText, word) => {
@@ -139,12 +151,12 @@ const Words = ({ content, locale = 'fr' }) => {
 					try {
 						// FIRST ATTEMPT: Try the word without contraction as-is
 						// For nouns like "d'apprentissage" → "apprentissage", this should work
-						
+
 						let retryResult = await translateWordAction({
 							word: wordWithoutPronoun,
 							sentence: response.sentence,
 							userLearningLanguage,
-							locale,
+							locale: spokenLanguage,
 							isAuthenticated: isUserLoggedIn,
 						})
 
@@ -160,13 +172,13 @@ const Words = ({ content, locale = 'fr' }) => {
 						// For verbs like "j'enseigne" → "enseigne" → "enseigner"
 						if (wordWithoutPronoun.endsWith('e') && !wordWithoutPronoun.endsWith('re')) {
 							const infinitiveForm = wordWithoutPronoun + 'r'
-							
+
 
 							retryResult = await translateWordAction({
 								word: infinitiveForm,
 								sentence: response.sentence,
 								userLearningLanguage,
-								locale,
+								locale: spokenLanguage,
 								isAuthenticated: isUserLoggedIn,
 							})
 
@@ -270,12 +282,12 @@ const Words = ({ content, locale = 'fr' }) => {
 				word,
 				sentence,
 				userLearningLanguage,
-				locale,
+				locale: spokenLanguage,
 				isAuthenticated: isUserLoggedIn,
 				coordinates: clickCoordinates, // Pass coordinates to mutation
 			})
 		},
-		[translationMutation, userLearningLanguage, locale, isUserLoggedIn, extractSentence, isBootstrapping]
+		[translationMutation, userLearningLanguage, spokenLanguage, isUserLoggedIn, extractSentence, isBootstrapping]
 	)
 
 	// Use word wrapping hook

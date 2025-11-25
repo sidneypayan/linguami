@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { validateWordPair } from '@/utils/validation'
@@ -36,8 +36,20 @@ const AddWordModal = ({ open, onClose }) => {
 	const params = useParams()
 	const theme = useTheme()
 	const isDark = theme.palette.mode === 'dark'
-	const { user, userLearningLanguage } = useUserContext()
+	const { user, userLearningLanguage, userProfile } = useUserContext()
 	const locale = params.locale
+
+	// Get spoken language: DB for logged-in users, localStorage or locale for guests
+	const spokenLanguage = useMemo(() => {
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		if (typeof window !== 'undefined') {
+			const stored = localStorage.getItem('spoken_language')
+			if (stored) return stored
+		}
+		return locale
+	}, [userProfile?.spoken_language, locale])
 
 	// Charger les données depuis sessionStorage au montage
 	const loadFromStorage = () => {
@@ -147,7 +159,7 @@ const AddWordModal = ({ open, onClose }) => {
 				validation.sanitized.learningLangWord,
 				validation.sanitized.browserLangWord,
 				userLearningLanguage,
-				locale
+				spokenLanguage
 			)
 			wordData.word_sentence = validation.sanitized.contextSentence || ''
 			wordData.material_id = null
@@ -188,7 +200,7 @@ const AddWordModal = ({ open, onClose }) => {
 			materialId: null,
 			word_sentence: validation.sanitized.contextSentence || '',
 			userLearningLanguage,
-			locale,
+			locale: spokenLanguage,
 		})
 
 		setIsSubmitting(false)
