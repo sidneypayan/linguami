@@ -122,6 +122,11 @@ const UserProvider = ({ children }) => {
 						} catch {}
 					}
 
+					// Always sync spoken_language to localStorage from DB
+					try {
+						localStorage.setItem('spoken_language', spokenLang)
+					} catch {}
+
 					if (learningLang) {
 						setUserLearningLanguage(learningLang)
 						try {
