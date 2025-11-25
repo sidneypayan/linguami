@@ -28,17 +28,14 @@ import {
 	FlagOutlined,
 	Close,
 	BrokenImageOutlined,
-	LinkOffOutlined,
 	VolumeOffOutlined,
-	WarningAmberOutlined,
 	TranslateOutlined,
-	MoreHorizOutlined,
 } from '@mui/icons-material'
 
 const ReportButton = ({ materialId }) => {
 	const t = useTranslations('materials')
 	const [open, setOpen] = useState(false)
-	const [reportType, setReportType] = useState('broken_video')
+	const [reportType, setReportType] = useState('broken_audio')
 	const [comment, setComment] = useState('')
 	const [showSuccess, setShowSuccess] = useState(false)
 	const [showError, setShowError] = useState(false)
@@ -50,7 +47,7 @@ const ReportButton = ({ materialId }) => {
 				setShowSuccess(true)
 				setOpen(false)
 				setComment('')
-				setReportType('broken_video')
+				setReportType('broken_audio')
 			} else {
 				setShowError(true)
 			}
@@ -61,12 +58,10 @@ const ReportButton = ({ materialId }) => {
 	})
 
 	const reportOptions = [
-		{ value: 'broken_video', icon: BrokenImageOutlined, labelKey: 'report_broken_video' },
-		{ value: 'broken_link', icon: LinkOffOutlined, labelKey: 'report_broken_link' },
 		{ value: 'broken_audio', icon: VolumeOffOutlined, labelKey: 'report_broken_audio' },
-		{ value: 'inappropriate_content', icon: WarningAmberOutlined, labelKey: 'report_inappropriate' },
-		{ value: 'translation_error', icon: TranslateOutlined, labelKey: 'report_translation_error' },
-		{ value: 'other', icon: MoreHorizOutlined, labelKey: 'report_other' },
+		{ value: 'broken_video', icon: BrokenImageOutlined, labelKey: 'report_broken_video' },
+		{ value: 'missing_image', icon: BrokenImageOutlined, labelKey: 'report_missing_image' },
+		{ value: 'missing_translation', icon: TranslateOutlined, labelKey: 'report_missing_translation' },
 	]
 
 	return (

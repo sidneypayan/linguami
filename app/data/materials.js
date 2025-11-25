@@ -182,13 +182,13 @@ export async function getUserMaterialStatus(materialId, userId) {
 
   const { data: status } = await supabase
     .from('user_materials')
-    .select('is_being_studied, is_studied')
+    .select('is_being_studied, is_studied, reading_page')
     .match({ user_id: userId, material_id: materialId })
     .maybeSingle()
 
   // maybeSingle() is designed to return null without error when no rows found
   // No need to check for errors
-  return status || { is_being_studied: false, is_studied: false }
+  return status || { is_being_studied: false, is_studied: false, reading_page: 1 }
 }
 
 /**
