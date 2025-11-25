@@ -412,6 +412,76 @@ export async function getUserMaterialsByLanguageAction(lang) {
 }
 
 /**
+ * Save reading progress (current page) for a book chapter
+ * @param {number} materialId - Material ID
+ * @param {number} page - Current page number
+ * @returns {Promise<Object>} Result with success status
+ */
+export async function saveReadingProgress(materialId, page) {
+  try {
+    // Validate inputs
+    const validMaterialId = MaterialIdSchema.parse(materialId)
+    const PageSchema = z.number().int().min(1, 'Page must be at least 1')
+    const validPage = PageSchema.parse(page)
+
+    const cookieStore = await cookies()
+    const supabase = createServerClient(cookieStore)
+
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Check if user_material already exists
+    const { data: existing, error: checkError } = await supabase
+      .from('user_materials')
+      .select('id')
+      .match({ user_id: user.id, material_id: validMaterialId })
+      .maybeSingle()
+
+    if (checkError) {
+      logger.error('Error checking user_material:', checkError)
+      return { success: false, error: checkError.message }
+    }
+
+    if (existing) {
+      // Update existing entry
+      const { error: updateError } = await supabase
+        .from('user_materials')
+        .update({ reading_page: validPage })
+        .match({ user_id: user.id, material_id: validMaterialId })
+
+      if (updateError) {
+        logger.error('Error updating reading progress:', updateError)
+        return { success: false, error: updateError.message }
+      }
+    } else {
+      // Insert new entry with reading page
+      const { error: insertError } = await supabase
+        .from('user_materials')
+        .insert([{
+          user_id: user.id,
+          material_id: validMaterialId,
+          is_being_studied: true,
+          is_studied: false,
+          reading_page: validPage,
+        }])
+
+      if (insertError) {
+        logger.error('Error inserting reading progress:', insertError)
+        return { success: false, error: insertError.message }
+      }
+    }
+
+    return { success: true }
+  } catch (error) {
+    logger.error('Error in saveReadingProgress:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+/**
  * Report a material issue (broken link, inappropriate content, etc.)
  * @param {number} materialId - Material ID
  * @param {string} reportType - Type of report (broken_video, broken_link, etc.)

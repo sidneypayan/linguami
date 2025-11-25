@@ -11,6 +11,7 @@ import {
 	addBeingStudiedMaterial,
 	removeBeingStudiedMaterial,
 	addMaterialToStudied,
+	saveReadingProgress,
 } from '@/app/actions/materials'
 import { useTranslation } from '@/context/translation'
 import ChapterBreadcrumb from '@/components/material/ChapterBreadcrumb'
@@ -26,6 +27,8 @@ import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
 
 import Player from '@/components/shared/Player'
+import ContentPagination from '@/components/material/ContentPagination'
+import { usePaginatedContent } from '@/hooks/materials/usePaginatedContent'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
 import {
 	Box,
@@ -79,6 +82,9 @@ const Material = ({
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
+	// Check if this is a book chapter (for pagination)
+	const isBookChapter = initialMaterial?.book_id != null
+
 	// Helper function to decode base64 UTF-8
 	const decodeBase64UTF8 = (base64String) => {
 		if (!base64String) return null
@@ -117,7 +123,47 @@ const Material = ({
 		staleTime: Infinity,
 	})
 
-	const { is_being_studied, is_studied } = userMaterialStatus || { is_being_studied: false, is_studied: false }
+	const { is_being_studied, is_studied, reading_page } = userMaterialStatus || { is_being_studied: false, is_studied: false, reading_page: 1 }
+
+	// Pagination for book chapters (5 paragraphs per page)
+	const contentForPagination = showAccents
+		? currentMaterial?.content_accented
+		: currentMaterial?.content
+
+	// Use saved reading page directly from server props (not from React Query state)
+	// This ensures the value is available at first render before hydration
+	const savedPage = initialUserMaterialStatus?.reading_page || 1
+
+	const {
+		paginatedContent,
+		currentPage,
+		totalPages,
+		isPaginated,
+		nextPage,
+		prevPage,
+		goToFirst,
+		goToLast,
+		hasNextPage,
+		hasPrevPage,
+	} = usePaginatedContent(
+		isBookChapter ? contentForPagination : null,
+		5, // 5 paragraphs per page
+		savedPage // Start at saved page
+	)
+
+	// Auto-save reading progress when page changes (for logged-in users with book chapters)
+	useEffect(() => {
+		if (!isBookChapter || !isPaginated || !isUserLoggedIn || !currentMaterial?.id) return
+		// Don't save on initial load (when currentPage equals savedPage)
+		if (currentPage === savedPage) return
+
+		// Debounce the save to avoid too many requests
+		const timeoutId = setTimeout(() => {
+			saveReadingProgress(currentMaterial.id, currentPage)
+		}, 500)
+
+		return () => clearTimeout(timeoutId)
+	}, [currentPage, isBookChapter, isPaginated, isUserLoggedIn, currentMaterial?.id, savedPage])
 
 	// Mutation: Add material to studying
 	const addToStudyingMutation = useMutation({
@@ -540,52 +586,64 @@ const Material = ({
 									lg: '0 4px 20px rgba(139, 92, 246, 0.15)',
 								},
 							}}>
-							{showAccents ? (
-								<Typography
-									sx={{
-										fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-										lineHeight: 1.8,
-										color: isDark ? '#f1f5f9' : '#1a202c',
-										cursor: 'pointer',
-										fontWeight: 400,
-										'& span': {
-											transition: 'background-color 0.2s ease',
-										},
-										'& p': {
-											marginBottom: '1.5rem',
-										},
-									}}
-									variant='body1'
->
-									<Words
-										content={currentMaterial.content_accented}
-										materialId={currentMaterial.id}
-										locale={locale}
+							{/* Pagination controls - Top (only for book chapters with pagination) */}
+							{isBookChapter && isPaginated && (
+								<Box sx={{ mb: 3 }}>
+									<ContentPagination
+										currentPage={currentPage}
+										totalPages={totalPages}
+										onPrevPage={prevPage}
+										onNextPage={nextPage}
+										onGoToFirst={goToFirst}
+										onGoToLast={goToLast}
+										hasPrevPage={hasPrevPage}
+										hasNextPage={hasNextPage}
 									/>
-								</Typography>
-							) : (
-								<Typography
-									sx={{
-										fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-										lineHeight: 1.8,
-										color: isDark ? '#f1f5f9' : '#1a202c',
-										cursor: 'pointer',
-										fontWeight: 400,
-										'& span': {
-											transition: 'background-color 0.2s ease',
-										},
-										'& p': {
-											marginBottom: '1.5rem',
-										},
-									}}
-									variant='body1'
->
-									<Words
-										content={currentMaterial.content}
-										materialId={currentMaterial.id}
-										locale={locale}
+								</Box>
+							)}
+
+							{/* Content - use paginated content for book chapters */}
+							<Typography
+								sx={{
+									fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
+									lineHeight: 1.8,
+									color: isDark ? '#f1f5f9' : '#1a202c',
+									cursor: 'pointer',
+									fontWeight: 400,
+									'& span': {
+										transition: 'background-color 0.2s ease',
+									},
+									'& p': {
+										marginBottom: '1.5rem',
+									},
+								}}
+								variant='body1'
+							>
+								<Words
+									content={
+										isBookChapter && isPaginated
+											? paginatedContent
+											: (showAccents ? currentMaterial.content_accented : currentMaterial.content)
+									}
+									materialId={currentMaterial.id}
+									locale={locale}
+								/>
+							</Typography>
+
+							{/* Pagination controls - Bottom (only for book chapters with pagination) */}
+							{isBookChapter && isPaginated && (
+								<Box sx={{ mt: 3 }}>
+									<ContentPagination
+										currentPage={currentPage}
+										totalPages={totalPages}
+										onPrevPage={prevPage}
+										onNextPage={nextPage}
+										onGoToFirst={goToFirst}
+										onGoToLast={goToLast}
+										hasPrevPage={hasPrevPage}
+										hasNextPage={hasNextPage}
 									/>
-								</Typography>
+								</Box>
 							)}
 						</Paper>
 
