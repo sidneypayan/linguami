@@ -75,6 +75,32 @@ export async function getMaterialsByLanguageAction(lang) {
 }
 
 /**
+ * Fetch all books by language (for client-side use with React Query)
+ * @param {string} lang - Learning language (fr, ru, en)
+ * @returns {Promise<Array>} Books array
+ */
+export async function getBooksByLanguageAction(lang) {
+  // Validate language
+  const validLang = LanguageSchema.parse(lang)
+
+  const cookieStore = await cookies()
+  const supabase = createServerClient(cookieStore)
+
+  const { data: books, error } = await supabase
+    .from('books')
+    .select('*')
+    .eq('lang', validLang)
+    .order('id', { ascending: false })
+
+  if (error) {
+    logger.error('Error fetching books:', error)
+    return []
+  }
+
+  return books || []
+}
+
+/**
  * Fetch materials by section and language (for client-side use with React Query)
  * @param {string} lang - Learning language (fr, ru, en)
  * @param {string} section - Section name
