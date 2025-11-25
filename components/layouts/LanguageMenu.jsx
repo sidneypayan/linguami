@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { ExpandMoreRounded, SchoolRounded, CheckCircleRounded } from '@mui/icons-material'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Box, Typography, IconButton } from '@mui/material'
 import { useUserContext } from '@/context/user.js'
 
@@ -129,7 +129,8 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const isDark = theme.palette.mode === 'dark'
 
 	// Get spoken language from userProfile (DB) or localStorage
-	const getSpokenLanguage = () => {
+	// Use useMemo to recalculate when userProfile changes
+	const spokenLanguage = useMemo(() => {
 		if (userProfile?.spoken_language) {
 			return userProfile.spoken_language
 		}
@@ -138,8 +139,7 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 			if (storedSpokenLang) return storedSpokenLang
 		}
 		return locale // Fallback to interface locale
-	}
-	const spokenLanguage = getSpokenLanguage()
+	}, [userProfile?.spoken_language, locale])
 
 	// Langues disponibles pour l'apprentissage
 	const allLanguages = [
