@@ -31,7 +31,8 @@ export function useRouterCompat() {
 					if (match) {
 						// URL contient une locale valide → utiliser ça
 						setLocale(match[1])
-						localStorage.setItem('spoken_language', match[1])
+						// NOTE: Don't write spoken_language here - it's managed by UserContext
+						// spoken_language is the user's native language, not the interface language
 					} else {
 						// Pas de locale dans l'URL → fallback sur localStorage
 						const storedLocale = localStorage.getItem('spoken_language')
