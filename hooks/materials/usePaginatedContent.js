@@ -2,14 +2,18 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react'
 
+// Default characters per page (approximately 2000 chars is readable)
+const DEFAULT_CHARS_PER_PAGE = 2000
+
 /**
- * Hook to paginate text content by paragraphs
+ * Hook to paginate text content by character count
+ * Splits at sentence boundaries to avoid cutting words/sentences
  * @param {string} content - The full text content
- * @param {number} paragraphsPerPage - Number of paragraphs per page (default: 5)
+ * @param {number} charsPerPage - Approximate characters per page (default: 2000)
  * @param {number} initialPage - Initial page to start on (default: 1)
  * @returns {Object} - Pagination state and controls
  */
-export function usePaginatedContent(content, paragraphsPerPage = 5, initialPage = 1) {
+export function usePaginatedContent(content, charsPerPage = DEFAULT_CHARS_PER_PAGE, initialPage = 1) {
 	const [currentPage, setCurrentPage] = useState(initialPage)
 	const [hasUserNavigated, setHasUserNavigated] = useState(false)
 
@@ -21,38 +25,72 @@ export function usePaginatedContent(content, paragraphsPerPage = 5, initialPage 
 		}
 	}, [initialPage, hasUserNavigated, currentPage])
 
-	// Split content into paragraphs
-	const paragraphs = useMemo(() => {
+	// Split content into pages by character count (at sentence boundaries)
+	const pages = useMemo(() => {
 		if (!content) return []
 
-		// Split by double newlines or single newlines (paragraphs)
-		const parts = content.split(/\n\n|\r\n\r\n/)
+		const contentLength = content.length
+		if (contentLength <= charsPerPage) {
+			return [content]
+		}
 
-		// Filter out empty paragraphs and trim whitespace
-		return parts
-			.map(p => p.trim())
-			.filter(p => p.length > 0)
-	}, [content])
+		const result = []
+		let startIndex = 0
+
+		while (startIndex < contentLength) {
+			let endIndex = startIndex + charsPerPage
+
+			// If we're not at the end, find a good break point
+			if (endIndex < contentLength) {
+				// Look for sentence endings (. ! ? followed by space or newline) within a range
+				const searchStart = Math.max(startIndex + Math.floor(charsPerPage * 0.7), startIndex)
+				const searchEnd = Math.min(endIndex + 200, contentLength)
+				const searchText = content.substring(searchStart, searchEnd)
+
+				// Find the best break point (sentence end)
+				let lastGoodBreak = -1
+				for (const match of searchText.matchAll(/[.!?。？！]\s/g)) {
+					const breakPos = searchStart + match.index + match[0].length
+					if (breakPos <= endIndex + 100) {
+						lastGoodBreak = breakPos
+					}
+				}
+
+				if (lastGoodBreak > startIndex) {
+					endIndex = lastGoodBreak
+				} else {
+					// No sentence end found, try to break at newline or space
+					const newlinePos = content.lastIndexOf('\n', endIndex)
+					const spacePos = content.lastIndexOf(' ', endIndex)
+					const breakPos = Math.max(newlinePos, spacePos)
+					if (breakPos > startIndex + charsPerPage * 0.5) {
+						endIndex = breakPos + 1
+					}
+				}
+			} else {
+				endIndex = contentLength
+			}
+
+			const pageContent = content.substring(startIndex, endIndex).trim()
+			if (pageContent.length > 0) {
+				result.push(pageContent)
+			}
+			startIndex = endIndex
+		}
+
+		return result
+	}, [content, charsPerPage])
 
 	// Calculate total pages
-	const totalPages = useMemo(() => {
-		return Math.ceil(paragraphs.length / paragraphsPerPage)
-	}, [paragraphs.length, paragraphsPerPage])
+	const totalPages = pages.length
 
 	// Get current page's content
 	const paginatedContent = useMemo(() => {
 		if (totalPages <= 1) {
-			// No pagination needed, return original content
 			return content
 		}
-
-		const startIndex = (currentPage - 1) * paragraphsPerPage
-		const endIndex = startIndex + paragraphsPerPage
-		const pageParas = paragraphs.slice(startIndex, endIndex)
-
-		// Join paragraphs back with double newlines
-		return pageParas.join('\n\n')
-	}, [content, paragraphs, currentPage, paragraphsPerPage, totalPages])
+		return pages[currentPage - 1] || ''
+	}, [content, pages, currentPage, totalPages])
 
 	// Navigation functions
 	const goToPage = useCallback((page) => {
@@ -109,8 +147,8 @@ export function usePaginatedContent(content, paragraphsPerPage = 5, initialPage 
 		hasPrevPage: currentPage > 1,
 
 		// Stats
-		totalParagraphs: paragraphs.length,
-		paragraphsPerPage,
+		totalCharacters: content?.length || 0,
+		charsPerPage,
 	}
 }
 

@@ -27,6 +27,7 @@ import { useUserContext } from '@/context/user'
 import { sections } from '@/data/sections'
 
 import Player from '@/components/shared/Player'
+import CelebrationOverlay, { triggerCelebration } from '@/components/shared/CelebrationOverlay'
 import ContentPagination from '@/components/material/ContentPagination'
 import { usePaginatedContent } from '@/hooks/materials/usePaginatedContent'
 import { getAudioUrl, getMaterialImageUrl } from '@/utils/mediaUrls'
@@ -82,7 +83,7 @@ const Material = ({
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
-	// Check if this is a book chapter (for pagination)
+	// Check if this is a book chapter (for breadcrumb and chapter navigation)
 	const isBookChapter = initialMaterial?.book_id != null
 
 	// Helper function to decode base64 UTF-8
@@ -125,7 +126,7 @@ const Material = ({
 
 	const { is_being_studied, is_studied, reading_page } = userMaterialStatus || { is_being_studied: false, is_studied: false, reading_page: 1 }
 
-	// Pagination for book chapters (5 paragraphs per page)
+	// Pagination (5 paragraphs per page)
 	const contentForPagination = showAccents
 		? currentMaterial?.content_accented
 		: currentMaterial?.content
@@ -146,14 +147,14 @@ const Material = ({
 		hasNextPage,
 		hasPrevPage,
 	} = usePaginatedContent(
-		isBookChapter ? contentForPagination : null,
-		5, // 5 paragraphs per page
+		contentForPagination,
+		2000, // ~2000 characters per page
 		savedPage // Start at saved page
 	)
 
-	// Auto-save reading progress when page changes (for logged-in users with book chapters)
+	// Auto-save reading progress when page changes (for logged-in users)
 	useEffect(() => {
-		if (!isBookChapter || !isPaginated || !isUserLoggedIn || !currentMaterial?.id) return
+		if (!isPaginated || !isUserLoggedIn || !currentMaterial?.id) return
 		// Don't save on initial load (when currentPage equals savedPage)
 		if (currentPage === savedPage) return
 
@@ -163,7 +164,23 @@ const Material = ({
 		}, 500)
 
 		return () => clearTimeout(timeoutId)
-	}, [currentPage, isBookChapter, isPaginated, isUserLoggedIn, currentMaterial?.id, savedPage])
+	}, [currentPage, isPaginated, isUserLoggedIn, currentMaterial?.id, savedPage])
+
+	// Determine the finish button text based on context
+	// - Regular material: "J'ai terminé ce matériel"
+	// - Book chapter (not last): "J'ai terminé cette page"
+	// - Last page of last chapter: "J'ai terminé ce livre"
+	const getFinishButtonText = () => {
+		if (!isBookChapter) {
+			return t('finish_material')
+		}
+		// For book chapters: show "finish book" only on last page of last chapter
+		const isLastPageOfContent = !isPaginated || !hasNextPage
+		if (!nextChapter && isLastPageOfContent) {
+			return t('finish_book')
+		}
+		return t('finish_page')
+	}
 
 	// Mutation: Add material to studying
 	const addToStudyingMutation = useMutation({
@@ -206,6 +223,13 @@ const Material = ({
 			// Invalidate user materials list so my-materials page updates
 			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 			// XP is now added server-side in addMaterialToStudied action
+
+			// Trigger celebration via custom event (avoids re-render issues)
+			let celebrationType = 'material'
+			if (isBookChapter) {
+				celebrationType = !nextChapter ? 'book' : 'page'
+			}
+			triggerCelebration({ type: celebrationType, xpGained: 25, goldGained: 5 })
 		},
 	})
 
@@ -380,6 +404,7 @@ const Material = ({
 								zIndex: 100,
 								display: 'flex',
 								flexWrap: 'wrap',
+								alignItems: 'center',
 								gap: 2,
 								marginBottom: '3rem',
 								marginTop: '2rem',
@@ -564,6 +589,7 @@ const Material = ({
 									/>
 								</Button>
 							)}
+
 						</Box>
 
 
@@ -586,8 +612,8 @@ const Material = ({
 									lg: '0 4px 20px rgba(139, 92, 246, 0.15)',
 								},
 							}}>
-							{/* Pagination controls - Top (only for book chapters with pagination) */}
-							{isBookChapter && isPaginated && (
+							{/* Pagination controls - Top (when content is paginated) */}
+							{isPaginated && (
 								<Box sx={{ mb: 3 }}>
 									<ContentPagination
 										currentPage={currentPage}
@@ -602,7 +628,7 @@ const Material = ({
 								</Box>
 							)}
 
-							{/* Content - use paginated content for book chapters */}
+							{/* Content - use paginated content when pagination is active */}
 							<Typography
 								sx={{
 									fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
@@ -621,7 +647,7 @@ const Material = ({
 							>
 								<Words
 									content={
-										isBookChapter && isPaginated
+										isPaginated
 											? paginatedContent
 											: (showAccents ? currentMaterial.content_accented : currentMaterial.content)
 									}
@@ -630,8 +656,8 @@ const Material = ({
 								/>
 							</Typography>
 
-							{/* Pagination controls - Bottom (only for book chapters with pagination) */}
-							{isBookChapter && isPaginated && (
+							{/* Pagination controls - Bottom (when content is paginated) */}
+							{isPaginated && (
 								<Box sx={{ mt: 3 }}>
 									<ContentPagination
 										currentPage={currentPage}
@@ -650,8 +676,8 @@ const Material = ({
 						{/* Exercise Section - Visible uniquement pour les admins */}
 						{isUserAdmin && <ExerciseSection materialId={currentMaterial.id} />}
 
-						{/* Ne pas afficher le bouton permettant de terminer le matériel s'il a déjà été étudié */}
-						{!is_studied && isUserLoggedIn && (
+						{/* Bouton pour terminer OU badge "Matériel terminé" */}
+						{isUserLoggedIn && (
 							<Box
 								sx={{
 									position: 'relative',
@@ -661,36 +687,55 @@ const Material = ({
 									marginTop: '4rem',
 									marginBottom: '3rem',
 								}}>
-								<Button
-									variant='contained'
-									size='large'
-									startIcon={<CheckCircleRounded />}
-									onClick={() => markAsStudiedMutation.mutate(currentMaterial.id)}
-									sx={{
-										background:
-											'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-										color: 'white',
-										fontWeight: 600,
-										fontSize: { xs: '1rem', sm: '1.15rem' },
-										padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
-										borderRadius: 3,
-										textTransform: 'none',
-										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-										border: '1px solid rgba(16, 185, 129, 0.3)',
-										boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
-										'&:hover': {
+								{!is_studied ? (
+									<Button
+										variant='contained'
+										size='large'
+										startIcon={<CheckCircleRounded />}
+										onClick={() => markAsStudiedMutation.mutate(currentMaterial.id)}
+										sx={{
 											background:
-												'linear-gradient(135deg, #059669 0%, #047857 100%)',
-											transform: 'translateY(-4px)',
-											boxShadow: '0 10px 40px rgba(16, 185, 129, 0.5)',
-											borderColor: 'rgba(16, 185, 129, 0.5)',
-										},
-										'&:active': {
-											transform: 'scale(0.98)',
-										},
-									}}>
-									{t('lessonlearnt')}
-								</Button>
+												'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '1rem', sm: '1.15rem' },
+											padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
+											borderRadius: 3,
+											textTransform: 'none',
+											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+											border: '1px solid rgba(16, 185, 129, 0.3)',
+											boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
+											'&:hover': {
+												background:
+													'linear-gradient(135deg, #059669 0%, #047857 100%)',
+												transform: 'translateY(-4px)',
+												boxShadow: '0 10px 40px rgba(16, 185, 129, 0.5)',
+												borderColor: 'rgba(16, 185, 129, 0.5)',
+											},
+											'&:active': {
+												transform: 'scale(0.98)',
+											},
+										}}>
+										{getFinishButtonText()}
+									</Button>
+								) : (
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: 1,
+											background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+											color: 'white',
+											fontWeight: 600,
+											fontSize: { xs: '1rem', sm: '1.15rem' },
+											padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
+											borderRadius: 3,
+											boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
+										}}>
+										<CheckCircleRounded sx={{ fontSize: '1.5rem' }} />
+										{t('material_completed')}
+									</Box>
+								)}
 							</Box>
 						)}
 
@@ -853,6 +898,9 @@ const Material = ({
 				}}>
 				<ReportButton materialId={currentMaterial.id} />
 			</Box>
+
+			{/* Celebration overlay when completing material/page/book */}
+			<CelebrationOverlay />
 		</>
 	)
 }

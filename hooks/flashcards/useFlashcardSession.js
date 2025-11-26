@@ -206,29 +206,55 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		}
 
 		// Initialize cards with SRS fields if needed
-		// Initialize cards using helper function
 		const initializedCards = filteredWords.map(initializeCardDefaults)
 
-		// Filter for due cards and apply limit
+		// Filter for due cards - no limit at initialization (SRS determines what's due)
 		const dueCards = getDueCards(initializedCards)
-		const limitedCards = dueCards.slice(0, cardsLimit)
 
 		console.log('[useFlashcardSession] Session initialization:', {
 			filteredWordsCount: filteredWords.length,
 			initializedCardsCount: initializedCards.length,
-			dueCardsCount: dueCards.length,
-			limitedCardsCount: limitedCards.length,
-			cardsLimit,
-			limitedCards
+			dueCardsCount: dueCards.length
 		})
 
 		setSessionInitialized(true)
 
-		if (limitedCards.length > 0) {
-			setSessionCards(limitedCards)
-			logger.log('[useFlashcardSession] Session initialized with', limitedCards.length, 'cards')
+		if (dueCards.length > 0) {
+			setSessionCards(dueCards)
+			logger.log('[useFlashcardSession] Session initialized with', dueCards.length, 'cards')
 		}
-	}, [filteredWords, sessionInitialized, cardsLimit, userLearningLanguage, locale, isUserLoggedIn, isLoadingWords])
+	}, [filteredWords, sessionInitialized, userLearningLanguage, locale, isUserLoggedIn, isLoadingWords])
+
+
+	// Apply limit changes immediately during active session
+	useEffect(() => {
+		if (!sessionInitialized || sessionCards.length === 0 || !filteredWords) {
+			return // No active session to adjust
+		}
+
+		// Get all due cards from filtered words
+		const initializedCards = filteredWords.map(initializeCardDefaults)
+		const allDueCards = getDueCards(initializedCards)
+
+		// Get IDs of cards currently in session
+		const currentCardIds = new Set(sessionCards.map(c => c.id))
+
+		if (sessionCards.length > cardsLimit) {
+			// Reduce: keep only the first cardsLimit cards
+			setSessionCards(prev => prev.slice(0, cardsLimit))
+			logger.log('[useFlashcardSession] Reduced session to', cardsLimit, 'cards')
+		} else if (sessionCards.length < cardsLimit) {
+			// Increase: add more due cards that aren't already in the session
+			const additionalCards = allDueCards
+				.filter(c => !currentCardIds.has(c.id))
+				.slice(0, cardsLimit - sessionCards.length)
+
+			if (additionalCards.length > 0) {
+				setSessionCards(prev => [...prev, ...additionalCards])
+				logger.log('[useFlashcardSession] Added', additionalCards.length, 'cards to session')
+			}
+		}
+	}, [cardsLimit]) // Only react to cardsLimit changes
 
 	// Reset session
 	const resetSession = useCallback(() => {
