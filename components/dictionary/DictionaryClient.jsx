@@ -42,6 +42,8 @@ import {
 import AddWordModal from '@/components/dictionary/AddWordModal'
 import EditWordModal from '@/components/dictionary/EditWordModal'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
+import { SessionConfigModal } from '@/components/flashcards/SessionConfigModal'
+import { TuneRounded } from '@mui/icons-material'
 
 const DictionaryClient = ({ translations }) => {
 	const t = useTranslations('words')
@@ -57,6 +59,7 @@ const { openFlashcards } = useFlashcards()
 	const [checkedWords, setCheckedWords] = useState([])
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [isEditWordModalOpen, setIsEditWordModalOpen] = useState(false)
+	const [isSessionConfigOpen, setIsSessionConfigOpen] = useState(false)
 	const [wordToEdit, setWordToEdit] = useState(null)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [wordsPerPage, setWordsPerPage] = useState(20)
@@ -239,60 +242,96 @@ const { openFlashcards } = useFlashcards()
 					<Box
 						sx={{
 							display: 'flex',
-							flexDirection: 'row',
-							gap: { xs: 2, sm: 3 },
+							flexDirection: 'column',
+							gap: 2,
 							justifyContent: 'center',
 							alignItems: 'stretch',
 							margin: { xs: '2rem auto', sm: '3rem auto' },
-							maxWidth: '600px',
+							maxWidth: '700px',
 							px: { xs: 2, sm: 0 },
 						}}>
-						<Button
-							variant='contained'
-							size='large'
-							startIcon={<FlashOnRounded />}
-							onClick={() => openFlashcards()}
-							sx={{
-								flex: 1,
-								py: 2.5,
-								borderRadius: 3,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								fontWeight: 700,
-								fontSize: { xs: '1rem', sm: '1.0625rem' },
-								textTransform: 'none',
-								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-									transform: 'translateY(-3px)',
-									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-									borderColor: 'rgba(139, 92, 246, 0.5)',
-								},
-								'&:active': {
-									transform: 'translateY(0)',
-								},
-							}}>
-							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-								{translations.repeatwords}
-							</Box>
-							<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
-								Réviser
-							</Box>
-						</Button>
+						{/* Ligne 1: Boutons de révision */}
+						<Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2 } }}>
+							<Button
+								variant='contained'
+								size='large'
+								startIcon={<FlashOnRounded />}
+								onClick={() => openFlashcards()}
+								sx={{
+									flex: 1,
+									py: 2,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									border: '1px solid rgba(139, 92, 246, 0.3)',
+									fontWeight: 700,
+									fontSize: { xs: '0.875rem', sm: '1rem' },
+									textTransform: 'none',
+									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&:hover': {
+										background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
+										transform: 'translateY(-3px)',
+										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
+										borderColor: 'rgba(139, 92, 246, 0.5)',
+									},
+									'&:active': {
+										transform: 'translateY(0)',
+									},
+								}}>
+								<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+									{translations.repeatwords}
+								</Box>
+								<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+									{t('srs_review_short')}
+								</Box>
+							</Button>
+							<Button
+								variant='contained'
+								size='large'
+								startIcon={<TuneRounded />}
+								onClick={() => setIsSessionConfigOpen(true)}
+								sx={{
+									flex: 1,
+									py: 2,
+									borderRadius: 3,
+									background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+									border: '1px solid rgba(245, 158, 11, 0.3)',
+									fontWeight: 700,
+									fontSize: { xs: '0.875rem', sm: '1rem' },
+									textTransform: 'none',
+									boxShadow: '0 8px 32px rgba(245, 158, 11, 0.4)',
+									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+									'&:hover': {
+										background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+										transform: 'translateY(-3px)',
+										boxShadow: '0 12px 40px rgba(245, 158, 11, 0.5)',
+										borderColor: 'rgba(245, 158, 11, 0.5)',
+									},
+									'&:active': {
+										transform: 'translateY(0)',
+									},
+								}}>
+								<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+									{t('custom_session')}
+								</Box>
+								<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+									{t('custom_session_short')}
+								</Box>
+							</Button>
+						</Box>
+						{/* Ligne 2: Bouton ajouter */}
 						<Button
 							variant='contained'
 							size='large'
 							startIcon={<AddCircleRounded />}
 							onClick={() => setIsAddWordModalOpen(true)}
 							sx={{
-								flex: 1,
-								py: 2.5,
+								py: 2,
 								borderRadius: 3,
 								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
 								border: '1px solid rgba(16, 185, 129, 0.3)',
 								fontWeight: 700,
-								fontSize: { xs: '1rem', sm: '1.0625rem' },
+								fontSize: { xs: '0.875rem', sm: '1rem' },
 								textTransform: 'none',
 								boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
 								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -306,12 +345,7 @@ const { openFlashcards } = useFlashcards()
 									transform: 'translateY(0)',
 								},
 							}}>
-							<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-								{translations.add_word_btn}
-							</Box>
-							<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
-								Ajouter
-							</Box>
+							{translations.add_word_btn}
 						</Button>
 					</Box>
 
@@ -503,81 +537,57 @@ const { openFlashcards } = useFlashcards()
 										},
 									},
 								}}>
+								{/* Ligne 1: Mot/traduction + boutons */}
 								<Box
 									sx={{
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'space-between',
-										gap: 2,
+										gap: { xs: 1, sm: 2 },
 									}}>
-									<Box sx={{ flex: 1, minWidth: 0 }}>
-										<Box
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: { xs: 1, sm: 2 },
+											flex: 1,
+											minWidth: 0,
+											flexWrap: 'wrap',
+										}}>
+										<Chip
+											label={sourceWord || '—'}
 											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 2,
-												mb: word.word_sentence ? 1.5 : 0,
-												flexWrap: 'wrap',
+												fontWeight: 700,
+												fontSize: { xs: '0.875rem', sm: '1rem' },
+												background:
+													'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
+												color: '#8b5cf6',
+												border: '1px solid rgba(139, 92, 246, 0.3)',
+												px: { xs: 1, sm: 1.5 },
+												backdropFilter: 'blur(10px)',
+											}}
+										/>
+										<Typography
+											sx={{
+												fontSize: { xs: '0.875rem', sm: '1rem' },
+												color: isDark ? '#94a3b8' : '#718096',
+												fontWeight: 500,
 											}}>
-											<Chip
-												label={sourceWord || '—'}
-												sx={{
-													fontWeight: 700,
-													fontSize: { xs: '0.9375rem', sm: '1rem' },
-													background:
-														'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-													color: '#8b5cf6',
-													border: '1px solid rgba(139, 92, 246, 0.3)',
-													px: 1.5,
-													backdropFilter: 'blur(10px)',
-												}}
-											/>
-											<Typography
-												sx={{
-													fontSize: { xs: '0.875rem', sm: '1rem' },
-													color: isDark ? '#94a3b8' : '#718096',
-													fontWeight: 500,
-												}}>
-												→
-											</Typography>
-											<Typography
-												sx={{
-													fontSize: { xs: '0.9375rem', sm: '1rem' },
-													color: isDark ? '#e2e8f0' : '#4a5568',
-													fontWeight: 600,
-												}}>
-												{translation || '—'}
-											</Typography>
-										</Box>
-										{word.word_sentence && (
-											<Box
-												sx={{
-													mt: 1.5,
-													pl: 2,
-													py: 1,
-													borderLeft: '3px solid',
-													borderLeftColor: isDark
-														? 'rgba(139, 92, 246, 0.4)'
-														: 'rgba(139, 92, 246, 0.3)',
-													backgroundColor: isDark
-														? 'rgba(139, 92, 246, 0.05)'
-														: 'rgba(139, 92, 246, 0.03)',
-													borderRadius: '0 8px 8px 0',
-												}}>
-												<Typography
-													sx={{
-														fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-														color: isDark ? '#94a3b8' : '#718096',
-														lineHeight: 1.6,
-													}}>
-													&ldquo;{word.word_sentence}&rdquo;
-												</Typography>
-											</Box>
-										)}
+											→
+										</Typography>
+										<Typography
+											sx={{
+												fontSize: { xs: '0.875rem', sm: '1rem' },
+												color: isDark ? '#e2e8f0' : '#4a5568',
+												fontWeight: 600,
+											}}>
+											{translation || '—'}
+										</Typography>
 									</Box>
-									<Box sx={{ display: 'flex', gap: 1 }}>
+									<Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
 										<IconButton
 											className='edit-btn'
+											size='small'
 											onClick={() => {
 												setWordToEdit(word)
 												setIsEditWordModalOpen(true)
@@ -586,29 +596,59 @@ const { openFlashcards } = useFlashcards()
 												opacity: { xs: 1, md: 0 },
 												transition: 'all 0.3s ease',
 												color: '#667eea',
+												p: { xs: 0.5, sm: 1 },
 												'&:hover': {
 													background: 'rgba(102, 126, 234, 0.1)',
 													transform: 'scale(1.1)',
 												},
 											}}>
-											<EditRounded />
+											<EditRounded sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
 										</IconButton>
 										<IconButton
 											className='delete-btn'
+											size='small'
 											onClick={() => handleDeleteWord(word.id)}
 											sx={{
 												opacity: { xs: 1, md: 0 },
 												transition: 'all 0.3s ease',
 												color: '#ef4444',
+												p: { xs: 0.5, sm: 1 },
 												'&:hover': {
 													background: 'rgba(239, 68, 68, 0.1)',
 													transform: 'scale(1.1)',
 												},
 											}}>
-											<DeleteRounded />
+											<DeleteRounded sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
 										</IconButton>
 									</Box>
 								</Box>
+								{/* Ligne 2: Phrase de contexte (pleine largeur) */}
+								{word.word_sentence && (
+									<Box
+										sx={{
+											mt: 1.5,
+											pl: 2,
+											py: 1,
+											borderLeft: '3px solid',
+											borderLeftColor: isDark
+												? 'rgba(139, 92, 246, 0.4)'
+												: 'rgba(139, 92, 246, 0.3)',
+											backgroundColor: isDark
+												? 'rgba(139, 92, 246, 0.05)'
+												: 'rgba(139, 92, 246, 0.03)',
+											borderRadius: '0 8px 8px 0',
+											width: '100%',
+										}}>
+										<Typography
+											sx={{
+												fontSize: { xs: '0.875rem', sm: '0.9375rem' },
+												color: isDark ? '#94a3b8' : '#718096',
+												lineHeight: 1.6,
+											}}>
+											&ldquo;{word.word_sentence}&rdquo;
+										</Typography>
+									</Box>
+								)}
 							</Card>
 						)})}
 					</Box>
@@ -702,6 +742,12 @@ const { openFlashcards } = useFlashcards()
 							setWordToEdit(null)
 						}}
 						word={wordToEdit}
+					/>
+					<SessionConfigModal
+						open={isSessionConfigOpen}
+						onClose={() => setIsSessionConfigOpen(false)}
+						onStart={(options) => openFlashcards(options)}
+						totalWords={filteredUserWords.length}
 					/>
 				</Container>
 			) : (

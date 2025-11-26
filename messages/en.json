@@ -1207,6 +1207,21 @@
     "dictionary_limit_message": "You have reached the limit of 20 words in your dictionary. Create an account to increase this limit and access all features.",
     "translation_limit_title": "Translation limit reached",
     "translation_limit_message": "You have reached the limit of 20 translations. Create a free account to increase the number of translations and access all features!",
-    "guest_dictionary_message": "You can save up to 20 words for free and review them with flashcards. Create an account for unlimited access!"
+    "guest_dictionary_message": "You can save up to 20 words for free and review them with flashcards. Create an account for unlimited access!",
+    "srs_review_short": "Review",
+    "custom_session": "Custom session",
+    "custom_session_short": "Custom",
+    "session_config_title": "Custom session",
+    "session_mode_label": "Review mode",
+    "session_mode_cards": "Number of cards",
+    "session_mode_time": "Time limit",
+    "session_cards_count": "Number of cards",
+    "session_time_duration": "Duration",
+    "session_time_hint": "Session will end after the current card",
+    "session_available_words": "words available",
+    "session_cancel": "Cancel",
+    "session_start": "Start",
+    "time_up_last_card": "Time is up! Finish this last card",
+    "last_card": "Last card"
   }
 }
