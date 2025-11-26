@@ -47,6 +47,22 @@ const UserProvider = ({ children }) => {
 	const [isBootstrapping, setIsBootstrapping] = useState(true)
 	const [hasShownLoginToast, setHasShownLoginToast] = useState(false)
 
+	// 🔑 Immediate sync from localStorage on mount (client-side only)
+	// This runs ONCE on mount to sync localStorage values before the async DB call
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const storedSpokenLang = localStorage.getItem('spoken_language')
+			const storedLearningLang = localStorage.getItem('learning_language')
+
+			if (storedLearningLang) {
+				setUserLearningLanguage(storedLearningLang)
+			}
+			if (storedSpokenLang) {
+				setUserProfile(prev => prev ? { ...prev, spoken_language: storedSpokenLang } : { spoken_language: storedSpokenLang })
+			}
+		}
+	}, [])
+
 	// ---- Toast messages avec la bonne locale
 	const toastMessages = useMemo(
 		() => createToastMessages(router.locale),
@@ -108,7 +124,10 @@ const UserProvider = ({ children }) => {
 
 					// 🛡️ VALIDATION: Détecter et corriger les conflits learning_language === spoken_language
 					let learningLang = profile?.learning_language
-					const spokenLang = profile?.spoken_language || 'fr'
+					// Get spoken_language from DB, or fallback to localStorage, or finally to 'fr'
+					const spokenLang = profile?.spoken_language
+						|| (typeof window !== 'undefined' ? localStorage.getItem('spoken_language') : null)
+						|| 'fr'
 
 					// Si conflit détecté, corriger automatiquement
 					if (learningLang && learningLang === spokenLang) {
@@ -403,7 +422,7 @@ const UserProvider = ({ children }) => {
 
 	const login = useCallback(
 		async ({ email, password }) => {
-			const { error } = await supabase.auth.signInWithPassword({
+			const { data, error } = await supabase.auth.signInWithPassword({
 				email,
 				password,
 			})
@@ -416,6 +435,11 @@ const UserProvider = ({ children }) => {
 				}
 				return safeToastError(error)
 			}
+			// 🔑 CRITICAL: Hydrate session BEFORE redirect to load language settings from DB
+			// This prevents race condition where page renders with stale localStorage values
+			if (data?.session) {
+				await hydrateFromSession(data.session)
+			}
 
 			// 👉 Afficher le toast seulement si pas déjà affiché
 			if (!hasShownLoginToast) {
@@ -426,7 +450,7 @@ const UserProvider = ({ children }) => {
 			}
 			router.push('/')
 		},
-		[router, hasShownLoginToast]
+		[router, hasShownLoginToast, hydrateFromSession]
 	)
 
 	const loginWithThirdPartyOAuth = useCallback(async provider => {
