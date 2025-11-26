@@ -686,7 +686,7 @@ const Material = ({
 							<Typography
 								sx={{
 									fontSize: { xs: '1.05rem', sm: '1.15rem', md: '1.2rem' },
-									lineHeight: 1.5,
+									lineHeight: 1.65,
 									color: isDark ? '#f1f5f9' : '#1a202c',
 									cursor: 'pointer',
 									fontWeight: 400,

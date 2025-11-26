@@ -357,7 +357,7 @@ const Words = ({ content, locale = 'fr' }) => {
 		const lines = clean.split(/\r?\n/)
 
 		return lines.map((line, lineIndex) => {
-			if (!line) return <span key={lineIndex} style={{ display: 'block', marginBottom: '0.5rem' }} />
+			if (!line) return <span key={lineIndex} style={{ display: 'block', marginBottom: '1.2rem' }} />
 
 			// Parse character names in the line
 			const parts = parseCharacterNames(line)

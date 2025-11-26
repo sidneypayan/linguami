@@ -44,10 +44,12 @@ import {
 	Close,
 	Search,
 	OpenInNew,
+	AudioFile,
+	Image as ImageIcon,
 } from '@mui/icons-material'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
-import { checkBrokenVideos, updateMaterialVideo } from '@/app/actions/admin'
+import { checkBrokenVideos, updateMaterialVideo, checkBrokenAudios, updateMaterialAudio, checkBrokenImages, updateMaterialImage } from '@/app/actions/admin'
 
 const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	const t = useTranslations('admin')
@@ -61,6 +63,22 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	const [editVideoDialog, setEditVideoDialog] = useState({ open: false, video: null })
 	const [newVideoUrl, setNewVideoUrl] = useState('')
 	const [savingVideo, setSavingVideo] = useState(false)
+
+	// Audio states
+	const [brokenAudios, setBrokenAudios] = useState([])
+	const [loadingAudios, setLoadingAudios] = useState(false)
+	const [showBrokenAudios, setShowBrokenAudios] = useState(false)
+	const [editAudioDialog, setEditAudioDialog] = useState({ open: false, audio: null })
+	const [newAudioFilename, setNewAudioFilename] = useState('')
+	const [savingAudio, setSavingAudio] = useState(false)
+
+	// Image states
+	const [brokenImages, setBrokenImages] = useState([])
+	const [loadingImages, setLoadingImages] = useState(false)
+	const [showBrokenImages, setShowBrokenImages] = useState(false)
+	const [editImageDialog, setEditImageDialog] = useState({ open: false, image: null })
+	const [newImageFilename, setNewImageFilename] = useState('')
+	const [savingImage, setSavingImage] = useState(false)
 
 	// Use initial data from server
 	const materialsCountByLang = initialMaterialsData
@@ -111,6 +129,146 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 			alert(t('errorUpdatingVideo'))
 		} finally {
 			setSavingVideo(false)
+		}
+	}
+
+	// Audio functions
+	const loadBrokenAudios = async () => {
+		setLoadingAudios(true)
+		try {
+			const result = await checkBrokenAudios()
+			setBrokenAudios(result.brokenAudios || [])
+			setShowBrokenAudios(true)
+		} catch (error) {
+			logger.error('Error loading broken audios:', error)
+		} finally {
+			setLoadingAudios(false)
+		}
+	}
+
+	const handleOpenEditAudioDialog = (audio) => {
+		setEditAudioDialog({ open: true, audio })
+		setNewAudioFilename(audio.audio_filename || '')
+	}
+
+	const handleCloseEditAudioDialog = () => {
+		setEditAudioDialog({ open: false, audio: null })
+		setNewAudioFilename('')
+	}
+
+	const handleSaveAudioFilename = async () => {
+		setSavingAudio(true)
+		try {
+			const result = await updateMaterialAudio(
+				editAudioDialog.audio.id,
+				newAudioFilename.trim()
+			)
+
+			if (result.success) {
+				setBrokenAudios(prev => prev.filter(a => a.id !== editAudioDialog.audio.id))
+				handleCloseEditAudioDialog()
+			} else {
+				logger.error('Failed to update audio')
+				alert(t('errorUpdatingAudio'))
+			}
+		} catch (error) {
+			logger.error('Error updating audio:', error)
+			alert(t('errorUpdatingAudio'))
+		} finally {
+			setSavingAudio(false)
+		}
+	}
+
+	const handleRemoveAudio = async () => {
+		setSavingAudio(true)
+		try {
+			const result = await updateMaterialAudio(
+				editAudioDialog.audio.id,
+				'' // Empty string to remove audio
+			)
+
+			if (result.success) {
+				setBrokenAudios(prev => prev.filter(a => a.id !== editAudioDialog.audio.id))
+				handleCloseEditAudioDialog()
+			} else {
+				logger.error('Failed to remove audio')
+				alert(t('errorUpdatingAudio'))
+			}
+		} catch (error) {
+			logger.error('Error removing audio:', error)
+			alert(t('errorUpdatingAudio'))
+		} finally {
+			setSavingAudio(false)
+		}
+	}
+
+	// Image functions
+	const loadBrokenImages = async () => {
+		setLoadingImages(true)
+		try {
+			const result = await checkBrokenImages()
+			setBrokenImages(result.brokenImages || [])
+			setShowBrokenImages(true)
+		} catch (error) {
+			logger.error('Error loading broken images:', error)
+		} finally {
+			setLoadingImages(false)
+		}
+	}
+
+	const handleOpenEditImageDialog = (image) => {
+		setEditImageDialog({ open: true, image })
+		setNewImageFilename(image.image_filename || '')
+	}
+
+	const handleCloseEditImageDialog = () => {
+		setEditImageDialog({ open: false, image: null })
+		setNewImageFilename('')
+	}
+
+	const handleSaveImageFilename = async () => {
+		setSavingImage(true)
+		try {
+			const result = await updateMaterialImage(
+				editImageDialog.image.id,
+				newImageFilename.trim()
+			)
+
+			if (result.success) {
+				setBrokenImages(prev => prev.filter(i => i.id !== editImageDialog.image.id))
+				handleCloseEditImageDialog()
+			} else {
+				logger.error('Failed to update image')
+				alert(t('errorUpdatingImage'))
+			}
+		} catch (error) {
+			logger.error('Error updating image:', error)
+			alert(t('errorUpdatingImage'))
+		} finally {
+			setSavingImage(false)
+		}
+	}
+
+	const handleRemoveImage = async () => {
+		setSavingImage(true)
+		try {
+			const result = await updateMaterialImage(
+				editImageDialog.image.id,
+				'' // Empty string to remove image
+			)
+
+			if (result.success) {
+				setBrokenImages(prev => prev.filter(i => i.id !== editImageDialog.image.id))
+				handleCloseEditImageDialog()
+			} else {
+				logger.error('Failed to remove image')
+				alert(t('errorUpdatingImage'))
+			}
+		} catch (error) {
+			logger.error('Error removing image:', error)
+			alert(t('errorUpdatingImage'))
+		} finally {
+			setSavingImage(false)
 		}
 	}
 
@@ -546,6 +704,373 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 					)}
 				</Paper>
 
+				{/* Broken Audios Section */}
+				<Paper
+					elevation={0}
+					sx={{
+						borderRadius: 3,
+						border: '1px solid',
+						borderColor: brokenAudios.length > 0 ? '#FCD34D' : 'divider',
+						overflow: 'hidden',
+						mb: 4,
+						bgcolor: brokenAudios.length > 0 ? '#FEF3C7' : 'white',
+					}}>
+					<Box
+						sx={{
+							p: 3,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#F59E0B', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#F59E0B',
+								}}>
+								{brokenAudios.length > 0 ? <Warning /> : <AudioFile />}
+							</Box>
+							<Box>
+								<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{t('brokenAudiosTitle')}
+								</Typography>
+								<Typography variant='body2' sx={{ color: '#64748B' }}>
+									{showBrokenAudios
+										? brokenAudios.length > 0
+											? t('brokenAudiosFound', { count: brokenAudios.length })
+											: t('noBrokenAudios')
+										: t('brokenAudiosDesc')}
+								</Typography>
+							</Box>
+						</Box>
+						<Button
+							variant='contained'
+							startIcon={loadingAudios ? <Refresh sx={{ animation: 'spin 1s linear infinite' }} /> : <Refresh />}
+							onClick={loadBrokenAudios}
+							disabled={loadingAudios}
+							sx={{
+								bgcolor: '#F59E0B',
+								color: 'white',
+								px: 3,
+								py: 1.2,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								boxShadow: 'none',
+								'&:hover': {
+									bgcolor: '#D97706',
+									boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+								},
+								'&:disabled': {
+									bgcolor: '#FCD34D',
+									color: 'white',
+								},
+								'@keyframes spin': {
+									'0%': { transform: 'rotate(0deg)' },
+									'100%': { transform: 'rotate(360deg)' },
+								},
+							}}>
+							{loadingAudios ? t('checking') : t('checkAudios')}
+						</Button>
+					</Box>
+
+					{showBrokenAudios && brokenAudios.length > 0 && (
+						<TableContainer>
+							<Table>
+								<TableHead>
+									<TableRow
+										sx={{
+											bgcolor: alpha('#F59E0B', 0.08),
+											borderBottom: '2px solid',
+											borderColor: '#F59E0B',
+											'& th': {
+												fontWeight: 700,
+												color: '#F59E0B',
+												fontSize: '0.75rem',
+												textTransform: 'uppercase',
+												letterSpacing: '1px',
+												py: 2.5,
+												px: 3,
+											},
+										}}>
+										<TableCell>{t('title')}</TableCell>
+										<TableCell>{t('section')}</TableCell>
+										<TableCell>{t('language')}</TableCell>
+										<TableCell>{t('audioFileName')}</TableCell>
+										<TableCell align='right'>{t('actions')}</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{brokenAudios.map((audio) => (
+										<TableRow
+											key={audio.id}
+											sx={{
+												'&:hover': {
+													bgcolor: '#FEF3C7',
+												},
+												'& td': {
+													py: 2.5,
+													borderBottom: '1px solid',
+													borderColor: 'divider',
+												},
+											}}>
+											<TableCell>
+												<Typography
+													sx={{
+														fontWeight: 600,
+														color: '#1E293B',
+													}}>
+													{audio.title}
+												</Typography>
+											</TableCell>
+											<TableCell>
+												<Typography
+													sx={{
+														textTransform: 'capitalize',
+														color: '#64748B',
+													}}>
+													{audio.section}
+												</Typography>
+											</TableCell>
+											<TableCell>
+												<Chip
+													label={getLanguageInfo(audio.lang).flag + ' ' + getLanguageInfo(audio.lang).name}
+													size='small'
+													sx={{
+														bgcolor: alpha(getLanguageInfo(audio.lang).color, 0.1),
+														color: getLanguageInfo(audio.lang).color,
+														fontWeight: 600,
+													}}
+												/>
+											</TableCell>
+											<TableCell>
+												<Typography
+													sx={{
+														color: '#EF4444',
+														fontSize: '0.875rem',
+														display: 'block',
+														maxWidth: 300,
+														overflow: 'hidden',
+														textOverflow: 'ellipsis',
+														whiteSpace: 'nowrap',
+													}}>
+													{audio.audio_filename}
+												</Typography>
+											</TableCell>
+											<TableCell align='right'>
+												<Tooltip title={t('replaceAudioLink')}>
+													<IconButton
+														size='small'
+														onClick={() => handleOpenEditAudioDialog(audio)}
+														sx={{
+															color: '#F59E0B',
+															'&:hover': {
+																bgcolor: alpha('#F59E0B', 0.1),
+																color: '#F59E0B',
+															},
+														}}>
+														<SwapHoriz fontSize='small' />
+													</IconButton>
+												</Tooltip>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+				</Paper>
+
+
+				{/* Broken Images Section */}
+				<Paper
+					elevation={0}
+					sx={{
+						borderRadius: 3,
+						border: '1px solid',
+						borderColor: brokenImages.length > 0 ? '#FCD34D' : 'divider',
+						overflow: 'hidden',
+						mb: 4,
+						bgcolor: brokenImages.length > 0 ? '#FEF3C7' : 'white',
+					}}>
+					<Box
+						sx={{
+							p: 3,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+							<Box
+								sx={{
+									width: 48,
+									height: 48,
+									borderRadius: 2,
+									bgcolor: alpha('#8B5CF6', 0.1),
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									color: '#8B5CF6',
+								}}>
+								{brokenImages.length > 0 ? <Warning /> : <ImageIcon />}
+							</Box>
+							<Box>
+								<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
+									{t('brokenImagesTitle')}
+								</Typography>
+								<Typography variant='body2' sx={{ color: '#64748B' }}>
+									{showBrokenImages
+										? brokenImages.length > 0
+											? t('brokenImagesFound', { count: brokenImages.length })
+											: t('noBrokenImages')
+										: t('brokenImagesDesc')}
+								</Typography>
+							</Box>
+						</Box>
+						<Button
+							variant='contained'
+							startIcon={loadingImages ? <Refresh sx={{ animation: 'spin 1s linear infinite' }} /> : <Refresh />}
+							onClick={loadBrokenImages}
+							disabled={loadingImages}
+							sx={{
+								bgcolor: '#8B5CF6',
+								color: 'white',
+								px: 3,
+								py: 1.2,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								boxShadow: 'none',
+								'&:hover': {
+									bgcolor: '#7C3AED',
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+								},
+								'&:disabled': {
+									bgcolor: '#C4B5FD',
+									color: 'white',
+								},
+								'@keyframes spin': {
+									'0%': { transform: 'rotate(0deg)' },
+									'100%': { transform: 'rotate(360deg)' },
+								},
+							}}>
+							{loadingImages ? t('checking') : t('checkImages')}
+						</Button>
+					</Box>
+
+					{showBrokenImages && brokenImages.length > 0 && (
+						<TableContainer>
+							<Table>
+								<TableHead>
+									<TableRow
+										sx={{
+											bgcolor: alpha('#8B5CF6', 0.08),
+											borderBottom: '2px solid',
+											borderColor: '#8B5CF6',
+											'& th': {
+												fontWeight: 700,
+												color: '#8B5CF6',
+												fontSize: '0.75rem',
+												textTransform: 'uppercase',
+												letterSpacing: '1px',
+												py: 2.5,
+												px: 3,
+											},
+										}}>
+										<TableCell>{t('title')}</TableCell>
+										<TableCell>{t('section')}</TableCell>
+										<TableCell>{t('language')}</TableCell>
+										<TableCell>{t('imageFileName')}</TableCell>
+										<TableCell align='right'>{t('actions')}</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{brokenImages.map((image) => (
+										<TableRow
+											key={image.id}
+											sx={{
+												'&:hover': {
+													bgcolor: '#FEF3C7',
+												},
+												'& td': {
+													py: 2.5,
+													borderBottom: '1px solid',
+													borderColor: 'divider',
+												},
+											}}>
+											<TableCell>
+												<Typography
+													sx={{
+														fontWeight: 600,
+														color: '#1E293B',
+													}}>
+													{image.title}
+												</Typography>
+											</TableCell>
+											<TableCell>
+												<Typography
+													sx={{
+														textTransform: 'capitalize',
+														color: '#64748B',
+													}}>
+													{image.section}
+												</Typography>
+											</TableCell>
+											<TableCell>
+												<Chip
+													label={getLanguageInfo(image.lang).flag + ' ' + getLanguageInfo(image.lang).name}
+													size='small'
+													sx={{
+														bgcolor: alpha(getLanguageInfo(image.lang).color, 0.1),
+														color: getLanguageInfo(image.lang).color,
+														fontWeight: 600,
+													}}
+												/>
+											</TableCell>
+											<TableCell>
+												<Typography
+													sx={{
+														color: '#EF4444',
+														fontSize: '0.875rem',
+														display: 'block',
+														maxWidth: 300,
+														overflow: 'hidden',
+														textOverflow: 'ellipsis',
+														whiteSpace: 'nowrap',
+													}}>
+													{image.image_filename}
+												</Typography>
+											</TableCell>
+											<TableCell align='right'>
+												<Tooltip title={t('replaceImageLink')}>
+													<IconButton
+														size='small'
+														onClick={() => handleOpenEditImageDialog(image)}
+														sx={{
+															color: '#8B5CF6',
+															'&:hover': {
+																bgcolor: alpha('#8B5CF6', 0.1),
+																color: '#8B5CF6',
+															},
+														}}>
+														<SwapHoriz fontSize='small' />
+													</IconButton>
+												</Tooltip>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+				</Paper>
+
 				{/* Language Tabs */}
 				<Paper
 					elevation={0}
@@ -952,6 +1477,330 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 							t('save')
 						)}
 					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Dialog pour modifier/supprimer le fichier audio */}
+			<Dialog
+				open={editAudioDialog.open}
+				onClose={handleCloseEditAudioDialog}
+				maxWidth='md'
+				fullWidth
+				PaperProps={{
+					sx: {
+						borderRadius: 3,
+					},
+				}}>
+				<DialogTitle
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						pb: 2,
+					}}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+						<Box
+							sx={{
+								width: 48,
+								height: 48,
+								borderRadius: 2,
+								bgcolor: alpha('#F59E0B', 0.1),
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								color: '#F59E0B',
+							}}>
+							<AudioFile />
+						</Box>
+						<Box>
+							<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
+								{t('replaceAudioLink')}
+							</Typography>
+							<Typography variant='body2' sx={{ color: '#64748B' }}>
+								{editAudioDialog.audio?.title}
+							</Typography>
+						</Box>
+					</Box>
+					<IconButton onClick={handleCloseEditAudioDialog} size='small'>
+						<Close />
+					</IconButton>
+				</DialogTitle>
+
+				<DialogContent sx={{ pt: 0 }}>
+					<Box sx={{ mb: 2 }}>
+						<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, display: 'block', mb: 1 }}>
+							{t('currentAudioFile')}
+						</Typography>
+						<Typography
+							sx={{
+								color: '#EF4444',
+								textDecoration: 'line-through',
+								fontSize: '0.875rem',
+								display: 'block',
+								wordBreak: 'break-all',
+							}}>
+							{editAudioDialog.audio?.audio_filename}
+						</Typography>
+					</Box>
+
+					<Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+						<Button
+							variant='outlined'
+							startIcon={<OpenInNew />}
+							fullWidth
+							component={Link}
+							href={`/materials/${editAudioDialog.audio?.section}/${editAudioDialog.audio?.id}`}
+							target='_blank'
+							sx={{
+								py: 1.5,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								borderColor: '#E2E8F0',
+								color: '#475569',
+								'&:hover': {
+									borderColor: '#10B981',
+									bgcolor: alpha('#10B981', 0.05),
+									color: '#10B981',
+								},
+							}}>
+							{t('viewMaterial')}
+						</Button>
+					</Box>
+
+					<TextField
+						autoFocus
+						fullWidth
+						label={t('newAudioFile')}
+						value={newAudioFilename}
+						onChange={(e) => setNewAudioFilename(e.target.value)}
+						placeholder='mon-audio.mp3'
+						sx={{
+							'& .MuiOutlinedInput-root': {
+								borderRadius: 2,
+							},
+						}}
+						helperText={t('audioFileHelp')}
+					/>
+				</DialogContent>
+
+				<DialogActions sx={{ p: 3, pt: 0, justifyContent: 'space-between' }}>
+					<Button
+						onClick={handleRemoveAudio}
+						disabled={savingAudio}
+						sx={{
+							textTransform: 'none',
+							fontWeight: 600,
+							color: '#EF4444',
+							'&:hover': {
+								bgcolor: alpha('#EF4444', 0.1),
+							},
+						}}>
+						{t('removeAudio')}
+					</Button>
+					<Box sx={{ display: 'flex', gap: 1 }}>
+						<Button
+							onClick={handleCloseEditAudioDialog}
+							sx={{
+								textTransform: 'none',
+								fontWeight: 600,
+								color: '#64748B',
+							}}>
+							{t('cancel')}
+						</Button>
+						<Button
+							onClick={handleSaveAudioFilename}
+							disabled={savingAudio || !newAudioFilename.trim()}
+							variant='contained'
+							sx={{
+								bgcolor: '#F59E0B',
+								color: 'white',
+								px: 3,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								boxShadow: 'none',
+								'&:hover': {
+									bgcolor: '#D97706',
+									boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+								},
+								'&:disabled': {
+									bgcolor: '#CBD5E1',
+									color: 'white',
+								},
+							}}>
+							{savingAudio ? (
+								<>
+									<CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
+									{t('saving')}
+								</>
+							) : (
+								t('save')
+							)}
+						</Button>
+					</Box>
+				</DialogActions>
+			</Dialog>
+
+			{/* Dialog pour modifier/supprimer le fichier image */}
+			<Dialog
+				open={editImageDialog.open}
+				onClose={handleCloseEditImageDialog}
+				maxWidth='md'
+				fullWidth
+				PaperProps={{
+					sx: {
+						borderRadius: 3,
+					},
+				}}>
+				<DialogTitle
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						pb: 2,
+					}}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+						<Box
+							sx={{
+								width: 48,
+								height: 48,
+								borderRadius: 2,
+								bgcolor: alpha('#8B5CF6', 0.1),
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								color: '#8B5CF6',
+							}}>
+							<ImageIcon />
+						</Box>
+						<Box>
+							<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
+								{t('replaceImageLink')}
+							</Typography>
+							<Typography variant='body2' sx={{ color: '#64748B' }}>
+								{editImageDialog.image?.title}
+							</Typography>
+						</Box>
+					</Box>
+					<IconButton onClick={handleCloseEditImageDialog} size='small'>
+						<Close />
+					</IconButton>
+				</DialogTitle>
+
+				<DialogContent sx={{ pt: 0 }}>
+					<Box sx={{ mb: 2 }}>
+						<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, display: 'block', mb: 1 }}>
+							{t('currentImageFile')}
+						</Typography>
+						<Typography
+							sx={{
+								color: '#EF4444',
+								textDecoration: 'line-through',
+								fontSize: '0.875rem',
+								display: 'block',
+								wordBreak: 'break-all',
+							}}>
+							{editImageDialog.image?.image_filename}
+						</Typography>
+					</Box>
+
+					<Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+						<Button
+							variant='outlined'
+							startIcon={<OpenInNew />}
+							fullWidth
+							component={Link}
+							href={`/materials/${editImageDialog.image?.section}/${editImageDialog.image?.id}`}
+							target='_blank'
+							sx={{
+								py: 1.5,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								borderColor: '#E2E8F0',
+								color: '#475569',
+								'&:hover': {
+									borderColor: '#10B981',
+									bgcolor: alpha('#10B981', 0.05),
+									color: '#10B981',
+								},
+							}}>
+							{t('viewMaterial')}
+						</Button>
+					</Box>
+
+					<TextField
+						autoFocus
+						fullWidth
+						label={t('newImageFile')}
+						value={newImageFilename}
+						onChange={(e) => setNewImageFilename(e.target.value)}
+						placeholder='mon-image.jpg'
+						sx={{
+							'& .MuiOutlinedInput-root': {
+								borderRadius: 2,
+							},
+						}}
+						helperText={t('imageFileHelp')}
+					/>
+				</DialogContent>
+
+				<DialogActions sx={{ p: 3, pt: 0, justifyContent: 'space-between' }}>
+					<Button
+						onClick={handleRemoveImage}
+						disabled={savingImage}
+						sx={{
+							textTransform: 'none',
+							fontWeight: 600,
+							color: '#EF4444',
+							'&:hover': {
+								bgcolor: alpha('#EF4444', 0.1),
+							},
+						}}>
+						{t('removeImage')}
+					</Button>
+					<Box sx={{ display: 'flex', gap: 1 }}>
+						<Button
+							onClick={handleCloseEditImageDialog}
+							sx={{
+								textTransform: 'none',
+								fontWeight: 600,
+								color: '#64748B',
+							}}>
+							{t('cancel')}
+						</Button>
+						<Button
+							onClick={handleSaveImageFilename}
+							disabled={savingImage || !newImageFilename.trim()}
+							variant='contained'
+							sx={{
+								bgcolor: '#8B5CF6',
+								color: 'white',
+								px: 3,
+								borderRadius: 2,
+								textTransform: 'none',
+								fontWeight: 600,
+								boxShadow: 'none',
+								'&:hover': {
+									bgcolor: '#7C3AED',
+									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+								},
+								'&:disabled': {
+									bgcolor: '#CBD5E1',
+									color: 'white',
+								},
+							}}>
+							{savingImage ? (
+								<>
+									<CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
+									{t('saving')}
+								</>
+							) : (
+								t('save')
+							)}
+						</Button>
+					</Box>
 				</DialogActions>
 			</Dialog>
 		</Box>
