@@ -80,7 +80,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
 							<FormRowSelect
 								label={t('language')}
-								value={formData.locale ?? ''}
+								value={formData.lang ?? ''}
 								handleChange={handleChange}
 								name='lang'
 								list={lang}
@@ -173,7 +173,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 			</Box>
 
 			{/* Content Section - Afficher si langue, niveau et section sont sélectionnés */}
-			{formData.locale && formData.level && formData.section && (
+			{formData.lang && formData.level && formData.section && (
 				<Box>
 			<Box sx={{ mb: 3 }}>
 				<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B', mb: 1 }}>
@@ -273,10 +273,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 						/>
 					</Box>
 					<CardContent sx={{ p: 3 }}>
-						<Box sx={{ display: 'grid', gridTemplateColumns: formData.locale === 'ru' ? { xs: '1fr', lg: 'repeat(2, 1fr)' } : '1fr', gap: 3 }}>
+						<Box sx={{ display: 'grid', gridTemplateColumns: formData.lang === 'ru' ? { xs: '1fr', lg: 'repeat(2, 1fr)' } : '1fr', gap: 3 }}>
 							<Box>
 								<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, mb: 1, display: 'block' }}>
-									{formData.locale === 'ru' ? t('textWithoutAccents') : t('materialText')}
+									{formData.lang === 'ru' ? t('textWithoutAccents') : t('materialText')}
 								</Typography>
 								<FormRow
 									label=''
@@ -285,10 +285,10 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 									name='content'
 									multiline={true}
 									rows={20}
-									placeholder={formData.locale === 'ru' ? t('textWithoutAccentsPlaceholder') : t('textWithAccentsPlaceholder')}
+									placeholder={formData.lang === 'ru' ? t('textWithoutAccentsPlaceholder') : t('textWithAccentsPlaceholder')}
 								/>
 							</Box>
-							{formData.locale === 'ru' && (
+							{formData.lang === 'ru' && (
 								<Box>
 									<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, mb: 1, display: 'block' }}>
 										{t('textWithAccents')}
@@ -305,7 +305,7 @@ const CreateMaterialForm = ({ formData, handleChange }) => {
 								</Box>
 							)}
 						</Box>
-						{formData.locale === 'ru' && (
+						{formData.lang === 'ru' && (
 							<Alert
 								severity='info'
 								icon={<CheckCircle />}

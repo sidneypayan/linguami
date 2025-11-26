@@ -23,7 +23,8 @@ export function usePaginatedContent(content, charsPerPage = DEFAULT_CHARS_PER_PA
 		if (!hasUserNavigated && initialPage !== currentPage) {
 			setCurrentPage(initialPage)
 		}
-	}, [initialPage, hasUserNavigated, currentPage])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [initialPage, hasUserNavigated])
 
 	// Split content into pages by character count (at sentence boundaries)
 	const pages = useMemo(() => {
@@ -95,16 +96,19 @@ export function usePaginatedContent(content, charsPerPage = DEFAULT_CHARS_PER_PA
 	// Navigation functions
 	const goToPage = useCallback((page) => {
 		const newPage = Math.max(1, Math.min(page, totalPages))
-		setCurrentPage(newPage)
 		setHasUserNavigated(true)
+		setCurrentPage(newPage)
 	}, [totalPages])
 
 	const nextPage = useCallback(() => {
-		if (currentPage < totalPages) {
-			setCurrentPage(prev => prev + 1)
-			setHasUserNavigated(true)
-		}
-	}, [currentPage, totalPages])
+		setHasUserNavigated(true)
+		setCurrentPage(prev => {
+			if (prev < totalPages) {
+				return prev + 1
+			}
+			return prev
+		})
+	}, [totalPages])
 
 	const prevPage = useCallback(() => {
 		if (currentPage > 1) {

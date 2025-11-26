@@ -251,6 +251,7 @@ const Material = ({
 					is_studied: result.allPagesCompleted,
 					is_being_studied: !result.allPagesCompleted,
 				}))
+
 				// Invalidate user materials list so my-materials page updates
 				queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 
