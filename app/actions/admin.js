@@ -1019,3 +1019,327 @@ export async function deleteReport(reportId) {
 		return { success: false, error: error.message }
 	}
 }
+
+// ============================================================================
+// ACTION: Vérifier les fichiers audio cassés (admin uniquement)
+// ============================================================================
+
+export async function checkBrokenAudios() {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Récupérer tous les matériels avec audio
+		const { data: materials, error } = await supabase
+			.from('materials')
+			.select('id, title, section, lang, audio_filename')
+			.not('audio_filename', 'is', null)
+			.order('id', { ascending: false })
+
+		if (error) {
+			logger.error('Error fetching materials:', error)
+			throw new Error('Failed to fetch materials')
+		}
+
+		// 3. Filtrer pour ne garder que les matériels avec un vrai nom de fichier audio
+		const materialsWithAudio = materials.filter(m => {
+			if (!m.audio_filename) return false
+			const trimmed = m.audio_filename.trim()
+			return trimmed.length > 0
+		})
+
+		// 4. Vérifier chaque fichier audio avec limite de concurrence
+		const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+		if (!R2_BASE_URL) {
+			throw new Error('R2_BASE_URL is not configured')
+		}
+
+		const BATCH_SIZE = 10
+		const checkedAudios = []
+
+		for (let i = 0; i < materialsWithAudio.length; i += BATCH_SIZE) {
+			const batch = materialsWithAudio.slice(i, i + BATCH_SIZE)
+			const batchResults = await Promise.allSettled(
+				batch.map(async (material) => {
+					try {
+						const audioUrl = `${R2_BASE_URL}/audios/${material.lang}/materials/${material.audio_filename}`
+						const status = await checkAudioFile(audioUrl)
+						return {
+							...material,
+							audio_url: audioUrl,
+							status,
+						}
+					} catch (error) {
+						logger.error(`Error checking audio ${material.id}:`, error)
+						return {
+							...material,
+							audio_url: `${R2_BASE_URL}/audios/${material.lang}/materials/${material.audio_filename}`,
+							status: 'error',
+						}
+					}
+				})
+			)
+
+			batchResults.forEach(result => {
+				if (result.status === 'fulfilled') {
+					checkedAudios.push(result.value)
+				}
+			})
+		}
+
+		// 5. Filtrer pour ne garder que les fichiers cassés
+		const brokenAudios = checkedAudios.filter(a => a.status === 'broken' || a.status === 'error')
+
+		return {
+			success: true,
+			brokenAudios,
+			totalAudios: materialsWithAudio.length,
+			checked: checkedAudios.length,
+		}
+
+	} catch (error) {
+		logger.error('Check broken audios error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to check audios',
+		}
+	}
+}
+
+// ============================================================================
+// HELPER: Vérifier un fichier audio sur R2
+// ============================================================================
+
+async function checkAudioFile(url) {
+	if (!url) return 'broken'
+
+	try {
+		const controller = new AbortController()
+		const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+		// Utiliser HEAD pour vérifier si le fichier existe sans le télécharger
+		const response = await fetch(url, {
+			method: 'HEAD',
+			signal: controller.signal,
+		})
+
+		clearTimeout(timeoutId)
+
+		// Status 200 = fichier existe, autres = cassé
+		return response.ok ? 'working' : 'broken'
+	} catch (error) {
+		logger.error(`Error checking audio ${url}:`, error.message)
+		return 'broken'
+	}
+}
+
+// ============================================================================
+// ACTION: Mettre à jour le fichier audio d'un material (admin uniquement)
+// ============================================================================
+
+export async function updateMaterialAudio(materialId, audioFilename) {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Valider les paramètres
+		if (!materialId || audioFilename === undefined) {
+			throw new Error('Material ID and audio filename are required')
+		}
+
+		// 3. Mettre à jour le nom de fichier audio
+		const { data: material, error } = await supabase
+			.from('materials')
+			.update({ audio_filename: audioFilename || null })
+			.eq('id', materialId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating audio:', error)
+			throw new Error(`Database error: ${error.message}`)
+		}
+
+		// 4. Revalider les caches
+		revalidatePath('/materials')
+		revalidatePath(`/materials/${material.section}`)
+		revalidatePath(`/materials/${material.section}/${material.id}`)
+		revalidatePath('/admin')
+
+		logger.info('Material audio updated successfully:', materialId)
+
+		return {
+			success: true,
+			material,
+		}
+
+	} catch (error) {
+		logger.error('Update material audio error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to update audio',
+		}
+	}
+}
+
+// ============================================================================
+// ACTION: Vérifier les fichiers image cassés (admin uniquement)
+// ============================================================================
+
+export async function checkBrokenImages() {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Récupérer tous les matériels avec image
+		const { data: materials, error } = await supabase
+			.from('materials')
+			.select('id, title, section, lang, image_filename')
+			.not('image_filename', 'is', null)
+			.order('id', { ascending: false })
+
+		if (error) {
+			logger.error('Error fetching materials:', error)
+			throw new Error('Failed to fetch materials')
+		}
+
+		// 3. Filtrer pour ne garder que les matériels avec un vrai nom de fichier image
+		const materialsWithImage = materials.filter(m => {
+			if (!m.image_filename) return false
+			const trimmed = m.image_filename.trim()
+			return trimmed.length > 0
+		})
+
+		// 4. Vérifier chaque fichier image avec limite de concurrence
+		const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+		if (!R2_BASE_URL) {
+			throw new Error('R2_BASE_URL is not configured')
+		}
+
+		const BATCH_SIZE = 10
+		const checkedImages = []
+
+		for (let i = 0; i < materialsWithImage.length; i += BATCH_SIZE) {
+			const batch = materialsWithImage.slice(i, i + BATCH_SIZE)
+			const batchResults = await Promise.allSettled(
+				batch.map(async (material) => {
+					try {
+						const imageUrl = `${R2_BASE_URL}/images/materials/${material.image_filename}`
+						const status = await checkImageFile(imageUrl)
+						return {
+							...material,
+							image_url: imageUrl,
+							status,
+						}
+					} catch (error) {
+						logger.error(`Error checking image ${material.id}:`, error)
+						return {
+							...material,
+							image_url: `${R2_BASE_URL}/images/materials/${material.image_filename}`,
+							status: 'error',
+						}
+					}
+				})
+			)
+
+			batchResults.forEach(result => {
+				if (result.status === 'fulfilled') {
+					checkedImages.push(result.value)
+				}
+			})
+		}
+
+		// 5. Filtrer pour ne garder que les fichiers cassés
+		const brokenImages = checkedImages.filter(i => i.status === 'broken' || i.status === 'error')
+
+		return {
+			success: true,
+			brokenImages,
+			totalImages: materialsWithImage.length,
+			checked: checkedImages.length,
+		}
+
+	} catch (error) {
+		logger.error('Check broken images error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to check images',
+		}
+	}
+}
+
+// ============================================================================
+// HELPER: Vérifier un fichier image sur R2
+// ============================================================================
+
+async function checkImageFile(url) {
+	if (!url) return 'broken'
+
+	try {
+		const controller = new AbortController()
+		const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+		// Utiliser HEAD pour vérifier si le fichier existe sans le télécharger
+		const response = await fetch(url, {
+			method: 'HEAD',
+			signal: controller.signal,
+		})
+
+		clearTimeout(timeoutId)
+
+		// Status 200 = fichier existe, autres = cassé
+		return response.ok ? 'working' : 'broken'
+	} catch (error) {
+		logger.error(`Error checking image ${url}:`, error.message)
+		return 'broken'
+	}
+}
+
+// ============================================================================
+// ACTION: Mettre à jour le fichier image d'un material (admin uniquement)
+// ============================================================================
+
+export async function updateMaterialImage(materialId, imageFilename) {
+	try {
+		// 1. Vérifier que l'utilisateur est admin
+		const { supabase } = await requireAdmin()
+
+		// 2. Valider les paramètres
+		if (!materialId || imageFilename === undefined) {
+			throw new Error('Material ID and image filename are required')
+		}
+
+		// 3. Mettre à jour le nom de fichier image
+		const { data: material, error } = await supabase
+			.from('materials')
+			.update({ image_filename: imageFilename || null })
+			.eq('id', materialId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating image:', error)
+			throw new Error(`Database error: ${error.message}`)
+		}
+
+		// 4. Revalider les caches
+		revalidatePath('/materials')
+		revalidatePath(`/materials/${material.section}`)
+		revalidatePath(`/materials/${material.section}/${material.id}`)
+		revalidatePath('/admin')
+
+		logger.info('Material image updated successfully:', materialId)
+
+		return {
+			success: true,
+			material,
+		}
+
+	} catch (error) {
+		logger.error('Update material image error:', error)
+		return {
+			success: false,
+			error: error.message || 'Failed to update image',
+		}
+	}
+}
