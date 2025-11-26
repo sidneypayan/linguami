@@ -2,7 +2,7 @@
  * Flashcard review card component - displays the card and review buttons
  */
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { IconButton } from '@mui/material'
 import {
 	CloseRounded,
@@ -17,38 +17,6 @@ import {
 import { useTranslations } from 'next-intl'
 import { BUTTON_TYPES, CARD_STATES } from '@/utils/spacedRepetition'
 import styles from '@/styles/FlashCards.module.css'
-
-/**
- * Mask word in sentence with "..."
- */
-function getMaskedSentence(sentence, wordToMask) {
-	if (!sentence || !wordToMask) return sentence
-
-	const normalizedSentence = sentence.toLowerCase()
-	const normalizedWord = wordToMask.toLowerCase().trim()
-
-	// Try exact match first
-	const index = normalizedSentence.indexOf(normalizedWord)
-	if (index !== -1) {
-		return sentence.substring(0, index) + '...' + sentence.substring(index + wordToMask.length)
-	}
-
-	// Try stem match for declined/conjugated forms
-	if (normalizedWord.length > 4) {
-		const stem = normalizedWord.substring(0, normalizedWord.length - 2)
-		const stemIndex = normalizedSentence.indexOf(stem)
-
-		if (stemIndex !== -1) {
-			let endIndex = stemIndex
-			while (endIndex < sentence.length && /[а-яА-ЯёЁa-zA-Z]/.test(sentence[endIndex])) {
-				endIndex++
-			}
-			return sentence.substring(0, stemIndex) + '...' + sentence.substring(endIndex)
-		}
-	}
-
-	return sentence
-}
 
 export function FlashcardReviewCard({
 	currentCard,
@@ -91,17 +59,6 @@ export function FlashcardReviewCard({
 	const translationWord = currentCard?.[`word_${locale}`]
 	const frontWord = isReversed ? translationWord : sourceWord
 	const backWord = isReversed ? sourceWord : translationWord
-
-	// Determine displayed sentence (masked if answer not shown)
-	const displayedSentence = useMemo(() => {
-		if (!currentCard?.word_sentence) return null
-
-		if (isReversed && !showAnswer) {
-			return getMaskedSentence(currentCard.word_sentence, sourceWord)
-		}
-
-		return currentCard.word_sentence
-	}, [currentCard, isReversed, showAnswer, sourceWord])
 
 	// Handle review button click
 	const handleReviewClick = async (buttonType) => {
@@ -167,15 +124,15 @@ export function FlashcardReviewCard({
 				{/* Front of card */}
 				<div className={styles.originalWord}>{frontWord}</div>
 
-				{/* Context sentence */}
-				{displayedSentence && (
-					<div className={styles.contextSentence}>
-						<em>{displayedSentence}</em>
-					</div>
-				)}
-
 				{showAnswer ? (
 					<>
+						{/* Context sentence - only shown after revealing answer */}
+						{currentCard?.word_sentence && (
+							<div className={styles.contextSentence}>
+								<em>{currentCard.word_sentence}</em>
+							</div>
+						)}
+
 						{/* Back of card (answer) */}
 						<div className={styles.translatedWord}>{backWord}</div>
 

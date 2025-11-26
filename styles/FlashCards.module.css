@@ -435,6 +435,8 @@
 	.wordsContainer {
 		margin-top: 15vh;
 		padding: 0 1rem;
+		width: 100%;
+		max-width: none;
 	}
 
 	.originalWord,
