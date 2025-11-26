@@ -374,45 +374,6 @@ const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) =
 						})}
 					</Menu>
 
-					{/* Completion badges */}
-					{isBookCompleted && (
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								gap: 0.5,
-								px: 1.5,
-								py: 0.5,
-								borderRadius: 2,
-								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-								color: 'white',
-								fontSize: '0.8rem',
-								fontWeight: 600,
-								boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
-							}}>
-							<CheckCircleRounded sx={{ fontSize: '1rem' }} />
-							{t('completed_badge')}
-						</Box>
-					)}
-					{!isBookCompleted && isCurrentChapterCompleted && (
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								gap: 0.5,
-								px: 1.5,
-								py: 0.5,
-								borderRadius: 2,
-								background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)',
-								color: '#10b981',
-								fontSize: '0.8rem',
-								fontWeight: 600,
-								border: '1px solid rgba(16, 185, 129, 0.3)',
-							}}>
-							<CheckCircleRounded sx={{ fontSize: '1rem' }} />
-							{t('page_completed')}
-						</Box>
-					)}
 				</Box>
 			</Breadcrumbs>
 		</Box>

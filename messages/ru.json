@@ -740,7 +740,9 @@
     "correct": "правильных",
     "finish_material": "Материал изучен",
     "finish_page": "Страница изучена",
+    "finish_chapter": "Глава прочитана",
     "finish_book": "Книга прочитана",
+    "complete_previous_pages_first": "Сначала завершите предыдущие страницы, чтобы завершить главу",
     "completed_badge": "Завершено",
     "page_completed": "Страница прочитана",
     "celebration_title": "Поздравляем!",
@@ -749,7 +751,9 @@
     "celebration_book": "Ты завершил эту книгу!",
     "gold": "Золото",
     "tap_to_close": "Нажми, чтобы закрыть",
-    "material_completed": "Материал завершён"
+    "material_completed": "Материал завершён",
+    "page_read": "Страница завершена",
+    "book_completed": "Книга завершена"
   },
   "premium": {
     "pagetitle": "Премиум",
