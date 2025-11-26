@@ -737,7 +737,19 @@
     "exerciseCompletedAlready": "✅ Exercice terminé ! (XP déjà obtenu)",
     "saveError": "Erreur lors de l'enregistrement",
     "completed": "Réussi",
-    "correct": "correctes"
+    "correct": "correctes",
+    "finish_material": "J'ai terminé ce matériel",
+    "finish_page": "J'ai terminé cette page",
+    "finish_book": "J'ai terminé ce livre",
+    "completed_badge": "Terminé",
+    "page_completed": "Page terminée",
+    "celebration_title": "Félicitations !",
+    "celebration_material": "Tu as terminé ce matériel !",
+    "celebration_page": "Tu as terminé cette page !",
+    "celebration_book": "Tu as terminé ce livre !",
+    "gold": "Or",
+    "tap_to_close": "Appuie pour fermer",
+    "material_completed": "Matériel terminé"
   },
   "premium": {
     "pagetitle": "Premium",

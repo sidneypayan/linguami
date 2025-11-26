@@ -737,7 +737,19 @@
     "exerciseCompletedAlready": "✅ Упражнение завершено! (XP уже получено)",
     "saveError": "Ошибка при сохранении",
     "completed": "Выполнено",
-    "correct": "правильных"
+    "correct": "правильных",
+    "finish_material": "Материал изучен",
+    "finish_page": "Страница изучена",
+    "finish_book": "Книга прочитана",
+    "completed_badge": "Завершено",
+    "page_completed": "Страница прочитана",
+    "celebration_title": "Поздравляем!",
+    "celebration_material": "Ты завершил этот материал!",
+    "celebration_page": "Ты завершил эту страницу!",
+    "celebration_book": "Ты завершил эту книгу!",
+    "gold": "Золото",
+    "tap_to_close": "Нажми, чтобы закрыть",
+    "material_completed": "Материал завершён"
   },
   "premium": {
     "pagetitle": "Премиум",

@@ -126,15 +126,15 @@ export function FlashcardReviewCard({
 
 				{showAnswer ? (
 					<>
-						{/* Context sentence - only shown after revealing answer */}
+						{/* Back of card (answer) */}
+						<div className={styles.translatedWord}>{backWord}</div>
+
+						{/* Context sentence - shown between answer and buttons */}
 						{currentCard?.word_sentence && (
 							<div className={styles.contextSentence}>
 								<em>{currentCard.word_sentence}</em>
 							</div>
 						)}
-
-						{/* Back of card (answer) */}
-						<div className={styles.translatedWord}>{backWord}</div>
 
 						{/* 4 Anki-style review buttons */}
 						<div className={styles.btnsContainer}>

@@ -64,6 +64,16 @@ const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) =
 	// Find current chapter index
 	const currentIndex = chapters.findIndex(ch => ch.id === currentChapter?.id)
 
+	// Check if current chapter is completed
+	const currentChapterStatus = getChapterStatus(currentChapter?.id)
+	const isCurrentChapterCompleted = currentChapterStatus?.is_studied
+
+	// Check if entire book is completed (all chapters studied)
+	const isBookCompleted = chapters.length > 0 && chapters.every(ch => {
+		const status = getChapterStatus(ch.id)
+		return status?.is_studied
+	})
+
 	return (
 		<Box
 			sx={{
@@ -363,6 +373,46 @@ const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) =
 							)
 						})}
 					</Menu>
+
+					{/* Completion badges */}
+					{isBookCompleted && (
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 0.5,
+								px: 1.5,
+								py: 0.5,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+								color: 'white',
+								fontSize: '0.8rem',
+								fontWeight: 600,
+								boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+							}}>
+							<CheckCircleRounded sx={{ fontSize: '1rem' }} />
+							{t('completed_badge')}
+						</Box>
+					)}
+					{!isBookCompleted && isCurrentChapterCompleted && (
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 0.5,
+								px: 1.5,
+								py: 0.5,
+								borderRadius: 2,
+								background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)',
+								color: '#10b981',
+								fontSize: '0.8rem',
+								fontWeight: 600,
+								border: '1px solid rgba(16, 185, 129, 0.3)',
+							}}>
+							<CheckCircleRounded sx={{ fontSize: '1rem' }} />
+							{t('page_completed')}
+						</Box>
+					)}
 				</Box>
 			</Breadcrumbs>
 		</Box>
