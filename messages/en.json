@@ -740,7 +740,9 @@
     "correct": "correct",
     "finish_material": "I finished this material",
     "finish_page": "I finished this page",
+    "finish_chapter": "I finished this chapter",
     "finish_book": "I finished this book",
+    "complete_previous_pages_first": "Complete the previous pages first to validate this chapter",
     "completed_badge": "Completed",
     "page_completed": "Page completed",
     "celebration_title": "Congratulations!",
@@ -749,7 +751,9 @@
     "celebration_book": "You completed this book!",
     "gold": "Gold",
     "tap_to_close": "Tap to close",
-    "material_completed": "Material completed"
+    "material_completed": "Material completed",
+    "page_read": "Page completed",
+    "book_completed": "Book completed"
   },
   "premium": {
     "pagetitle": "Premium",

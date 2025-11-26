@@ -12,6 +12,7 @@ import {
 	removeBeingStudiedMaterial,
 	addMaterialToStudied,
 	saveReadingProgress,
+	markPageAsCompleted,
 } from '@/app/actions/materials'
 import { useTranslation } from '@/context/translation'
 import ChapterBreadcrumb from '@/components/material/ChapterBreadcrumb'
@@ -116,15 +117,16 @@ const Material = ({
 		enabled: false, // Never refetch, only use initial data
 	})
 
-	// React Query: Hydrate user material status
-	const { data: userMaterialStatus } = useQuery({
-		queryKey: ['userMaterialStatus', params?.material],
-		queryFn: () => initialUserMaterialStatus,
-		initialData: initialUserMaterialStatus,
-		staleTime: Infinity,
-	})
+	// Local state for material status - initialized from server props
+	// Using useState instead of React Query to properly reset on navigation
+	const [localMaterialStatus, setLocalMaterialStatus] = useState(initialUserMaterialStatus)
 
-	const { is_being_studied, is_studied, reading_page } = userMaterialStatus || { is_being_studied: false, is_studied: false, reading_page: 1 }
+	// Reset local state when navigating to a different material
+	useEffect(() => {
+		setLocalMaterialStatus(initialUserMaterialStatus)
+	}, [params?.material, initialUserMaterialStatus])
+
+	const { is_being_studied, is_studied, reading_page, completed_pages = [] } = localMaterialStatus || { is_being_studied: false, is_studied: false, reading_page: 1, completed_pages: [] }
 
 	// Pagination (5 paragraphs per page)
 	const contentForPagination = showAccents
@@ -168,29 +170,53 @@ const Material = ({
 
 	// Determine the finish button text based on context
 	// - Regular material: "J'ai terminé ce matériel"
-	// - Book chapter (not last): "J'ai terminé cette page"
+	// - Book chapter, middle page: "J'ai terminé cette page"
+	// - Book chapter, last page (not last chapter): "J'ai terminé ce chapitre"
 	// - Last page of last chapter: "J'ai terminé ce livre"
 	const getFinishButtonText = () => {
 		if (!isBookChapter) {
 			return t('finish_material')
 		}
-		// For book chapters: show "finish book" only on last page of last chapter
+		// For book chapters
 		const isLastPageOfContent = !isPaginated || !hasNextPage
-		if (!nextChapter && isLastPageOfContent) {
-			return t('finish_book')
+		if (isLastPageOfContent) {
+			// Last page of chapter
+			if (!nextChapter) {
+				// Last chapter of book
+				return t('finish_book')
+			}
+			// Not the last chapter
+			return t('finish_chapter')
 		}
 		return t('finish_page')
+	}
+
+	// Determine the completed badge text based on context
+	// - Regular material: "Matériel terminé"
+	// - Book chapter (not last page of last chapter): "Page lue"
+	// - Last page of last chapter: "Livre terminé"
+	const getCompletedBadgeText = () => {
+		if (!isBookChapter) {
+			return t('material_completed')
+		}
+		// For book chapters: show "book completed" only on last page of last chapter
+		const isLastPageOfContent = !isPaginated || !hasNextPage
+		if (!nextChapter && isLastPageOfContent) {
+			return t('book_completed')
+		}
+		return t('page_read')
 	}
 
 	// Mutation: Add material to studying
 	const addToStudyingMutation = useMutation({
 		mutationFn: addBeingStudiedMaterial,
 		onSuccess: () => {
-			// Update local cache
-			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+			// Update local state
+			setLocalMaterialStatus(prev => ({
+				...prev,
 				is_being_studied: true,
 				is_studied: false,
-			})
+			}))
 			// Invalidate user materials list so my-materials page updates
 			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 			// XP is now added server-side in addBeingStudiedMaterial action
@@ -201,35 +227,62 @@ const Material = ({
 	const removeFromStudyingMutation = useMutation({
 		mutationFn: removeBeingStudiedMaterial,
 		onSuccess: () => {
-			// Update local cache
-			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+			// Update local state
+			setLocalMaterialStatus(prev => ({
+				...prev,
 				is_being_studied: false,
 				is_studied: false,
-			})
+			}))
 			// Invalidate user materials list so my-materials page updates
 			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
 		},
 	})
 
-	// Mutation: Mark material as studied
+	// Mutation: Mark a single page as completed (for paginated content)
+	const markPageCompletedMutation = useMutation({
+		mutationFn: ({ materialId, pageNumber, totalPagesCount, isLastChapter }) =>
+			markPageAsCompleted(materialId, pageNumber, totalPagesCount, isLastChapter),
+		onSuccess: (result) => {
+			if (result.success) {
+				// Update local state with new completed_pages
+				setLocalMaterialStatus(prev => ({
+					...prev,
+					completed_pages: result.completedPages,
+					is_studied: result.allPagesCompleted,
+					is_being_studied: !result.allPagesCompleted,
+				}))
+				// Invalidate user materials list so my-materials page updates
+				queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
+
+				// Trigger celebration with real XP/Gold values from server
+				let celebrationType = 'page'
+				if (result.allPagesCompleted) {
+					celebrationType = isBookChapter ? (!nextChapter ? 'book' : 'page') : 'material'
+				}
+				triggerCelebration({ type: celebrationType, xpGained: result.xpGained || 0, goldGained: result.goldGained || 0 })
+			}
+		},
+	})
+
+	// Mutation: Mark entire material as studied (for non-paginated content)
 	const markAsStudiedMutation = useMutation({
 		mutationFn: addMaterialToStudied,
-		onSuccess: () => {
-			// Update local cache
-			queryClient.setQueryData(['userMaterialStatus', params?.material], {
+		onSuccess: (result) => {
+			// Update local state
+			setLocalMaterialStatus(prev => ({
+				...prev,
 				is_being_studied: false,
 				is_studied: true,
-			})
+			}))
 			// Invalidate user materials list so my-materials page updates
 			queryClient.invalidateQueries({ queryKey: ['userMaterials'] })
-			// XP is now added server-side in addMaterialToStudied action
 
-			// Trigger celebration via custom event (avoids re-render issues)
+			// Trigger celebration with real XP/Gold values from server
 			let celebrationType = 'material'
 			if (isBookChapter) {
 				celebrationType = !nextChapter ? 'book' : 'page'
 			}
-			triggerCelebration({ type: celebrationType, xpGained: 25, goldGained: 5 })
+			triggerCelebration({ type: celebrationType, xpGained: result?.xpGained || 0, goldGained: result?.goldGained || 0 })
 		},
 	})
 
@@ -676,68 +729,125 @@ const Material = ({
 						{/* Exercise Section - Visible uniquement pour les admins */}
 						{isUserAdmin && <ExerciseSection materialId={currentMaterial.id} />}
 
-						{/* Bouton pour terminer OU badge "Matériel terminé" */}
-						{isUserLoggedIn && (
-							<Box
-								sx={{
-									position: 'relative',
-									zIndex: 100,
-									display: 'flex',
-									justifyContent: 'center',
-									marginTop: '4rem',
-									marginBottom: '3rem',
-								}}>
-								{!is_studied ? (
-									<Button
-										variant='contained'
-										size='large'
-										startIcon={<CheckCircleRounded />}
-										onClick={() => markAsStudiedMutation.mutate(currentMaterial.id)}
-										sx={{
-											background:
-												'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-											color: 'white',
-											fontWeight: 600,
-											fontSize: { xs: '1rem', sm: '1.15rem' },
-											padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
-											borderRadius: 3,
-											textTransform: 'none',
-											transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-											border: '1px solid rgba(16, 185, 129, 0.3)',
-											boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
-											'&:hover': {
-												background:
-													'linear-gradient(135deg, #059669 0%, #047857 100%)',
-												transform: 'translateY(-4px)',
-												boxShadow: '0 10px 40px rgba(16, 185, 129, 0.5)',
-												borderColor: 'rgba(16, 185, 129, 0.5)',
-											},
-											'&:active': {
-												transform: 'scale(0.98)',
-											},
-										}}>
-										{getFinishButtonText()}
-									</Button>
-								) : (
+						{/* Bouton pour terminer OU badge "Page/Matériel terminé" */}
+						{isUserLoggedIn && (() => {
+							// For paginated content: check if current page is completed
+							// For non-paginated content (including single-page book chapters): check completed_pages or is_studied
+							const isCurrentPageCompleted = isPaginated
+								? completed_pages.includes(currentPage)
+								: (isBookChapter ? (completed_pages.includes(1) || is_studied) : is_studied)
+
+							// Check if all previous pages are completed (for chapter completion)
+							const isLastPageOfChapter = isBookChapter && (!isPaginated || !hasNextPage)
+							const allPreviousPagesCompleted = !isPaginated ||
+								Array.from({ length: currentPage - 1 }, (_, i) => i + 1)
+									.every(page => completed_pages.includes(page))
+
+							// Can only finish chapter if all previous pages are done
+							const canFinishChapter = !isLastPageOfChapter || allPreviousPagesCompleted
+
+							const handleFinishClick = () => {
+								if (isCurrentPageCompleted || !canFinishChapter) return
+
+								// For book chapters: always use page completion logic (even if single page)
+								// This ensures chapter/book bonuses are properly awarded
+								if (isBookChapter) {
+									const isLastChapter = !nextChapter
+									console.log('🔥 Calling markPageCompletedMutation for book chapter', { materialId: currentMaterial.id, pageNumber: currentPage, totalPagesCount: totalPages || 1, isLastChapter })
+									markPageCompletedMutation.mutate({
+										materialId: currentMaterial.id,
+										pageNumber: currentPage,
+										totalPagesCount: totalPages || 1, // Ensure at least 1 page
+										isLastChapter
+									})
+								} else if (isPaginated) {
+									// Non-book paginated content
+									markPageCompletedMutation.mutate({
+										materialId: currentMaterial.id,
+										pageNumber: currentPage,
+										totalPagesCount: totalPages,
+										isLastChapter: false
+									})
+								} else {
+									// Non-paginated, non-book material
+									markAsStudiedMutation.mutate(currentMaterial.id)
+								}
+							}
+
+							// Button is disabled if: already completed OR (is last page of chapter AND previous pages not done)
+							const isButtonDisabled = isCurrentPageCompleted || !canFinishChapter
+
+							return (
+								<Box
+									sx={{
+										position: 'relative',
+										zIndex: 100,
+										display: 'flex',
+										flexDirection: 'column',
+										alignItems: 'center',
+										justifyContent: 'center',
+										marginTop: '4rem',
+										marginBottom: '3rem',
+										gap: 1,
+									}}>
+									{/* Warning message if previous pages not completed */}
+									{isLastPageOfChapter && !allPreviousPagesCompleted && !isCurrentPageCompleted && (
+										<Typography
+											sx={{
+												color: '#f59e0b',
+												fontSize: '0.9rem',
+												textAlign: 'center',
+												mb: 1,
+											}}>
+											{t('complete_previous_pages_first')}
+										</Typography>
+									)}
 									<Box
+										onClick={handleFinishClick}
 										sx={{
 											display: 'flex',
 											alignItems: 'center',
+											justifyContent: 'center',
 											gap: 1,
-											background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-											color: 'white',
 											fontWeight: 600,
 											fontSize: { xs: '1rem', sm: '1.15rem' },
 											padding: { xs: '1.125rem 2.5rem', sm: '1.375rem 4rem' },
 											borderRadius: 3,
-											boxShadow: '0 6px 30px rgba(16, 185, 129, 0.4)',
+											cursor: isButtonDisabled ? 'default' : 'pointer',
+											userSelect: 'none',
+											opacity: (!canFinishChapter && !isCurrentPageCompleted) ? 0.5 : 1,
+											// Animated properties
+											background: isCurrentPageCompleted
+												? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+												: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%)',
+											color: isCurrentPageCompleted ? 'white' : '#10b981',
+											border: isCurrentPageCompleted ? '2px solid transparent' : '2px solid rgba(16, 185, 129, 0.3)',
+											boxShadow: isCurrentPageCompleted ? '0 6px 30px rgba(16, 185, 129, 0.4)' : 'none',
+											transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+											'&:hover': (!isButtonDisabled) ? {
+												background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)',
+												transform: 'translateY(-2px)',
+												boxShadow: '0 4px 20px rgba(16, 185, 129, 0.2)',
+												borderColor: 'rgba(16, 185, 129, 0.5)',
+											} : {},
+											'&:active': (!isButtonDisabled) ? {
+												transform: 'scale(0.98)',
+											} : {},
 										}}>
-										<CheckCircleRounded sx={{ fontSize: '1.5rem' }} />
-										{t('material_completed')}
+										<CheckCircleRounded
+											sx={{
+												fontSize: '1.5rem',
+												opacity: isCurrentPageCompleted ? 1 : 0,
+												width: isCurrentPageCompleted ? '1.5rem' : 0,
+												marginRight: isCurrentPageCompleted ? 0 : '-0.5rem',
+												transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+											}}
+										/>
+										{getFinishButtonText()}
 									</Box>
-								)}
-							</Box>
-						)}
+								</Box>
+							)
+						})()}
 
 						<Box
 							sx={{

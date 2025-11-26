@@ -283,12 +283,16 @@ export async function addMaterialToStudied(materialId) {
   }
 
   // Add XP for completing a material
+  let xpGained = 0
+  let goldGained = 0
   try {
-    await addXP({
+    const xpResult = await addXP({
       actionType: 'material_completed',
       sourceId: validMaterialId.toString(),
       description: 'Completed material'
     })
+    xpGained = xpResult.xpGained || 0
+    goldGained = xpResult.goldGained || 0
   } catch (err) {
     logger.error('Error adding XP:', err)
   }
@@ -297,7 +301,7 @@ export async function addMaterialToStudied(materialId) {
   revalidatePath('/[locale]/my-materials', 'page')
   revalidatePath('/[locale]/materials/[section]', 'page')
 
-  return { success: true }
+  return { success: true, xpGained, goldGained }
 }
 
 /**
@@ -503,6 +507,158 @@ export async function saveReadingProgress(materialId, page) {
     return { success: true }
   } catch (error) {
     logger.error('Error in saveReadingProgress:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+
+/**
+ * Mark a specific page as completed for paginated materials
+ * @param {number} materialId - Material ID
+ * @param {number} pageNumber - Page number to mark as completed
+ * @param {number} totalPages - Total number of pages in the material
+ * @param {boolean} isLastChapter - Whether this is the last chapter of a book
+ * @returns {Promise<Object>} Result with success status and updated completed_pages
+ */
+export async function markPageAsCompleted(materialId, pageNumber, totalPages, isLastChapter = false) {
+  console.log('🔥 markPageAsCompleted called:', { materialId, pageNumber, totalPages, isLastChapter })
+  try {
+    // Validate inputs
+    const validMaterialId = MaterialIdSchema.parse(materialId)
+    const PageSchema = z.number().int().min(1, 'Page must be at least 1')
+    const validPage = PageSchema.parse(pageNumber)
+    const validTotalPages = PageSchema.parse(totalPages)
+
+    const cookieStore = await cookies()
+    const supabase = createServerClient(cookieStore)
+
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Check if user_material already exists
+    const { data: existing, error: checkError } = await supabase
+      .from('user_materials')
+      .select('id, completed_pages, is_studied')
+      .match({ user_id: user.id, material_id: validMaterialId })
+      .maybeSingle()
+
+    if (checkError) {
+      logger.error('Error checking user_material:', checkError)
+      return { success: false, error: checkError.message }
+    }
+
+    let completedPages = existing?.completed_pages || []
+
+    // Add page to completed_pages if not already there
+    if (!completedPages.includes(validPage)) {
+      completedPages = [...completedPages, validPage].sort((a, b) => a - b)
+    }
+
+    // Check if all pages are completed
+    const allPagesCompleted = completedPages.length >= validTotalPages
+
+    logger.info(`Page completion check: completedPages=${JSON.stringify(completedPages)}, totalPages=${validTotalPages}, allPagesCompleted=${allPagesCompleted}, isLastChapter=${isLastChapter}`)
+
+    if (existing) {
+      // Update existing entry
+      const { error: updateError } = await supabase
+        .from('user_materials')
+        .update({
+          completed_pages: completedPages,
+          is_studied: allPagesCompleted,
+          is_being_studied: !allPagesCompleted
+        })
+        .match({ user_id: user.id, material_id: validMaterialId })
+
+      if (updateError) {
+        logger.error('Error updating completed pages:', updateError)
+        return { success: false, error: updateError.message }
+      }
+    } else {
+      // Insert new entry
+      const { error: insertError } = await supabase
+        .from('user_materials')
+        .insert([{
+          user_id: user.id,
+          material_id: validMaterialId,
+          is_being_studied: !allPagesCompleted,
+          is_studied: allPagesCompleted,
+          completed_pages: completedPages,
+        }])
+
+      if (insertError) {
+        logger.error('Error inserting completed page:', insertError)
+        return { success: false, error: insertError.message }
+      }
+    }
+
+    // Add XP for completing a page
+    let xpGained = 0
+    let goldGained = 0
+    try {
+      const xpResult = await addXP({
+        actionType: 'page_completed',
+        sourceId: `${validMaterialId}_page_${validPage}`,
+        description: `Completed page ${validPage}`
+      })
+      xpGained = xpResult.xpGained || 0
+      goldGained = xpResult.goldGained || 0
+    } catch (err) {
+      logger.error('Error adding XP for page:', err)
+    }
+
+    // Add bonus XP/Gold when all pages are completed (chapter finished)
+    if (allPagesCompleted) {
+      logger.info('All pages completed - adding chapter bonus')
+      try {
+        const bonusResult = await addXP({
+          actionType: 'chapter_completed',
+          sourceId: `${validMaterialId}_chapter`,
+          description: 'Completed all pages of chapter'
+        })
+        logger.info(`Chapter bonus result: ${JSON.stringify(bonusResult)}`)
+        xpGained += bonusResult.xpGained || 0
+        goldGained += bonusResult.goldGained || 0
+      } catch (err) {
+        logger.error('Error adding bonus XP for chapter completion:', err)
+      }
+
+      // Extra bonus for completing the entire book (last chapter)
+      if (isLastChapter) {
+        logger.info('Last chapter - adding book bonus')
+        try {
+          const bookBonusResult = await addXP({
+            actionType: 'book_completed',
+            sourceId: `${validMaterialId}_book`,
+            description: 'Completed entire book'
+          })
+          logger.info(`Book bonus result: ${JSON.stringify(bookBonusResult)}`)
+          xpGained += bookBonusResult.xpGained || 0
+          goldGained += bookBonusResult.goldGained || 0
+        } catch (err) {
+          logger.error('Error adding bonus XP for book completion:', err)
+        }
+      }
+    }
+
+    logger.info(`Final XP/Gold: xpGained=${xpGained}, goldGained=${goldGained}`)
+
+    // Revalidate paths
+    revalidatePath('/[locale]/my-materials', 'page')
+    revalidatePath('/[locale]/materials/[section]', 'page')
+
+    return {
+      success: true,
+      completedPages,
+      allPagesCompleted,
+      xpGained,
+      goldGained
+    }
+  } catch (error) {
+    logger.error('Error in markPageAsCompleted:', error)
     return { success: false, error: error.message }
   }
 }
