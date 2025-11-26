@@ -160,7 +160,7 @@ const ChapterNavigation = ({ previousChapter, nextChapter, userMaterialsStatus =
 											color: '#10b981',
 										}}
 									>
-										{t('studied') || 'Terminé'}
+										{t('completed_badge')}
 									</Typography>
 								</Box>
 							)}
@@ -291,7 +291,7 @@ const ChapterNavigation = ({ previousChapter, nextChapter, userMaterialsStatus =
 											color: '#10b981',
 										}}
 									>
-										{t('studied') || 'Terminé'}
+										{t('completed_badge')}
 									</Typography>
 								</Box>
 							)}
