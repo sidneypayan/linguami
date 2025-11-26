@@ -27,9 +27,10 @@ const MaterialsGrid = ({ materials }) => {
 	return (
 		<Grid
 			container
-			spacing={{ xs: 2, sm: 2.5, md: 3 }}
+			spacing={{ xs: 1.5, sm: 2.5, md: 3 }}
 			sx={{
 				mb: 4,
+				mx: { xs: -0.5, sm: 0 },
 			}}>
 			{materials.map((material, index) => (
 				<Grid
