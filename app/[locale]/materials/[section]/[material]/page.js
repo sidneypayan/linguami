@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { cookies } from 'next/headers'
+import { notFound } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase-server'
 import { getUserMaterialStatus, getSiblingChapters, getUserMaterialsStatus } from '@/app/data/materials'
 import MaterialPageClient from '@/components/material/MaterialPageClient'
@@ -13,9 +14,16 @@ export async function generateMetadata({ params }) {
 	const supabase = createServerClient(cookieStore)
 	const { data: material } = await supabase
 		.from('materials')
-		.select('title, level')
+		.select('title, level, section')
 		.eq('id', materialId)
 		.single()
+
+	// Return empty metadata if section doesn't match (will 404 in page)
+	if (!material || material.section !== section) {
+		return {
+			title: 'Not Found | Linguami',
+		}
+	}
 
 	const materialTitle = material?.title || t('material')
 	const sectionTitle = t(section) || section
@@ -66,7 +74,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function MaterialPage({ params }) {
-	const { material: materialId } = await params
+	const { section, material: materialId } = await params
 
 	// Fetch material data server-side
 	const cookieStore = await cookies()
@@ -77,6 +85,11 @@ export default async function MaterialPage({ params }) {
 		.select('*')
 		.eq('id', materialId)
 		.single()
+
+	// Return 404 if material doesn't exist or section doesn't match
+	if (!material || material.section !== section) {
+		notFound()
+	}
 
 	// Get user and fetch material status if authenticated
 	const { data: { user } } = await supabase.auth.getUser()
