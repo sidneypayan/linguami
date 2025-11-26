@@ -64,7 +64,7 @@ const loadGuestWordsHelper = (userLearningLanguage, materialId, pathname) => {
 
 
 
-export function useFlashcardSession({ cardsLimit, locale }) {
+export function useFlashcardSession({ cardsLimit, timeLimit, isCustomSession, locale }) {
 	const { user, isUserLoggedIn, userLearningLanguage } = useUserContext()
 	const params = useParams()
 	const pathname = usePathname()
@@ -107,8 +107,51 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 	const [sessionCards, setSessionCards] = useState([])
 	const [sessionInitialized, setSessionInitialized] = useState(false)
 	const [reviewedCount, setReviewedCount] = useState(0)
-	const [sessionStartTime] = useState(Date.now())
+	const [sessionStartTime, setSessionStartTime] = useState(null)
 	const [isSessionComplete, setIsSessionComplete] = useState(false)
+	const [isTimeUp, setIsTimeUp] = useState(false)
+
+	// Start session timer when session is initialized
+	useEffect(() => {
+		if (sessionInitialized && !sessionStartTime) {
+			setSessionStartTime(Date.now())
+			logger.log('[useFlashcardSession] Session started at:', new Date().toISOString())
+		}
+	}, [sessionInitialized, sessionStartTime])
+
+	// Time-based session: mark session as "time up" when timeLimit is reached
+	// The actual completion happens after the current card is reviewed
+	useEffect(() => {
+		if (!timeLimit || !sessionInitialized || !sessionStartTime || isTimeUp) return
+
+		const timeLimitMs = timeLimit * 60 * 1000 // Convert minutes to ms
+		const elapsed = Date.now() - sessionStartTime
+
+		logger.log('[useFlashcardSession] Timer check:', {
+			timeLimit,
+			timeLimitMs,
+			elapsed,
+			sessionStartTime,
+			remaining: timeLimitMs - elapsed
+		})
+
+		if (elapsed >= timeLimitMs) {
+			setIsTimeUp(true)
+			logger.log('[useFlashcardSession] Time already up!')
+			return
+		}
+
+		// Set a timer for when time will be up
+		const remainingTime = timeLimitMs - elapsed
+		logger.log('[useFlashcardSession] Setting timer for', remainingTime, 'ms (', Math.round(remainingTime / 1000), 'seconds)')
+
+		const timer = setTimeout(() => {
+			setIsTimeUp(true)
+			logger.log('[useFlashcardSession] Time limit reached:', timeLimit, 'minutes')
+		}, remainingTime)
+
+		return () => clearTimeout(timer)
+	}, [timeLimit, sessionInitialized, sessionStartTime, isTimeUp])
 
 	// Load guest words if not logged in
 	useEffect(() => {
@@ -208,26 +251,41 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		// Initialize cards with SRS fields if needed
 		const initializedCards = filteredWords.map(initializeCardDefaults)
 
-		// Filter for due cards - no limit at initialization (SRS determines what's due)
-		const dueCards = getDueCards(initializedCards)
+		let sessionCardsToUse = []
+
+		if (isCustomSession) {
+			// Custom session: shuffle all cards and take up to cardsLimit
+			const activeCards = initializedCards.filter(card => !card.is_suspended)
+			const shuffled = fisherYatesShuffle(activeCards)
+			sessionCardsToUse = shuffled.slice(0, Math.min(cardsLimit, shuffled.length))
+			logger.log('[useFlashcardSession] Custom session with', sessionCardsToUse.length, 'random cards (limit:', cardsLimit, ')')
+		} else {
+			// SRS session: use only due cards
+			sessionCardsToUse = getDueCards(initializedCards)
+			logger.log('[useFlashcardSession] SRS session with', sessionCardsToUse.length, 'due cards')
+		}
 
 		console.log('[useFlashcardSession] Session initialization:', {
 			filteredWordsCount: filteredWords.length,
 			initializedCardsCount: initializedCards.length,
-			dueCardsCount: dueCards.length
+			sessionCardsCount: sessionCardsToUse.length,
+			isCustomSession
 		})
 
 		setSessionInitialized(true)
 
-		if (dueCards.length > 0) {
-			setSessionCards(dueCards)
-			logger.log('[useFlashcardSession] Session initialized with', dueCards.length, 'cards')
+		if (sessionCardsToUse.length > 0) {
+			setSessionCards(sessionCardsToUse)
 		}
-	}, [filteredWords, sessionInitialized, userLearningLanguage, locale, isUserLoggedIn, isLoadingWords])
+	}, [filteredWords, sessionInitialized, userLearningLanguage, locale, isUserLoggedIn, isLoadingWords, isCustomSession, cardsLimit])
 
 
-	// Apply limit changes immediately during active session
+	// Apply limit changes immediately during active session (only for SRS mode, not custom sessions)
+	// This effect is disabled for custom sessions since they have a fixed card count
 	useEffect(() => {
+		// Skip for custom sessions - they have a fixed card count set at initialization
+		if (isCustomSession) return
+
 		if (!sessionInitialized || sessionCards.length === 0 || !filteredWords) {
 			return // No active session to adjust
 		}
@@ -254,7 +312,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 				logger.log('[useFlashcardSession] Added', additionalCards.length, 'cards to session')
 			}
 		}
-	}, [cardsLimit]) // Only react to cardsLimit changes
+	}, [cardsLimit, isCustomSession]) // Only react to cardsLimit changes
 
 	// Reset session
 	const resetSession = useCallback(() => {
@@ -262,6 +320,8 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		setSessionCards([])
 		setReviewedCount(0)
 		setIsSessionComplete(false)
+		setIsTimeUp(false)
+		setSessionStartTime(null) // Reset timer for next session
 	}, [])
 
 	// Start random practice session
@@ -307,6 +367,12 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		})
 	}, [])
 
+	// End session immediately (used when time is up)
+	const endSessionNow = useCallback(() => {
+		setSessionCards([])
+		setIsSessionComplete(true)
+	}, [])
+
 	// Add card back to session (for learning/relearning)
 	const addCardToSession = useCallback((card) => {
 		setSessionCards(prev => [...prev, card])
@@ -324,8 +390,33 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 
 	// Calculate session duration in minutes
 	const sessionDuration = useMemo(() => {
+		if (!sessionStartTime) return 0
 		return Math.floor((Date.now() - sessionStartTime) / 60000)
 	}, [sessionStartTime])
+
+	// Calculate remaining time for time-based sessions (in seconds)
+	const [remainingTime, setRemainingTime] = useState(null)
+
+	useEffect(() => {
+		if (!timeLimit || !sessionStartTime || isTimeUp) {
+			setRemainingTime(null)
+			return
+		}
+
+		const timeLimitMs = timeLimit * 60 * 1000
+
+		// Update every second
+		const updateRemainingTime = () => {
+			const elapsed = Date.now() - sessionStartTime
+			const remaining = Math.max(0, timeLimitMs - elapsed)
+			setRemainingTime(Math.ceil(remaining / 1000)) // in seconds
+		}
+
+		updateRemainingTime() // Initial update
+		const interval = setInterval(updateRemainingTime, 1000)
+
+		return () => clearInterval(interval)
+	}, [timeLimit, sessionStartTime, isTimeUp])
 
 	return {
 		// State
@@ -333,7 +424,9 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		currentCard: sessionCards[0] || null,
 		reviewedCount,
 		sessionDuration,
+		remainingTime,
 		isSessionComplete,
+		isTimeUp,
 		sessionInitialized,
 		filteredWords,
 
@@ -341,6 +434,7 @@ export function useFlashcardSession({ cardsLimit, locale }) {
 		resetSession,
 		startRandomPractice,
 		removeCurrentCard,
+		endSessionNow,
 		addCardToSession,
 		requeueCurrentCard,
 		incrementReviewedCount,

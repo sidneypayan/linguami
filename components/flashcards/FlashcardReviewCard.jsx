@@ -7,7 +7,6 @@ import { IconButton } from '@mui/material'
 import {
 	CloseRounded,
 	SwapHorizRounded,
-	SettingsRounded,
 	PauseCircleRounded,
 	ThumbDownRounded,
 	ThumbUpRounded,
@@ -22,20 +21,28 @@ export function FlashcardReviewCard({
 	currentCard,
 	sessionCards,
 	cardsLimit,
+	timeLimit,
+	remainingTime,
+	isTimeUp,
 	isReversed,
 	onReview,
 	onSuspend,
 	onClose,
 	onToggleReversed,
-	onToggleSettings,
-	showSettings,
-	settings,
 	isDark,
 	userLearningLanguage,
 	locale
 }) {
 	const t = useTranslations('words')
 	const [showAnswer, setShowAnswer] = useState(false)
+
+	// Format remaining time as MM:SS
+	const formatTime = (seconds) => {
+		if (seconds === null || seconds === undefined) return null
+		const mins = Math.floor(seconds / 60)
+		const secs = seconds % 60
+		return `${mins}:${secs.toString().padStart(2, '0')}`
+	}
 
 	// Reset showAnswer when card changes (e.g., after suspend)
 	useEffect(() => {
@@ -78,18 +85,35 @@ export function FlashcardReviewCard({
 				<CloseRounded sx={{ fontSize: '2rem' }} />
 			</IconButton>
 
+			{/* Time up banner */}
+			{isTimeUp && (
+				<div className={styles.timeUpBanner}>
+					{t('time_up_last_card')}
+				</div>
+			)}
+
 			{/* Header with stats and controls */}
 			<div className={styles.header}>
 				<div className={styles.progressInfo}>
-					<span className={styles.cardsRemaining}>
-						{sessionCards.length}{' '}
-						{sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
-						{cardsLimit < 9999 && (
-							<span className={styles.limitIndicator}>
-								{' '}({t('limit_indicator')}: {cardsLimit})
-							</span>
-						)}
-					</span>
+					{/* Timer display for time-based sessions */}
+					{timeLimit && remainingTime !== null && !isTimeUp && (
+						<span className={`${styles.timerDisplay} ${remainingTime <= 30 ? styles.timerWarning : ''}`}>
+							{formatTime(remainingTime)}
+						</span>
+					)}
+					{/* Show cards remaining only for card-based sessions (not time-based) */}
+					{!timeLimit && (
+						<span className={styles.cardsRemaining}>
+							{sessionCards.length}{' '}
+							{sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
+						</span>
+					)}
+					{/* Show "last card" message when time is up */}
+					{isTimeUp && (
+						<span className={styles.cardsRemaining}>
+							{t('last_card')}
+						</span>
+					)}
 					{currentCard.card_state === CARD_STATES.NEW && (
 						<span className={styles.newBadge}>{t('new_badge')}</span>
 					)}
@@ -106,17 +130,7 @@ export function FlashcardReviewCard({
 						<SwapHorizRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
 						{t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}
 					</button>
-					<button
-						className={styles.settingsBtn}
-						onClick={onToggleSettings}
-						title={t('settings_btn')}>
-						<SettingsRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
-						{t('settings_btn')}
-					</button>
 				</div>
-
-				{/* Settings panel */}
-				{showSettings && settings}
 			</div>
 
 			{/* Card content */}
@@ -132,7 +146,7 @@ export function FlashcardReviewCard({
 						{/* Context sentence - shown between answer and buttons */}
 						{currentCard?.word_sentence && (
 							<div className={styles.contextSentence}>
-								<em>{currentCard.word_sentence}</em>
+								{currentCard.word_sentence}
 							</div>
 						)}
 

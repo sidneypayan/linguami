@@ -293,36 +293,32 @@ const ConversationBlock = ({ block }) => {
 					</Typography>
 					{questions.map((q, index) => (
 						<Box key={index} sx={{ mb: 2 }}>
-							<Typography sx={{ color: 'text.primary', mb: 1, fontWeight: 500 }}>
-								{q.question}
-							</Typography>
-							<Button
-								size="small"
-								onClick={() => toggleAnswer(index)}
-								startIcon={revealedAnswers[index] ? <VisibilityOff /> : <Visibility />}
-								sx={{
-									textTransform: 'none',
-									color: '#fb923c',
-									'&:hover': {
-										background: isDark ? 'rgba(251, 146, 60, 0.1)' : 'rgba(251, 146, 60, 0.1)',
-									},
-								}}>
-								{revealedAnswers[index] ? t('methode_hide_answer') : t('methode_see_answer')}
-							</Button>
-							{revealedAnswers[index] && (
-								<Typography
-									sx={{
-										color: isDark ? '#94a3b8' : '#64748b',
-										fontSize: '0.9rem',
-										mt: 1,
-										p: 1.5,
-										borderRadius: 2,
-										background: isDark ? 'rgba(251, 146, 60, 0.15)' : 'rgba(251, 146, 60, 0.1)',
-										fontWeight: 500,
-									}}>
-									→ {q.answer}
+							<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, flexWrap: 'wrap' }}>
+								<Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+									{q.question}
 								</Typography>
-							)}
+								<IconButton
+									size="small"
+									onClick={() => toggleAnswer(index)}
+									sx={{
+										color: '#fb923c',
+										p: 0.5,
+										'&:hover': {
+											background: isDark ? 'rgba(251, 146, 60, 0.1)' : 'rgba(251, 146, 60, 0.1)',
+										},
+									}}>
+									{revealedAnswers[index] ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+								</IconButton>
+								{revealedAnswers[index] && (
+									<Typography
+										sx={{
+											color: isDark ? '#34d399' : '#059669',
+											fontWeight: 600,
+										}}>
+										→ {q.answer}
+									</Typography>
+								)}
+							</Box>
 						</Box>
 					))}
 				</Box>

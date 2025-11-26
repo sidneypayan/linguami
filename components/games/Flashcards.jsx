@@ -6,10 +6,10 @@
  */
 
 import { useUserContext } from '@/context/user'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useLocale } from 'next-intl'
 import { useTheme } from '@mui/material'
-import { useFlashcards } from '@/context/flashcards'
+import { useFlashcards, SESSION_MODE } from '@/context/flashcards'
 import { useAchievementContext } from '../gamification/AchievementProvider'
 import { CARD_STATES } from '@/utils/spacedRepetition'
 import { logger } from '@/utils/logger'
@@ -25,23 +25,28 @@ import { LoadingState } from '@/components/flashcards/LoadingState'
 import { SessionComplete } from '@/components/flashcards/SessionComplete'
 import { NoCardsState } from '@/components/flashcards/NoCardsState'
 import { FlashcardReviewCard } from '@/components/flashcards/FlashcardReviewCard'
-import { ReviewSettings } from '@/components/flashcards/ReviewSettings'
+
 
 const Flashcards = () => {
 	const locale = useLocale()
 	const theme = useTheme()
-	const { closeFlashcards } = useFlashcards()
+	const { closeFlashcards, sessionOptions } = useFlashcards()
 	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { showAchievements } = useAchievementContext()
 
-	// Settings hook
-	const { isReversed, cardsLimit, toggleReversed, updateCardsLimit } = useFlashcardSettings()
-	const [showSettings, setShowSettings] = useState(false)
+	// Settings hook (only for isReversed now)
+	const { isReversed, toggleReversed } = useFlashcardSettings()
 	const [isProcessingReview, setIsProcessingReview] = useState(false)
+	const [showTimeUpMessage, setShowTimeUpMessage] = useState(false)
 
 	// XP mutation
 	const addXPMutation = useAddXP()
+
+	// Get limits from session options
+	const cardsLimit = sessionOptions.cardsLimit
+	const timeLimit = sessionOptions.mode === SESSION_MODE.TIME ? sessionOptions.timeLimit : null
+	const isCustomSession = sessionOptions.isCustomSession || false
 
 	// Session hook
 	const {
@@ -49,17 +54,20 @@ const Flashcards = () => {
 		currentCard,
 		reviewedCount,
 		sessionDuration,
+		remainingTime,
 		isSessionComplete,
+		isTimeUp,
 		sessionInitialized,
 		filteredWords,
 		resetSession,
 		startRandomPractice,
 		removeCurrentCard,
+		endSessionNow,
 		addCardToSession,
 		requeueCurrentCard,
 		incrementReviewedCount,
 		setGuestWords
-	} = useFlashcardSession({ cardsLimit, locale })
+	} = useFlashcardSession({ cardsLimit, timeLimit, isCustomSession, locale })
 
 	// Handle close and cleanup
 	const handleClose = useCallback(() => {
@@ -96,6 +104,16 @@ const Flashcards = () => {
 		}
 
 
+		// Update stats first
+		incrementReviewedCount()
+
+		// If time is up, end the session immediately (clear all remaining cards)
+		if (isTimeUp) {
+			endSessionNow()
+			setIsProcessingReview(false)
+			return
+		}
+
 		// Determine if card should stay in session
 		// RELEARNING_STEPS[0] is 10 minutes, so we use <= 10
 		const shouldStayInSession =
@@ -114,11 +132,8 @@ const Flashcards = () => {
 			removeCurrentCard()
 		}
 
-		// Update stats AFTER queue operations to prevent "session complete" flash
-		incrementReviewedCount()
-
 		setIsProcessingReview(false)
-	}, [currentCard, incrementReviewedCount, removeCurrentCard, requeueCurrentCard, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation])
+	}, [currentCard, incrementReviewedCount, removeCurrentCard, endSessionNow, requeueCurrentCard, userLearningLanguage, locale, isReversed, showAchievements, isUserLoggedIn, addXPMutation, isTimeUp])
 
 	// Suspend completion callback
 	const handleSuspendComplete = useCallback(() => {
@@ -148,6 +163,14 @@ const Flashcards = () => {
 	const handleStartPractice = useCallback((practiceCount) => {
 		startRandomPractice(practiceCount)
 	}, [startRandomPractice])
+
+	// When time is up, show message and wait for user to finish current card
+	useEffect(() => {
+		if (isTimeUp && !showTimeUpMessage) {
+			setShowTimeUpMessage(true)
+			logger.log('[Flashcards] Time is up! Finishing current card...')
+		}
+	}, [isTimeUp, showTimeUpMessage])
 
 	// Render loading state
 	if (!sessionInitialized) {
@@ -186,20 +209,14 @@ const Flashcards = () => {
 			currentCard={currentCard}
 			sessionCards={sessionCards}
 			cardsLimit={cardsLimit}
+			timeLimit={timeLimit}
+			remainingTime={remainingTime}
+			isTimeUp={isTimeUp}
 			isReversed={isReversed}
 			onReview={handleReviewWithButton}
 			onSuspend={handleSuspendClick}
 			onClose={handleClose}
 			onToggleReversed={toggleReversed}
-			onToggleSettings={() => setShowSettings(prev => !prev)}
-			showSettings={showSettings}
-			settings={
-				<ReviewSettings
-					cardsLimit={cardsLimit}
-					onUpdateLimit={updateCardsLimit}
-					onClose={() => setShowSettings(false)}
-				/>
-			}
 			isDark={isDark}
 			userLearningLanguage={userLearningLanguage}
 			locale={locale}

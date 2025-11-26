@@ -1207,6 +1207,21 @@
     "dictionary_limit_message": "Vous avez atteint la limite de 20 mots dans votre dictionnaire. Créez un compte pour augmenter cette limite et accéder à toutes les fonctionnalités.",
     "translation_limit_title": "Limite de traductions atteinte",
     "translation_limit_message": "Vous avez atteint la limite de 20 traductions. Créez un compte gratuit pour augmenter le nombre de traductions et accéder à toutes les fonctionnalités !",
-    "guest_dictionary_message": "Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !"
+    "guest_dictionary_message": "Vous pouvez sauvegarder jusqu'à 20 mots gratuitement et les réviser avec les flashcards. Créez un compte pour un accès illimité !",
+    "srs_review_short": "Réviser",
+    "custom_session": "Session personnalisée",
+    "custom_session_short": "Perso",
+    "session_config_title": "Session personnalisée",
+    "session_mode_label": "Mode de révision",
+    "session_mode_cards": "Nombre de cartes",
+    "session_mode_time": "Durée limitée",
+    "session_cards_count": "Nombre de cartes",
+    "session_time_duration": "Durée",
+    "session_time_hint": "La session se terminera après la carte en cours",
+    "session_available_words": "mots disponibles",
+    "session_cancel": "Annuler",
+    "session_start": "Commencer",
+    "time_up_last_card": "Temps ecoul\u00e9 ! Terminez cette derni\u00e8re carte",
+    "last_card": "Derni\u00e8re carte"
   }
 }
