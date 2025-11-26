@@ -313,13 +313,14 @@ export default function SectionPageClient({
               sx={{
                 display: 'grid',
                 gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)',
-                  lg: 'repeat(4, 1fr)',
+                  xs: 'repeat(2, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                  md: 'repeat(4, 1fr)',
+                  lg: 'repeat(5, 1fr)',
                 },
-                rowGap: { xs: 2, md: 3 },
-                columnGap: { xs: 2, md: 3 },
+                rowGap: { xs: 1.5, md: 3 },
+                columnGap: { xs: 1.5, md: 3 },
+                mx: { xs: -0.5, sm: 0 },
                 opacity: displayedMaterials.length > 0 ? 1 : 0,
                 transition: 'opacity 0.15s ease-in',
               }}
