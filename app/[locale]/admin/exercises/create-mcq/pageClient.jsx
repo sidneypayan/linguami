@@ -1,32 +1,115 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
+import { cn } from '@/lib/utils'
 import {
-	Container,
-	Box,
-	Typography,
-	TextField,
-	Button,
-	Paper,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	IconButton,
-	Alert,
-	Divider,
-	Radio,
-	RadioGroup,
-	FormControlLabel,
-	Autocomplete,
-} from '@mui/material'
-import { Add, Delete, ArrowBack } from '@mui/icons-material'
+	Plus,
+	Trash2,
+	ArrowLeft,
+	Info,
+	ChevronDown,
+} from 'lucide-react'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
 import { logger } from '@/utils/logger'
+import AdminNavbar from '@/components/admin/AdminNavbar'
+
+// Custom autocomplete component
+const MaterialAutocomplete = ({ materials, value, onChange, label, placeholder }) => {
+	const [isOpen, setIsOpen] = useState(false)
+	const [search, setSearch] = useState('')
+	const ref = useRef(null)
+
+	const selectedMaterial = materials.find(m => m.id === value)
+
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (ref.current && !ref.current.contains(e.target)) {
+				setIsOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [])
+
+	const filteredMaterials = materials.filter(m => {
+		const searchLower = search.toLowerCase()
+		return (
+			m.title?.toLowerCase().includes(searchLower) ||
+			m.id?.toString().includes(searchLower)
+		)
+	})
+
+	const groupedMaterials = filteredMaterials.reduce((acc, m) => {
+		const section = m.section || 'other'
+		if (!acc[section]) acc[section] = []
+		acc[section].push(m)
+		return acc
+	}, {})
+
+	return (
+		<div className="relative" ref={ref}>
+			<label className="block text-sm font-medium text-slate-700 mb-1.5">{label}</label>
+			<button
+				type="button"
+				onClick={() => setIsOpen(!isOpen)}
+				className="w-full flex items-center justify-between px-4 py-2.5 border border-slate-200 rounded-lg bg-white text-left hover:border-indigo-300 transition-colors"
+			>
+				<span className={selectedMaterial ? 'text-slate-800' : 'text-slate-400'}>
+					{selectedMaterial ? `#${selectedMaterial.id} - ${selectedMaterial.title}` : placeholder}
+				</span>
+				<ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform', isOpen && 'rotate-180')} />
+			</button>
+
+			{isOpen && (
+				<div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-80 overflow-hidden">
+					<div className="p-2 border-b border-slate-100">
+						<input
+							type="text"
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							placeholder="Rechercher..."
+							className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+							autoFocus
+						/>
+					</div>
+					<div className="overflow-y-auto max-h-60">
+						<button
+							type="button"
+							onClick={() => { onChange(''); setIsOpen(false) }}
+							className="w-full px-4 py-2 text-left text-sm text-slate-500 hover:bg-slate-50"
+						>
+							Aucun
+						</button>
+						{Object.entries(groupedMaterials).map(([section, items]) => (
+							<div key={section}>
+								<div className="px-4 py-2 bg-slate-50 text-xs font-bold text-indigo-600 uppercase tracking-wide sticky top-0">
+									{section}
+								</div>
+								{items.map(m => (
+									<button
+										type="button"
+										key={m.id}
+										onClick={() => { onChange(m.id); setIsOpen(false); setSearch('') }}
+										className={cn(
+											'w-full px-4 py-2 text-left text-sm hover:bg-indigo-50 transition-colors',
+											value === m.id && 'bg-indigo-50 text-indigo-700'
+										)}
+									>
+										#{m.id} - {m.title}
+									</button>
+								))}
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	)
+}
 
 const CreateMCQExercise = () => {
 	const router = useRouter()
@@ -128,7 +211,7 @@ const CreateMCQExercise = () => {
 	const addOption = (questionIndex) => {
 		const updated = [...questions]
 		const currentOptions = updated[questionIndex].options
-		const nextKey = String.fromCharCode(65 + currentOptions.length) // A, B, C, D, E...
+		const nextKey = String.fromCharCode(65 + currentOptions.length)
 		updated[questionIndex].options.push({ key: nextKey, text: '' })
 		setQuestions(updated)
 	}
@@ -226,272 +309,262 @@ const CreateMCQExercise = () => {
 	}
 
 	return (
-		<Container maxWidth="lg" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
-			<Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-				<IconButton onClick={() => router.back()}>
-					<ArrowBack />
-				</IconButton>
-				<Typography variant="h4" sx={{ fontWeight: 700 }}>
-					{t('createMCQTitle')}
-				</Typography>
-			</Box>
+		<>
+			<AdminNavbar activePage="exercises" />
 
-			<Alert severity="info" sx={{ mb: 3 }}>
-				<strong>{t('mcqInfo')}</strong>
-				<ul style={{ marginTop: '8px', marginBottom: 0 }}>
-					<li>{t('mcqStep1')}</li>
-					<li>{t('mcqStep2')}</li>
-					<li>{t('mcqStep3')}</li>
-					<li>{t('mcqStep4')}</li>
-				</ul>
-			</Alert>
-
-			<Paper
-				component="form"
-				onSubmit={handleSubmit}
-				elevation={0}
-				sx={{
-					p: { xs: 3, md: 4 },
-					borderRadius: 4,
-					border: '1px solid rgba(139, 92, 246, 0.2)',
-				}}>
-				{/* Basic info */}
-				<Box sx={{ mb: 4 }}>
-					<Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-						{t('generalInfo')}
-					</Typography>
-
-					<TextField
-						fullWidth
-						label={t('exerciseTitleLabel')}
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
-						sx={{ mb: 2 }}
-						required
-					/>
-
-					<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mb: 2 }}>
-						<FormControl fullWidth>
-							<InputLabel>{t('languageLabel')}</InputLabel>
-							<Select
-								value={lang}
-								label={t('languageLabel')}
-								onChange={(e) => setLang(e.target.value)}>
-								<MenuItem value="fr">{t('french')}</MenuItem>
-								<MenuItem value="ru">{t('russian')}</MenuItem>
-								<MenuItem value="en">{t('english')}</MenuItem>
-							</Select>
-						</FormControl>
-
-						<FormControl fullWidth>
-							<InputLabel>{t('levelLabel')}</InputLabel>
-							<Select
-								value={level}
-								label={t('levelLabel')}
-								onChange={(e) => setLevel(e.target.value)}>
-								<MenuItem value="beginner">{t('beginner')}</MenuItem>
-								<MenuItem value="intermediate">{t('intermediate')}</MenuItem>
-								<MenuItem value="advanced">{t('advanced')}</MenuItem>
-							</Select>
-						</FormControl>
-					</Box>
-
-					<Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 2 }}>
-						<Autocomplete
-							fullWidth
-							options={[{ id: '', title: t('none'), section: '' }, ...materials]}
-							groupBy={(option) => option.section || 'other'}
-							getOptionLabel={(option) => {
-								if (typeof option === 'string') return option
-								if (!option.id) return option.title
-								return `#${option.id} - ${option.title}`
-							}}
-							value={materials.find(m => m.id === materialId) || { id: '', title: t('none'), section: '' }}
-							onChange={(e, newValue) => setMaterialId(newValue?.id || '')}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									label={t('associatedMaterial')}
-									placeholder="Rechercher par ID ou titre..."
-								/>
-							)}
-							renderGroup={(params) => (
-								<li key={params.key}>
-									<Box sx={{
-										position: 'sticky',
-										top: -8,
-										padding: '8px 16px',
-										bgcolor: 'background.paper',
-										fontWeight: 700,
-										color: '#8b5cf6',
-										fontSize: '0.875rem',
-										zIndex: 10
-									}}>
-										{params.group}
-									</Box>
-									<ul style={{ padding: 0 }}>{params.children}</ul>
-								</li>
-							)}
-							isOptionEqualToValue={(option, value) => option.id === value.id}
-						/>
-
-						<TextField
-							fullWidth
-							type="number"
-							label={t('xpReward')}
-							value={xpReward}
-							onChange={(e) => setXpReward(parseInt(e.target.value))}
-							inputProps={{ min: 1, max: 100 }}
-						/>
-					</Box>
-				</Box>
-
-				<Divider sx={{ mb: 4 }} />
-
-				{/* Questions */}
-				<Box>
-					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-						<Typography variant="h6" sx={{ fontWeight: 600 }}>
-							{t('questionsCount')} ({questions.length})
-						</Typography>
-						<Button
-							variant="outlined"
-							startIcon={<Add />}
-							onClick={addQuestion}>
-							{t('addQuestion')}
-						</Button>
-					</Box>
-
-					{questions.map((question, qIndex) => (
-						<Paper
-							key={question.id}
-							elevation={0}
-							sx={{
-								p: 3,
-								mb: 3,
-								border: '1px solid rgba(139, 92, 246, 0.1)',
-								borderRadius: 3,
-							}}>
-							<Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-								<Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-									{t('question')} {qIndex + 1}
-								</Typography>
-								{questions.length > 1 && (
-									<IconButton
-										color="error"
-										size="small"
-										onClick={() => removeQuestion(qIndex)}>
-										<Delete />
-									</IconButton>
-								)}
-							</Box>
-
-							<TextField
-								fullWidth
-								multiline
-								rows={2}
-								label={t('question')}
-								value={question.question}
-								onChange={(e) => updateQuestion(qIndex, 'question', e.target.value)}
-								sx={{ mb: 3 }}
-								required
-							/>
-
-							{/* Options */}
-							<Box sx={{ mb: 2 }}>
-								<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-									<Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-										{t('options')} ({question.options.length})
-									</Typography>
-									{question.options.length < 6 && (
-										<Button
-											size="small"
-											startIcon={<Add />}
-											onClick={() => addOption(qIndex)}>
-											{t('addOption')}
-										</Button>
-									)}
-								</Box>
-
-								<RadioGroup
-									value={question.correctAnswer}
-									onChange={(e) => updateQuestion(qIndex, 'correctAnswer', e.target.value)}>
-									{question.options.map((option) => (
-										<Box
-											key={option.key}
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1,
-												mb: 2,
-												p: 2,
-												backgroundColor: 'rgba(139, 92, 246, 0.05)',
-												borderRadius: 2,
-											}}>
-											<FormControlLabel
-												value={option.key}
-												control={<Radio />}
-												label={
-													<Typography variant="body2" sx={{ fontWeight: 600, minWidth: '30px' }}>
-														{option.key}
-													</Typography>
-												}
-											/>
-											<TextField
-												fullWidth
-												placeholder={t('optionPlaceholder', { key: option.key })}
-												value={option.text}
-												onChange={(e) => updateOption(qIndex, option.key, e.target.value)}
-												size="small"
-												required
-											/>
-											{question.options.length > 2 && (
-												<IconButton
-													size="small"
-													color="error"
-													onClick={() => removeOption(qIndex, option.key)}>
-													<Delete fontSize="small" />
-												</IconButton>
-											)}
-										</Box>
-									))}
-								</RadioGroup>
-							</Box>
-
-							<TextField
-								fullWidth
-								multiline
-								rows={2}
-								label={t('explanation')}
-								value={question.explanation}
-								onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
-								helperText={t('explanationHelper')}
-							/>
-						</Paper>
-					))}
-				</Box>
-
-				{/* Submit button */}
-				<Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 4 }}>
-					<Button
-						variant="outlined"
+			<div className="max-w-4xl mx-auto px-4 pt-16 md:pt-24 pb-8">
+				{/* Header */}
+				<div className="flex items-center gap-3 mb-6">
+					<button
 						onClick={() => router.back()}
-						disabled={loading}>
-						{t('cancel')}
-					</Button>
-					<Button
-						type="submit"
-						variant="contained"
-						disabled={loading}
-						sx={{
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							px: 4,
-						}}>
-						{loading ? t('creating') : t('createExercise')}
-					</Button>
-				</Box>
-			</Paper>
-		</Container>
+						className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+					>
+						<ArrowLeft className="w-5 h-5" />
+					</button>
+					<h1 className="text-2xl font-bold text-slate-800">
+						{t('createMCQTitle')}
+					</h1>
+				</div>
+
+				{/* Info Alert */}
+				<div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+					<div className="flex items-start gap-3">
+						<Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+						<div>
+							<p className="font-semibold text-blue-800 mb-2">{t('mcqInfo')}</p>
+							<ul className="text-sm text-blue-700 space-y-1 list-disc pl-4">
+								<li>{t('mcqStep1')}</li>
+								<li>{t('mcqStep2')}</li>
+								<li>{t('mcqStep3')}</li>
+								<li>{t('mcqStep4')}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				{/* Form */}
+				<form onSubmit={handleSubmit} className="bg-white rounded-xl border border-indigo-100 p-6">
+					{/* Basic info */}
+					<div className="mb-8">
+						<h2 className="text-lg font-semibold text-slate-800 mb-4">{t('generalInfo')}</h2>
+
+						<div className="space-y-4">
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-1.5">
+									{t('exerciseTitleLabel')} *
+								</label>
+								<input
+									type="text"
+									value={title}
+									onChange={(e) => setTitle(e.target.value)}
+									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+									required
+								/>
+							</div>
+
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div>
+									<label className="block text-sm font-medium text-slate-700 mb-1.5">
+										{t('languageLabel')}
+									</label>
+									<select
+										value={lang}
+										onChange={(e) => setLang(e.target.value)}
+										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+									>
+										<option value="fr">{t('french')}</option>
+										<option value="ru">{t('russian')}</option>
+										<option value="en">{t('english')}</option>
+									</select>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-slate-700 mb-1.5">
+										{t('levelLabel')}
+									</label>
+									<select
+										value={level}
+										onChange={(e) => setLevel(e.target.value)}
+										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+									>
+										<option value="beginner">{t('beginner')}</option>
+										<option value="intermediate">{t('intermediate')}</option>
+										<option value="advanced">{t('advanced')}</option>
+									</select>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div className="md:col-span-2">
+									<MaterialAutocomplete
+										materials={materials}
+										value={materialId}
+										onChange={setMaterialId}
+										label={t('associatedMaterial')}
+										placeholder="Rechercher un matériel..."
+									/>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-slate-700 mb-1.5">
+										{t('xpReward')}
+									</label>
+									<input
+										type="number"
+										value={xpReward}
+										onChange={(e) => setXpReward(parseInt(e.target.value))}
+										min={1}
+										max={100}
+										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<hr className="border-slate-200 mb-8" />
+
+					{/* Questions */}
+					<div>
+						<div className="flex justify-between items-center mb-4">
+							<h2 className="text-lg font-semibold text-slate-800">
+								{t('questionsCount')} ({questions.length})
+							</h2>
+							<button
+								type="button"
+								onClick={addQuestion}
+								className="flex items-center gap-2 px-4 py-2 border border-indigo-200 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
+							>
+								<Plus className="w-4 h-4" />
+								{t('addQuestion')}
+							</button>
+						</div>
+
+						{questions.map((question, qIndex) => (
+							<div
+								key={question.id}
+								className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100"
+							>
+								<div className="flex justify-between items-center mb-4">
+									<h3 className="font-semibold text-slate-700">
+										{t('question')} {qIndex + 1}
+									</h3>
+									{questions.length > 1 && (
+										<button
+											type="button"
+											onClick={() => removeQuestion(qIndex)}
+											className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+										>
+											<Trash2 className="w-4 h-4" />
+										</button>
+									)}
+								</div>
+
+								<textarea
+									value={question.question}
+									onChange={(e) => updateQuestion(qIndex, 'question', e.target.value)}
+									placeholder={t('question')}
+									rows={2}
+									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none mb-4"
+									required
+								/>
+
+								{/* Options */}
+								<div className="mb-4">
+									<div className="flex justify-between items-center mb-2">
+										<span className="text-sm font-medium text-slate-600">
+											{t('options')} ({question.options.length})
+										</span>
+										{question.options.length < 6 && (
+											<button
+												type="button"
+												onClick={() => addOption(qIndex)}
+												className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+											>
+												<Plus className="w-3 h-3" />
+												{t('addOption')}
+											</button>
+										)}
+									</div>
+
+									<div className="space-y-2">
+										{question.options.map((option) => (
+											<div
+												key={option.key}
+												className="flex items-center gap-2 p-3 bg-white rounded-lg border border-slate-100"
+											>
+												<label className="flex items-center cursor-pointer">
+													<input
+														type="radio"
+														name={`correct-${qIndex}`}
+														value={option.key}
+														checked={question.correctAnswer === option.key}
+														onChange={(e) => updateQuestion(qIndex, 'correctAnswer', e.target.value)}
+														className="w-4 h-4 text-indigo-600 border-slate-300 focus:ring-indigo-500"
+													/>
+													<span className="ml-2 font-semibold text-slate-700 min-w-[24px]">
+														{option.key}
+													</span>
+												</label>
+												<input
+													type="text"
+													value={option.text}
+													onChange={(e) => updateOption(qIndex, option.key, e.target.value)}
+													placeholder={t('optionPlaceholder', { key: option.key })}
+													className="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+													required
+												/>
+												{question.options.length > 2 && (
+													<button
+														type="button"
+														onClick={() => removeOption(qIndex, option.key)}
+														className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+													>
+														<Trash2 className="w-4 h-4" />
+													</button>
+												)}
+											</div>
+										))}
+									</div>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-slate-600 mb-1.5">
+										{t('explanation')}
+									</label>
+									<textarea
+										value={question.explanation}
+										onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
+										placeholder={t('explanationHelper')}
+										rows={2}
+										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none text-sm"
+									/>
+								</div>
+							</div>
+						))}
+					</div>
+
+					{/* Submit buttons */}
+					<div className="flex gap-3 justify-end mt-8">
+						<button
+							type="button"
+							onClick={() => router.back()}
+							disabled={loading}
+							className="px-6 py-2.5 border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-50 transition-colors disabled:opacity-50"
+						>
+							{t('cancel')}
+						</button>
+						<button
+							type="submit"
+							disabled={loading}
+							className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-cyan-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+						>
+							{loading ? t('creating') : t('createExercise')}
+						</button>
+					</div>
+				</form>
+			</div>
+		</>
 	)
 }
 

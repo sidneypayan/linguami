@@ -388,7 +388,7 @@ export default function LeaderboardClient({ leaderboardData, isGuest = false }) 
 				'border-b',
 				isDark ? 'border-violet-500/20' : 'border-violet-100'
 			)}>
-				<div className="max-w-4xl mx-auto px-4 text-center">
+				<div className="max-w-6xl mx-auto px-4 text-center">
 					<div className="flex items-center justify-center gap-3 mb-2">
 						<div className={cn(
 							'w-12 h-12 rounded-xl flex items-center justify-center',
@@ -413,7 +413,7 @@ export default function LeaderboardClient({ leaderboardData, isGuest = false }) 
 				</div>
 			</div>
 
-			<div className="max-w-4xl mx-auto px-0 sm:px-4">
+			<div className="max-w-6xl mx-auto px-0 sm:px-4">
 				{/* Guest Banner */}
 				{isGuest && (
 					<div className={cn(

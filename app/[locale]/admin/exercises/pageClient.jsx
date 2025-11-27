@@ -3,32 +3,18 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
+import { cn } from '@/lib/utils'
 import {
-	Container,
-	Box,
-	Typography,
-	Button,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Chip,
-	IconButton,
-	Alert,
-	useTheme,
-	TextField,
-	InputAdornment,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	Grid,
-	TableSortLabel,
-} from '@mui/material'
-import { Add, Edit, Delete, Visibility, Search, FilterList } from '@mui/icons-material'
+	Plus,
+	Edit,
+	Trash2,
+	Eye,
+	Search,
+	SlidersHorizontal,
+	ArrowUp,
+	ArrowDown,
+	X,
+} from 'lucide-react'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import toast from '@/utils/toast'
@@ -36,14 +22,55 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
 
+// Sortable table header component
+const SortableHeader = ({ label, sortKey, currentSort, currentOrder, onSort }) => {
+	const isActive = currentSort === sortKey
+	return (
+		<button
+			onClick={() => onSort(sortKey)}
+			className="flex items-center gap-1 font-bold text-slate-700 hover:text-indigo-600 transition-colors"
+		>
+			{label}
+			{isActive && (
+				currentOrder === 'asc' ? (
+					<ArrowUp className="w-4 h-4" />
+				) : (
+					<ArrowDown className="w-4 h-4" />
+				)
+			)}
+		</button>
+	)
+}
+
+// Badge component
+const Badge = ({ children, variant = 'default', size = 'sm' }) => {
+	const variants = {
+		default: 'bg-slate-100 text-slate-700',
+		primary: 'bg-indigo-100 text-indigo-700 border border-indigo-200',
+		success: 'bg-emerald-100 text-emerald-700',
+		warning: 'bg-amber-100 text-amber-700',
+		error: 'bg-red-100 text-red-700',
+		secondary: 'bg-purple-100 text-purple-700',
+	}
+
+	const sizes = {
+		sm: 'px-2 py-0.5 text-xs',
+		md: 'px-3 py-1 text-sm',
+	}
+
+	return (
+		<span className={cn('rounded-full font-medium', variants[variant], sizes[size])}>
+			{children}
+		</span>
+	)
+}
+
 const ExercisesAdmin = () => {
 	const router = useRouter()
 	const locale = useLocale()
 	const t = useTranslations('exercises')
 	const { isUserAdmin, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
@@ -113,8 +140,8 @@ const ExercisesAdmin = () => {
 		}
 	}
 
-	// Get level badge color
-	const getLevelColor = (level) => {
+	// Get level badge variant
+	const getLevelVariant = (level) => {
 		switch (level) {
 			case 'beginner': return 'success'
 			case 'intermediate': return 'warning'
@@ -268,332 +295,289 @@ const ExercisesAdmin = () => {
 		<>
 			<AdminNavbar activePage="exercises" />
 
-			<Container maxWidth="xl" sx={{ pt: { xs: '2rem', md: '4rem' }, pb: 4 }}>
-				<Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-					<Typography variant="h4" sx={{ fontWeight: 700 }}>
+			<div className="max-w-7xl mx-auto px-4 pt-8 md:pt-16 pb-8">
+				{/* Header */}
+				<div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+					<h1 className="text-2xl font-bold text-slate-800">
 						{t('title')} ({filteredAndSortedExercises.length})
-					</Typography>
-					<Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-						<Button
-							variant="contained"
-							startIcon={<Add />}
+					</h1>
+					<div className="flex flex-wrap gap-2">
+						<button
 							onClick={() => router.push(`/${locale}/admin/exercises/create-fitb`)}
-							sx={{
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								px: 3,
-							}}>
+							className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+						>
+							<Plus className="w-4 h-4" />
 							{t('createFillInBlank')}
-						</Button>
-						<Button
-							variant="contained"
-							startIcon={<Add />}
+						</button>
+						<button
 							onClick={() => router.push(`/${locale}/admin/exercises/create-mcq`)}
-							sx={{
-								background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
-								px: 3,
-							}}>
+							className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+						>
+							<Plus className="w-4 h-4" />
 							{t('createMCQ')}
-						</Button>
-						<Button
-							variant="contained"
-							startIcon={<Add />}
+						</button>
+						<button
 							onClick={() => router.push(`/${locale}/admin/exercises/create-drag-drop`)}
-							sx={{
-								background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-								px: 3,
-							}}>
+							className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-red-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+						>
+							<Plus className="w-4 h-4" />
 							Drag & Drop
-						</Button>
-					</Box>
-				</Box>
+						</button>
+					</div>
+				</div>
 
 				{/* Filters Section */}
-				<Paper
-					elevation={0}
-					sx={{
-						p: 3,
-						mb: 3,
-						borderRadius: 3,
-						border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-						background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-						<FilterList />
-						<Typography variant="h6" sx={{ fontWeight: 600 }}>
-							Filtres et recherche
-						</Typography>
-					</Box>
+				<div className="bg-white rounded-xl border border-indigo-100 p-4 mb-6">
+					<div className="flex items-center gap-2 mb-4">
+						<SlidersHorizontal className="w-5 h-5 text-indigo-500" />
+						<h2 className="font-semibold text-slate-700">Filtres et recherche</h2>
+					</div>
 
-					<Grid container spacing={2}>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
 						{/* Search */}
-						<Grid item xs={12} md={6} lg={3}>
-							<TextField
-								fullWidth
-								size="small"
-								placeholder="Rechercher par titre de matériel ou ID..."
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">
-											<Search />
-										</InputAdornment>
-									),
-								}}
-							/>
-						</Grid>
+						<div className="lg:col-span-2">
+							<div className="relative">
+								<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+								<input
+									type="text"
+									placeholder="Rechercher par titre ou ID..."
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+								/>
+							</div>
+						</div>
 
 						{/* Type Filter */}
-						<Grid item xs={12} sm={6} md={3} lg={2}>
-							<FormControl fullWidth size="small">
-								<InputLabel>Type</InputLabel>
-								<Select
-									value={typeFilter}
-									label="Type"
-									onChange={(e) => setTypeFilter(e.target.value)}>
-									<MenuItem value="all">Tous</MenuItem>
-									<MenuItem value="mcq">QCM</MenuItem>
-									<MenuItem value="fill_in_blank">Texte à trous</MenuItem>
-									<MenuItem value="drag_and_drop">Glisser-déposer</MenuItem>
-								</Select>
-							</FormControl>
-						</Grid>
+						<select
+							value={typeFilter}
+							onChange={(e) => setTypeFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">Tous types</option>
+							<option value="mcq">QCM</option>
+							<option value="fill_in_blank">Texte à trous</option>
+							<option value="drag_and_drop">Glisser-déposer</option>
+						</select>
 
 						{/* Level Filter */}
-						<Grid item xs={12} sm={6} md={3} lg={2}>
-							<FormControl fullWidth size="small">
-								<InputLabel>Niveau</InputLabel>
-								<Select
-									value={levelFilter}
-									label="Niveau"
-									onChange={(e) => setLevelFilter(e.target.value)}>
-									<MenuItem value="all">Tous</MenuItem>
-									<MenuItem value="beginner">Débutant</MenuItem>
-									<MenuItem value="intermediate">Intermédiaire</MenuItem>
-									<MenuItem value="advanced">Avancé</MenuItem>
-								</Select>
-							</FormControl>
-						</Grid>
+						<select
+							value={levelFilter}
+							onChange={(e) => setLevelFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">Tous niveaux</option>
+							<option value="beginner">Débutant</option>
+							<option value="intermediate">Intermédiaire</option>
+							<option value="advanced">Avancé</option>
+						</select>
 
 						{/* Language Filter */}
-						<Grid item xs={12} sm={6} md={3} lg={1.5}>
-							<FormControl fullWidth size="small">
-								<InputLabel>Langue</InputLabel>
-								<Select
-									value={langFilter}
-									label="Langue"
-									onChange={(e) => setLangFilter(e.target.value)}>
-									<MenuItem value="all">Toutes</MenuItem>
-									<MenuItem value="fr">FR</MenuItem>
-									<MenuItem value="ru">RU</MenuItem>
-									<MenuItem value="en">EN</MenuItem>
-								</Select>
-							</FormControl>
-						</Grid>
+						<select
+							value={langFilter}
+							onChange={(e) => setLangFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">Toutes langues</option>
+							<option value="fr">FR</option>
+							<option value="ru">RU</option>
+							<option value="en">EN</option>
+						</select>
 
 						{/* Material Filter */}
-						<Grid item xs={12} sm={6} md={3} lg={1.5}>
-							<FormControl fullWidth size="small">
-								<InputLabel>Matériau</InputLabel>
-								<Select
-									value={materialFilter}
-									label="Matériau"
-									onChange={(e) => setMaterialFilter(e.target.value)}>
-									<MenuItem value="all">Tous</MenuItem>
-									<MenuItem value="linked">Liés</MenuItem>
-									<MenuItem value="unlinked">Non liés</MenuItem>
-								</Select>
-							</FormControl>
-						</Grid>
+						<select
+							value={materialFilter}
+							onChange={(e) => setMaterialFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">Tous matériaux</option>
+							<option value="linked">Liés</option>
+							<option value="unlinked">Non liés</option>
+						</select>
+					</div>
 
-						{/* Section Filter */}
-						<Grid item xs={12} sm={6} md={3} lg={2}>
-							<FormControl fullWidth size="small">
-								<InputLabel>Section</InputLabel>
-								<Select
-									value={sectionFilter}
-									label="Section"
-									onChange={(e) => setSectionFilter(e.target.value)}>
-									<MenuItem value="all">Toutes</MenuItem>
-									{uniqueSections.map(section => (
-										<MenuItem key={section} value={section}>
-											{section}
-										</MenuItem>
-									))}
-								</Select>
-							</FormControl>
-						</Grid>
-					</Grid>
+					{/* Section Filter + Reset */}
+					<div className="flex flex-wrap items-center gap-3 mt-3">
+						<select
+							value={sectionFilter}
+							onChange={(e) => setSectionFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">Toutes sections</option>
+							{uniqueSections.map(section => (
+								<option key={section} value={section}>{section}</option>
+							))}
+						</select>
 
-					{/* Reset Button */}
-					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-						<Button
-							size="small"
+						<button
 							onClick={handleResetFilters}
-							sx={{ textTransform: 'none' }}>
-							Réinitialiser les filtres
-						</Button>
-					</Box>
-				</Paper>
+							className="flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600 transition-colors"
+						>
+							<X className="w-4 h-4" />
+							Réinitialiser
+						</button>
+					</div>
+				</div>
 
+				{/* Table */}
 				{exercises.length === 0 ? (
-					<Alert severity="info">
+					<div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-700">
 						{t('noExercises')}
-					</Alert>
+					</div>
 				) : (
-					<TableContainer
-						component={Paper}
-						elevation={0}
-						sx={{
-							borderRadius: 3,
-							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-							background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
-						}}
-					>
-						<Table>
-							<TableHead>
-								<TableRow
-									sx={{
-										backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.05)'
-									}}
-								>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'id'}
-											direction={orderBy === 'id' ? order : 'asc'}
-											onClick={() => handleRequestSort('id')}>
-											{t('id')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'title'}
-											direction={orderBy === 'title' ? order : 'asc'}
-											onClick={() => handleRequestSort('title')}>
-											{t('exerciseTitle')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'type'}
-											direction={orderBy === 'type' ? order : 'asc'}
-											onClick={() => handleRequestSort('type')}>
-											{t('type')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'level'}
-											direction={orderBy === 'level' ? order : 'asc'}
-											onClick={() => handleRequestSort('level')}>
-											{t('level')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'lang'}
-											direction={orderBy === 'lang' ? order : 'asc'}
-											onClick={() => handleRequestSort('lang')}>
-											{t('language')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>{t('material')}</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'questions'}
-											direction={orderBy === 'questions' ? order : 'asc'}
-											onClick={() => handleRequestSort('questions')}>
-											{t('questions')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }}>
-										<TableSortLabel
-											active={orderBy === 'xp'}
-											direction={orderBy === 'xp' ? order : 'asc'}
-											onClick={() => handleRequestSort('xp')}>
-											{t('xp')}
-										</TableSortLabel>
-									</TableCell>
-									<TableCell sx={{ fontWeight: 700 }} align="right">{t('actions')}</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{filteredAndSortedExercises.map((exercise) => (
-									<TableRow key={exercise.id} hover>
-										<TableCell>#{exercise.id}</TableCell>
-										<TableCell>
-											<Typography sx={{ fontWeight: 600 }}>
-												{exercise.title}
-											</Typography>
-										</TableCell>
-										<TableCell>
-											<Chip
-												label={
-													exercise.type === 'fill_in_blank' ? t('fillInBlankType') :
+					<div className="bg-white rounded-xl border border-indigo-100 overflow-hidden">
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead>
+									<tr className="bg-indigo-50/50 border-b border-indigo-100">
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('id')}
+												sortKey="id"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('exerciseTitle')}
+												sortKey="title"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('type')}
+												sortKey="type"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('level')}
+												sortKey="level"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('language')}
+												sortKey="lang"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left font-bold text-slate-700">
+											{t('material')}
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('questions')}
+												sortKey="questions"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-left">
+											<SortableHeader
+												label={t('xp')}
+												sortKey="xp"
+												currentSort={orderBy}
+												currentOrder={order}
+												onSort={handleRequestSort}
+											/>
+										</th>
+										<th className="px-4 py-3 text-right font-bold text-slate-700">
+											{t('actions')}
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{filteredAndSortedExercises.map((exercise) => (
+										<tr key={exercise.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+											<td className="px-4 py-3 text-slate-600">#{exercise.id}</td>
+											<td className="px-4 py-3">
+												<span className="font-semibold text-slate-800">
+													{exercise.title}
+												</span>
+											</td>
+											<td className="px-4 py-3">
+												<Badge variant="primary">
+													{exercise.type === 'fill_in_blank' ? t('fillInBlankType') :
 													exercise.type === 'mcq' ? t('mcqType') :
 													exercise.type === 'drag_and_drop' ? t('dragDropType') :
-													exercise.type
-												}
-												size="small"
-												color="primary"
-												variant="outlined"
-											/>
-										</TableCell>
-										<TableCell>
-											<Chip
-												label={t(exercise.level)}
-												size="small"
-												color={getLevelColor(exercise.level)}
-											/>
-										</TableCell>
-										<TableCell>
-											<Chip label={exercise.lang.toUpperCase()} size="small" />
-										</TableCell>
-										<TableCell>
-											{exercise.materials ? (
-												<Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-													#{exercise.materials.id} - {exercise.materials.title}
-												</Typography>
-											) : (
-												<Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-													{t('notLinked')}
-												</Typography>
-											)}
-										</TableCell>
-										<TableCell>
-											{exercise.data?.questions?.length || 0}
-										</TableCell>
-										<TableCell>
-											<Chip label={`+${exercise.xp_reward} XP`} size="small" color="secondary" />
-										</TableCell>
-										<TableCell align="right">
-											<IconButton
-												size="small"
-												onClick={() => router.push(`/${locale}/admin/exercises/preview/${exercise.id}`)}
-												title={t('preview')}>
-												<Visibility fontSize="small" />
-											</IconButton>
-											<IconButton
-												size="small"
-												onClick={() => router.push(`/${locale}/admin/exercises/edit/${exercise.id}`)}
-												title={t('edit')}>
-												<Edit fontSize="small" />
-											</IconButton>
-											<IconButton
-												size="small"
-												color="error"
-												onClick={() => handleDelete(exercise.id)}
-												title={t('delete')}>
-												<Delete fontSize="small" />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</TableContainer>
+													exercise.type}
+												</Badge>
+											</td>
+											<td className="px-4 py-3">
+												<Badge variant={getLevelVariant(exercise.level)}>
+													{t(exercise.level)}
+												</Badge>
+											</td>
+											<td className="px-4 py-3">
+												<Badge>{exercise.lang.toUpperCase()}</Badge>
+											</td>
+											<td className="px-4 py-3">
+												{exercise.materials ? (
+													<span className="text-sm text-slate-600">
+														#{exercise.materials.id} - {exercise.materials.title}
+													</span>
+												) : (
+													<span className="text-sm text-slate-400 italic">
+														{t('notLinked')}
+													</span>
+												)}
+											</td>
+											<td className="px-4 py-3 text-slate-600">
+												{exercise.data?.questions?.length || 0}
+											</td>
+											<td className="px-4 py-3">
+												<Badge variant="secondary">
+													+{exercise.xp_reward} XP
+												</Badge>
+											</td>
+											<td className="px-4 py-3">
+												<div className="flex justify-end gap-1">
+													<button
+														onClick={() => router.push(`/${locale}/admin/exercises/preview/${exercise.id}`)}
+														className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+														title={t('preview')}
+													>
+														<Eye className="w-4 h-4" />
+													</button>
+													<button
+														onClick={() => router.push(`/${locale}/admin/exercises/edit/${exercise.id}`)}
+														className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+														title={t('edit')}
+													>
+														<Edit className="w-4 h-4" />
+													</button>
+													<button
+														onClick={() => handleDelete(exercise.id)}
+														className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+														title={t('delete')}
+													>
+														<Trash2 className="w-4 h-4" />
+													</button>
+												</div>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
 				)}
-			</Container>
+			</div>
 		</>
 	)
 }
