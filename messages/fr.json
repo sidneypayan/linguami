@@ -442,7 +442,8 @@
     "guest_leaderboard_title": "Rejoignez la compétition !",
     "guest_leaderboard_description": "Créez un compte pour gagner de l'XP et de l'or, débloquer des récompenses, grimper dans le classement et défier d'autres apprenants !",
     "create_account": "Créer un compte",
-    "training": "Entraînement"
+    "training": "Entraînement",
+    "completeAllSectionsHint": "Parcours toutes les sections et clique sur \"Terminer\" pour valider"
   },
   "exercises": {
     "title": "Gestion des exercices",

@@ -3111,32 +3111,7 @@ const TrainingPageClient = () => {
 	const { isDark } = useThemeMode()
 	const { userLearningLanguage, isUserLoggedIn, isUserAdmin } = useUserContext()
 
-	// Admin-only access for now (beta feature)
-	if (!isUserAdmin) {
-		return (
-			<div className={cn(
-				'min-h-screen flex items-center justify-center p-4',
-				isDark ? 'bg-slate-900' : 'bg-gradient-to-br from-slate-50 to-violet-50'
-			)}>
-				<OrnateFrame isDark={isDark} className="max-w-md p-8 text-center">
-					<div className="text-6xl mb-4">🔒</div>
-					<h1 className={cn(
-						'text-2xl font-bold mb-2',
-						isDark ? 'text-white' : 'text-slate-800'
-					)}>
-						{tCommon('accessDenied')}
-					</h1>
-					<p className={cn(
-						'text-sm',
-						isDark ? 'text-slate-400' : 'text-slate-600'
-					)}>
-						{tCommon('accessDeniedMessage')}
-					</p>
-				</OrnateFrame>
-			</div>
-		)
-	}
-
+	// All hooks must be called before any early returns
 	const [step, setStep] = useState('setup') // setup, theme-select, training, results
 	const [selectedLevel, setSelectedLevel] = useState('beginner')
 	const [mode, setMode] = useState('questions')
@@ -3155,24 +3130,6 @@ const TrainingPageClient = () => {
 		}
 		return vocabularyThemes[lang]?.[selectedLevel] || vocabularyThemes.ru?.[selectedLevel] || []
 	}, [selectedLevel, selectedType, userLearningLanguage])
-
-	// Handle type selection - if vocabulary or verbs, go to theme selection
-	const handleTypeSelect = (type) => {
-		setSelectedType(type)
-		if (type === 'vocabulary' || type === 'verbs') {
-			// Reset theme when changing to vocabulary or verbs
-			setSelectedTheme(null)
-		}
-	}
-
-	// Proceed to next step after setup
-	const handleProceed = () => {
-		if (selectedType === 'vocabulary' || selectedType === 'verbs') {
-			setStep('theme-select')
-		} else {
-			startTraining()
-		}
-	}
 
 	const startTraining = useCallback(() => {
 		const lang = userLearningLanguage || 'ru'
@@ -3220,6 +3177,50 @@ const TrainingPageClient = () => {
 		setQuestions(shuffled.slice(0, Math.min(questionCount, shuffled.length)))
 		setStep('training')
 	}, [selectedLevel, selectedType, selectedTheme, questionCount, userLearningLanguage])
+
+	// Handle type selection - if vocabulary or verbs, go to theme selection
+	const handleTypeSelect = (type) => {
+		setSelectedType(type)
+		if (type === 'vocabulary' || type === 'verbs') {
+			// Reset theme when changing to vocabulary or verbs
+			setSelectedTheme(null)
+		}
+	}
+
+	// Proceed to next step after setup
+	const handleProceed = () => {
+		if (selectedType === 'vocabulary' || selectedType === 'verbs') {
+			setStep('theme-select')
+		} else {
+			startTraining()
+		}
+	}
+
+	// Admin-only access for now (beta feature) - early return AFTER all hooks
+	if (!isUserAdmin) {
+		return (
+			<div className={cn(
+				'min-h-screen flex items-center justify-center p-4',
+				isDark ? 'bg-slate-900' : 'bg-gradient-to-br from-slate-50 to-violet-50'
+			)}>
+				<OrnateFrame isDark={isDark} className="max-w-md p-8 text-center">
+					<div className="text-6xl mb-4">🔒</div>
+					<h1 className={cn(
+						'text-2xl font-bold mb-2',
+						isDark ? 'text-white' : 'text-slate-800'
+					)}>
+						{tCommon('accessDenied')}
+					</h1>
+					<p className={cn(
+						'text-sm',
+						isDark ? 'text-slate-400' : 'text-slate-600'
+					)}>
+						{tCommon('accessDeniedMessage')}
+					</p>
+				</OrnateFrame>
+			</div>
+		)
+	}
 
 	const handleFinish = (sessionResults) => {
 		setResults(sessionResults)

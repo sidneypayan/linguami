@@ -441,7 +441,7 @@ const LessonPageClient = ({
 									'text-sm',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									Parcours toutes les sections et clique sur "Terminer" pour valider
+									{t('completeAllSectionsHint')}
 								</p>
 							</div>
 						)}

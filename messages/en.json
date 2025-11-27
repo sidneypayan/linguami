@@ -442,7 +442,8 @@
     "guest_leaderboard_title": "Join the Competition!",
     "guest_leaderboard_description": "Create an account to earn XP and gold, unlock rewards, climb the leaderboard, and challenge other learners!",
     "create_account": "Create Account",
-    "training": "Training"
+    "training": "Training",
+    "completeAllSectionsHint": "Go through all sections and click \"Finish\" to validate"
   },
   "exercises": {
     "title": "Exercise Management",
