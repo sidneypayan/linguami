@@ -3106,9 +3106,36 @@ const ResultsScreen = ({ results, onRestart, onBack, isDark, t }) => {
 // ============================================
 const TrainingPageClient = () => {
 	const t = useTranslations('training')
+	const tCommon = useTranslations('common')
 	const locale = useLocale()
 	const { isDark } = useThemeMode()
-	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
+	const { userLearningLanguage, isUserLoggedIn, isUserAdmin } = useUserContext()
+
+	// Admin-only access for now (beta feature)
+	if (!isUserAdmin) {
+		return (
+			<div className={cn(
+				'min-h-screen flex items-center justify-center p-4',
+				isDark ? 'bg-slate-900' : 'bg-gradient-to-br from-slate-50 to-violet-50'
+			)}>
+				<OrnateFrame isDark={isDark} className="max-w-md p-8 text-center">
+					<div className="text-6xl mb-4">🔒</div>
+					<h1 className={cn(
+						'text-2xl font-bold mb-2',
+						isDark ? 'text-white' : 'text-slate-800'
+					)}>
+						{tCommon('accessDenied')}
+					</h1>
+					<p className={cn(
+						'text-sm',
+						isDark ? 'text-slate-400' : 'text-slate-600'
+					)}>
+						{tCommon('accessDeniedMessage')}
+					</p>
+				</OrnateFrame>
+			</div>
+		)
+	}
 
 	const [step, setStep] = useState('setup') // setup, theme-select, training, results
 	const [selectedLevel, setSelectedLevel] = useState('beginner')
