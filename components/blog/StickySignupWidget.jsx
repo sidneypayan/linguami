@@ -1,31 +1,29 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Typography, Button, IconButton, useTheme } from '@mui/material'
-import { CloseRounded, RocketLaunchRounded } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
+import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
 import * as gtm from '@/lib/gtm'
-import { useRouter, usePathname, useParams } from 'next/navigation'
-import { useTranslations, useLocale } from 'next-intl'
+import { cn } from '@/lib/utils'
+import { X, Rocket, Sparkles } from 'lucide-react'
 
 /**
- * Widget sticky qui apparaît après un certain scroll
- * Disparaît si l'utilisateur est connecté
+ * Widget sticky qui apparait apres un certain scroll
+ * Disparait si l'utilisateur est connecte
  */
 export default function StickySignupWidget() {
 	const t = useTranslations('blog')
 	const [visible, setVisible] = useState(false)
 	const [dismissed, setDismissed] = useState(false)
 	const { isUserLoggedIn } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
-	const router = useRouter()
-	const pathname = usePathname()
+	const { isDark } = useThemeMode()
 	const params = useParams()
 
 	useEffect(() => {
-		// Vérifier si le widget a déjà été fermé dans cette session
+		// Verifier si le widget a deja ete ferme dans cette session
 		const isDismissed = sessionStorage.getItem('signup_widget_dismissed')
 		if (isDismissed) {
 			setDismissed(true)
@@ -33,7 +31,7 @@ export default function StickySignupWidget() {
 		}
 
 		const handleScroll = () => {
-			// Afficher après 30% de scroll
+			// Afficher apres 30% de scroll
 			const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
 			setVisible(scrollPercent > 30)
 		}
@@ -62,114 +60,85 @@ export default function StickySignupWidget() {
 		})
 	}
 
-	// Ne pas afficher si l'utilisateur est connecté ou a fermé le widget
+	// Ne pas afficher si l'utilisateur est connecte ou a ferme le widget
 	if (isUserLoggedIn || dismissed || !visible) return null
 
 	return (
-		<Box
-			sx={{
-				position: 'fixed',
-				bottom: { xs: 80, md: 24 },
-				right: { xs: 16, md: 24 },
-				maxWidth: { xs: 'calc(100% - 32px)', sm: '380px' },
-				p: 3,
-				borderRadius: 3,
-				background: isDark
-					? 'linear-gradient(135deg, rgba(30, 27, 75, 0.98) 0%, rgba(49, 46, 129, 0.98) 100%)'
-					: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.98) 100%)',
-				border: `2px solid ${isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(139, 92, 246, 0.2)'}`,
-				backdropFilter: 'blur(20px)',
-				boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-				zIndex: 1000,
-				animation: 'slideInUp 0.5s ease-out',
-				'@keyframes slideInUp': {
-					from: {
-						transform: 'translateY(100px)',
-						opacity: 0,
-					},
-					to: {
-						transform: 'translateY(0)',
-						opacity: 1,
-					},
-				},
-			}}>
+		<div className={cn(
+			'fixed bottom-20 md:bottom-6 right-4 md:right-6',
+			'max-w-[calc(100%-2rem)] sm:max-w-[380px]',
+			'p-6 rounded-2xl',
+			'border-2 backdrop-blur-xl',
+			isDark
+				? 'bg-slate-900/95 border-violet-500/30'
+				: 'bg-white/95 border-violet-600/20',
+			'shadow-2xl',
+			isDark ? 'shadow-violet-500/20' : 'shadow-violet-400/30',
+			'z-50',
+			'animate-in slide-in-from-bottom-10 duration-500'
+		)}>
 			{/* Close button */}
-			<IconButton
+			<button
 				onClick={handleDismiss}
-				sx={{
-					position: 'absolute',
-					top: 8,
-					right: 8,
-					color: isDark ? '#94a3b8' : '#64748b',
-					'&:hover': {
-						background: 'rgba(139, 92, 246, 0.1)',
-						color: '#8b5cf6',
-					},
-				}}>
-				<CloseRounded fontSize="small" />
-			</IconButton>
+				className={cn(
+					'absolute top-3 right-3',
+					'w-8 h-8 rounded-lg',
+					'flex items-center justify-center',
+					'transition-all duration-200',
+					isDark
+						? 'text-slate-400 hover:text-violet-400 hover:bg-violet-500/10'
+						: 'text-slate-500 hover:text-violet-500 hover:bg-violet-500/10'
+				)}
+			>
+				<X className="w-5 h-5" />
+			</button>
 
-			{/* Icon */}
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					width: 56,
-					height: 56,
-					borderRadius: '50%',
-					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-					mb: 2,
-					boxShadow: '0 8px 20px rgba(139, 92, 246, 0.4)',
-				}}>
-				<RocketLaunchRounded sx={{ color: 'white', fontSize: '1.75rem' }} />
-			</Box>
+			{/* Icon with glow effect */}
+			<div className="relative mb-4">
+				<div className={cn(
+					'w-14 h-14 rounded-2xl',
+					'bg-gradient-to-br from-violet-500 to-cyan-500',
+					'flex items-center justify-center',
+					'shadow-lg shadow-violet-500/40'
+				)}>
+					<Rocket className="w-7 h-7 text-white" />
+				</div>
+				{/* Sparkle decoration */}
+				<Sparkles className={cn(
+					'absolute -top-1 -right-1 w-5 h-5',
+					isDark ? 'text-amber-400' : 'text-amber-500'
+				)} />
+			</div>
 
 			{/* Content */}
-			<Typography
-				variant="h6"
-				sx={{
-					fontWeight: 800,
-					mb: 1,
-					fontSize: '1.25rem',
-					color: isDark ? '#f1f5f9' : '#2d3748',
-				}}>
-				{t('signup_widget_title', 'Commencez votre apprentissage !')}
-			</Typography>
+			<h3 className={cn(
+				'text-xl font-black mb-2',
+				isDark ? 'text-slate-100' : 'text-slate-800'
+			)}>
+				{t('signup_widget_title') || 'Commencez votre apprentissage !'}
+			</h3>
 
-			<Typography
-				variant="body2"
-				sx={{
-					mb: 2.5,
-					color: isDark ? '#cbd5e1' : '#64748b',
-					lineHeight: 1.6,
-				}}>
+			<p className={cn(
+				'text-sm leading-relaxed mb-5',
+				isDark ? 'text-slate-400' : 'text-slate-600'
+			)}>
 				{t('signup_widget_message')}
-			</Typography>
+			</p>
 
-			<Link href="/signup" style={{ textDecoration: 'none' }}>
-				<Button
-					onClick={handleClick}
-					fullWidth
-					variant="contained"
-					size="large"
-					sx={{
-						py: 1.5,
-						fontSize: '1rem',
-						fontWeight: 700,
-						borderRadius: 2,
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						textTransform: 'none',
-						boxShadow: '0 8px 20px rgba(139, 92, 246, 0.3)',
-						transition: 'all 0.3s ease',
-						'&:hover': {
-							transform: 'translateY(-2px)',
-							boxShadow: '0 12px 28px rgba(139, 92, 246, 0.4)',
-						},
-					}}>
-					{t('signup_widget_button', 'Inscription gratuite')}
-				</Button>
+			{/* CTA Button */}
+			<Link href="/signup" onClick={handleClick} className="block">
+				<button className={cn(
+					'w-full py-3.5 px-6 rounded-xl',
+					'font-bold text-base text-white',
+					'bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-600',
+					'shadow-lg shadow-violet-500/30',
+					'transition-all duration-300',
+					'hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/40',
+					'active:translate-y-0'
+				)}>
+					{t('signup_widget_button') || 'Inscription gratuite'}
+				</button>
 			</Link>
-		</Box>
+		</div>
 	)
 }

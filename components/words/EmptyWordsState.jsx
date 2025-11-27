@@ -3,14 +3,14 @@
  * Shows when user has no saved words in current material
  */
 
-import { Box, Card, Typography, useTheme } from '@mui/material'
-import { BookmarkAddRounded } from '@mui/icons-material'
+import { BookmarkPlus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 export function EmptyWordsState({ isGuest }) {
 	const t = useTranslations('words')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	// Different translations for guests vs logged-in users
 	const titleKey = isGuest ? 'guest_no_words_yet_title' : 'no_words_yet_title'
@@ -18,91 +18,70 @@ export function EmptyWordsState({ isGuest }) {
 	const tipKey = isGuest ? 'guest_no_words_yet_tip' : 'no_words_yet_tip'
 
 	return (
-		<Card
-			sx={{
-				p: { xs: 3, sm: 4, md: 5 },
-				borderRadius: 4,
-				boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-				border: '1px solid rgba(139, 92, 246, 0.2)',
-				background: isDark
-					? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-					: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-				mt: { xs: 2, md: 3 },
-			}}>
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: 3,
-				}}>
+		<div
+			className={cn(
+				'p-6 sm:p-8 md:p-10 rounded-2xl mt-4 md:mt-6',
+				'border border-violet-500/20',
+				isDark
+					? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90'
+					: 'bg-gradient-to-br from-white/95 to-white/90',
+				isDark
+					? 'shadow-[0_20px_25px_-5px_rgba(139,92,246,0.2),0_8px_10px_-6px_rgba(139,92,246,0.2)]'
+					: 'shadow-[0_20px_25px_-5px_rgba(196,181,253,0.3),0_8px_10px_-6px_rgba(196,181,253,0.3)]'
+			)}
+		>
+			<div className="flex flex-col items-center gap-6">
 				{/* Icon */}
-				<Box
-					sx={{
-						width: 80,
-						height: 80,
-						borderRadius: 4,
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-						border: '2px solid rgba(255, 255, 255, 0.5)',
-					}}>
-					<BookmarkAddRounded sx={{ fontSize: '2.5rem', color: 'white' }} />
-				</Box>
+				<div
+					className={cn(
+						'w-20 h-20 rounded-2xl',
+						'bg-gradient-to-br from-violet-500 to-cyan-500',
+						'flex items-center justify-center',
+						'border-2 border-white/50',
+						'shadow-lg shadow-violet-500/30'
+					)}
+				>
+					<BookmarkPlus className="w-10 h-10 text-white" />
+				</div>
 
 				{/* Title */}
-				<Typography
-					variant="h4"
-					align="center"
-					sx={{
-						fontWeight: 800,
-						fontSize: { xs: '1.5rem', sm: '1.75rem' },
-						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
-					}}>
+				<h3
+					className={cn(
+						'text-2xl sm:text-3xl font-extrabold text-center',
+						'bg-gradient-to-r from-indigo-900 via-violet-500 to-cyan-500 bg-clip-text text-transparent'
+					)}
+				>
 					{t(titleKey)}
-				</Typography>
+				</h3>
 
 				{/* Description */}
-				<Typography
-					variant="body1"
-					align="center"
-					sx={{
-						color: isDark ? '#cbd5e1' : '#718096',
-						fontSize: { xs: '1rem', sm: '1.0625rem' },
-						lineHeight: 1.7,
-						maxWidth: '500px',
-					}}>
+				<p
+					className={cn(
+						'text-base sm:text-lg text-center leading-relaxed max-w-[500px]',
+						isDark ? 'text-slate-300' : 'text-slate-600'
+					)}
+				>
 					{t(descriptionKey)}
-				</Typography>
+				</p>
 
 				{/* Tip box */}
-				<Box
-					sx={{
-						width: '100%',
-						maxWidth: '400px',
-						p: 3,
-						borderRadius: 3,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						backdropFilter: 'blur(10px)',
-					}}>
-					<Typography
-						sx={{
-							fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-							color: isDark ? '#cbd5e1' : '#4a5568',
-							fontWeight: 600,
-							textAlign: 'center',
-							lineHeight: 1.6,
-						}}>
-						{isGuest ? t(tipKey) : `💡 ${t(tipKey)}`}
-					</Typography>
-				</Box>
-			</Box>
-		</Card>
+				<div
+					className={cn(
+						'w-full max-w-[400px] p-4 rounded-xl',
+						'bg-gradient-to-r from-violet-500/10 to-cyan-500/8',
+						'border border-violet-500/20'
+					)}
+				>
+					<p
+						className={cn(
+							'text-sm sm:text-[0.9375rem] font-semibold text-center leading-relaxed',
+							isDark ? 'text-slate-300' : 'text-slate-600'
+						)}
+					>
+						{isGuest ? t(tipKey) : t(tipKey)}
+					</p>
+				</div>
+			</div>
+		</div>
 	)
 }

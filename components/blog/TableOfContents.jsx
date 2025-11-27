@@ -1,18 +1,21 @@
-import { Box, Typography, List, ListItem, ListItemButton, useTheme } from '@mui/material'
+'use client'
+
 import { useRef } from 'react'
+import { useThemeMode } from '@/context/ThemeContext'
+import { useTranslations } from 'next-intl'
 import { slugify } from '@/utils/slugify'
-import { useTranslations, useLocale } from 'next-intl'
+import { cn } from '@/lib/utils'
+import { List } from 'lucide-react'
 
 /**
- * Table des matières générée automatiquement à partir du contenu Markdown
+ * Table des matieres generee automatiquement a partir du contenu Markdown
  * Extrait les titres H2 du contenu
  *
  * @param {string} content - Contenu markdown de l'article
  */
 export default function TableOfContents({ content }) {
 	const t = useTranslations('blog')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const scrollTimeoutRef = useRef(null)
 	const isScrollingRef = useRef(false)
 
@@ -42,7 +45,7 @@ export default function TableOfContents({ content }) {
 				clearTimeout(scrollTimeoutRef.current)
 			}
 
-			// Si on est déjà en train de scroller, utiliser instant scroll
+			// Si on est deja en train de scroller, utiliser instant scroll
 			const behavior = isScrollingRef.current ? 'auto' : 'smooth'
 
 			isScrollingRef.current = true
@@ -57,7 +60,7 @@ export default function TableOfContents({ content }) {
 				behavior: behavior
 			})
 
-			// Réinitialiser le flag après un délai
+			// Reinitialiser le flag apres un delai
 			scrollTimeoutRef.current = setTimeout(() => {
 				isScrollingRef.current = false
 			}, 100)
@@ -65,73 +68,59 @@ export default function TableOfContents({ content }) {
 			return true
 		}
 
-		// Essayer de scroller immédiatement
+		// Essayer de scroller immediatement
 		const success = scrollToElement()
 
-		// Si ça échoue, réessayer après un court délai (au cas où le DOM n'est pas encore prêt)
+		// Si ca echoue, reessayer apres un court delai (au cas ou le DOM n'est pas encore pret)
 		if (!success) {
 			setTimeout(scrollToElement, 50)
 		}
 	}
 
 	return (
-		<Box
-			sx={{
-				position: 'sticky',
-				top: 120,
-				maxHeight: 'calc(100vh - 180px)',
-				overflowY: 'auto',
-				display: { xs: 'none', lg: 'block' },
-				'&::-webkit-scrollbar': {
-					width: '3px',
-				},
-				'&::-webkit-scrollbar-thumb': {
-					bgcolor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-					borderRadius: '3px',
-					'&:hover': {
-						bgcolor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-					},
-				},
-			}}>
-			<Typography
-				variant="h6"
-				sx={{
-					fontWeight: 600,
-					fontSize: '0.875rem',
-					color: 'text.secondary',
-					mb: 2,
-					textTransform: 'uppercase',
-					letterSpacing: '0.05em',
-				}}>
-				{t('tableOfContents')}
-			</Typography>
-			<List sx={{ p: 0 }}>
+		<nav className={cn(
+			'sticky top-[120px] max-h-[calc(100vh-180px)] overflow-y-auto',
+			'hidden lg:block',
+			'scrollbar-thin',
+			isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'
+		)}>
+			{/* Header */}
+			<div className="flex items-center gap-2 mb-4">
+				<List className={cn(
+					'w-4 h-4',
+					isDark ? 'text-violet-400' : 'text-violet-500'
+				)} />
+				<h3 className={cn(
+					'text-sm font-semibold uppercase tracking-wider',
+					isDark ? 'text-slate-400' : 'text-slate-500'
+				)}>
+					{t('tableOfContents')}
+				</h3>
+			</div>
+
+			{/* Items */}
+			<ul className="space-y-1">
 				{tocItems.map((item, index) => (
-					<ListItem key={index} disablePadding sx={{ mb: 0 }}>
-						<ListItemButton
+					<li key={index}>
+						<button
 							onClick={(e) => handleClick(item.id, e)}
-							sx={{
-								py: 1.25,
-								px: 0,
-								pl: 2,
-								borderRadius: 0,
-								borderLeft: `2px solid transparent`,
-								fontSize: '0.875rem',
-								lineHeight: 1.5,
-								color: 'text.secondary',
-								transition: 'all 0.15s ease',
-								'&:hover': {
-									bgcolor: 'transparent',
-									color: 'primary.main',
-									borderLeftColor: 'primary.main',
-									pl: 2.5,
-								},
-							}}>
+							className={cn(
+								'w-full text-left py-2.5 pl-4 pr-2',
+								'text-sm leading-snug',
+								'border-l-2 border-transparent',
+								'transition-all duration-200',
+								isDark ? 'text-slate-400' : 'text-slate-500',
+								'hover:text-violet-500 dark:hover:text-violet-400',
+								'hover:border-violet-500 dark:hover:border-violet-400',
+								'hover:pl-5',
+								'hover:bg-violet-500/5'
+							)}
+						>
 							{item.title}
-						</ListItemButton>
-					</ListItem>
+						</button>
+					</li>
 				))}
-			</List>
-		</Box>
+			</ul>
+		</nav>
 	)
 }

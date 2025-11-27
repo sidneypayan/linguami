@@ -1,13 +1,15 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { Box, useTheme } from '@mui/material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 /**
  * Barre de progression de lecture qui se remplit au scroll
  */
 export default function ReadingProgress() {
 	const [progress, setProgress] = useState(0)
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	useEffect(() => {
 		const updateProgress = () => {
@@ -24,24 +26,17 @@ export default function ReadingProgress() {
 	}, [])
 
 	return (
-		<Box
-			sx={{
-				position: 'fixed',
-				top: 0,
-				left: 0,
-				right: 0,
-				height: '2px',
-				bgcolor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-				zIndex: 1300,
-			}}>
-			<Box
-				sx={{
-					height: '100%',
-					width: `${progress}%`,
-					bgcolor: isDark ? 'primary.light' : 'primary.main',
-					transition: 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-				}}
+		<div className={cn(
+			'fixed top-0 left-0 right-0 h-0.5 z-50',
+			isDark ? 'bg-white/5' : 'bg-black/5'
+		)}>
+			<div
+				className={cn(
+					'h-full transition-all duration-150 ease-out',
+					'bg-gradient-to-r from-violet-500 via-purple-500 to-cyan-500'
+				)}
+				style={{ width: `${progress}%` }}
 			/>
-		</Box>
+		</div>
 	)
 }

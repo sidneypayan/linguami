@@ -1,28 +1,20 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
 import { logger } from '@/utils/logger'
-import {
-	Box,
-	IconButton,
-	Paper,
-	Tooltip,
-	ToggleButtonGroup,
-	ToggleButton,
-} from '@mui/material'
-import {
-	MinimizeRounded,
-	AspectRatioRounded,
-	FitScreenRounded,
-	CloseFullscreenRounded,
-} from '@mui/icons-material'
+import { Minimize2, Maximize2, Monitor, Square } from 'lucide-react'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 const VideoPlayer = ({ videoUrl }) => {
+	const { isDark } = useThemeMode()
 	const [viewMode, setViewMode] = useState('normal') // 'minimized', 'normal', 'theater'
 	const [userSelectedMode, setUserSelectedMode] = useState(null) // Track if user manually selected a mode
 	const [lastScrollY, setLastScrollY] = useState(0)
 	const iframeRef = useRef(null)
 	const playerRef = useRef(null)
 
-	const handleViewModeChange = (event, newMode) => {
+	const handleViewModeChange = (newMode) => {
 		if (newMode !== null) {
 			setViewMode(newMode)
 			setUserSelectedMode(newMode) // User made a manual selection
@@ -122,193 +114,132 @@ const VideoPlayer = ({ videoUrl }) => {
 		}
 	}, [videoUrl])
 
-	const getVideoContainerStyles = () => {
-		const baseStyles = {
-			transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-		}
+	const getVideoContainerClasses = () => {
+		const base = 'transition-all duration-400 ease-out relative overflow-hidden'
 
 		switch (viewMode) {
 			case 'minimized':
-				return {
-					...baseStyles,
-					zIndex: 1000,
-					position: 'sticky',
-					top: { xs: '5rem', md: '5.5rem' },
-					width: { xs: '200px', sm: '280px' },
-					height: { xs: '112px', sm: '157px' },
-					boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-					borderRadius: 3,
-					overflow: 'hidden',
-					border: '2px solid rgba(102, 126, 234, 0.3)',
-					marginLeft: 'auto',
-					marginRight: { xs: '1rem', sm: '2rem' },
-				}
+				return cn(
+					base,
+					'z-[1000] sticky top-20 md:top-[5.5rem]',
+					'w-[200px] sm:w-[280px] h-[112px] sm:h-[157px]',
+					'rounded-xl ml-auto mr-4 sm:mr-8',
+					'shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
+					'border-2 border-violet-500/30'
+				)
 			case 'theater':
-				return {
-					...baseStyles,
-					zIndex: 100,
-					position: 'relative',
-					width: '100%',
-					maxWidth: { xs: '100%', sm: '90%', md: '1400px' },
-					height: { xs: '250px', sm: '400px', md: '600px' },
-					boxShadow: '0 12px 48px rgba(102, 126, 234, 0.2)',
-					borderRadius: 4,
-					overflow: 'hidden',
-					border: '3px solid rgba(102, 126, 234, 0.2)',
-					margin: '0 auto',
-				}
+				return cn(
+					base,
+					'z-100 relative',
+					'w-full max-w-full sm:max-w-[90%] md:max-w-[1400px]',
+					'h-[250px] sm:h-[400px] md:h-[600px]',
+					'rounded-2xl mx-auto',
+					'shadow-[0_12px_48px_rgba(139,92,246,0.2)]',
+					'border-[3px] border-violet-500/20'
+				)
 			default: // normal
-				return {
-					...baseStyles,
-					zIndex: 100,
-					position: 'relative',
-					width: { xs: '100%', sm: '500px' },
-					maxWidth: { xs: '100%', sm: '500px' },
-					height: { xs: '220px', sm: '280px' },
-					boxShadow: '0 8px 32px rgba(102, 126, 234, 0.15)',
-					borderRadius: 3,
-					overflow: 'hidden',
-					border: '2px solid rgba(102, 126, 234, 0.2)',
-					margin: '0 auto',
-				}
+				return cn(
+					base,
+					'z-100 relative',
+					'w-full sm:w-[500px] max-w-full sm:max-w-[500px]',
+					'h-[220px] sm:h-[280px]',
+					'rounded-xl mx-auto',
+					'shadow-[0_8px_32px_rgba(139,92,246,0.15)]',
+					'border-2 border-violet-500/20'
+				)
 		}
 	}
 
-	const getControlsStyles = () => {
-		if (viewMode === 'minimized') {
-			return {
-				position: 'absolute',
-				bottom: '4px',
-				right: '4px',
-				zIndex: 102,
-			}
-		}
-		return {
-			position: 'absolute',
-			top: { xs: '8px', sm: '12px' },
-			right: { xs: '8px', sm: '12px' },
-			zIndex: 102,
-		}
-	}
+	const modes = [
+		{ value: 'minimized', icon: Minimize2, label: 'Minimiser' },
+		{ value: 'normal', icon: Square, label: 'Normal' },
+		{ value: 'theater', icon: Monitor, label: 'Mode theatre' },
+	]
 
 	return (
-		<Paper
-			elevation={0}
-			sx={{
-				...getVideoContainerStyles(),
-				position: 'relative',
-				'&:hover .video-controls': {
-					opacity: 1,
-				},
-			}}>
+		<div
+			className={cn(
+				getVideoContainerClasses(),
+				'group',
+				isDark ? 'bg-slate-900' : 'bg-white'
+			)}
+		>
 			{/* Gradient overlay for better contrast */}
-			<Box
-				sx={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					right: 0,
-					height: '80px',
-					background: 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%)',
-					zIndex: 101,
-					pointerEvents: 'none',
-					opacity: viewMode === 'minimized' ? 0 : 1,
-					transition: 'opacity 0.3s ease',
-				}}
+			<div
+				className={cn(
+					'absolute top-0 left-0 right-0 h-20 z-[101] pointer-events-none',
+					'bg-gradient-to-b from-black/40 to-transparent',
+					'transition-opacity duration-300',
+					viewMode === 'minimized' ? 'opacity-0' : 'opacity-100'
+				)}
 			/>
 
 			{/* Video iframe */}
 			<iframe
 				ref={iframeRef}
 				id="youtube-player"
-				style={{
-					width: '100%',
-					height: '100%',
-					border: 'none',
-					display: 'block',
-					borderRadius: 'inherit',
-				}}
+				className="w-full h-full border-none block rounded-[inherit]"
 				src={`${videoUrl}${videoUrl.includes('?') ? '&' : '?'}enablejsapi=1`}
 				allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen'
 				allowFullScreen
 			/>
 
 			{/* Controls */}
-			<Box
-				className='video-controls'
-				sx={{
-					...getControlsStyles(),
-					opacity: viewMode === 'minimized' ? 1 : 0.7,
-					transition: 'opacity 0.3s ease',
-				}}>
-				<ToggleButtonGroup
-					value={viewMode}
-					exclusive
-					onChange={handleViewModeChange}
-					size='small'
-					sx={{
-						background: 'rgba(0, 0, 0, 0.7)',
-						backdropFilter: 'blur(10px)',
-						borderRadius: 2,
-						border: '1px solid rgba(255, 255, 255, 0.1)',
-						'& .MuiToggleButton-root': {
-							color: 'white',
-							border: 'none',
-							padding: { xs: '4px', sm: '6px 8px' },
-							transition: 'all 0.2s ease',
-							'&:hover': {
-								background: 'rgba(102, 126, 234, 0.3)',
-							},
-							'&.Mui-selected': {
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								color: 'white',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-								},
-							},
-						},
-					}}>
-					<Tooltip title='Minimiser' placement='bottom'>
-						<ToggleButton value='minimized' aria-label='minimized'>
-							<MinimizeRounded sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-						</ToggleButton>
-					</Tooltip>
-					<Tooltip title='Normal' placement='bottom'>
-						<ToggleButton value='normal' aria-label='normal'>
-							<AspectRatioRounded sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-						</ToggleButton>
-					</Tooltip>
-					<Tooltip title='Mode théâtre' placement='bottom'>
-						<ToggleButton value='theater' aria-label='theater'>
-							<FitScreenRounded sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} />
-						</ToggleButton>
-					</Tooltip>
-				</ToggleButtonGroup>
-			</Box>
+			<div
+				className={cn(
+					'video-controls absolute z-[102]',
+					'transition-opacity duration-300',
+					viewMode === 'minimized'
+						? 'bottom-1 right-1 opacity-100'
+						: 'top-2 sm:top-3 right-2 sm:right-3 opacity-70 group-hover:opacity-100'
+				)}
+			>
+				<div
+					className={cn(
+						'flex rounded-lg overflow-hidden',
+						'bg-black/70 backdrop-blur-sm',
+						'border border-white/10'
+					)}
+				>
+					{modes.map((mode) => {
+						const Icon = mode.icon
+						const isActive = viewMode === mode.value
+						return (
+							<button
+								key={mode.value}
+								onClick={() => handleViewModeChange(mode.value)}
+								title={mode.label}
+								className={cn(
+									'p-1.5 sm:px-2 sm:py-1.5',
+									'text-white transition-all duration-200',
+									isActive
+										? 'bg-gradient-to-br from-violet-500 to-purple-600'
+										: 'hover:bg-violet-500/30'
+								)}
+							>
+								<Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+							</button>
+						)
+					})}
+				</div>
+			</div>
 
 			{/* Badge indicator */}
 			{viewMode !== 'minimized' && (
-				<Box
-					sx={{
-						position: 'absolute',
-						top: { xs: '8px', sm: '12px' },
-						left: { xs: '8px', sm: '12px' },
-						zIndex: 102,
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						color: 'white',
-						padding: '4px 12px',
-						borderRadius: 2,
-						fontSize: { xs: '0.7rem', sm: '0.8rem' },
-						fontWeight: 600,
-						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-						textTransform: 'uppercase',
-						letterSpacing: '0.5px',
-						opacity: 0.9,
-					}}>
-					{viewMode === 'theater' ? '🎬 Théâtre' : '📺 Vidéo'}
-				</Box>
+				<div
+					className={cn(
+						'absolute top-2 sm:top-3 left-2 sm:left-3 z-[102]',
+						'bg-gradient-to-br from-violet-500 to-purple-600',
+						'text-white px-3 py-1 rounded-lg',
+						'text-[0.7rem] sm:text-[0.8rem] font-semibold',
+						'shadow-[0_2px_8px_rgba(0,0,0,0.3)]',
+						'uppercase tracking-wide opacity-90'
+					)}
+				>
+					{viewMode === 'theater' ? 'Theatre' : 'Video'}
+				</div>
 			)}
-		</Paper>
+		</div>
 	)
 }
 

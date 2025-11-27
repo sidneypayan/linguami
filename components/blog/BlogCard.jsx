@@ -1,147 +1,98 @@
+'use client'
+
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import {
-	Box,
-	Card,
-	CardContent,
-	Typography,
-	useTheme,
-} from '@mui/material'
-import { ArrowForwardRounded } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { getBlogImageUrl } from '@/utils/mediaUrls'
 import { formatBlogDate } from '@/utils/blogHelpers'
+import { cn } from '@/lib/utils'
 
 const BlogCard = ({ post }) => {
 	const t = useTranslations('blog')
 	const locale = useLocale()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	return (
-		<Link href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
-			<Card
-				sx={{
-					display: 'flex',
-					flexDirection: { xs: 'column', sm: 'row' },
-					borderRadius: 2,
-					overflow: 'hidden',
-					transition: 'all 0.2s ease',
-					bgcolor: 'background.paper',
-					boxShadow: 'none',
-					border: '1px solid',
-					borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
-					'&:hover': {
-						borderColor: isDark ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.3)',
-						boxShadow: isDark
-							? '0 4px 12px rgba(0, 0, 0, 0.3)'
-							: '0 4px 12px rgba(0, 0, 0, 0.08)',
-						'& .blog-image': {
-							opacity: 0.85,
-						},
-						'& .read-more-arrow': {
-							transform: 'translateX(4px)',
-						},
-					},
-				}}>
+		<Link href={`/blog/${post.slug}`} className="block group">
+			<article className={cn(
+				'flex flex-col sm:flex-row rounded-2xl overflow-hidden',
+				'border-2 transition-all duration-300',
+				isDark
+					? 'bg-slate-900/80 border-violet-500/20 hover:border-violet-400/50'
+					: 'bg-white/90 border-violet-600/10 hover:border-violet-500/30',
+				'shadow-lg hover:shadow-xl',
+				isDark ? 'shadow-black/20 hover:shadow-violet-500/20' : 'shadow-slate-200/50 hover:shadow-violet-400/30',
+				'hover:-translate-y-1'
+			)}>
 				{/* Image Section */}
-				<Box
-					sx={{
-						width: { xs: '100%', sm: '240px' },
-						height: { xs: '200px', sm: 'auto' },
-						flexShrink: 0,
-						position: 'relative',
-						overflow: 'hidden',
-					}}>
+				<div className="relative w-full sm:w-60 h-48 sm:h-auto flex-shrink-0 overflow-hidden">
+					{/* Decorative corner */}
+					<div className={cn(
+						'absolute top-0 left-0 w-16 h-16 z-10',
+						'bg-gradient-to-br from-violet-500/20 to-transparent'
+					)} />
 					<Image
-						className='blog-image'
 						fill
-						style={{ objectFit: 'cover', transition: 'opacity 0.2s ease' }}
-						sizes='(max-width: 600px) 100vw, 240px'
+						className="object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
+						sizes="(max-width: 640px) 100vw, 240px"
 						quality={85}
 						src={getBlogImageUrl(post)}
 						alt={post.title || post.frontmatter?.title}
 					/>
-				</Box>
+					{/* Gradient overlay */}
+					<div className={cn(
+						'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300',
+						'bg-gradient-to-t from-violet-900/30 to-transparent'
+					)} />
+				</div>
 
 				{/* Content Section */}
-				<CardContent
-					sx={{
-						flex: 1,
-						display: 'flex',
-						flexDirection: 'column',
-						padding: { xs: 2.5, sm: 3 },
-						'&:last-child': { pb: { xs: 2.5, sm: 3 } },
-					}}>
-					{/* Date */}
-					<Typography
-						variant='caption'
-						sx={{
-							color: 'text.secondary',
-							fontSize: '0.875rem',
-							mb: 1.5,
-							display: 'block',
-						}}>
-						{formatBlogDate(post.published_at || post.frontmatter?.date, locale)}
-					</Typography>
+				<div className="flex-1 flex flex-col p-5 sm:p-6">
+					{/* Date with sparkle */}
+					<div className="flex items-center gap-2 mb-3">
+						<Sparkles className={cn(
+							'w-4 h-4',
+							isDark ? 'text-amber-400' : 'text-amber-500'
+						)} />
+						<span className={cn(
+							'text-sm font-medium',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{formatBlogDate(post.published_at || post.frontmatter?.date, locale)}
+						</span>
+					</div>
 
 					{/* Title */}
-					<Typography
-						variant='h3'
-						sx={{
-							fontWeight: 600,
-							fontSize: { xs: '1.25rem', sm: '1.375rem' },
-							lineHeight: 1.3,
-							color: 'text.primary',
-							mb: 1.5,
-							display: '-webkit-box',
-							WebkitLineClamp: 2,
-							WebkitBoxOrient: 'vertical',
-							overflow: 'hidden',
-							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-							letterSpacing: '-0.01em',
-						}}>
+					<h2 className={cn(
+						'font-bold text-xl sm:text-[1.375rem] leading-tight mb-3',
+						'line-clamp-2 tracking-tight',
+						isDark ? 'text-slate-100' : 'text-slate-800',
+						'group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors'
+					)}>
 						{post.title || post.frontmatter?.title}
-					</Typography>
+					</h2>
 
 					{/* Excerpt */}
-					<Typography
-						variant='body2'
-						sx={{
-							color: 'text.secondary',
-							fontSize: '0.9375rem',
-							lineHeight: 1.6,
-							mb: 2,
-							display: '-webkit-box',
-							WebkitLineClamp: 2,
-							WebkitBoxOrient: 'vertical',
-							overflow: 'hidden',
-						}}>
+					<p className={cn(
+						'text-[0.9375rem] leading-relaxed mb-4 line-clamp-2',
+						isDark ? 'text-slate-400' : 'text-slate-600'
+					)}>
 						{post.excerpt || post.frontmatter?.excerpt}
-					</Typography>
+					</p>
 
 					{/* Read More Link */}
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 0.5,
-							color: 'primary.main',
-							fontSize: '0.9375rem',
-							fontWeight: 500,
-							mt: 'auto',
-						}}>
+					<div className={cn(
+						'flex items-center gap-2 mt-auto font-semibold text-[0.9375rem]',
+						'text-violet-500 dark:text-violet-400',
+						'group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors'
+					)}>
 						<span>{t('readMore') || 'Lire la suite'}</span>
-						<ArrowForwardRounded
-							className='read-more-arrow'
-							sx={{
-								fontSize: '1.125rem',
-								transition: 'transform 0.2s ease',
-							}}
-						/>
-					</Box>
-				</CardContent>
-			</Card>
+						<ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+					</div>
+				</div>
+			</article>
 		</Link>
 	)
 }

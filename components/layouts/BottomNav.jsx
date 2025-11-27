@@ -3,26 +3,21 @@
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslations, useLocale } from 'next-intl'
-import { Paper, BottomNavigation, BottomNavigationAction, Badge, useTheme } from '@mui/material'
-import {
-	HomeRounded,
-	AutoStoriesRounded,
-	BookmarksRounded,
-	LocalLibraryRounded,
-} from '@mui/icons-material'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { getUserWordsAction } from '@/app/actions/words'
 import { useState, useEffect } from 'react'
 import { getGuestWordsByLanguage } from '@/utils/guestDictionary'
+import { cn } from '@/lib/utils'
+import { Home, BookOpen, Bookmark, Library } from 'lucide-react'
 
 const BottomNav = () => {
-	const router = useNextRouter() // For navigation
+	const router = useNextRouter()
 	const pathname = usePathname()
 	const params = useParams()
 	const locale = useLocale()
 	const t = useTranslations('common')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const { isUserLoggedIn, userLearningLanguage, isBootstrapping, user } = useUserContext()
 	const userId = user?.id
 
@@ -49,15 +44,12 @@ const BottomNav = () => {
 	// Total words count (user or guest)
 	const wordsCount = isUserLoggedIn ? user_words.length : guestWordsCount
 
-	// Vérifier si des cours sont disponibles pour la langue choisie
+	// Check if lessons are available
 	const hasLessons = userLearningLanguage === 'fr'
 
-	// Déterminer la valeur active basée sur le pathname
-	// Paths include locale: /fr, /ru/materials, /en/dictionary, etc.
+	// Determine active value based on pathname
 	const getActiveValue = () => {
-		// Remove locale prefix from pathname (e.g., /fr/materials -> /materials)
 		const pathWithoutLocale = pathname.replace(/^\/(fr|ru|en)/, '') || '/'
-
 		if (pathWithoutLocale === '/') return 'home'
 		if (pathWithoutLocale.startsWith('/materials')) return 'materials'
 		if (pathWithoutLocale.startsWith('/dictionary')) return 'dictionary'
@@ -65,8 +57,10 @@ const BottomNav = () => {
 		return 'home'
 	}
 
-	const handleNavigation = (event, newValue) => {
-		switch (newValue) {
+	const activeValue = getActiveValue()
+
+	const handleNavigation = (value) => {
+		switch (value) {
 			case 'home':
 				router.push('/')
 				break
@@ -74,7 +68,6 @@ const BottomNav = () => {
 				router.push('/materials')
 				break
 			case 'dictionary':
-				// Allow both guests and logged-in users to access dictionary
 				router.push('/dictionary')
 				break
 			case 'lessons':
@@ -85,134 +78,95 @@ const BottomNav = () => {
 		}
 	}
 
+	const navItems = [
+		{
+			value: 'home',
+			label: locale === 'fr' ? 'Accueil' : locale === 'en' ? 'Home' : 'Главная',
+			icon: Home,
+		},
+		{
+			value: 'materials',
+			label: t('material'),
+			icon: BookOpen,
+		},
+		{
+			value: 'dictionary',
+			label: locale === 'fr' ? 'Dico' : locale === 'en' ? 'Words' : 'Слова',
+			icon: Bookmark,
+			badge: !isBootstrapping && wordsCount > 0 ? wordsCount : null,
+		},
+		...(hasLessons ? [{
+			value: 'lessons',
+			label: t('lessons'),
+			icon: Library,
+		}] : []),
+	]
+
 	return (
-		<Paper
-			sx={{
-				position: 'fixed',
-				bottom: 0,
-				left: 0,
-				right: 0,
-				display: { xs: 'block', md: 'none' },
-				zIndex: 1100,
-				borderRadius: 0,
-				boxShadow: isDark
-					? '0 -4px 24px rgba(139, 92, 246, 0.25)'
-					: '0 -4px 24px rgba(102, 126, 234, 0.15)',
-				borderTop: isDark
-					? '1px solid rgba(139, 92, 246, 0.3)'
-					: '1px solid rgba(102, 126, 234, 0.15)',
-				backdropFilter: 'blur(10px)',
-				background: isDark
-					? 'rgba(15, 23, 42, 0.95)'
-					: 'rgba(255, 255, 255, 0.95)',
-			}}
-			elevation={0}>
-			<BottomNavigation
-				value={getActiveValue()}
-				onChange={handleNavigation}
-				showLabels
-				sx={{
-					height: '72px',
-					background: 'transparent',
-					'& .MuiBottomNavigationAction-root': {
-						minWidth: 'auto',
-						padding: '8px 12px 10px',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						borderRadius: 2,
-						mx: 0.5,
-						'&.Mui-selected': {
-							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
-							'& .MuiBottomNavigationAction-label': {
-								fontSize: '0.75rem',
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								letterSpacing: '0.3px',
-							},
-							'& .MuiSvgIcon-root': {
-								transform: 'scale(1.15) translateY(-2px)',
-								filter: 'drop-shadow(0 3px 6px rgba(102, 126, 234, 0.35))',
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							},
-						},
-						'&:not(.Mui-selected)': {
-							color: isDark ? '#cbd5e1' : '#9ca3af',
-							'& .MuiBottomNavigationAction-label': {
-								fontSize: '0.6875rem',
-								fontWeight: 600,
-								color: isDark ? '#cbd5e1' : '#9ca3af',
-							},
-							'&:active': {
-								background: isDark
-									? 'rgba(139, 92, 246, 0.08)'
-									: 'rgba(102, 126, 234, 0.05)',
-							},
-						},
-					},
-					'& .MuiBottomNavigationAction-label': {
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-						marginTop: '4px',
-					},
-					'& .MuiSvgIcon-root': {
-						fontSize: '1.625rem',
-						transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-					},
-				}}>
-				<BottomNavigationAction
-					label={locale === 'fr' ? 'Accueil' : locale === 'en' ? 'Home' : 'Главная'}
-					value='home'
-					icon={<HomeRounded />}
-				/>
-				<BottomNavigationAction
-					label={t('material')}
-					value='materials'
-					icon={<AutoStoriesRounded />}
-				/>
-				<BottomNavigationAction
-					label={locale === 'fr' ? 'Dico' : locale === 'en' ? 'Words' : 'Слова'}
-					value='dictionary'
-					icon={
-						!isBootstrapping && wordsCount > 0 ? (
-							<Badge
-								badgeContent={wordsCount}
-								max={99}
-								sx={{
-									'& .MuiBadge-badge': {
-										background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-										color: 'white',
-										fontWeight: 800,
-										fontSize: '0.625rem',
-										height: '20px',
-										minWidth: '20px',
-										padding: '0 5px',
-										borderRadius: '10px',
-										boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)',
-										border: isDark
-											? '2px solid rgba(15, 23, 42, 0.95)'
-											: '2px solid white',
-									},
-								}}>
-								<BookmarksRounded />
-							</Badge>
-						) : (
-							<BookmarksRounded />
-						)
-					}
-				/>
-				{hasLessons && (
-					<BottomNavigationAction
-						label={t('lessons')}
-						value='lessons'
-						icon={<LocalLibraryRounded />}
-					/>
-				)}
-			</BottomNavigation>
-		</Paper>
+		<div className={cn(
+			'fixed bottom-0 left-0 right-0 z-50',
+			'md:hidden',
+			'backdrop-blur-xl',
+			isDark
+				? 'bg-slate-900/95 border-t border-violet-500/30 shadow-[0_-4px_24px_rgba(139,92,246,0.25)]'
+				: 'bg-white/95 border-t border-violet-500/15 shadow-[0_-4px_24px_rgba(102,126,234,0.15)]'
+		)}>
+			<nav className="h-[72px] flex items-center justify-around px-2">
+				{navItems.map((item) => {
+					const isActive = activeValue === item.value
+					const Icon = item.icon
+					return (
+						<button
+							key={item.value}
+							onClick={() => handleNavigation(item.value)}
+							className={cn(
+								'flex flex-col items-center justify-center gap-1',
+								'min-w-0 flex-1 py-2 px-3 mx-0.5 rounded-xl',
+								'transition-all duration-300',
+								isActive && (isDark
+									? 'bg-gradient-to-br from-violet-500/15 to-purple-500/10'
+									: 'bg-gradient-to-br from-violet-500/10 to-purple-500/5'
+								)
+							)}
+						>
+							{/* Icon with optional badge */}
+							<div className="relative">
+								<Icon className={cn(
+									'w-[1.625rem] h-[1.625rem] transition-all duration-300',
+									isActive
+										? 'text-violet-500 scale-115 -translate-y-0.5 drop-shadow-[0_3px_6px_rgba(102,126,234,0.35)]'
+										: isDark ? 'text-slate-400' : 'text-slate-500'
+								)} />
+								{/* Badge */}
+								{item.badge && (
+									<span className={cn(
+										'absolute -top-1.5 -right-2.5',
+										'min-w-[20px] h-5 px-1.5',
+										'flex items-center justify-center',
+										'text-[0.625rem] font-extrabold text-white',
+										'bg-gradient-to-br from-emerald-500 to-emerald-600',
+										'rounded-full',
+										'shadow-[0_2px_8px_rgba(16,185,129,0.4)]',
+										isDark ? 'border-2 border-slate-900' : 'border-2 border-white'
+									)}>
+										{item.badge > 99 ? '99+' : item.badge}
+									</span>
+								)}
+							</div>
+							{/* Label */}
+							<span className={cn(
+								'text-[0.6875rem] font-semibold transition-all duration-300 mt-1',
+								isActive
+									? 'text-transparent bg-gradient-to-r from-violet-500 to-purple-600 bg-clip-text font-extrabold tracking-wide'
+									: isDark ? 'text-slate-400' : 'text-slate-500'
+							)}>
+								{item.label}
+							</span>
+						</button>
+					)
+				})}
+			</nav>
+		</div>
 	)
 }
 

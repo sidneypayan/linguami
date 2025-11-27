@@ -1,270 +1,202 @@
 'use client'
 
-import { useState } from 'react'
-import {
-	AutoStoriesRounded,
-	CheckCircleRounded,
-	ScheduleRounded,
-	CloseRounded,
-	MenuBookRounded,
-} from '@mui/icons-material'
+import { useState, useEffect, useRef } from 'react'
+import { BookOpen, CheckCircle2, Clock, X, Library } from 'lucide-react'
 import { useBookChapters, useUserMaterialsStatus } from '@/lib/materials-client'
 import { useUserContext } from '@/context/user'
-import { useRouter, usePathname, useParams } from 'next/navigation'
-import {
-	Box,
-	Button,
-	Drawer,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemText,
-	Typography,
-	IconButton,
-	Divider,
-	Chip,
-} from '@mui/material'
+import { useParams } from 'next/navigation'
+import { Link } from '@/i18n/navigation'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 const BookMenu = ({ bookId }) => {
+	const { isDark } = useThemeMode()
 	const { isUserLoggedIn } = useUserContext()
 	const { data: chapters = [] } = useBookChapters(bookId)
 	const { data: userMaterialsStatus = [] } = useUserMaterialsStatus(isUserLoggedIn)
 
-	const router = useRouter()
-	const pathname = usePathname()
 	const params = useParams()
-	const { section, material } = params
+	const { material } = params
+
+	const [drawerOpen, setDrawerOpen] = useState(false)
+	const drawerRef = useRef(null)
 
 	const checkIfUserMaterialIsInMaterials = id => {
 		if (!userMaterialsStatus) return null
-		const matchingMaterials = userMaterialsStatus.find(
-			userMaterial => userMaterial.material_id === id
-		)
-		return matchingMaterials
+		return userMaterialsStatus.find(userMaterial => userMaterial.material_id === id)
 	}
 
-	const [drawerState, setDrawerState] = useState(false)
-
-	const toggleDrawer = open => event => {
-		if (
-			event.type === 'keydown' &&
-			(event.key === 'Tab' || event.key === 'Shift')
-		) {
-			return
+	// Close on escape
+	useEffect(() => {
+		const handleEscape = (e) => {
+			if (e.key === 'Escape') setDrawerOpen(false)
 		}
-
-		setDrawerState(open)
-	}
-
-	const list = (
-		<Box
-			sx={{
-				width: { xs: '100vw', sm: 400 },
-				height: '100%',
-				display: 'flex',
-				flexDirection: 'column',
-				backgroundColor: '#fafafa',
-			}}
-			role='presentation'>
-			{/* Header */}
-			<Box
-				sx={{
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-					color: 'white',
-					padding: 3,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-				}}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-					<MenuBookRounded sx={{ fontSize: '2rem' }} />
-					<Box>
-						<Typography variant='h5' sx={{ fontWeight: 700, mb: 0.5 }}>
-							Chapitres
-						</Typography>
-						<Typography variant='body2' sx={{ opacity: 0.9 }}>
-							{chapters.length} chapitre{chapters.length > 1 ? 's' : ''}
-						</Typography>
-					</Box>
-				</Box>
-				<IconButton
-					onClick={toggleDrawer(false)}
-					sx={{
-						color: 'white',
-						'&:hover': {
-							backgroundColor: 'rgba(255, 255, 255, 0.1)',
-							transform: 'rotate(90deg)',
-						},
-						transition: 'all 0.3s ease',
-					}}>
-					<CloseRounded />
-				</IconButton>
-			</Box>
-
-			<Divider />
-
-			{/* Chapters List */}
-			<List
-				sx={{
-					flex: 1,
-					overflow: 'auto',
-					padding: 2,
-				}}>
-				{chapters.map((chapter, index) => {
-					const status = checkIfUserMaterialIsInMaterials(chapter.id)
-					const isBeingStudied = status?.is_being_studied
-					const isStudied = status?.is_studied
-					const isCurrentChapter = material == chapter.id
-
-					return (
-						<ListItem
-							key={chapter.id}
-							disablePadding
-							sx={{ marginBottom: 1 }}>
-							<ListItemButton
-								href={`/materials/books/${chapter.id}`}
-								onClick={toggleDrawer(false)}
-								sx={{
-									borderRadius: 2,
-									padding: 2,
-									backgroundColor: isCurrentChapter
-										? 'rgba(102, 126, 234, 0.1)'
-										: 'white',
-									border: isCurrentChapter
-										? '2px solid #667eea'
-										: '1px solid rgba(0, 0, 0, 0.08)',
-									transition: 'all 0.2s ease',
-									'&:hover': {
-										backgroundColor: 'rgba(102, 126, 234, 0.08)',
-										transform: 'translateX(4px)',
-										boxShadow: '0 2px 8px rgba(102, 126, 234, 0.15)',
-									},
-									'&:active': {
-										transform: 'scale(0.98)',
-									},
-								}}>
-								{/* Chapter Number */}
-								<Box
-									sx={{
-										minWidth: 40,
-										height: 40,
-										borderRadius: '50%',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										background: isCurrentChapter
-											? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-											: 'rgba(102, 126, 234, 0.1)',
-										color: isCurrentChapter ? 'white' : '#667eea',
-										fontWeight: 700,
-										fontSize: '1rem',
-										marginRight: 2,
-										flexShrink: 0,
-									}}>
-									{index + 1}
-								</Box>
-
-								<ListItemText
-									primary={
-										<Typography
-											variant='subtitle1'
-											sx={{
-												color: isCurrentChapter ? '#667eea' : '#2d3748',
-												fontWeight: 600,
-												fontSize: '1rem',
-												lineHeight: 1.4,
-											}}>
-											{chapter.title}
-										</Typography>
-									}
-								/>
-
-								{/* Status Badges */}
-								<Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
-									{isBeingStudied && (
-										<Chip
-											icon={<ScheduleRounded />}
-											label='En cours'
-											size='small'
-											sx={{
-												background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-												color: 'white',
-												fontWeight: 600,
-												fontSize: '0.7rem',
-												height: 24,
-												'& .MuiChip-icon': {
-													color: 'white',
-													fontSize: '0.9rem',
-												},
-											}}
-										/>
-									)}
-									{isStudied && (
-										<Chip
-											icon={<CheckCircleRounded />}
-											label='Terminé'
-											size='small'
-											sx={{
-												background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-												color: 'white',
-												fontWeight: 600,
-												fontSize: '0.7rem',
-												height: 24,
-												'& .MuiChip-icon': {
-													color: 'white',
-													fontSize: '0.9rem',
-												},
-											}}
-										/>
-									)}
-								</Box>
-							</ListItemButton>
-						</ListItem>
-					)
-				})}
-			</List>
-		</Box>
-	)
+		if (drawerOpen) {
+			document.addEventListener('keydown', handleEscape)
+			document.body.style.overflow = 'hidden'
+		}
+		return () => {
+			document.removeEventListener('keydown', handleEscape)
+			document.body.style.overflow = ''
+		}
+	}, [drawerOpen])
 
 	return (
 		<>
-			<Button
-				variant='contained'
-				startIcon={<AutoStoriesRounded />}
-				onClick={toggleDrawer(true)}
-				sx={{
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-					color: 'white',
-					fontWeight: 600,
-					fontSize: { xs: '0.9rem', sm: '1rem' },
-					padding: '0.75rem 1.5rem',
-					borderRadius: 3,
-					textTransform: 'none',
-					transition: 'all 0.3s ease',
-					boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
-					'&:hover': {
-						background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-						transform: 'translateY(-2px)',
-						boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
-					},
-					'&:active': {
-						transform: 'scale(0.98)',
-					},
-				}}>
+			{/* Trigger Button */}
+			<button
+				onClick={() => setDrawerOpen(true)}
+				className={cn(
+					'flex items-center gap-2 px-5 py-3 rounded-xl',
+					'bg-gradient-to-r from-violet-500 to-purple-600',
+					'text-white font-semibold text-sm sm:text-base',
+					'shadow-[0_4px_15px_rgba(139,92,246,0.3)]',
+					'transition-all duration-300',
+					'hover:from-purple-600 hover:to-violet-500',
+					'hover:-translate-y-0.5',
+					'hover:shadow-[0_6px_20px_rgba(139,92,246,0.4)]',
+					'active:scale-[0.98]'
+				)}
+			>
+				<Library className="w-5 h-5" />
 				Chapitres du livre
-			</Button>
-			<Drawer
-				anchor='left'
-				open={drawerState}
-				onClose={toggleDrawer(false)}
-				sx={{
-					'& .MuiDrawer-paper': {
-						boxShadow: '8px 0 32px rgba(0, 0, 0, 0.1)',
-					},
-				}}>
-				{list}
-			</Drawer>
+			</button>
+
+			{/* Backdrop */}
+			{drawerOpen && (
+				<div
+					className="fixed inset-0 bg-black/50 z-[1200] transition-opacity duration-300"
+					onClick={() => setDrawerOpen(false)}
+				/>
+			)}
+
+			{/* Drawer */}
+			<div
+				ref={drawerRef}
+				className={cn(
+					'fixed top-0 left-0 h-full z-[1300]',
+					'w-full sm:w-[400px]',
+					'transform transition-transform duration-300 ease-out',
+					drawerOpen ? 'translate-x-0' : '-translate-x-full',
+					isDark ? 'bg-slate-900' : 'bg-slate-50',
+					'shadow-[8px_0_32px_rgba(0,0,0,0.2)]'
+				)}
+			>
+				{/* Header */}
+				<div
+					className={cn(
+						'bg-gradient-to-r from-violet-500 to-purple-600',
+						'text-white p-5',
+						'flex items-center justify-between',
+						'shadow-[0_4px_12px_rgba(139,92,246,0.3)]'
+					)}
+				>
+					<div className="flex items-center gap-3">
+						<BookOpen className="w-8 h-8" />
+						<div>
+							<h2 className="text-xl font-bold">Chapitres</h2>
+							<p className="text-sm opacity-90">
+								{chapters.length} chapitre{chapters.length > 1 ? 's' : ''}
+							</p>
+						</div>
+					</div>
+					<button
+						onClick={() => setDrawerOpen(false)}
+						className={cn(
+							'p-2 rounded-lg transition-all duration-300',
+							'hover:bg-white/10 hover:rotate-90'
+						)}
+					>
+						<X className="w-6 h-6" />
+					</button>
+				</div>
+
+				{/* Divider */}
+				<div className={cn('h-px', isDark ? 'bg-slate-700' : 'bg-slate-200')} />
+
+				{/* Chapters List */}
+				<div className="flex-1 overflow-y-auto p-4 h-[calc(100%-100px)]">
+					{chapters.map((chapter, index) => {
+						const status = checkIfUserMaterialIsInMaterials(chapter.id)
+						const isBeingStudied = status?.is_being_studied
+						const isStudied = status?.is_studied
+						const isCurrentChapter = material == chapter.id
+
+						return (
+							<Link
+								key={chapter.id}
+								href={`/materials/book-chapters/${chapter.id}`}
+								onClick={() => setDrawerOpen(false)}
+								className={cn(
+									'flex items-center gap-3 p-4 mb-2 rounded-xl',
+									'transition-all duration-200',
+									'border',
+									isCurrentChapter
+										? isDark
+											? 'bg-violet-500/20 border-violet-500'
+											: 'bg-violet-100 border-violet-500'
+										: isDark
+											? 'bg-slate-800 border-slate-700 hover:bg-slate-700 hover:border-violet-500/50'
+											: 'bg-white border-slate-200 hover:bg-violet-50 hover:border-violet-300',
+									'hover:translate-x-1',
+									'active:scale-[0.98]'
+								)}
+							>
+								{/* Chapter Number */}
+								<div
+									className={cn(
+										'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+										'font-bold text-sm',
+										isCurrentChapter
+											? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white'
+											: isDark
+												? 'bg-violet-500/20 text-violet-400'
+												: 'bg-violet-100 text-violet-600'
+									)}
+								>
+									{index + 1}
+								</div>
+
+								{/* Title */}
+								<span
+									className={cn(
+										'flex-1 font-semibold text-sm leading-snug',
+										isCurrentChapter
+											? 'text-violet-500'
+											: isDark
+												? 'text-slate-200'
+												: 'text-slate-700'
+									)}
+								>
+									{chapter.title}
+								</span>
+
+								{/* Status Badges */}
+								<div className="flex gap-1">
+									{isBeingStudied && (
+										<span className={cn(
+											'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold',
+											'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+										)}>
+											<Clock className="w-3 h-3" />
+											En cours
+										</span>
+									)}
+									{isStudied && (
+										<span className={cn(
+											'flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold',
+											'bg-gradient-to-r from-emerald-500 to-green-600 text-white'
+										)}>
+											<CheckCircle2 className="w-3 h-3" />
+											Terminé
+										</span>
+									)}
+								</div>
+							</Link>
+						)
+					})}
+				</div>
+			</div>
 		</>
 	)
 }

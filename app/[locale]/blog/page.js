@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server'
-import { Container, Typography, Box } from '@mui/material'
 import { getPublishedBlogPostsAction } from '@/app/actions/blog'
 import BlogList from '@/components/blog/BlogList'
 
@@ -24,48 +23,25 @@ export default async function BlogPage({ params }) {
 	const t = await getTranslations({ locale, namespace: 'blog' })
 
 	return (
-		<>
+		<div className="min-h-screen">
 			{/* Hero Section */}
-			<Box
-				sx={{
-					pt: { xs: '5rem', md: '6rem' },
-					pb: { xs: '3rem', md: '4rem' },
-				}}>
-				<Container maxWidth='lg'>
-					<Typography
-						variant='h1'
-						sx={{
-							fontWeight: 700,
-							fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-							color: 'text.primary',
-							mb: 2,
-							letterSpacing: '-0.02em',
-							fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-						}}>
+			<section className="pt-20 md:pt-24 pb-12 md:pb-16">
+				<div className="max-w-5xl mx-auto px-4 sm:px-6">
+					<h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-800 dark:text-slate-100 mb-4">
 						{t('pagetitle')}
-					</Typography>
-					<Typography
-						variant='body1'
-						sx={{
-							color: 'text.secondary',
-							fontSize: { xs: '1rem', sm: '1.125rem' },
-							maxWidth: '700px',
-							lineHeight: 1.6,
-						}}>
+					</h1>
+					<p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
 						{t('description')}
-					</Typography>
-				</Container>
-			</Box>
+					</p>
+				</div>
+			</section>
 
-			<Container
-				maxWidth='lg'
-				sx={{
-					py: { xs: 3, md: 4 },
-					px: { xs: 2, sm: 3 },
-				}}>
-				{/* Blog Posts - Client Component for filtering */}
-				<BlogList posts={posts} locale={locale} />
-			</Container>
-		</>
+			{/* Blog Posts */}
+			<section className="py-6 md:py-8 px-4 sm:px-6">
+				<div className="max-w-5xl mx-auto">
+					<BlogList posts={posts} locale={locale} />
+				</div>
+			</section>
+		</div>
 	)
 }

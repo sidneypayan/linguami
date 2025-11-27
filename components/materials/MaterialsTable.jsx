@@ -1,44 +1,42 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter, usePathname, useParams } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Paper,
-	Box,
-	Typography,
-	Chip,
-	useMediaQuery,
-	useTheme,
-} from '@mui/material'
-import {
-	Movie,
-	MusicNote,
-	Audiotrack,
-	CheckCircle,
-	Schedule,
-	MenuBook,
-} from '@mui/icons-material'
+	Film,
+	Music,
+	Headphones,
+	BookOpen,
+	CheckCircle2,
+	Clock,
+} from 'lucide-react'
 import { sections } from '@/data/sections'
 import { getMaterialImageUrl } from '@/utils/mediaUrls'
-import { logger } from '@/utils/logger'
 
 const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const t = useTranslations('materials')
 	const router = useRouter()
-	const pathname = usePathname()
 	const params = useParams()
-	const theme = useTheme()
+	const { isDark } = useThemeMode()
 	const { section } = params
-	const { userLearningLanguage, userProfile } = useUserContext()
+	const { userProfile } = useUserContext()
 	const locale = useLocale()
+
+	// Handle responsive display
+	const [isMobile, setIsMobile] = useState(false)
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 640px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = e => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	// Get translated title based on user's spoken language
 	const getTranslatedTitle = (material) => {
@@ -52,46 +50,34 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 		return material.title_fr || material.title_en || material.title
 	}
 
-	// Fix hydration mismatch: sync theme and media query only on client
-	const [isDark, setIsDark] = useState(false)
-	const [isMobile, setIsMobile] = useState(false)
-
-	useEffect(() => {
-		setIsDark(theme.palette.mode === 'dark')
-	}, [theme.palette.mode])
-
-	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 600px)')
-		setIsMobile(mediaQuery.matches)
-
-		const handler = e => setIsMobile(e.matches)
-		mediaQuery.addEventListener('change', handler)
-		return () => mediaQuery.removeEventListener('change', handler)
-	}, [])
-
 	const handleRowClick = material => {
-		// Navigate to the material detail page
 		router.push(`/materials/${material.section}/${material.id}`)
 	}
 
-	const getIcon = section => {
-		if (sections.audio.includes(section)) {
-			return <Audiotrack sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
+	const getIcon = (sectionName) => {
+		if (sections.audio.includes(sectionName)) {
+			return <Headphones className="w-5 h-5 text-violet-500" />
 		}
-		if (sections.music.includes(section)) {
-			return <MusicNote sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
+		if (sections.music.includes(sectionName)) {
+			return <Music className="w-5 h-5 text-violet-500" />
 		}
-		if (sections.video.includes(section)) {
-			return <Movie sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
+		if (sections.video.includes(sectionName)) {
+			return <Film className="w-5 h-5 text-violet-500" />
 		}
-		return <MenuBook sx={{ fontSize: '1.5rem', color: '#8b5cf6' }} />
+		return <BookOpen className="w-5 h-5 text-violet-500" />
 	}
 
-	const getLevelColor = level => {
-		if (level === 'beginner') return '#10b981'
-		if (level === 'intermediate') return '#a855f7'
-		if (level === 'advanced') return '#fbbf24'
-		return '#8b5cf6'
+	const getLevelColors = level => {
+		switch (level) {
+			case 'beginner':
+				return { bg: 'bg-emerald-500', border: 'border-emerald-500', text: 'text-emerald-600', color: '#10b981' }
+			case 'intermediate':
+				return { bg: 'bg-violet-500', border: 'border-violet-500', text: 'text-violet-600', color: '#a855f7' }
+			case 'advanced':
+				return { bg: 'bg-amber-500', border: 'border-amber-500', text: 'text-amber-600', color: '#fbbf24' }
+			default:
+				return { bg: 'bg-violet-500', border: 'border-violet-500', text: 'text-violet-600', color: '#8b5cf6' }
+		}
 	}
 
 	const getRarity = level => {
@@ -100,607 +86,384 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 		return 'common'
 	}
 
-	const getLevelLabel = level => {
-		if (level === 'beginner') return t('beginner')
-		if (level === 'intermediate') return t('intermediate')
-		if (level === 'advanced') return t('advanced')
-		return level
-	}
-
 	const getStatusIcon = materialId => {
 		const status = checkIfUserMaterialIsInMaterials(materialId)
 		if (!status) return null
 
 		if (status.is_studied) {
-			return (
-				<CheckCircle
-					sx={{
-						fontSize: '1.5rem',
-						color: '#22c55e',
-					}}
-				/>
-			)
+			return <CheckCircle2 className="w-5 h-5 text-emerald-500" />
 		}
 		if (status.is_being_studied) {
-			return (
-				<Schedule
-					sx={{
-						fontSize: '1.5rem',
-						color: '#a855f7',
-					}}
-				/>
-			)
+			return <Clock className="w-5 h-5 text-violet-500" />
 		}
 		return null
 	}
 
-	// Version mobile - liste de cartes compactes
+	// Rarity-based gradient styles for mobile cards
+	const getRarityGradient = (rarity) => {
+		if (rarity === 'legendary') {
+			return isDark
+				? 'from-amber-500/20 via-yellow-500/10 to-amber-500/20'
+				: 'from-amber-100/80 via-yellow-50/60 to-amber-100/80'
+		}
+		if (rarity === 'epic') {
+			return isDark
+				? 'from-violet-500/20 via-purple-500/10 to-violet-500/20'
+				: 'from-violet-100/80 via-purple-50/60 to-violet-100/80'
+		}
+		return isDark
+			? 'from-emerald-500/15 via-green-500/10 to-emerald-500/15'
+			: 'from-emerald-100/70 via-green-50/50 to-emerald-100/70'
+	}
+
+	const getRarityBorder = (rarity) => {
+		if (rarity === 'legendary') return 'border-amber-500/60'
+		if (rarity === 'epic') return 'border-violet-500/50'
+		return 'border-emerald-500/40'
+	}
+
+	const getRarityShadow = (rarity) => {
+		if (rarity === 'legendary') {
+			return isDark
+				? 'shadow-[0_6px_24px_rgba(251,191,36,0.4),0_0_40px_rgba(251,191,36,0.15)]'
+				: 'shadow-[0_6px_20px_rgba(251,191,36,0.25),0_2px_10px_rgba(251,191,36,0.15)]'
+		}
+		if (rarity === 'epic') {
+			return isDark
+				? 'shadow-[0_6px_24px_rgba(168,85,247,0.35),0_0_40px_rgba(168,85,247,0.12)]'
+				: 'shadow-[0_6px_20px_rgba(168,85,247,0.2),0_2px_10px_rgba(168,85,247,0.12)]'
+		}
+		return isDark
+			? 'shadow-[0_6px_24px_rgba(16,185,129,0.2),0_0_40px_rgba(16,185,129,0.08)]'
+			: 'shadow-[0_6px_20px_rgba(16,185,129,0.15),0_2px_10px_rgba(16,185,129,0.08)]'
+	}
+
+	const getTitleGradient = (rarity) => {
+		if (isDark) {
+			if (rarity === 'legendary') return 'from-amber-400 via-yellow-300 to-amber-400'
+			if (rarity === 'epic') return 'from-violet-400 via-purple-300 to-violet-400'
+			return 'from-emerald-400 via-green-300 to-emerald-400'
+		}
+		return 'from-violet-600 via-purple-500 to-violet-600'
+	}
+
+	// Mobile version - compact card list
 	if (isMobile) {
 		return (
-			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-				{materials.map((material, index) => {
+			<div className="flex flex-col gap-3">
+				{materials.map((material) => {
 					const rarity = getRarity(material.level)
-					const levelColor = getLevelColor(material.level)
+					const levelColors = getLevelColors(material.level)
 					const status = checkIfUserMaterialIsInMaterials(material.id)
+					const translatedTitle = getTranslatedTitle(material)
 
 					return (
-						<Paper
+						<button
 							key={material.id}
 							onClick={() => handleRowClick(material)}
-							sx={{
-								position: 'relative',
-								p: 0,
-								borderRadius: '16px',
-								cursor: 'pointer',
-								overflow: 'hidden',
-								border: '2px solid transparent',
-								backgroundImage: isDark
-									? rarity === 'legendary'
-										? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #fbbf24 0%, #fcd34d 25%, #fbbf24 50%, #fcd34d 75%, #fbbf24 100%)'
-										: rarity === 'epic'
-										? 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #a855f7 0%, #c084fc 25%, #a855f7 50%, #c084fc 75%, #a855f7 100%)'
-										: 'linear-gradient(145deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)'
-									: rarity === 'legendary'
-									? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #fbbf24 0%, #fcd34d 25%, #fbbf24 50%, #fcd34d 75%, #fbbf24 100%)'
-									: rarity === 'epic'
-									? 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #a855f7 0%, #c084fc 25%, #a855f7 50%, #c084fc 75%, #a855f7 100%)'
-									: 'linear-gradient(145deg, rgba(255, 252, 245, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%), linear-gradient(135deg, #10b981 0%, #34d399 25%, #10b981 50%, #34d399 75%, #10b981 100%)',
-								backgroundOrigin: 'border-box',
-								backgroundClip: 'padding-box, border-box',
-								boxShadow: isDark
-									? rarity === 'legendary'
-										? '0 6px 24px rgba(251, 191, 36, 0.5), 0 0 60px rgba(251, 191, 36, 0.2)'
-										: rarity === 'epic'
-										? '0 6px 24px rgba(168, 85, 247, 0.4), 0 0 60px rgba(168, 85, 247, 0.15)'
-										: '0 6px 24px rgba(16, 185, 129, 0.25), 0 0 60px rgba(16, 185, 129, 0.1)'
-									: rarity === 'legendary'
-									? '0 6px 24px rgba(251, 191, 36, 0.3), 0 2px 12px rgba(251, 191, 36, 0.2)'
-									: rarity === 'epic'
-									? '0 6px 24px rgba(168, 85, 247, 0.25), 0 2px 12px rgba(168, 85, 247, 0.15)'
-									: '0 6px 24px rgba(16, 185, 129, 0.2), 0 2px 12px rgba(16, 185, 129, 0.1)',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									background: isDark
-										? 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 92, 246, 0.03) 2px, rgba(139, 92, 246, 0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 92, 246, 0.03) 2px, rgba(139, 92, 246, 0.03) 4px)'
-										: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 92, 246, 0.02) 2px, rgba(139, 92, 246, 0.02) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 92, 246, 0.02) 2px, rgba(139, 92, 246, 0.02) 4px)',
-									opacity: 0.3,
-									zIndex: 0,
-									pointerEvents: 'none',
-								},
-								'&::after': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									background: isDark
-										? rarity === 'legendary'
-											? 'radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.1) 0%, transparent 50%)'
-											: rarity === 'epic'
-											? 'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%)'
-											: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)'
-										: rarity === 'legendary'
-										? 'radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.08) 0%, transparent 50%)'
-										: rarity === 'epic'
-										? 'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.08) 0%, transparent 50%)'
-										: 'radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 50%)',
-									opacity: 0,
-									transition: 'opacity 0.5s ease',
-									zIndex: 0,
-									pointerEvents: 'none',
-								},
-								'&:hover': {
-									boxShadow: isDark
-										? rarity === 'legendary'
-											? '0 10px 36px rgba(251, 191, 36, 0.7), 0 0 90px rgba(251, 191, 36, 0.35)'
-											: rarity === 'epic'
-											? '0 10px 36px rgba(168, 85, 247, 0.6), 0 0 90px rgba(168, 85, 247, 0.3)'
-											: '0 10px 36px rgba(16, 185, 129, 0.4), 0 0 90px rgba(16, 185, 129, 0.2)'
-										: rarity === 'legendary'
-										? '0 10px 36px rgba(251, 191, 36, 0.45), 0 4px 20px rgba(251, 191, 36, 0.3)'
-										: rarity === 'epic'
-										? '0 10px 36px rgba(168, 85, 247, 0.4), 0 4px 20px rgba(168, 85, 247, 0.25)'
-										: '0 10px 36px rgba(16, 185, 129, 0.35), 0 4px 20px rgba(16, 185, 129, 0.2)',
-									transform: 'translateY(-4px) scale(1.01)',
-									'&::after': {
-										opacity: 1,
-									},
-								},
-								'&:active': {
-									transform: 'scale(0.98)',
-								},
-							}}>
-							{/* Badge de statut positionné en haut à droite */}
+							className={cn(
+								'relative p-0 rounded-2xl cursor-pointer overflow-hidden text-left',
+								'border-2 transition-all duration-400',
+								getRarityBorder(rarity),
+								'bg-gradient-to-br',
+								getRarityGradient(rarity),
+								getRarityShadow(rarity),
+								'hover:-translate-y-1 hover:scale-[1.01]',
+								'active:scale-[0.98]'
+							)}
+						>
+							{/* Status badge */}
 							{status?.is_being_studied && (
-								<Schedule
-									sx={{
-										position: 'absolute',
-										top: 8,
-										right: 8,
-										fontSize: '1.3rem',
-										color: '#a855f7',
-										background: isDark
-											? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
-											: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 240, 0.95) 100%)',
-										backdropFilter: 'blur(12px)',
-										borderRadius: '50%',
-										padding: '5px',
-										boxShadow:
-											'0 3px 15px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)',
-										border: '2px solid rgba(168, 85, 247, 0.6)',
-										zIndex: 10,
-										pointerEvents: 'none',
-									}}
-								/>
+								<div
+									className={cn(
+										'absolute top-2 right-2 z-[10]',
+										'p-1.5 rounded-full',
+										'border-2 border-violet-500/60',
+										isDark
+											? 'bg-gradient-to-br from-slate-900/98 to-purple-950/95'
+											: 'bg-gradient-to-br from-white/98 to-violet-50/95',
+										'shadow-[0_3px_15px_rgba(168,85,247,0.5),0_0_20px_rgba(168,85,247,0.3)]'
+									)}
+								>
+									<Clock className="w-4 h-4 text-violet-500" />
+								</div>
 							)}
 							{status?.is_studied && (
-								<CheckCircle
-									sx={{
-										position: 'absolute',
-										top: 8,
-										right: 8,
-										fontSize: '1.3rem',
-										color: '#22c55e',
-										background: isDark
-											? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
-											: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 255, 245, 0.95) 100%)',
-										backdropFilter: 'blur(12px)',
-										borderRadius: '50%',
-										padding: '5px',
-										boxShadow:
-											'0 3px 15px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.4)',
-										border: '2px solid rgba(34, 197, 94, 0.6)',
-										zIndex: 10,
-										pointerEvents: 'none',
-									}}
-								/>
+								<div
+									className={cn(
+										'absolute top-2 right-2 z-[10]',
+										'p-1.5 rounded-full',
+										'border-2 border-emerald-500/60',
+										isDark
+											? 'bg-gradient-to-br from-slate-900/98 to-emerald-950/95'
+											: 'bg-gradient-to-br from-white/98 to-emerald-50/95',
+										'shadow-[0_3px_15px_rgba(34,197,94,0.5),0_0_20px_rgba(34,197,94,0.3)]'
+									)}
+								>
+									<CheckCircle2 className="w-4 h-4 text-emerald-500" />
+								</div>
 							)}
 
-							<Box
-								sx={{
-									display: 'flex',
-									gap: 2,
-									alignItems: 'center',
-									p: 2,
-									position: 'relative',
-									zIndex: 1,
-								}}>
+							<div className="flex gap-3 items-center p-3 relative z-[1]">
 								{/* Image */}
-								<Box
-									sx={{
-										width: 90,
-										height: 90,
-										flexShrink: 0,
-										borderRadius: 2,
-										overflow: 'hidden',
-										position: 'relative',
-										boxShadow: isDark
-											? `0 4px 16px ${levelColor}40`
-											: `0 4px 16px ${levelColor}30`,
-										border: `2px solid ${levelColor}40`,
-									}}>
-									<Box
-										component='img'
+								<div
+									className={cn(
+										'w-[90px] h-[90px] flex-shrink-0 rounded-lg overflow-hidden',
+										'border-2',
+										levelColors.border,
+										isDark
+											? 'shadow-[0_4px_16px_rgba(0,0,0,0.3)]'
+											: 'shadow-[0_4px_16px_rgba(0,0,0,0.15)]'
+									)}
+								>
+									<img
 										src={getMaterialImageUrl(material)}
 										alt={material.title}
-										sx={{
-											width: '100%',
-											height: '100%',
-											objectFit: 'cover',
-										}}
+										className="w-full h-full object-cover"
 									/>
-								</Box>
+								</div>
 
 								{/* Content */}
-								<Box
-									sx={{
-										flex: 1,
-										minWidth: 0,
-										display: 'flex',
-										flexDirection: 'column',
-										justifyContent: 'space-between',
-									}}>
-									{/* Original title (target language) - Large and bold */}
-									<Typography
-										sx={{
-											fontSize: '0.95rem',
-											fontWeight: 800,
-											background: isDark
-												? rarity === 'legendary'
-													? 'linear-gradient(135deg, #fbbf24 0%, #fcd34d 50%, #fbbf24 100%)'
-													: rarity === 'epic'
-													? 'linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #a855f7 100%)'
-													: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%)'
-												: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #7c3aed 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											backgroundClip: 'text',
-											lineHeight: 1.3,
-											mb: getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title ? 0.25 : 1,
-											textTransform: 'uppercase',
-											letterSpacing: '0.3px',
-											pr: 2,
-										}}>
+								<div className="flex-1 min-w-0 flex flex-col justify-between">
+									{/* Original title */}
+									<h3
+										className={cn(
+											'text-[0.95rem] font-extrabold leading-tight',
+											'uppercase tracking-wide',
+											'bg-gradient-to-r bg-clip-text text-transparent',
+											getTitleGradient(rarity),
+											'pr-6',
+											translatedTitle && translatedTitle !== material.title ? 'mb-0.5' : 'mb-2'
+										)}
+									>
 										{material.title}
-									</Typography>
+									</h3>
 
-									{/* Translated title (spoken language) - Small and subtle */}
-									{getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title && (
-										<Typography
-											sx={{
-												fontSize: '0.75rem',
-												fontWeight: 500,
-												color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(100, 116, 139, 0.7)',
-												mb: 1,
-												lineHeight: 1.2,
-												opacity: 0.8,
-												pr: 2,
-											}}>
-											{getTranslatedTitle(material)}
-										</Typography>
+									{/* Translated title */}
+									{translatedTitle && translatedTitle !== material.title && (
+										<p
+											className={cn(
+												'text-[0.75rem] font-medium leading-tight mb-2 pr-6',
+												isDark ? 'text-slate-400/60' : 'text-slate-500/70'
+											)}
+										>
+											{translatedTitle}
+										</p>
 									)}
 
-									<Box>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1,
-												justifyContent: 'space-between',
-												mb: 0.5,
-											}}>
-											<Typography
-												variant='caption'
-												sx={{
-													color: isDark ? '#cbd5e1' : '#64748b',
-													fontWeight: 600,
-													fontSize: '0.75rem',
-													textTransform: 'capitalize',
-												}}>
+									<div>
+										<div className="flex items-center gap-2 justify-between mb-1">
+											<span
+												className={cn(
+													'text-[0.75rem] font-semibold capitalize',
+													isDark ? 'text-slate-400' : 'text-slate-500'
+												)}
+											>
 												{material.section}
-											</Typography>
-											<Chip
-												label={getLevelLabel(material.level)}
-												size='small'
-												sx={{
-													background: isDark
-														? 'linear-gradient(135deg, rgba(20, 20, 35, 0.98) 0%, rgba(30, 25, 50, 0.95) 100%)'
-														: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 245, 0.95) 100%)',
-													backdropFilter: 'blur(12px)',
-													border: `1.5px solid ${levelColor}`,
-													color: levelColor,
-													fontWeight: 800,
-													fontSize: '0.65rem',
-													height: 22,
-													boxShadow: isDark
-														? `0 3px 15px ${levelColor}60, 0 0 20px ${levelColor}40`
-														: `0 3px 12px ${levelColor}50`,
-													textTransform: 'uppercase',
-													letterSpacing: '0.5px',
-													'& .MuiChip-label': {
-														px: 1,
-														textShadow: isDark
-															? `0 0 8px ${levelColor}80`
-															: 'none',
-													},
-												}}
-											/>
-										</Box>
+											</span>
+											<span
+												className={cn(
+													'px-2 py-0.5 rounded-md',
+													'text-[0.65rem] font-extrabold uppercase tracking-wider',
+													'border-[1.5px]',
+													levelColors.bg + '/15',
+													levelColors.border,
+													levelColors.text,
+													isDark
+														? 'bg-gradient-to-br from-slate-900/98 to-slate-800/95 backdrop-blur-xl'
+														: 'bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl'
+												)}
+											>
+												{t(material.level)}
+											</span>
+										</div>
 
 										{/* Decorative divider */}
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												gap: 0.5,
-												opacity: 0.8,
-												mt: 2.5,
-												mb: -2.5,
-											}}>
-											<Box
-												sx={{
-													flex: 1,
-													height: '1px',
-													background: isDark
-														? `linear-gradient(90deg, transparent 0%, ${
-																rarity === 'legendary'
-																	? 'rgba(251, 191, 36, 0.6)'
-																	: rarity === 'epic'
-																	? 'rgba(168, 85, 247, 0.5)'
-																	: 'rgba(16, 185, 129, 0.4)'
-														  } 100%)`
-														: `linear-gradient(90deg, transparent 0%, ${
-																rarity === 'legendary'
-																	? 'rgba(251, 191, 36, 0.5)'
-																	: rarity === 'epic'
-																	? 'rgba(168, 85, 247, 0.4)'
-																	: 'rgba(16, 185, 129, 0.3)'
-														  } 100%)`,
-												}}
+										<div className="flex items-center justify-center gap-1 opacity-80 mt-3 -mb-1">
+											<div
+												className={cn(
+													'flex-1 h-px',
+													'bg-gradient-to-r from-transparent',
+													rarity === 'legendary'
+														? 'to-amber-500/50'
+														: rarity === 'epic'
+														? 'to-violet-500/40'
+														: 'to-emerald-500/30'
+												)}
 											/>
-											<Box
-												sx={{
-													width: 3,
-													height: 3,
-													background: levelColor,
-													transform: 'rotate(45deg)',
-													boxShadow: `0 0 4px ${levelColor}`,
-												}}
+											<div
+												className={cn(
+													'w-[3px] h-[3px] rotate-45',
+													levelColors.bg
+												)}
+												style={{ boxShadow: `0 0 4px ${levelColors.color}` }}
 											/>
-											<Box
-												sx={{
-													width: 2,
-													height: 2,
-													background: levelColor,
-													borderRadius: '50%',
-													opacity: 0.6,
-												}}
+											<div
+												className={cn(
+													'w-0.5 h-0.5 rounded-full opacity-60',
+													levelColors.bg
+												)}
 											/>
-											<Box
-												sx={{
-													width: 3,
-													height: 3,
-													background: levelColor,
-													transform: 'rotate(45deg)',
-													boxShadow: `0 0 4px ${levelColor}`,
-												}}
+											<div
+												className={cn(
+													'w-[3px] h-[3px] rotate-45',
+													levelColors.bg
+												)}
+												style={{ boxShadow: `0 0 4px ${levelColors.color}` }}
 											/>
-											<Box
-												sx={{
-													flex: 1,
-													height: '1px',
-													background: isDark
-														? `linear-gradient(90deg, ${
-																rarity === 'legendary'
-																	? 'rgba(251, 191, 36, 0.6)'
-																	: rarity === 'epic'
-																	? 'rgba(168, 85, 247, 0.5)'
-																	: 'rgba(16, 185, 129, 0.4)'
-														  } 0%, transparent 100%)`
-														: `linear-gradient(90deg, ${
-																rarity === 'legendary'
-																	? 'rgba(251, 191, 36, 0.5)'
-																	: rarity === 'epic'
-																	? 'rgba(168, 85, 247, 0.4)'
-																	: 'rgba(16, 185, 129, 0.3)'
-														  } 0%, transparent 100%)`,
-												}}
+											<div
+												className={cn(
+													'flex-1 h-px',
+													'bg-gradient-to-l from-transparent',
+													rarity === 'legendary'
+														? 'to-amber-500/50'
+														: rarity === 'epic'
+														? 'to-violet-500/40'
+														: 'to-emerald-500/30'
+												)}
 											/>
-										</Box>
-									</Box>
-								</Box>
-							</Box>
-						</Paper>
+										</div>
+									</div>
+								</div>
+							</div>
+						</button>
 					)
 				})}
-			</Box>
+			</div>
 		)
 	}
 
-	// Version desktop - tableau
+	// Desktop version - table
 	return (
-		<TableContainer
-			component={Paper}
-			sx={{
-				borderRadius: 4,
-				boxShadow: isDark
-					? '0 4px 20px rgba(139, 92, 246, 0.25)'
-					: '0 4px 20px rgba(139, 92, 246, 0.15)',
-				border: isDark
-					? '1px solid rgba(139, 92, 246, 0.3)'
-					: '1px solid rgba(139, 92, 246, 0.2)',
-				overflow: 'hidden',
-				background: isDark
-					? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-					: 'background.paper',
-			}}>
-			<Table>
-				<TableHead>
-					<TableRow
-						sx={{
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						}}>
-						<TableCell
-							sx={{
-								color: 'white',
-								fontWeight: 700,
-								fontSize: '0.95rem',
-								py: 2,
-								width: '60px',
-							}}>
+		<div
+			className={cn(
+				'rounded-2xl overflow-hidden',
+				'border',
+				isDark
+					? 'border-violet-500/30 shadow-[0_4px_20px_rgba(139,92,246,0.2)]'
+					: 'border-violet-500/20 shadow-[0_4px_20px_rgba(139,92,246,0.1)]',
+				isDark
+					? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90'
+					: 'bg-white'
+			)}
+		>
+			<table className="w-full">
+				<thead>
+					<tr className="bg-gradient-to-r from-violet-500 to-cyan-500">
+						<th className="text-left text-white font-bold text-[0.95rem] py-3 px-4 w-[60px]">
 							{/* Empty for icon */}
-						</TableCell>
-						<TableCell
-							sx={{
-								color: 'white',
-								fontWeight: 700,
-								fontSize: '0.95rem',
-								py: 2,
-							}}>
+						</th>
+						<th className="text-left text-white font-bold text-[0.95rem] py-3 px-4">
 							Title
-						</TableCell>
-						<TableCell
-							sx={{
-								color: 'white',
-								fontWeight: 700,
-								fontSize: '0.95rem',
-								py: 2,
-								width: '150px',
-							}}>
+						</th>
+						<th className="text-left text-white font-bold text-[0.95rem] py-3 px-4 w-[150px]">
 							Section
-						</TableCell>
-						<TableCell
-							sx={{
-								color: 'white',
-								fontWeight: 700,
-								fontSize: '0.95rem',
-								py: 2,
-								width: '120px',
-								textAlign: 'center',
-							}}>
+						</th>
+						<th className="text-center text-white font-bold text-[0.95rem] py-3 px-4 w-[120px]">
 							Level
-						</TableCell>
-						<TableCell
-							sx={{
-								color: 'white',
-								fontWeight: 700,
-								fontSize: '0.95rem',
-								py: 2,
-								width: '80px',
-								textAlign: 'center',
-							}}>
+						</th>
+						<th className="text-center text-white font-bold text-[0.95rem] py-3 px-4 w-[80px]">
 							Status
-						</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{materials.map((material, index) => (
-						<TableRow
-							key={material.id}
-							onClick={() => handleRowClick(material)}
-							sx={{
-								cursor: 'pointer',
-								backgroundColor:
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{materials.map((material, index) => {
+						const levelColors = getLevelColors(material.level)
+						const translatedTitle = getTranslatedTitle(material)
+
+						return (
+							<tr
+								key={material.id}
+								onClick={() => handleRowClick(material)}
+								className={cn(
+									'cursor-pointer transition-all duration-300',
 									index % 2 === 0
-										? 'rgba(139, 92, 246, 0.03)'
+										? 'bg-violet-500/[0.03]'
 										: isDark
-										? 'rgba(15, 23, 42, 0.5)'
-										: 'white',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									backgroundColor: 'rgba(139, 92, 246, 0.08)',
-									transform: 'scale(1.005)',
-									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.15)',
-								},
-								'&:active': {
-									transform: 'scale(0.99)',
-								},
-							}}>
-							{/* Image/Icon Column */}
-							<TableCell sx={{ py: 2 }}>
-								<Box
-									sx={{
-										width: 50,
-										height: 50,
-										borderRadius: 1.5,
-										overflow: 'hidden',
-										position: 'relative',
-										boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-									}}>
-									<Box
-										component='img'
-										src={getMaterialImageUrl(material)}
-										alt={material.title}
-										sx={{
-											width: '100%',
-											height: '100%',
-											objectFit: 'cover',
-										}}
-									/>
-								</Box>
-							</TableCell>
+										? 'bg-slate-900/50'
+										: 'bg-white',
+									'hover:bg-violet-500/[0.08] hover:scale-[1.005]',
+									'hover:shadow-[0_4px_12px_rgba(139,92,246,0.15)]',
+									'active:scale-[0.99]'
+								)}
+							>
+								{/* Image Column */}
+								<td className="py-3 px-4">
+									<div className="w-[50px] h-[50px] rounded-lg overflow-hidden shadow-md">
+										<img
+											src={getMaterialImageUrl(material)}
+											alt={material.title}
+											className="w-full h-full object-cover"
+										/>
+									</div>
+								</td>
 
-							{/* Title Column */}
-							<TableCell sx={{ py: 2 }}>
-								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-									{getIcon(material.section)}
-									<Box>
-										{/* Original title (target language) - Large and bold */}
-										<Typography
-											sx={{
-												fontSize: '1rem',
-												fontWeight: 700,
-												background:
-													'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-												WebkitBackgroundClip: 'text',
-												WebkitTextFillColor: 'transparent',
-												backgroundClip: 'text',
-												mb: getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title ? 0.25 : 0,
-											}}>
-											{material.title}
-										</Typography>
+								{/* Title Column */}
+								<td className="py-3 px-4">
+									<div className="flex items-center gap-3">
+										{getIcon(material.section)}
+										<div>
+											<h4
+												className={cn(
+													'text-base font-bold',
+													'bg-gradient-to-r from-indigo-950 via-violet-500 to-cyan-500',
+													'bg-clip-text text-transparent',
+													translatedTitle && translatedTitle !== material.title ? 'mb-0.5' : ''
+												)}
+											>
+												{material.title}
+											</h4>
+											{translatedTitle && translatedTitle !== material.title && (
+												<p
+													className={cn(
+														'text-[0.75rem] font-medium leading-tight',
+														isDark ? 'text-slate-400/60' : 'text-slate-500/70'
+													)}
+												>
+													{translatedTitle}
+												</p>
+											)}
+										</div>
+									</div>
+								</td>
 
-										{/* Translated title (spoken language) - Small and subtle */}
-										{getTranslatedTitle(material) && getTranslatedTitle(material) !== material.title && (
-											<Typography
-												sx={{
-													fontSize: '0.75rem',
-													fontWeight: 500,
-													color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(100, 116, 139, 0.7)',
-													lineHeight: 1.2,
-													opacity: 0.8,
-												}}>
-												{getTranslatedTitle(material)}
-											</Typography>
+								{/* Section Column */}
+								<td className="py-3 px-4">
+									<span
+										className={cn(
+											'text-[0.9rem] font-semibold',
+											isDark ? 'text-slate-400' : 'text-slate-500'
 										)}
-									</Box>
-								</Box>
-							</TableCell>
+									>
+										{material.section}
+									</span>
+								</td>
 
-							{/* Section Column */}
-							<TableCell sx={{ py: 2 }}>
-								<Typography
-									sx={{
-										fontSize: '0.9rem',
-										fontWeight: 600,
-										color: isDark ? '#94a3b8' : '#718096',
-									}}>
-									{material.section}
-								</Typography>
-							</TableCell>
+								{/* Level Column */}
+								<td className="py-3 px-4 text-center">
+									<span
+										className={cn(
+											'inline-block px-3 py-1 rounded-full',
+											'text-white font-semibold text-[0.85rem]',
+											levelColors.bg,
+											'shadow-md'
+										)}
+									>
+										{t(material.level)}
+									</span>
+								</td>
 
-							{/* Level Column */}
-							<TableCell sx={{ py: 2, textAlign: 'center' }}>
-								<Chip
-									label={getLevelLabel(material.level)}
-									sx={{
-										backgroundColor: getLevelColor(material.level),
-										color: 'white',
-										fontWeight: 600,
-										fontSize: '0.85rem',
-										height: '28px',
-										boxShadow: `0 2px 8px ${getLevelColor(material.level)}40`,
-									}}
-								/>
-							</TableCell>
-
-							{/* Status Column */}
-							<TableCell sx={{ py: 2, textAlign: 'center' }}>
-								{getStatusIcon(material.id)}
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-		</TableContainer>
+								{/* Status Column */}
+								<td className="py-3 px-4 text-center">
+									{getStatusIcon(material.id)}
+								</td>
+							</tr>
+						)
+					})}
+				</tbody>
+			</table>
+		</div>
 	)
 }
 

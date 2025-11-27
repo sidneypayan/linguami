@@ -134,47 +134,6 @@ const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 }
 
 // ============================================
-// MAGICAL PARTICLES BACKGROUND
-// ============================================
-const MagicalParticles = ({ isDark }) => (
-	<div className="fixed inset-0 pointer-events-none overflow-hidden">
-		{/* Floating orbs */}
-		<div className={cn(
-			'absolute top-32 left-10 w-3 h-3 rounded-full animate-pulse',
-			isDark ? 'bg-violet-400/20' : 'bg-violet-300/40'
-		)} style={{ animationDuration: '3s' }} />
-		<div className={cn(
-			'absolute top-48 right-20 w-2 h-2 rounded-full animate-pulse',
-			isDark ? 'bg-cyan-400/20' : 'bg-cyan-300/40'
-		)} style={{ animationDuration: '4s' }} />
-		<div className={cn(
-			'absolute top-64 left-1/4 w-2.5 h-2.5 rounded-full animate-pulse',
-			isDark ? 'bg-amber-400/20' : 'bg-amber-300/40'
-		)} style={{ animationDuration: '2.5s' }} />
-		<div className={cn(
-			'absolute bottom-48 right-1/4 w-2 h-2 rounded-full animate-pulse',
-			isDark ? 'bg-emerald-400/20' : 'bg-emerald-300/40'
-		)} style={{ animationDuration: '3.5s' }} />
-
-		{/* Sparkle effects */}
-		<div className={cn(
-			'absolute top-40 right-1/3 w-1 h-1 rounded-full animate-ping',
-			isDark ? 'bg-white/10' : 'bg-violet-400/30'
-		)} style={{ animationDuration: '2s' }} />
-
-		{/* Ambient glows */}
-		<div className={cn(
-			'absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-violet-900/20' : 'bg-violet-200/30'
-		)} />
-		<div className={cn(
-			'absolute -bottom-20 -right-20 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-cyan-900/20' : 'bg-cyan-200/30'
-		)} />
-	</div>
-)
-
-// ============================================
 // EPIC HEADER FOR REGULAR MATERIALS
 // ============================================
 const EpicHeader = ({ isDark, title, onBack }) => {
@@ -222,14 +181,8 @@ const EpicHeader = ({ isDark, title, onBack }) => {
 						)} />
 					</button>
 
-					{/* Title with decorations */}
-					<div className="relative flex-1">
-						{/* Crown decoration */}
-						<div className="absolute -top-2 left-0 flex items-center gap-1">
-							<Scroll className={cn('w-4 h-4', isDark ? 'text-amber-400/60' : 'text-amber-500/50')} />
-							<div className={cn('w-12 h-0.5 bg-gradient-to-r from-amber-500/50 to-transparent')} />
-						</div>
-
+					{/* Title */}
+					<div className="flex-1">
 						<h1 className={cn(
 							'text-xl sm:text-2xl md:text-3xl font-black',
 							'bg-gradient-to-r from-violet-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent',
@@ -237,12 +190,6 @@ const EpicHeader = ({ isDark, title, onBack }) => {
 						)}>
 							{title}
 						</h1>
-
-						{/* Decorative underline */}
-						<div className="mt-1 flex items-center gap-2">
-							<div className={cn('flex-1 h-0.5 bg-gradient-to-r from-violet-500 to-transparent max-w-32')} />
-							<Gem className={cn('w-3 h-3', isDark ? 'text-cyan-400' : 'text-cyan-500')} />
-						</div>
 					</div>
 				</div>
 			</div>
@@ -735,9 +682,6 @@ const Material = ({
 					? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
 					: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-amber-50/30 to-slate-50'
 			)}>
-				{/* Magical particles background */}
-				<MagicalParticles isDark={isDark} />
-
 				<div className="flex flex-col lg:flex-row justify-center items-start gap-0 lg:gap-8 px-0 lg:px-6 max-w-[1600px] mx-auto w-full">
 					{/* Main content */}
 					<div className="py-0 lg:py-8 px-4 lg:px-6 flex-1 min-w-0 max-w-full">
@@ -751,7 +695,7 @@ const Material = ({
 							/>
 
 							{/* Action buttons */}
-							<div className="relative z-50 flex flex-wrap items-center gap-3 mb-8 mt-6">
+							<div className="flex flex-wrap items-center gap-3 mb-8 mt-6">
 								{!is_being_studied && !is_studied && isUserLoggedIn && (
 									<ActionButton
 										variant="primary"
@@ -807,21 +751,22 @@ const Material = ({
 							</div>
 
 							{/* Content Paper - Ornate Frame */}
-							<OrnateFrame
-								isDark={isDark}
-								glowColor="violet"
-								className={cn(
-									'p-4 lg:p-8 mb-8',
-									isDark
-										? 'bg-slate-800/50'
-										: 'bg-white/80'
-								)}
-							>
-								{/* Scroll label */}
-								<div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-bold uppercase tracking-wider">
+							<div className="relative">
+								{/* Scroll label - positioned outside OrnateFrame to avoid overflow:hidden */}
+								<div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
 									<Scroll className="w-3 h-3" />
 									<span>Texte</span>
 								</div>
+								<OrnateFrame
+									isDark={isDark}
+									glowColor="violet"
+									className={cn(
+										'p-4 lg:p-8 mb-8',
+										isDark
+											? 'bg-slate-800/50'
+											: 'bg-white/80'
+									)}
+								>
 
 								{/* Pagination controls - Top */}
 								{isPaginated && (
@@ -873,6 +818,7 @@ const Material = ({
 									</div>
 								)}
 							</OrnateFrame>
+							</div>
 
 							{/* Exercise Section */}
 							{isUserAdmin && <ExerciseSection materialId={currentMaterial.id} />}
@@ -969,14 +915,9 @@ const Material = ({
 					<div className={cn(
 						'hidden lg:block',
 						'w-[500px] xl:w-[550px] flex-shrink-0',
-						isDark ? 'bg-slate-950' : 'bg-gradient-to-b from-slate-50 to-white',
 						'sticky top-[120px] self-start',
 						'max-h-[calc(100vh-130px)] overflow-y-auto',
-						'pt-8 px-6',
-						'[&::-webkit-scrollbar]:w-3',
-						'[&::-webkit-scrollbar-track]:bg-violet-500/5 [&::-webkit-scrollbar-track]:rounded-md',
-						'[&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-violet-500 [&::-webkit-scrollbar-thumb]:to-cyan-500',
-						'[&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-white/30'
+						'pt-8 px-6'
 					)}>
 						<WordsContainer />
 					</div>

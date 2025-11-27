@@ -1,13 +1,9 @@
 'use client'
 
-import { Box, IconButton, Typography, useTheme } from '@mui/material'
-import {
-	ChevronLeft,
-	ChevronRight,
-	FirstPage,
-	LastPage,
-} from '@mui/icons-material'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 /**
  * Pagination controls for book chapter content
@@ -23,140 +19,88 @@ const ContentPagination = ({
 	hasNextPage,
 }) => {
 	const t = useTranslations('materials')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	if (totalPages <= 1) return null
 
+	const buttonClass = cn(
+		'p-2 rounded-lg transition-all duration-200',
+		'hover:bg-violet-500/10 hover:scale-110',
+		'disabled:opacity-30 disabled:hover:scale-100 disabled:hover:bg-transparent'
+	)
+
+	const activeColor = 'text-violet-500'
+	const disabledColor = isDark ? 'text-slate-600' : 'text-slate-400'
+
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				gap: { xs: 0.5, sm: 1 },
-				py: 2,
-				px: 2,
-				borderRadius: 3,
-				background: isDark
-					? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)'
-					: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-				border: isDark
-					? '1px solid rgba(139, 92, 246, 0.3)'
-					: '1px solid rgba(139, 92, 246, 0.2)',
-				boxShadow: isDark
-					? '0 4px 20px rgba(0, 0, 0, 0.3)'
-					: '0 4px 20px rgba(139, 92, 246, 0.15)',
-			}}>
+		<div
+			className={cn(
+				'flex items-center justify-center gap-1 sm:gap-2',
+				'py-3 px-4 rounded-xl',
+				'border',
+				isDark
+					? 'bg-gradient-to-r from-slate-800/80 to-slate-900/90 border-violet-500/30'
+					: 'bg-gradient-to-r from-white/95 to-slate-50/95 border-violet-500/20',
+				isDark
+					? 'shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
+					: 'shadow-[0_4px_20px_rgba(139,92,246,0.15)]'
+			)}
+		>
 			{/* First Page */}
-			<IconButton
+			<button
 				onClick={onGoToFirst}
 				disabled={!hasPrevPage}
-				sx={{
-					color: hasPrevPage ? '#8b5cf6' : 'text.disabled',
-					transition: 'all 0.2s ease',
-					'&:hover:not(:disabled)': {
-						background: 'rgba(139, 92, 246, 0.1)',
-						transform: 'scale(1.1)',
-					},
-					'&:disabled': {
-						opacity: 0.3,
-					},
-				}}>
-				<FirstPage />
-			</IconButton>
+				className={cn(buttonClass, hasPrevPage ? activeColor : disabledColor)}
+			>
+				<ChevronsLeft className="w-5 h-5" />
+			</button>
 
 			{/* Previous Page */}
-			<IconButton
+			<button
 				onClick={onPrevPage}
 				disabled={!hasPrevPage}
-				sx={{
-					color: hasPrevPage ? '#8b5cf6' : 'text.disabled',
-					transition: 'all 0.2s ease',
-					'&:hover:not(:disabled)': {
-						background: 'rgba(139, 92, 246, 0.1)',
-						transform: 'scale(1.1)',
-					},
-					'&:disabled': {
-						opacity: 0.3,
-					},
-				}}>
-				<ChevronLeft />
-			</IconButton>
+				className={cn(buttonClass, hasPrevPage ? activeColor : disabledColor)}
+			>
+				<ChevronLeft className="w-5 h-5" />
+			</button>
 
 			{/* Page indicator */}
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: 1,
-					px: { xs: 1.5, sm: 3 },
-					py: 0.75,
-					borderRadius: 2,
-					background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
-					border: '1px solid rgba(139, 92, 246, 0.2)',
-				}}>
-				<Typography
-					sx={{
-						fontWeight: 700,
-						fontSize: { xs: '0.9rem', sm: '1rem' },
-						color: '#8b5cf6',
-					}}>
+			<div
+				className={cn(
+					'flex items-center gap-2 px-3 sm:px-5 py-1.5 rounded-lg',
+					'bg-gradient-to-r from-violet-500/10 to-cyan-500/10',
+					'border border-violet-500/20'
+				)}
+			>
+				<span className="font-bold text-sm sm:text-base text-violet-500">
 					{currentPage}
-				</Typography>
-				<Typography
-					sx={{
-						color: isDark ? '#94a3b8' : '#64748b',
-						fontSize: { xs: '0.85rem', sm: '0.95rem' },
-					}}>
+				</span>
+				<span className={cn('text-sm sm:text-base', isDark ? 'text-slate-400' : 'text-slate-500')}>
 					/
-				</Typography>
-				<Typography
-					sx={{
-						fontWeight: 600,
-						fontSize: { xs: '0.9rem', sm: '1rem' },
-						color: isDark ? '#cbd5e1' : '#475569',
-					}}>
+				</span>
+				<span className={cn('font-semibold text-sm sm:text-base', isDark ? 'text-slate-300' : 'text-slate-600')}>
 					{totalPages}
-				</Typography>
-			</Box>
+				</span>
+			</div>
 
 			{/* Next Page */}
-			<IconButton
+			<button
 				onClick={onNextPage}
 				disabled={!hasNextPage}
-				sx={{
-					color: hasNextPage ? '#8b5cf6' : 'text.disabled',
-					transition: 'all 0.2s ease',
-					'&:hover:not(:disabled)': {
-						background: 'rgba(139, 92, 246, 0.1)',
-						transform: 'scale(1.1)',
-					},
-					'&:disabled': {
-						opacity: 0.3,
-					},
-				}}>
-				<ChevronRight />
-			</IconButton>
+				className={cn(buttonClass, hasNextPage ? activeColor : disabledColor)}
+			>
+				<ChevronRight className="w-5 h-5" />
+			</button>
 
 			{/* Last Page */}
-			<IconButton
+			<button
 				onClick={onGoToLast}
 				disabled={!hasNextPage}
-				sx={{
-					color: hasNextPage ? '#8b5cf6' : 'text.disabled',
-					transition: 'all 0.2s ease',
-					'&:hover:not(:disabled)': {
-						background: 'rgba(139, 92, 246, 0.1)',
-						transform: 'scale(1.1)',
-					},
-					'&:disabled': {
-						opacity: 0.3,
-					},
-				}}>
-				<LastPage />
-			</IconButton>
-		</Box>
+				className={cn(buttonClass, hasNextPage ? activeColor : disabledColor)}
+			>
+				<ChevronsRight className="w-5 h-5" />
+			</button>
+		</div>
 	)
 }
 

@@ -3,11 +3,12 @@ import { useRef, useMemo } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/context/translation'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { addWordAction } from '@/app/actions/words'
 import { addGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
 import { buildWordData, getOriginalWord } from '@/utils/wordMapping'
 import toast from '@/utils/toast'
-import { Paper, Fade, useTheme, Box, Typography } from '@mui/material'
+import { cn } from '@/lib/utils'
 import { TranslationHeader } from '@/components/translation/TranslationHeader'
 import { TranslationContent } from '@/components/translation/TranslationContent'
 import { CustomTranslationForm } from '@/components/translation/CustomTranslationForm'
@@ -23,8 +24,7 @@ const Translation = ({ materialId, userId }) => {
 
 	const queryClient = useQueryClient()
 	const ref = useRef()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const {
 		translationData: translation,
@@ -161,28 +161,26 @@ const Translation = ({ materialId, userId }) => {
 
 
 	return (
-		<Fade in={isTranslationOpen}>
-			<Paper
+		<div
+			className={cn(
+				'fixed z-[1300]',
+				'transition-opacity duration-200',
+				isTranslationOpen ? 'opacity-100' : 'opacity-0'
+			)}
+			style={position}
+		>
+			<div
 				ref={ref}
-				elevation={8}
-				sx={{
-					position: 'fixed',
-					...position,
-					width: { xs: 'calc(100vw - 40px)', sm: '380px' },
-					maxWidth: '380px',
-					maxHeight: '500px',
-					borderRadius: 4,
-					overflow: 'hidden',
-					overflowX: 'hidden',
-					background: isDark
-						? 'linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
-						: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
-					boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-					zIndex: 1300,
-					display: 'flex',
-					flexDirection: 'column',
-				}}>
-
+				className={cn(
+					'w-[calc(100vw-40px)] sm:w-[380px] max-w-[380px] max-h-[500px]',
+					'rounded-2xl overflow-hidden',
+					'flex flex-col',
+					'shadow-[0_20px_60px_rgba(0,0,0,0.3)]',
+					isDark
+						? 'bg-gradient-to-br from-slate-800/98 to-slate-900/98'
+						: 'bg-gradient-to-br from-white to-slate-50'
+				)}
+			>
 				{/* Header */}
 				<TranslationHeader onClose={handleClose} />
 
@@ -215,11 +213,14 @@ const Translation = ({ materialId, userId }) => {
 				) : (
 				/* No translation found - show message and allow custom translation */
 				<>
-					<Box sx={{ p: 2, textAlign: 'center' }}>
-						<Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+					<div className="p-4 text-center">
+						<p className={cn(
+							'mb-4 text-sm',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
 							{t('no_translation_found') || 'Aucune traduction trouvée'}
-						</Typography>
-					</Box>
+						</p>
+					</div>
 
 					{/* Custom translation form (for all users if not at limit) */}
 					{(isUserLoggedIn || !hasDictionaryLimit) && (
@@ -232,8 +233,8 @@ const Translation = ({ materialId, userId }) => {
 					)}
 				</>
 			)}
-			</Paper>
-		</Fade>
+			</div>
+		</div>
 	)
 }
 

@@ -1,28 +1,13 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react'
-import {
-	Box,
-	IconButton,
-	Slider,
-	Typography,
-	Paper,
-	Tooltip,
-	useTheme,
-} from '@mui/material'
-import {
-	PlayArrowRounded,
-	PauseRounded,
-	VolumeUpRounded,
-	VolumeOffRounded,
-	Forward10Rounded,
-	Replay10Rounded,
-	HeadphonesRounded,
-	SpeedRounded,
-} from '@mui/icons-material'
+import { Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, Headphones, Gauge } from 'lucide-react'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 const Player = ({ src }) => {
 	const audioRef = useRef(null)
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentTime, setCurrentTime] = useState(0)
 	const [duration, setDuration] = useState(0)
@@ -36,16 +21,12 @@ const Player = ({ src }) => {
 		const audio = audioRef.current
 		if (!audio) return
 
-		// Activer la préservation du pitch (empêche la voix de devenir grave/aiguë)
-		// Supporté nativement dans les navigateurs modernes
+		// Enable pitch preservation (prevents voice from becoming deeper/higher)
 		audio.preservesPitch = true
-		// Fallback pour Firefox plus ancien
 		audio.mozPreservesPitch = true
-		// Fallback pour WebKit plus ancien
 		audio.webkitPreservesPitch = true
 
 		const updateTime = () => {
-			// Ne pas mettre à jour le temps si l'utilisateur est en train de seek
 			if (!isSeekingRef.current) {
 				setCurrentTime(audio.currentTime)
 			}
@@ -53,22 +34,18 @@ const Player = ({ src }) => {
 		const updateDuration = () => {
 			if (!isNaN(audio.duration) && audio.duration > 0) {
 				setDuration(audio.duration)
-				} else {
-				}
+			}
 		}
 		const handleEnded = () => {
-			// Ne rien faire - laisser l'audio à la fin
-			// togglePlay gérera la remise à 0 si l'utilisateur clique sur play
+			// Don't do anything - leave audio at the end
 		}
 
 		audio.addEventListener('timeupdate', updateTime)
 		audio.addEventListener('loadedmetadata', updateDuration)
 		audio.addEventListener('durationchange', updateDuration)
-		
-		// Vérifier immédiatement si la durée est déjà disponible (audio en cache)
+
 		if (!isNaN(audio.duration) && audio.duration > 0) {
 			setDuration(audio.duration)
-		} else {
 		}
 		audio.addEventListener('ended', handleEnded)
 		const handlePlay = () => {
@@ -77,29 +54,26 @@ const Player = ({ src }) => {
 		const handlePause = () => {
 			setIsPlaying(false)
 		}
-		
+
 		audio.addEventListener('play', handlePlay)
 		audio.addEventListener('pause', handlePause)
-		
-		// Gérer le seeking
+
 		const handleSeeking = () => {
 			shouldResumeRef.current = !audio.paused
 		}
-		
+
 		const handleSeeked = () => {
 			const timeRemaining = audio.duration - audio.currentTime
-			
-			// Reprendre la lecture si nécessaire et s'il reste plus de 0.5s
+
 			if (shouldResumeRef.current && timeRemaining > 0.5) {
-				audio.play().catch(() => {})
+				audio.play().catch(() => { })
 			}
 			shouldResumeRef.current = false
 		}
-		
-		const handleWaiting = () => {}
-		
-		const handleCanPlay = () => {}
-		
+
+		const handleWaiting = () => { }
+		const handleCanPlay = () => { }
+
 		audio.addEventListener('seeking', handleSeeking)
 		audio.addEventListener('seeked', handleSeeked)
 		audio.addEventListener('waiting', handleWaiting)
@@ -121,8 +95,7 @@ const Player = ({ src }) => {
 
 	const togglePlay = () => {
 		const audio = audioRef.current
-		
-		// If audio not loaded yet, just toggle play/pause
+
 		if (isNaN(audio.duration)) {
 			if (audio.paused) {
 				audio.play()
@@ -131,14 +104,13 @@ const Player = ({ src }) => {
 			}
 			return
 		}
-		
-		// Reset to start only if very close to the end
+
 		const timeRemaining = audio.duration - audio.currentTime
 		if (timeRemaining < 0.5) {
 			audio.currentTime = 0
 			setCurrentTime(0)
 		}
-		
+
 		if (audio.paused) {
 			audio.play()
 		} else {
@@ -150,24 +122,35 @@ const Player = ({ src }) => {
 		isSeekingRef.current = true
 	}
 
-	const handleSeek = (event, newValue) => {
-		setCurrentTime(newValue)
+	const handleSeek = (e) => {
+		const rect = e.currentTarget.getBoundingClientRect()
+		const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+		const newTime = percent * (duration || 100)
+		setCurrentTime(newTime)
 	}
 
-	const handleSeekEnd = (event, newValue) => {
+	const handleSeekEnd = (e) => {
 		const audio = audioRef.current
-		if (!audio || isNaN(audio.duration)) return
-		
-		audio.currentTime = newValue
-		setCurrentTime(newValue)
-		
+		if (!audio || isNaN(audio.duration)) {
+			isSeekingRef.current = false
+			return
+		}
+
+		const rect = e.currentTarget.getBoundingClientRect()
+		const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+		const newTime = percent * duration
+
+		audio.currentTime = newTime
+		setCurrentTime(newTime)
 		isSeekingRef.current = false
 	}
 
-	const handleVolumeChange = (event, newValue) => {
+	const handleVolumeChange = (e) => {
 		const audio = audioRef.current
-		audio.volume = newValue
-		setVolume(newValue)
+		const rect = e.currentTarget.getBoundingClientRect()
+		const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+		audio.volume = percent
+		setVolume(percent)
 	}
 
 	const toggleMute = () => {
@@ -184,7 +167,7 @@ const Player = ({ src }) => {
 	const skip = (seconds) => {
 		const audio = audioRef.current
 		if (!audio || isNaN(audio.duration)) return
-		
+
 		const newTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds))
 		audio.currentTime = newTime
 		setCurrentTime(newTime)
@@ -192,7 +175,6 @@ const Player = ({ src }) => {
 
 	const cyclePlaybackRate = () => {
 		const audio = audioRef.current
-		// Vitesses de réduction uniquement (pour l'apprentissage)
 		const rates = [1, 0.9, 0.8, 0.7, 0.6, 0.5]
 		const currentIndex = rates.indexOf(playbackRate)
 		const nextIndex = (currentIndex + 1) % rates.length
@@ -208,308 +190,219 @@ const Player = ({ src }) => {
 		return `${minutes}:${seconds.toString().padStart(2, '0')}`
 	}
 
+	const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
+
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				justifyContent: 'center',
-				width: '100%',
-				my: 3,
-			}}>
-			<Paper
-				elevation={0}
-				sx={{
-					maxWidth: { xs: '100%', sm: '540px', md: '680px' },
-					width: '100%',
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)',
-					backdropFilter: 'blur(10px)',
-					padding: { xs: '14px 16px', sm: '16px 20px' },
-					borderRadius: 4,
-					border: '2px solid rgba(139, 92, 246, 0.2)',
-					boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15)',
-					display: 'flex',
-					alignItems: 'center',
-					gap: { xs: 1.5, sm: 2 },
-					position: 'relative',
-					transition: 'all 0.3s ease',
-					'&:hover': {
-						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.25)',
-						borderColor: 'rgba(139, 92, 246, 0.35)',
-					},
-				}}>
+		<div className="flex justify-center w-full my-6">
+			<div
+				className={cn(
+					'max-w-full sm:max-w-[540px] md:max-w-[680px] w-full',
+					'py-3.5 px-4 sm:py-4 sm:px-5',
+					'rounded-2xl',
+					'border-2 border-violet-500/20',
+					'shadow-[0_8px_32px_rgba(139,92,246,0.15)]',
+					'flex items-center gap-3 sm:gap-4',
+					'transition-all duration-300',
+					'hover:shadow-[0_12px_40px_rgba(139,92,246,0.25)]',
+					'hover:border-violet-500/35',
+					isDark
+						? 'bg-gradient-to-br from-slate-800/98 to-slate-900/98 backdrop-blur-sm'
+						: 'bg-gradient-to-br from-white/98 to-slate-50/98 backdrop-blur-sm'
+				)}
+			>
 				<audio ref={audioRef} src={src} preload='metadata' />
 
-				{/* Icône décorative */}
-				<Box
-					sx={{
-						display: { xs: 'none', sm: 'flex' },
-						alignItems: 'center',
-						justifyContent: 'center',
-						width: 42,
-						height: 42,
-						borderRadius: 2,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-						border: '1px solid rgba(139, 92, 246, 0.2)',
-						flexShrink: 0,
-					}}>
-					<HeadphonesRounded sx={{ fontSize: '1.4rem', color: '#8b5cf6' }} />
-				</Box>
+				{/* Decorative icon */}
+				<div
+					className={cn(
+						'hidden sm:flex items-center justify-center',
+						'w-[42px] h-[42px] rounded-lg flex-shrink-0',
+						'bg-gradient-to-br from-violet-500/12 to-cyan-500/8',
+						'border border-violet-500/20'
+					)}
+				>
+					<Headphones className="w-6 h-6 text-violet-500" />
+				</div>
 
 				{/* Playback Controls */}
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: { xs: 0.5, sm: 1 },
-						flexShrink: 0,
-					}}>
-					<Tooltip title='Reculer de 10s' placement='top'>
-						<IconButton
-							onClick={() => skip(-10)}
-							size='small'
-							sx={{
-								color: isDark ? '#94a3b8' : '#64748b',
-								width: { xs: 38, sm: 42 },
-								height: { xs: 38, sm: 42 },
-								background: 'rgba(139, 92, 246, 0.06)',
-								border: '1px solid rgba(139, 92, 246, 0.15)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-									color: '#8b5cf6',
-									transform: 'scale(1.05)',
-									borderColor: 'rgba(139, 92, 246, 0.3)',
-								},
-								transition: 'all 0.2s ease',
-							}}>
-							<Replay10Rounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
-						</IconButton>
-					</Tooltip>
-
-					<IconButton
-						onClick={togglePlay}
-						sx={{
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							color: 'white',
-							width: { xs: 48, sm: 54 },
-							height: { xs: 48, sm: 54 },
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
-							'&:hover': {
-								background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-								transform: 'scale(1.05)',
-								boxShadow: '0 6px 28px rgba(139, 92, 246, 0.4)',
-							},
-							transition: 'all 0.2s ease',
-							...(isPlaying && {
-								animation: 'pulse 2s ease-in-out infinite',
-								'@keyframes pulse': {
-									'0%, 100%': {
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
-									},
-									'50%': {
-										boxShadow: '0 6px 32px rgba(139, 92, 246, 0.5)',
-									},
-								},
-							}),
-						}}>
-						{isPlaying ? (
-							<PauseRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.6rem' } }} />
-						) : (
-							<PlayArrowRounded sx={{ fontSize: { xs: '1.5rem', sm: '1.6rem' } }} />
+				<div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+					<button
+						onClick={() => skip(-10)}
+						title="Reculer de 10s"
+						className={cn(
+							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'flex items-center justify-center',
+							'bg-violet-500/6 border border-violet-500/15',
+							'transition-all duration-200',
+							'hover:bg-gradient-to-br hover:from-violet-500/12 hover:to-cyan-500/8',
+							'hover:text-violet-500 hover:scale-105 hover:border-violet-500/30',
+							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}
-					</IconButton>
+					>
+						<SkipBack className="w-5 h-5" />
+					</button>
 
-					<Tooltip title='Avancer de 10s' placement='top'>
-						<IconButton
-							onClick={() => skip(10)}
-							size='small'
-							sx={{
-								color: isDark ? '#94a3b8' : '#64748b',
-								width: { xs: 38, sm: 42 },
-								height: { xs: 38, sm: 42 },
-								background: 'rgba(139, 92, 246, 0.06)',
-								border: '1px solid rgba(139, 92, 246, 0.15)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-									color: '#8b5cf6',
-									transform: 'scale(1.05)',
-									borderColor: 'rgba(139, 92, 246, 0.3)',
-								},
-								transition: 'all 0.2s ease',
-							}}>
-							<Forward10Rounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
-						</IconButton>
-					</Tooltip>
-				</Box>
+					<button
+						onClick={togglePlay}
+						className={cn(
+							'w-12 h-12 sm:w-14 sm:h-14 rounded-full',
+							'flex items-center justify-center',
+							'bg-gradient-to-br from-violet-500 to-cyan-500',
+							'text-white',
+							'shadow-[0_4px_20px_rgba(139,92,246,0.3)]',
+							'transition-all duration-200',
+							'hover:from-violet-600 hover:to-cyan-600',
+							'hover:scale-105 hover:shadow-[0_6px_28px_rgba(139,92,246,0.4)]'
+						)}
+					>
+						{isPlaying ? (
+							<Pause className="w-6 h-6" />
+						) : (
+							<Play className="w-6 h-6 ml-0.5" />
+						)}
+					</button>
+
+					<button
+						onClick={() => skip(10)}
+						title="Avancer de 10s"
+						className={cn(
+							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'flex items-center justify-center',
+							'bg-violet-500/6 border border-violet-500/15',
+							'transition-all duration-200',
+							'hover:bg-gradient-to-br hover:from-violet-500/12 hover:to-cyan-500/8',
+							'hover:text-violet-500 hover:scale-105 hover:border-violet-500/30',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}
+					>
+						<SkipForward className="w-5 h-5" />
+					</button>
+				</div>
 
 				{/* Progress Bar with time */}
-				<Box sx={{ flex: 1, minWidth: 0 }}>
-					<Slider
-						value={currentTime}
-						max={duration || 100}
-						onChange={handleSeek}
-						onChangeCommitted={handleSeekEnd}
+				<div className="flex-1 min-w-0">
+					<div
+						className="relative h-1 w-full cursor-pointer group"
 						onMouseDown={handleSeekStart}
-						onTouchStart={handleSeekStart}
-						sx={{
-							color: '#8b5cf6',
-							height: 4,
-							padding: 0,
-							'& .MuiSlider-track': {
-								border: 'none',
-								background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
-							},
-							'& .MuiSlider-thumb': {
-								height: 14,
-								width: 14,
-								backgroundColor: '#8b5cf6',
-								border: '2px solid white',
-								boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
-								'&:hover, &.Mui-focusVisible': {
-									boxShadow: '0 0 0 6px rgba(139, 92, 246, 0.16)',
-								},
-								'&:active': {
-									height: 16,
-									width: 16,
-								},
-							},
-							'& .MuiSlider-rail': {
-								backgroundColor: 'rgba(139, 92, 246, 0.15)',
-								height: 4,
-							},
-						}}
-					/>
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							color: isDark ? '#94a3b8' : '#64748b',
-							fontSize: '0.7rem',
-							fontWeight: 600,
-							mt: 0.5,
-						}}>
-						<Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}>
+						onClick={handleSeekEnd}
+					>
+						{/* Rail */}
+						<div className="absolute inset-0 rounded-full bg-violet-500/15" />
+						{/* Track */}
+						<div
+							className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500"
+							style={{ width: `${progressPercent}%` }}
+						/>
+						{/* Thumb */}
+						<div
+							className={cn(
+								'absolute top-1/2 -translate-y-1/2 -translate-x-1/2',
+								'w-3.5 h-3.5 rounded-full',
+								'bg-violet-500 border-2 border-white',
+								'shadow-[0_2px_8px_rgba(139,92,246,0.3)]',
+								'transition-all duration-150',
+								'group-hover:scale-110 group-hover:shadow-[0_0_0_6px_rgba(139,92,246,0.16)]'
+							)}
+							style={{ left: `${progressPercent}%` }}
+						/>
+					</div>
+					<div className="flex justify-between mt-1.5">
+						<span className={cn(
+							'text-[0.7rem] font-semibold',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
 							{formatTime(currentTime)}
-						</Typography>
-						<Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}>
+						</span>
+						<span className={cn(
+							'text-[0.7rem] font-semibold',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
 							{formatTime(duration)}
-						</Typography>
-					</Box>
-				</Box>
+						</span>
+					</div>
+				</div>
 
 				{/* Playback Speed Control */}
-				<Tooltip title='Vitesse de lecture' placement='top'>
-					<IconButton
-						onClick={cyclePlaybackRate}
-						size='small'
-						sx={{
-							color: playbackRate === 1 ? (isDark ? '#94a3b8' : '#64748b') : '#8b5cf6',
-							width: { xs: 52, sm: 58 },
-							height: { xs: 38, sm: 42 },
-							background: playbackRate === 1
-								? 'rgba(139, 92, 246, 0.06)'
-								: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-							border: `1px solid ${playbackRate === 1 ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.3)'}`,
-							display: 'flex',
-							alignItems: 'center',
-							gap: 0.5,
-							flexShrink: 0,
-							'&:hover': {
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-								color: '#8b5cf6',
-								transform: 'scale(1.05)',
-								borderColor: 'rgba(139, 92, 246, 0.3)',
-							},
-							transition: 'all 0.2s ease',
-						}}>
-						<SpeedRounded sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }} />
-						<Typography
-							sx={{
-								fontSize: { xs: '0.65rem', sm: '0.7rem' },
-								fontWeight: 700,
-								lineHeight: 1,
-							}}>
-							{playbackRate}x
-						</Typography>
-					</IconButton>
-				</Tooltip>
+				<button
+					onClick={cyclePlaybackRate}
+					title="Vitesse de lecture"
+					className={cn(
+						'w-[52px] sm:w-[58px] h-[38px] sm:h-[42px] rounded-lg',
+						'flex items-center justify-center gap-1 flex-shrink-0',
+						'border transition-all duration-200',
+						'hover:bg-gradient-to-br hover:from-violet-500/12 hover:to-cyan-500/8',
+						'hover:text-violet-500 hover:scale-105 hover:border-violet-500/30',
+						playbackRate === 1
+							? cn(
+								'bg-violet-500/6 border-violet-500/15',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)
+							: 'bg-gradient-to-br from-violet-500/12 to-cyan-500/8 border-violet-500/30 text-violet-500'
+					)}
+				>
+					<Gauge className="w-4 h-4 sm:w-[1.1rem] sm:h-[1.1rem]" />
+					<span className="text-[0.65rem] sm:text-[0.7rem] font-bold leading-none">
+						{playbackRate}x
+					</span>
+				</button>
 
 				{/* Volume Control */}
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 0.5,
-						flexShrink: 0,
-					}}
+				<div
+					className="flex items-center gap-1 flex-shrink-0"
 					onMouseEnter={() => setShowVolumeSlider(true)}
-					onMouseLeave={() => setShowVolumeSlider(false)}>
-					<Box
-						sx={{
-							width: showVolumeSlider ? { xs: 0, sm: 100 } : 0,
-							opacity: showVolumeSlider ? 1 : 0,
-							transition: 'all 0.3s ease',
-							overflow: 'visible',
-							display: { xs: 'none', sm: 'block' },
-						marginRight: showVolumeSlider ? '12px' : 0,
-						}}>
-						<Slider
-							value={volume}
-							onChange={handleVolumeChange}
-							min={0}
-							max={1}
-							step={0.01}
-							sx={{
-								color: '#8b5cf6',
-								'& .MuiSlider-track': {
-									border: 'none',
-									background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
-								},
-								'& .MuiSlider-thumb': {
-									width: 12,
-									height: 12,
-									backgroundColor: '#8b5cf6',
-									border: '2px solid white',
-									boxShadow: '0 2px 6px rgba(139, 92, 246, 0.3)',
-									'&:hover, &.Mui-focusVisible': {
-										boxShadow: '0 0 0 6px rgba(139, 92, 246, 0.16)',
-									},
-								},
-								'& .MuiSlider-rail': {
-									backgroundColor: 'rgba(139, 92, 246, 0.15)',
-								},
-							}}
-						/>
-					</Box>
-					<Tooltip title={volume > 0 ? 'Muet' : 'Son'} placement='top'>
-						<IconButton
-							onClick={toggleMute}
-							size='small'
-							sx={{
-								color: isDark ? '#94a3b8' : '#64748b',
-								width: { xs: 38, sm: 42 },
-								height: { xs: 38, sm: 42 },
-								background: 'rgba(139, 92, 246, 0.06)',
-								border: '1px solid rgba(139, 92, 246, 0.15)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-									color: '#8b5cf6',
-									transform: 'scale(1.05)',
-									borderColor: 'rgba(139, 92, 246, 0.3)',
-								},
-								transition: 'all 0.2s ease',
-							}}>
-							{volume > 0 ? (
-								<VolumeUpRounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
-							) : (
-								<VolumeOffRounded sx={{ fontSize: { xs: '1.2rem', sm: '1.3rem' } }} />
-							)}
-						</IconButton>
-					</Tooltip>
-				</Box>
-			</Paper>
-		</Box>
+					onMouseLeave={() => setShowVolumeSlider(false)}
+				>
+					{/* Volume Slider (desktop only) */}
+					<div
+						className={cn(
+							'hidden sm:block overflow-visible transition-all duration-300',
+							showVolumeSlider ? 'w-[100px] opacity-100 mr-3' : 'w-0 opacity-0'
+						)}
+					>
+						<div
+							className="relative h-1 w-full cursor-pointer group"
+							onClick={handleVolumeChange}
+						>
+							<div className="absolute inset-0 rounded-full bg-violet-500/15" />
+							<div
+								className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500"
+								style={{ width: `${volume * 100}%` }}
+							/>
+							<div
+								className={cn(
+									'absolute top-1/2 -translate-y-1/2 -translate-x-1/2',
+									'w-3 h-3 rounded-full',
+									'bg-violet-500 border-2 border-white',
+									'shadow-[0_2px_6px_rgba(139,92,246,0.3)]',
+									'group-hover:shadow-[0_0_0_6px_rgba(139,92,246,0.16)]'
+								)}
+								style={{ left: `${volume * 100}%` }}
+							/>
+						</div>
+					</div>
+
+					<button
+						onClick={toggleMute}
+						title={volume > 0 ? 'Muet' : 'Son'}
+						className={cn(
+							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'flex items-center justify-center',
+							'bg-violet-500/6 border border-violet-500/15',
+							'transition-all duration-200',
+							'hover:bg-gradient-to-br hover:from-violet-500/12 hover:to-cyan-500/8',
+							'hover:text-violet-500 hover:scale-105 hover:border-violet-500/30',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}
+					>
+						{volume > 0 ? (
+							<Volume2 className="w-5 h-5" />
+						) : (
+							<VolumeX className="w-5 h-5" />
+						)}
+					</button>
+				</div>
+			</div>
+		</div>
 	)
 }
 

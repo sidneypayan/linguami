@@ -1,37 +1,190 @@
 'use client'
 
+import { useState, useCallback, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { FaEnvelope, FaMicrosoft } from 'react-icons/fa'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { getUIImageUrl } from '@/utils/mediaUrls'
-import {
-	Box,
-	Button,
-	Card,
-	CardContent,
-	Container,
-	Stack,
-	Typography,
-	Avatar,
-	IconButton,
-	useTheme,
-} from '@mui/material'
-import { FormatQuote, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { cn } from '@/lib/utils'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
-import { useState, useCallback, useEffect } from 'react'
+import {
+	Mail,
+	MessageSquare,
+	Quote,
+	ChevronLeft,
+	ChevronRight,
+	Sparkles,
+	Star,
+	GraduationCap,
+	Users,
+	Clock,
+	Globe,
+} from 'lucide-react'
 
-export default function Teacher() {
+// ============================================
+// ORNATE FRAME COMPONENT (Fantasy Style)
+// ============================================
+const OrnateFrame = ({ children, className, isDark, allowOverflow = false }) => {
+	return (
+		<div className={cn(
+			'relative rounded-2xl',
+			allowOverflow ? 'overflow-visible' : 'overflow-hidden',
+			'border-2',
+			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
+			'shadow-lg',
+			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			className
+		)}>
+			{/* Corner decorations */}
+			<div className={cn(
+				'absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 rounded-tl-2xl',
+				isDark ? 'border-violet-400/30' : 'border-violet-500/20'
+			)} />
+			<div className={cn(
+				'absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 rounded-tr-2xl',
+				isDark ? 'border-violet-400/30' : 'border-violet-500/20'
+			)} />
+			<div className={cn(
+				'absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 rounded-bl-2xl',
+				isDark ? 'border-violet-400/30' : 'border-violet-500/20'
+			)} />
+			<div className={cn(
+				'absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 rounded-br-2xl',
+				isDark ? 'border-violet-400/30' : 'border-violet-500/20'
+			)} />
+			{children}
+		</div>
+	)
+}
+
+// ============================================
+// FEATURE CARD COMPONENT
+// ============================================
+const FeatureCard = ({ icon: Icon, title, description, isDark, color = 'violet' }) => {
+	const colorClasses = {
+		violet: {
+			icon: 'from-violet-500 to-purple-600',
+			shadow: 'shadow-violet-500/30',
+		},
+		cyan: {
+			icon: 'from-cyan-500 to-teal-600',
+			shadow: 'shadow-cyan-500/30',
+		},
+		amber: {
+			icon: 'from-amber-500 to-orange-600',
+			shadow: 'shadow-amber-500/30',
+		},
+		emerald: {
+			icon: 'from-emerald-500 to-green-600',
+			shadow: 'shadow-emerald-500/30',
+		},
+	}
+
+	const colors = colorClasses[color]
+
+	return (
+		<div className={cn(
+			'p-6 rounded-xl text-center',
+			'border transition-all duration-300',
+			isDark
+				? 'bg-slate-800/50 border-slate-700/50 hover:border-violet-500/30'
+				: 'bg-white/80 border-slate-200 hover:border-violet-400/50',
+			'hover:transform hover:-translate-y-1'
+		)}>
+			<div className={cn(
+				'w-14 h-14 mx-auto mb-4 rounded-xl',
+				'bg-gradient-to-br flex items-center justify-center',
+				'shadow-lg',
+				colors.icon,
+				colors.shadow
+			)}>
+				<Icon className="w-7 h-7 text-white" />
+			</div>
+			<h3 className={cn(
+				'font-bold text-lg mb-2',
+				isDark ? 'text-slate-100' : 'text-slate-800'
+			)}>
+				{title}
+			</h3>
+			<p className={cn(
+				'text-sm',
+				isDark ? 'text-slate-400' : 'text-slate-600'
+			)}>
+				{description}
+			</p>
+		</div>
+	)
+}
+
+// ============================================
+// REVIEW CARD COMPONENT
+// ============================================
+const ReviewCard = ({ name, text, isDark }) => {
+	return (
+		<OrnateFrame
+			isDark={isDark}
+			allowOverflow={true}
+			className={cn(
+				'h-full transition-all duration-300',
+				'hover:transform hover:-translate-y-2',
+				isDark ? 'hover:shadow-violet-500/20' : 'hover:shadow-violet-400/30'
+			)}
+		>
+			{/* Quote icon */}
+			<div className={cn(
+				'absolute -top-4 left-6',
+				'w-10 h-10 rounded-full',
+				'bg-gradient-to-br from-violet-500 to-cyan-500',
+				'flex items-center justify-center',
+				'shadow-lg shadow-violet-500/30',
+				'border-2',
+				isDark ? 'border-slate-900' : 'border-white'
+			)}>
+				<Quote className="w-5 h-5 text-white" />
+			</div>
+
+			<div className="p-6 pt-8">
+				{/* Stars */}
+				<div className="flex justify-center gap-1 mb-4">
+					{[...Array(5)].map((_, i) => (
+						<Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
+					))}
+				</div>
+
+				{/* Name */}
+				<h4 className={cn(
+					'text-xl font-bold text-center mb-4',
+					isDark ? 'text-slate-100' : 'text-slate-800'
+				)}>
+					{name}
+				</h4>
+
+				{/* Review text */}
+				<p className={cn(
+					'text-sm leading-relaxed text-center',
+					isDark ? 'text-slate-400' : 'text-slate-600'
+				)}>
+					{text}
+				</p>
+			</div>
+		</OrnateFrame>
+	)
+}
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
+export default function TeacherClient() {
 	const t = useTranslations('teacher')
 	const locale = useLocale()
 	const { userLearningLanguage } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
-	// Déterminer la langue d'apprentissage (fallback sur lang si pas défini)
+	// Determine learning language (fallback if not set)
 	const learningLang = userLearningLanguage || (locale === 'ru' ? 'fr' : 'ru')
 
-	// Si l'utilisateur apprend le russe → Natacha, si français → Sidney
+	// If user learns Russian -> Natacha, if French -> Sidney
 	const isLearningRussian = learningLang === 'ru'
 	const teacherName = isLearningRussian ? 'Natacha' : 'Sidney'
 	const img = isLearningRussian
@@ -41,7 +194,7 @@ export default function Teacher() {
 	// Embla Carousel setup
 	const [emblaRef, emblaApi] = useEmblaCarousel(
 		{
-			loop: false,
+			loop: true,
 			align: 'start',
 			skipSnaps: false,
 		},
@@ -73,444 +226,398 @@ export default function Teacher() {
 	const reviews = [
 		{
 			name: 'David',
-			text: "Natacha se donne beaucoup de mal pour préparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
-			color: '#8b5cf6',
+			text: "Natacha se donne beaucoup de mal pour preparer le cours suivant en fonction du besoin du moment. Les moyens pour apprendre sont sur mesure. Super ambiance. J'attends chaque cours avec impatience",
 		},
 		{
 			name: 'Carole',
-			text: "Je suis très satisfaite du cours. Natalia est attentive aux différents besoins des élèves, gentille et agréable. L'apprentissage est rapide et facile grâce à sa pedagogie. Autres points forts, la flexibilité pour les horaires et le bon matériel didactique (livres, audios) mis à disposition",
-			color: '#06b6d4',
+			text: "Je suis tres satisfaite du cours. Natalia est attentive aux differents besoins des eleves, gentille et agreable. L'apprentissage est rapide et facile grace a sa pedagogie. Autres points forts, la flexibilite pour les horaires et le bon materiel didactique mis a disposition",
 		},
 		{
 			name: 'Daniel',
-			text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis très satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages à Saint Petersbourg. Sa méthode d'apprentissage est facile et complète",
-			color: '#8b5cf6',
+			text: "Depuis 1 an j'apprends le Russe avec Natacha et je suis tres satisfait de ma professeure, je progresse facilement et j'ai pu commencer quelques dialogues lors de 2 voyages a Saint Petersbourg. Sa methode d'apprentissage est facile et complete",
+		},
+	]
+
+	const features = [
+		{
+			icon: GraduationCap,
+			title: t('featurePersonalized'),
+			description: t('featurePersonalizedDesc'),
+			color: 'violet',
+		},
+		{
+			icon: Clock,
+			title: t('featureFlexible'),
+			description: t('featureFlexibleDesc'),
+			color: 'cyan',
+		},
+		{
+			icon: Users,
+			title: t('featureExperience'),
+			description: t('featureExperienceDesc'),
+			color: 'amber',
+		},
+		{
+			icon: Globe,
+			title: t('featureOnline'),
+			description: t('featureOnlineDesc'),
+			color: 'emerald',
 		},
 	]
 
 	return (
-		<>
-			{/* Hero Section */}
-			<Box
-				sx={{
-					background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-					pt: { xs: 12, sm: 14, md: 16 },
-					pb: { xs: 10, sm: 12, md: 14 },
-					position: 'relative',
-					overflow: 'hidden',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
-				}}>
-				<Container
-					maxWidth='md'
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-						position: 'relative',
-						zIndex: 1,
-					}}>
-					{/* Photo avec effet */}
-					<Box
-						sx={{
-							position: 'relative',
-							mb: 4,
-						}}>
-						<Box
-							sx={{
-								position: 'absolute',
-								top: '50%',
-								left: '50%',
-								transform: 'translate(-50%, -50%)',
-								width: { xs: 240, sm: 280 },
-								height: { xs: 240, sm: 280 },
-								borderRadius: '50%',
-								background: 'rgba(255, 255, 255, 0.2)',
-								animation: 'pulse 3s ease-in-out infinite',
-								'@keyframes pulse': {
-									'0%, 100%': {
-										transform: 'translate(-50%, -50%) scale(1)',
-										opacity: 0.5,
-									},
-									'50%': {
-										transform: 'translate(-50%, -50%) scale(1.1)',
-										opacity: 0.3,
-									},
-								},
-							}}
-						/>
-						<Avatar
-							src={img}
-							alt='teacher'
-							sx={{
-								width: { xs: 200, sm: 240 },
-								height: { xs: 200, sm: 240 },
-								border: '8px solid rgba(255, 255, 255, 0.95)',
-								boxShadow: '0 16px 60px rgba(139, 92, 246, 0.4), 0 0 40px rgba(6, 182, 212, 0.3)',
-								position: 'relative',
-								zIndex: 1,
-							}}
-						/>
-					</Box>
+		<div className={cn(
+			'min-h-screen',
+			isDark
+				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
+				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-50 via-slate-50 to-white'
+		)}>
+			{/* ============================================ */}
+			{/* HERO SECTION */}
+			{/* ============================================ */}
+			<section className="relative pt-24 md:pt-32 pb-20 md:pb-28 overflow-hidden">
+				{/* Animated background orbs */}
+				<div className="absolute inset-0 overflow-hidden pointer-events-none">
+					<div className={cn(
+						'absolute top-20 left-1/4 w-72 h-72 rounded-full blur-3xl',
+						isDark ? 'bg-violet-600/20' : 'bg-violet-400/30'
+					)} />
+					<div className={cn(
+						'absolute bottom-20 right-1/4 w-96 h-96 rounded-full blur-3xl',
+						isDark ? 'bg-cyan-600/20' : 'bg-cyan-400/20'
+					)} />
+				</div>
 
-					{/* Titre principal */}
-					<Typography
-						variant='h3'
-						align='center'
-						sx={{
-							color: 'white',
-							fontWeight: 800,
-							fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-							mb: 2,
-							textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-							px: 2,
-						}}>
+				<div className="relative max-w-4xl mx-auto px-4 text-center">
+					{/* Teacher avatar with fantasy frame */}
+					<div className="relative inline-block mb-8">
+						{/* Glowing ring animation */}
+						<div className={cn(
+							'absolute inset-0 rounded-full',
+							'bg-gradient-to-r from-violet-500 via-cyan-500 to-violet-500',
+							'animate-spin-slow opacity-50 blur-sm',
+							'scale-110'
+						)}
+						style={{ animationDuration: '8s' }}
+						/>
+						{/* Pulse effect */}
+						<div className={cn(
+							'absolute inset-0 rounded-full',
+							'bg-gradient-to-r from-violet-500/50 to-cyan-500/50',
+							'animate-pulse scale-125'
+						)} />
+						{/* Avatar container */}
+						<div className={cn(
+							'relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden',
+							'border-4',
+							isDark ? 'border-violet-400/50' : 'border-white',
+							'shadow-2xl',
+							isDark ? 'shadow-violet-500/30' : 'shadow-violet-400/40'
+						)}>
+							<img
+								src={img}
+								alt={teacherName}
+								className="w-full h-full object-cover"
+							/>
+						</div>
+						{/* Sparkle decorations */}
+						<Sparkles className={cn(
+							'absolute -top-2 -right-2 w-8 h-8',
+							isDark ? 'text-amber-400' : 'text-amber-500'
+						)} />
+						<Sparkles className={cn(
+							'absolute -bottom-2 -left-2 w-6 h-6',
+							isDark ? 'text-cyan-400' : 'text-cyan-500'
+						)} />
+					</div>
+
+					{/* Title */}
+					<h1 className={cn(
+						'text-4xl md:text-5xl lg:text-6xl font-black mb-4',
+						'bg-gradient-to-r from-violet-500 via-purple-500 to-cyan-500',
+						'bg-clip-text text-transparent'
+					)}>
 						{t(isLearningRussian ? 'titleRussian' : 'titleFrench')}
-					</Typography>
+					</h1>
 
-					{/* Sous-titre */}
-						<Typography
-							variant='h6'
-							align='center'
-							sx={{
-								color: 'rgba(255, 255, 255, 0.95)',
-								fontWeight: 500,
-								fontSize: { xs: '1rem', sm: '1.25rem' },
-								mb: 4,
-								px: 2,
-								lineHeight: 1.6,
-							}}>
-							{t(isLearningRussian ? 'subtitleRussian' : 'subtitleFrench')}
-						</Typography>
+					{/* Subtitle */}
+					<p className={cn(
+						'text-lg md:text-xl mb-8 max-w-2xl mx-auto',
+						isDark ? 'text-slate-300' : 'text-slate-600'
+					)}>
+						{t(isLearningRussian ? 'subtitleRussian' : 'subtitleFrench')}
+					</p>
 
-					{/* Label contact */}
-					<Typography
-						variant='body1'
-						sx={{
-							color: 'rgba(255, 255, 255, 0.9)',
-							fontWeight: 600,
-							mb: 3,
-							fontSize: { xs: '1rem', sm: '1.125rem' },
-						}}>
+					{/* Contact label */}
+					<p className={cn(
+						'text-sm font-semibold mb-4 uppercase tracking-wider',
+						isDark ? 'text-violet-400' : 'text-violet-600'
+					)}>
 						{t(isLearningRussian ? 'contactRussian' : 'contactFrench')}
-					</Typography>
+					</p>
 
-					{/* Boutons de contact */}
-					<Stack
-						direction={{ xs: 'column', sm: 'row' }}
-						gap={2}
-						sx={{
-							width: { xs: '100%', sm: 'auto' },
-							px: { xs: 2, sm: 0 },
-						}}>
-						<Button
+					{/* Contact buttons */}
+					<div className="flex flex-col sm:flex-row gap-4 justify-center">
+						<a
 							href={t(isLearningRussian ? 'teamsRussian' : 'teamsFrench')}
-							variant='contained'
-							startIcon={<FaMicrosoft />}
-							sx={{
-								background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
-								color: '#8b5cf6',
-								border: '2px solid rgba(139, 92, 246, 0.3)',
-								fontWeight: 700,
-								fontSize: { xs: '1rem', sm: '1.125rem' },
-								padding: { xs: '14px 36px', sm: '16px 44px' },
-								borderRadius: 3,
-								textTransform: 'none',
-								boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.98) 100%)',
-									transform: 'translateY(-4px)',
-									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-									borderColor: 'rgba(139, 92, 246, 0.5)',
-								},
-								'&:active': {
-									transform: 'translateY(-2px)',
-								},
-							}}>
+							className={cn(
+								'inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl',
+								'font-bold text-lg',
+								'bg-gradient-to-r from-violet-600 to-purple-600',
+								'text-white shadow-lg shadow-violet-500/30',
+								'hover:shadow-xl hover:shadow-violet-500/40',
+								'hover:scale-105 transition-all duration-300',
+								'border-2 border-violet-400/30'
+							)}
+						>
+							<MessageSquare className="w-5 h-5" />
 							Teams
-						</Button>
-						<Button
+						</a>
+						<a
 							href={t(isLearningRussian ? 'mailRussian' : 'mailFrench')}
-							variant='outlined'
-							startIcon={<FaEnvelope />}
-							sx={{
-								borderColor: 'rgba(255, 255, 255, 0.8)',
-								backgroundColor: 'rgba(255, 255, 255, 0.15)',
-								backdropFilter: 'blur(10px)',
-								color: 'white',
-								border: '2px solid rgba(255, 255, 255, 0.8)',
-								fontWeight: 700,
-								fontSize: { xs: '1rem', sm: '1.125rem' },
-								padding: { xs: '14px 36px', sm: '16px 44px' },
-								borderRadius: 3,
-								textTransform: 'none',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									backgroundColor: 'rgba(255, 255, 255, 0.25)',
-									borderColor: 'white',
-									borderWidth: '2px',
-									transform: 'translateY(-4px)',
-									boxShadow: '0 8px 32px rgba(255, 255, 255, 0.3)',
-								},
-								'&:active': {
-									transform: 'translateY(-2px)',
-								},
-							}}>
-							Mail
-						</Button>
-					</Stack>
-				</Container>
+							className={cn(
+								'inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl',
+								'font-bold text-lg',
+								'border-2 transition-all duration-300',
+								isDark
+									? 'border-slate-600 text-slate-200 hover:bg-slate-800 hover:border-violet-500/50'
+									: 'border-slate-300 text-slate-700 hover:bg-white hover:border-violet-400',
+								'hover:scale-105'
+							)}
+						>
+							<Mail className="w-5 h-5" />
+							Email
+						</a>
+					</div>
+				</div>
+			</section>
 
-				{/* Modern diagonal separator */}
-				<Box
-					sx={{
-						position: 'absolute',
-						bottom: -1,
-						left: 0,
-						right: 0,
-						height: { xs: '41px', md: '81px' },
-						bgcolor: 'background.default',
-						clipPath: 'polygon(0 50%, 100% 0, 100% 100%, 0 100%)',
-					}}
-				/>
-			</Box>
+			{/* ============================================ */}
+			{/* FEATURES SECTION */}
+			{/* ============================================ */}
+			<section className="py-16 md:py-20 px-4">
+				<div className="max-w-5xl mx-auto">
+					<div className="text-center mb-12">
+						<h2 className={cn(
+							'text-3xl md:text-4xl font-black mb-4',
+							isDark ? 'text-slate-100' : 'text-slate-800'
+						)}>
+							{t('featuresTitle')}
+						</h2>
+						<p className={cn(
+							'text-lg',
+							isDark ? 'text-slate-400' : 'text-slate-600'
+						)}>
+							{t('featuresSubtitle')}
+						</p>
+					</div>
 
-			{/* Section de présentation */}
-			<Container
-				maxWidth='md'
-				sx={{
-					py: { xs: 6, sm: 8, md: 10 },
-					px: { xs: 2, sm: 3 },
-				}}>
-				<Typography
-					variant='body1'
-					sx={{
-						fontSize: { xs: '1.0625rem', sm: '1.125rem' },
-						lineHeight: 1.8,
-						color: isDark ? '#cbd5e1' : '#4a5568',
-						textAlign: 'center',
-						mb: 6,
-					}}>
-					{t(isLearningRussian ? 'textRussian' : 'textFrench')}
-				</Typography>
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+						{features.map((feature, index) => (
+							<FeatureCard
+								key={index}
+								icon={feature.icon}
+								title={feature.title}
+								description={feature.description}
+								isDark={isDark}
+								color={feature.color}
+							/>
+						))}
+					</div>
+				</div>
+			</section>
 
-				{/* Section des avis */}
-				{isLearningRussian && (
-					<Box sx={{ mt: { xs: 6, md: 8 } }}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontWeight: 700,
-								fontSize: { xs: '1.75rem', md: '2rem' },
-								mb: 1,
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{t('reviewsTitle')}
-						</Typography>
-						<Typography
-							variant='subtitle1'
-							align='center'
-							sx={{
-								color: isDark ? '#94a3b8' : '#718096',
-								mb: 5,
-							}}>
-							{t('reviewsSubtitle')}
-						</Typography>
+			{/* ============================================ */}
+			{/* ABOUT SECTION */}
+			{/* ============================================ */}
+			<section className="py-16 md:py-20 px-4">
+				<div className="max-w-3xl mx-auto">
+					<OrnateFrame isDark={isDark} className="p-8 md:p-12">
+						<div className="text-center">
+							<div className={cn(
+								'w-16 h-16 mx-auto mb-6 rounded-full',
+								'bg-gradient-to-br from-violet-500 to-cyan-500',
+								'flex items-center justify-center',
+								'shadow-lg shadow-violet-500/30'
+							)}>
+								<GraduationCap className="w-8 h-8 text-white" />
+							</div>
+							<h2 className={cn(
+								'text-2xl md:text-3xl font-bold mb-6',
+								isDark ? 'text-slate-100' : 'text-slate-800'
+							)}>
+								{t(isLearningRussian ? 'aboutTitleRussian' : 'aboutTitleFrench')}
+							</h2>
+							<p className={cn(
+								'text-base md:text-lg leading-relaxed',
+								isDark ? 'text-slate-300' : 'text-slate-600'
+							)}>
+								{t(isLearningRussian ? 'textRussian' : 'textFrench')}
+							</p>
+						</div>
+					</OrnateFrame>
+				</div>
+			</section>
 
-						<Box sx={{ py: { xs: 3, md: 4 }, mt: 2 }}>
-							<Box ref={emblaRef} sx={{ overflow: 'hidden' }}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'stretch',
-										gap: { xs: 2, sm: 3, md: 4 },
-										px: { xs: 0, md: 2 },
-										pt: 3,
-										'& > *': {
-											flex: '0 0 100%',
-											minWidth: 0,
-											'@media (min-width: 768px)': {
-												flex: '0 0 calc(50% - 12px)',
-											},
-											'@media (min-width: 1024px)': {
-												flex: '0 0 calc(33.333% - 21.333px)',
-											},
-										},
-									}}>
+			{/* ============================================ */}
+			{/* REVIEWS SECTION (Only for Russian) */}
+			{/* ============================================ */}
+			{isLearningRussian && (
+				<section className="py-16 md:py-20 px-4">
+					<div className="max-w-5xl mx-auto">
+						{/* Section header */}
+						<div className="text-center mb-12">
+							<div className="flex items-center justify-center gap-2 mb-4">
+								<Star className={cn(
+									'w-6 h-6',
+									isDark ? 'text-amber-400' : 'text-amber-500'
+								)} />
+								<h2 className={cn(
+									'text-3xl md:text-4xl font-black',
+									'bg-gradient-to-r from-violet-500 to-cyan-500',
+									'bg-clip-text text-transparent'
+								)}>
+									{t('reviewsTitle')}
+								</h2>
+								<Star className={cn(
+									'w-6 h-6',
+									isDark ? 'text-amber-400' : 'text-amber-500'
+								)} />
+							</div>
+							<p className={cn(
+								'text-lg',
+								isDark ? 'text-slate-400' : 'text-slate-600'
+							)}>
+								{t('reviewsSubtitle')}
+							</p>
+						</div>
+
+						{/* Carousel */}
+						<div className="relative">
+							<div ref={emblaRef} className="overflow-hidden">
+								<div className="flex gap-6 pt-6">
 									{reviews.map((review, index) => (
-										<Box key={review.name}>
-											<Card
-												sx={{
-													width: '100%',
-													height: { xs: '380px', sm: '420px', md: '460px' },
-													position: 'relative',
-													borderRadius: 4,
-													overflow: 'visible',
-													display: 'flex',
-													flexDirection: 'column',
-													background: isDark
-														? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-														: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-													boxShadow: isDark
-														? '0 4px 20px rgba(139, 92, 246, 0.25)'
-														: '0 4px 20px rgba(139, 92, 246, 0.15)',
-													border: isDark
-														? '1px solid rgba(139, 92, 246, 0.3)'
-														: '1px solid rgba(139, 92, 246, 0.2)',
-													transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-													'&:hover': {
-														transform: 'translateY(-8px)',
-														boxShadow: isDark
-															? '0 12px 40px rgba(139, 92, 246, 0.4)'
-															: '0 12px 40px rgba(139, 92, 246, 0.3)',
-														borderColor: 'rgba(139, 92, 246, 0.4)',
-													},
-												}}>
-												<Box
-													sx={{
-														position: 'absolute',
-														top: -20,
-														left: 24,
-														width: 48,
-														height: 48,
-														borderRadius: '50%',
-														background: `linear-gradient(135deg, ${review.color} 0%, ${review.color === '#8b5cf6' ? '#06b6d4' : '#8b5cf6'} 100%)`,
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														boxShadow: `0 4px 12px ${review.color}40`,
-														border: '2px solid rgba(255, 255, 255, 0.3)',
-													}}>
-													<FormatQuote sx={{ color: 'white', fontSize: 28 }} />
-												</Box>
-												<CardContent sx={{ pt: 5, pb: 4, px: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
-													<Typography
-														variant='h5'
-														align='center'
-														sx={{
-															fontWeight: 700,
-															mb: 2,
-															color: isDark ? '#f1f5f9' : '#2d3748',
-															fontSize: { xs: '1.25rem', sm: '1.5rem' },
-														}}>
-														{review.name}
-													</Typography>
-													<Typography
-														variant='body1'
-														sx={{
-															color: isDark ? '#cbd5e1' : '#718096',
-															lineHeight: 1.7,
-															fontSize: { xs: '0.9375rem', sm: '1rem' },
-															textAlign: 'center',
-														}}>
-														{review.text}
-													</Typography>
-												</CardContent>
-											</Card>
-										</Box>
+										<div
+											key={index}
+											className="flex-[0_0_100%] min-w-0 md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)]"
+										>
+											<ReviewCard
+												name={review.name}
+												text={review.text}
+												isDark={isDark}
+											/>
+										</div>
 									))}
-								</Box>
-							</Box>
+								</div>
+							</div>
 
-							{/* Indicateurs de pagination (dots) */}
-							<Box
-								sx={{
-									display: 'flex',
-									justifyContent: 'center',
-									gap: 1,
-									mt: 4,
-									mb: 2,
-								}}>
-								{reviews.map((_, index) => (
-									<Box
-										key={index}
-										onClick={() => scrollTo(index)}
-										sx={{
-											width: selectedIndex === index ? '24px' : '10px',
-											height: '10px',
-											borderRadius: selectedIndex === index ? '5px' : '50%',
-											background: selectedIndex === index
-												? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-												: 'rgba(139, 92, 246, 0.3)',
-											boxShadow: selectedIndex === index ? '0 2px 8px rgba(139, 92, 246, 0.4)' : 'none',
-											cursor: 'pointer',
-											transition: 'all 0.3s ease',
-											'&:hover': {
-												background: selectedIndex === index
-													? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-													: 'rgba(139, 92, 246, 0.5)',
-											},
-										}}
-									/>
-								))}
-							</Box>
+							{/* Navigation buttons */}
+							<button
+								onClick={scrollPrev}
+								disabled={!canScrollPrev}
+								className={cn(
+									'absolute top-1/2 -left-4 md:-left-6 -translate-y-1/2',
+									'w-12 h-12 rounded-full',
+									'flex items-center justify-center',
+									'border-2 transition-all duration-300',
+									isDark
+										? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
+										: 'bg-white/80 border-violet-300 hover:border-violet-500',
+									'shadow-lg backdrop-blur-sm',
+									'hover:scale-110',
+									'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
+								)}
+							>
+								<ChevronLeft className={cn(
+									'w-6 h-6',
+									isDark ? 'text-violet-400' : 'text-violet-600'
+								)} />
+							</button>
+							<button
+								onClick={scrollNext}
+								disabled={!canScrollNext}
+								className={cn(
+									'absolute top-1/2 -right-4 md:-right-6 -translate-y-1/2',
+									'w-12 h-12 rounded-full',
+									'flex items-center justify-center',
+									'border-2 transition-all duration-300',
+									isDark
+										? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
+										: 'bg-white/80 border-violet-300 hover:border-violet-500',
+									'shadow-lg backdrop-blur-sm',
+									'hover:scale-110',
+									'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
+								)}
+							>
+								<ChevronRight className={cn(
+									'w-6 h-6',
+									isDark ? 'text-violet-400' : 'text-violet-600'
+								)} />
+							</button>
+						</div>
 
-							{/* Boutons de navigation */}
-							<Box
-								sx={{
-									display: 'flex',
-									justifyContent: 'center',
-									gap: 2,
-									mt: 1,
-								}}>
-								<IconButton
-									onClick={scrollPrev}
-									disabled={!canScrollPrev}
-									sx={{
-										width: 48,
-										height: 48,
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '2px solid rgba(139, 92, 246, 0.3)',
-										transition: 'all 0.3s ease',
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											transform: 'scale(1.1)',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-										},
-										'&.Mui-disabled': {
-											opacity: 0.3,
-										},
-									}}>
-									<ArrowBackIosNew sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
-								</IconButton>
-								<IconButton
-									onClick={scrollNext}
-									disabled={!canScrollNext}
-									sx={{
-										width: 48,
-										height: 48,
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '2px solid rgba(139, 92, 246, 0.3)',
-										transition: 'all 0.3s ease',
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											transform: 'scale(1.1)',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-										},
-										'&.Mui-disabled': {
-											opacity: 0.3,
-										},
-									}}>
-									<ArrowForwardIos sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
-								</IconButton>
-							</Box>
-						</Box>
-					</Box>
-				)}
-			</Container>
-		</>
+						{/* Pagination dots */}
+						<div className="flex justify-center gap-2 mt-8">
+							{reviews.map((_, index) => (
+								<button
+									key={index}
+									onClick={() => scrollTo(index)}
+									className={cn(
+										'h-2.5 rounded-full transition-all duration-300',
+										selectedIndex === index
+											? 'w-8 bg-gradient-to-r from-violet-500 to-cyan-500 shadow-lg shadow-violet-500/30'
+											: cn(
+												'w-2.5',
+												isDark ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-300 hover:bg-slate-400'
+											)
+									)}
+								/>
+							))}
+						</div>
+					</div>
+				</section>
+			)}
+
+			{/* ============================================ */}
+			{/* CTA SECTION */}
+			{/* ============================================ */}
+			<section className="py-16 md:py-20 px-4">
+				<div className="max-w-2xl mx-auto text-center">
+					<OrnateFrame isDark={isDark} className="p-8 md:p-12">
+						<Sparkles className={cn(
+							'w-12 h-12 mx-auto mb-6',
+							isDark ? 'text-amber-400' : 'text-amber-500'
+						)} />
+						<h2 className={cn(
+							'text-2xl md:text-3xl font-black mb-4',
+							isDark ? 'text-slate-100' : 'text-slate-800'
+						)}>
+							{t('ctaTitle')}
+						</h2>
+						<p className={cn(
+							'text-lg mb-8',
+							isDark ? 'text-slate-400' : 'text-slate-600'
+						)}>
+							{t('ctaDescription')}
+						</p>
+						<a
+							href={t(isLearningRussian ? 'mailRussian' : 'mailFrench')}
+							className={cn(
+								'inline-flex items-center justify-center gap-3 px-10 py-4 rounded-xl',
+								'font-bold text-lg',
+								'bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-600',
+								'text-white shadow-lg shadow-violet-500/30',
+								'hover:shadow-xl hover:shadow-violet-500/40',
+								'hover:scale-105 transition-all duration-300',
+								'border-2 border-violet-400/30'
+							)}
+						>
+							<Mail className="w-5 h-5" />
+							{t('ctaButton')}
+						</a>
+					</OrnateFrame>
+				</div>
+			</section>
+		</div>
 	)
 }

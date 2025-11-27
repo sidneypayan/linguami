@@ -4,17 +4,17 @@
  */
 
 import { useState } from 'react'
-import { Box, Stack, Typography, TextField, Button, useTheme } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 import { sanitizeInput, validateTranslation } from '@/utils/wordMapping'
 
 const MAX_TRANSLATION_LENGTH = 100
 
 export function CustomTranslationForm({ onSubmit }) {
 	const t = useTranslations('words')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const [personalTranslation, setPersonalTranslation] = useState('')
 	const [translationError, setTranslationError] = useState('')
@@ -58,89 +58,74 @@ export function CustomTranslationForm({ onSubmit }) {
 	}
 
 	return (
-		<Box
-			component="form"
+		<form
 			onSubmit={handleSubmit}
-			sx={{
-				p: 2,
-				backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'white',
-			}}>
-			<Typography
-				variant="caption"
-				sx={{
-					display: 'block',
-					mb: 1,
-					color: isDark ? '#cbd5e1' : '#666',
-					fontWeight: 600,
-				}}>
+			className={cn(
+				'p-4',
+				isDark ? 'bg-slate-800/50' : 'bg-white'
+			)}
+		>
+			<label className={cn(
+				'block mb-2 text-xs font-semibold',
+				isDark ? 'text-slate-300' : 'text-slate-600'
+			)}>
 				{t('custom_translation')}
-			</Typography>
-			<Stack direction="column" spacing={1}>
-				<Stack direction="row" spacing={1}>
-					<TextField
-						fullWidth
-						size="small"
-						placeholder="votre traduction"
-						value={personalTranslation}
-						onChange={handleTranslationChange}
-						error={!!translationError}
-						helperText={translationError}
-						inputProps={{
-							maxLength: MAX_TRANSLATION_LENGTH,
-							autoComplete: 'off',
-							spellCheck: 'true',
-						}}
-						sx={{
-							'& .MuiOutlinedInput-root': {
-								borderRadius: 2,
-								'& fieldset': {
-									borderColor: translationError ? '#f44336' : '#e0e0e0',
-								},
-								'&:hover fieldset': {
-									borderColor: translationError ? '#f44336' : '#667eea',
-								},
-								'&.Mui-focused fieldset': {
-									borderColor: translationError ? '#f44336' : '#667eea',
-									borderWidth: 2,
-								},
-							},
-							'& .MuiFormHelperText-root': {
-								fontSize: '0.7rem',
-								mt: 0.5,
-							},
-						}}
-					/>
-					<Button
+			</label>
+
+			<div className="flex flex-col gap-2">
+				<div className="flex gap-2">
+					<div className="flex-1">
+						<input
+							type="text"
+							placeholder="votre traduction"
+							value={personalTranslation}
+							onChange={handleTranslationChange}
+							maxLength={MAX_TRANSLATION_LENGTH}
+							autoComplete="off"
+							spellCheck="true"
+							className={cn(
+								'w-full px-3 py-2 rounded-lg text-sm',
+								'border-2 transition-colors',
+								'focus:outline-none',
+								isDark
+									? 'bg-slate-900 text-slate-100 placeholder-slate-500'
+									: 'bg-white text-slate-800 placeholder-slate-400',
+								translationError
+									? 'border-red-500 focus:border-red-500'
+									: isDark
+										? 'border-slate-600 hover:border-violet-500 focus:border-violet-500'
+										: 'border-slate-300 hover:border-violet-500 focus:border-violet-500'
+							)}
+						/>
+						{translationError && (
+							<p className="mt-1 text-xs text-red-500">
+								{translationError}
+							</p>
+						)}
+					</div>
+					<button
 						type="submit"
 						disabled={!personalTranslation || !!translationError}
-						variant="contained"
-						sx={{
-							minWidth: 'auto',
-							px: 2,
-							alignSelf: 'flex-start',
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							color: 'white',
-							fontWeight: 600,
-							'&:hover': {
-								background: 'linear-gradient(135deg, #5568d3 0%, #63408b 100%)',
-							},
-						}}
-						startIcon={<Add />}>
+						className={cn(
+							'px-4 py-2 rounded-lg self-start',
+							'bg-gradient-to-r from-violet-500 to-purple-600',
+							'text-white font-semibold text-sm',
+							'flex items-center gap-1.5',
+							'transition-all duration-200',
+							'hover:from-violet-600 hover:to-purple-700',
+							'disabled:opacity-50 disabled:cursor-not-allowed'
+						)}
+					>
+						<Plus className="w-4 h-4" />
 						{t('add')}
-					</Button>
-				</Stack>
+					</button>
+				</div>
 				{personalTranslation && (
-					<Typography
-						variant="caption"
-						sx={{
-							color: '#999',
-							fontSize: '0.7rem',
-							textAlign: 'right',
-						}}>
+					<p className="text-xs text-slate-400 text-right">
 						{personalTranslation.length}/{MAX_TRANSLATION_LENGTH}
-					</Typography>
+					</p>
 				)}
-			</Stack>
-		</Box>
+			</div>
+		</form>
 	)
 }

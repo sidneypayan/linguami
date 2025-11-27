@@ -3,45 +3,44 @@
  * Shows appropriate message for guests based on dictionary limit
  */
 
-import { Box, Typography, Button, useTheme } from '@mui/material'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 export function GuestLimitMessage({ hasReachedLimit }) {
 	const t = useTranslations('words')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	return (
-		<Box sx={{ p: 2, backgroundColor: 'rgba(102, 126, 234, 0.05)' }}>
+		<div className="p-4 bg-violet-500/5">
 			{hasReachedLimit ? (
 				<>
-					<Typography variant="caption" sx={{ display: 'block', mb: 1.5, color: '#f5576c', fontWeight: 600 }}>
-						⚠️ {t('dictionary_limit_title')} : supprimez des mots pour en ajouter de nouveaux
-					</Typography>
+					<p className="block mb-3 text-xs font-semibold text-rose-500">
+						{t('dictionary_limit_title')} : supprimez des mots pour en ajouter de nouveaux
+					</p>
 					<Link href="/signup">
-						<Button
-							variant="contained"
-							fullWidth
-							size="small"
-							sx={{
-								background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-								color: 'white',
-								fontWeight: 600,
-								textTransform: 'none',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #d978e0 0%, #d9445a 100%)',
-								},
-							}}>
+						<button
+							className={cn(
+								'w-full py-2 px-4 rounded-lg',
+								'bg-gradient-to-r from-pink-500 to-rose-500',
+								'text-white font-semibold text-sm',
+								'transition-all duration-200',
+								'hover:from-pink-600 hover:to-rose-600'
+							)}
+						>
 							{t('noaccount')}
-						</Button>
+						</button>
 					</Link>
 				</>
 			) : (
-				<Typography variant="caption" sx={{ display: 'block', color: isDark ? '#cbd5e1' : '#666', fontWeight: 600, textAlign: 'center' }}>
+				<p className={cn(
+					'text-xs font-semibold text-center',
+					isDark ? 'text-slate-300' : 'text-slate-600'
+				)}>
 					{t('click_translation_to_add')}
-				</Typography>
+				</p>
 			)}
-		</Box>
+		</div>
 	)
 }

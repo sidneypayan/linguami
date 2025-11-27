@@ -1,59 +1,44 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useBookChapters } from '@/lib/materials-client'
-import {
-	Box,
-	Breadcrumbs,
-	Typography,
-	Button,
-	Menu,
-	MenuItem,
-	Chip,
-	useTheme,
-} from '@mui/material'
-import {
-	HomeRounded,
-	MenuBookRounded,
-	KeyboardArrowDownRounded,
-	CheckCircleRounded,
-	RadioButtonUncheckedRounded,
-	Schedule,
-} from '@mui/icons-material'
+import { Home, BookOpen, ChevronDown, CheckCircle2, Circle, Clock } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 /**
  * ChapterBreadcrumb component - Navigation breadcrumb for book chapters
  * Shows: Home > Book Title > Current Chapter (with dropdown to all chapters)
- *
- * @param {Object} book - Book object with id and title
- * @param {Object} currentChapter - Current chapter object
- * @param {Array} userMaterialsStatus - User's material completion status
  */
 const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) => {
 	const t = useTranslations('materials')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const router = useRouter()
-	const [anchorEl, setAnchorEl] = useState(null)
-	const open = Boolean(anchorEl)
+	const [open, setOpen] = useState(false)
+	const dropdownRef = useRef(null)
 
 	// Fetch all chapters for this book
 	const { data: chapters = [] } = useBookChapters(book?.id)
 
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget)
-	}
-
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
+	// Close on click outside
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+				setOpen(false)
+			}
+		}
+		if (open) {
+			document.addEventListener('mousedown', handleClickOutside)
+		}
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [open])
 
 	const handleChapterSelect = (chapterId) => {
 		router.push(`/materials/book-chapters/${chapterId}`)
-		handleClose()
+		setOpen(false)
 	}
 
 	// Get completion status for a chapter
@@ -64,319 +49,191 @@ const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) =
 	// Find current chapter index
 	const currentIndex = chapters.findIndex(ch => ch.id === currentChapter?.id)
 
-	// Check if current chapter is completed
-	const currentChapterStatus = getChapterStatus(currentChapter?.id)
-	const isCurrentChapterCompleted = currentChapterStatus?.is_studied
-
-	// Check if entire book is completed (all chapters studied)
-	const isBookCompleted = chapters.length > 0 && chapters.every(ch => {
-		const status = getChapterStatus(ch.id)
-		return status?.is_studied
-	})
-
 	return (
-		<Box
-			sx={{
-				pt: { xs: '4rem', md: '6.5rem' },
-				pb: 3,
-				px: { xs: 2, sm: 3, md: 4 },
-				borderBottom: `2px solid ${isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)'}`,
-				background: isDark
-					? 'linear-gradient(135deg, rgba(20, 20, 35, 0.95) 0%, rgba(30, 25, 50, 0.9) 100%)'
-					: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 245, 255, 0.95) 100%)',
-				backdropFilter: 'blur(20px)',
-				boxShadow: isDark
-					? '0 4px 20px rgba(139, 92, 246, 0.1)'
-					: '0 4px 20px rgba(139, 92, 246, 0.05)',
-			}}
+		<div
+			className={cn(
+				'pt-16 md:pt-[6.5rem] pb-6 px-4 sm:px-6 md:px-8',
+				'border-b-2',
+				isDark
+					? 'border-violet-500/30 bg-gradient-to-br from-slate-950/95 to-purple-950/90'
+					: 'border-violet-500/20 bg-gradient-to-br from-white/98 to-violet-50/95',
+				isDark
+					? 'shadow-[0_4px_20px_rgba(139,92,246,0.1)]'
+					: 'shadow-[0_4px_20px_rgba(139,92,246,0.05)]'
+			)}
 		>
-			<Breadcrumbs
-				separator="›"
-				sx={{
-					'& .MuiBreadcrumbs-separator': {
-						color: isDark ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.4)',
-						fontWeight: 700,
-						fontSize: '1.5rem',
-						mx: 1,
-					},
-				}}
-			>
+			<nav className="flex items-center flex-wrap gap-2">
 				{/* Home */}
-				<Link href="/materials" style={{ textDecoration: 'none' }}>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 1,
-							color: isDark ? 'rgba(139, 92, 246, 0.8)' : 'rgba(139, 92, 246, 0.7)',
-							transition: 'all 0.2s ease',
-							px: 1.5,
-							py: 0.75,
-							borderRadius: 2,
-							'&:hover': {
-								color: '#8b5cf6',
-								transform: 'translateY(-2px)',
-								bgcolor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.05)',
-							},
-						}}
-					>
-						<HomeRounded sx={{ fontSize: '1.5rem' }} />
-						<Typography
-							sx={{
-								fontSize: '1rem',
-								fontWeight: 700,
-								display: { xs: 'none', sm: 'block' },
-							}}
-						>
-							{t('allMaterials')}
-						</Typography>
-					</Box>
+				<Link
+					href="/materials"
+					className={cn(
+						'flex items-center gap-2 px-3 py-1.5 rounded-lg',
+						'transition-all duration-200',
+						isDark
+							? 'text-violet-400/80 hover:text-violet-400 hover:bg-violet-500/10'
+							: 'text-violet-500/70 hover:text-violet-600 hover:bg-violet-100/50',
+						'hover:-translate-y-0.5'
+					)}
+				>
+					<Home className="w-5 h-5" />
+					<span className="hidden sm:inline font-bold text-sm">
+						{t('allMaterials')}
+					</span>
 				</Link>
+
+				<span className={cn(
+					'text-xl font-bold mx-1',
+					isDark ? 'text-violet-500/50' : 'text-violet-400/40'
+				)}>
+					›
+				</span>
 
 				{/* Book Title */}
-				<Link href="/materials/books" style={{ textDecoration: 'none' }}>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 1,
-							color: isDark ? 'rgba(139, 92, 246, 0.9)' : 'rgba(139, 92, 246, 0.8)',
-							transition: 'all 0.2s ease',
-							px: 1.5,
-							py: 0.75,
-							borderRadius: 2,
-							'&:hover': {
-								color: '#8b5cf6',
-								transform: 'translateY(-2px)',
-								bgcolor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(139, 92, 246, 0.05)',
-							},
-						}}
-					>
-						<MenuBookRounded sx={{ fontSize: '1.5rem' }} />
-						<Typography
-							sx={{
-								fontSize: '1rem',
-								fontWeight: 700,
-								maxWidth: { xs: '150px', sm: '300px', md: '400px' },
-								overflow: 'hidden',
-								textOverflow: 'ellipsis',
-								whiteSpace: 'nowrap',
-							}}
-						>
-							{book?.title || t('books')}
-						</Typography>
-					</Box>
+				<Link
+					href="/materials/books"
+					className={cn(
+						'flex items-center gap-2 px-3 py-1.5 rounded-lg',
+						'transition-all duration-200',
+						isDark
+							? 'text-violet-400/90 hover:text-violet-400 hover:bg-violet-500/10'
+							: 'text-violet-500/80 hover:text-violet-600 hover:bg-violet-100/50',
+						'hover:-translate-y-0.5'
+					)}
+				>
+					<BookOpen className="w-5 h-5" />
+					<span className="font-bold text-sm max-w-[150px] sm:max-w-[300px] md:max-w-[400px] truncate">
+						{book?.title || t('books')}
+					</span>
 				</Link>
 
+				<span className={cn(
+					'text-xl font-bold mx-1',
+					isDark ? 'text-violet-500/50' : 'text-violet-400/40'
+				)}>
+					›
+				</span>
+
 				{/* Current Chapter with Dropdown */}
-				<Box>
-					<Button
-						onClick={handleClick}
-						endIcon={<KeyboardArrowDownRounded sx={{ fontSize: '1.8rem' }} />}
-						sx={{
-							color: isDark ? '#c4b5fd' : '#8b5cf6',
-							fontWeight: 700,
-							fontSize: '1rem',
-							textTransform: 'none',
-							px: 2.5,
-							py: 1,
-							minHeight: '44px',
-							borderRadius: 3,
-							background: isDark
-								? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)'
-								: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-							border: `2px solid ${isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(139, 92, 246, 0.3)'}`,
-							boxShadow: isDark
-								? '0 4px 12px rgba(139, 92, 246, 0.2)'
-								: '0 4px 12px rgba(139, 92, 246, 0.15)',
-							transition: 'all 0.3s ease',
-							'&:hover': {
-								background: isDark
-									? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)'
-									: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-								transform: 'translateY(-2px)',
-								boxShadow: isDark
-									? '0 6px 20px rgba(139, 92, 246, 0.3)'
-									: '0 6px 20px rgba(139, 92, 246, 0.2)',
-								borderColor: '#8b5cf6',
-							},
-						}}
+				<div className="relative" ref={dropdownRef}>
+					<button
+						onClick={() => setOpen(!open)}
+						className={cn(
+							'flex items-center gap-2 px-4 py-2 rounded-xl',
+							'font-bold text-sm',
+							'border-2 transition-all duration-300',
+							isDark
+								? 'text-violet-300 bg-gradient-to-r from-violet-500/20 to-cyan-500/15 border-violet-500/40'
+								: 'text-violet-600 bg-gradient-to-r from-violet-500/15 to-cyan-500/10 border-violet-500/30',
+							isDark
+								? 'shadow-[0_4px_12px_rgba(139,92,246,0.2)] hover:shadow-[0_6px_20px_rgba(139,92,246,0.3)]'
+								: 'shadow-[0_4px_12px_rgba(139,92,246,0.15)] hover:shadow-[0_6px_20px_rgba(139,92,246,0.2)]',
+							'hover:-translate-y-0.5 hover:border-violet-500'
+						)}
 					>
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								gap: 1.5,
-								maxWidth: { xs: '150px', sm: '300px', md: '400px' },
-							}}
-						>
-							<Chip
-								label={`${currentIndex + 1}/${chapters.length}`}
-								size="small"
-								sx={{
-									height: 24,
-									fontSize: '0.8rem',
-									fontWeight: 800,
-									bgcolor: isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(139, 92, 246, 0.3)',
-									color: isDark ? '#ffffff' : '#7c3aed',
-									border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(124, 58, 237, 0.3)'}`,
-								}}
-							/>
-							<Typography
-								sx={{
-									overflow: 'hidden',
-									textOverflow: 'ellipsis',
-									whiteSpace: 'nowrap',
-									fontWeight: 700,
-								}}
-							>
-								{currentChapter?.title}
-							</Typography>
-						</Box>
-					</Button>
+						<span className={cn(
+							'px-2 py-0.5 rounded text-xs font-extrabold',
+							isDark
+								? 'bg-violet-500/40 text-white border border-white/20'
+								: 'bg-violet-500/30 text-violet-700 border border-violet-500/30'
+						)}>
+							{currentIndex + 1}/{chapters.length}
+						</span>
+						<span className="max-w-[150px] sm:max-w-[300px] md:max-w-[400px] truncate">
+							{currentChapter?.title}
+						</span>
+						<ChevronDown className={cn(
+							'w-5 h-5 transition-transform duration-200',
+							open && 'rotate-180'
+						)} />
+					</button>
 
 					{/* Dropdown Menu */}
-					<Menu
-						anchorEl={anchorEl}
-						open={open}
-						onClose={handleClose}
-						PaperProps={{
-							sx: {
-								maxHeight: 500,
-								width: { xs: '90vw', sm: 450 },
-								mt: 1,
-								borderRadius: 3,
-								boxShadow: isDark
-									? '0 8px 32px rgba(139, 92, 246, 0.3)'
-									: '0 8px 32px rgba(139, 92, 246, 0.15)',
-								border: `1px solid ${isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.1)'}`,
-								bgcolor: isDark ? 'rgba(20, 20, 35, 0.98)' : 'rgba(255, 255, 255, 0.98)',
-								backdropFilter: 'blur(10px)',
-								py: 1,
-							},
-						}}
-					>
-						{chapters.map((chapter, index) => {
-							const status = getChapterStatus(chapter.id)
-							const isCurrentChapter = chapter.id === currentChapter?.id
-							const isCompleted = status?.is_studied
-							const isBeingStudied = status?.is_being_studied
+					{open && (
+						<div
+							className={cn(
+								'absolute top-full left-0 mt-2 z-50',
+								'w-[90vw] sm:w-[450px] max-h-[500px] overflow-y-auto',
+								'rounded-xl border py-2',
+								isDark
+									? 'bg-slate-950/98 border-violet-500/20 shadow-[0_8px_32px_rgba(139,92,246,0.3)]'
+									: 'bg-white/98 border-violet-500/10 shadow-[0_8px_32px_rgba(139,92,246,0.15)]'
+							)}
+						>
+							{chapters.map((chapter, index) => {
+								const status = getChapterStatus(chapter.id)
+								const isCurrentChapter = chapter.id === currentChapter?.id
+								const isCompleted = status?.is_studied
+								const isBeingStudied = status?.is_being_studied
 
-							return (
-								<MenuItem
-									key={chapter.id}
-									onClick={() => handleChapterSelect(chapter.id)}
-									sx={{
-										py: 2,
-										px: 2.5,
-										mb: 0.5,
-										mx: 1,
-										borderRadius: 2,
-										bgcolor: isCurrentChapter
-											? isDark
-												? 'rgba(139, 92, 246, 0.2)'
-												: 'rgba(139, 92, 246, 0.12)'
-											: 'transparent',
-										borderLeft: isCurrentChapter
-											? '4px solid #8b5cf6'
-											: '4px solid transparent',
-										transition: 'all 0.2s ease',
-										'&:hover': {
-											bgcolor: isDark
-												? 'rgba(139, 92, 246, 0.25)'
-												: 'rgba(139, 92, 246, 0.15)',
-											transform: 'translateX(4px)',
-											borderLeftColor: '#8b5cf6',
-										},
-									}}
-								>
-									<Box
-										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											gap: 2,
-											width: '100%',
-										}}
+								return (
+									<button
+										key={chapter.id}
+										onClick={() => handleChapterSelect(chapter.id)}
+										className={cn(
+											'w-[calc(100%-0.5rem)] mx-1 py-3 px-4 rounded-xl mb-1',
+											'flex items-center gap-3',
+											'border-l-4 transition-all duration-200',
+											isCurrentChapter
+												? isDark
+													? 'bg-violet-500/20 border-l-violet-500'
+													: 'bg-violet-500/12 border-l-violet-500'
+												: 'border-l-transparent',
+											!isCurrentChapter && (isDark
+												? 'hover:bg-violet-500/25 hover:border-l-violet-500'
+												: 'hover:bg-violet-500/15 hover:border-l-violet-500'),
+											'hover:translate-x-1'
+										)}
 									>
 										{/* Chapter number */}
-										<Box
-											sx={{
-												minWidth: 40,
-												height: 40,
-												borderRadius: '50%',
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												bgcolor: isCurrentChapter
-													? '#8b5cf6'
+										<div
+											className={cn(
+												'w-10 h-10 rounded-full flex items-center justify-center',
+												'font-extrabold text-sm transition-all',
+												isCurrentChapter
+													? 'bg-violet-500 text-white shadow-[0_4px_12px_rgba(139,92,246,0.4)]'
 													: isDark
-													? 'rgba(139, 92, 246, 0.3)'
-													: 'rgba(139, 92, 246, 0.15)',
-												color: isCurrentChapter ? 'white' : '#8b5cf6',
-												fontWeight: 800,
-												fontSize: '1rem',
-												boxShadow: isCurrentChapter
-													? '0 4px 12px rgba(139, 92, 246, 0.4)'
-													: '0 2px 8px rgba(139, 92, 246, 0.2)',
-												transition: 'all 0.2s ease',
-											}}
+														? 'bg-violet-500/30 text-violet-400 shadow-[0_2px_8px_rgba(139,92,246,0.2)]'
+														: 'bg-violet-500/15 text-violet-600 shadow-[0_2px_8px_rgba(139,92,246,0.2)]'
+											)}
 										>
 											{index + 1}
-										</Box>
+										</div>
 
 										{/* Chapter title */}
-										<Typography
-											sx={{
-												flex: 1,
-												fontWeight: isCurrentChapter ? 700 : 600,
-												fontSize: '1rem',
-												lineHeight: 1.4,
-												color: isCurrentChapter
-													? '#8b5cf6'
+										<span
+											className={cn(
+												'flex-1 text-left font-semibold text-sm leading-snug',
+												isCurrentChapter
+													? 'text-violet-500 font-bold'
 													: isDark
-													? '#e5e7eb'
-													: '#374151',
-											}}
+														? 'text-slate-200'
+														: 'text-slate-700'
+											)}
 										>
 											{chapter.title}
-										</Typography>
+										</span>
 
-										{/* Completion status */}
+										{/* Status icon */}
 										{isCompleted && (
-											<CheckCircleRounded
-												sx={{
-													fontSize: '1.5rem',
-													color: '#10b981',
-													filter: 'drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3))',
-												}}
-											/>
+											<CheckCircle2 className="w-5 h-5 text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.3)]" />
 										)}
 										{!isCompleted && isBeingStudied && (
-											<Schedule
-												sx={{
-													fontSize: '1.5rem',
-													color: '#a855f7',
-													filter: 'drop-shadow(0 2px 4px rgba(168, 85, 247, 0.3))',
-												}}
-											/>
+											<Clock className="w-5 h-5 text-purple-500 drop-shadow-[0_2px_4px_rgba(168,85,247,0.3)]" />
 										)}
 										{!isCompleted && !isBeingStudied && !isCurrentChapter && (
-											<RadioButtonUncheckedRounded
-												sx={{
-													fontSize: '1.5rem',
-													color: isDark ? 'rgba(139, 92, 246, 0.4)' : 'rgba(139, 92, 246, 0.3)',
-												}}
-											/>
+											<Circle className={cn(
+												'w-5 h-5',
+												isDark ? 'text-violet-500/40' : 'text-violet-500/30'
+											)} />
 										)}
-									</Box>
-								</MenuItem>
-							)
-						})}
-					</Menu>
-
-				</Box>
-			</Breadcrumbs>
-		</Box>
+									</button>
+								)
+							})}
+						</div>
+					)}
+				</div>
+			</nav>
+		</div>
 	)
 }
 

@@ -1,318 +1,162 @@
-import { useTranslations, useLocale } from 'next-intl'
-import { useState, useEffect } from 'react'
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { Box, Container, Stack, Typography, IconButton, useTheme, useMediaQuery } from '@mui/material'
-import { Facebook, Twitter, YouTube, Favorite, Email } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import {
+	Heart,
+	Mail,
+	Facebook,
+	Twitter,
+	Youtube,
+	Sparkles,
+	ExternalLink
+} from 'lucide-react'
 
 const Footer = () => {
 	const t = useTranslations('common')
-	const theme = useTheme()
+	const { isDark } = useThemeMode()
 
-	// Fix hydration mismatch: sync theme and media query only on client
-	const [isDark, setIsDark] = useState(false)
-	const [isMobile, setIsMobile] = useState(false)
-
-	useEffect(() => {
-		setIsDark(theme.palette.mode === 'dark')
-	}, [theme.palette.mode])
-
-	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 600px)')
-		setIsMobile(mediaQuery.matches)
-
-		const handler = e => setIsMobile(e.matches)
-		mediaQuery.addEventListener('change', handler)
-		return () => mediaQuery.removeEventListener('change', handler)
-	}, [])
+	const socialLinks = [
+		{ href: 'https://www.facebook.com/linguami/', icon: Facebook, label: 'Facebook' },
+		{ href: 'https://twitter.com/linguami/', icon: Twitter, label: 'Twitter' },
+		{ href: 'https://www.youtube.com/channel/UCVtNeYVhksLsMqYmCCAFFIg/', icon: Youtube, label: 'YouTube' },
+	]
 
 	return (
-		<Box
-			component='footer'
-			sx={{
-				background: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1e1b4b 100%)',
-				color: 'white',
-				mt: 'auto',
-				position: 'relative',
-				overflow: 'hidden',
-				pt: { xs: 4, md: 6 },
-				pb: { xs: 'calc(72px + 32px)', md: 6 },
-				'&::before': {
-					content: '""',
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					background: 'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
-					pointerEvents: 'none',
-				},
-			}}>
-			<Container maxWidth='lg' sx={{ position: 'relative', zIndex: 1 }}>
-				<Stack
-					direction={{ xs: 'column', md: 'row' }}
-					spacing={{ xs: 2.5, md: 8 }}
-					justifyContent='space-between'
-					alignItems={{ xs: 'center', md: 'flex-start' }}>
+		<footer className={cn(
+			'relative mt-auto overflow-hidden',
+			'pt-10 md:pt-14 pb-[calc(72px+2rem)] md:pb-14',
+			'bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900'
+		)}>
+			{/* Background effects */}
+			<div className="absolute inset-0 pointer-events-none">
+				<div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl" />
+				<div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl" />
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl" />
+			</div>
 
-					{/* Section Logo & Description */}
-					<Box sx={{ textAlign: { xs: 'center', md: 'left' }, flex: 1 }}>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 800,
-								mb: { xs: 0, md: 2 },
-								fontSize: { xs: '1.75rem', md: '2.125rem' },
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #a78bfa 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								letterSpacing: '-0.5px',
-								filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.5))',
-							}}>
-							Linguami
-						</Typography>
-						<Typography
-							variant='body2'
-							sx={{
-								display: { xs: 'none', md: 'block' },
-								color: 'rgba(255, 255, 255, 0.9)',
-								maxWidth: '300px',
-								lineHeight: 1.7,
-								mx: { xs: 'auto', md: 0 },
-							}}>
+			{/* Top decorative border */}
+			<div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 to-transparent" />
+
+			<div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
+				<div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-12">
+
+					{/* Logo & Description */}
+					<div className="text-center md:text-left flex-1">
+						<div className="flex items-center justify-center md:justify-start gap-2 mb-3">
+							<Sparkles className="w-5 h-5 text-amber-400" />
+							<h2 className={cn(
+								'text-3xl md:text-4xl font-black',
+								'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400',
+								'bg-clip-text text-transparent',
+								'drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]'
+							)}>
+								Linguami
+							</h2>
+						</div>
+						<p className="hidden md:block text-white/80 max-w-xs leading-relaxed">
 							{t('footerDescription')}
-						</Typography>
-					</Box>
+						</p>
+					</div>
 
-					{/* Section Liens */}
-					<Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-						<Typography
-							variant='h6'
-							sx={{
-								fontWeight: 700,
-								mb: { xs: 1, md: 2 },
-								fontSize: { xs: '1rem', md: '1.25rem' },
-								color: 'rgba(255, 255, 255, 0.95)',
-							}}>
+					{/* Links */}
+					<div className="text-center md:text-left">
+						<h3 className="text-lg font-bold text-white/95 mb-3 md:mb-4">
 							{t('usefulLinks')}
-						</Typography>
-						<Stack spacing={{ xs: 1, md: 1.5 }}>
-							<Link
-								href='https://paypal.me/linguami'
-								target='_blank'
-								style={{ textDecoration: 'none' }}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 1,
-										color: 'rgba(255, 255, 255, 0.85)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										justifyContent: { xs: 'center', md: 'flex-start' },
-										position: 'relative',
-										'&:hover': {
-											color: '#06b6d4',
-											transform: 'translateX(6px)',
-											filter: 'drop-shadow(0 0 8px rgba(6, 182, 212, 0.6))',
-										},
-										'&:hover .icon': {
-											transform: 'scale(1.2) rotate(10deg)',
-										},
-									}}>
-									<Favorite className='icon' sx={{ fontSize: '1rem', transition: 'all 0.3s ease' }} />
-									<Typography variant='body2' sx={{ fontWeight: 500 }}>
-										{t('support')}
-									</Typography>
-								</Box>
-							</Link>
-							<Link
-								href='mailto:contact@linguami.com?Subject=Contact%20from%20linguami'
-								style={{ textDecoration: 'none' }}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 1,
-										color: 'rgba(255, 255, 255, 0.85)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										justifyContent: { xs: 'center', md: 'flex-start' },
-										position: 'relative',
-										'&:hover': {
-											color: '#8b5cf6',
-											transform: 'translateX(6px)',
-											filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.6))',
-										},
-										'&:hover .icon': {
-											transform: 'scale(1.2) rotate(10deg)',
-										},
-									}}>
-									<Email className='icon' sx={{ fontSize: '1rem', transition: 'all 0.3s ease' }} />
-									<Typography variant='body2' sx={{ fontWeight: 500 }}>
-										{t('contact')}
-									</Typography>
-								</Box>
-							</Link>
-						</Stack>
-					</Box>
+						</h3>
+						<div className="flex flex-col gap-2 md:gap-3">
+							{/* Support Link */}
+							<a
+								href="https://paypal.me/linguami"
+								target="_blank"
+								rel="noopener noreferrer"
+								className={cn(
+									'group flex items-center gap-2 justify-center md:justify-start',
+									'text-white/80 transition-all duration-300',
+									'hover:text-cyan-400 hover:translate-x-1'
+								)}
+							>
+								<Heart className="w-4 h-4 transition-transform group-hover:scale-125 group-hover:rotate-12" />
+								<span className="font-medium">{t('support')}</span>
+								<ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+							</a>
 
-					{/* Section Réseaux Sociaux */}
-					<Box sx={{ textAlign: 'center' }}>
-						<Typography
-							variant='h6'
-							sx={{
-								fontWeight: 700,
-								mb: { xs: 1, md: 2 },
-								fontSize: { xs: '1rem', md: '1.25rem' },
-								color: 'rgba(255, 255, 255, 0.95)',
-							}}>
+							{/* Contact Link */}
+							<a
+								href="mailto:contact@linguami.com?Subject=Contact%20from%20linguami"
+								className={cn(
+									'group flex items-center gap-2 justify-center md:justify-start',
+									'text-white/80 transition-all duration-300',
+									'hover:text-violet-400 hover:translate-x-1'
+								)}
+							>
+								<Mail className="w-4 h-4 transition-transform group-hover:scale-125 group-hover:rotate-12" />
+								<span className="font-medium">{t('contact')}</span>
+							</a>
+						</div>
+					</div>
+
+					{/* Social Links */}
+					<div className="text-center">
+						<h3 className="text-lg font-bold text-white/95 mb-3 md:mb-4">
 							{t('followUs')}
-						</Typography>
-						<Stack direction='row' spacing={{ xs: 0.75, md: 1 }} justifyContent='center'>
-							<Link href='https://www.facebook.com/linguami/' target='_blank'>
-								<IconButton
-									sx={{
-										width: { xs: '38px', md: '40px' },
-										height: { xs: '38px', md: '40px' },
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-										color: 'white',
-										backdropFilter: 'blur(10px)',
-										border: '1px solid rgba(139, 92, 246, 0.4)',
-										position: 'relative',
-										overflow: 'hidden',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
-										'& svg': {
-											fontSize: { xs: '1.25rem', md: '1.5rem' },
-											transition: 'transform 0.6s ease',
-										},
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.4) 100%)',
-											transform: 'translateY(-4px) scale(1.1)',
-											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.3)',
-											'&::before': {
-												left: '100%',
-											},
-										},
-										'&:hover svg': {
-											transform: 'rotate(360deg)',
-										},
-									}}>
-									<Facebook />
-								</IconButton>
-							</Link>
-							<Link href='https://twitter.com/linguami/' target='_blank'>
-								<IconButton
-									sx={{
-										width: { xs: '38px', md: '40px' },
-										height: { xs: '38px', md: '40px' },
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-										color: 'white',
-										backdropFilter: 'blur(10px)',
-										border: '1px solid rgba(139, 92, 246, 0.4)',
-										position: 'relative',
-										overflow: 'hidden',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
-										'& svg': {
-											fontSize: { xs: '1.25rem', md: '1.5rem' },
-											transition: 'transform 0.6s ease',
-										},
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.4) 100%)',
-											transform: 'translateY(-4px) scale(1.1)',
-											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.3)',
-											'&::before': {
-												left: '100%',
-											},
-										},
-										'&:hover svg': {
-											transform: 'rotate(360deg)',
-										},
-									}}>
-									<Twitter />
-								</IconButton>
-							</Link>
-							<Link
-								href='https://www.youtube.com/channel/UCVtNeYVhksLsMqYmCCAFFIg/'
-								target='_blank'>
-								<IconButton
-									sx={{
-										width: { xs: '38px', md: '40px' },
-										height: { xs: '38px', md: '40px' },
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-										color: 'white',
-										backdropFilter: 'blur(10px)',
-										border: '1px solid rgba(139, 92, 246, 0.4)',
-										position: 'relative',
-										overflow: 'hidden',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
-										'& svg': {
-											fontSize: { xs: '1.25rem', md: '1.5rem' },
-											transition: 'transform 0.6s ease',
-										},
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.4) 100%)',
-											transform: 'translateY(-4px) scale(1.1)',
-											boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.3)',
-											'&::before': {
-												left: '100%',
-											},
-										},
-										'&:hover svg': {
-											transform: 'rotate(360deg)',
-										},
-									}}>
-									<YouTube />
-								</IconButton>
-							</Link>
-						</Stack>
-					</Box>
-				</Stack>
+						</h3>
+						<div className="flex gap-2 md:gap-3 justify-center">
+							{socialLinks.map((social) => {
+								const Icon = social.icon
+								return (
+									<a
+										key={social.label}
+										href={social.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										title={social.label}
+										className={cn(
+											'group relative w-10 h-10 md:w-11 md:h-11 rounded-xl',
+											'flex items-center justify-center',
+											'bg-gradient-to-br from-violet-500/30 to-cyan-500/20',
+											'border border-violet-500/40',
+											'backdrop-blur-sm',
+											'shadow-lg shadow-violet-500/20',
+											'transition-all duration-300',
+											'hover:-translate-y-1 hover:scale-110',
+											'hover:shadow-xl hover:shadow-violet-500/40',
+											'hover:border-violet-400/60',
+											'overflow-hidden'
+										)}
+									>
+										{/* Shine effect */}
+										<div className={cn(
+											'absolute inset-0 -translate-x-full',
+											'bg-gradient-to-r from-transparent via-white/20 to-transparent',
+											'group-hover:translate-x-full transition-transform duration-700'
+										)} />
+										<Icon className={cn(
+											'w-5 h-5 md:w-6 md:h-6 text-white relative z-10',
+											'transition-transform duration-500',
+											'group-hover:rotate-[360deg]'
+										)} />
+									</a>
+								)
+							})}
+						</div>
+					</div>
+				</div>
 
 				{/* Copyright */}
-				<Typography
-					variant='body2'
-					align='center'
-					sx={{
-						mt: { xs: 2.5, md: 4 },
-						color: 'rgba(255, 255, 255, 0.8)',
-						fontWeight: 500,
-					}}>
-					Copyright &copy; {new Date().getFullYear()} {t('allrights')}
-				</Typography>
-			</Container>
-		</Box>
+				<div className={cn(
+					'mt-8 md:mt-12 pt-6',
+					'border-t border-violet-500/20',
+					'text-center'
+				)}>
+					<p className="text-white/70 font-medium">
+						Copyright &copy; {new Date().getFullYear()} {t('allrights')}
+					</p>
+				</div>
+			</div>
+		</footer>
 	)
 }
 

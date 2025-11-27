@@ -5,38 +5,26 @@ import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
 import { usePathname, useParams } from 'next/navigation'
 import { useHasLessonsForLanguage } from '@/lib/lessons-client'
+import { useThemeMode } from '@/context/ThemeContext'
 import UserMenu from './UserMenu'
 import GuestMenu from './GuestMenu'
 import ThemeToggle from './ThemeToggle'
-import {
-	AppBar,
-	Box,
-	Button,
-	Divider,
-	Drawer,
-	IconButton,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	Toolbar,
-} from '@mui/material'
 import { Link } from '@/i18n/navigation'
-
-import {
-	HomeRounded,
-	AutoStoriesRounded,
-	PersonSearchRounded,
-	LocalLibraryRounded,
-	RssFeedRounded,
-	DensityMediumRounded,
-	AdminPanelSettings,
-	School,
-} from '@mui/icons-material'
-
 import LanguageMenu from './LanguageMenu.jsx'
 import InterfaceLanguageMenu from './InterfaceLanguageMenu.jsx'
+import { cn } from '@/lib/utils'
+import {
+	Home,
+	BookOpen,
+	UserSearch,
+	Library,
+	Rss,
+	Menu,
+	ShieldCheck,
+	GraduationCap,
+	X,
+	Sparkles,
+} from 'lucide-react'
 
 const drawerWidth = '75%'
 
@@ -44,48 +32,46 @@ const Navbar = props => {
 	const t = useTranslations('common')
 	const locale = useLocale()
 	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
+	const { isDark } = useThemeMode()
 	const pathname = usePathname()
 	const params = useParams()
-	// Check if lessons are available for current interface language
 	const { data: hasLessons = false, isLoading: isCheckingLessons } = useHasLessonsForLanguage(locale)
 
 	const allNavigationLinks = [
 		{
 			name: 'Linguami',
-			icon: <HomeRounded style={{ fontSize: '1.5rem' }} />,
+			icon: Home,
 			href: '/',
 		},
 		{
 			name: t('material'),
-			icon: <AutoStoriesRounded style={{ fontSize: '1.5rem' }} />,
+			icon: BookOpen,
 			href: '/materials',
 		},
 		{
 			name: t('methode'),
-			icon: <School style={{ fontSize: '1.5rem' }} />,
+			icon: GraduationCap,
 			href: '/method',
-			// Visible uniquement pour les admins
 			hideIf: !isUserAdmin,
 		},
 		{
 			name: t('teacher'),
-			icon: <PersonSearchRounded style={{ fontSize: '1.5rem' }} />,
+			icon: UserSearch,
 			href: '/teacher',
 		},
 		{
 			name: t('lessons'),
-			icon: <LocalLibraryRounded style={{ fontSize: '1.5rem' }} />,
+			icon: Library,
 			href: '/lessons',
 			hideIf: !isCheckingLessons && !hasLessons,
 		},
 		{
 			name: t('blog'),
-			icon: <RssFeedRounded style={{ fontSize: '1.5rem' }} />,
+			icon: Rss,
 			href: '/blog',
 		},
 	]
 
-	// Filtrer les liens à ne pas afficher
 	const navigationLinks = allNavigationLinks.filter(link => !link.hideIf)
 
 	const { window } = props
@@ -105,584 +91,134 @@ const Navbar = props => {
 		return pathname?.startsWith(href)
 	}
 
-	// Check if user is currently on a lesson page
 	const isOnLessonPage = () => {
 		if (!pathname) return false
 		const pathSegments = pathname.split('/').filter(Boolean)
-		// Check if path is /method/[level]/[lessonSlug] (3 segments)
 		return pathname.startsWith('/method/') && pathSegments.length === 3
 	}
 
-	// Check if user is currently on a material section page (e.g., /materials/dialogues)
 	const isOnMaterialSectionPage = () => {
 		if (!pathname) return false
-		const pathSegments = pathname.split('/').filter(Boolean)
-		// Check if path is /materials/[section] (2 segments, or 3 with locale)
-		// e.g., /fr/materials/dialogues or /materials/dialogues
 		const isMaterialsPath = pathname.includes('/materials/')
 		const hasSection = params?.section && !params?.material
 		return isMaterialsPath && hasSection
 	}
 
-	const drawer = (
-		<Box
-			onClick={handleDrawerToggle}
-			sx={{
-				height: '100vh',
-				background: 'linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%)',
-				display: 'flex',
-				flexDirection: 'column',
-				position: 'relative',
-				overflowY: 'auto',
-				overflowX: 'hidden',
-				'&::before': {
-					content: '""',
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.2) 0%, transparent 50%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
-					pointerEvents: 'none',
-				},
-				'&::after': {
-					content: '""',
-					position: 'absolute',
-					bottom: 0,
-					left: 0,
-					right: 0,
-					height: '200px',
-					background: 'radial-gradient(circle at bottom left, rgba(0,0,0,0.3) 0%, transparent 70%)',
-					pointerEvents: 'none',
-				},
-			}}>
-			{/* Navigation */}
-			<List sx={{ color: '#fff', px: 2, pt: 2.5, pb: 2, position: 'relative', zIndex: 1, flex: 1 }}>
-				{navigationLinks.map((link, index) => {
-					const isActive = isActivePath(link.href)
-					return (
-						<ListItem
-							key={link.name}
-							disablePadding
-							sx={{
-								mb: 1,
-								animation: `slideIn 0.25s ease-out ${index * 0.03}s both`,
-								'@keyframes slideIn': {
-									'0%': {
-										opacity: 0,
-										transform: 'translateX(-15px)',
-									},
-									'100%': {
-										opacity: 1,
-										transform: 'translateX(0)',
-									},
-								},
-							}}>
-							<Link href={`${link.href}`} style={{ width: '100%' }}>
-								<ListItemButton
-									sx={{
-										borderRadius: 2.5,
-										py: 1.4,
-										px: 1.75,
-										backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-										backdropFilter: isActive ? 'blur(10px)' : 'none',
-										boxShadow: isActive ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
-										border: isActive ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent',
-										transition: 'all 0.3s ease',
-										'&:hover': {
-											backgroundColor: 'rgba(255, 255, 255, 0.15)',
-											transform: 'translateX(8px)',
-											boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-										},
-									}}>
-									<ListItemIcon
-										sx={{
-											color: '#fff',
-											minWidth: 40,
-											'& .MuiSvgIcon-root': {
-												fontSize: '1.45rem',
-												filter: isActive ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'none',
-											},
-										}}>
-										{link.icon}
-									</ListItemIcon>
-									<ListItemText
-										primary={link.name}
-										primaryTypographyProps={{
-											fontWeight: isActive ? 700 : 600,
-											fontSize: '1rem',
-											letterSpacing: '-0.2px',
-										}}
-									/>
-									{isActive && (
-										<Box
-											sx={{
-												width: 6,
-												height: 6,
-												borderRadius: '50%',
-												backgroundColor: 'white',
-												boxShadow: '0 0 10px rgba(255,255,255,0.8)',
-											}}
-										/>
-									)}
-								</ListItemButton>
-							</Link>
-						</ListItem>
-					)
-				})}
-
-				{/* Admin button for mobile - only for admin users */}
-				{isUserAdmin && (
-					<ListItem
-						disablePadding
-						sx={{
-							mb: 1,
-							animation: `slideIn 0.25s ease-out ${navigationLinks.length * 0.03}s both`,
-							'@keyframes slideIn': {
-								'0%': {
-									opacity: 0,
-									transform: 'translateX(-15px)',
-								},
-								'100%': {
-									opacity: 1,
-									transform: 'translateX(0)',
-								},
-							},
-						}}>
-						<Link href="/admin" style={{ width: '100%' }}>
-							<ListItemButton
-								sx={{
-									borderRadius: 2.5,
-									py: 1.4,
-									px: 1.75,
-									backgroundColor: isActivePath('/admin') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-									backdropFilter: isActivePath('/admin') ? 'blur(10px)' : 'none',
-									boxShadow: isActivePath('/admin') ? '0 4px 15px rgba(0, 0, 0, 0.15)' : 'none',
-									border: isActivePath('/admin') ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid rgba(255, 200, 100, 0.3)',
-									background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 140, 0, 0.15) 100%)',
-									transition: 'all 0.3s ease',
-									'&:hover': {
-										backgroundColor: 'rgba(255, 215, 0, 0.25)',
-										transform: 'translateX(8px)',
-										boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)',
-									},
-								}}>
-								<ListItemIcon
-									sx={{
-										color: '#fff',
-										minWidth: 40,
-										'& .MuiSvgIcon-root': {
-											fontSize: '1.45rem',
-											filter: isActivePath('/admin') ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'drop-shadow(0 2px 4px rgba(255,215,0,0.3))',
-										},
-									}}>
-									<AdminPanelSettings />
-								</ListItemIcon>
-								<ListItemText
-									primary={t('admin')}
-									primaryTypographyProps={{
-										fontWeight: isActivePath('/admin') ? 700 : 600,
-										fontSize: '1rem',
-										letterSpacing: '-0.2px',
-									}}
-								/>
-								{isActivePath('/admin') && (
-									<Box
-										sx={{
-											width: 6,
-											height: 6,
-											borderRadius: '50%',
-											backgroundColor: 'white',
-											boxShadow: '0 0 10px rgba(255,255,255,0.8)',
-										}}
-									/>
-								)}
-							</ListItemButton>
-						</Link>
-					</ListItem>
-				)}
-			</List>
-
-			{/* Boutons Sign in / Sign up pour mobile */}
-			{isMounted && (
-				<>
-					{isBootstrapping ? (
-						// Skeleton pendant le chargement (mobile)
-						<Box sx={{ px: 2.5, pb: 3, mt: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.25 }}>
-							<Box
-								sx={{
-									height: 50,
-									borderRadius: 2.5,
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-									animation: 'pulse 1.5s ease-in-out infinite',
-									'@keyframes pulse': {
-										'0%, 100%': { opacity: 0.6 },
-										'50%': { opacity: 0.3 },
-									},
-								}}
-							/>
-							<Box
-								sx={{
-									height: 50,
-									borderRadius: 2.5,
-									background: 'rgba(255, 255, 255, 0.1)',
-									animation: 'pulse 1.5s ease-in-out infinite 0.2s',
-									'@keyframes pulse': {
-										'0%, 100%': { opacity: 0.6 },
-										'50%': { opacity: 0.3 },
-									},
-								}}
-							/>
-						</Box>
-					) : !isUserLoggedIn ? (
-						<Box sx={{ px: 2.5, pb: 3, mt: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 1.25 }}>
-							<Link href={`/signup`}>
-						<Button
-							variant='contained'
-							fullWidth
-							sx={{
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								color: 'white',
-								fontWeight: 700,
-								textTransform: 'none',
-								py: 1.5,
-								borderRadius: 2.5,
-								fontSize: '1rem',
-								boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									transform: 'translateY(-3px)',
-									boxShadow: '0 12px 32px rgba(139, 92, 246, 0.6), 0 0 20px rgba(6, 182, 212, 0.3)',
-								},
-								'&:active': {
-									transform: 'translateY(-1px)',
-								},
-							}}>
-							{t('signup')}
-						</Button>
-					</Link>
-					<Link href={`/login`}>
-						<Button
-							variant='outlined'
-							fullWidth
-							sx={{
-								color: 'white',
-								fontWeight: 600,
-								textTransform: 'none',
-								py: 1.5,
-								borderRadius: 2.5,
-								fontSize: '1rem',
-								border: '1px solid rgba(255, 255, 255, 0.3)',
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									background: 'rgba(255, 255, 255, 0.1)',
-									border: '1px solid rgba(255, 255, 255, 0.5)',
-									transform: 'translateY(-2px)',
-								},
-								'&:active': {
-									transform: 'translateY(-1px)',
-								},
-							}}>
-							{t('signin')}
-						</Button>
-					</Link>
-				</Box>
-					) : null}
-				</>
-			)}
-		</Box>
-	)
-
-	const container =
-		window !== undefined ? () => window().document.body : undefined
-
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-			}}>
-			<AppBar
-				component='nav'
-				elevation={0}
-				sx={{
-					background: 'linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1e1b4b 100%)',
-					backdropFilter: 'blur(10px)',
-					boxShadow: '0 4px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-					borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
-					position: 'relative',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
-						pointerEvents: 'none',
-					},
-				}}>
-				<Toolbar sx={{
-				display: 'flex',
-				justifyContent: 'space-between',
-				alignItems: 'center',
-				py: 2,
-				position: 'relative',
-				zIndex: 1,
-				minHeight: { xs: 70, sm: 80 },
-				px: { xs: 1.5, sm: 2, md: 3 },
-			}}>
-					{/* Menu mobile */}
-					<IconButton
-						color='inherit'
-						aria-label='open drawer'
-						edge='start'
+		<>
+			{/* Main Navbar */}
+			<nav className={cn(
+				'fixed top-0 left-0 right-0 z-50',
+				'bg-gradient-to-r from-violet-900 via-purple-900 to-indigo-900',
+				'backdrop-blur-xl',
+				'shadow-[0_4px_30px_rgba(139,92,246,0.4)]',
+				'border-b border-violet-500/30'
+			)}>
+				{/* Background effects */}
+				<div className="absolute inset-0 pointer-events-none overflow-hidden">
+					<div className="absolute top-0 left-1/4 w-64 h-32 bg-violet-500/20 rounded-full blur-3xl" />
+					<div className="absolute top-0 right-1/4 w-64 h-32 bg-cyan-500/15 rounded-full blur-3xl" />
+				</div>
+
+				<div className={cn(
+					'relative z-10 flex items-center justify-between',
+					'min-h-[70px] sm:min-h-[80px]',
+					'px-3 sm:px-4 md:px-6 py-2'
+				)}>
+					{/* Mobile menu button */}
+					<button
 						onClick={handleDrawerToggle}
-						sx={{
-							ml: { xs: 0.5, sm: 0 },
-							mr: { xs: 1.5, sm: 1.5 },
-							display: 'flex',
-							'@media (min-width: 1400px)': {
-								display: 'none',
-							},
-							width: { xs: 44, sm: 48 },
-							height: { xs: 44, sm: 48 },
-							borderRadius: 2,
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-							backdropFilter: 'blur(10px)',
-							border: '1px solid rgba(139, 92, 246, 0.4)',
-							boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							position: 'relative',
-							overflow: 'hidden',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: '-50%',
-								left: '-50%',
-								width: '200%',
-								height: '200%',
-								background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
-								transform: 'translate(-100%, -100%)',
-								transition: 'transform 0.5s ease',
-							},
-							'&:hover': {
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.3) 100%)',
-								transform: 'scale(1.1) rotate(5deg)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)',
-								border: '1px solid rgba(139, 92, 246, 0.6)',
-								'&::before': {
-									transform: 'translate(0, 0)',
-								},
-							},
-							'&:active': {
-								transform: 'scale(0.95)',
-							},
-						}}>
-						<DensityMediumRounded sx={{ fontSize: '1.6rem', filter: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' }} />
-					</IconButton>
+						className={cn(
+							'2xl:hidden',
+							'w-11 h-11 sm:w-12 sm:h-12 rounded-xl',
+							'flex items-center justify-center',
+							'bg-gradient-to-br from-violet-500/30 to-cyan-500/20',
+							'border border-violet-500/40',
+							'backdrop-blur-sm',
+							'shadow-lg shadow-violet-500/30',
+							'transition-all duration-300',
+							'hover:from-violet-500/50 hover:to-cyan-500/30',
+							'hover:scale-110 hover:rotate-3',
+							'hover:shadow-xl hover:shadow-violet-500/50',
+							'active:scale-95'
+						)}
+					>
+						<Menu className="w-6 h-6 text-white drop-shadow-[0_0_4px_rgba(139,92,246,0.8)]" />
+					</button>
 
-					{/* Logo/Brand - caché sur mobile, visible sur tablette et desktop */}
-					<Box
-						sx={{
-							display: { xs: 'none', sm: 'flex' },
-							alignItems: 'center',
-							mr: { xs: 0, lg: 3 },
-							flexShrink: 0,
-						}}>
-						<Link href='/'>
-							<Box
-								sx={{
-									cursor: 'pointer',
-									display: 'flex',
-									alignItems: 'center',
-									px: { xs: 1, sm: 1.5, md: 2 },
-									py: 1,
-									borderRadius: 2,
-									transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-									position: 'relative',
-									overflow: 'hidden',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: '-100%',
-										width: '100%',
-										height: '100%',
-										background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-										transition: 'left 0.6s ease',
-									},
-									'&:hover': {
-										transform: 'scale(1.05) translateY(-2px)',
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.25) 100%)',
-										boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), 0 0 25px rgba(6, 182, 212, 0.3)',
-										'&::before': {
-											left: '100%',
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										fontWeight: 800,
-										fontSize: { xs: '1.3rem', sm: '1.5rem' },
-										color: 'white',
-										letterSpacing: '-0.5px',
-									}}>
-									Linguami
-								</Box>
-							</Box>
-						</Link>
-					</Box>
+					{/* Logo - hidden on mobile */}
+					<Link href="/" className="hidden sm:flex items-center gap-2 group mr-4 lg:mr-6">
+						<div className={cn(
+							'px-3 md:px-4 py-2 rounded-xl',
+							'transition-all duration-300',
+							'group-hover:scale-105 group-hover:-translate-y-0.5',
+							'group-hover:bg-gradient-to-br group-hover:from-violet-500/30 group-hover:to-cyan-500/25',
+							'group-hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)]'
+						)}>
+							<span className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+								Linguami
+							</span>
+						</div>
+					</Link>
 
-					{/* Navigation Links */}
-					<Box sx={{
-						display: 'none',
-						'@media (min-width: 1400px)': {
-							display: 'flex',
-						},
-						gap: 1.5,
-						flex: 1,
-						justifyContent: 'flex-start',
-						minWidth: 0,
-					}}>
-						{navigationLinks.slice(1).map((link, index) => {
+					{/* Desktop Navigation Links */}
+					<div className="hidden 2xl:flex items-center gap-3 flex-1">
+						{navigationLinks.slice(1).map((link) => {
 							const isActive = isActivePath(link.href)
+							const Icon = link.icon
 							return (
-								<Link key={link.name} href={`${link.href}`}>
-									<Button
-										startIcon={link.icon}
-										sx={{
-											color: '#fff',
-											fontWeight: 600,
-											textTransform: 'none',
-											fontSize: '0.95rem',
-											px: 2.5,
-											py: 1,
-											borderRadius: 2,
-											background: isActive
-												? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)'
-												: 'rgba(255, 255, 255, 0.05)',
-											border: isActive
-												? '1px solid rgba(139, 92, 246, 0.5)'
-												: '1px solid rgba(255, 255, 255, 0.1)',
-											boxShadow: isActive ? '0 0 15px rgba(139, 92, 246, 0.3)' : 'none',
-											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-											position: 'relative',
-											overflow: 'hidden',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: '-100%',
-												width: '100%',
-												height: '100%',
-												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-												transition: 'left 0.5s ease',
-											},
-											'& .MuiButton-startIcon': {
-												marginRight: '8px',
-											},
-											'& .MuiSvgIcon-root': {
-												fontSize: '1.3rem',
-												transition: 'all 0.3s ease',
-												filter: isActive ? 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.8))' : 'none',
-											},
-											'&:hover': {
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(6, 182, 212, 0.3) 100%)',
-												border: '1px solid rgba(139, 92, 246, 0.6)',
-												transform: 'translateY(-3px)',
-												boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-												'& .MuiSvgIcon-root': {
-													transform: 'scale(1.2) rotate(-5deg)',
-													filter: 'drop-shadow(0 0 6px rgba(139, 92, 246, 0.9))',
-												},
-												'&::before': {
-													left: '100%',
-												},
-											},
-											'&:active': {
-												transform: 'translateY(-1px)',
-											},
-										}}>
-										{link.name}
-									</Button>
+								<Link key={link.name} href={link.href}>
+									<button className={cn(
+										'flex items-center gap-2 px-4 py-2.5 rounded-xl',
+										'font-semibold text-white text-[0.95rem]',
+										'transition-all duration-300',
+										'border relative overflow-hidden group',
+										isActive
+											? 'bg-gradient-to-br from-violet-500/30 to-cyan-500/20 border-violet-500/50 shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+											: 'bg-white/5 border-white/10 hover:bg-gradient-to-br hover:from-violet-500/40 hover:to-cyan-500/30',
+										'hover:border-violet-500/60 hover:-translate-y-0.5',
+										'hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)]'
+									)}>
+										{/* Shine effect */}
+										<div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-500" />
+										<Icon className={cn(
+											'w-5 h-5 transition-all duration-300 relative z-10',
+											isActive && 'drop-shadow-[0_0_4px_rgba(139,92,246,0.8)]',
+											'group-hover:scale-110 group-hover:-rotate-3'
+										)} />
+										<span className="relative z-10">{link.name}</span>
+									</button>
 								</Link>
 							)
 						})}
-					</Box>
+					</div>
 
 					{/* Right side */}
-					<Box sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: { xs: 0.5, sm: 0.75, lg: 1.5 },
-						flexShrink: 0,
-					}}>
-						{/* Admin button - only for admin users */}
+					<div className="flex items-center gap-1 sm:gap-2 lg:gap-3">
+						{/* Admin button - desktop only */}
 						{isUserAdmin && (
-							<Link href="/admin">
-									<Button
-									startIcon={<AdminPanelSettings />}
-									sx={{
-										color: '#fff',
-										fontWeight: 700,
-										textTransform: 'none',
-										fontSize: '0.95rem',
-										px: 2.5,
-										py: 1,
-										borderRadius: 2,
-										background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.25) 100%)',
-										border: '1px solid rgba(255, 215, 0, 0.4)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										display: 'none',
-										'@media (min-width: 1400px)': {
-											display: 'flex',
-										},
-										boxShadow: '0 0 15px rgba(255, 215, 0, 0.3)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'& .MuiButton-startIcon': {
-											marginRight: '8px',
-										},
-										'& .MuiSvgIcon-root': {
-											fontSize: '1.3rem',
-											transition: 'all 0.3s ease',
-											filter: 'drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))',
-										},
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.4) 0%, rgba(255, 140, 0, 0.4) 100%)',
-											transform: 'translateY(-3px) scale(1.05)',
-											boxShadow: '0 4px 25px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4)',
-											border: '1px solid rgba(255, 215, 0, 0.6)',
-											'& .MuiSvgIcon-root': {
-												transform: 'scale(1.2) rotate(10deg)',
-												filter: 'drop-shadow(0 0 8px rgba(255, 215, 0, 1))',
-											},
-											'&::before': {
-												left: '100%',
-											},
-										},
-										'&:active': {
-											transform: 'translateY(-1px) scale(1.02)',
-										},
-									}}>
-									{t('admin')}
-									</Button>
+							<Link href="/admin" className="hidden 2xl:block">
+								<button className={cn(
+									'flex items-center gap-2 px-4 py-2.5 rounded-xl',
+									'font-bold text-white text-[0.95rem]',
+									'bg-gradient-to-br from-amber-500/25 to-orange-500/25',
+									'border border-amber-500/40',
+									'shadow-[0_0_15px_rgba(255,215,0,0.3)]',
+									'transition-all duration-300',
+									'hover:from-amber-500/40 hover:to-orange-500/40',
+									'hover:-translate-y-0.5 hover:scale-105',
+									'hover:shadow-[0_4px_25px_rgba(255,215,0,0.5)]',
+									'hover:border-amber-500/60',
+									'group overflow-hidden relative'
+								)}>
+									<div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-full transition-transform duration-500" />
+									<ShieldCheck className="w-5 h-5 drop-shadow-[0_0_4px_rgba(255,215,0,0.8)] group-hover:scale-110 group-hover:rotate-6 transition-transform relative z-10" />
+									<span className="relative z-10">{t('admin')}</span>
+								</button>
 							</Link>
 						)}
 
-						{/* Theme toggle and Language buttons - only show when not in material/blog detail, section page, or in lesson */}
+						{/* Theme toggle and Language menus */}
 						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && !isOnMaterialSectionPage() && (
 							<>
 								<ThemeToggle />
@@ -691,30 +227,18 @@ const Navbar = props => {
 							</>
 						)}
 
+						{/* User/Guest menu */}
 						{isMounted && (
 							<>
 								{isBootstrapping ? (
-									// Skeleton pendant le chargement
-									<Box sx={{ ml: { xs: 0.5, sm: 1, lg: 2 } }}>
-										<Box
-											sx={{
-												width: { xs: 44, sm: 48, lg: 52 },
-												height: { xs: 44, sm: 48, lg: 52 },
-												borderRadius: '50%',
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-												border: '2px solid rgba(255, 255, 255, 0.2)',
-												animation: 'pulse 1.5s ease-in-out infinite',
-												'@keyframes pulse': {
-													'0%, 100%': {
-														opacity: 0.6,
-													},
-													'50%': {
-														opacity: 0.3,
-													},
-												},
-											}}
-										/>
-									</Box>
+									<div className="ml-1 sm:ml-2 lg:ml-4">
+										<div className={cn(
+											'w-11 h-11 sm:w-12 sm:h-12 lg:w-13 lg:h-13 rounded-full',
+											'bg-gradient-to-br from-violet-500/20 to-cyan-500/15',
+											'border-2 border-white/20',
+											'animate-pulse'
+										)} />
+									</div>
 								) : isUserLoggedIn ? (
 									<UserMenu />
 								) : (
@@ -722,42 +246,162 @@ const Navbar = props => {
 								)}
 							</>
 						)}
-					</Box>
-				</Toolbar>
-			</AppBar>
+					</div>
+				</div>
+			</nav>
 
-			<Box component='nav'>
-				<Drawer
-					container={container}
-					variant='temporary'
-					open={mobileOpen}
-					onClose={handleDrawerToggle}
-					ModalProps={{
-						keepMounted: true, // Better open performance on mobile.
-					}}
-					sx={{
-						display: 'block',
-						'@media (min-width: 1400px)': {
-							display: 'none',
-						},
-						'& .MuiDrawer-paper': {
-							boxSizing: 'border-box',
-							width: drawerWidth,
-							borderRight: 'none',
-							boxShadow: '4px 0 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-						},
-						'& .MuiBackdrop-root': {
-							backgroundColor: 'rgba(0, 0, 0, 0.7)',
-							backdropFilter: 'blur(4px)',
-						},
-					}}>
-					{drawer}
-				</Drawer>
-			</Box>
-		</Box>
+			{/* Mobile Drawer Backdrop */}
+			{mobileOpen && (
+				<div
+					className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm 2xl:hidden"
+					onClick={handleDrawerToggle}
+				/>
+			)}
+
+			{/* Mobile Drawer */}
+			<div className={cn(
+				'fixed top-0 left-0 h-full z-[70] 2xl:hidden',
+				'w-[75%] max-w-[320px]',
+				'bg-gradient-to-b from-violet-900 via-purple-900 to-indigo-950',
+				'shadow-[4px_0_30px_rgba(139,92,246,0.4)]',
+				'transition-transform duration-300 ease-out',
+				mobileOpen ? 'translate-x-0' : '-translate-x-full'
+			)}>
+				{/* Background effects */}
+				<div className="absolute inset-0 pointer-events-none overflow-hidden">
+					<div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/20 rounded-full blur-3xl" />
+					<div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/15 rounded-full blur-3xl" />
+				</div>
+
+				<div className="relative z-10 flex flex-col h-full overflow-y-auto">
+					{/* Close button */}
+					<button
+						onClick={handleDrawerToggle}
+						className={cn(
+							'absolute top-4 right-4',
+							'w-10 h-10 rounded-xl',
+							'flex items-center justify-center',
+							'bg-white/10 border border-white/20',
+							'text-white transition-all duration-200',
+							'hover:bg-white/20 hover:scale-110'
+						)}
+					>
+						<X className="w-5 h-5" />
+					</button>
+
+					{/* Navigation */}
+					<nav className="flex-1 px-4 pt-16 pb-4">
+						<ul className="space-y-2">
+							{navigationLinks.map((link, index) => {
+								const isActive = isActivePath(link.href)
+								const Icon = link.icon
+								return (
+									<li
+										key={link.name}
+										style={{ animationDelay: `${index * 30}ms` }}
+										className="animate-in slide-in-from-left-4 duration-300"
+									>
+										<Link href={link.href} onClick={handleDrawerToggle}>
+											<div className={cn(
+												'flex items-center gap-3 px-4 py-3.5 rounded-xl',
+												'text-white font-semibold',
+												'transition-all duration-300',
+												'border',
+												isActive
+													? 'bg-white/20 backdrop-blur-sm border-white/30 shadow-lg'
+													: 'border-transparent hover:bg-white/15 hover:translate-x-2',
+											)}>
+												<Icon className={cn(
+													'w-6 h-6',
+													isActive && 'drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
+												)} />
+												<span>{link.name}</span>
+												{isActive && (
+													<div className="ml-auto w-2 h-2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+												)}
+											</div>
+										</Link>
+									</li>
+								)
+							})}
+
+							{/* Admin link for mobile */}
+							{isUserAdmin && (
+								<li
+									style={{ animationDelay: `${navigationLinks.length * 30}ms` }}
+									className="animate-in slide-in-from-left-4 duration-300"
+								>
+									<Link href="/admin" onClick={handleDrawerToggle}>
+										<div className={cn(
+											'flex items-center gap-3 px-4 py-3.5 rounded-xl',
+											'text-white font-semibold',
+											'transition-all duration-300',
+											'border',
+											'bg-gradient-to-r from-amber-500/15 to-orange-500/15',
+											'border-amber-500/30',
+											isActivePath('/admin')
+												? 'bg-white/20 backdrop-blur-sm border-white/30 shadow-lg'
+												: 'hover:bg-amber-500/25 hover:translate-x-2',
+										)}>
+											<ShieldCheck className="w-6 h-6 drop-shadow-[0_2px_4px_rgba(255,215,0,0.3)]" />
+											<span>{t('admin')}</span>
+											{isActivePath('/admin') && (
+												<div className="ml-auto w-2 h-2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+											)}
+										</div>
+									</Link>
+								</li>
+							)}
+						</ul>
+					</nav>
+
+					{/* Sign in/Sign up buttons for mobile */}
+					{isMounted && (
+						<>
+							{isBootstrapping ? (
+								<div className="px-4 pb-6 mt-auto space-y-3">
+									<div className="h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/15 animate-pulse" />
+									<div className="h-12 rounded-xl bg-white/10 animate-pulse" />
+								</div>
+							) : !isUserLoggedIn ? (
+								<div className="px-4 pb-6 mt-auto space-y-3">
+									<Link href="/signup" onClick={handleDrawerToggle}>
+										<button className={cn(
+											'w-full py-3.5 rounded-xl',
+											'font-bold text-white text-base',
+											'bg-gradient-to-r from-violet-500 to-cyan-500',
+											'shadow-[0_8px_24px_rgba(139,92,246,0.4)]',
+											'border border-violet-500/30',
+											'transition-all duration-300',
+											'hover:from-violet-600 hover:to-cyan-600',
+											'hover:-translate-y-0.5',
+											'hover:shadow-[0_12px_32px_rgba(139,92,246,0.6)]',
+											'active:translate-y-0'
+										)}>
+											{t('signup')}
+										</button>
+									</Link>
+									<Link href="/login" onClick={handleDrawerToggle}>
+										<button className={cn(
+											'w-full py-3.5 rounded-xl',
+											'font-semibold text-white text-base',
+											'border border-white/30',
+											'transition-all duration-300',
+											'hover:bg-white/10 hover:border-white/50',
+											'hover:-translate-y-0.5',
+											'active:translate-y-0'
+										)}>
+											{t('signin')}
+										</button>
+									</Link>
+								</div>
+							) : null}
+						</>
+					)}
+				</div>
+			</div>
+		</>
 	)
 }
 
-// Mémoïser la navbar (composant statique)
-// Removed React.memo to allow re-rendering when userProfile context changes
 export default Navbar

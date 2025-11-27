@@ -1,71 +1,47 @@
-import { Grid, Box, Typography } from '@mui/material'
+'use client'
+
 import MaterialsCard from './MaterialsCard'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 const MaterialsGrid = ({ materials }) => {
 	const t = useTranslations('materials')
+	const { isDark } = useThemeMode()
 
 	if (!materials || materials.length === 0) {
 		return (
-			<Box
-				sx={{
-					py: 8,
-					textAlign: 'center',
-				}}>
-				<Typography
-					variant="h6"
-					sx={{
-						color: '#64748b',
-						fontWeight: 600,
-					}}>
+			<div className="py-8 text-center">
+				<p
+					className={cn(
+						'text-lg font-semibold',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}
+				>
 					{t('noMaterialsFound')}
-				</Typography>
-			</Box>
+				</p>
+			</div>
 		)
 	}
 
 	return (
-		<Grid
-			container
-			spacing={{ xs: 1.5, sm: 2.5, md: 3 }}
-			sx={{
-				mb: 4,
-				mx: { xs: -0.5, sm: 0 },
-			}}>
+		<div
+			className={cn(
+				'grid gap-3 sm:gap-5 md:gap-6 mb-8',
+				'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
+				'-mx-1 sm:mx-0'
+			)}
+		>
 			{materials.map((material, index) => (
-				<Grid
-					item
-					xs={6}
-					sm={4}
-					md={3}
-					lg={2.4}
-					xl={2}
+				<div
 					key={`${material.section}-${index}`}
-					sx={{
-						display: 'flex',
-					}}>
-					<Box
-						sx={{
-							width: '100%',
-							animation: 'fadeInUp 0.5s ease-out',
-							animationDelay: `${index * 0.05}s`,
-							animationFillMode: 'both',
-							'@keyframes fadeInUp': {
-								from: {
-									opacity: 0,
-									transform: 'translateY(20px)',
-								},
-								to: {
-									opacity: 1,
-									transform: 'translateY(0)',
-								},
-							},
-						}}>
-						<MaterialsCard material={material} />
-					</Box>
-				</Grid>
+					className="flex animate-[fadeInUp_0.5s_ease-out_both]"
+					style={{ animationDelay: `${index * 0.05}s` }}
+				>
+					<MaterialsCard material={material} />
+				</div>
 			))}
-		</Grid>
+		</div>
 	)
 }
 
