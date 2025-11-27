@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Box } from '@mui/material'
 import BlogCard from './BlogCard'
 import { useUserContext } from '@/context/user'
 
@@ -39,17 +38,10 @@ export default function BlogList({ posts, locale }) {
 	}, [posts, locale, userLearningLanguage])
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: { xs: 2.5, sm: 3 },
-				maxWidth: '800px',
-				mx: 'auto',
-			}}>
+		<div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
 			{filteredPosts.map((post, index) => (
 				<BlogCard key={index} post={post} />
 			))}
-		</Box>
+		</div>
 	)
 }

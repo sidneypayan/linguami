@@ -3,39 +3,35 @@
  * Displays title and close button
  */
 
-import { Box, Typography, IconButton } from '@mui/material'
-import { Translate, Close } from '@mui/icons-material'
+import { Languages, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 
 export function TranslationHeader({ onClose }) {
 	const t = useTranslations('words')
 
 	return (
-		<Box
-			sx={{
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-				p: 2,
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-			}}>
-			<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-				<Translate sx={{ color: 'white' }} />
-				<Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 700 }}>
+		<div
+			className={cn(
+				'bg-gradient-to-r from-violet-500 to-purple-600',
+				'p-4 flex items-center justify-between'
+			)}
+		>
+			<div className="flex items-center gap-2">
+				<Languages className="w-5 h-5 text-white" />
+				<span className="text-white font-bold">
 					{t('translation')}
-				</Typography>
-			</Box>
-			<IconButton
-				size="small"
+				</span>
+			</div>
+			<button
 				onClick={onClose}
-				sx={{
-					color: 'white',
-					'&:hover': {
-						backgroundColor: 'rgba(255, 255, 255, 0.2)',
-					},
-				}}>
-				<Close />
-			</IconButton>
-		</Box>
+				className={cn(
+					'p-1.5 rounded-lg text-white',
+					'hover:bg-white/20 transition-colors'
+				)}
+			>
+				<X className="w-5 h-5" />
+			</button>
+		</div>
 	)
 }

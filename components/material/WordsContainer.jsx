@@ -4,6 +4,7 @@ import React, { useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { Zap } from 'lucide-react'
 import { useUserContext } from '@/context/user'
 import { useFlashcards } from '@/context/flashcards'
 import { deleteWordAction } from '@/app/actions/words'
@@ -13,10 +14,9 @@ import { useMaterialWords } from '@/hooks/words/useMaterialWords'
 import { EmptyWordsState } from '@/components/words/EmptyWordsState'
 import { WordCard } from '@/components/words/WordCard'
 import toast from '@/utils/toast'
-import { Box, Button } from '@mui/material'
-import { FlashOnRounded } from '@mui/icons-material'
+import { cn } from '@/lib/utils'
 
-const WordsContainer = ({ sx = {} }) => {
+const WordsContainer = ({ className }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
 	const params = useParams()
@@ -71,47 +71,37 @@ const WordsContainer = ({ sx = {} }) => {
 	// Show empty state if no words
 	if (filteredWords.length === 0) {
 		return (
-			<Box sx={sx}>
+			<div className={className}>
 				<EmptyWordsState isGuest={!isUserLoggedIn} />
-			</Box>
+			</div>
 		)
 	}
 
 	return (
-		<Box sx={sx}>
+		<div className={className}>
 			{/* Review button */}
-			<Button
-				fullWidth
-				variant="contained"
-				size="large"
-				startIcon={<FlashOnRounded />}
+			<button
 				onClick={() => openFlashcards()}
-				sx={{
-					py: 2.5,
-					borderRadius: 3,
-					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-					border: '1px solid rgba(139, 92, 246, 0.3)',
-					fontWeight: 700,
-					fontSize: { xs: '1rem', sm: '1.0625rem' },
-					textTransform: 'none',
-					boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-					mb: 3,
-					'&:hover': {
-						background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-						transform: 'translateY(-3px)',
-						boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-						borderColor: 'rgba(139, 92, 246, 0.5)',
-					},
-					'&:active': {
-						transform: 'translateY(0)',
-					},
-				}}>
+				className={cn(
+					'group w-full py-4 px-6 rounded-xl mb-6',
+					'bg-gradient-to-r from-violet-500 to-cyan-500',
+					'border border-violet-500/30',
+					'font-bold text-base sm:text-lg text-white',
+					'shadow-[0_8px_32px_rgba(139,92,246,0.4)]',
+					'transition-all duration-400 ease-out',
+					'hover:from-cyan-500 hover:to-violet-500',
+					'hover:-translate-y-1',
+					'hover:shadow-[0_12px_40px_rgba(139,92,246,0.5)]',
+					'active:translate-y-0',
+					'flex items-center justify-center gap-2'
+				)}
+			>
+				<Zap className="w-5 h-5 transition-transform group-hover:scale-110" />
 				{t('repeatwords')}
-			</Button>
+			</button>
 
 			{/* Words list */}
-			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+			<div className="flex flex-col gap-3">
 				{filteredWords.map((word, index) => (
 					<WordCard
 						key={word.id || index}
@@ -121,8 +111,8 @@ const WordsContainer = ({ sx = {} }) => {
 						locale={locale}
 					/>
 				))}
-			</Box>
-		</Box>
+			</div>
+		</div>
 	)
 }
 

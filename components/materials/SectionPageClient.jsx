@@ -15,26 +15,20 @@ import { logger } from '@/utils/logger'
 import {
 	ArrowLeft,
 	Search,
-	Grid3X3,
-	Table,
-	RotateCcw,
 	ChevronLeft,
 	ChevronRight,
-	ScrollText,
-	Sparkles,
 	Star,
 	Sword,
 	Shield,
-	Crown,
 	Gem,
-	Flame,
-	Trophy,
-	Wand2,
-	Castle,
-	Scroll,
-	BookOpen,
-	Film,
-	Music,
+	// FilterBar icons (consistent with MaterialsFilterBar)
+	Signal,
+	Clock,
+	PlayCircle,
+	CheckCircle2,
+	LayoutGrid,
+	List,
+	RefreshCw,
 } from 'lucide-react'
 
 // ============================================
@@ -76,7 +70,7 @@ const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl overflow-hidden',
+			'relative rounded-2xl overflow-visible',
 			'border-2',
 			borderColors[glowColor],
 			'shadow-xl',
@@ -114,173 +108,46 @@ const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 }
 
 // ============================================
-// MAGICAL PARTICLES BACKGROUND
+// SECTION HEADER
 // ============================================
-const MagicalParticles = ({ isDark }) => (
-	<div className="fixed inset-0 pointer-events-none overflow-hidden">
-		{/* Floating orbs */}
-		<div className={cn(
-			'absolute top-32 left-10 w-3 h-3 rounded-full animate-pulse',
-			isDark ? 'bg-violet-400/20' : 'bg-violet-300/40'
-		)} style={{ animationDuration: '3s' }} />
-		<div className={cn(
-			'absolute top-48 right-20 w-2 h-2 rounded-full animate-pulse',
-			isDark ? 'bg-cyan-400/20' : 'bg-cyan-300/40'
-		)} style={{ animationDuration: '4s' }} />
-		<div className={cn(
-			'absolute top-64 left-1/4 w-2.5 h-2.5 rounded-full animate-pulse',
-			isDark ? 'bg-amber-400/20' : 'bg-amber-300/40'
-		)} style={{ animationDuration: '2.5s' }} />
-		<div className={cn(
-			'absolute bottom-48 right-1/4 w-2 h-2 rounded-full animate-pulse',
-			isDark ? 'bg-emerald-400/20' : 'bg-emerald-300/40'
-		)} style={{ animationDuration: '3.5s' }} />
-		<div className={cn(
-			'absolute bottom-32 left-20 w-1.5 h-1.5 rounded-full animate-pulse',
-			isDark ? 'bg-purple-400/20' : 'bg-purple-300/40'
-		)} style={{ animationDuration: '4.5s' }} />
-
-		{/* Sparkle effects */}
-		<div className={cn(
-			'absolute top-40 right-1/3 w-1 h-1 rounded-full animate-ping',
-			isDark ? 'bg-white/10' : 'bg-violet-400/30'
-		)} style={{ animationDuration: '2s' }} />
-		<div className={cn(
-			'absolute bottom-60 left-1/3 w-1 h-1 rounded-full animate-ping',
-			isDark ? 'bg-white/10' : 'bg-amber-400/30'
-		)} style={{ animationDuration: '2.5s' }} />
-
-		{/* Ambient glows */}
-		<div className={cn(
-			'absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-violet-900/20' : 'bg-violet-200/30'
-		)} />
-		<div className={cn(
-			'absolute -bottom-20 -right-20 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-cyan-900/20' : 'bg-cyan-200/30'
-		)} />
-	</div>
-)
-
-// ============================================
-// SECTION ICON MAPPING
-// ============================================
-const getSectionIcon = (section) => {
-	const iconMap = {
-		texts: ScrollText,
-		audio: Music,
-		video: Film,
-		books: BookOpen,
-	}
-	return iconMap[section] || ScrollText
-}
-
-// ============================================
-// EPIC SECTION HEADER
-// ============================================
-const EpicHeader = ({ isDark, section, t, onBack }) => {
-	const SectionIcon = getSectionIcon(section)
-
+const SectionHeader = ({ isDark, section, t, onBack }) => {
 	return (
-		<div className="relative mb-8 md:mb-10">
-			{/* Back button with shield style */}
-			<div className="flex items-center gap-4 md:gap-6">
+		<div className="relative mb-6 md:mb-8">
+			<div className="flex items-center gap-3 md:gap-4">
+				{/* Back button */}
 				<button
 					onClick={onBack}
+					aria-label="back"
 					className={cn(
-						'group relative w-12 h-12 md:w-14 md:h-14',
-						'flex items-center justify-center',
-						'transition-all duration-300',
-						'hover:scale-110'
+						'p-2.5 md:p-3 rounded-xl transition-all duration-300',
+						'border',
+						isDark
+							? 'bg-gradient-to-br from-violet-500/10 to-cyan-500/10 border-violet-500/30'
+							: 'bg-gradient-to-br from-violet-500/5 to-cyan-500/5 border-violet-500/20',
+						'text-violet-500',
+						'hover:scale-105 hover:shadow-lg',
+						isDark
+							? 'hover:bg-gradient-to-br hover:from-violet-500/20 hover:to-cyan-500/20'
+							: 'hover:bg-gradient-to-br hover:from-violet-500/10 hover:to-cyan-500/10'
 					)}
 				>
-					{/* Shield background */}
-					<div className={cn(
-						'absolute inset-0 rounded-xl rotate-45',
-						'bg-gradient-to-br',
-						isDark
-							? 'from-slate-700 to-slate-800 border-2 border-violet-500/30'
-							: 'from-white to-slate-100 border-2 border-violet-300/50',
-						'shadow-lg',
-						isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30',
-						'group-hover:border-violet-400 transition-colors'
-					)} />
-					{/* Sword icon (or arrow) */}
-					<ArrowLeft className={cn(
-						'relative z-10 w-5 h-5 md:w-6 md:h-6',
-						isDark ? 'text-violet-400' : 'text-violet-600',
-						'group-hover:text-violet-500 transition-colors',
-						'group-hover:-translate-x-1 transition-transform'
-					)} />
-					{/* Glow on hover */}
-					<div className={cn(
-						'absolute inset-0 rounded-xl rotate-45',
-						'bg-gradient-to-br from-violet-500/0 to-cyan-500/0',
-						'group-hover:from-violet-500/20 group-hover:to-cyan-500/20',
-						'transition-all duration-300'
-					)} />
+					<ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
 				</button>
 
-				{/* Main title area */}
-				<div className="flex items-center gap-4">
-					{/* Section emblem */}
-					<div className="relative">
-						{/* Glow behind emblem */}
-						<div className={cn(
-							'absolute inset-0 blur-xl rounded-full',
-							isDark ? 'bg-violet-500/30' : 'bg-violet-400/40'
-						)} />
-						{/* Rotated frame */}
-						<div className={cn(
-							'relative w-14 h-14 md:w-16 md:h-16 rotate-45',
-							'bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-500',
-							'rounded-xl',
-							'shadow-lg shadow-violet-500/40',
-							'flex items-center justify-center'
-						)}>
-							<div className="-rotate-45">
-								<SectionIcon className="w-7 h-7 md:w-8 md:h-8 text-white" />
-							</div>
-						</div>
-						{/* Decorative dots */}
-						<div className={cn(
-							'absolute -top-1 -right-1 w-2 h-2 rounded-full',
-							'bg-amber-400 animate-pulse'
-						)} />
-					</div>
-
-					{/* Title with decorations */}
-					<div className="relative">
-						{/* Crown decoration above */}
-						<div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1">
-							<div className={cn('w-6 h-0.5 bg-gradient-to-r from-transparent to-amber-500/50')} />
-							<Crown className={cn('w-4 h-4', isDark ? 'text-amber-400/60' : 'text-amber-500/50')} />
-							<div className={cn('w-6 h-0.5 bg-gradient-to-l from-transparent to-amber-500/50')} />
-						</div>
-
-						<h1 className={cn(
-							'text-3xl sm:text-4xl md:text-5xl font-black tracking-tight',
-							'bg-gradient-to-r from-violet-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent',
-							'[text-shadow:0_4px_12px_rgba(139,92,246,0.3)]'
-						)}>
-							{section && t(section)}
-						</h1>
-
-						{/* Decorative underline */}
-						<div className="mt-1 flex items-center gap-2">
-							<div className={cn('flex-1 h-0.5 bg-gradient-to-r from-violet-500 to-transparent')} />
-							<Gem className={cn('w-3 h-3', isDark ? 'text-cyan-400' : 'text-cyan-500')} />
-							<div className={cn('flex-1 h-0.5 bg-gradient-to-l from-cyan-500 to-transparent')} />
-						</div>
-					</div>
-				</div>
+				{/* Title */}
+				<h1 className={cn(
+					'text-2xl sm:text-3xl md:text-4xl font-bold',
+					'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+				)}>
+					{section && t(section)}
+				</h1>
 			</div>
 		</div>
 	)
 }
 
 // ============================================
-// FILTER BAR - Gaming Style
+// FILTER BAR - Consistent with MaterialsFilterBar
 // ============================================
 const FilterBar = ({
 	searchValue,
@@ -298,188 +165,205 @@ const FilterBar = ({
 	showStudiedFilter = true,
 }) => {
 	const levels = [
-		{ key: 'beginner', icon: Shield, color: 'emerald', label: t('beginner') },
-		{ key: 'intermediate', icon: Sword, color: 'violet', label: t('intermediate') },
-		{ key: 'advanced', icon: Crown, color: 'amber', label: t('advanced') },
+		{ label: t('beginner'), key: 'beginner', color: 'emerald', colorHex: '#10b981' },
+		{ label: t('intermediate'), key: 'intermediate', color: 'violet', colorHex: '#a855f7' },
+		{ label: t('advanced'), key: 'advanced', color: 'amber', colorHex: '#fbbf24' },
 	]
 
 	const statuses = [
-		...(showNotStudiedFilter ? [{ key: 'not_studied', icon: Gem, color: 'violet', label: t('not_studied') }] : []),
-		{ key: 'is_being_studied', icon: Flame, color: 'amber', label: t('being_studied') },
-		...(showStudiedFilter ? [{ key: 'is_studied', icon: Trophy, color: 'emerald', label: t('studied') }] : []),
+		...(showNotStudiedFilter ? [
+			{ label: t('not_studied'), key: 'not_studied', tooltipKey: 'notStudiedTooltip', color: 'violet', colorHex: '#8b5cf6', Icon: PlayCircle }
+		] : []),
+		{ label: t('being_studied'), key: 'is_being_studied', tooltipKey: 'beingStudiedTooltip', color: 'amber', colorHex: '#f59e0b', Icon: Clock },
+		...(showStudiedFilter ? [
+			{ label: t('studied'), key: 'is_studied', tooltipKey: 'studiedTooltip', color: 'emerald', colorHex: '#10b981', Icon: CheckCircle2 }
+		] : []),
 	]
 
-	const colorClasses = {
-		emerald: {
-			active: 'from-emerald-500 to-teal-600 shadow-emerald-500/40 border-transparent',
-			inactive: isDark ? 'border-emerald-500/30 text-emerald-400' : 'border-emerald-400/50 text-emerald-600',
-		},
-		violet: {
-			active: 'from-violet-500 to-purple-600 shadow-violet-500/40 border-transparent',
-			inactive: isDark ? 'border-violet-500/30 text-violet-400' : 'border-violet-400/50 text-violet-600',
-		},
-		amber: {
-			active: 'from-amber-500 to-orange-600 shadow-amber-500/40 border-transparent',
-			inactive: isDark ? 'border-amber-500/30 text-amber-400' : 'border-amber-400/50 text-amber-600',
-		},
-	}
-
 	return (
-		<OrnateFrame isDark={isDark} glowColor="violet" className={cn(
-			'p-4 mb-6',
-			isDark
-				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
-				: 'bg-gradient-to-br from-white to-slate-50'
-		)}>
-			{/* Adventurer's toolkit label */}
-			<div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-bold uppercase tracking-wider">
-				<Wand2 className="w-3 h-3" />
-				<span>Filtres</span>
-			</div>
-
-			<div className="space-y-4 pt-2">
-				{/* Search + View Toggle */}
-				<div className="flex gap-3 items-center">
-					<div className="relative flex-1">
-						<Search className={cn(
-							'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
-							isDark ? 'text-violet-400' : 'text-violet-500'
-						)} />
-						<input
-							type="text"
-							placeholder={t('search')}
-							value={searchValue}
-							onChange={(e) => onSearchChange(e.target.value)}
-							className={cn(
-								'w-full pl-10 pr-4 py-2.5 rounded-xl',
-								'border-2 transition-all',
-								isDark
-									? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
-									: 'bg-slate-50 border-violet-200 text-slate-800 placeholder:text-slate-400',
-								'focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500'
-							)}
-						/>
-					</div>
-
-					{/* View toggle - Gaming style */}
-					<div className={cn(
-						'flex gap-1 p-1 rounded-xl',
-						isDark ? 'bg-slate-900/50' : 'bg-slate-100',
-						'border',
-						isDark ? 'border-violet-500/20' : 'border-violet-200/50'
-					)}>
-						<button
-							onClick={() => onViewChange('card')}
-							className={cn(
-								'relative p-2 rounded-lg transition-all overflow-hidden',
-								viewMode === 'card'
-									? 'bg-gradient-to-br from-violet-500 to-cyan-500 text-white shadow-lg'
-									: isDark ? 'text-slate-400 hover:text-violet-400' : 'text-slate-500 hover:text-violet-600'
-							)}
-						>
-							<Castle className="w-5 h-5" />
-							{viewMode === 'card' && (
-								<Flame className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 animate-pulse" />
-							)}
-						</button>
-						<button
-							onClick={() => onViewChange('list')}
-							className={cn(
-								'relative p-2 rounded-lg transition-all overflow-hidden',
-								viewMode === 'list'
-									? 'bg-gradient-to-br from-violet-500 to-cyan-500 text-white shadow-lg'
-									: isDark ? 'text-slate-400 hover:text-violet-400' : 'text-slate-500 hover:text-violet-600'
-							)}
-						>
-							<Scroll className="w-5 h-5" />
-							{viewMode === 'list' && (
-								<Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 animate-pulse" />
-							)}
-						</button>
+		<div
+			className={cn(
+				'flex flex-col gap-3 mb-6 p-3 md:p-4',
+				'rounded-2xl',
+				'border',
+				isDark
+					? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30'
+					: 'bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20',
+				isDark
+					? 'shadow-[0_4px_20px_rgba(139,92,246,0.2)]'
+					: 'shadow-[0_4px_20px_rgba(139,92,246,0.1)]'
+			)}
+		>
+			{/* First row: Search bar and view toggle */}
+			<div className="flex gap-2 items-center justify-between">
+				<div className="relative flex-1">
+					<input
+						type="text"
+						placeholder={t('search')}
+						value={searchValue}
+						onChange={(e) => onSearchChange(e.target.value)}
+						className={cn(
+							'w-full px-4 py-2.5 pr-12 rounded-xl',
+							'border-2 transition-all duration-300',
+							'text-sm sm:text-base font-medium',
+							isDark
+								? 'bg-slate-800/80 text-slate-100 border-violet-500/20 placeholder:text-slate-500'
+								: 'bg-white text-slate-900 border-violet-500/20 placeholder:text-slate-400',
+							'focus:outline-none focus:border-violet-500',
+							'hover:border-violet-500/50'
+						)}
+					/>
+					<div
+						className={cn(
+							'absolute right-2 top-1/2 -translate-y-1/2',
+							'p-2 rounded-lg',
+							'text-violet-500'
+						)}
+					>
+						<Search className="w-5 h-5" />
 					</div>
 				</div>
 
-				{/* Filters row */}
-				<div className="flex flex-wrap gap-2 items-center">
-					{/* Level filters */}
-					{levels.map((level) => {
-						const Icon = level.icon
-						const isSelected = selectedLevel === level.key
-						const colors = colorClasses[level.color]
-
-						return (
-							<button
-								key={level.key}
-								onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
-								className={cn(
-									'relative px-3 py-2 rounded-xl font-semibold text-sm',
-									'border-2 transition-all',
-									'flex items-center gap-1.5',
-									isSelected
-										? ['bg-gradient-to-br text-white shadow-lg', colors.active]
-										: [isDark ? 'bg-slate-800/50' : 'bg-white', colors.inactive, 'hover:scale-105']
-								)}
-							>
-								<Icon className="w-4 h-4" />
-								<span className="hidden sm:inline">{level.label}</span>
-								{isSelected && (
-									<Star className="absolute -top-1.5 -right-1.5 w-4 h-4 text-amber-300 fill-amber-300 animate-pulse" />
-								)}
-							</button>
-						)
-					})}
-
-					{/* Divider */}
-					<div className={cn(
-						'w-px h-8 mx-1',
-						isDark ? 'bg-gradient-to-b from-transparent via-amber-500/30 to-transparent' : 'bg-gradient-to-b from-transparent via-amber-400/40 to-transparent'
-					)} />
-
-					{/* Status filters */}
-					{statuses.map((status) => {
-						const Icon = status.icon
-						const isSelected = selectedStatus === status.key
-						const colors = colorClasses[status.color]
-
-						return (
-							<button
-								key={status.key}
-								onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
-								className={cn(
-									'relative px-3 py-2 rounded-xl font-semibold text-sm',
-									'border-2 transition-all',
-									'flex items-center gap-1.5',
-									isSelected
-										? ['bg-gradient-to-br text-white shadow-lg', colors.active]
-										: [isDark ? 'bg-slate-800/50' : 'bg-white', colors.inactive, 'hover:scale-105']
-								)}
-							>
-								<Icon className="w-4 h-4" />
-								<span className="hidden sm:inline">{status.label}</span>
-								{isSelected && (
-									<Star className="absolute -top-1.5 -right-1.5 w-4 h-4 text-amber-300 fill-amber-300 animate-pulse" />
-								)}
-							</button>
-						)
-					})}
-
-					{/* Reset button */}
+				{/* View toggle */}
+				<div
+					className={cn(
+						'flex gap-1 p-1 rounded-lg flex-shrink-0',
+						'border-2 border-violet-500/20',
+						isDark ? 'bg-slate-800/95' : 'bg-white/95',
+						'shadow-sm'
+					)}
+				>
 					<button
-						onClick={onClear}
+						onClick={() => onViewChange('card')}
+						title="Vue en grille"
 						className={cn(
-							'p-2 rounded-xl transition-all',
-							'border-2',
-							isDark
-								? 'bg-slate-800/50 border-violet-500/30 text-violet-400 hover:bg-violet-500/20'
-								: 'bg-white border-violet-200 text-violet-600 hover:bg-violet-50',
-							'hover:rotate-180 hover:scale-110'
+							'p-2 rounded-md transition-all duration-300',
+							viewMode === 'card'
+								? 'bg-gradient-to-r from-violet-500 to-cyan-500 text-white'
+								: 'text-violet-500 hover:bg-violet-500/10'
 						)}
 					>
-						<RotateCcw className="w-5 h-5" />
+						<LayoutGrid className="w-4 sm:w-5 h-4 sm:h-5" />
+					</button>
+					<button
+						onClick={() => onViewChange('list')}
+						title="Vue en liste"
+						className={cn(
+							'p-2 rounded-md transition-all duration-300',
+							viewMode === 'list'
+								? 'bg-gradient-to-r from-violet-500 to-cyan-500 text-white'
+								: 'text-violet-500 hover:bg-violet-500/10'
+						)}
+					>
+						<List className="w-4 sm:w-5 h-4 sm:h-5" />
 					</button>
 				</div>
 			</div>
-		</OrnateFrame>
+
+			{/* Second row: Filters */}
+			<div className="flex gap-2 items-center flex-wrap">
+				{/* Level filters */}
+				{levels.map(level => {
+					const isSelected = selectedLevel === level.key
+					return (
+						<button
+							key={level.key}
+							onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
+							title={t(`${level.key}Tooltip`) || level.label}
+							className={cn(
+								'flex items-center gap-1.5 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl',
+								'text-sm font-semibold',
+								'border-2 transition-all duration-300',
+								'min-w-[40px] sm:min-w-0',
+								isSelected
+									? [
+										level.color === 'emerald' && 'border-emerald-500 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-[0_6px_24px_rgba(16,185,129,0.4)]',
+										level.color === 'violet' && 'border-violet-500 bg-gradient-to-r from-violet-500 to-violet-600 text-white shadow-[0_6px_24px_rgba(168,85,247,0.4)]',
+										level.color === 'amber' && 'border-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-[0_6px_24px_rgba(251,191,36,0.4)]',
+									]
+									: [
+										isDark ? 'bg-slate-800/80' : 'bg-white/90',
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										level.color === 'emerald' && 'border-emerald-500/50 hover:border-emerald-500 hover:bg-emerald-500/20',
+										level.color === 'violet' && 'border-violet-500/50 hover:border-violet-500 hover:bg-violet-500/20',
+										level.color === 'amber' && 'border-amber-500/50 hover:border-amber-500 hover:bg-amber-500/20',
+									],
+								'hover:-translate-y-0.5 hover:scale-105',
+								'active:scale-100'
+							)}
+						>
+							<Signal
+								className={cn(
+									'w-4 h-4',
+									isSelected ? 'text-white' : `text-${level.color}-500`
+								)}
+								style={{ color: isSelected ? 'white' : level.colorHex }}
+							/>
+							<span className="hidden sm:inline">{level.label}</span>
+						</button>
+					)
+				})}
+
+				{/* Status filters */}
+				{statuses.map((status, index) => {
+					const isSelected = selectedStatus === status.key
+					const StatusIcon = status.Icon
+					return (
+						<button
+							key={status.key}
+							onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
+							title={t(status.tooltipKey) || status.label}
+							className={cn(
+								'flex items-center gap-1.5 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl',
+								'text-sm font-semibold',
+								'border-2 transition-all duration-300',
+								'min-w-[40px] sm:min-w-0',
+								index === 0 && 'ml-2 sm:ml-0',
+								isSelected
+									? [
+										status.color === 'emerald' && 'border-emerald-500 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-[0_6px_24px_rgba(16,185,129,0.4)]',
+										status.color === 'violet' && 'border-violet-500 bg-gradient-to-r from-violet-500 to-violet-600 text-white shadow-[0_6px_24px_rgba(139,92,246,0.4)]',
+										status.color === 'amber' && 'border-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-[0_6px_24px_rgba(245,158,11,0.4)]',
+									]
+									: [
+										isDark ? 'bg-slate-800/80' : 'bg-white/90',
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										status.color === 'emerald' && 'border-emerald-500/50 hover:border-emerald-500 hover:bg-emerald-500/20',
+										status.color === 'violet' && 'border-violet-500/50 hover:border-violet-500 hover:bg-violet-500/20',
+										status.color === 'amber' && 'border-amber-500/50 hover:border-amber-500 hover:bg-amber-500/20',
+									],
+								'hover:-translate-y-0.5 hover:scale-105',
+								'active:scale-100'
+							)}
+						>
+							<StatusIcon
+								className="w-4 h-4"
+								style={{ color: isSelected ? 'white' : status.colorHex }}
+							/>
+							<span className="hidden sm:inline">{status.label}</span>
+						</button>
+					)
+				})}
+
+				{/* Reset button */}
+				<button
+					onClick={onClear}
+					title={t('showall')}
+					className={cn(
+						'p-2.5 rounded-xl transition-all duration-300',
+						'border-2 border-violet-500/20',
+						isDark ? 'bg-slate-800/95' : 'bg-white/95',
+						'text-violet-500',
+						'hover:bg-gradient-to-r hover:from-violet-500 hover:to-cyan-500',
+						'hover:text-white hover:border-transparent',
+						'hover:rotate-180 hover:scale-110',
+						'hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)]'
+					)}
+				>
+					<RefreshCw className="w-4 sm:w-5 h-4 sm:h-5" />
+				</button>
+			</div>
+		</div>
 	)
 }
 
@@ -870,12 +754,9 @@ export default function SectionPageClient({
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
 				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-amber-50/30 to-slate-50'
 		)}>
-			{/* Magical particles background */}
-			<MagicalParticles isDark={isDark} />
-
 			<div className="relative max-w-7xl mx-auto px-4">
-				{/* Epic Header */}
-				<EpicHeader
+				{/* Section Header */}
+				<SectionHeader
 					isDark={isDark}
 					section={section}
 					t={t}

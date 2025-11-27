@@ -345,7 +345,7 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	}
 
 	return (
-		<div className="min-h-screen bg-slate-50">
+		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
 			<AdminNavbar activePage="dashboard" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -371,254 +371,278 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 					})}
 				</div>
 
-				{/* Broken Videos Section */}
-				<div className={cn(
-					'rounded-xl border overflow-hidden mb-6',
-					brokenVideos.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
-				)}>
-					<div className="p-6 flex items-center justify-between">
-						<div className="flex items-center gap-4">
-							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.red.bg)}>
-								{brokenVideos.length > 0 ? (
-									<AlertTriangle className={colorClasses.red.text} />
-								) : (
-									<Video className={colorClasses.red.text} />
-								)}
+				{/* Media Health Check - Compact Cards */}
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+					{/* Videos Card */}
+					<div className={cn(
+						'rounded-xl border p-4 transition-all',
+						brokenVideos.length > 0
+							? 'border-red-300 bg-red-50'
+							: showBrokenVideos
+								? 'border-emerald-300 bg-emerald-50'
+								: 'border-slate-200 bg-white hover:border-slate-300'
+					)}>
+						<div className="flex items-center justify-between mb-3">
+							<div className="flex items-center gap-3">
+								<div className={cn(
+									'w-10 h-10 rounded-lg flex items-center justify-center',
+									brokenVideos.length > 0 ? 'bg-red-100' : 'bg-slate-100'
+								)}>
+									{brokenVideos.length > 0 ? (
+										<AlertTriangle className="w-5 h-5 text-red-600" />
+									) : (
+										<Video className="w-5 h-5 text-slate-600" />
+									)}
+								</div>
+								<div>
+									<h4 className="font-semibold text-slate-800 text-sm">{t('videos')}</h4>
+									<p className="text-xs text-slate-500">
+										{showBrokenVideos
+											? brokenVideos.length > 0
+												? `${brokenVideos.length} ${t('broken')}`
+												: t('allGood')
+											: t('notChecked')}
+									</p>
+								</div>
 							</div>
-							<div>
-								<h3 className="text-lg font-bold text-slate-800">{t('brokenVideosTitle')}</h3>
-								<p className="text-sm text-slate-500">
-									{showBrokenVideos
-										? brokenVideos.length > 0
-											? t('brokenVideosFound', { count: brokenVideos.length })
-											: t('noBrokenVideos')
-										: t('brokenVideosDesc')}
-								</p>
-							</div>
+							{brokenVideos.length > 0 && (
+								<span className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+									{brokenVideos.length}
+								</span>
+							)}
 						</div>
 						<button
 							onClick={loadBrokenVideos}
 							disabled={loadingVideos}
-							className="flex items-center gap-2 px-4 py-2.5 bg-red-500 text-white rounded-lg font-semibold text-sm hover:bg-red-600 disabled:bg-red-300 transition-colors"
+							className={cn(
+								'w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+								brokenVideos.length > 0
+									? 'bg-red-500 text-white hover:bg-red-600'
+									: 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+							)}
 						>
 							<RefreshCw className={cn('w-4 h-4', loadingVideos && 'animate-spin')} />
-							{loadingVideos ? t('checking') : t('checkVideos')}
+							{loadingVideos ? t('checking') : t('check')}
 						</button>
 					</div>
 
-					{showBrokenVideos && brokenVideos.length > 0 && (
-						<div className="overflow-x-auto">
-							<table className="w-full">
-								<thead>
-									<tr className="bg-red-100/50 border-b-2 border-red-500">
-										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('title')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('section')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('language')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('videoUrl')}</th>
-										<th className="px-6 py-3 text-right text-xs font-bold text-red-600 uppercase tracking-wider">{t('actions')}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{brokenVideos.map((video) => (
-										<tr key={video.id} className="hover:bg-amber-50 border-b border-slate-200">
-											<td className="px-6 py-4 font-semibold text-slate-800">{video.title}</td>
-											<td className="px-6 py-4 text-slate-500 capitalize">{video.section}</td>
-											<td className="px-6 py-4">
-												<span className={cn(
-													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
-													video.lang === 'fr' && 'bg-blue-100 text-blue-700',
-													video.lang === 'ru' && 'bg-red-100 text-red-700',
-													video.lang === 'en' && 'bg-emerald-100 text-emerald-700'
-												)}>
-													{getLanguageInfo(video.lang).flag} {getLanguageInfo(video.lang).name}
-												</span>
-											</td>
-											<td className="px-6 py-4">
-												<a
-													href={video.video_url}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="text-indigo-600 hover:underline text-sm truncate block max-w-[300px]"
-												>
-													{video.video_url}
-												</a>
-											</td>
-											<td className="px-6 py-4 text-right">
-												<button
-													onClick={() => handleOpenEditDialog(video)}
-													className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
-													title={t('replaceLink')}
-												>
-													<ArrowRightLeft className="w-4 h-4" />
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					)}
-				</div>
-
-				{/* Broken Audios Section */}
-				<div className={cn(
-					'rounded-xl border overflow-hidden mb-6',
-					brokenAudios.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
-				)}>
-					<div className="p-6 flex items-center justify-between">
-						<div className="flex items-center gap-4">
-							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.amber.bg)}>
-								{brokenAudios.length > 0 ? (
-									<AlertTriangle className={colorClasses.amber.text} />
-								) : (
-									<FileAudio className={colorClasses.amber.text} />
-								)}
+					{/* Audios Card */}
+					<div className={cn(
+						'rounded-xl border p-4 transition-all',
+						brokenAudios.length > 0
+							? 'border-amber-300 bg-amber-50'
+							: showBrokenAudios
+								? 'border-emerald-300 bg-emerald-50'
+								: 'border-slate-200 bg-white hover:border-slate-300'
+					)}>
+						<div className="flex items-center justify-between mb-3">
+							<div className="flex items-center gap-3">
+								<div className={cn(
+									'w-10 h-10 rounded-lg flex items-center justify-center',
+									brokenAudios.length > 0 ? 'bg-amber-100' : 'bg-slate-100'
+								)}>
+									{brokenAudios.length > 0 ? (
+										<AlertTriangle className="w-5 h-5 text-amber-600" />
+									) : (
+										<FileAudio className="w-5 h-5 text-slate-600" />
+									)}
+								</div>
+								<div>
+									<h4 className="font-semibold text-slate-800 text-sm">{t('audios')}</h4>
+									<p className="text-xs text-slate-500">
+										{showBrokenAudios
+											? brokenAudios.length > 0
+												? `${brokenAudios.length} ${t('broken')}`
+												: t('allGood')
+											: t('notChecked')}
+									</p>
+								</div>
 							</div>
-							<div>
-								<h3 className="text-lg font-bold text-slate-800">{t('brokenAudiosTitle')}</h3>
-								<p className="text-sm text-slate-500">
-									{showBrokenAudios
-										? brokenAudios.length > 0
-											? t('brokenAudiosFound', { count: brokenAudios.length })
-											: t('noBrokenAudios')
-										: t('brokenAudiosDesc')}
-								</p>
-							</div>
+							{brokenAudios.length > 0 && (
+								<span className="px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">
+									{brokenAudios.length}
+								</span>
+							)}
 						</div>
 						<button
 							onClick={loadBrokenAudios}
 							disabled={loadingAudios}
-							className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg font-semibold text-sm hover:bg-amber-600 disabled:bg-amber-300 transition-colors"
+							className={cn(
+								'w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+								brokenAudios.length > 0
+									? 'bg-amber-500 text-white hover:bg-amber-600'
+									: 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+							)}
 						>
 							<RefreshCw className={cn('w-4 h-4', loadingAudios && 'animate-spin')} />
-							{loadingAudios ? t('checking') : t('checkAudios')}
+							{loadingAudios ? t('checking') : t('check')}
 						</button>
 					</div>
 
-					{showBrokenAudios && brokenAudios.length > 0 && (
-						<div className="overflow-x-auto">
-							<table className="w-full">
-								<thead>
-									<tr className="bg-amber-100/50 border-b-2 border-amber-500">
-										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('title')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('section')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('language')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('audioFileName')}</th>
-										<th className="px-6 py-3 text-right text-xs font-bold text-amber-600 uppercase tracking-wider">{t('actions')}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{brokenAudios.map((audio) => (
-										<tr key={audio.id} className="hover:bg-amber-50 border-b border-slate-200">
-											<td className="px-6 py-4 font-semibold text-slate-800">{audio.title}</td>
-											<td className="px-6 py-4 text-slate-500 capitalize">{audio.section}</td>
-											<td className="px-6 py-4">
-												<span className={cn(
-													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
-													audio.lang === 'fr' && 'bg-blue-100 text-blue-700',
-													audio.lang === 'ru' && 'bg-red-100 text-red-700',
-													audio.lang === 'en' && 'bg-emerald-100 text-emerald-700'
-												)}>
-													{getLanguageInfo(audio.lang).flag} {getLanguageInfo(audio.lang).name}
-												</span>
-											</td>
-											<td className="px-6 py-4 text-red-500 text-sm truncate max-w-[300px]">{audio.audio_filename}</td>
-											<td className="px-6 py-4 text-right">
-												<button
-													onClick={() => handleOpenEditAudioDialog(audio)}
-													className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
-													title={t('replaceAudioLink')}
-												>
-													<ArrowRightLeft className="w-4 h-4" />
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					)}
-				</div>
-
-				{/* Broken Images Section */}
-				<div className={cn(
-					'rounded-xl border overflow-hidden mb-6',
-					brokenImages.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
-				)}>
-					<div className="p-6 flex items-center justify-between">
-						<div className="flex items-center gap-4">
-							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.violet.bg)}>
-								{brokenImages.length > 0 ? (
-									<AlertTriangle className={colorClasses.violet.text} />
-								) : (
-									<ImageIcon className={colorClasses.violet.text} />
-								)}
+					{/* Images Card */}
+					<div className={cn(
+						'rounded-xl border p-4 transition-all',
+						brokenImages.length > 0
+							? 'border-violet-300 bg-violet-50'
+							: showBrokenImages
+								? 'border-emerald-300 bg-emerald-50'
+								: 'border-slate-200 bg-white hover:border-slate-300'
+					)}>
+						<div className="flex items-center justify-between mb-3">
+							<div className="flex items-center gap-3">
+								<div className={cn(
+									'w-10 h-10 rounded-lg flex items-center justify-center',
+									brokenImages.length > 0 ? 'bg-violet-100' : 'bg-slate-100'
+								)}>
+									{brokenImages.length > 0 ? (
+										<AlertTriangle className="w-5 h-5 text-violet-600" />
+									) : (
+										<ImageIcon className="w-5 h-5 text-slate-600" />
+									)}
+								</div>
+								<div>
+									<h4 className="font-semibold text-slate-800 text-sm">{t('images')}</h4>
+									<p className="text-xs text-slate-500">
+										{showBrokenImages
+											? brokenImages.length > 0
+												? `${brokenImages.length} ${t('broken')}`
+												: t('allGood')
+											: t('notChecked')}
+									</p>
+								</div>
 							</div>
-							<div>
-								<h3 className="text-lg font-bold text-slate-800">{t('brokenImagesTitle')}</h3>
-								<p className="text-sm text-slate-500">
-									{showBrokenImages
-										? brokenImages.length > 0
-											? t('brokenImagesFound', { count: brokenImages.length })
-											: t('noBrokenImages')
-										: t('brokenImagesDesc')}
-								</p>
-							</div>
+							{brokenImages.length > 0 && (
+								<span className="px-2 py-1 bg-violet-500 text-white text-xs font-bold rounded-full">
+									{brokenImages.length}
+								</span>
+							)}
 						</div>
 						<button
 							onClick={loadBrokenImages}
 							disabled={loadingImages}
-							className="flex items-center gap-2 px-4 py-2.5 bg-violet-500 text-white rounded-lg font-semibold text-sm hover:bg-violet-600 disabled:bg-violet-300 transition-colors"
+							className={cn(
+								'w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+								brokenImages.length > 0
+									? 'bg-violet-500 text-white hover:bg-violet-600'
+									: 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+							)}
 						>
 							<RefreshCw className={cn('w-4 h-4', loadingImages && 'animate-spin')} />
-							{loadingImages ? t('checking') : t('checkImages')}
+							{loadingImages ? t('checking') : t('check')}
 						</button>
 					</div>
-
-					{showBrokenImages && brokenImages.length > 0 && (
-						<div className="overflow-x-auto">
-							<table className="w-full">
-								<thead>
-									<tr className="bg-violet-100/50 border-b-2 border-violet-500">
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('title')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('section')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('language')}</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('imageFileName')}</th>
-										<th className="px-6 py-3 text-right text-xs font-bold text-violet-600 uppercase tracking-wider">{t('actions')}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{brokenImages.map((image) => (
-										<tr key={image.id} className="hover:bg-amber-50 border-b border-slate-200">
-											<td className="px-6 py-4 font-semibold text-slate-800">{image.title}</td>
-											<td className="px-6 py-4 text-slate-500 capitalize">{image.section}</td>
-											<td className="px-6 py-4">
-												<span className={cn(
-													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
-													image.lang === 'fr' && 'bg-blue-100 text-blue-700',
-													image.lang === 'ru' && 'bg-red-100 text-red-700',
-													image.lang === 'en' && 'bg-emerald-100 text-emerald-700'
-												)}>
-													{getLanguageInfo(image.lang).flag} {getLanguageInfo(image.lang).name}
-												</span>
-											</td>
-											<td className="px-6 py-4 text-red-500 text-sm truncate max-w-[300px]">{image.image_filename}</td>
-											<td className="px-6 py-4 text-right">
-												<button
-													onClick={() => handleOpenEditImageDialog(image)}
-													className="p-2 text-violet-600 hover:bg-violet-100 rounded-lg transition-colors"
-													title={t('replaceImageLink')}
-												>
-													<ArrowRightLeft className="w-4 h-4" />
-												</button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					)}
 				</div>
+
+				{/* Broken Items Tables - Only show when there are broken items */}
+				{(brokenVideos.length > 0 || brokenAudios.length > 0 || brokenImages.length > 0) && (
+					<div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+						<div className="border-b border-slate-200 px-4 py-3 bg-slate-50">
+							<h3 className="font-semibold text-slate-800 flex items-center gap-2">
+								<AlertTriangle className="w-4 h-4 text-amber-500" />
+								{t('brokenMediaFiles')}
+							</h3>
+						</div>
+
+						{/* Videos Table */}
+						{brokenVideos.length > 0 && (
+							<div className="border-b border-slate-100">
+								<div className="px-4 py-2 bg-red-50 flex items-center gap-2">
+									<Video className="w-4 h-4 text-red-600" />
+									<span className="text-sm font-medium text-red-700">{t('videos')} ({brokenVideos.length})</span>
+								</div>
+								<div className="overflow-x-auto">
+									<table className="w-full text-sm">
+										<tbody>
+											{brokenVideos.map((video) => (
+												<tr key={video.id} className="hover:bg-slate-50 border-b border-slate-100">
+													<td className="px-4 py-2 font-medium text-slate-800">{video.title}</td>
+													<td className="px-4 py-2 text-slate-500 capitalize">{video.section}</td>
+													<td className="px-4 py-2">
+														<span className="text-xs">{getLanguageInfo(video.lang).flag}</span>
+													</td>
+													<td className="px-4 py-2 text-right">
+														<button
+															onClick={() => handleOpenEditDialog(video)}
+															className="p-1.5 text-red-600 hover:bg-red-100 rounded transition-colors"
+														>
+															<ArrowRightLeft className="w-4 h-4" />
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+
+						{/* Audios Table */}
+						{brokenAudios.length > 0 && (
+							<div className="border-b border-slate-100">
+								<div className="px-4 py-2 bg-amber-50 flex items-center gap-2">
+									<FileAudio className="w-4 h-4 text-amber-600" />
+									<span className="text-sm font-medium text-amber-700">{t('audios')} ({brokenAudios.length})</span>
+								</div>
+								<div className="overflow-x-auto">
+									<table className="w-full text-sm">
+										<tbody>
+											{brokenAudios.map((audio) => (
+												<tr key={audio.id} className="hover:bg-slate-50 border-b border-slate-100">
+													<td className="px-4 py-2 font-medium text-slate-800">{audio.title}</td>
+													<td className="px-4 py-2 text-slate-500 capitalize">{audio.section}</td>
+													<td className="px-4 py-2">
+														<span className="text-xs">{getLanguageInfo(audio.lang).flag}</span>
+													</td>
+													<td className="px-4 py-2 text-right">
+														<button
+															onClick={() => handleOpenEditAudioDialog(audio)}
+															className="p-1.5 text-amber-600 hover:bg-amber-100 rounded transition-colors"
+														>
+															<ArrowRightLeft className="w-4 h-4" />
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+
+						{/* Images Table */}
+						{brokenImages.length > 0 && (
+							<div>
+								<div className="px-4 py-2 bg-violet-50 flex items-center gap-2">
+									<ImageIcon className="w-4 h-4 text-violet-600" />
+									<span className="text-sm font-medium text-violet-700">{t('images')} ({brokenImages.length})</span>
+								</div>
+								<div className="overflow-x-auto">
+									<table className="w-full text-sm">
+										<tbody>
+											{brokenImages.map((image) => (
+												<tr key={image.id} className="hover:bg-slate-50 border-b border-slate-100 last:border-b-0">
+													<td className="px-4 py-2 font-medium text-slate-800">{image.title}</td>
+													<td className="px-4 py-2 text-slate-500 capitalize">{image.section}</td>
+													<td className="px-4 py-2">
+														<span className="text-xs">{getLanguageInfo(image.lang).flag}</span>
+													</td>
+													<td className="px-4 py-2 text-right">
+														<button
+															onClick={() => handleOpenEditImageDialog(image)}
+															className="p-1.5 text-violet-600 hover:bg-violet-100 rounded transition-colors"
+														>
+															<ArrowRightLeft className="w-4 h-4" />
+														</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+					</div>
+				)}
 
 				{/* Language Tabs */}
 				<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">

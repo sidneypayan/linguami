@@ -3,44 +3,44 @@
  * Displays word info and list of translations
  */
 
-import { Box, Stack, Typography, Chip, Divider, List, ListItem, ListItemButton, useTheme } from '@mui/material'
+import { Star } from 'lucide-react'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 export function TranslationContent({ translation, onTranslationClick, disabled = false }) {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	return (
 		<>
 			{/* Word info */}
 			{(translation.displayInf || translation.inf) && (
-				<Box sx={{ p: 2, backgroundColor: 'rgba(102, 126, 234, 0.08)' }}>
-					<Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+				<div className="p-4 bg-violet-500/8">
+					<div className="flex items-center gap-2 flex-wrap">
 						{translation.form && (
-							<Chip
-								label={translation.form}
-								size="small"
-								sx={{
-									fontWeight: 600,
-									background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-									color: 'white',
-								}}
-							/>
+							<span
+								className={cn(
+									'px-2.5 py-1 rounded-full text-xs font-semibold',
+									'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+								)}
+							>
+								{translation.form}
+							</span>
 						)}
-						<Typography variant="body2" sx={{ color: isDark ? '#94a3b8' : '#666' }}>
+						<span className={cn('text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
 							→
-						</Typography>
-						<Typography variant="subtitle1" sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : 'inherit' }}>
+						</span>
+						<span className={cn('font-bold', isDark ? 'text-slate-100' : 'text-slate-800')}>
 							{translation.displayInf || translation.inf}
-						</Typography>
-					</Stack>
-				</Box>
+						</span>
+					</div>
+				</div>
 			)}
 
-			<Divider />
+			<div className={cn('h-px', isDark ? 'bg-slate-700' : 'bg-slate-200')} />
 
 			{/* Translations list */}
-			<Box sx={{ flex: 1, overflow: 'auto', overflowX: 'hidden', maxHeight: '250px' }}>
-				<List sx={{ py: 0 }}>
+			<div className="flex-1 overflow-auto overflow-x-hidden max-h-[250px]">
+				<ul className="py-0">
 					{translation.definitions?.map((definition, index) => {
 						// Support both old format (string) and new format ({ text, count })
 						const translationText = typeof definition === 'string' ? definition : definition.text
@@ -48,59 +48,50 @@ export function TranslationContent({ translation, onTranslationClick, disabled =
 						const isPopular = popularityCount >= 3 // Show badge if chosen by 3+ users
 
 						return (
-							<ListItem key={index} disablePadding>
-								<ListItemButton
+							<li key={index}>
+								<button
 									onClick={disabled ? undefined : (e) => {
 										e.preventDefault()
 										e.target.textContent = translationText // Override textContent to exclude badge
 										onTranslationClick(e)
 									}}
 									disabled={disabled}
-									sx={{
-										py: 1.5,
-										px: 2,
-										pl: 1.5,
-										transition: 'all 0.2s ease',
-										borderLeft: '3px solid transparent',
-										opacity: disabled ? 0.5 : 1,
-										cursor: disabled ? 'not-allowed' : 'pointer',
-										'&:hover': disabled
-											? {}
-											: {
-													backgroundColor: 'rgba(102, 126, 234, 0.08)',
-													borderLeftColor: '#667eea',
-													pl: 2.5,
-											  },
-									}}>
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-										<Typography variant="body2" sx={{ fontWeight: 500, color: isDark ? '#f1f5f9' : 'inherit', flex: 1 }}>
+									className={cn(
+										'w-full py-3 px-4 text-left',
+										'border-l-[3px] border-transparent',
+										'transition-all duration-200',
+										disabled
+											? 'opacity-50 cursor-not-allowed'
+											: 'hover:bg-violet-500/8 hover:border-l-violet-500 hover:pl-5 cursor-pointer'
+									)}
+								>
+									<div className="flex items-center gap-2 w-full">
+										<span className={cn(
+											'font-medium flex-1',
+											isDark ? 'text-slate-100' : 'text-slate-800'
+										)}>
 											{translationText}
-										</Typography>
+										</span>
 										{isPopular && (
-											<Chip
-												label={`⭐ ${popularityCount}`}
-												size="small"
-												sx={{
-													height: '20px',
-													fontSize: '0.7rem',
-													fontWeight: 600,
-													background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-													color: 'white',
-													'& .MuiChip-label': {
-														px: 1,
-													},
-												}}
-											/>
+											<span
+												className={cn(
+													'flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.7rem] font-semibold',
+													'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+												)}
+											>
+												<Star className="w-3 h-3" />
+												{popularityCount}
+											</span>
 										)}
-									</Box>
-								</ListItemButton>
-							</ListItem>
+									</div>
+								</button>
+							</li>
 						)
 					})}
-				</List>
-			</Box>
+				</ul>
+			</div>
 
-			<Divider />
+			<div className={cn('h-px', isDark ? 'bg-slate-700' : 'bg-slate-200')} />
 		</>
 	)
 }

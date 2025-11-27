@@ -8,19 +8,15 @@ import SectionCard from '@/components/materials/SectionCard'
 import MaterialsTable from '@/components/materials/MaterialsTable'
 import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
 import { getUserMaterialsByLanguageAction } from '@/app/actions/materials'
-
-import {
-	Box,
-	Container,
-	IconButton,
-	Typography,
-} from '@mui/material'
-import { ArrowBack } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import { ArrowLeft } from 'lucide-react'
 
 const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const router = useRouter()
+	const { isDark } = useThemeMode()
 
 	// React Query: Fetch user materials with refetching capability
 	const { data: userMaterials = [], isLoading } = useQuery({
@@ -30,12 +26,7 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 		staleTime: 1000 * 60 * 5, // 5 minutes
 	})
 
-	console.log('[MyMaterialsClient] learningLanguage:', learningLanguage)
-	console.log('[MyMaterialsClient] initialMaterials:', initialMaterials)
-	console.log('[MyMaterialsClient] userMaterials:', userMaterials)
-	console.log('[MyMaterialsClient] isLoading:', isLoading)
-
-	// Local filter state (simpler than useMaterialFilters hook)
+	// Local filter state
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedLevel, setSelectedLevel] = useState(null)
 	const [selectedStatus, setSelectedStatus] = useState(null)
@@ -106,103 +97,80 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 		setSelectedSection(null)
 	}, [])
 
-	console.log('[MyMaterialsClient] filteredMaterials:', filteredMaterials)
-
 	const checkIfUserMaterialIsInMaterials = id => {
 		return userMaterials.find(material => material.id === id)
 	}
 
 	return (
 		<>
-			{/* Header Section - App Style */}
-			<Box
-				sx={{
-					display: { xs: 'none', lg: 'block' },
-					pt: { xs: '3.75rem', md: '6rem' },
-					pb: { xs: 2, md: 2.5 },
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: 'background.paper',
-				}}>
-				<Container maxWidth='lg'>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 2 }, mb: { xs: 1.25, md: 1.5 } }}>
-						<IconButton
-							sx={{
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								color: '#8b5cf6',
-								width: { xs: 40, md: 44 },
-								height: { xs: 40, md: 44 },
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
-									transform: 'scale(1.05)',
-								},
-							}}
-							aria-label='back'
-							onClick={() => router.back()}>
-							<ArrowBack fontSize='medium' />
-						</IconButton>
-						<Box>
-							<Typography
-								variant='h4'
-								sx={{
-									fontWeight: 700,
-									fontSize: { xs: '1.5rem', sm: '2rem' },
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									mb: 0.5,
-								}}>
+			{/* Header Section - Desktop only */}
+			<div
+				className={cn(
+					'hidden lg:block',
+					'pt-16 md:pt-24 pb-3 md:pb-4',
+					'border-b border-violet-500/15',
+					isDark ? 'bg-slate-900' : 'bg-white'
+				)}
+			>
+				<div className="max-w-6xl mx-auto px-4">
+					<div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-3">
+						<button
+							onClick={() => router.back()}
+							aria-label="back"
+							className={cn(
+								'p-2.5 md:p-3 rounded-xl transition-all duration-300',
+								'border',
+								isDark
+									? 'bg-gradient-to-br from-violet-500/10 to-cyan-500/10 border-violet-500/30'
+									: 'bg-gradient-to-br from-violet-500/5 to-cyan-500/5 border-violet-500/20',
+								'text-violet-500',
+								'hover:scale-105 hover:shadow-lg',
+								isDark
+									? 'hover:bg-gradient-to-br hover:from-violet-500/20 hover:to-cyan-500/20'
+									: 'hover:bg-gradient-to-br hover:from-violet-500/10 hover:to-cyan-500/10'
+							)}
+						>
+							<ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+						</button>
+						<div>
+							<h1
+								className={cn(
+									'text-2xl sm:text-3xl font-bold mb-1',
+									'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+								)}
+							>
 								{t('myMaterialsTitle')}
-							</Typography>
-							<Typography
-								variant='body2'
-								sx={{
-									color: '#64748b',
-									fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-								}}>
+							</h1>
+							<p className="text-slate-500 text-sm sm:text-[0.9375rem]">
 								{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
-							</Typography>
-						</Box>
-					</Box>
-				</Container>
-			</Box>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
 
-			<Container sx={{ pt: { xs: '3.75rem', lg: 2.5 }, pb: { xs: 2.5, md: 4 } }}>
-
+			<div className="max-w-6xl mx-auto px-4 pt-16 lg:pt-4 pb-4 md:pb-8">
 				{/* Mobile Title - Hidden on desktop */}
-				<Box
-					sx={{
-						display: { xs: 'flex', lg: 'none' },
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						mb: 2.5,
-						pb: 1.5,
-						borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					}}>
-					<Box>
-						<Typography
-							variant='h5'
-							sx={{
-								fontWeight: 700,
-								fontSize: '1.5rem',
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								mb: 0.25,
-							}}>
+				<div
+					className={cn(
+						'flex lg:hidden items-center justify-between',
+						'mb-4 pb-3 border-b border-violet-500/15'
+					)}
+				>
+					<div>
+						<h1
+							className={cn(
+								'text-2xl font-bold mb-1',
+								'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+							)}
+						>
 							{t('myMaterialsTitle')}
-						</Typography>
-						<Typography
-							variant='body2'
-							sx={{
-								color: '#64748b',
-								fontSize: '0.875rem',
-							}}>
+						</h1>
+						<p className="text-slate-500 text-sm">
 							{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
-						</Typography>
-					</Box>
-				</Box>
+						</p>
+					</div>
+				</div>
 
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}
@@ -223,42 +191,29 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 
 				{/* Materials display */}
 				{filteredMaterials.length === 0 ? (
-					<Box
-						sx={{
-							textAlign: 'center',
-							py: 8,
-							px: 2,
-						}}>
-						<Typography
-							variant='h5'
-							sx={{
-								color: '#718096',
-								mb: 2,
-								fontWeight: 600,
-							}}>
+					<div className="text-center py-12 px-4">
+						<h2
+							className={cn(
+								'text-xl font-semibold mb-3',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)}
+						>
 							{t('noMaterialsFound')}
-						</Typography>
-						<Typography
-							variant='body1'
-							sx={{
-								color: '#a0aec0',
-							}}>
+						</h2>
+						<p className={cn(
+							'text-base',
+							isDark ? 'text-slate-500' : 'text-slate-400'
+						)}>
 							{t('noMaterialsInCategory')}
-						</Typography>
-					</Box>
+						</p>
+					</div>
 				) : viewMode === 'card' ? (
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								sm: 'repeat(2, 1fr)',
-								md: 'repeat(3, 1fr)',
-								lg: 'repeat(4, 1fr)',
-							},
-							rowGap: { xs: 2, md: 3 },
-							columnGap: { xs: 2, md: 3 },
-						}}>
+					<div
+						className={cn(
+							'grid gap-4 md:gap-6',
+							'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+						)}
+					>
 						{filteredMaterials.map(material => (
 							<SectionCard
 								key={material.id}
@@ -266,14 +221,14 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 								checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
 							/>
 						))}
-					</Box>
+					</div>
 				) : (
 					<MaterialsTable
 						materials={filteredMaterials}
 						checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials}
 					/>
 				)}
-			</Container>
+			</div>
 		</>
 	)
 }

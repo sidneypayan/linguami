@@ -1,133 +1,34 @@
+'use client'
+
 import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user.js'
-import { useState, useMemo } from 'react'
-import { styled, alpha, useTheme } from '@mui/material/styles'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { useThemeMode } from '@/context/ThemeContext'
 import { getAvatarUrl } from '@/utils/avatars.js'
-import {
-	Box,
-	Divider,
-	IconButton,
-	ListItemIcon,
-	Menu,
-	MenuItem,
-	Avatar,
-	Typography,
-	Chip,
-} from '@mui/material'
-import {
-	BookmarksRounded,
-	LogoutRounded,
-	SpellcheckRounded,
-	PersonRounded,
-	BarChartRounded,
-	EmojiEventsRounded,
-	SettingsRounded,
-	VerifiedRounded,
-	FitnessCenterRounded,
-} from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
-
-const StyledMenu = styled(props => (
-	<Menu
-		elevation={0}
-		anchorOrigin={{
-			vertical: 'bottom',
-			horizontal: 'right',
-		}}
-		transformOrigin={{
-			vertical: 'top',
-			horizontal: 'right',
-		}}
-		{...props}
-	/>
-))(({ theme }) => ({
-	'& .MuiPaper-root': {
-		borderRadius: 16,
-		marginTop: theme.spacing(1),
-		minWidth: 280,
-		color: theme.palette.text.primary,
-		background:
-			theme.palette.mode === 'light'
-				? 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
-				: 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
-		backdropFilter: 'blur(10px)',
-		border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)'}`,
-		boxShadow:
-			theme.palette.mode === 'light'
-				? '0 8px 32px rgba(139, 92, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)'
-				: '0 8px 32px rgba(139, 92, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5)',
-		'& .MuiMenu-list': {
-			padding: '0',
-		},
-		'& .MuiMenuItem-root': {
-			borderRadius: '8px',
-			padding: '10px 16px',
-			margin: '4px 8px',
-			fontSize: '0.95rem',
-			fontWeight: 500,
-			transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-			'& .MuiListItemIcon-root': {
-				minWidth: 36,
-			},
-			'& .MuiSvgIcon-root': {
-				fontSize: 20,
-				color: theme.palette.mode === 'light' ? '#8b5cf6' : '#a78bfa',
-				transition: 'transform 0.3s ease',
-			},
-			'&:hover': {
-				background:
-					theme.palette.mode === 'light'
-						? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)'
-						: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-				transform: 'translateX(4px)',
-				borderLeft: `2px solid ${theme.palette.mode === 'light' ? '#8b5cf6' : '#a78bfa'}`,
-				'& .MuiSvgIcon-root': {
-					transform: 'scale(1.1)',
-					color: theme.palette.mode === 'light' ? '#06b6d4' : '#67e8f9',
-				},
-			},
-			'&:active': {
-				backgroundColor: 'rgba(139, 92, 246, 0.15)',
-			},
-		},
-		'& .MuiDivider-root': {
-			margin: '8px 0',
-			borderColor: theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)',
-		},
-		'&:before': {
-			content: '""',
-			display: 'block',
-			position: 'absolute',
-			top: 0,
-			right: 14,
-			width: 10,
-			height: 10,
-			background:
-				theme.palette.mode === 'light'
-					? 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)'
-					: 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
-			border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.4)'}`,
-			transform: 'translateY(-50%) rotate(45deg)',
-			zIndex: 0,
-		},
-	},
-}))
+import { cn } from '@/lib/utils'
+import {
+	Bookmark,
+	LogOut,
+	SpellCheck,
+	User,
+	BarChart3,
+	Trophy,
+	Settings,
+	BadgeCheck,
+	Dumbbell,
+	Sparkles,
+} from 'lucide-react'
 
 const UserMenu = () => {
 	const t = useTranslations('common')
 	const locale = useLocale()
 	const { user, userProfile, logout } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
-	const [anchorEl, setAnchorEl] = useState(null)
-	const open = Boolean(anchorEl)
-	const handleClick = event => {
-		setAnchorEl(event.currentTarget)
-	}
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
+	const [isOpen, setIsOpen] = useState(false)
+	const menuRef = useRef(null)
+	const buttonRef = useRef(null)
 
 	const avatarUrl = useMemo(
 		() => getAvatarUrl(userProfile?.avatar_id),
@@ -136,328 +37,267 @@ const UserMenu = () => {
 
 	const username = userProfile?.name || user?.email?.split('@')[0] || 'User'
 
+	// Close menu when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				menuRef.current &&
+				!menuRef.current.contains(event.target) &&
+				buttonRef.current &&
+				!buttonRef.current.contains(event.target)
+			) {
+				setIsOpen(false)
+			}
+		}
+
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside)
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [isOpen])
+
+	const menuItems = [
+		{ href: '/dictionary', icon: SpellCheck, label: t('mydictionary') },
+		{ href: '/my-materials', icon: Bookmark, label: t('mymaterials') },
+		{ href: '/statistics', icon: BarChart3, label: t('statistics') },
+		{ href: '/leaderboard', icon: Trophy, label: t('leaderboard') },
+		{ href: '/training', icon: Dumbbell, label: t('training') },
+		{ href: '/settings', icon: Settings, label: t('settings') },
+	]
+
 	return (
-		<>
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					textAlign: 'center',
-					ml: { xs: 0.5, sm: 1, lg: 2 },
-					flexShrink: 0,
-				}}>
-				<IconButton
-					onClick={handleClick}
-					size='small'
-					sx={{
-						p: 0,
-						background: open
-							? 'rgba(255, 255, 255, 0.25)'
-							: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-						backdropFilter: 'blur(10px)',
-						border: { xs: '1.5px solid rgba(255, 255, 255, 0.3)', sm: '2px solid rgba(255, 255, 255, 0.3)' },
-						borderColor: open ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)',
-						transition: 'all 0.3s ease',
-						'&:hover': {
-							background: 'rgba(255, 255, 255, 0.25)',
-							borderColor: 'rgba(255, 255, 255, 0.5)',
-							transform: 'scale(1.05)',
-						},
-					}}
-					aria-controls={open ? 'account-menu' : undefined}
-					aria-haspopup='true'
-					aria-expanded={open ? 'true' : undefined}>
-					<Avatar
-						src={avatarUrl}
-						alt={username}
-						sx={{
-							width: { xs: 44, sm: 48, lg: 52 },
-							height: { xs: 44, sm: 48, lg: 52 },
-							border: '2px solid transparent',
-						}}>
-						<PersonRounded sx={{ fontSize: { xs: 24, sm: 28 } }} />
-					</Avatar>
-				</IconButton>
-			</Box>
-			<StyledMenu
-				id='account-menu'
-				anchorEl={anchorEl}
-				open={open}
-				onClose={handleClose}
-				onClick={handleClose}>
-				{/* Carte de personnage */}
-				<Box
-					sx={{
-						p: 2.5,
-						background: 'linear-gradient(145deg, #4c1d95 0%, #2e1065 100%)',
-						position: 'relative',
-						overflow: 'hidden',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: -2,
-							left: -2,
-							right: -2,
-							bottom: -2,
-							background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-							zIndex: -1,
-						},
-						'&::after': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							bottom: 0,
-							background: 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.2) 0%, transparent 50%)',
-							pointerEvents: 'none',
-						},
-					}}
-					onClick={e => e.stopPropagation()}>
-					<Box sx={{ position: 'relative', zIndex: 1 }}>
-						{/* Nom du personnage */}
-						<Box
-							sx={{
-								textAlign: 'center',
-								mb: 1.5,
-								pb: 1.5,
-								borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
-							}}>
-							<Typography
-								variant='h6'
-								sx={{
-									fontWeight: 700,
-									background: 'linear-gradient(145deg, #a78bfa 0%, #06b6d4 50%, #a78bfa 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									fontSize: '1.1rem',
-									letterSpacing: '0.03em',
-									mb: 0.5,
-								}}>
-								{username}
-							</Typography>
-							{userProfile?.is_premium && (
-								<Chip
-									label='Premium'
-									size='small'
-									sx={{
-										bgcolor: 'rgba(255, 215, 0, 0.2)',
-										color: '#FFD700',
-										fontWeight: 600,
-										fontSize: '0.7rem',
-										height: 20,
-										border: '1px solid rgba(255, 215, 0, 0.3)',
-									}}
-								/>
-							)}
-						</Box>
+		<div className="relative ml-1 sm:ml-2 lg:ml-4">
+			{/* Avatar Button */}
+			<button
+				ref={buttonRef}
+				onClick={() => setIsOpen(!isOpen)}
+				className={cn(
+					'p-0 rounded-full',
+					'bg-gradient-to-br from-violet-500/30 to-cyan-500/20',
+					'backdrop-blur-sm',
+					'border-2 border-white/30',
+					'transition-all duration-300',
+					'hover:border-white/50 hover:scale-105',
+					isOpen && 'border-white/50 bg-white/25'
+				)}
+			>
+				<div className="w-11 h-11 sm:w-12 sm:h-12 lg:w-[52px] lg:h-[52px] rounded-full overflow-hidden">
+					{avatarUrl ? (
+						<img
+							src={avatarUrl}
+							alt={username}
+							className="w-full h-full object-cover"
+						/>
+					) : (
+						<div className="w-full h-full flex items-center justify-center bg-violet-500/50">
+							<User className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+						</div>
+					)}
+				</div>
+			</button>
 
-						{/* Avatar */}
-						<Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5 }}>
-							<Box
-								sx={{
-									position: 'relative',
-									width: 80,
-									height: 80,
-									borderRadius: '50%',
-									background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 100%)',
-									p: 0.4,
-									boxShadow: '0 4px 16px rgba(139, 92, 246, 0.5)',
-								}}>
-								<Avatar
-									src={avatarUrl}
-									alt={username}
-									sx={{
-										width: '100%',
-										height: '100%',
-										border: `3px solid ${isDark ? '#1e293b' : '#0f172a'}`,
-										boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
-									}}>
-									<PersonRounded sx={{ fontSize: 35 }} />
-								</Avatar>
+			{/* Dropdown Menu */}
+			{isOpen && (
+				<div
+					ref={menuRef}
+					className={cn(
+						'absolute top-full right-0 mt-2 z-50',
+						'w-72 rounded-2xl overflow-hidden',
+						'backdrop-blur-xl',
+						'border',
+						isDark
+							? 'bg-gradient-to-b from-slate-800/95 to-slate-900/95 border-violet-500/40 shadow-[0_8px_32px_rgba(139,92,246,0.4)]'
+							: 'bg-gradient-to-b from-white/95 to-slate-50/95 border-violet-500/20 shadow-[0_8px_32px_rgba(139,92,246,0.2)]',
+						'animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200'
+					)}
+				>
+					{/* Character Card Header */}
+					<div className={cn(
+						'relative p-5 overflow-hidden',
+						'bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900'
+					)}>
+						{/* Background glow */}
+						<div className="absolute inset-0 pointer-events-none">
+							<div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-violet-500/30 rounded-full blur-3xl" />
+						</div>
+
+						<div className="relative z-10">
+							{/* Username */}
+							<div className="text-center mb-3 pb-3 border-b border-violet-500/30">
+								<h3 className={cn(
+									'font-bold text-lg tracking-wide',
+									'bg-gradient-to-r from-violet-300 via-cyan-300 to-violet-300',
+									'bg-clip-text text-transparent'
+								)}>
+									{username}
+								</h3>
 								{userProfile?.is_premium && (
-									<Box
-										sx={{
-											position: 'absolute',
-											bottom: 0,
-											right: 0,
-											bgcolor: '#FFD700',
-											borderRadius: '50%',
-											width: 20,
-											height: 20,
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											border: `2px solid ${isDark ? '#1e293b' : '#0f172a'}`,
-											boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-										}}>
-										<VerifiedRounded sx={{ fontSize: 12, color: 'white' }} />
-									</Box>
+									<span className={cn(
+										'inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5',
+										'text-xs font-semibold text-amber-300',
+										'bg-amber-500/20 border border-amber-500/30 rounded-full'
+									)}>
+										<Sparkles className="w-3 h-3" />
+										Premium
+									</span>
 								)}
-							</Box>
-						</Box>
+							</div>
 
-						{/* Statistiques */}
-						<Box
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: '1fr 1fr 1fr',
-								gap: 1,
-								pt: 1.5,
-								borderTop: '1px solid rgba(139, 92, 246, 0.3)',
-								alignItems: 'end',
-							}}>
-							{/* XP */}
-							<Box sx={{ textAlign: 'center' }}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: 'rgba(6, 182, 212, 0.8)',
-										fontSize: '0.65rem',
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '0.1em',
-									}}>
-									XP
-								</Typography>
-								<Typography
-									variant='h6'
-									sx={{
-										fontWeight: 700,
-										background: 'linear-gradient(145deg, #06b6d4 0%, #67e8f9 100%)',
-										WebkitBackgroundClip: 'text',
-										WebkitTextFillColor: 'transparent',
-										lineHeight: 1,
-										mt: 0.5,
-										fontSize: '1rem',
-									}}>
-									{userProfile?.xp || 0}
-								</Typography>
-							</Box>
+							{/* Avatar */}
+							<div className="flex justify-center mb-3">
+								<div className={cn(
+									'relative w-20 h-20 rounded-full',
+									'bg-gradient-to-br from-violet-500 to-cyan-500 p-1',
+									'shadow-lg shadow-violet-500/50'
+								)}>
+									<div className="w-full h-full rounded-full overflow-hidden border-[3px] border-slate-900">
+										{avatarUrl ? (
+											<img
+												src={avatarUrl}
+												alt={username}
+												className="w-full h-full object-cover"
+											/>
+										) : (
+											<div className="w-full h-full flex items-center justify-center bg-slate-800">
+												<User className="w-9 h-9 text-violet-300" />
+											</div>
+										)}
+									</div>
+									{userProfile?.is_premium && (
+										<div className={cn(
+											'absolute bottom-0 right-0',
+											'w-5 h-5 rounded-full',
+											'bg-amber-400 border-2 border-slate-900',
+											'flex items-center justify-center',
+											'shadow-lg'
+										)}>
+											<BadgeCheck className="w-3 h-3 text-white" />
+										</div>
+									)}
+								</div>
+							</div>
 
-							{/* Niveau */}
-							<Box sx={{ textAlign: 'center' }}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: 'rgba(167, 139, 250, 0.8)',
-										fontSize: '0.75rem',
-										fontWeight: 700,
-										textTransform: 'uppercase',
-										letterSpacing: '0.12em',
-									}}>
-									Niveau
-								</Typography>
-								<Typography
-									variant='h3'
-									sx={{
-										fontWeight: 800,
-										background: 'linear-gradient(145deg, #a78bfa 0%, #c4b5fd 100%)',
-										WebkitBackgroundClip: 'text',
-										WebkitTextFillColor: 'transparent',
-										lineHeight: 1,
-										mt: 0.5,
-										textShadow: '0 0 20px rgba(139, 92, 246, 0.3)',
-									}}>
-									{userProfile?.level || 1}
-								</Typography>
-							</Box>
+							{/* Stats */}
+							<div className="grid grid-cols-3 gap-2 pt-3 border-t border-violet-500/30">
+								{/* XP */}
+								<div className="text-center">
+									<span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cyan-400/80">
+										XP
+									</span>
+									<span className={cn(
+										'block text-base font-bold mt-0.5',
+										'bg-gradient-to-r from-cyan-400 to-cyan-300',
+										'bg-clip-text text-transparent'
+									)}>
+										{userProfile?.xp || 0}
+									</span>
+								</div>
 
-							{/* Or */}
-							<Box sx={{ textAlign: 'center' }}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: 'rgba(6, 182, 212, 0.8)',
-										fontSize: '0.65rem',
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '0.1em',
-									}}>
-									Or
-								</Typography>
-								<Typography
-									variant='h6'
-									sx={{
-										fontWeight: 700,
-										background: 'linear-gradient(145deg, #06b6d4 0%, #67e8f9 100%)',
-										WebkitBackgroundClip: 'text',
-										WebkitTextFillColor: 'transparent',
-										lineHeight: 1.2,
-										mt: 0.5,
-										fontSize: '0.85rem',
-									}}>
-									{userProfile?.gold || 0}
-								</Typography>
-							</Box>
-						</Box>
-					</Box>
-				</Box>
+								{/* Level */}
+								<div className="text-center">
+									<span className="block text-xs font-bold uppercase tracking-wider text-violet-300/80">
+										Niveau
+									</span>
+									<span className={cn(
+										'block text-2xl font-extrabold mt-0.5',
+										'bg-gradient-to-r from-violet-300 to-purple-300',
+										'bg-clip-text text-transparent',
+										'drop-shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+									)}>
+										{userProfile?.level || 1}
+									</span>
+								</div>
 
-				<Box sx={{ mt: 1 }}>
-					<Link href='/dictionary'>
-						<MenuItem>
-							<ListItemIcon>
-								<SpellcheckRounded />
-							</ListItemIcon>
-							{t('mydictionary')}
-						</MenuItem>
-					</Link>
-				<Link href='/my-materials'>
-					<MenuItem>
-						<ListItemIcon>
-							<BookmarksRounded />
-						</ListItemIcon>
-						{t('mymaterials')}
-					</MenuItem>
-				</Link>
-				<Link href='/statistics'>
-					<MenuItem>
-						<ListItemIcon>
-							<BarChartRounded />
-						</ListItemIcon>
-						{t('statistics')}
-					</MenuItem>
-				</Link>
-				<Link href='/leaderboard'>
-					<MenuItem>
-						<ListItemIcon>
-							<EmojiEventsRounded />
-						</ListItemIcon>
-						{t('leaderboard')}
-					</MenuItem>
-				</Link>
-				<Link href='/training'>
-					<MenuItem>
-						<ListItemIcon>
-							<FitnessCenterRounded />
-						</ListItemIcon>
-						{t('training')}
-					</MenuItem>
-				</Link>
-				<Link href='/settings'>
-					<MenuItem>
-						<ListItemIcon>
-							<SettingsRounded />
-						</ListItemIcon>
-						{t('settings')}
-					</MenuItem>
-				</Link>
-				</Box>
+								{/* Gold */}
+								<div className="text-center">
+									<span className="block text-[0.65rem] font-semibold uppercase tracking-wider text-cyan-400/80">
+										Or
+									</span>
+									<span className={cn(
+										'block text-sm font-bold mt-0.5',
+										'bg-gradient-to-r from-cyan-400 to-cyan-300',
+										'bg-clip-text text-transparent'
+									)}>
+										{userProfile?.gold || 0}
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
 
-				<Divider sx={{ mt: 1 }} />
+					{/* Menu Items */}
+					<div className="py-2">
+						{menuItems.map((item) => {
+							const Icon = item.icon
+							return (
+								<Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+									<div className={cn(
+										'flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl',
+										'font-medium text-[0.95rem]',
+										'transition-all duration-300',
+										isDark ? 'text-slate-200' : 'text-slate-700',
+										'hover:bg-gradient-to-r',
+										isDark
+											? 'hover:from-violet-500/20 hover:to-cyan-500/15'
+											: 'hover:from-violet-500/10 hover:to-cyan-500/8',
+										'hover:translate-x-1',
+										'hover:border-l-2 hover:border-violet-500',
+										'group'
+									)}>
+										<Icon className={cn(
+											'w-5 h-5 transition-all duration-300',
+											isDark ? 'text-violet-400' : 'text-violet-500',
+											'group-hover:text-cyan-400 group-hover:scale-110'
+										)} />
+										<span>{item.label}</span>
+									</div>
+								</Link>
+							)
+						})}
+					</div>
 
-				<Box sx={{ mb: 1 }}>
-					<MenuItem
-						onClick={() => logout()}>
-						<ListItemIcon>
-							<LogoutRounded />
-						</ListItemIcon>
-						{t('logout')}
-					</MenuItem>
-				</Box>
-			</StyledMenu>
-		</>
+					{/* Divider */}
+					<div className={cn(
+						'mx-4 border-t',
+						isDark ? 'border-violet-500/30' : 'border-violet-500/20'
+					)} />
+
+					{/* Logout */}
+					<div className="py-2">
+						<button
+							onClick={() => {
+								setIsOpen(false)
+								logout()
+							}}
+							className={cn(
+								'w-full flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl',
+								'font-medium text-[0.95rem]',
+								'transition-all duration-300',
+								isDark ? 'text-slate-200' : 'text-slate-700',
+								'hover:bg-gradient-to-r',
+								isDark
+									? 'hover:from-violet-500/20 hover:to-cyan-500/15'
+									: 'hover:from-violet-500/10 hover:to-cyan-500/8',
+								'hover:translate-x-1',
+								'hover:border-l-2 hover:border-violet-500',
+								'group'
+							)}
+							style={{ width: 'calc(100% - 1rem)' }}
+						>
+							<LogOut className={cn(
+								'w-5 h-5 transition-all duration-300',
+								isDark ? 'text-violet-400' : 'text-violet-500',
+								'group-hover:text-cyan-400 group-hover:scale-110'
+							)} />
+							<span>{t('logout')}</span>
+						</button>
+					</div>
+				</div>
+			)}
+		</div>
 	)
 }
 

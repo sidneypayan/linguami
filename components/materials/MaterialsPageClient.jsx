@@ -449,9 +449,6 @@ const DisplayModeToggle = ({ displayMode, setDisplayMode, isDark, t }) => {
 			>
 				<LayoutGrid className="w-5 h-5" />
 				<span>{t('categoryView')}</span>
-				{displayMode === 'category' && (
-					<Flame className="w-4 h-4 ml-1 animate-pulse text-yellow-200" />
-				)}
 			</button>
 
 			<button
@@ -475,9 +472,6 @@ const DisplayModeToggle = ({ displayMode, setDisplayMode, isDark, t }) => {
 			>
 				<ListFilter className="w-5 h-5" />
 				<span>{t('listView')}</span>
-				{displayMode === 'list' && (
-					<Sparkles className="w-4 h-4 ml-1 animate-pulse text-violet-200" />
-				)}
 			</button>
 		</div>
 	)
@@ -721,7 +715,13 @@ const FilterBar = ({
 	}
 
 	return (
-		<OrnateFrame isDark={isDark} className="p-4 mb-8 overflow-visible">
+		<div className={cn(
+			'relative rounded-2xl p-4 mb-8 overflow-visible',
+			'border-2',
+			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-200/50 bg-white/90',
+			'shadow-lg',
+			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
+		)}>
 			{/* Header */}
 			<div className="flex items-center gap-2 mb-4">
 				<Wand2 className={cn('w-5 h-5', isDark ? 'text-violet-400' : 'text-violet-600')} />
@@ -874,7 +874,7 @@ const FilterBar = ({
 					</button>
 				</div>
 			</div>
-		</OrnateFrame>
+		</div>
 	)
 }
 
@@ -966,12 +966,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 										]
 								)}
 							>
-								{page === currentPage && (
-									<>
-										<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-										<Star className="absolute top-0 right-0 w-3 h-3 text-yellow-200 animate-pulse" />
-									</>
-								)}
 								<span className="relative z-10">{page}</span>
 							</button>
 						)

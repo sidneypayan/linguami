@@ -1061,7 +1061,7 @@ const TrainingAdminClient = () => {
 	const totalQuestions = stats.reduce((sum, stat) => sum + (stat.question_count || 0), 0)
 
 	return (
-		<div className="min-h-screen bg-slate-50">
+		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
 			<AdminNavbar activePage="training" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
