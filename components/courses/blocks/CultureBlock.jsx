@@ -1,115 +1,148 @@
-import { Box, Paper, Typography, List, ListItem, ListItemIcon, ListItemText, useTheme } from '@mui/material'
-import { Public, CheckCircle } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import { Globe, CheckCircle } from 'lucide-react'
 
+/**
+ * CultureBlock - Carte du monde culturel
+ * Style gaming/fantasy avec comparaisons entre pays
+ */
 const CultureBlock = ({ block }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const { title, content, keyPoints, comparison } = block
 
 	return (
-		<Paper
-			elevation={0}
-			sx={{
-				p: { xs: 2, sm: 3 },
-				mb: 3,
-				borderRadius: 3,
-				border: '2px solid',
-				borderColor: isDark ? 'rgba(6, 182, 212, 0.3)' : 'rgba(6, 182, 212, 0.3)',
-				background: isDark
-					? 'linear-gradient(135deg, rgba(8, 145, 178, 0.15) 0%, rgba(30, 41, 59, 0.8) 100%)'
-					: 'linear-gradient(135deg, rgba(207, 250, 254, 0.5) 0%, rgba(255, 255, 255, 0.9) 100%)',
-			}}>
+		<div className={cn(
+			'relative rounded-2xl border-2 overflow-hidden',
+			isDark
+				? 'bg-gradient-to-br from-cyan-950/50 via-slate-900 to-teal-950/30 border-cyan-500/30'
+				: 'bg-gradient-to-br from-cyan-50 via-white to-teal-50 border-cyan-200'
+		)}>
+			{/* Effet de brillance */}
+			<div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
+
 			{/* Header */}
-			<Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 2 }}>
-				<Public sx={{ fontSize: 32, color: '#06b6d4' }} />
-				<Typography
-					variant="h5"
-					sx={{
-						fontWeight: 700,
-						color: isDark ? '#22d3ee' : '#0891b2',
-					}}>
-					{title}
-				</Typography>
-			</Box>
+			<div className={cn(
+				'relative p-4 sm:p-5 border-b',
+				isDark ? 'border-cyan-500/20' : 'border-cyan-200'
+			)}>
+				<div className="flex items-center gap-4">
+					<div className={cn(
+						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'bg-gradient-to-br from-cyan-400 to-teal-500'
+					)}>
+						<Globe className="w-6 h-6 text-white" />
+					</div>
 
-			{/* Content */}
-			{content && (
-				<Typography
-					sx={{
-						mb: 3,
-						lineHeight: 1.8,
-						color: isDark ? '#cbd5e1' : '#475569',
-					}}
-					dangerouslySetInnerHTML={{ __html: content }}
-				/>
-			)}
+					<h3 className={cn(
+						'text-lg sm:text-xl font-bold',
+						isDark ? 'text-cyan-300' : 'text-cyan-700'
+					)}>
+						{title}
+					</h3>
+				</div>
+			</div>
 
-			{/* Key Points */}
-			{keyPoints && keyPoints.length > 0 && (
-				<List sx={{ mb: comparison ? 2 : 0 }}>
-					{keyPoints.map((point, index) => (
-						<ListItem key={index} sx={{ py: 0.5 }}>
-							<ListItemIcon sx={{ minWidth: 36 }}>
-								<CheckCircle sx={{ color: '#06b6d4', fontSize: 20 }} />
-							</ListItemIcon>
-							<ListItemText
-								primary={point}
-								sx={{
-									'& .MuiListItemText-primary': {
-										color: isDark ? '#cbd5e1' : '#475569',
-									},
-								}}
-							/>
-						</ListItem>
-					))}
-				</List>
-			)}
+			<div className="relative p-4 sm:p-5 space-y-5">
+				{/* Contenu */}
+				{content && (
+					<div
+						className={cn(
+							'prose prose-sm max-w-none',
+							isDark
+								? 'prose-invert text-slate-300'
+								: 'text-slate-600'
+						)}
+						dangerouslySetInnerHTML={{ __html: content }}
+					/>
+				)}
 
-			{/* Comparison */}
-			{comparison && (
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-						gap: 2,
-						mt: 2,
-					}}>
-					{comparison.fr && (
-						<Box
-							sx={{
-								p: 2,
-								borderRadius: 2,
-								background: isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)',
-								borderLeft: '4px solid #3b82f6',
-							}}>
-							<Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5, color: '#3b82f6' }}>
-								🇫🇷 En France
-							</Typography>
-							<Typography sx={{ fontSize: '0.9rem', color: isDark ? '#cbd5e1' : '#475569' }}>
-								{comparison.fr}
-							</Typography>
-						</Box>
-					)}
-					{comparison.ru && (
-						<Box
-							sx={{
-								p: 2,
-								borderRadius: 2,
-								background: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)',
-								borderLeft: '4px solid #ef4444',
-							}}>
-							<Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5, color: '#ef4444' }}>
-								🇷🇺 En Russie
-							</Typography>
-							<Typography sx={{ fontSize: '0.9rem', color: isDark ? '#cbd5e1' : '#475569' }}>
-								{comparison.ru}
-							</Typography>
-						</Box>
-					)}
-				</Box>
-			)}
-		</Paper>
+				{/* Points cles */}
+				{keyPoints && keyPoints.length > 0 && (
+					<div className="space-y-2">
+						{keyPoints.map((point, index) => (
+							<div
+								key={index}
+								className={cn(
+									'flex items-start gap-3 p-3 rounded-xl',
+									isDark
+										? 'bg-slate-800/50'
+										: 'bg-white shadow-sm'
+								)}
+							>
+								<div className={cn(
+									'w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0',
+									'bg-gradient-to-br from-cyan-400 to-teal-500'
+								)}>
+									<CheckCircle className="w-4 h-4 text-white" />
+								</div>
+								<p className={cn(
+									'text-sm',
+									isDark ? 'text-slate-300' : 'text-slate-600'
+								)}>
+									{point}
+								</p>
+							</div>
+						))}
+					</div>
+				)}
+
+				{/* Comparaison */}
+				{comparison && (
+					<div className="grid gap-4 sm:grid-cols-2">
+						{comparison.fr && (
+							<div className={cn(
+								'p-4 rounded-xl border-l-4',
+								isDark
+									? 'bg-blue-500/10 border-blue-500'
+									: 'bg-blue-50 border-blue-400'
+							)}>
+								<div className="flex items-center gap-2 mb-2">
+									<span className="text-xl">🇫🇷</span>
+									<h4 className={cn(
+										'font-bold',
+										isDark ? 'text-blue-300' : 'text-blue-700'
+									)}>
+										En France
+									</h4>
+								</div>
+								<p className={cn(
+									'text-sm',
+									isDark ? 'text-slate-300' : 'text-slate-600'
+								)}>
+									{comparison.fr}
+								</p>
+							</div>
+						)}
+
+						{comparison.ru && (
+							<div className={cn(
+								'p-4 rounded-xl border-l-4',
+								isDark
+									? 'bg-red-500/10 border-red-500'
+									: 'bg-red-50 border-red-400'
+							)}>
+								<div className="flex items-center gap-2 mb-2">
+									<span className="text-xl">🇷🇺</span>
+									<h4 className={cn(
+										'font-bold',
+										isDark ? 'text-red-300' : 'text-red-700'
+									)}>
+										En Russie
+									</h4>
+								</div>
+								<p className={cn(
+									'text-sm',
+									isDark ? 'text-slate-300' : 'text-slate-600'
+								)}>
+									{comparison.ru}
+								</p>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
+		</div>
 	)
 }
 

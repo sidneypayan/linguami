@@ -1,50 +1,34 @@
 import { useState, useRef, useEffect } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
-	Box,
-	Paper,
-	Typography,
-	IconButton,
-	Table,
-	TableBody,
-	TableRow,
-	TableCell,
-	Chip,
-	Collapse,
-	List,
-	ListItem,
-	ListItemText,
-	useTheme,
-	Button,
-	Menu,
-	MenuItem,
-	ListItemIcon,
-} from '@mui/material'
-import {
-	PlayArrow,
+	Play,
 	Pause,
-	VolumeUp,
-	ExpandMore,
-	ExpandLess,
-	RecordVoiceOver,
-	Speed,
+	Volume2,
+	ChevronDown,
+	ChevronUp,
+	MessageSquare,
+	Gauge,
 	Check,
-} from '@mui/icons-material'
+	Sparkles,
+} from 'lucide-react'
 
 /**
- * DialogueBlock - Affiche un dialogue avec audio et traduction
- * Inspiré du format Harrap's
+ * DialogueBlock - Parchemin de dialogue avec audio
+ * Style gaming/fantasy inspire des RPG
  */
 const DialogueBlock = ({ block }) => {
 	const t = useTranslations('common')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentLineIndex, setCurrentLineIndex] = useState(null)
 	const [showVocabulary, setShowVocabulary] = useState(false)
 	const [playbackRate, setPlaybackRate] = useState(1)
-	const [speedMenuAnchor, setSpeedMenuAnchor] = useState(null)
+	const [showSpeedMenu, setShowSpeedMenu] = useState(false)
 
 	const audioRef = useRef(null)
 	const lineAudioRefs = useRef({})
@@ -53,7 +37,6 @@ const DialogueBlock = ({ block }) => {
 
 	// Lecture du dialogue complet
 	const handlePlayDialogue = () => {
-		// Si audio global existe, l'utiliser
 		if (audioUrl) {
 			if (isPlaying) {
 				audioRef.current?.pause()
@@ -71,26 +54,21 @@ const DialogueBlock = ({ block }) => {
 				setIsPlaying(true)
 			}
 		} else {
-			// Sinon, jouer toutes les lignes en séquence
 			if (isPlaying) {
-				// Arrêter la lecture
 				if (lineAudioRefs.current[currentLineIndex]) {
 					lineAudioRefs.current[currentLineIndex].pause()
 				}
 				setIsPlaying(false)
 				setCurrentLineIndex(null)
 			} else {
-				// Commencer à jouer toutes les lignes
 				setIsPlaying(true)
 				playNextLine(0)
 			}
 		}
 	}
 
-	// Jouer les lignes en séquence
 	const playNextLine = (index) => {
 		if (index >= lines.length) {
-			// Fin du dialogue
 			setIsPlaying(false)
 			setCurrentLineIndex(null)
 			return
@@ -98,7 +76,6 @@ const DialogueBlock = ({ block }) => {
 
 		const line = lines[index]
 		if (!line.audioUrl) {
-			// Si pas d'audio pour cette ligne, passer à la suivante
 			playNextLine(index + 1)
 			return
 		}
@@ -109,38 +86,28 @@ const DialogueBlock = ({ block }) => {
 			lineAudioRefs.current[index] = new Audio(line.audioUrl)
 		}
 
-		// Appliquer la vitesse de lecture
 		lineAudioRefs.current[index].playbackRate = playbackRate
-
-		// Jouer la ligne suivante quand celle-ci se termine
 		lineAudioRefs.current[index].onended = () => {
-			setTimeout(() => playNextLine(index + 1), 300) // 300ms de pause entre les lignes
+			setTimeout(() => playNextLine(index + 1), 300)
 		}
 
 		lineAudioRefs.current[index].play()
 	}
 
-	// Cleanup: arrêter tous les audios quand le composant se démonte
 	useEffect(() => {
 		return () => {
-			// Arrêter l'audio global
 			if (audioRef.current) {
 				audioRef.current.pause()
 			}
-			// Arrêter tous les audios de lignes
 			Object.values(lineAudioRefs.current).forEach((audio) => {
-				if (audio) {
-					audio.pause()
-				}
+				if (audio) audio.pause()
 			})
 		}
 	}, [])
 
-	// Lecture d'une ligne spécifique
 	const handlePlayLine = (index, url) => {
 		if (!url) return
 
-		// Arrêter le dialogue complet si en cours
 		if (isPlaying) {
 			audioRef.current?.pause()
 			setIsPlaying(false)
@@ -152,22 +119,18 @@ const DialogueBlock = ({ block }) => {
 			lineAudioRefs.current[index] = new Audio(url)
 		}
 
-		// Supprimer tout ancien événement onended et en créer un nouveau qui ne joue que cette ligne
 		lineAudioRefs.current[index].onended = () => {
 			setCurrentLineIndex(null)
 		}
 
-		// Appliquer la vitesse de lecture
 		lineAudioRefs.current[index].playbackRate = playbackRate
 		lineAudioRefs.current[index].play()
 	}
 
-	// Gérer le changement de vitesse
 	const handleSpeedChange = (speed) => {
 		setPlaybackRate(speed)
-		setSpeedMenuAnchor(null)
+		setShowSpeedMenu(false)
 
-		// Appliquer immédiatement si un audio est en cours de lecture
 		if (audioRef.current && !audioRef.current.paused) {
 			audioRef.current.playbackRate = speed
 		}
@@ -177,302 +140,321 @@ const DialogueBlock = ({ block }) => {
 	}
 
 	const speedOptions = [
-		{ value: 0.5, label: `0.5x (${t('methode_speed_very_slow')})` },
-		{ value: 0.75, label: `0.75x (${t('methode_speed_slow')})` },
-		{ value: 1, label: `1x (${t('methode_speed_normal')})` },
-		{ value: 1.25, label: `1.25x (${t('methode_speed_fast')})` },
-		{ value: 1.5, label: `1.5x (${t('methode_speed_very_fast')})` },
+		{ value: 0.5, label: '0.5x' },
+		{ value: 0.75, label: '0.75x' },
+		{ value: 1, label: '1x' },
+		{ value: 1.25, label: '1.25x' },
+		{ value: 1.5, label: '1.5x' },
 	]
 
 	return (
-		<Paper
-			elevation={0}
-			sx={{
-				p: { xs: 2, sm: 3 },
-				mb: 3,
-				borderRadius: 3,
-				border: '2px solid',
-				borderColor: isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(59, 130, 246, 0.3)',
-				background: isDark
-					? 'linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(30, 41, 59, 0.8) 100%)'
-					: 'linear-gradient(135deg, rgba(219, 234, 254, 0.5) 0%, rgba(255, 255, 255, 0.9) 100%)',
-			}}>
-			{/* Header avec icône et bouton play */}
-			<Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2, flexWrap: 'wrap' }}>
-				<RecordVoiceOver sx={{ fontSize: 32, color: '#60a5fa' }} />
-				<Typography
-					variant="h5"
-					sx={{
-						fontWeight: 700,
-						flex: 1,
-						color: isDark ? '#60a5fa' : '#1e40af',
-					}}>
-					{title || 'Dialogue'}
-				</Typography>
+		<div className={cn(
+			'relative rounded-2xl border-2 overflow-hidden',
+			isDark
+				? 'bg-gradient-to-br from-blue-950/50 via-slate-900 to-cyan-950/30 border-blue-500/30'
+				: 'bg-gradient-to-br from-blue-50 via-white to-cyan-50 border-blue-200'
+		)}>
+			{/* Effet de brillance */}
+			<div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl" />
 
-				{(audioUrl || lines?.some((line) => line.audioUrl)) && (
-					<Box sx={{ display: 'flex', gap: 1 }}>
-						<Button
-							variant="outlined"
-							size="small"
-							startIcon={<Speed />}
-							onClick={(e) => setSpeedMenuAnchor(e.currentTarget)}
-							sx={{
-								borderColor: isDark ? 'rgba(96, 165, 250, 0.5)' : '#3b82f6',
-								color: isDark ? '#60a5fa' : '#1e40af',
-								'&:hover': {
-									borderColor: '#3b82f6',
-									background: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-								},
-							}}>
-							{playbackRate}x
-						</Button>
-						<Button
-							variant="contained"
-							startIcon={isPlaying ? <Pause /> : <PlayArrow />}
-							onClick={handlePlayDialogue}
-							sx={{
-								background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-								px: 3,
-							}}>
-							{isPlaying ? t('methode_pause') : t('methode_play_all')}
-						</Button>
-					</Box>
-				)}
+			{/* Header */}
+			<div className={cn(
+				'relative p-4 sm:p-5 border-b',
+				isDark ? 'border-blue-500/20' : 'border-blue-200'
+			)}>
+				<div className="flex items-center gap-4 flex-wrap">
+					<div className={cn(
+						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'bg-gradient-to-br from-blue-400 to-cyan-500'
+					)}>
+						<MessageSquare className="w-6 h-6 text-white" />
+					</div>
 
-				{/* Menu de vitesse */}
-				<Menu
-					anchorEl={speedMenuAnchor}
-					open={Boolean(speedMenuAnchor)}
-					onClose={() => setSpeedMenuAnchor(null)}
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'right',
-					}}
-					transformOrigin={{
-						vertical: 'top',
-						horizontal: 'right',
-					}}>
-					{speedOptions.map((option) => (
-						<MenuItem
-							key={option.value}
-							onClick={() => handleSpeedChange(option.value)}
-							selected={playbackRate === option.value}>
-							{playbackRate === option.value && (
-								<ListItemIcon>
-									<Check fontSize="small" />
-								</ListItemIcon>
-							)}
-							<Typography sx={{ pl: playbackRate === option.value ? 0 : 4 }}>
-								{option.label}
-							</Typography>
-						</MenuItem>
-					))}
-				</Menu>
-			</Box>
+					<div className="flex-1 min-w-0">
+						<h3 className={cn(
+							'text-lg sm:text-xl font-bold truncate',
+							isDark ? 'text-blue-300' : 'text-blue-700'
+						)}>
+							{title || 'Dialogue'}
+						</h3>
+						<p className={cn(
+							'text-sm',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{lines?.length || 0} {t('methode_lines')}
+						</p>
+					</div>
 
-			{/* Tableau du dialogue */}
-			<Table
-				sx={{
-					mb: 2,
-					'& .MuiTableCell-root': {
-						borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-						py: 2,
-					},
-				}}>
-				<TableBody>
-					{lines?.map((line, index) => (
-						<TableRow
-							key={index}
-							hover
-							sx={{
-								transition: 'all 0.3s ease',
-								background:
-									currentLineIndex === index
-										? isDark
-											? 'rgba(96, 165, 250, 0.2)'
-											: 'rgba(219, 234, 254, 0.5)'
-										: 'transparent',
-							}}>
-							{/* Personnage */}
-							<TableCell sx={{ width: '25%', verticalAlign: 'top' }}>
-								<Chip
-									label={line.speaker}
-									size="small"
-									sx={{
-										fontWeight: 600,
-										background:
-											line.speakerGender === 'male'
-												? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
-												: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
-										color: 'white',
-									}}
-								/>
-							</TableCell>
-
-							{/* Texte français */}
-							<TableCell sx={{ width: '35%' }}>
-								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-									{line.audioUrl && (
-										<IconButton
-											size="small"
-											onClick={() => handlePlayLine(index, line.audioUrl)}
-											sx={{ color: '#60a5fa' }}>
-											<VolumeUp fontSize="small" />
-										</IconButton>
+					{/* Controles audio */}
+					{(audioUrl || lines?.some((line) => line.audioUrl)) && (
+						<div className="flex items-center gap-2">
+							{/* Menu vitesse */}
+							<div className="relative">
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+									className={cn(
+										'gap-1 border-2',
+										isDark
+											? 'border-blue-500/30 text-blue-300 hover:bg-blue-500/10'
+											: 'border-blue-300 text-blue-700 hover:bg-blue-50'
 									)}
-									<Typography sx={{ fontWeight: 500, fontSize: '1rem' }}>
-										{line.text}
-									</Typography>
-								</Box>
-							</TableCell>
+								>
+									<Gauge className="w-4 h-4" />
+									{playbackRate}x
+								</Button>
 
-							{/* Aide au vocabulaire */}
-							<TableCell sx={{ width: '40%' }}>
-								{line.vocab && line.vocab.length > 0 ? (
-									<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-										{line.vocab.map((item, idx) => (
-											<Chip
-												key={idx}
-												label={`${item.word} = ${item.translation}`}
-												size="small"
-												sx={{
-													fontSize: '0.75rem',
-													height: 'auto',
-													py: 0.5,
-													background: isDark ? 'rgba(96, 165, 250, 0.15)' : 'rgba(219, 234, 254, 0.6)',
-													border: `1px solid ${isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
-													'& .MuiChip-label': {
-														whiteSpace: 'normal',
-														padding: '4px 8px',
-													},
-												}}
-											/>
+								{showSpeedMenu && (
+									<div className={cn(
+										'absolute right-0 top-full mt-1 py-1 rounded-lg border shadow-xl z-20 min-w-[100px]',
+										isDark
+											? 'bg-slate-800 border-slate-700'
+											: 'bg-white border-slate-200'
+									)}>
+										{speedOptions.map((option) => (
+											<button
+												key={option.value}
+												onClick={() => handleSpeedChange(option.value)}
+												className={cn(
+													'w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors',
+													playbackRate === option.value
+														? isDark
+															? 'bg-blue-500/20 text-blue-300'
+															: 'bg-blue-50 text-blue-700'
+														: isDark
+															? 'hover:bg-slate-700 text-slate-300'
+															: 'hover:bg-slate-50 text-slate-700'
+												)}
+											>
+												{playbackRate === option.value && (
+													<Check className="w-4 h-4" />
+												)}
+												<span className={playbackRate === option.value ? '' : 'ml-6'}>
+													{option.label}
+												</span>
+											</button>
 										))}
-									</Box>
+									</div>
+								)}
+							</div>
+
+							<Button
+								onClick={handlePlayDialogue}
+								className={cn(
+									'gap-2 font-semibold shadow-lg',
+									'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
+								)}
+							>
+								{isPlaying ? (
+									<>
+										<Pause className="w-4 h-4" />
+										{t('methode_pause')}
+									</>
+								) : (
+									<>
+										<Play className="w-4 h-4" />
+										{t('methode_play_all')}
+									</>
+								)}
+							</Button>
+						</div>
+					)}
+				</div>
+			</div>
+
+			{/* Lignes du dialogue */}
+			<div className="p-4 sm:p-5 space-y-3">
+				{lines?.map((line, index) => (
+					<div
+						key={index}
+						className={cn(
+							'p-4 rounded-xl transition-all duration-300',
+							currentLineIndex === index
+								? isDark
+									? 'bg-blue-500/20 ring-2 ring-blue-500/50'
+									: 'bg-blue-100 ring-2 ring-blue-300'
+								: isDark
+									? 'bg-slate-800/50 hover:bg-slate-800'
+									: 'bg-white hover:bg-slate-50 shadow-sm'
+						)}
+					>
+						<div className="flex items-start gap-3">
+							{/* Avatar du personnage */}
+							<div className={cn(
+								'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold text-white shadow-md',
+								line.speakerGender === 'male'
+									? 'bg-gradient-to-br from-blue-500 to-indigo-600'
+									: 'bg-gradient-to-br from-pink-500 to-rose-600'
+							)}>
+								{line.speaker?.charAt(0) || '?'}
+							</div>
+
+							<div className="flex-1 min-w-0">
+								{/* Nom du personnage */}
+								<div className="flex items-center gap-2 mb-1">
+									<span className={cn(
+										'font-bold text-sm',
+										line.speakerGender === 'male'
+											? 'text-blue-500'
+											: 'text-pink-500'
+									)}>
+										{line.speaker}
+									</span>
+									{line.audioUrl && (
+										<button
+											onClick={() => handlePlayLine(index, line.audioUrl)}
+											className={cn(
+												'p-1 rounded-full transition-colors',
+												isDark
+													? 'hover:bg-blue-500/20 text-blue-400'
+													: 'hover:bg-blue-100 text-blue-600'
+											)}
+										>
+											<Volume2 className="w-4 h-4" />
+										</button>
+									)}
+								</div>
+
+								{/* Texte */}
+								<p className={cn(
+									'font-medium mb-2',
+									isDark ? 'text-white' : 'text-slate-900'
+								)}>
+									{line.text}
+								</p>
+
+								{/* Vocabulaire ou traduction */}
+								{line.vocab && line.vocab.length > 0 ? (
+									<div className="flex flex-wrap gap-1.5">
+										{line.vocab.map((item, idx) => (
+											<Badge
+												key={idx}
+												variant="outline"
+												className={cn(
+													'text-xs py-1',
+													isDark
+														? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+														: 'border-blue-200 bg-blue-50 text-blue-700'
+												)}
+											>
+												{item.word} = {item.translation}
+											</Badge>
+										))}
+									</div>
 								) : line.translation ? (
-									<Typography
-										sx={{
-											color: isDark ? '#94a3b8' : '#64748b',
-											fontStyle: 'italic',
-											fontSize: '0.95rem',
-										}}>
+									<p className={cn(
+										'text-sm italic',
+										isDark ? 'text-slate-400' : 'text-slate-500'
+									)}>
 										{line.translation}
-									</Typography>
+									</p>
 								) : null}
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
 
 			{/* Section vocabulaire (collapsible) */}
 			{vocabulary && vocabulary.length > 0 && (
-				<Box>
-					<Button
-						fullWidth
-						variant="text"
+				<div className={cn(
+					'border-t',
+					isDark ? 'border-blue-500/20' : 'border-blue-200'
+				)}>
+					<button
 						onClick={() => setShowVocabulary(!showVocabulary)}
-						endIcon={showVocabulary ? <ExpandLess /> : <ExpandMore />}
-						sx={{
-							justifyContent: 'space-between',
-							textTransform: 'none',
-							color: isDark ? '#60a5fa' : '#1e40af',
-							fontWeight: 600,
-						}}>
-						{t('methode_key_vocabulary')} ({vocabulary.length} {t('methode_words')})
-					</Button>
+						className={cn(
+							'w-full p-4 flex items-center justify-between transition-colors',
+							isDark
+								? 'hover:bg-blue-500/10'
+								: 'hover:bg-blue-50'
+						)}
+					>
+						<div className="flex items-center gap-2">
+							<Sparkles className={cn(
+								'w-5 h-5',
+								isDark ? 'text-blue-400' : 'text-blue-600'
+							)} />
+							<span className={cn(
+								'font-bold',
+								isDark ? 'text-blue-300' : 'text-blue-700'
+							)}>
+								{t('methode_key_vocabulary')} ({vocabulary.length} {t('methode_words')})
+							</span>
+						</div>
+						{showVocabulary ? (
+							<ChevronUp className={cn('w-5 h-5', isDark ? 'text-blue-400' : 'text-blue-600')} />
+						) : (
+							<ChevronDown className={cn('w-5 h-5', isDark ? 'text-blue-400' : 'text-blue-600')} />
+						)}
+					</button>
 
-					<Collapse in={showVocabulary}>
-						<Box sx={{ mt: 2 }}>
-							{/* Group vocabulary by category */}
+					{showVocabulary && (
+						<div className="px-4 pb-4 space-y-4">
 							{['adjectives', 'verbs', 'expressions'].map((category) => {
 								const categoryItems = vocabulary.filter((item) => item.category === category)
 								if (categoryItems.length === 0) return null
 
-								const categoryLabels = {
-									adjectives: { icon: '🔹', label: t('methode_vocab_adjectives') },
-									verbs: { icon: '🔹', label: t('methode_vocab_verbs') },
-									expressions: { icon: '🔹', label: t('methode_vocab_expressions') },
+								const categoryConfig = {
+									adjectives: { icon: '🔷', label: t('methode_vocab_adjectives') },
+									verbs: { icon: '⚡', label: t('methode_vocab_verbs') },
+									expressions: { icon: '💬', label: t('methode_vocab_expressions') },
 								}
 
 								return (
-									<Box key={category} sx={{ mb: 3 }}>
-										<Typography
-											variant="subtitle2"
-											sx={{
-												fontWeight: 700,
-												color: isDark ? '#60a5fa' : '#1e40af',
-												mb: 1.5,
-												display: 'flex',
-												alignItems: 'center',
-												gap: 1,
-											}}>
-											<span>{categoryLabels[category].icon}</span>
-											{categoryLabels[category].label}
-										</Typography>
+									<div key={category}>
+										<h4 className={cn(
+											'font-bold mb-2 flex items-center gap-2',
+											isDark ? 'text-blue-300' : 'text-blue-700'
+										)}>
+											<span>{categoryConfig[category].icon}</span>
+											{categoryConfig[category].label}
+										</h4>
 
-										<List sx={{ pl: 2 }}>
+										<div className="space-y-2 pl-2">
 											{categoryItems.map((item, index) => (
-												<ListItem
+												<div
 													key={index}
-													sx={{
-														py: 1,
-														px: 2,
-														borderRadius: 2,
-														background: isDark
-															? 'rgba(255, 255, 255, 0.03)'
-															: 'rgba(0, 0, 0, 0.02)',
-														mb: 1,
-													}}>
-													<ListItemText
-														primary={
-															<Box sx={{ display: 'flex', gap: 2, alignItems: 'baseline' }}>
-																<Typography
-																	component="span"
-																	sx={{
-																		fontWeight: 600,
-																		color: isDark ? '#60a5fa' : '#1e40af',
-																		fontSize: '0.95rem',
-																	}}>
-																	{item.word}
-																</Typography>
-																<Typography
-																	component="span"
-																	sx={{
-																		color: isDark ? '#cbd5e1' : '#475569',
-																		fontSize: '0.9rem',
-																	}}>
-																	→ {item.translation}
-																</Typography>
-															</Box>
-														}
-														secondary={
-															item.example && (
-																<Typography
-																	variant="body2"
-																	sx={{
-																		color: isDark ? '#94a3b8' : '#64748b',
-																		fontStyle: 'italic',
-																		mt: 0.5,
-																		fontSize: '0.85rem',
-																	}}>
-																	Ex: {item.example}
-																</Typography>
-															)
-														}
-													/>
-												</ListItem>
+													className={cn(
+														'p-3 rounded-lg',
+														isDark
+															? 'bg-slate-800/50'
+															: 'bg-slate-50'
+													)}
+												>
+													<div className="flex items-baseline gap-2 flex-wrap">
+														<span className={cn(
+															'font-semibold',
+															isDark ? 'text-blue-300' : 'text-blue-700'
+														)}>
+															{item.word}
+														</span>
+														<span className={cn(
+															isDark ? 'text-slate-300' : 'text-slate-600'
+														)}>
+															→ {item.translation}
+														</span>
+													</div>
+													{item.example && (
+														<p className={cn(
+															'text-sm mt-1 italic',
+															isDark ? 'text-slate-500' : 'text-slate-400'
+														)}>
+															Ex: {item.example}
+														</p>
+													)}
+												</div>
 											))}
-										</List>
-									</Box>
+										</div>
+									</div>
 								)
 							})}
-						</Box>
-					</Collapse>
-				</Box>
+						</div>
+					)}
+				</div>
 			)}
-		</Paper>
+		</div>
 	)
 }
 
