@@ -3,27 +3,31 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import {
-	Box,
-	Button,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Typography,
-	IconButton,
-	Chip,
-	Select,
-	MenuItem,
-	FormControl,
-	InputLabel,
-} from '@mui/material'
-import { Edit, Delete, Add, Visibility } from '@mui/icons-material'
+import { cn } from '@/lib/utils'
+import { Edit, Trash2, Plus, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { getAllBlogPostsAction, deleteBlogPostAction } from '@/app/actions/blog'
+import AdminNavbar from '@/components/admin/AdminNavbar'
+
+// Badge component
+const Badge = ({ children, variant = 'default', size = 'sm' }) => {
+	const variants = {
+		default: 'bg-slate-100 text-slate-700',
+		primary: 'bg-indigo-100 text-indigo-700 border border-indigo-200',
+		success: 'bg-emerald-100 text-emerald-700',
+	}
+
+	const sizes = {
+		sm: 'px-2 py-0.5 text-xs',
+		md: 'px-3 py-1 text-sm',
+	}
+
+	return (
+		<span className={cn('rounded-full font-medium', variants[variant], sizes[size])}>
+			{children}
+		</span>
+	)
+}
 
 export default function BlogListClient() {
 	const router = useRouter()
@@ -73,116 +77,118 @@ export default function BlogListClient() {
 	}
 
 	return (
-		<Box sx={{ p: 3 }}>
-			<Box
-				sx={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					mb: 3,
-				}}>
-				<Typography variant="h4">Blog Posts</Typography>
-				<Box sx={{ display: 'flex', gap: 2 }}>
-					<FormControl size="small" sx={{ minWidth: 120 }}>
-						<InputLabel>Language</InputLabel>
-						<Select
-							value={langFilter}
-							label="Language"
-							onChange={(e) => setLangFilter(e.target.value)}>
-							<MenuItem value="all">All</MenuItem>
-							<MenuItem value="fr">Français</MenuItem>
-							<MenuItem value="en">English</MenuItem>
-							<MenuItem value="ru">Русский</MenuItem>
-						</Select>
-					</FormControl>
-					<Button
-						variant="contained"
-						startIcon={<Add />}
-						onClick={() => router.push(`/${locale}/admin/blog/create`)}>
-						New Post
-					</Button>
-				</Box>
-			</Box>
+		<>
+			<AdminNavbar activePage="blog" />
 
-			<TableContainer component={Paper}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Title</TableCell>
-							<TableCell>Slug</TableCell>
-							<TableCell>Lang</TableCell>
-							<TableCell>Status</TableCell>
-							<TableCell>Published</TableCell>
-							<TableCell>Actions</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{loading ? (
-							<TableRow>
-								<TableCell colSpan={6} align="center">
-									Loading...
-								</TableCell>
-							</TableRow>
-						) : posts.length === 0 ? (
-							<TableRow>
-								<TableCell colSpan={6} align="center">
-									No blog posts found
-								</TableCell>
-							</TableRow>
-						) : (
-							posts.map((post) => (
-								<TableRow key={post.id}>
-									<TableCell>{post.title}</TableCell>
-									<TableCell>
-										<code>{post.slug}</code>
-									</TableCell>
-									<TableCell>
-										<Chip
-											label={post.lang.toUpperCase()}
-											size="small"
-											color="primary"
-											variant="outlined"
-										/>
-									</TableCell>
-									<TableCell>
-										{post.is_published ? (
-											<Chip label="Published" size="small" color="success" />
-										) : (
-											<Chip label="Draft" size="small" color="default" />
-										)}
-									</TableCell>
-									<TableCell>{formatDate(post.published_at)}</TableCell>
-									<TableCell>
-										<IconButton
-											size="small"
-											onClick={() =>
-												router.push(`/${locale}/blog/${post.slug}`)
-											}
-											title="View">
-											<Visibility />
-										</IconButton>
-										<IconButton
-											size="small"
-											onClick={() =>
-												router.push(`/${locale}/admin/blog/edit/${post.id}`)
-											}
-											title="Edit">
-											<Edit />
-										</IconButton>
-										<IconButton
-											size="small"
-											color="error"
-											onClick={() => handleDelete(post.id, post.title)}
-											title="Delete">
-											<Delete />
-										</IconButton>
-									</TableCell>
-								</TableRow>
-							))
-						)}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Box>
+			<div className="max-w-6xl mx-auto px-4 pt-8 md:pt-16 pb-8">
+				{/* Header */}
+				<div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+					<h1 className="text-2xl font-bold text-slate-800">Blog Posts</h1>
+					<div className="flex items-center gap-3">
+						<select
+							value={langFilter}
+							onChange={(e) => setLangFilter(e.target.value)}
+							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+						>
+							<option value="all">All languages</option>
+							<option value="fr">Français</option>
+							<option value="en">English</option>
+							<option value="ru">Русский</option>
+						</select>
+						<button
+							onClick={() => router.push(`/${locale}/admin/blog/create`)}
+							className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+						>
+							<Plus className="w-4 h-4" />
+							New Post
+						</button>
+					</div>
+				</div>
+
+				{/* Table */}
+				<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+					<div className="overflow-x-auto">
+						<table className="w-full">
+							<thead>
+								<tr className="bg-slate-50 border-b border-slate-200">
+									<th className="px-4 py-3 text-left font-bold text-slate-700">Title</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">Slug</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">Lang</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">Status</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">Published</th>
+									<th className="px-4 py-3 text-right font-bold text-slate-700">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{loading ? (
+									<tr>
+										<td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+											Loading...
+										</td>
+									</tr>
+								) : posts.length === 0 ? (
+									<tr>
+										<td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+											No blog posts found
+										</td>
+									</tr>
+								) : (
+									posts.map((post) => (
+										<tr key={post.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+											<td className="px-4 py-3 font-medium text-slate-800">{post.title}</td>
+											<td className="px-4 py-3">
+												<code className="px-2 py-1 bg-slate-100 rounded text-sm text-slate-600">
+													{post.slug}
+												</code>
+											</td>
+											<td className="px-4 py-3">
+												<Badge variant="primary">
+													{post.lang.toUpperCase()}
+												</Badge>
+											</td>
+											<td className="px-4 py-3">
+												{post.is_published ? (
+													<Badge variant="success">Published</Badge>
+												) : (
+													<Badge>Draft</Badge>
+												)}
+											</td>
+											<td className="px-4 py-3 text-slate-600 text-sm">
+												{formatDate(post.published_at)}
+											</td>
+											<td className="px-4 py-3">
+												<div className="flex justify-end gap-1">
+													<button
+														onClick={() => router.push(`/${locale}/blog/${post.slug}`)}
+														className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+														title="View"
+													>
+														<Eye className="w-4 h-4" />
+													</button>
+													<button
+														onClick={() => router.push(`/${locale}/admin/blog/edit/${post.id}`)}
+														className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+														title="Edit"
+													>
+														<Edit className="w-4 h-4" />
+													</button>
+													<button
+														onClick={() => handleDelete(post.id, post.title)}
+														className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+														title="Delete"
+													>
+														<Trash2 className="w-4 h-4" />
+													</button>
+												</div>
+											</td>
+										</tr>
+									))
+								)}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</>
 	)
 }

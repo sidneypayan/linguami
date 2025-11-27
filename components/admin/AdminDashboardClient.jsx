@@ -1,60 +1,32 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from '@/i18n/navigation'
-import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import {
-	Box,
-	Container,
-	Typography,
-	Tabs,
-	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Paper,
-	Button,
-	Chip,
-	Stack,
-	IconButton,
-	Tooltip,
-	alpha,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	TextField,
-	CircularProgress,
-	useTheme,
-} from '@mui/material'
-import {
-	Add,
-	Visibility,
 	TrendingUp,
-	LibraryBooks,
-	MenuBook,
-	VideoLibrary,
-	Warning,
-	Refresh,
-	SwapHoriz,
-	Close,
+	BookOpen,
+	Video,
+	Library,
+	AlertTriangle,
+	RefreshCw,
+	ArrowRightLeft,
+	X,
 	Search,
-	OpenInNew,
-	AudioFile,
+	ExternalLink,
+	FileAudio,
 	Image as ImageIcon,
-} from '@mui/icons-material'
+	Eye,
+	Loader2,
+} from 'lucide-react'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
+import { cn } from '@/lib/utils'
 import { checkBrokenVideos, updateMaterialVideo, checkBrokenAudios, updateMaterialAudio, checkBrokenImages, updateMaterialImage } from '@/app/actions/admin'
 
 const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	const t = useTranslations('admin')
 	const locale = useLocale()
-	const theme = useTheme()
 
 	const [selectedLang, setSelectedLang] = useState('fr')
 	const [brokenVideos, setBrokenVideos] = useState([])
@@ -274,9 +246,9 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 
 	const getLanguageInfo = (lang) => {
 		const info = {
-			fr: { name: 'Français', color: '#3B82F6', flag: '🇫🇷' },
-			ru: { name: 'Русский', color: '#EF4444', flag: '🇷🇺' },
-			en: { name: 'English', color: '#10B981', flag: '🇬🇧' },
+			fr: { name: 'Francais', color: 'blue', flag: '🇫🇷' },
+			ru: { name: 'Russkiy', color: 'red', flag: '🇷🇺' },
+			en: { name: 'English', color: 'emerald', flag: '🇬🇧' },
 		}
 		return info[lang] || info.fr
 	}
@@ -317,7 +289,7 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 			type: 'material',
 			section,
 			count,
-			icon: <LibraryBooks />,
+			icon: BookOpen,
 			indent: false,
 		})),
 
@@ -330,7 +302,7 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 			type: 'material',
 			section,
 			count,
-			icon: <VideoLibrary />,
+			icon: Video,
 			indent: false,
 		})),
 
@@ -343,1469 +315,702 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 			type: 'books',
 			section: t('books'),
 			count: totalBooks,
-			icon: <MenuBook />,
+			icon: Library,
 			indent: false,
 		}] : []),
 		...(bookChaptersData ? [{
 			type: 'bookChapters',
 			section: 'book-chapters',
 			count: bookChaptersData.count,
-			icon: <MenuBook />,
+			icon: Library,
 			indent: true,
 		}] : [])
 	]
 
+	// Stats cards data
+	const statsCards = [
+		{ label: t('totalContent'), value: grandTotal, icon: TrendingUp, color: 'indigo' },
+		{ label: t('textAndAudio'), value: totalAudioText, icon: BookOpen, color: 'blue' },
+		{ label: t('videos'), value: totalVideo, icon: Video, color: 'emerald' },
+		{ label: t('books'), value: totalBooks, icon: Library, color: 'amber' },
+	]
+
+	const colorClasses = {
+		indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600' },
+		blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+		emerald: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
+		amber: { bg: 'bg-amber-100', text: 'text-amber-600' },
+		red: { bg: 'bg-red-100', text: 'text-red-600' },
+		violet: { bg: 'bg-violet-100', text: 'text-violet-600' },
+	}
+
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				bgcolor: 'background.paper',
-			}}>
+		<div className="min-h-screen bg-slate-50">
 			<AdminNavbar activePage="dashboard" />
 
-			<Container maxWidth="xl" sx={{ py: 4 }}>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Stats Cards */}
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: {
-							xs: '1fr',
-							sm: 'repeat(2, 1fr)',
-							md: 'repeat(4, 1fr)',
-						},
-						gap: 3,
-						mb: 4,
-					}}>
-					<Paper
-						elevation={0}
-						sx={{
-							p: 3,
-							borderRadius: 3,
-							border: '1px solid',
-							borderColor: 'divider',
-							background: 'white',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#667eea', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#667eea',
-								}}>
-								<TrendingUp />
-							</Box>
-							<Box>
-								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{grandTotal}
-								</Typography>
-							</Box>
-						</Box>
-						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
-							{t('totalContent')}
-						</Typography>
-					</Paper>
-
-					<Paper
-						elevation={0}
-						sx={{
-							p: 3,
-							borderRadius: 3,
-							border: '1px solid',
-							borderColor: 'divider',
-							background: 'white',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#3B82F6', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#3B82F6',
-								}}>
-								<LibraryBooks />
-							</Box>
-							<Box>
-								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{totalAudioText}
-								</Typography>
-							</Box>
-						</Box>
-						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
-							{t('textAndAudio')}
-						</Typography>
-					</Paper>
-
-					<Paper
-						elevation={0}
-						sx={{
-							p: 3,
-							borderRadius: 3,
-							border: '1px solid',
-							borderColor: 'divider',
-							background: 'white',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#10B981', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#10B981',
-								}}>
-								<VideoLibrary />
-							</Box>
-							<Box>
-								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{totalVideo}
-								</Typography>
-							</Box>
-						</Box>
-						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
-							{t('videos')}
-						</Typography>
-					</Paper>
-
-					<Paper
-						elevation={0}
-						sx={{
-							p: 3,
-							borderRadius: 3,
-							border: '1px solid',
-							borderColor: 'divider',
-							background: 'white',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#F59E0B', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#F59E0B',
-								}}>
-								<MenuBook />
-							</Box>
-							<Box>
-								<Typography variant='h4' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{totalBooks}
-								</Typography>
-							</Box>
-						</Box>
-						<Typography variant='body2' sx={{ color: '#64748B', fontWeight: 500 }}>
-							{t('books')}
-						</Typography>
-					</Paper>
-				</Box>
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+					{statsCards.map((card, index) => {
+						const Icon = card.icon
+						const colors = colorClasses[card.color]
+						return (
+							<div
+								key={index}
+								className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow"
+							>
+								<div className="flex items-center gap-4 mb-2">
+									<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colors.bg)}>
+										<Icon className={cn('w-6 h-6', colors.text)} />
+									</div>
+									<span className="text-3xl font-bold text-slate-800">{card.value}</span>
+								</div>
+								<p className="text-sm font-medium text-slate-500">{card.label}</p>
+							</div>
+						)
+					})}
+				</div>
 
 				{/* Broken Videos Section */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: 3,
-						border: '1px solid',
-						borderColor: brokenVideos.length > 0 ? '#FCD34D' : 'divider',
-						overflow: 'hidden',
-						mb: 4,
-						bgcolor: brokenVideos.length > 0 ? '#FEF3C7' : 'white',
-					}}>
-					<Box
-						sx={{
-							p: 3,
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#EF4444', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#EF4444',
-								}}>
-								{brokenVideos.length > 0 ? <Warning /> : <VideoLibrary />}
-							</Box>
-							<Box>
-								<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{t('brokenVideosTitle')}
-								</Typography>
-								<Typography variant='body2' sx={{ color: '#64748B' }}>
+				<div className={cn(
+					'rounded-xl border overflow-hidden mb-6',
+					brokenVideos.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
+				)}>
+					<div className="p-6 flex items-center justify-between">
+						<div className="flex items-center gap-4">
+							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.red.bg)}>
+								{brokenVideos.length > 0 ? (
+									<AlertTriangle className={colorClasses.red.text} />
+								) : (
+									<Video className={colorClasses.red.text} />
+								)}
+							</div>
+							<div>
+								<h3 className="text-lg font-bold text-slate-800">{t('brokenVideosTitle')}</h3>
+								<p className="text-sm text-slate-500">
 									{showBrokenVideos
 										? brokenVideos.length > 0
 											? t('brokenVideosFound', { count: brokenVideos.length })
 											: t('noBrokenVideos')
 										: t('brokenVideosDesc')}
-								</Typography>
-							</Box>
-						</Box>
-						<Button
-							variant='contained'
-							startIcon={loadingVideos ? <Refresh sx={{ animation: 'spin 1s linear infinite' }} /> : <Refresh />}
+								</p>
+							</div>
+						</div>
+						<button
 							onClick={loadBrokenVideos}
 							disabled={loadingVideos}
-							sx={{
-								bgcolor: '#EF4444',
-								color: 'white',
-								px: 3,
-								py: 1.2,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								boxShadow: 'none',
-								'&:hover': {
-									bgcolor: '#DC2626',
-									boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
-								},
-								'&:disabled': {
-									bgcolor: '#FCA5A5',
-									color: 'white',
-								},
-								'@keyframes spin': {
-									'0%': { transform: 'rotate(0deg)' },
-									'100%': { transform: 'rotate(360deg)' },
-								},
-							}}>
+							className="flex items-center gap-2 px-4 py-2.5 bg-red-500 text-white rounded-lg font-semibold text-sm hover:bg-red-600 disabled:bg-red-300 transition-colors"
+						>
+							<RefreshCw className={cn('w-4 h-4', loadingVideos && 'animate-spin')} />
 							{loadingVideos ? t('checking') : t('checkVideos')}
-						</Button>
-					</Box>
+						</button>
+					</div>
 
 					{showBrokenVideos && brokenVideos.length > 0 && (
-						<TableContainer>
-							<Table>
-								<TableHead>
-									<TableRow
-										sx={{
-											bgcolor: alpha('#EF4444', 0.08),
-											borderBottom: '2px solid',
-											borderColor: '#EF4444',
-											'& th': {
-												fontWeight: 700,
-												color: '#EF4444',
-												fontSize: '0.75rem',
-												textTransform: 'uppercase',
-												letterSpacing: '1px',
-												py: 2.5,
-												px: 3,
-											},
-										}}>
-										<TableCell>{t('title')}</TableCell>
-										<TableCell>{t('section')}</TableCell>
-										<TableCell>{t('language')}</TableCell>
-										<TableCell>{t('videoUrl')}</TableCell>
-										<TableCell align='right'>{t('actions')}</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead>
+									<tr className="bg-red-100/50 border-b-2 border-red-500">
+										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('title')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('section')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('language')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-red-600 uppercase tracking-wider">{t('videoUrl')}</th>
+										<th className="px-6 py-3 text-right text-xs font-bold text-red-600 uppercase tracking-wider">{t('actions')}</th>
+									</tr>
+								</thead>
+								<tbody>
 									{brokenVideos.map((video) => (
-										<TableRow
-											key={video.id}
-											sx={{
-												'&:hover': {
-													bgcolor: '#FEF3C7',
-												},
-												'& td': {
-													py: 2.5,
-													borderBottom: '1px solid',
-													borderColor: 'divider',
-												},
-											}}>
-											<TableCell>
-												<Typography
-													sx={{
-														fontWeight: 600,
-														color: '#1E293B',
-													}}>
-													{video.title}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														textTransform: 'capitalize',
-														color: '#64748B',
-													}}>
-													{video.section}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={getLanguageInfo(video.lang).flag + ' ' + getLanguageInfo(video.lang).name}
-													size='small'
-													sx={{
-														bgcolor: alpha(getLanguageInfo(video.lang).color, 0.1),
-														color: getLanguageInfo(video.lang).color,
-														fontWeight: 600,
-													}}
-												/>
-											</TableCell>
-											<TableCell>
-												<Typography
-													component='a'
+										<tr key={video.id} className="hover:bg-amber-50 border-b border-slate-200">
+											<td className="px-6 py-4 font-semibold text-slate-800">{video.title}</td>
+											<td className="px-6 py-4 text-slate-500 capitalize">{video.section}</td>
+											<td className="px-6 py-4">
+												<span className={cn(
+													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
+													video.lang === 'fr' && 'bg-blue-100 text-blue-700',
+													video.lang === 'ru' && 'bg-red-100 text-red-700',
+													video.lang === 'en' && 'bg-emerald-100 text-emerald-700'
+												)}>
+													{getLanguageInfo(video.lang).flag} {getLanguageInfo(video.lang).name}
+												</span>
+											</td>
+											<td className="px-6 py-4">
+												<a
 													href={video.video_url}
-													target='_blank'
-													rel='noopener noreferrer'
-													sx={{
-														color: '#667eea',
-														textDecoration: 'none',
-														fontSize: '0.875rem',
-														'&:hover': {
-															textDecoration: 'underline',
-														},
-														display: 'block',
-														maxWidth: 300,
-														overflow: 'hidden',
-														textOverflow: 'ellipsis',
-														whiteSpace: 'nowrap',
-													}}>
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-indigo-600 hover:underline text-sm truncate block max-w-[300px]"
+												>
 													{video.video_url}
-												</Typography>
-											</TableCell>
-											<TableCell align='right'>
-												<Tooltip title={t('replaceLink')}>
-													<IconButton
-														size='small'
-														onClick={() => handleOpenEditDialog(video)}
-														sx={{
-															color: '#F59E0B',
-															'&:hover': {
-																bgcolor: alpha('#F59E0B', 0.1),
-																color: '#F59E0B',
-															},
-														}}>
-														<SwapHoriz fontSize='small' />
-													</IconButton>
-												</Tooltip>
-											</TableCell>
-										</TableRow>
+												</a>
+											</td>
+											<td className="px-6 py-4 text-right">
+												<button
+													onClick={() => handleOpenEditDialog(video)}
+													className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
+													title={t('replaceLink')}
+												>
+													<ArrowRightLeft className="w-4 h-4" />
+												</button>
+											</td>
+										</tr>
 									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
+								</tbody>
+							</table>
+						</div>
 					)}
-				</Paper>
+				</div>
 
 				{/* Broken Audios Section */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: 3,
-						border: '1px solid',
-						borderColor: brokenAudios.length > 0 ? '#FCD34D' : 'divider',
-						overflow: 'hidden',
-						mb: 4,
-						bgcolor: brokenAudios.length > 0 ? '#FEF3C7' : 'white',
-					}}>
-					<Box
-						sx={{
-							p: 3,
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#F59E0B', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#F59E0B',
-								}}>
-								{brokenAudios.length > 0 ? <Warning /> : <AudioFile />}
-							</Box>
-							<Box>
-								<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{t('brokenAudiosTitle')}
-								</Typography>
-								<Typography variant='body2' sx={{ color: '#64748B' }}>
+				<div className={cn(
+					'rounded-xl border overflow-hidden mb-6',
+					brokenAudios.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
+				)}>
+					<div className="p-6 flex items-center justify-between">
+						<div className="flex items-center gap-4">
+							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.amber.bg)}>
+								{brokenAudios.length > 0 ? (
+									<AlertTriangle className={colorClasses.amber.text} />
+								) : (
+									<FileAudio className={colorClasses.amber.text} />
+								)}
+							</div>
+							<div>
+								<h3 className="text-lg font-bold text-slate-800">{t('brokenAudiosTitle')}</h3>
+								<p className="text-sm text-slate-500">
 									{showBrokenAudios
 										? brokenAudios.length > 0
 											? t('brokenAudiosFound', { count: brokenAudios.length })
 											: t('noBrokenAudios')
 										: t('brokenAudiosDesc')}
-								</Typography>
-							</Box>
-						</Box>
-						<Button
-							variant='contained'
-							startIcon={loadingAudios ? <Refresh sx={{ animation: 'spin 1s linear infinite' }} /> : <Refresh />}
+								</p>
+							</div>
+						</div>
+						<button
 							onClick={loadBrokenAudios}
 							disabled={loadingAudios}
-							sx={{
-								bgcolor: '#F59E0B',
-								color: 'white',
-								px: 3,
-								py: 1.2,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								boxShadow: 'none',
-								'&:hover': {
-									bgcolor: '#D97706',
-									boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
-								},
-								'&:disabled': {
-									bgcolor: '#FCD34D',
-									color: 'white',
-								},
-								'@keyframes spin': {
-									'0%': { transform: 'rotate(0deg)' },
-									'100%': { transform: 'rotate(360deg)' },
-								},
-							}}>
+							className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg font-semibold text-sm hover:bg-amber-600 disabled:bg-amber-300 transition-colors"
+						>
+							<RefreshCw className={cn('w-4 h-4', loadingAudios && 'animate-spin')} />
 							{loadingAudios ? t('checking') : t('checkAudios')}
-						</Button>
-					</Box>
+						</button>
+					</div>
 
 					{showBrokenAudios && brokenAudios.length > 0 && (
-						<TableContainer>
-							<Table>
-								<TableHead>
-									<TableRow
-										sx={{
-											bgcolor: alpha('#F59E0B', 0.08),
-											borderBottom: '2px solid',
-											borderColor: '#F59E0B',
-											'& th': {
-												fontWeight: 700,
-												color: '#F59E0B',
-												fontSize: '0.75rem',
-												textTransform: 'uppercase',
-												letterSpacing: '1px',
-												py: 2.5,
-												px: 3,
-											},
-										}}>
-										<TableCell>{t('title')}</TableCell>
-										<TableCell>{t('section')}</TableCell>
-										<TableCell>{t('language')}</TableCell>
-										<TableCell>{t('audioFileName')}</TableCell>
-										<TableCell align='right'>{t('actions')}</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead>
+									<tr className="bg-amber-100/50 border-b-2 border-amber-500">
+										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('title')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('section')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('language')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-amber-600 uppercase tracking-wider">{t('audioFileName')}</th>
+										<th className="px-6 py-3 text-right text-xs font-bold text-amber-600 uppercase tracking-wider">{t('actions')}</th>
+									</tr>
+								</thead>
+								<tbody>
 									{brokenAudios.map((audio) => (
-										<TableRow
-											key={audio.id}
-											sx={{
-												'&:hover': {
-													bgcolor: '#FEF3C7',
-												},
-												'& td': {
-													py: 2.5,
-													borderBottom: '1px solid',
-													borderColor: 'divider',
-												},
-											}}>
-											<TableCell>
-												<Typography
-													sx={{
-														fontWeight: 600,
-														color: '#1E293B',
-													}}>
-													{audio.title}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														textTransform: 'capitalize',
-														color: '#64748B',
-													}}>
-													{audio.section}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={getLanguageInfo(audio.lang).flag + ' ' + getLanguageInfo(audio.lang).name}
-													size='small'
-													sx={{
-														bgcolor: alpha(getLanguageInfo(audio.lang).color, 0.1),
-														color: getLanguageInfo(audio.lang).color,
-														fontWeight: 600,
-													}}
-												/>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														color: '#EF4444',
-														fontSize: '0.875rem',
-														display: 'block',
-														maxWidth: 300,
-														overflow: 'hidden',
-														textOverflow: 'ellipsis',
-														whiteSpace: 'nowrap',
-													}}>
-													{audio.audio_filename}
-												</Typography>
-											</TableCell>
-											<TableCell align='right'>
-												<Tooltip title={t('replaceAudioLink')}>
-													<IconButton
-														size='small'
-														onClick={() => handleOpenEditAudioDialog(audio)}
-														sx={{
-															color: '#F59E0B',
-															'&:hover': {
-																bgcolor: alpha('#F59E0B', 0.1),
-																color: '#F59E0B',
-															},
-														}}>
-														<SwapHoriz fontSize='small' />
-													</IconButton>
-												</Tooltip>
-											</TableCell>
-										</TableRow>
+										<tr key={audio.id} className="hover:bg-amber-50 border-b border-slate-200">
+											<td className="px-6 py-4 font-semibold text-slate-800">{audio.title}</td>
+											<td className="px-6 py-4 text-slate-500 capitalize">{audio.section}</td>
+											<td className="px-6 py-4">
+												<span className={cn(
+													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
+													audio.lang === 'fr' && 'bg-blue-100 text-blue-700',
+													audio.lang === 'ru' && 'bg-red-100 text-red-700',
+													audio.lang === 'en' && 'bg-emerald-100 text-emerald-700'
+												)}>
+													{getLanguageInfo(audio.lang).flag} {getLanguageInfo(audio.lang).name}
+												</span>
+											</td>
+											<td className="px-6 py-4 text-red-500 text-sm truncate max-w-[300px]">{audio.audio_filename}</td>
+											<td className="px-6 py-4 text-right">
+												<button
+													onClick={() => handleOpenEditAudioDialog(audio)}
+													className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors"
+													title={t('replaceAudioLink')}
+												>
+													<ArrowRightLeft className="w-4 h-4" />
+												</button>
+											</td>
+										</tr>
 									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
+								</tbody>
+							</table>
+						</div>
 					)}
-				</Paper>
-
+				</div>
 
 				{/* Broken Images Section */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: 3,
-						border: '1px solid',
-						borderColor: brokenImages.length > 0 ? '#FCD34D' : 'divider',
-						overflow: 'hidden',
-						mb: 4,
-						bgcolor: brokenImages.length > 0 ? '#FEF3C7' : 'white',
-					}}>
-					<Box
-						sx={{
-							p: 3,
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									bgcolor: alpha('#8B5CF6', 0.1),
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									color: '#8B5CF6',
-								}}>
-								{brokenImages.length > 0 ? <Warning /> : <ImageIcon />}
-							</Box>
-							<Box>
-								<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-									{t('brokenImagesTitle')}
-								</Typography>
-								<Typography variant='body2' sx={{ color: '#64748B' }}>
+				<div className={cn(
+					'rounded-xl border overflow-hidden mb-6',
+					brokenImages.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-white'
+				)}>
+					<div className="p-6 flex items-center justify-between">
+						<div className="flex items-center gap-4">
+							<div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorClasses.violet.bg)}>
+								{brokenImages.length > 0 ? (
+									<AlertTriangle className={colorClasses.violet.text} />
+								) : (
+									<ImageIcon className={colorClasses.violet.text} />
+								)}
+							</div>
+							<div>
+								<h3 className="text-lg font-bold text-slate-800">{t('brokenImagesTitle')}</h3>
+								<p className="text-sm text-slate-500">
 									{showBrokenImages
 										? brokenImages.length > 0
 											? t('brokenImagesFound', { count: brokenImages.length })
 											: t('noBrokenImages')
 										: t('brokenImagesDesc')}
-								</Typography>
-							</Box>
-						</Box>
-						<Button
-							variant='contained'
-							startIcon={loadingImages ? <Refresh sx={{ animation: 'spin 1s linear infinite' }} /> : <Refresh />}
+								</p>
+							</div>
+						</div>
+						<button
 							onClick={loadBrokenImages}
 							disabled={loadingImages}
-							sx={{
-								bgcolor: '#8B5CF6',
-								color: 'white',
-								px: 3,
-								py: 1.2,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								boxShadow: 'none',
-								'&:hover': {
-									bgcolor: '#7C3AED',
-									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-								},
-								'&:disabled': {
-									bgcolor: '#C4B5FD',
-									color: 'white',
-								},
-								'@keyframes spin': {
-									'0%': { transform: 'rotate(0deg)' },
-									'100%': { transform: 'rotate(360deg)' },
-								},
-							}}>
+							className="flex items-center gap-2 px-4 py-2.5 bg-violet-500 text-white rounded-lg font-semibold text-sm hover:bg-violet-600 disabled:bg-violet-300 transition-colors"
+						>
+							<RefreshCw className={cn('w-4 h-4', loadingImages && 'animate-spin')} />
 							{loadingImages ? t('checking') : t('checkImages')}
-						</Button>
-					</Box>
+						</button>
+					</div>
 
 					{showBrokenImages && brokenImages.length > 0 && (
-						<TableContainer>
-							<Table>
-								<TableHead>
-									<TableRow
-										sx={{
-											bgcolor: alpha('#8B5CF6', 0.08),
-											borderBottom: '2px solid',
-											borderColor: '#8B5CF6',
-											'& th': {
-												fontWeight: 700,
-												color: '#8B5CF6',
-												fontSize: '0.75rem',
-												textTransform: 'uppercase',
-												letterSpacing: '1px',
-												py: 2.5,
-												px: 3,
-											},
-										}}>
-										<TableCell>{t('title')}</TableCell>
-										<TableCell>{t('section')}</TableCell>
-										<TableCell>{t('language')}</TableCell>
-										<TableCell>{t('imageFileName')}</TableCell>
-										<TableCell align='right'>{t('actions')}</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead>
+									<tr className="bg-violet-100/50 border-b-2 border-violet-500">
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('title')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('section')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('language')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">{t('imageFileName')}</th>
+										<th className="px-6 py-3 text-right text-xs font-bold text-violet-600 uppercase tracking-wider">{t('actions')}</th>
+									</tr>
+								</thead>
+								<tbody>
 									{brokenImages.map((image) => (
-										<TableRow
-											key={image.id}
-											sx={{
-												'&:hover': {
-													bgcolor: '#FEF3C7',
-												},
-												'& td': {
-													py: 2.5,
-													borderBottom: '1px solid',
-													borderColor: 'divider',
-												},
-											}}>
-											<TableCell>
-												<Typography
-													sx={{
-														fontWeight: 600,
-														color: '#1E293B',
-													}}>
-													{image.title}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														textTransform: 'capitalize',
-														color: '#64748B',
-													}}>
-													{image.section}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={getLanguageInfo(image.lang).flag + ' ' + getLanguageInfo(image.lang).name}
-													size='small'
-													sx={{
-														bgcolor: alpha(getLanguageInfo(image.lang).color, 0.1),
-														color: getLanguageInfo(image.lang).color,
-														fontWeight: 600,
-													}}
-												/>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														color: '#EF4444',
-														fontSize: '0.875rem',
-														display: 'block',
-														maxWidth: 300,
-														overflow: 'hidden',
-														textOverflow: 'ellipsis',
-														whiteSpace: 'nowrap',
-													}}>
-													{image.image_filename}
-												</Typography>
-											</TableCell>
-											<TableCell align='right'>
-												<Tooltip title={t('replaceImageLink')}>
-													<IconButton
-														size='small'
-														onClick={() => handleOpenEditImageDialog(image)}
-														sx={{
-															color: '#8B5CF6',
-															'&:hover': {
-																bgcolor: alpha('#8B5CF6', 0.1),
-																color: '#8B5CF6',
-															},
-														}}>
-														<SwapHoriz fontSize='small' />
-													</IconButton>
-												</Tooltip>
-											</TableCell>
-										</TableRow>
+										<tr key={image.id} className="hover:bg-amber-50 border-b border-slate-200">
+											<td className="px-6 py-4 font-semibold text-slate-800">{image.title}</td>
+											<td className="px-6 py-4 text-slate-500 capitalize">{image.section}</td>
+											<td className="px-6 py-4">
+												<span className={cn(
+													'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold',
+													image.lang === 'fr' && 'bg-blue-100 text-blue-700',
+													image.lang === 'ru' && 'bg-red-100 text-red-700',
+													image.lang === 'en' && 'bg-emerald-100 text-emerald-700'
+												)}>
+													{getLanguageInfo(image.lang).flag} {getLanguageInfo(image.lang).name}
+												</span>
+											</td>
+											<td className="px-6 py-4 text-red-500 text-sm truncate max-w-[300px]">{image.image_filename}</td>
+											<td className="px-6 py-4 text-right">
+												<button
+													onClick={() => handleOpenEditImageDialog(image)}
+													className="p-2 text-violet-600 hover:bg-violet-100 rounded-lg transition-colors"
+													title={t('replaceImageLink')}
+												>
+													<ArrowRightLeft className="w-4 h-4" />
+												</button>
+											</td>
+										</tr>
 									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
+								</tbody>
+							</table>
+						</div>
 					)}
-				</Paper>
+				</div>
 
 				{/* Language Tabs */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: 3,
-						border: '1px solid',
-						borderColor: 'divider',
-						overflow: 'hidden',
-					}}>
-					<Box
-						sx={{
-							borderBottom: '1px solid',
-							borderColor: 'divider',
-							px: 3,
-							py: 2,
-							bgcolor: 'white',
-						}}>
-						<Tabs
-							value={selectedLang}
-							onChange={(e, newValue) => setSelectedLang(newValue)}
-							sx={{
-								'& .MuiTab-root': {
-									textTransform: 'none',
-									fontWeight: 600,
-									fontSize: '1rem',
-									minHeight: 48,
-									px: 3,
-									color: '#64748B',
-									'&.Mui-selected': {
-										color: '#667eea',
-									},
-								},
-								'& .MuiTabs-indicator': {
-									backgroundColor: '#667eea',
-									height: 3,
-									borderRadius: '3px 3px 0 0',
-								},
-							}}>
+				<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+					<div className="border-b border-slate-200 px-6 py-4">
+						<div className="flex gap-1">
 							{materialsCountByLang.map(({ lang }) => {
 								const langInfo = getLanguageInfo(lang)
+								const isActive = selectedLang === lang
 								return (
-									<Tab
+									<button
 										key={lang}
-										value={lang}
-										label={
-											<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-												<span style={{ fontSize: '1.2rem' }}>{langInfo.flag}</span>
-												<span>{langInfo.name}</span>
-											</Box>
-										}
-									/>
+										onClick={() => setSelectedLang(lang)}
+										className={cn(
+											'px-4 py-2.5 rounded-lg font-semibold text-sm transition-all',
+											isActive
+												? 'bg-indigo-100 text-indigo-700'
+												: 'text-slate-500 hover:bg-slate-100'
+										)}
+									>
+										<span className="mr-2 text-lg">{langInfo.flag}</span>
+										{langInfo.name}
+									</button>
 								)
 							})}
-						</Tabs>
-					</Box>
+						</div>
+					</div>
 
 					{/* Content Table */}
-					<TableContainer>
-						<Table>
-							<TableHead>
-								<TableRow
-									sx={{
-										bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.08),
-										borderBottom: '2px solid',
-										borderColor: getLanguageInfo(selectedLang).color,
-										'& th': {
-											fontWeight: 700,
-											color: getLanguageInfo(selectedLang).color,
-											fontSize: '0.75rem',
-											textTransform: 'uppercase',
-											letterSpacing: '1px',
-											py: 2.5,
-											px: 3,
-										},
-									}}>
-									<TableCell>{t('type')}</TableCell>
-									<TableCell>{t('section')}</TableCell>
-									<TableCell align='center'>{t('content')}</TableCell>
-									<TableCell align='right'>{t('actions')}</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
+					<div className="overflow-x-auto">
+						<table className="w-full">
+							<thead>
+								<tr className={cn(
+									'border-b-2',
+									selectedLang === 'fr' && 'bg-blue-50 border-blue-500',
+									selectedLang === 'ru' && 'bg-red-50 border-red-500',
+									selectedLang === 'en' && 'bg-emerald-50 border-emerald-500'
+								)}>
+									<th className={cn(
+										'px-6 py-3 text-left text-xs font-bold uppercase tracking-wider',
+										selectedLang === 'fr' && 'text-blue-600',
+										selectedLang === 'ru' && 'text-red-600',
+										selectedLang === 'en' && 'text-emerald-600'
+									)}>{t('type')}</th>
+									<th className={cn(
+										'px-6 py-3 text-left text-xs font-bold uppercase tracking-wider',
+										selectedLang === 'fr' && 'text-blue-600',
+										selectedLang === 'ru' && 'text-red-600',
+										selectedLang === 'en' && 'text-emerald-600'
+									)}>{t('section')}</th>
+									<th className={cn(
+										'px-6 py-3 text-center text-xs font-bold uppercase tracking-wider',
+										selectedLang === 'fr' && 'text-blue-600',
+										selectedLang === 'ru' && 'text-red-600',
+										selectedLang === 'en' && 'text-emerald-600'
+									)}>{t('content')}</th>
+									<th className={cn(
+										'px-6 py-3 text-right text-xs font-bold uppercase tracking-wider',
+										selectedLang === 'fr' && 'text-blue-600',
+										selectedLang === 'ru' && 'text-red-600',
+										selectedLang === 'en' && 'text-emerald-600'
+									)}>{t('actions')}</th>
+								</tr>
+							</thead>
+							<tbody>
 								{tableData.length === 0 ? (
-									<TableRow>
-										<TableCell colSpan={4} align='center' sx={{ py: 8 }}>
-											<Typography variant='body1' color='text.secondary'>
-												{t('noContentAvailable')}
-											</Typography>
-										</TableCell>
-									</TableRow>
+									<tr>
+										<td colSpan={4} className="px-6 py-16 text-center text-slate-500">
+											{t('noContentAvailable')}
+										</td>
+									</tr>
 								) : (
 									tableData.map((item, index) => (
 										item.isCategory ? (
-											<TableRow
-												key={`${item.type}-${item.section}-${index}`}
-												sx={{
-													bgcolor: 'white',
-													'& td': {
-														pt: index === 0 ? 2 : 4,
-														pb: 1.5,
-														borderBottom: 'none',
-													},
-												}}>
-												<TableCell colSpan={4}>
-													<Box
-														sx={{
-															display: 'flex',
-															alignItems: 'center',
-															gap: 2,
-															px: 1,
-														}}>
-														<Box
-															sx={{
-																width: 4,
-																height: 24,
-																borderRadius: 2,
-																bgcolor: getLanguageInfo(selectedLang).color,
-															}}
-														/>
-														<Typography
-															sx={{
-																fontWeight: 700,
-																color: '#1E293B',
-																fontSize: '1rem',
-																letterSpacing: '0.3px',
-															}}>
-															{item.section}
-														</Typography>
-													</Box>
-												</TableCell>
-											</TableRow>
+											<tr key={`${item.type}-${item.section}-${index}`} className="bg-white">
+												<td colSpan={4} className={cn('px-6', index === 0 ? 'pt-4 pb-3' : 'pt-8 pb-3')}>
+													<div className="flex items-center gap-3">
+														<div className={cn(
+															'w-1 h-6 rounded',
+															selectedLang === 'fr' && 'bg-blue-500',
+															selectedLang === 'ru' && 'bg-red-500',
+															selectedLang === 'en' && 'bg-emerald-500'
+														)} />
+														<span className="font-bold text-slate-800">{item.section}</span>
+													</div>
+												</td>
+											</tr>
 										) : (
-											<TableRow
+											<tr
 												key={`${item.type}-${item.section}-${index}`}
-												sx={{
-													transition: 'background-color 0.2s ease',
-													'&:hover': {
-														bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.03),
-													},
-													'& td': {
-														py: 2.5,
-														px: 3,
-														borderBottom: '1px solid',
-														borderColor: '#F1F5F9',
-													},
-												}}>
-												<TableCell>
-													<Box sx={{
-														display: 'flex',
-														alignItems: 'center',
-														gap: 1.5,
-														pl: item.indent ? 6 : 0,
-													}}>
-														<Box
-															sx={{
-																width: 40,
-																height: 40,
-																borderRadius: 2,
-																bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.1),
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'center',
-																color: getLanguageInfo(selectedLang).color,
-																opacity: item.indent ? 0.7 : 1,
-															}}>
-															{item.icon}
-														</Box>
-													</Box>
-												</TableCell>
-												<TableCell>
-													<Typography
-														sx={{
-															fontWeight: item.indent ? 500 : 600,
-															color: item.indent ? '#64748B' : '#1E293B',
-															textTransform: 'capitalize',
-															fontSize: item.indent ? '0.875rem' : '1rem',
-														}}>
+												className="hover:bg-slate-50 border-b border-slate-100 transition-colors"
+											>
+												<td className="px-6 py-4">
+													<div className={cn('flex items-center gap-3', item.indent && 'pl-6')}>
+														<div className={cn(
+															'w-10 h-10 rounded-lg flex items-center justify-center',
+															item.indent ? 'opacity-70' : '',
+															selectedLang === 'fr' && 'bg-blue-100 text-blue-600',
+															selectedLang === 'ru' && 'bg-red-100 text-red-600',
+															selectedLang === 'en' && 'bg-emerald-100 text-emerald-600'
+														)}>
+															<item.icon className="w-5 h-5" />
+														</div>
+													</div>
+												</td>
+												<td className="px-6 py-4">
+													<span className={cn(
+														'capitalize',
+														item.indent ? 'text-slate-500 text-sm' : 'font-semibold text-slate-800'
+													)}>
 														{item.section}
-													</Typography>
-												</TableCell>
-												<TableCell align='center'>
-													<Chip
-														label={item.count}
-														sx={{
-															bgcolor: alpha(getLanguageInfo(selectedLang).color, 0.1),
-															color: getLanguageInfo(selectedLang).color,
-															fontWeight: 700,
-															fontSize: '0.875rem',
-															minWidth: 48,
-														}}
-													/>
-												</TableCell>
-												<TableCell align='right'>
-													{item.type === 'material' || item.type === 'books' ? (
-														<Stack direction='row' spacing={1} justifyContent='flex-end'>
-															<Tooltip title={t('view')}>
-																<IconButton
-																	size='small'
-																	component={Link}
-																	href={
-																		item.type === 'material'
-																			? `/materials/${item.section}?lang=${selectedLang}`
-																			: `/materials/books?lang=${selectedLang}`
-																	}
-																	sx={{
-																		color: '#64748B',
-																		'&:hover': {
-																			bgcolor: alpha('#667eea', 0.1),
-																			color: '#667eea',
-																		},
-																	}}>
-																	<Visibility fontSize='small' />
-																</IconButton>
-															</Tooltip>
-														</Stack>
+													</span>
+												</td>
+												<td className="px-6 py-4 text-center">
+													<span className={cn(
+														'inline-flex items-center justify-center min-w-[48px] px-3 py-1 rounded-full text-sm font-bold',
+														selectedLang === 'fr' && 'bg-blue-100 text-blue-700',
+														selectedLang === 'ru' && 'bg-red-100 text-red-700',
+														selectedLang === 'en' && 'bg-emerald-100 text-emerald-700'
+													)}>
+														{item.count}
+													</span>
+												</td>
+												<td className="px-6 py-4 text-right">
+													{(item.type === 'material' || item.type === 'books') ? (
+														<Link
+															href={
+																item.type === 'material'
+																	? `/materials/${item.section}?lang=${selectedLang}`
+																	: `/materials/books?lang=${selectedLang}`
+															}
+															className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg inline-flex transition-colors"
+															title={t('view')}
+														>
+															<Eye className="w-4 h-4" />
+														</Link>
 													) : (
-														<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
-															—
-														</Typography>
+														<span className="text-slate-300 italic text-sm">—</span>
 													)}
-												</TableCell>
-											</TableRow>
+												</td>
+											</tr>
 										)
 									))
 								)}
-							</TableBody>
-						</Table>
-					</TableContainer>
-				</Paper>
-			</Container>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 
-			{/* Dialog pour remplacer le lien vidéo */}
-			<Dialog
-				open={editVideoDialog.open}
-				onClose={handleCloseEditDialog}
-				maxWidth='md'
-				fullWidth
-				PaperProps={{
-					sx: {
-						borderRadius: 3,
-					},
-				}}>
-				<DialogTitle
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						pb: 2,
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-						<Box
-							sx={{
-								width: 48,
-								height: 48,
-								borderRadius: 2,
-								bgcolor: alpha('#F59E0B', 0.1),
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								color: '#F59E0B',
-							}}>
-							<SwapHoriz />
-						</Box>
-						<Box>
-							<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-								{t('replaceVideoLink')}
-							</Typography>
-							<Typography variant='body2' sx={{ color: '#64748B' }}>
-								{editVideoDialog.video?.title}
-							</Typography>
-						</Box>
-					</Box>
-					<IconButton onClick={handleCloseEditDialog} size='small'>
-						<Close />
-					</IconButton>
-				</DialogTitle>
+			{/* Video Edit Dialog */}
+			{editVideoDialog.open && (
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+						<div className="p-6 border-b border-slate-200 flex items-center justify-between">
+							<div className="flex items-center gap-4">
+								<div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+									<ArrowRightLeft className="w-6 h-6 text-amber-600" />
+								</div>
+								<div>
+									<h3 className="text-lg font-bold text-slate-800">{t('replaceVideoLink')}</h3>
+									<p className="text-sm text-slate-500">{editVideoDialog.video?.title}</p>
+								</div>
+							</div>
+							<button onClick={handleCloseEditDialog} className="p-2 hover:bg-slate-100 rounded-lg">
+								<X className="w-5 h-5 text-slate-500" />
+							</button>
+						</div>
 
-				<DialogContent sx={{ pt: 0 }}>
-					<Box sx={{ mb: 2 }}>
-						<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, display: 'block', mb: 1 }}>
-							{t('currentLink')}
-						</Typography>
-						<Typography
-							component='a'
-							href={editVideoDialog.video?.video}
-							target='_blank'
-							rel='noopener noreferrer'
-							sx={{
-								color: '#EF4444',
-								textDecoration: 'line-through',
-								fontSize: '0.875rem',
-								display: 'block',
-								wordBreak: 'break-all',
-								'&:hover': {
-									textDecoration: 'line-through underline',
-								},
-							}}>
-							{editVideoDialog.video?.video}
-						</Typography>
-					</Box>
+						<div className="p-6 space-y-4">
+							<div>
+								<label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('currentLink')}</label>
+								<a
+									href={editVideoDialog.video?.video_url}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="block text-red-500 line-through text-sm mt-1 break-all hover:underline"
+								>
+									{editVideoDialog.video?.video_url}
+								</a>
+							</div>
 
-					<Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-						<Button
-							variant='outlined'
-							startIcon={<Search />}
-							fullWidth
-							onClick={() => {
-								const searchQuery = encodeURIComponent(editVideoDialog.video?.title || '')
-								window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank')
-							}}
-							sx={{
-								py: 1.5,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								borderColor: '#E2E8F0',
-								color: '#475569',
-								'&:hover': {
-									borderColor: '#667eea',
-									bgcolor: alpha('#667eea', 0.05),
-									color: '#667eea',
-								},
-							}}>
-							{t('searchOnYouTube')}
-						</Button>
+							<div className="flex gap-3">
+								<button
+									onClick={() => {
+										const searchQuery = encodeURIComponent(editVideoDialog.video?.title || '')
+										window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank')
+									}}
+									className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-lg text-slate-600 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+								>
+									<Search className="w-4 h-4" />
+									{t('searchOnYouTube')}
+								</button>
+								<Link
+									href={`/materials/${editVideoDialog.video?.section}/${editVideoDialog.video?.id}`}
+									target="_blank"
+									className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-lg text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
+								>
+									<ExternalLink className="w-4 h-4" />
+									{t('viewMaterial')}
+								</Link>
+							</div>
 
-						<Button
-							variant='outlined'
-							startIcon={<OpenInNew />}
-							fullWidth
-							component={Link}
-							href={`/materials/${editVideoDialog.video?.section}/${editVideoDialog.video?.id}`}
-							target='_blank'
-							sx={{
-								py: 1.5,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								borderColor: '#E2E8F0',
-								color: '#475569',
-								'&:hover': {
-									borderColor: '#10B981',
-									bgcolor: alpha('#10B981', 0.05),
-									color: '#10B981',
-								},
-							}}>
-							{t('viewMaterial')}
-						</Button>
-					</Box>
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-2">{t('newVideoLink')}</label>
+								<input
+									type="text"
+									value={newVideoUrl}
+									onChange={(e) => setNewVideoUrl(e.target.value)}
+									placeholder="https://www.youtube.com/watch?v=..."
+									className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+								/>
+								<p className="text-xs text-slate-500 mt-1">{t('videoLinkHelp')}</p>
+							</div>
+						</div>
 
-					<TextField
-						autoFocus
-						fullWidth
-						label={t('newVideoLink')}
-						value={newVideoUrl}
-						onChange={(e) => setNewVideoUrl(e.target.value)}
-						placeholder='https://www.youtube.com/watch?v=...'
-						sx={{
-							'& .MuiOutlinedInput-root': {
-								borderRadius: 2,
-							},
-						}}
-						helperText={t('videoLinkHelp')}
-					/>
-				</DialogContent>
+						<div className="p-6 border-t border-slate-200 flex justify-end gap-3">
+							<button
+								onClick={handleCloseEditDialog}
+								className="px-4 py-2.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
+							>
+								{t('cancel')}
+							</button>
+							<button
+								onClick={handleSaveVideoUrl}
+								disabled={savingVideo || !newVideoUrl.trim()}
+								className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-colors"
+							>
+								{savingVideo && <Loader2 className="w-4 h-4 animate-spin" />}
+								{savingVideo ? t('saving') : t('save')}
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
-				<DialogActions sx={{ p: 3, pt: 0 }}>
-					<Button
-						onClick={handleCloseEditDialog}
-						sx={{
-							textTransform: 'none',
-							fontWeight: 600,
-							color: '#64748B',
-						}}>
-						{t('cancel')}
-					</Button>
-					<Button
-						onClick={handleSaveVideoUrl}
-						disabled={savingVideo || !newVideoUrl.trim()}
-						variant='contained'
-						sx={{
-							bgcolor: '#667eea',
-							color: 'white',
-							px: 3,
-							borderRadius: 2,
-							textTransform: 'none',
-							fontWeight: 600,
-							boxShadow: 'none',
-							'&:hover': {
-								bgcolor: '#5568d3',
-								boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-							},
-							'&:disabled': {
-								bgcolor: '#CBD5E1',
-								color: 'white',
-							},
-						}}>
-						{savingVideo ? (
-							<>
-								<CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
-								{t('saving')}
-							</>
-						) : (
-							t('save')
-						)}
-					</Button>
-				</DialogActions>
-			</Dialog>
+			{/* Audio Edit Dialog */}
+			{editAudioDialog.open && (
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+						<div className="p-6 border-b border-slate-200 flex items-center justify-between">
+							<div className="flex items-center gap-4">
+								<div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+									<FileAudio className="w-6 h-6 text-amber-600" />
+								</div>
+								<div>
+									<h3 className="text-lg font-bold text-slate-800">{t('replaceAudioLink')}</h3>
+									<p className="text-sm text-slate-500">{editAudioDialog.audio?.title}</p>
+								</div>
+							</div>
+							<button onClick={handleCloseEditAudioDialog} className="p-2 hover:bg-slate-100 rounded-lg">
+								<X className="w-5 h-5 text-slate-500" />
+							</button>
+						</div>
 
-			{/* Dialog pour modifier/supprimer le fichier audio */}
-			<Dialog
-				open={editAudioDialog.open}
-				onClose={handleCloseEditAudioDialog}
-				maxWidth='md'
-				fullWidth
-				PaperProps={{
-					sx: {
-						borderRadius: 3,
-					},
-				}}>
-				<DialogTitle
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						pb: 2,
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-						<Box
-							sx={{
-								width: 48,
-								height: 48,
-								borderRadius: 2,
-								bgcolor: alpha('#F59E0B', 0.1),
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								color: '#F59E0B',
-							}}>
-							<AudioFile />
-						</Box>
-						<Box>
-							<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-								{t('replaceAudioLink')}
-							</Typography>
-							<Typography variant='body2' sx={{ color: '#64748B' }}>
-								{editAudioDialog.audio?.title}
-							</Typography>
-						</Box>
-					</Box>
-					<IconButton onClick={handleCloseEditAudioDialog} size='small'>
-						<Close />
-					</IconButton>
-				</DialogTitle>
+						<div className="p-6 space-y-4">
+							<div>
+								<label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('currentAudioFile')}</label>
+								<p className="text-red-500 line-through text-sm mt-1 break-all">
+									{editAudioDialog.audio?.audio_filename}
+								</p>
+							</div>
 
-				<DialogContent sx={{ pt: 0 }}>
-					<Box sx={{ mb: 2 }}>
-						<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, display: 'block', mb: 1 }}>
-							{t('currentAudioFile')}
-						</Typography>
-						<Typography
-							sx={{
-								color: '#EF4444',
-								textDecoration: 'line-through',
-								fontSize: '0.875rem',
-								display: 'block',
-								wordBreak: 'break-all',
-							}}>
-							{editAudioDialog.audio?.audio_filename}
-						</Typography>
-					</Box>
+							<Link
+								href={`/materials/${editAudioDialog.audio?.section}/${editAudioDialog.audio?.id}`}
+								target="_blank"
+								className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-lg text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
+							>
+								<ExternalLink className="w-4 h-4" />
+								{t('viewMaterial')}
+							</Link>
 
-					<Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-						<Button
-							variant='outlined'
-							startIcon={<OpenInNew />}
-							fullWidth
-							component={Link}
-							href={`/materials/${editAudioDialog.audio?.section}/${editAudioDialog.audio?.id}`}
-							target='_blank'
-							sx={{
-								py: 1.5,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								borderColor: '#E2E8F0',
-								color: '#475569',
-								'&:hover': {
-									borderColor: '#10B981',
-									bgcolor: alpha('#10B981', 0.05),
-									color: '#10B981',
-								},
-							}}>
-							{t('viewMaterial')}
-						</Button>
-					</Box>
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-2">{t('newAudioFile')}</label>
+								<input
+									type="text"
+									value={newAudioFilename}
+									onChange={(e) => setNewAudioFilename(e.target.value)}
+									placeholder="mon-audio.mp3"
+									className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+								/>
+								<p className="text-xs text-slate-500 mt-1">{t('audioFileHelp')}</p>
+							</div>
+						</div>
 
-					<TextField
-						autoFocus
-						fullWidth
-						label={t('newAudioFile')}
-						value={newAudioFilename}
-						onChange={(e) => setNewAudioFilename(e.target.value)}
-						placeholder='mon-audio.mp3'
-						sx={{
-							'& .MuiOutlinedInput-root': {
-								borderRadius: 2,
-							},
-						}}
-						helperText={t('audioFileHelp')}
-					/>
-				</DialogContent>
+						<div className="p-6 border-t border-slate-200 flex justify-between">
+							<button
+								onClick={handleRemoveAudio}
+								disabled={savingAudio}
+								className="px-4 py-2.5 text-red-600 font-semibold hover:bg-red-50 rounded-lg transition-colors"
+							>
+								{t('removeAudio')}
+							</button>
+							<div className="flex gap-3">
+								<button
+									onClick={handleCloseEditAudioDialog}
+									className="px-4 py-2.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
+								>
+									{t('cancel')}
+								</button>
+								<button
+									onClick={handleSaveAudioFilename}
+									disabled={savingAudio || !newAudioFilename.trim()}
+									className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 disabled:bg-slate-300 transition-colors"
+								>
+									{savingAudio && <Loader2 className="w-4 h-4 animate-spin" />}
+									{savingAudio ? t('saving') : t('save')}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
-				<DialogActions sx={{ p: 3, pt: 0, justifyContent: 'space-between' }}>
-					<Button
-						onClick={handleRemoveAudio}
-						disabled={savingAudio}
-						sx={{
-							textTransform: 'none',
-							fontWeight: 600,
-							color: '#EF4444',
-							'&:hover': {
-								bgcolor: alpha('#EF4444', 0.1),
-							},
-						}}>
-						{t('removeAudio')}
-					</Button>
-					<Box sx={{ display: 'flex', gap: 1 }}>
-						<Button
-							onClick={handleCloseEditAudioDialog}
-							sx={{
-								textTransform: 'none',
-								fontWeight: 600,
-								color: '#64748B',
-							}}>
-							{t('cancel')}
-						</Button>
-						<Button
-							onClick={handleSaveAudioFilename}
-							disabled={savingAudio || !newAudioFilename.trim()}
-							variant='contained'
-							sx={{
-								bgcolor: '#F59E0B',
-								color: 'white',
-								px: 3,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								boxShadow: 'none',
-								'&:hover': {
-									bgcolor: '#D97706',
-									boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
-								},
-								'&:disabled': {
-									bgcolor: '#CBD5E1',
-									color: 'white',
-								},
-							}}>
-							{savingAudio ? (
-								<>
-									<CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
-									{t('saving')}
-								</>
-							) : (
-								t('save')
-							)}
-						</Button>
-					</Box>
-				</DialogActions>
-			</Dialog>
+			{/* Image Edit Dialog */}
+			{editImageDialog.open && (
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+						<div className="p-6 border-b border-slate-200 flex items-center justify-between">
+							<div className="flex items-center gap-4">
+								<div className="w-12 h-12 rounded-lg bg-violet-100 flex items-center justify-center">
+									<ImageIcon className="w-6 h-6 text-violet-600" />
+								</div>
+								<div>
+									<h3 className="text-lg font-bold text-slate-800">{t('replaceImageLink')}</h3>
+									<p className="text-sm text-slate-500">{editImageDialog.image?.title}</p>
+								</div>
+							</div>
+							<button onClick={handleCloseEditImageDialog} className="p-2 hover:bg-slate-100 rounded-lg">
+								<X className="w-5 h-5 text-slate-500" />
+							</button>
+						</div>
 
-			{/* Dialog pour modifier/supprimer le fichier image */}
-			<Dialog
-				open={editImageDialog.open}
-				onClose={handleCloseEditImageDialog}
-				maxWidth='md'
-				fullWidth
-				PaperProps={{
-					sx: {
-						borderRadius: 3,
-					},
-				}}>
-				<DialogTitle
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						pb: 2,
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-						<Box
-							sx={{
-								width: 48,
-								height: 48,
-								borderRadius: 2,
-								bgcolor: alpha('#8B5CF6', 0.1),
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								color: '#8B5CF6',
-							}}>
-							<ImageIcon />
-						</Box>
-						<Box>
-							<Typography variant='h6' sx={{ fontWeight: 700, color: '#1E293B' }}>
-								{t('replaceImageLink')}
-							</Typography>
-							<Typography variant='body2' sx={{ color: '#64748B' }}>
-								{editImageDialog.image?.title}
-							</Typography>
-						</Box>
-					</Box>
-					<IconButton onClick={handleCloseEditImageDialog} size='small'>
-						<Close />
-					</IconButton>
-				</DialogTitle>
+						<div className="p-6 space-y-4">
+							<div>
+								<label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('currentImageFile')}</label>
+								<p className="text-red-500 line-through text-sm mt-1 break-all">
+									{editImageDialog.image?.image_filename}
+								</p>
+							</div>
 
-				<DialogContent sx={{ pt: 0 }}>
-					<Box sx={{ mb: 2 }}>
-						<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600, display: 'block', mb: 1 }}>
-							{t('currentImageFile')}
-						</Typography>
-						<Typography
-							sx={{
-								color: '#EF4444',
-								textDecoration: 'line-through',
-								fontSize: '0.875rem',
-								display: 'block',
-								wordBreak: 'break-all',
-							}}>
-							{editImageDialog.image?.image_filename}
-						</Typography>
-					</Box>
+							<Link
+								href={`/materials/${editImageDialog.image?.section}/${editImageDialog.image?.id}`}
+								target="_blank"
+								className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-lg text-slate-600 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
+							>
+								<ExternalLink className="w-4 h-4" />
+								{t('viewMaterial')}
+							</Link>
 
-					<Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-						<Button
-							variant='outlined'
-							startIcon={<OpenInNew />}
-							fullWidth
-							component={Link}
-							href={`/materials/${editImageDialog.image?.section}/${editImageDialog.image?.id}`}
-							target='_blank'
-							sx={{
-								py: 1.5,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								borderColor: '#E2E8F0',
-								color: '#475569',
-								'&:hover': {
-									borderColor: '#10B981',
-									bgcolor: alpha('#10B981', 0.05),
-									color: '#10B981',
-								},
-							}}>
-							{t('viewMaterial')}
-						</Button>
-					</Box>
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-2">{t('newImageFile')}</label>
+								<input
+									type="text"
+									value={newImageFilename}
+									onChange={(e) => setNewImageFilename(e.target.value)}
+									placeholder="mon-image.jpg"
+									className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none"
+								/>
+								<p className="text-xs text-slate-500 mt-1">{t('imageFileHelp')}</p>
+							</div>
+						</div>
 
-					<TextField
-						autoFocus
-						fullWidth
-						label={t('newImageFile')}
-						value={newImageFilename}
-						onChange={(e) => setNewImageFilename(e.target.value)}
-						placeholder='mon-image.jpg'
-						sx={{
-							'& .MuiOutlinedInput-root': {
-								borderRadius: 2,
-							},
-						}}
-						helperText={t('imageFileHelp')}
-					/>
-				</DialogContent>
-
-				<DialogActions sx={{ p: 3, pt: 0, justifyContent: 'space-between' }}>
-					<Button
-						onClick={handleRemoveImage}
-						disabled={savingImage}
-						sx={{
-							textTransform: 'none',
-							fontWeight: 600,
-							color: '#EF4444',
-							'&:hover': {
-								bgcolor: alpha('#EF4444', 0.1),
-							},
-						}}>
-						{t('removeImage')}
-					</Button>
-					<Box sx={{ display: 'flex', gap: 1 }}>
-						<Button
-							onClick={handleCloseEditImageDialog}
-							sx={{
-								textTransform: 'none',
-								fontWeight: 600,
-								color: '#64748B',
-							}}>
-							{t('cancel')}
-						</Button>
-						<Button
-							onClick={handleSaveImageFilename}
-							disabled={savingImage || !newImageFilename.trim()}
-							variant='contained'
-							sx={{
-								bgcolor: '#8B5CF6',
-								color: 'white',
-								px: 3,
-								borderRadius: 2,
-								textTransform: 'none',
-								fontWeight: 600,
-								boxShadow: 'none',
-								'&:hover': {
-									bgcolor: '#7C3AED',
-									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-								},
-								'&:disabled': {
-									bgcolor: '#CBD5E1',
-									color: 'white',
-								},
-							}}>
-							{savingImage ? (
-								<>
-									<CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
-									{t('saving')}
-								</>
-							) : (
-								t('save')
-							)}
-						</Button>
-					</Box>
-				</DialogActions>
-			</Dialog>
-		</Box>
+						<div className="p-6 border-t border-slate-200 flex justify-between">
+							<button
+								onClick={handleRemoveImage}
+								disabled={savingImage}
+								className="px-4 py-2.5 text-red-600 font-semibold hover:bg-red-50 rounded-lg transition-colors"
+							>
+								{t('removeImage')}
+							</button>
+							<div className="flex gap-3">
+								<button
+									onClick={handleCloseEditImageDialog}
+									className="px-4 py-2.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
+								>
+									{t('cancel')}
+								</button>
+								<button
+									onClick={handleSaveImageFilename}
+									disabled={savingImage || !newImageFilename.trim()}
+									className="flex items-center gap-2 px-4 py-2.5 bg-violet-500 text-white font-semibold rounded-lg hover:bg-violet-600 disabled:bg-slate-300 transition-colors"
+								>
+									{savingImage && <Loader2 className="w-4 h-4 animate-spin" />}
+									{savingImage ? t('saving') : t('save')}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
 	)
 }
 
 export default React.memo(AdminDashboardClient)
-

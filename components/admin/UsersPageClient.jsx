@@ -4,32 +4,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { useUserContext } from '@/context/user'
-import {
-	Box,
-	Container,
-	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Paper,
-	Chip,
-	Avatar,
-	alpha,
-	TextField,
-	InputAdornment,
-	Tooltip,
-	Card,
-	CardContent,
-	Grid,
-	Divider,
-	CircularProgress,
-} from '@mui/material'
-import { Search, Person, AdminPanelSettings, ArrowUpward, ArrowDownward, UnfoldMore } from '@mui/icons-material'
+import { Search, User, Shield, ArrowUp, ArrowDown, ChevronsUpDown, Loader2 } from 'lucide-react'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { logger } from '@/utils/logger'
+import { cn } from '@/lib/utils'
 
 const UsersPage = () => {
 	const t = useTranslations('admin')
@@ -145,25 +123,25 @@ const UsersPage = () => {
 		})
 
 	const getRoleColor = (role) => {
-		return role === 'admin' ? '#EF4444' : '#3B82F6'
+		return role === 'admin' ? 'red' : 'blue'
 	}
 
 	const getLanguageInfo = (lang) => {
 		const info = {
-			french: { name: 'Français', flag: '🇫🇷', color: '#3B82F6' },
-			russian: { name: 'Русский', flag: '🇷🇺', color: '#EF4444' },
-			english: { name: 'English', flag: '🇬🇧', color: '#10B981' },
+			french: { name: 'Francais', flag: '🇫🇷', color: 'blue' },
+			russian: { name: 'Russkiy', flag: '🇷🇺', color: 'red' },
+			english: { name: 'English', flag: '🇬🇧', color: 'emerald' },
 		}
-		return info[lang] || { name: lang, flag: '🌐', color: '#64748B' }
+		return info[lang] || { name: lang, flag: '🌐', color: 'slate' }
 	}
 
 	const getLevelInfo = (level) => {
 		const info = {
-			beginner: { name: t('beginner'), color: '#10B981' },
-			intermediate: { name: t('intermediate'), color: '#F59E0B' },
-			advanced: { name: t('advanced'), color: '#EF4444' },
+			beginner: { name: t('beginner'), color: 'emerald' },
+			intermediate: { name: t('intermediate'), color: 'amber' },
+			advanced: { name: t('advanced'), color: 'red' },
 		}
-		return info[level] || { name: level, color: '#64748B' }
+		return info[level] || { name: level, color: 'slate' }
 	}
 
 	const formatDate = (dateString) => {
@@ -181,43 +159,26 @@ const UsersPage = () => {
 	const SortableHeader = ({ column, children }) => {
 		const isActive = sortBy === column
 		return (
-			<TableCell>
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 1,
-						cursor: 'pointer',
-						userSelect: 'none',
-						'&:hover': {
-							'& .sort-icon': {
-								opacity: 1,
-							},
-						},
-					}}
-					onClick={() => handleSort(column)}>
+			<th
+				onClick={() => handleSort(column)}
+				className="px-6 py-3 text-left text-xs font-bold text-indigo-600 uppercase tracking-wider cursor-pointer select-none group"
+			>
+				<span className="flex items-center gap-1">
 					{children}
-					<Tooltip title={isActive && sortOrder === 'asc' ? t('sortDescending') : t('sortAscending')}>
-						<Box
-							className="sort-icon"
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								color: isActive ? '#667eea' : '#94A3B8',
-								opacity: isActive ? 1 : 0.3,
-								transition: 'all 0.2s',
-							}}>
-							{isActive && sortOrder === 'asc' ? (
-								<ArrowUpward fontSize='small' />
-							) : isActive && sortOrder === 'desc' ? (
-								<ArrowDownward fontSize='small' />
-							) : (
-								<UnfoldMore fontSize='small' />
-							)}
-						</Box>
-					</Tooltip>
-				</Box>
-			</TableCell>
+					<span className={cn(
+						'transition-opacity',
+						isActive ? 'opacity-100' : 'opacity-30 group-hover:opacity-100'
+					)}>
+						{isActive && sortOrder === 'asc' ? (
+							<ArrowUp className="w-4 h-4 text-indigo-600" />
+						) : isActive && sortOrder === 'desc' ? (
+							<ArrowDown className="w-4 h-4 text-indigo-600" />
+						) : (
+							<ChevronsUpDown className="w-4 h-4 text-slate-400" />
+						)}
+					</span>
+				</span>
+			</th>
 		)
 	}
 
@@ -228,458 +189,247 @@ const UsersPage = () => {
 
 	if (loading) {
 		return (
-			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-				<CircularProgress />
-			</Box>
+			<div className="min-h-screen bg-slate-50 flex items-center justify-center">
+				<Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+			</div>
 		)
 	}
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				bgcolor: 'background.paper',
-			}}>
+		<div className="min-h-screen bg-slate-50">
 			<AdminNavbar activePage="users" />
 
-			<Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 }, px: { xs: 2, md: 3 } }}>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Page Header */}
-				<Box sx={{ mb: { xs: 3, md: 4 } }}>
-					<Typography
-						variant='h4'
-						sx={{
-							fontWeight: 700,
-							color: '#1E293B',
-							mb: 1,
-							fontSize: { xs: '1.5rem', md: '2rem' },
-						}}>
+				<div className="mb-6">
+					<h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-1">
 						{t('usersManagement')}
-					</Typography>
-					<Typography
-						variant='body1'
-						sx={{
-							color: '#64748B',
-							fontSize: { xs: '0.875rem', md: '1rem' },
-						}}>
+					</h1>
+					<p className="text-slate-500">
 						{users.length} {users.length > 1 ? t('registeredUsersPlural') : t('registeredUsers')}
-					</Typography>
-				</Box>
+					</p>
+				</div>
 
 				{/* Search Bar */}
-				<Paper
-					elevation={0}
-					sx={{
-						p: { xs: 2, md: 3 },
-						borderRadius: { xs: 2, md: 3 },
-						border: '1px solid',
-						borderColor: 'divider',
-						mb: { xs: 2, md: 3 },
-					}}>
-					<TextField
-						fullWidth
-						placeholder={t('searchByNameOrEmail')}
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						size="small"
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<Search sx={{ color: '#64748B', fontSize: { xs: '1.2rem', md: '1.5rem' } }} />
-								</InputAdornment>
-							),
-						}}
-						sx={{
-							'& .MuiOutlinedInput-root': {
-								borderRadius: 2,
-								bgcolor: 'white',
-								fontSize: { xs: '0.875rem', md: '1rem' },
-							},
-						}}
-					/>
-				</Paper>
+				<div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+					<div className="relative">
+						<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+						<input
+							type="text"
+							placeholder={t('searchByNameOrEmail')}
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+						/>
+					</div>
+				</div>
 
 				{/* Mobile View - Cards */}
-				<Box sx={{ display: { xs: 'block', md: 'none' } }}>
+				<div className="md:hidden space-y-4">
 					{filteredUsers.length === 0 ? (
-						<Paper
-							elevation={0}
-							sx={{
-								p: 8,
-								textAlign: 'center',
-								borderRadius: 3,
-								border: '1px solid',
-								borderColor: 'divider',
-							}}>
-							<Typography variant='body1' color='text.secondary'>
-								{t('noUserFound')}
-							</Typography>
-						</Paper>
+						<div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+							<p className="text-slate-500">{t('noUserFound')}</p>
+						</div>
 					) : (
-						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-							{filteredUsers.map((user) => (
-								<Card
-									key={user.id}
-									elevation={0}
-									sx={{
-										borderRadius: 3,
-										border: '1px solid',
-										borderColor: 'divider',
-										overflow: 'hidden',
-									}}>
-									<CardContent sx={{ p: 3 }}>
-										<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-											<Avatar
-												src={user.avatar_id ? `/avatars/${user.avatar_id}.png` : null}
-												sx={{
-													width: 56,
-													height: 56,
-													bgcolor: '#667eea',
-												}}>
-												{user.name?.[0]?.toUpperCase() || 'U'}
-											</Avatar>
-											<Box sx={{ flex: 1 }}>
-												<Typography
-													variant='h6'
-													sx={{
-														fontWeight: 700,
-														color: '#1E293B',
-														mb: 0.5,
-													}}>
-													{user.name || 'Sans nom'}
-												</Typography>
-												<Typography
-													variant='body2'
-													sx={{
-														color: '#64748B',
-													}}>
-													{user.email || 'N/A'}
-												</Typography>
-											</Box>
-										</Box>
+						filteredUsers.map((user) => (
+							<div
+								key={user.id}
+								className="bg-white rounded-xl border border-slate-200 p-4"
+							>
+								<div className="flex items-center gap-3 mb-4">
+									<div className="w-14 h-14 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xl">
+										{user.avatar_id ? (
+											<img src={`/avatars/${user.avatar_id}.png`} alt="" className="w-full h-full rounded-full object-cover" />
+										) : (
+											user.name?.[0]?.toUpperCase() || 'U'
+										)}
+									</div>
+									<div className="flex-1">
+										<h3 className="font-bold text-slate-800">{user.name || 'Sans nom'}</h3>
+										<p className="text-sm text-slate-500">{user.email || 'N/A'}</p>
+									</div>
+								</div>
 
-										<Divider sx={{ mb: 2 }} />
-
-										<Grid container spacing={2}>
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('role')}
-												</Typography>
-												<Chip
-													icon={user.role === 'admin' ? <AdminPanelSettings fontSize='small' /> : <Person fontSize='small' />}
-													label={user.role || 'user'}
-													size='small'
-													sx={{
-														bgcolor: alpha(getRoleColor(user.role), 0.1),
-														color: getRoleColor(user.role),
-														fontWeight: 600,
-														textTransform: 'capitalize',
-													}}
-												/>
-											</Grid>
-
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('premium')}
-												</Typography>
-												<Chip
-													label={user.is_premium ? t('premium') : t('free')}
-													size='small'
-													sx={{
-														bgcolor: user.is_premium ? alpha('#F59E0B', 0.1) : alpha('#94A3B8', 0.1),
-														color: user.is_premium ? '#F59E0B' : '#64748B',
-														fontWeight: 600,
-														border: user.is_premium ? '1px solid' : 'none',
-														borderColor: user.is_premium ? alpha('#F59E0B', 0.3) : 'transparent',
-													}}
-												/>
-											</Grid>
-
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('learnedLanguage')}
-												</Typography>
-												{user.spoken_language ? (
-													<Chip
-														label={getLanguageInfo(user.spoken_language).flag + ' ' + getLanguageInfo(user.spoken_language).name}
-														size='small'
-														sx={{
-															bgcolor: alpha(getLanguageInfo(user.spoken_language).color, 0.1),
-															color: getLanguageInfo(user.spoken_language).color,
-															fontWeight: 600,
-														}}
-													/>
-												) : (
-													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
-														{t('notDefined')}
-													</Typography>
-												)}
-											</Grid>
-
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('level')}
-												</Typography>
-												{user.language_level ? (
-													<Chip
-														label={getLevelInfo(user.language_level).name}
-														size='small'
-														sx={{
-															bgcolor: alpha(getLevelInfo(user.language_level).color, 0.1),
-															color: getLevelInfo(user.language_level).color,
-															fontWeight: 600,
-														}}
-													/>
-												) : (
-													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
-														{t('notDefined')}
-													</Typography>
-												)}
-											</Grid>
-
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('totalXP')}
-												</Typography>
-												<Chip
-													label={user.total_xp?.toLocaleString() || '0'}
-													size='small'
-													sx={{
-														bgcolor: alpha('#F59E0B', 0.1),
-														color: '#F59E0B',
-														fontWeight: 700,
-													}}
-												/>
-											</Grid>
-
-											<Grid item xs={6}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('xpLevel')}
-												</Typography>
-												<Chip
-													label={`Niv. ${user.current_level || 1}`}
-													size='small'
-													sx={{
-														bgcolor: alpha('#8B5CF6', 0.1),
-														color: '#8B5CF6',
-														fontWeight: 700,
-													}}
-												/>
-											</Grid>
-
-											<Grid item xs={12}>
-												<Typography variant='caption' sx={{ color: '#64748B', display: 'block', mb: 0.5 }}>
-													{t('creationDate')}
-												</Typography>
-												<Typography
-													variant='body2'
-													sx={{
-														color: '#1E293B',
-														fontWeight: 500,
-													}}>
-													{formatDate(user.created_at)}
-												</Typography>
-											</Grid>
-										</Grid>
-									</CardContent>
-								</Card>
-							))}
-						</Box>
+								<div className="border-t border-slate-200 pt-4 grid grid-cols-2 gap-3">
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('role')}</p>
+										<span className={cn(
+											'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold',
+											user.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+										)}>
+											{user.role === 'admin' ? <Shield className="w-3 h-3" /> : <User className="w-3 h-3" />}
+											{user.role || 'user'}
+										</span>
+									</div>
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('premium')}</p>
+										<span className={cn(
+											'inline-flex px-2 py-1 rounded-full text-xs font-semibold',
+											user.is_premium ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-slate-100 text-slate-600'
+										)}>
+											{user.is_premium ? t('premium') : t('free')}
+										</span>
+									</div>
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('learnedLanguage')}</p>
+										{user.spoken_language ? (
+											<span className={cn(
+												'inline-flex px-2 py-1 rounded-full text-xs font-semibold',
+												getLanguageInfo(user.spoken_language).color === 'blue' && 'bg-blue-100 text-blue-700',
+												getLanguageInfo(user.spoken_language).color === 'red' && 'bg-red-100 text-red-700',
+												getLanguageInfo(user.spoken_language).color === 'emerald' && 'bg-emerald-100 text-emerald-700'
+											)}>
+												{getLanguageInfo(user.spoken_language).flag} {getLanguageInfo(user.spoken_language).name}
+											</span>
+										) : (
+											<span className="text-xs text-slate-400 italic">{t('notDefined')}</span>
+										)}
+									</div>
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('level')}</p>
+										{user.language_level ? (
+											<span className={cn(
+												'inline-flex px-2 py-1 rounded-full text-xs font-semibold',
+												getLevelInfo(user.language_level).color === 'emerald' && 'bg-emerald-100 text-emerald-700',
+												getLevelInfo(user.language_level).color === 'amber' && 'bg-amber-100 text-amber-700',
+												getLevelInfo(user.language_level).color === 'red' && 'bg-red-100 text-red-700'
+											)}>
+												{getLevelInfo(user.language_level).name}
+											</span>
+										) : (
+											<span className="text-xs text-slate-400 italic">{t('notDefined')}</span>
+										)}
+									</div>
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('totalXP')}</p>
+										<span className="inline-flex px-2 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+											{user.total_xp?.toLocaleString() || '0'}
+										</span>
+									</div>
+									<div>
+										<p className="text-xs text-slate-500 mb-1">{t('xpLevel')}</p>
+										<span className="inline-flex px-2 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-700">
+											Niv. {user.current_level || 1}
+										</span>
+									</div>
+									<div className="col-span-2">
+										<p className="text-xs text-slate-500 mb-1">{t('creationDate')}</p>
+										<p className="text-sm font-medium text-slate-700">{formatDate(user.created_at)}</p>
+									</div>
+								</div>
+							</div>
+						))
 					)}
-				</Box>
+				</div>
 
 				{/* Desktop View - Table */}
-				<Paper
-					elevation={0}
-					sx={{
-						display: { xs: 'none', md: 'block' },
-						borderRadius: 3,
-						border: '1px solid',
-						borderColor: 'divider',
-						overflow: 'hidden',
-					}}>
-					<TableContainer>
-						<Table>
-							<TableHead>
-								<TableRow
-									sx={{
-										bgcolor: alpha('#667eea', 0.08),
-										borderBottom: '2px solid',
-										borderColor: '#667eea',
-										'& th': {
-											fontWeight: 700,
-											color: '#667eea',
-											fontSize: '0.75rem',
-											textTransform: 'uppercase',
-											letterSpacing: '1px',
-											py: 2.5,
-											px: 3,
-										},
-									}}>
+				<div className="hidden md:block bg-white rounded-xl border border-slate-200 overflow-hidden">
+					<div className="overflow-x-auto">
+						<table className="w-full">
+							<thead>
+								<tr className="bg-indigo-50 border-b-2 border-indigo-500">
 									<SortableHeader column="name">{t('user')}</SortableHeader>
-									<TableCell>{t('email')}</TableCell>
+									<th className="px-6 py-3 text-left text-xs font-bold text-indigo-600 uppercase tracking-wider">{t('email')}</th>
 									<SortableHeader column="role">{t('role')}</SortableHeader>
 									<SortableHeader column="is_premium">{t('premium')}</SortableHeader>
-									<TableCell>{t('learnedLanguage')}</TableCell>
+									<th className="px-6 py-3 text-left text-xs font-bold text-indigo-600 uppercase tracking-wider">{t('learnedLanguage')}</th>
 									<SortableHeader column="language_level">{t('level')}</SortableHeader>
 									<SortableHeader column="created_at">{t('creationDate')}</SortableHeader>
 									<SortableHeader column="total_xp">{t('totalXP')}</SortableHeader>
 									<SortableHeader column="current_level">{t('xpLevel')}</SortableHeader>
-								</TableRow>
-							</TableHead>
-							<TableBody>
+								</tr>
+							</thead>
+							<tbody>
 								{filteredUsers.length === 0 ? (
-									<TableRow>
-										<TableCell colSpan={9} align='center' sx={{ py: 8 }}>
-											<Typography variant='body1' color='text.secondary'>
-												{t('noUserFound')}
-											</Typography>
-										</TableCell>
-									</TableRow>
+									<tr>
+										<td colSpan={9} className="px-6 py-16 text-center text-slate-500">
+											{t('noUserFound')}
+										</td>
+									</tr>
 								) : (
 									filteredUsers.map((user) => (
-										<TableRow
+										<tr
 											key={user.id}
-											sx={{
-												transition: 'background-color 0.2s ease',
-												'&:hover': {
-													bgcolor: alpha('#667eea', 0.03),
-												},
-												'& td': {
-													py: 2.5,
-													px: 3,
-													borderBottom: '1px solid',
-													borderColor: '#F1F5F9',
-												},
-											}}>
-											<TableCell>
-												<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-													<Avatar
-														src={user.avatar_id ? `/avatars/${user.avatar_id}.png` : null}
-														sx={{
-															width: 40,
-															height: 40,
-															bgcolor: '#667eea',
-														}}>
-														{user.name?.[0]?.toUpperCase() || 'U'}
-													</Avatar>
-													<Typography
-														sx={{
-															fontWeight: 600,
-															color: '#1E293B',
-														}}>
-														{user.name || 'Sans nom'}
-													</Typography>
-												</Box>
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														color: '#64748B',
-														fontSize: '0.875rem',
-													}}>
-													{user.email || 'N/A'}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Chip
-													icon={user.role === 'admin' ? <AdminPanelSettings fontSize='small' /> : <Person fontSize='small' />}
-													label={user.role || 'user'}
-													size='small'
-													sx={{
-														bgcolor: alpha(getRoleColor(user.role), 0.1),
-														color: getRoleColor(user.role),
-														fontWeight: 600,
-														textTransform: 'capitalize',
-													}}
-												/>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={user.is_premium ? t('premium') : t('free')}
-													size='small'
-													sx={{
-														bgcolor: user.is_premium ? alpha('#F59E0B', 0.1) : alpha('#94A3B8', 0.1),
-														color: user.is_premium ? '#F59E0B' : '#64748B',
-														fontWeight: 600,
-														border: user.is_premium ? '1px solid' : 'none',
-														borderColor: user.is_premium ? alpha('#F59E0B', 0.3) : 'transparent',
-													}}
-												/>
-											</TableCell>
-											<TableCell>
+											className="hover:bg-indigo-50/30 border-b border-slate-100 transition-colors"
+										>
+											<td className="px-6 py-4">
+												<div className="flex items-center gap-3">
+													<div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+														{user.avatar_id ? (
+															<img src={`/avatars/${user.avatar_id}.png`} alt="" className="w-full h-full rounded-full object-cover" />
+														) : (
+															user.name?.[0]?.toUpperCase() || 'U'
+														)}
+													</div>
+													<span className="font-semibold text-slate-800">{user.name || 'Sans nom'}</span>
+												</div>
+											</td>
+											<td className="px-6 py-4 text-sm text-slate-500">{user.email || 'N/A'}</td>
+											<td className="px-6 py-4">
+												<span className={cn(
+													'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold capitalize',
+													user.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+												)}>
+													{user.role === 'admin' ? <Shield className="w-3 h-3" /> : <User className="w-3 h-3" />}
+													{user.role || 'user'}
+												</span>
+											</td>
+											<td className="px-6 py-4">
+												<span className={cn(
+													'inline-flex px-2.5 py-1 rounded-full text-xs font-semibold',
+													user.is_premium ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-slate-100 text-slate-600'
+												)}>
+													{user.is_premium ? t('premium') : t('free')}
+												</span>
+											</td>
+											<td className="px-6 py-4">
 												{user.spoken_language ? (
-													<Chip
-														label={getLanguageInfo(user.spoken_language).flag + ' ' + getLanguageInfo(user.spoken_language).name}
-														size='small'
-														sx={{
-															bgcolor: alpha(getLanguageInfo(user.spoken_language).color, 0.1),
-															color: getLanguageInfo(user.spoken_language).color,
-															fontWeight: 600,
-														}}
-													/>
+													<span className={cn(
+														'inline-flex px-2.5 py-1 rounded-full text-xs font-semibold',
+														getLanguageInfo(user.spoken_language).color === 'blue' && 'bg-blue-100 text-blue-700',
+														getLanguageInfo(user.spoken_language).color === 'red' && 'bg-red-100 text-red-700',
+														getLanguageInfo(user.spoken_language).color === 'emerald' && 'bg-emerald-100 text-emerald-700'
+													)}>
+														{getLanguageInfo(user.spoken_language).flag} {getLanguageInfo(user.spoken_language).name}
+													</span>
 												) : (
-													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
-														{t('notDefined')}
-													</Typography>
+													<span className="text-xs text-slate-400 italic">{t('notDefined')}</span>
 												)}
-											</TableCell>
-											<TableCell>
+											</td>
+											<td className="px-6 py-4">
 												{user.language_level ? (
-													<Chip
-														label={getLevelInfo(user.language_level).name}
-														size='small'
-														sx={{
-															bgcolor: alpha(getLevelInfo(user.language_level).color, 0.1),
-															color: getLevelInfo(user.language_level).color,
-															fontWeight: 600,
-														}}
-													/>
+													<span className={cn(
+														'inline-flex px-2.5 py-1 rounded-full text-xs font-semibold',
+														getLevelInfo(user.language_level).color === 'emerald' && 'bg-emerald-100 text-emerald-700',
+														getLevelInfo(user.language_level).color === 'amber' && 'bg-amber-100 text-amber-700',
+														getLevelInfo(user.language_level).color === 'red' && 'bg-red-100 text-red-700'
+													)}>
+														{getLevelInfo(user.language_level).name}
+													</span>
 												) : (
-													<Typography variant='caption' sx={{ color: '#94A3B8', fontStyle: 'italic' }}>
-														{t('notDefined')}
-													</Typography>
+													<span className="text-xs text-slate-400 italic">{t('notDefined')}</span>
 												)}
-											</TableCell>
-											<TableCell>
-												<Typography
-													sx={{
-														color: '#64748B',
-														fontSize: '0.875rem',
-													}}>
-													{formatDate(user.created_at)}
-												</Typography>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={user.total_xp?.toLocaleString() || '0'}
-													size='small'
-													sx={{
-														bgcolor: alpha('#F59E0B', 0.1),
-														color: '#F59E0B',
-														fontWeight: 700,
-													}}
-												/>
-											</TableCell>
-											<TableCell>
-												<Chip
-													label={`Niv. ${user.current_level || 1}`}
-													size='small'
-													sx={{
-														bgcolor: alpha('#8B5CF6', 0.1),
-														color: '#8B5CF6',
-														fontWeight: 700,
-													}}
-												/>
-											</TableCell>
-										</TableRow>
+											</td>
+											<td className="px-6 py-4 text-sm text-slate-500">{formatDate(user.created_at)}</td>
+											<td className="px-6 py-4">
+												<span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+													{user.total_xp?.toLocaleString() || '0'}
+												</span>
+											</td>
+											<td className="px-6 py-4">
+												<span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-700">
+													Niv. {user.current_level || 1}
+												</span>
+											</td>
+										</tr>
 									))
 								)}
-							</TableBody>
-						</Table>
-					</TableContainer>
-				</Paper>
-			</Container>
-		</Box>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
 	)
 }
 

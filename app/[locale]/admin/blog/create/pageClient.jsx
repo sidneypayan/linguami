@@ -3,24 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import {
-	Box,
-	Button,
-	Paper,
-	TextField,
-	Typography,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	FormControlLabel,
-	Switch,
-	Grid,
-} from '@mui/material'
-import { Save, ArrowBack } from '@mui/icons-material'
+import { cn } from '@/lib/utils'
+import { Save, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import TextEditor from '@/components/shared/TextEditor'
 import { createBlogPostAction } from '@/app/actions/blog'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 
 export default function BlogCreateClient() {
 	const router = useRouter()
@@ -96,138 +84,177 @@ export default function BlogCreateClient() {
 	}
 
 	return (
-		<Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
-			<Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-				<Button
-					startIcon={<ArrowBack />}
-					onClick={() => router.push(`/${locale}/admin/blog`)}>
-					Back
-				</Button>
-				<Typography variant="h4">Create Blog Post</Typography>
-			</Box>
+		<>
+			<AdminNavbar activePage="blog" />
 
-			<Paper sx={{ p: 3 }}>
-				<Grid container spacing={3}>
-					{/* Title */}
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							label="Title"
-							value={formData.title}
-							onChange={(e) => handleChange('title', e.target.value)}
-							required
-						/>
-					</Grid>
+			<div className="max-w-5xl mx-auto px-4 pt-16 md:pt-24 pb-8">
+				{/* Header */}
+				<div className="flex items-center gap-3 mb-6">
+					<button
+						onClick={() => router.push(`/${locale}/admin/blog`)}
+						className="flex items-center gap-2 text-slate-600 hover:text-indigo-600 transition-colors"
+					>
+						<ArrowLeft className="w-5 h-5" />
+						Back
+					</button>
+					<h1 className="text-2xl font-bold text-slate-800">Create Blog Post</h1>
+				</div>
 
-					{/* Slug */}
-					<Grid item xs={12} md={6}>
-						<TextField
-							fullWidth
-							label="Slug"
-							value={formData.slug}
-							onChange={(e) => handleChange('slug', e.target.value)}
-							helperText="URL-friendly identifier"
-							required
-						/>
-					</Grid>
+				{/* Form */}
+				<div className="bg-white rounded-xl border border-slate-200 p-6">
+					<div className="space-y-6">
+						{/* Title */}
+						<div>
+							<label className="block text-sm font-medium text-slate-700 mb-1.5">
+								Title *
+							</label>
+							<input
+								type="text"
+								value={formData.title}
+								onChange={(e) => handleChange('title', e.target.value)}
+								className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+								required
+							/>
+						</div>
 
-					{/* Language */}
-					<Grid item xs={12} md={6}>
-						<FormControl fullWidth required>
-							<InputLabel>Language</InputLabel>
-							<Select
-								value={formData.lang}
-								label="Language"
-								onChange={(e) => handleChange('lang', e.target.value)}>
-								<MenuItem value="fr">Français</MenuItem>
-								<MenuItem value="en">English</MenuItem>
-								<MenuItem value="ru">Русский</MenuItem>
-							</Select>
-						</FormControl>
-					</Grid>
+						{/* Slug + Language */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-1.5">
+									Slug *
+								</label>
+								<input
+									type="text"
+									value={formData.slug}
+									onChange={(e) => handleChange('slug', e.target.value)}
+									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+									required
+								/>
+								<p className="text-xs text-slate-500 mt-1">URL-friendly identifier</p>
+							</div>
 
-					{/* Excerpt */}
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							label="Excerpt"
-							value={formData.excerpt}
-							onChange={(e) => handleChange('excerpt', e.target.value)}
-							multiline
-							rows={2}
-							helperText={`Short description for listing (${formData.excerpt.length}/500 chars)`}
-							required
-							error={formData.excerpt.length > 500}
-						/>
-					</Grid>
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-1.5">
+									Language *
+								</label>
+								<select
+									value={formData.lang}
+									onChange={(e) => handleChange('lang', e.target.value)}
+									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+								>
+									<option value="fr">Francais</option>
+									<option value="en">English</option>
+									<option value="ru">Русский</option>
+								</select>
+							</div>
+						</div>
 
-					{/* Image */}
-					<Grid item xs={12} md={6}>
-						<TextField
-							fullWidth
-							label="Image"
-							value={formData.img}
-							onChange={(e) => handleChange('img', e.target.value)}
-							helperText="Image filename or URL"
-						/>
-					</Grid>
+						{/* Excerpt */}
+						<div>
+							<label className="block text-sm font-medium text-slate-700 mb-1.5">
+								Excerpt *
+							</label>
+							<textarea
+								value={formData.excerpt}
+								onChange={(e) => handleChange('excerpt', e.target.value)}
+								rows={2}
+								className={cn(
+									'w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none',
+									formData.excerpt.length > 500 ? 'border-red-300' : 'border-slate-200'
+								)}
+								required
+							/>
+							<p className={cn(
+								'text-xs mt-1',
+								formData.excerpt.length > 500 ? 'text-red-500' : 'text-slate-500'
+							)}>
+								Short description for listing ({formData.excerpt.length}/500 chars)
+							</p>
+						</div>
 
-					{/* Meta Description */}
-					<Grid item xs={12} md={6}>
-						<TextField
-							fullWidth
-							label="Meta Description"
-							value={formData.meta_description}
-							onChange={(e) => handleChange('meta_description', e.target.value)}
-							helperText={`SEO description (${formData.meta_description.length}/160 chars)`}
-							error={formData.meta_description.length > 160}
-						/>
-					</Grid>
+						{/* Image + Meta Description */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-1.5">
+									Image
+								</label>
+								<input
+									type="text"
+									value={formData.img}
+									onChange={(e) => handleChange('img', e.target.value)}
+									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+								/>
+								<p className="text-xs text-slate-500 mt-1">Image filename or URL</p>
+							</div>
 
-					{/* Content (Markdown Editor) */}
-					<Grid item xs={12}>
-						<Typography variant="subtitle1" gutterBottom>
-							Content (Markdown)
-						</Typography>
-						<TextEditor
-							value={formData.content}
-							setValue={(value) => handleChange('content', value)}
-							height={600}
-						/>
-					</Grid>
+							<div>
+								<label className="block text-sm font-medium text-slate-700 mb-1.5">
+									Meta Description
+								</label>
+								<input
+									type="text"
+									value={formData.meta_description}
+									onChange={(e) => handleChange('meta_description', e.target.value)}
+									className={cn(
+										'w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none',
+										formData.meta_description.length > 160 ? 'border-red-300' : 'border-slate-200'
+									)}
+								/>
+								<p className={cn(
+									'text-xs mt-1',
+									formData.meta_description.length > 160 ? 'text-red-500' : 'text-slate-500'
+								)}>
+									SEO description ({formData.meta_description.length}/160 chars)
+								</p>
+							</div>
+						</div>
 
-					{/* Published */}
-					<Grid item xs={12}>
-						<FormControlLabel
-							control={
-								<Switch
+						{/* Content */}
+						<div>
+							<label className="block text-sm font-medium text-slate-700 mb-1.5">
+								Content (Markdown) *
+							</label>
+							<TextEditor
+								value={formData.content}
+								setValue={(value) => handleChange('content', value)}
+								height={600}
+							/>
+						</div>
+
+						{/* Published */}
+						<div className="flex items-center gap-3">
+							<label className="relative inline-flex items-center cursor-pointer">
+								<input
+									type="checkbox"
 									checked={formData.is_published}
 									onChange={(e) => handleChange('is_published', e.target.checked)}
+									className="sr-only peer"
 								/>
-							}
-							label="Publish immediately"
-						/>
-					</Grid>
+								<div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+								<span className="ms-3 text-sm font-medium text-slate-700">Publish immediately</span>
+							</label>
+						</div>
 
-					{/* Actions */}
-					<Grid item xs={12}>
-						<Box sx={{ display: 'flex', gap: 2 }}>
-							<Button
-								variant="contained"
-								startIcon={<Save />}
+						{/* Actions */}
+						<div className="flex gap-3 pt-4 border-t border-slate-200">
+							<button
 								onClick={handleSave}
-								disabled={saving}>
+								disabled={saving}
+								className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+							>
+								<Save className="w-4 h-4" />
 								{saving ? 'Saving...' : 'Create Post'}
-							</Button>
-							<Button
-								variant="outlined"
-								onClick={() => router.push(`/${locale}/admin/blog`)}>
+							</button>
+							<button
+								onClick={() => router.push(`/${locale}/admin/blog`)}
+								className="px-6 py-2.5 border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+							>
 								Cancel
-							</Button>
-						</Box>
-					</Grid>
-				</Grid>
-			</Paper>
-		</Box>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
 	)
 }

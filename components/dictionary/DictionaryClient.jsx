@@ -1,62 +1,450 @@
 'use client'
-import React from 'react'
-import { useLocale, useTranslations } from 'next-intl'
+
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
+import { useLocale, useTranslations } from 'next-intl'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUserWordsAction, deleteWordAction } from '@/app/actions/words'
 import { useFlashcards } from '@/context/flashcards'
-import { getGuestWordsByLanguage, deleteGuestWord, GUEST_DICTIONARY_CONFIG } from '@/utils/guestDictionary'
+import { getGuestWordsByLanguage, deleteGuestWord } from '@/utils/guestDictionary'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 import toast from '@/utils/toast'
-import {
-	Box,
-	Button,
-	Container,
-	IconButton,
-	Typography,
-	Stack,
-	Chip,
-	Paper,
-	Pagination as MuiPagination,
-	PaginationItem,
-	ToggleButtonGroup,
-	ToggleButton,
-	Card,
-	useTheme,
-	TextField,
-	InputAdornment,
-} from '@mui/material'
-import {
-	DeleteRounded,
-	AddCircleRounded,
-	FlashOnRounded,
-	ChevronLeft,
-	ChevronRight,
-	AutoStoriesRounded,
-	BookmarkAddRounded,
-	SearchRounded,
-	EditRounded,
-} from '@mui/icons-material'
 import AddWordModal from '@/components/dictionary/AddWordModal'
 import EditWordModal from '@/components/dictionary/EditWordModal'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import { SessionConfigModal } from '@/components/flashcards/SessionConfigModal'
-import { TuneRounded } from '@mui/icons-material'
+import {
+	Search,
+	Plus,
+	Zap,
+	Settings2,
+	Trash2,
+	Pencil,
+	ChevronLeft,
+	ChevronRight,
+	BookOpen,
+	Bookmark,
+	Sparkles,
+	ScrollText,
+	Sword,
+	Shield,
+	Trophy,
+	Library,
+	Quote,
+	ArrowRight,
+	BookMarked,
+	GraduationCap,
+} from 'lucide-react'
 
+// ============================================
+// WORD CARD - Individual word display
+// ============================================
+const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) => {
+	return (
+		<div className={cn(
+			'group relative rounded-xl overflow-hidden',
+			'transition-all duration-300',
+			'hover:scale-[1.01] hover:-translate-y-1',
+			isDark
+				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
+				: 'bg-gradient-to-br from-white to-slate-50',
+			'border',
+			isDark ? 'border-violet-500/20' : 'border-violet-200/50',
+			'shadow-lg hover:shadow-xl',
+			isDark ? 'hover:shadow-violet-500/20' : 'hover:shadow-violet-300/30',
+			'hover:border-violet-500/40'
+		)}>
+			{/* Left accent bar */}
+			<div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-500 to-cyan-500" />
+
+			<div className="p-4 pl-5">
+				{/* Word row */}
+				<div className="flex items-center justify-between gap-3">
+					<div className="flex items-center gap-3 flex-wrap flex-1 min-w-0">
+						{/* Source word badge */}
+						<div className={cn(
+							'px-3 py-1.5 rounded-lg',
+							'bg-gradient-to-r from-violet-500/20 to-cyan-500/20',
+							'border border-violet-500/30',
+							'backdrop-blur-sm'
+						)}>
+							<span className={cn(
+								'font-bold text-sm sm:text-base',
+								isDark ? 'text-violet-300' : 'text-violet-600'
+							)}>
+								{sourceWord || '—'}
+							</span>
+						</div>
+
+						{/* Arrow */}
+						<ArrowRight className={cn(
+							'w-4 h-4 flex-shrink-0',
+							isDark ? 'text-slate-500' : 'text-slate-400'
+						)} />
+
+						{/* Translation */}
+						<span className={cn(
+							'font-semibold text-sm sm:text-base',
+							isDark ? 'text-slate-200' : 'text-slate-700'
+						)}>
+							{translation || '—'}
+						</span>
+					</div>
+
+					{/* Action buttons */}
+					<div className="flex gap-1 flex-shrink-0 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+						<button
+							onClick={onEdit}
+							className={cn(
+								'p-2 rounded-lg transition-all',
+								'hover:bg-blue-500/20 hover:scale-110',
+								isDark ? 'text-blue-400' : 'text-blue-500'
+							)}
+						>
+							<Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
+						</button>
+						<button
+							onClick={onDelete}
+							className={cn(
+								'p-2 rounded-lg transition-all',
+								'hover:bg-red-500/20 hover:scale-110',
+								isDark ? 'text-red-400' : 'text-red-500'
+							)}
+						>
+							<Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+						</button>
+					</div>
+				</div>
+
+				{/* Context sentence */}
+				{word.word_sentence && (
+					<div className={cn(
+						'mt-3 pl-3 py-2 rounded-r-lg',
+						'border-l-2 border-violet-500/40',
+						isDark ? 'bg-violet-500/5' : 'bg-violet-50/50'
+					)}>
+						<div className="flex items-start gap-2">
+							<Quote className={cn(
+								'w-4 h-4 flex-shrink-0 mt-0.5',
+								isDark ? 'text-violet-400/60' : 'text-violet-400'
+							)} />
+							<p className={cn(
+								'text-sm italic',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)}>
+								{word.word_sentence}
+							</p>
+						</div>
+					</div>
+				)}
+			</div>
+		</div>
+	)
+}
+
+// ============================================
+// ACTION BUTTON - Styled gaming button
+// ============================================
+const ActionButton = ({ children, icon: Icon, onClick, variant = 'primary', className, fullWidth }) => {
+	const variants = {
+		primary: 'from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 shadow-violet-500/30',
+		secondary: 'from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-amber-500/30',
+		success: 'from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 shadow-emerald-500/30',
+	}
+
+	return (
+		<button
+			onClick={onClick}
+			className={cn(
+				'relative px-5 py-3 rounded-xl font-bold text-white',
+				'bg-gradient-to-r',
+				variants[variant],
+				'shadow-lg hover:shadow-xl',
+				'transition-all duration-300',
+				'hover:-translate-y-0.5',
+				'active:translate-y-0',
+				'flex items-center justify-center gap-2',
+				fullWidth && 'w-full',
+				className
+			)}
+		>
+			{Icon && <Icon className="w-5 h-5" />}
+			{children}
+		</button>
+	)
+}
+
+// ============================================
+// PAGINATION
+// ============================================
+const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
+	if (totalPages <= 1) return null
+
+	const getVisiblePages = () => {
+		const pages = []
+		const delta = 2
+		const start = Math.max(1, currentPage - delta)
+		const end = Math.min(totalPages, currentPage + delta)
+
+		if (start > 1) {
+			pages.push(1)
+			if (start > 2) pages.push('...')
+		}
+
+		for (let i = start; i <= end; i++) {
+			pages.push(i)
+		}
+
+		if (end < totalPages) {
+			if (end < totalPages - 1) pages.push('...')
+			pages.push(totalPages)
+		}
+
+		return pages
+	}
+
+	return (
+		<div className={cn(
+			'flex items-center justify-center gap-2 py-8 mt-6',
+		)}>
+			{/* Previous button */}
+			<button
+				onClick={() => onPageChange(currentPage - 1)}
+				disabled={currentPage === 1}
+				className={cn(
+					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'transition-all duration-300',
+					'border-2 overflow-hidden',
+					currentPage === 1
+						? 'opacity-40 cursor-not-allowed'
+						: 'hover:scale-110 hover:-translate-x-0.5',
+					isDark
+						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
+						: 'border-violet-200 bg-white text-violet-600',
+					currentPage !== 1 && (isDark
+						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+				)}
+			>
+				<div className={cn(
+					'absolute inset-0 bg-gradient-to-r from-violet-500/20 to-transparent',
+					'opacity-0 group-hover:opacity-100 transition-opacity'
+				)} />
+				<ChevronLeft className="w-5 h-5 relative z-10" />
+			</button>
+
+			{/* Page numbers */}
+			<div className={cn(
+				'flex items-center gap-1.5 px-3 py-1.5 rounded-xl',
+				isDark ? 'bg-slate-800/50' : 'bg-slate-100/80',
+				'border',
+				isDark ? 'border-violet-500/20' : 'border-violet-200/50'
+			)}>
+				{getVisiblePages().map((page, index) => (
+					page === '...' ? (
+						<span
+							key={`ellipsis-${index}`}
+							className={cn(
+								'w-8 text-center font-bold',
+								isDark ? 'text-slate-500' : 'text-slate-400'
+							)}
+						>
+							···
+						</span>
+					) : (
+						<button
+							key={page}
+							onClick={() => onPageChange(page)}
+							className={cn(
+								'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
+								'overflow-hidden',
+								page === currentPage
+									? [
+										'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
+										'shadow-lg shadow-violet-500/40',
+										'scale-110 z-10',
+										'ring-2 ring-white/20'
+									]
+									: [
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										'hover:scale-105',
+										isDark
+											? 'hover:bg-violet-500/20 hover:text-violet-300'
+											: 'hover:bg-violet-100 hover:text-violet-600'
+									]
+							)}
+						>
+							{page === currentPage && (
+								<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+							)}
+							<span className="relative z-10">{page}</span>
+						</button>
+					)
+				))}
+			</div>
+
+			{/* Next button */}
+			<button
+				onClick={() => onPageChange(currentPage + 1)}
+				disabled={currentPage === totalPages}
+				className={cn(
+					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'transition-all duration-300',
+					'border-2 overflow-hidden',
+					currentPage === totalPages
+						? 'opacity-40 cursor-not-allowed'
+						: 'hover:scale-110 hover:translate-x-0.5',
+					isDark
+						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
+						: 'border-violet-200 bg-white text-violet-600',
+					currentPage !== totalPages && (isDark
+						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+				)}
+			>
+				<div className={cn(
+					'absolute inset-0 bg-gradient-to-l from-violet-500/20 to-transparent',
+					'opacity-0 group-hover:opacity-100 transition-opacity'
+				)} />
+				<ChevronRight className="w-5 h-5 relative z-10" />
+			</button>
+		</div>
+	)
+}
+
+// ============================================
+// EMPTY STATE - Grimoire with no spells
+// ============================================
+const EmptyState = ({ translations, t, isDark, onAddWord }) => {
+	const features = [
+		{ icon: BookOpen, text: translations.feature_translate_materials },
+		{ icon: Bookmark, text: translations.feature_save_words },
+		{ icon: Zap, text: translations.feature_flashcards },
+		{ icon: Plus, text: translations.feature_add_manually },
+	]
+
+	return (
+		<div className={cn(
+			'min-h-screen pt-24 md:pt-28 pb-24 px-4',
+			isDark
+				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
+				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
+		)}>
+			<div className="max-w-2xl mx-auto">
+				{/* Empty grimoire card */}
+				<div className={cn(
+					'relative rounded-3xl p-8 md:p-10 overflow-hidden',
+					isDark
+						? 'bg-gradient-to-br from-slate-900/95 via-violet-950/30 to-slate-900/95'
+						: 'bg-gradient-to-br from-white via-violet-50/30 to-white',
+					'border-2',
+					isDark ? 'border-violet-500/30' : 'border-violet-200',
+					'shadow-2xl',
+					isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30'
+				)}>
+					{/* Decorative corners */}
+					<div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-violet-500/50 rounded-tl-lg" />
+					<div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-violet-500/50 rounded-tr-lg" />
+					<div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-violet-500/50 rounded-bl-lg" />
+					<div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-violet-500/50 rounded-br-lg" />
+
+					{/* Icon */}
+					<div className="flex justify-center mb-6">
+						<div className={cn(
+							'w-20 h-20 rounded-2xl',
+							'bg-gradient-to-br from-violet-500 to-cyan-500',
+							'flex items-center justify-center',
+							'shadow-xl shadow-violet-500/30'
+						)}>
+							<ScrollText className="w-10 h-10 text-white" />
+						</div>
+					</div>
+
+					{/* Title */}
+					<h1 className={cn(
+						'text-2xl md:text-3xl font-black text-center mb-2',
+						'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+					)}>
+						{translations.dictionary_empty_title}
+					</h1>
+
+					<p className={cn(
+						'text-center mb-8',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
+						{t('nowords')}
+					</p>
+
+					{/* Features list */}
+					<div className="space-y-3 mb-8">
+						{features.map((feature, index) => (
+							<div
+								key={index}
+								className={cn(
+									'flex items-center gap-4 p-4 rounded-xl',
+									'transition-all duration-300',
+									'hover:translate-x-2',
+									isDark
+										? 'bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20'
+										: 'bg-violet-50 hover:bg-violet-100 border border-violet-200/50'
+								)}
+							>
+								<div className={cn(
+									'w-11 h-11 rounded-xl flex items-center justify-center',
+									'bg-gradient-to-br from-violet-500 to-cyan-500',
+									'shadow-lg shadow-violet-500/30'
+								)}>
+									<feature.icon className="w-5 h-5 text-white" />
+								</div>
+								<span className={cn(
+									'font-semibold',
+									isDark ? 'text-slate-200' : 'text-slate-700'
+								)}>
+									{feature.text}
+								</span>
+							</div>
+						))}
+					</div>
+
+					{/* Action buttons */}
+					<div className="flex flex-col sm:flex-row gap-3">
+						<Link href="/materials" className="flex-1">
+							<ActionButton variant="primary" icon={GraduationCap} fullWidth>
+								{translations.start}
+							</ActionButton>
+						</Link>
+						<ActionButton
+							variant="success"
+							icon={Plus}
+							onClick={onAddWord}
+							fullWidth
+							className="flex-1"
+						>
+							{translations.add_word_btn}
+						</ActionButton>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
 const DictionaryClient = ({ translations }) => {
 	const t = useTranslations('words')
 	const locale = useLocale()
-const { openFlashcards } = useFlashcards()
+	const { openFlashcards } = useFlashcards()
 	const router = useRouter()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
 	const userId = user?.id
 	const queryClient = useQueryClient()
 
-	const [checkedWords, setCheckedWords] = useState([])
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [isEditWordModalOpen, setIsEditWordModalOpen] = useState(false)
 	const [isSessionConfigOpen, setIsSessionConfigOpen] = useState(false)
@@ -67,7 +455,7 @@ const { openFlashcards } = useFlashcards()
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isMounted, setIsMounted] = useState(false)
 
-	// React Query: Fetch user words (only for logged-in users)
+	// React Query: Fetch user words
 	const { data: user_words = [], isLoading: user_words_loading, isFetching: user_words_fetching } = useQuery({
 		queryKey: ['userWords', userId, userLearningLanguage],
 		queryFn: async () => {
@@ -75,112 +463,75 @@ const { openFlashcards } = useFlashcards()
 			return result.success ? result.data : []
 		},
 		enabled: !!userId && !!userLearningLanguage && isUserLoggedIn && !isBootstrapping,
-		staleTime: 5 * 60 * 1000, // 5 minutes
-		refetchOnWindowFocus: false, // Prevent flash when switching tabs
-		refetchOnMount: false, // Prevent flash on remount if data exists
+		staleTime: 5 * 60 * 1000,
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
 	})
-
 
 	// React Query: Delete word mutation
 	const deleteWordMutation = useMutation({
 		mutationFn: deleteWordAction,
 		onSuccess: () => {
-			// Invalidate cache to refetch data
 			queryClient.invalidateQueries({ queryKey: ['userWords', userId, userLearningLanguage] })
-			toast.success(t('word_deleted') || 'Mot supprimé')
+			toast.success(t('word_deleted') || 'Mot supprime')
 		},
 		onError: () => {
 			toast.error(t('delete_error') || 'Erreur lors de la suppression')
 		}
 	})
 
-	const handleCheck = e => {
-		if (e.target.checked) {
-			setCheckedWords([...checkedWords, e.target.value])
-		} else {
-			setCheckedWords(prevCheckedWords =>
-				prevCheckedWords.filter(word => word !== e.target.value)
-			)
-		}
-	}
-
-	const handlePageChange = (event, value) => {
+	const handlePageChange = (value) => {
 		setCurrentPage(value)
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
-	const handleWordsPerPageChange = (event, newValue) => {
-		if (newValue !== null) {
-			setWordsPerPage(newValue === 'all' ? filteredUserWords.length : newValue)
-			setCurrentPage(1)
-		}
+	const handleWordsPerPageChange = (newValue) => {
+		setWordsPerPage(newValue === 'all' ? filteredUserWords.length : newValue)
+		setCurrentPage(1)
 	}
 
 	const handleDeleteWord = useCallback((wordId) => {
 		if (isUserLoggedIn) {
-			// Utilisateur connecté : utiliser React Query
 			deleteWordMutation.mutate(wordId)
 		} else {
-			// Invité : supprimer de localStorage
 			const success = deleteGuestWord(wordId)
 			if (success) {
-				// Recharger les mots
 				const updatedWords = getGuestWordsByLanguage(userLearningLanguage)
 				setGuestWords(updatedWords)
-				toast.success('Mot supprimé')
+				toast.success('Mot supprime')
 			} else {
 				toast.error('Erreur lors de la suppression')
 			}
 		}
 	}, [isUserLoggedIn, deleteWordMutation, userLearningLanguage])
 
-	// Filtrer les mots pour n'afficher que ceux traduits dans le contexte actuel
+	// Filter words
 	const filteredUserWords = useMemo(() => {
-		// Utiliser guestWords pour les invités, user_words pour les utilisateurs connectés
 		const wordsSource = isUserLoggedIn ? user_words : guestWords
-
 		if (!wordsSource || !userLearningLanguage || !locale) return []
-
-		// Ne pas afficher de mots si la langue d'apprentissage est la même que la langue d'interface
 		if (userLearningLanguage === locale) return []
 
 		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
 			const translation = word[`word_${locale}`]
-
-			// N'afficher que les mots qui ont à la fois le mot source ET la traduction
 			if (!sourceWord || !translation) return false
 
-			// Filtrer par recherche si une query est présente
 			if (searchQuery.trim()) {
 				const query = searchQuery.toLowerCase()
-				const sourceMatch = sourceWord.toLowerCase().includes(query)
-				const translationMatch = translation.toLowerCase().includes(query)
-				return sourceMatch || translationMatch
+				return sourceWord.toLowerCase().includes(query) || translation.toLowerCase().includes(query)
 			}
-
 			return true
 		})
 
-		// Trier par date de création, du plus récent au plus ancien
-		return filtered.sort((a, b) => {
-			const dateA = new Date(a.created_at)
-			const dateB = new Date(b.created_at)
-			return dateB - dateA // Ordre décroissant (plus récent d'abord)
-		})
+		return filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn, searchQuery])
 
-	// Fonction pour obtenir le mot source et la traduction selon les langues
-	const getWordDisplay = (word) => {
-		// Mot source : dans la langue qu'ils apprennent (userLearningLanguage)
-		const sourceWord = word[`word_${userLearningLanguage}`]
-		// Traduction : dans la langue de l'interface (lang)
-		const translation = word[`word_${locale}`]
+	const getWordDisplay = (word) => ({
+		sourceWord: word[`word_${userLearningLanguage}`],
+		translation: word[`word_${locale}`]
+	})
 
-		return { sourceWord, translation }
-	}
-
-	// Calculer les mots à afficher
+	// Pagination
 	const indexOfLastWord = currentPage * wordsPerPage
 	const indexOfFirstWord = indexOfLastWord - wordsPerPage
 	const currentWords = wordsPerPage === filteredUserWords.length
@@ -188,761 +539,294 @@ const { openFlashcards } = useFlashcards()
 		: filteredUserWords.slice(indexOfFirstWord, indexOfLastWord)
 	const totalPages = Math.ceil(filteredUserWords.length / wordsPerPage)
 
-	// Set mounted state to prevent SSR flash
+	// Effects
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
 
-	// Load guest words from localStorage (React Query handles logged-in users)
 	useEffect(() => {
 		if (isBootstrapping) return
-
 		if (!isUserLoggedIn && userLearningLanguage) {
 			const words = getGuestWordsByLanguage(userLearningLanguage)
 			setGuestWords(words)
 		}
 	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
 
-	// Listen for guest dictionary updates
 	useEffect(() => {
 		if (isUserLoggedIn || isBootstrapping) return
-
 		const handleGuestDictionaryUpdate = () => {
 			if (userLearningLanguage) {
 				const words = getGuestWordsByLanguage(userLearningLanguage)
 				setGuestWords(words)
 			}
 		}
-
 		window.addEventListener('guestDictionaryUpdated', handleGuestDictionaryUpdate)
-		return () => {
-			window.removeEventListener('guestDictionaryUpdated', handleGuestDictionaryUpdate)
-		}
+		return () => window.removeEventListener('guestDictionaryUpdated', handleGuestDictionaryUpdate)
 	}, [isUserLoggedIn, isBootstrapping, userLearningLanguage])
 
-	// Show loading while:
-	// 1. Not mounted yet (prevent SSR flash)
-	// 2. Bootstrapping auth
-	// 3. Logged in but no userId yet (auth still resolving)
-	// 4. Loading or fetching words
+	// Loading state
 	if (!isMounted || isBootstrapping || (isUserLoggedIn && !userId) || user_words_loading || user_words_fetching) {
 		return <LoadingSpinner />
 	}
 
-	return (
-		<>
-			{filteredUserWords.length > 0 ? (
-				<Container
-					sx={{
-						pt: { xs: '6.5rem', md: '7rem' },
-						pb: { xs: 3, md: 4 },
-						px: { xs: 1, sm: 2, md: 3 },
-					}}
-					maxWidth='lg'>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 2,
-							justifyContent: 'center',
-							alignItems: 'stretch',
-							margin: { xs: '2rem auto', sm: '3rem auto' },
-							maxWidth: '700px',
-							px: { xs: 2, sm: 0 },
-						}}>
-						{/* Ligne 1: Boutons de révision */}
-						<Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2 } }}>
-							<Button
-								variant='contained'
-								size='large'
-								startIcon={<FlashOnRounded />}
-								onClick={() => openFlashcards()}
-								sx={{
-									flex: 1,
-									py: 2,
-									borderRadius: 3,
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.3)',
-									fontWeight: 700,
-									fontSize: { xs: '0.875rem', sm: '1rem' },
-									textTransform: 'none',
-									boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&:hover': {
-										background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-										transform: 'translateY(-3px)',
-										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-										borderColor: 'rgba(139, 92, 246, 0.5)',
-									},
-									'&:active': {
-										transform: 'translateY(0)',
-									},
-								}}>
-								<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-									{translations.repeatwords}
-								</Box>
-								<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
-									{t('srs_review_short')}
-								</Box>
-							</Button>
-							<Button
-								variant='contained'
-								size='large'
-								startIcon={<TuneRounded />}
-								onClick={() => setIsSessionConfigOpen(true)}
-								sx={{
-									flex: 1,
-									py: 2,
-									borderRadius: 3,
-									background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-									border: '1px solid rgba(245, 158, 11, 0.3)',
-									fontWeight: 700,
-									fontSize: { xs: '0.875rem', sm: '1rem' },
-									textTransform: 'none',
-									boxShadow: '0 8px 32px rgba(245, 158, 11, 0.4)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&:hover': {
-										background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
-										transform: 'translateY(-3px)',
-										boxShadow: '0 12px 40px rgba(245, 158, 11, 0.5)',
-										borderColor: 'rgba(245, 158, 11, 0.5)',
-									},
-									'&:active': {
-										transform: 'translateY(0)',
-									},
-								}}>
-								<Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-									{t('custom_session')}
-								</Box>
-								<Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
-									{t('custom_session_short')}
-								</Box>
-							</Button>
-						</Box>
-						{/* Ligne 2: Bouton ajouter */}
-						<Button
-							variant='contained'
-							size='large'
-							startIcon={<AddCircleRounded />}
-							onClick={() => setIsAddWordModalOpen(true)}
-							sx={{
-								py: 2,
-								borderRadius: 3,
-								background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-								border: '1px solid rgba(16, 185, 129, 0.3)',
-								fontWeight: 700,
-								fontSize: { xs: '0.875rem', sm: '1rem' },
-								textTransform: 'none',
-								boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
-								transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-									transform: 'translateY(-3px)',
-									boxShadow: '0 12px 40px rgba(16, 185, 129, 0.5)',
-									borderColor: 'rgba(16, 185, 129, 0.5)',
-								},
-								'&:active': {
-									transform: 'translateY(0)',
-								},
-							}}>
-							{translations.add_word_btn}
-						</Button>
-					</Box>
+	// Empty state
+	if (filteredUserWords.length === 0) {
+		return (
+			<>
+				<EmptyState
+					translations={translations}
+					t={t}
+					isDark={isDark}
+					onAddWord={() => setIsAddWordModalOpen(true)}
+				/>
+				<AddWordModal
+					open={isAddWordModalOpen}
+					onClose={() => setIsAddWordModalOpen(false)}
+				/>
+			</>
+		)
+	}
 
-					{/* Contrôles de pagination */}
-					<Paper
-						elevation={0}
-						sx={{
-							p: { xs: 2.5, sm: 3 },
-							mb: 4,
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							borderRadius: 4,
-							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-							boxShadow: isDark
-								? '0 4px 20px rgba(139, 92, 246, 0.25)'
-								: '0 4px 20px rgba(139, 92, 246, 0.15)',
-						}}>
-						<Stack
-							direction={{ xs: 'column', sm: 'row' }}
-							spacing={2}
-							alignItems='center'
-							justifyContent='space-between'>
-							<TextField
+	return (
+		<div className={cn(
+			'min-h-screen pt-24 md:pt-28 pb-24',
+			isDark
+				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
+				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
+		)}>
+			{/* Floating particles */}
+			<div className="fixed inset-0 pointer-events-none overflow-hidden">
+				<div className={cn('absolute top-32 left-10 w-2 h-2 rounded-full animate-pulse', isDark ? 'bg-violet-400/20' : 'bg-violet-300/40')} />
+				<div className={cn('absolute top-48 right-20 w-1.5 h-1.5 rounded-full animate-pulse', isDark ? 'bg-cyan-400/20' : 'bg-cyan-300/40')} />
+				<div className={cn('absolute bottom-48 left-1/4 w-1 h-1 rounded-full animate-pulse', isDark ? 'bg-amber-400/20' : 'bg-amber-300/40')} />
+			</div>
+
+			<div className="relative max-w-5xl mx-auto px-4">
+				{/* Header Section */}
+				<div className="text-center mb-8">
+					<div className="flex items-center justify-center gap-3 mb-2">
+						<div className={cn(
+							'w-12 h-12 rounded-xl flex items-center justify-center',
+							'bg-gradient-to-br from-violet-500 to-cyan-500',
+							'shadow-lg shadow-violet-500/30'
+						)}>
+							<Library className="w-6 h-6 text-white" />
+						</div>
+						<h1 className={cn(
+							'text-2xl md:text-3xl font-black',
+							'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+						)}>
+							Grimoire
+						</h1>
+					</div>
+					<p className={cn(
+						'text-sm',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
+						Ta collection de mots magiques
+					</p>
+				</div>
+
+				{/* Action Buttons */}
+				<div className="space-y-3 mb-8">
+					<div className="flex gap-3">
+						<ActionButton
+							variant="primary"
+							icon={Zap}
+							onClick={() => openFlashcards()}
+							fullWidth
+							className="flex-1"
+						>
+							<span className="hidden sm:inline">{translations.repeatwords}</span>
+							<span className="sm:hidden">{t('srs_review_short')}</span>
+						</ActionButton>
+						<ActionButton
+							variant="secondary"
+							icon={Settings2}
+							onClick={() => setIsSessionConfigOpen(true)}
+							fullWidth
+							className="flex-1"
+						>
+							<span className="hidden sm:inline">{t('custom_session')}</span>
+							<span className="sm:hidden">{t('custom_session_short')}</span>
+						</ActionButton>
+					</div>
+					<ActionButton
+						variant="success"
+						icon={Plus}
+						onClick={() => setIsAddWordModalOpen(true)}
+						fullWidth
+					>
+						{translations.add_word_btn}
+					</ActionButton>
+				</div>
+
+				{/* Controls Panel */}
+				<div className={cn(
+					'relative rounded-2xl p-4 mb-6 overflow-hidden',
+					isDark
+						? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
+						: 'bg-white',
+					'border',
+					isDark ? 'border-violet-500/20' : 'border-violet-200/50',
+					'shadow-xl',
+					isDark ? 'shadow-violet-500/10' : 'shadow-violet-200/30'
+				)}>
+					{/* Top accent */}
+					<div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 via-cyan-500 to-violet-500" />
+
+					<div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+						{/* Search */}
+						<div className="relative w-full sm:w-64">
+							<Search className={cn(
+								'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
+								isDark ? 'text-violet-400' : 'text-violet-500'
+							)} />
+							<input
+								type="text"
 								placeholder={translations.search_words}
 								value={searchQuery}
 								onChange={(e) => {
 									setSearchQuery(e.target.value)
 									setCurrentPage(1)
 								}}
-								size='small'
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position='start'>
-											<SearchRounded sx={{ color: isDark ? '#8b5cf6' : '#7c3aed' }} />
-										</InputAdornment>
-									),
-								}}
-								sx={{
-									minWidth: { xs: '100%', sm: 250 },
-									'& .MuiOutlinedInput-root': {
-										background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
-										borderRadius: 2,
-										'& fieldset': {
-											borderColor: 'rgba(139, 92, 246, 0.2)',
-										},
-										'&:hover fieldset': {
-											borderColor: 'rgba(139, 92, 246, 0.4)',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: 'rgba(139, 92, 246, 0.6)',
-											boxShadow: '0 0 0 3px rgba(139, 92, 246, 0.1)',
-										},
-									},
-									'& .MuiInputBase-input': {
-										color: isDark ? '#e2e8f0' : '#1e293b',
-										fontSize: '0.9375rem',
-									},
-								}}
-							/>
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-								<Typography
-									variant='body2'
-									sx={{
-										fontWeight: 700,
-										color: isDark ? '#94a3b8' : '#4a5568',
-										fontSize: '0.9375rem',
-									}}>
-									{translations.words_per_page}
-								</Typography>
-								<ToggleButtonGroup
-									value={wordsPerPage === filteredUserWords.length ? 'all' : wordsPerPage}
-									exclusive
-									onChange={handleWordsPerPageChange}
-									size='small'
-									sx={{
-										gap: 1,
-										'& .MuiToggleButton-root': {
-											px: { xs: 1.5, sm: 2 },
-											py: { xs: 0.75, sm: 0.75 },
-											minHeight: { xs: '40px', sm: '40px' },
-											border: '1px solid rgba(139, 92, 246, 0.2)',
-											borderRadius: 2,
-											fontWeight: 700,
-											fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-											color: isDark ? '#94a3b8' : '#718096',
-											background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
-											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-											position: 'relative',
-											overflow: 'hidden',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: '-100%',
-												width: '100%',
-												height: '100%',
-												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-												transition: 'left 0.5s ease',
-											},
-											'&.Mui-selected': {
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-												color: 'white',
-												borderColor: 'rgba(139, 92, 246, 0.6)',
-												boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(6, 182, 212, 0.2)',
-												'&:hover': {
-													background: 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)',
-													boxShadow: '0 4px 12px rgba(139, 92, 246, 0.5), 0 0 20px rgba(6, 182, 212, 0.3)',
-													'&::before': {
-														left: '100%',
-													},
-												},
-											},
-											'&:hover': {
-												backgroundColor: 'rgba(139, 92, 246, 0.08)',
-												borderColor: 'rgba(139, 92, 246, 0.4)',
-												'&::before': {
-													left: '100%',
-												},
-											},
-											'&:active': {
-												transform: 'scale(0.97)',
-											},
-										},
-									}}>
-									<ToggleButton value={20}>20</ToggleButton>
-									<ToggleButton value={50}>50</ToggleButton>
-									<ToggleButton value={100}>100</ToggleButton>
-									<ToggleButton value='all'>{translations.all}</ToggleButton>
-								</ToggleButtonGroup>
-							</Box>
-							<Chip
-								label={`${filteredUserWords.length} ${
-									filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total
-								}`}
-								sx={{
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-									border: '1px solid rgba(139, 92, 246, 0.4)',
-									color: 'white',
-									fontWeight: 700,
-									fontSize: '0.9375rem',
-									px: 2,
-									py: 2.5,
-									boxShadow: '0 2px 8px rgba(139, 92, 246, 0.4), 0 0 15px rgba(6, 182, 212, 0.2)',
-								}}
-							/>
-						</Stack>
-					</Paper>
-
-					{/* Liste des mots */}
-					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						{currentWords.map((word, index) => {
-							const { sourceWord, translation } = getWordDisplay(word)
-							return (
-							<Card
-								key={index}
-								sx={{
-									p: { xs: 2, sm: 2.5 },
-									borderRadius: 4,
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-									border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-									boxShadow: isDark
-										? '0 4px 20px rgba(139, 92, 246, 0.25)'
-										: '0 4px 20px rgba(139, 92, 246, 0.15)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									position: 'relative',
-									overflow: 'hidden',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: '-100%',
-										width: '100%',
-										height: '100%',
-										background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
-										transition: 'left 0.5s ease',
-									},
-									'&:hover': {
-										transform: 'translateY(-4px)',
-										boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
-										borderColor: 'rgba(139, 92, 246, 0.4)',
-										'&::before': {
-											left: '100%',
-										},
-										'& .delete-btn, & .edit-btn': {
-											opacity: 1,
-										},
-									},
-								}}>
-								{/* Ligne 1: Mot/traduction + boutons */}
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-										gap: { xs: 1, sm: 2 },
-									}}>
-									<Box
-										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											gap: { xs: 1, sm: 2 },
-											flex: 1,
-											minWidth: 0,
-											flexWrap: 'wrap',
-										}}>
-										<Chip
-											label={sourceWord || '—'}
-											sx={{
-												fontWeight: 700,
-												fontSize: { xs: '0.875rem', sm: '1rem' },
-												background:
-													'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-												color: '#8b5cf6',
-												border: '1px solid rgba(139, 92, 246, 0.3)',
-												px: { xs: 1, sm: 1.5 },
-												backdropFilter: 'blur(10px)',
-											}}
-										/>
-										<Typography
-											sx={{
-												fontSize: { xs: '0.875rem', sm: '1rem' },
-												color: isDark ? '#94a3b8' : '#718096',
-												fontWeight: 500,
-											}}>
-											→
-										</Typography>
-										<Typography
-											sx={{
-												fontSize: { xs: '0.875rem', sm: '1rem' },
-												color: isDark ? '#e2e8f0' : '#4a5568',
-												fontWeight: 600,
-											}}>
-											{translation || '—'}
-										</Typography>
-									</Box>
-									<Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
-										<IconButton
-											className='edit-btn'
-											size='small'
-											onClick={() => {
-												setWordToEdit(word)
-												setIsEditWordModalOpen(true)
-											}}
-											sx={{
-												opacity: { xs: 1, md: 0 },
-												transition: 'all 0.3s ease',
-												color: '#667eea',
-												p: { xs: 0.5, sm: 1 },
-												'&:hover': {
-													background: 'rgba(102, 126, 234, 0.1)',
-													transform: 'scale(1.1)',
-												},
-											}}>
-											<EditRounded sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
-										</IconButton>
-										<IconButton
-											className='delete-btn'
-											size='small'
-											onClick={() => handleDeleteWord(word.id)}
-											sx={{
-												opacity: { xs: 1, md: 0 },
-												transition: 'all 0.3s ease',
-												color: '#ef4444',
-												p: { xs: 0.5, sm: 1 },
-												'&:hover': {
-													background: 'rgba(239, 68, 68, 0.1)',
-													transform: 'scale(1.1)',
-												},
-											}}>
-											<DeleteRounded sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }} />
-										</IconButton>
-									</Box>
-								</Box>
-								{/* Ligne 2: Phrase de contexte (pleine largeur) */}
-								{word.word_sentence && (
-									<Box
-										sx={{
-											mt: 1.5,
-											pl: 2,
-											py: 1,
-											borderLeft: '3px solid',
-											borderLeftColor: isDark
-												? 'rgba(139, 92, 246, 0.4)'
-												: 'rgba(139, 92, 246, 0.3)',
-											backgroundColor: isDark
-												? 'rgba(139, 92, 246, 0.05)'
-												: 'rgba(139, 92, 246, 0.03)',
-											borderRadius: '0 8px 8px 0',
-											width: '100%',
-										}}>
-										<Typography
-											sx={{
-												fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-												color: isDark ? '#94a3b8' : '#718096',
-												lineHeight: 1.6,
-											}}>
-											&ldquo;{word.word_sentence}&rdquo;
-										</Typography>
-									</Box>
+								className={cn(
+									'w-full pl-10 pr-4 py-2.5 rounded-xl',
+									'border transition-all',
+									isDark
+										? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
+										: 'bg-slate-50 border-violet-200 text-slate-800 placeholder:text-slate-400',
+									'focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500'
 								)}
-							</Card>
-						)})}
-					</Box>
-
-					{/* Pagination */}
-					{wordsPerPage < filteredUserWords.length && (
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								mt: 5,
-							}}>
-							<MuiPagination
-								count={totalPages}
-								page={currentPage}
-								onChange={handlePageChange}
-								size='large'
-								renderItem={(item) => (
-									<PaginationItem
-										slots={{ previous: ChevronLeft, next: ChevronRight }}
-										{...item}
-										sx={{
-											fontWeight: 700,
-											fontSize: '1rem',
-											border: '1px solid',
-											borderColor: item.selected ? 'rgba(139, 92, 246, 0.6)' : 'rgba(139, 92, 246, 0.2)',
-											background: item.selected
-												? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
-												: isDark ? 'rgba(30, 41, 59, 0.8)' : 'white',
-											color: item.selected ? 'white' : isDark ? '#94a3b8' : '#4a5568',
-											borderRadius: 2,
-											minWidth: '44px',
-											height: '44px',
-											mx: 0.5,
-											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-											position: 'relative',
-											overflow: 'hidden',
-											boxShadow: item.selected
-												? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)'
-												: '0 2px 6px rgba(139, 92, 246, 0.08)',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: '-100%',
-												width: '100%',
-												height: '100%',
-												background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-												transition: 'left 0.5s ease',
-											},
-											'&:hover': {
-												borderColor: 'rgba(139, 92, 246, 0.8)',
-												background: item.selected
-													? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
-													: 'rgba(139, 92, 246, 0.08)',
-												transform: 'translateY(-2px) scale(1.05)',
-												boxShadow: item.selected
-													? '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)'
-													: '0 4px 12px rgba(139, 92, 246, 0.25)',
-												'&::before': {
-													left: '100%',
-												},
-											},
-											'&.Mui-disabled': {
-												backgroundColor: isDark ? 'rgba(30, 41, 59, 0.4)' : '#f5f5f5',
-												borderColor: 'rgba(139, 92, 246, 0.1)',
-												opacity: 0.4,
-											},
-										}}
-									/>
-								)}
-								sx={{
-									'& .MuiPagination-ul': {
-										flexWrap: 'wrap',
-										justifyContent: 'center',
-										gap: 0.5,
-									},
-								}}
 							/>
-						</Box>
-					)}
+						</div>
 
-					<AddWordModal
-						open={isAddWordModalOpen}
-						onClose={() => setIsAddWordModalOpen(false)}
-					/>
-					<EditWordModal
-						open={isEditWordModalOpen}
-						onClose={() => {
-							setIsEditWordModalOpen(false)
-							setWordToEdit(null)
-						}}
-						word={wordToEdit}
-					/>
-					<SessionConfigModal
-						open={isSessionConfigOpen}
-						onClose={() => setIsSessionConfigOpen(false)}
-						onStart={(options) => openFlashcards(options)}
-						totalWords={filteredUserWords.length}
-					/>
-				</Container>
-			) : (
-				<Container
-					maxWidth='md'
-					sx={{
-						pt: { xs: '6.5rem', md: '7rem' },
-						pb: { xs: 4, md: 6 },
-					}}>
-					<Card
-						sx={{
-							p: { xs: 3, sm: 4, md: 5 },
-							borderRadius: 4,
-							boxShadow: '0 8px 40px rgba(139, 92, 246, 0.2)',
-							border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-						}}>
-						<Typography
-							variant='h4'
-							align='center'
-							sx={{
-								fontWeight: 800,
-								mb: 1,
-								fontSize: { xs: '1.5rem', sm: '1.75rem' },
-								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-							}}>
-							{translations.dictionary_empty_title}
-						</Typography>
-						<Typography
-							variant='body1'
-							align='center'
-							sx={{
-								color: isDark ? '#94a3b8' : '#718096',
-								fontSize: { xs: '0.9375rem', sm: '1rem' },
-								mb: 4,
-								fontWeight: 500,
-							}}>
-							{t('nowords')}
-						</Typography>
+						{/* Words per page */}
+						<div className={cn(
+							'flex items-center gap-3 p-2 rounded-xl',
+							isDark ? 'bg-slate-900/50' : 'bg-slate-50',
+							'border',
+							isDark ? 'border-violet-500/20' : 'border-violet-200/50'
+						)}>
+							<span className={cn(
+								'text-xs font-semibold uppercase tracking-wide whitespace-nowrap px-2',
+								isDark ? 'text-violet-400' : 'text-violet-600'
+							)}>
+								{translations.words_per_page}
+							</span>
+							<div className="flex gap-1 p-1 rounded-lg bg-gradient-to-r from-violet-500/10 to-cyan-500/10">
+								{[20, 50, 100, 'all'].map((value) => {
+									const isActive = wordsPerPage === value || (value === 'all' && wordsPerPage === filteredUserWords.length)
+									return (
+										<button
+											key={value}
+											onClick={() => handleWordsPerPageChange(value)}
+											className={cn(
+												'relative px-3 py-1.5 rounded-md text-sm font-bold transition-all duration-300',
+												'overflow-hidden',
+												isActive
+													? [
+														'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
+														'shadow-md shadow-violet-500/40',
+														'scale-105'
+													]
+													: [
+														isDark ? 'text-slate-400' : 'text-slate-500',
+														'hover:scale-105',
+														isDark
+															? 'hover:text-violet-300 hover:bg-violet-500/20'
+															: 'hover:text-violet-600 hover:bg-violet-100'
+													]
+											)}
+										>
+											{isActive && (
+												<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+											)}
+											<span className="relative z-10">
+												{value === 'all' ? translations.all : value}
+											</span>
+										</button>
+									)
+								})}
+							</div>
+						</div>
 
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								gap: 2.5,
-								mb: 4,
-								position: 'relative',
-								zIndex: 1,
-							}}>
-							{[
-								{ icon: AutoStoriesRounded, text: translations.feature_translate_materials },
-								{ icon: BookmarkAddRounded, text: translations.feature_save_words },
-								{ icon: FlashOnRounded, text: translations.feature_flashcards },
-								{ icon: AddCircleRounded, text: translations.feature_add_manually },
-							].map((item, index) => (
-								<Box
-									key={index}
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 2,
-										p: 2,
-										borderRadius: 2,
-										background:
-											'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.2)',
-										transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											transform: 'translateX(8px)',
-											background:
-												'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											border: '1px solid rgba(139, 92, 246, 0.4)',
-											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-											'&::before': {
-												left: '100%',
-											},
-										},
-									}}>
-									<Box
-										sx={{
-											width: 44,
-											height: 44,
-											borderRadius: 2,
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											boxShadow: '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)',
-											border: '1px solid rgba(139, 92, 246, 0.4)',
-										}}>
-										<item.icon sx={{ color: 'white', fontSize: '1.5rem' }} />
-									</Box>
-									<Typography
-										sx={{
-											fontSize: { xs: '0.9375rem', sm: '1rem' },
-											color: isDark ? '#e2e8f0' : '#4a5568',
-											fontWeight: 600,
-										}}>
-										{item.text}
-									</Typography>
-								</Box>
-							))}
-						</Box>
+						{/* Word count badge */}
+						<div className={cn(
+							'relative group px-5 py-2.5 rounded-xl overflow-hidden',
+							'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
+							'shadow-lg shadow-violet-500/40',
+							'border border-white/20'
+						)}>
+							{/* Shine effect */}
+							<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+							{/* Inner glow */}
+							<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+							<div className="relative z-10 flex items-center gap-2">
+								<BookMarked className="w-4 h-4 text-white/80" />
+								<span className="font-black text-white text-sm tracking-wide">
+									{filteredUserWords.length}
+								</span>
+								<span className="font-medium text-white/80 text-sm">
+									{filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: { xs: 'column', sm: 'row' },
-								gap: 2,
-								justifyContent: 'center',
-								position: 'relative',
-								zIndex: 1,
-							}}>
-							<Link href='/materials' style={{ flex: 1, textDecoration: 'none' }}>
-								<Button
-									variant='contained'
-									size='large'
-									fullWidth
-									sx={{
-										py: 2.5,
-										borderRadius: 3,
-										background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.3)',
-										fontWeight: 700,
-										fontSize: '1.0625rem',
-										textTransform: 'none',
-										boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
-										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-										'&:hover': {
-											background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-											transform: 'translateY(-3px)',
-											boxShadow: '0 12px 40px rgba(139, 92, 246, 0.5)',
-											borderColor: 'rgba(139, 92, 246, 0.5)',
-										},
-										'&:active': {
-											transform: 'translateY(0)',
-										},
-									}}>
-									{translations.start}
-								</Button>
-							</Link>
-							<Button
-								variant='contained'
-								size='large'
-								startIcon={<AddCircleRounded />}
-								onClick={() => setIsAddWordModalOpen(true)}
-								sx={{
-									flex: 1,
-									py: 2.5,
-									borderRadius: 3,
-									background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-									border: '1px solid rgba(16, 185, 129, 0.3)',
-									fontWeight: 700,
-									fontSize: '1.0625rem',
-									textTransform: 'none',
-									boxShadow: '0 8px 32px rgba(16, 185, 129, 0.4)',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									'&:hover': {
-										background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-										transform: 'translateY(-3px)',
-										boxShadow: '0 12px 40px rgba(16, 185, 129, 0.5)',
-										borderColor: 'rgba(16, 185, 129, 0.5)',
-									},
-									'&:active': {
-										transform: 'translateY(0)',
-									},
-								}}>
-								{translations.add_word_btn}
-							</Button>
-						</Box>
-					</Card>
-					<AddWordModal
-						open={isAddWordModalOpen}
-						onClose={() => setIsAddWordModalOpen(false)}
+				{/* Words List */}
+				<div className="space-y-3">
+					{currentWords.map((word, index) => {
+						const { sourceWord, translation } = getWordDisplay(word)
+						return (
+							<WordCard
+								key={word.id || index}
+								word={word}
+								sourceWord={sourceWord}
+								translation={translation}
+								onEdit={() => {
+									setWordToEdit(word)
+									setIsEditWordModalOpen(true)
+								}}
+								onDelete={() => handleDeleteWord(word.id)}
+								isDark={isDark}
+							/>
+						)
+					})}
+				</div>
+
+				{/* Pagination */}
+				{wordsPerPage < filteredUserWords.length && (
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPageChange={handlePageChange}
+						isDark={isDark}
 					/>
-				</Container>
-			)}
-		</>
+				)}
+			</div>
+
+			{/* Modals */}
+			<AddWordModal
+				open={isAddWordModalOpen}
+				onClose={() => setIsAddWordModalOpen(false)}
+			/>
+			<EditWordModal
+				open={isEditWordModalOpen}
+				onClose={() => {
+					setIsEditWordModalOpen(false)
+					setWordToEdit(null)
+				}}
+				word={wordToEdit}
+			/>
+			<SessionConfigModal
+				open={isSessionConfigOpen}
+				onClose={() => setIsSessionConfigOpen(false)}
+				onStart={(options) => openFlashcards(options)}
+				totalWords={filteredUserWords.length}
+			/>
+		</div>
 	)
 }
 

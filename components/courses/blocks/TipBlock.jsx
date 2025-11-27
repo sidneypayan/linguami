@@ -1,53 +1,95 @@
-import { Box, Paper, Typography, useTheme } from '@mui/material'
-import { Lightbulb } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import { Lightbulb, Zap, AlertCircle } from 'lucide-react'
 
+/**
+ * TipBlock - Parchemin de conseil magique
+ * Style gaming/fantasy avec effet de glow
+ */
 const TipBlock = ({ block }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const { title, content, color = 'info' } = block
 
-	const colorMap = {
-		info: { bg: '#0ea5e9', light: 'rgba(14, 165, 233, 0.1)' },
-		success: { bg: '#10b981', light: 'rgba(16, 185, 129, 0.1)' },
-		warning: { bg: '#f59e0b', light: 'rgba(245, 158, 11, 0.1)' },
+	const colorConfig = {
+		info: {
+			icon: Lightbulb,
+			gradient: 'from-cyan-400 to-blue-500',
+			bgGradient: isDark
+				? 'from-cyan-950/50 via-slate-900 to-blue-950/30'
+				: 'from-cyan-50 via-white to-blue-50',
+			border: isDark ? 'border-cyan-500/30' : 'border-cyan-200',
+			text: isDark ? 'text-cyan-300' : 'text-cyan-700',
+			glow: 'bg-cyan-500/10',
+		},
+		success: {
+			icon: Zap,
+			gradient: 'from-emerald-400 to-green-500',
+			bgGradient: isDark
+				? 'from-emerald-950/50 via-slate-900 to-green-950/30'
+				: 'from-emerald-50 via-white to-green-50',
+			border: isDark ? 'border-emerald-500/30' : 'border-emerald-200',
+			text: isDark ? 'text-emerald-300' : 'text-emerald-700',
+			glow: 'bg-emerald-500/10',
+		},
+		warning: {
+			icon: AlertCircle,
+			gradient: 'from-amber-400 to-orange-500',
+			bgGradient: isDark
+				? 'from-amber-950/50 via-slate-900 to-orange-950/30'
+				: 'from-amber-50 via-white to-orange-50',
+			border: isDark ? 'border-amber-500/30' : 'border-amber-200',
+			text: isDark ? 'text-amber-300' : 'text-amber-700',
+			glow: 'bg-amber-500/10',
+		},
 	}
 
-	const colors = colorMap[color] || colorMap.info
+	const config = colorConfig[color] || colorConfig.info
+	const Icon = config.icon
 
 	return (
-		<Paper
-			elevation={0}
-			sx={{
-				p: { xs: 2, sm: 2.5 },
-				mb: 3,
-				borderRadius: 2,
-				border: `2px solid ${colors.bg}`,
-				background: isDark ? colors.light : colors.light,
-			}}>
-			<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-				<Lightbulb sx={{ fontSize: 24, color: colors.bg, mt: 0.25 }} />
-				<Box>
-					<Typography
-						variant="subtitle1"
-						sx={{
-							fontWeight: 700,
-							mb: 0.5,
-							color: colors.bg,
-						}}>
-						{title}
-					</Typography>
-					<Typography
-						sx={{
-							lineHeight: 1.7,
-							color: isDark ? '#cbd5e1' : '#475569',
-							fontSize: '0.95rem',
-						}}
-						dangerouslySetInnerHTML={{ __html: content }}
-					/>
-				</Box>
-			</Box>
-		</Paper>
+		<div className={cn(
+			'relative rounded-2xl border-2 overflow-hidden',
+			`bg-gradient-to-br ${config.bgGradient}`,
+			config.border
+		)}>
+			{/* Effet de brillance */}
+			<div className={cn(
+				'absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl',
+				config.glow
+			)} />
+
+			<div className="relative p-4 sm:p-5">
+				<div className="flex items-start gap-4">
+					{/* Icone */}
+					<div className={cn(
+						'w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg',
+						`bg-gradient-to-br ${config.gradient}`
+					)}>
+						<Icon className="w-5 h-5 text-white" />
+					</div>
+
+					{/* Contenu */}
+					<div className="flex-1 min-w-0">
+						<h4 className={cn(
+							'font-bold text-lg mb-2',
+							config.text
+						)}>
+							{title}
+						</h4>
+						<div
+							className={cn(
+								'prose prose-sm max-w-none',
+								isDark
+									? 'prose-invert text-slate-300'
+									: 'text-slate-600'
+							)}
+							dangerouslySetInnerHTML={{ __html: content }}
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 	)
 }
 

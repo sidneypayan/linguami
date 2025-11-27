@@ -1,1727 +1,1031 @@
 'use client'
-import React, { useState, useMemo, useCallback } from 'react'
+
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { getUIImageUrl } from '@/utils/mediaUrls'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 import {
-	Box,
-	Container,
-	Typography,
-	Paper,
-	Grid,
-	Card,
-	CardContent,
-	alpha,
-	useTheme,
-} from '@mui/material'
-import {
-	WaterDrop,
-	ExpandMore,
-	ExpandLess,
-} from '@mui/icons-material'
-import {
-	FaTrophy,
-	FaFire,
-	FaBook,
-	FaStar,
-	FaCoins,
-	FaRedo,
-	FaVideo,
-	FaCheckCircle,
-} from 'react-icons/fa'
+	Flame,
+	Coins,
+	Trophy,
+	Target,
+	Book,
+	Video,
+	CheckCircle,
+	RefreshCw,
+	Star,
+	ChevronDown,
+	ChevronUp,
+	Sparkles,
+	Zap,
+	Crown,
+	Shield,
+	Sword,
+	Swords,
+	Scroll,
+	Gem,
+	Castle,
+	Wand2,
+	BookOpen,
+	Lock,
+	Unlock,
+	Award,
+	Medal,
+	CircleDot,
+} from 'lucide-react'
 
+// ============================================
+// RANK SYSTEM - Character Classes
+// ============================================
+const getRankInfo = (level) => {
+	if (level < 6) return {
+		title: 'APPRENTI LINGUISTE',
+		subtitle: 'Les premiers pas du voyage',
+		icon: Sword,
+		color: 'from-violet-600 to-purple-800',
+		glow: 'shadow-violet-600/50',
+		badge: 'bg-violet-700'
+	}
+	if (level < 11) return {
+		title: 'GUERRIER DES MOTS',
+		subtitle: 'La force du vocabulaire',
+		icon: Shield,
+		color: 'from-emerald-400 to-emerald-600',
+		glow: 'shadow-emerald-400/50',
+		badge: 'bg-emerald-500'
+	}
+	if (level < 21) return {
+		title: 'CHEVALIER POLYGLOTTE',
+		subtitle: 'Gardien des langues',
+		icon: Swords,
+		color: 'from-blue-400 to-blue-600',
+		glow: 'shadow-blue-400/50',
+		badge: 'bg-blue-500'
+	}
+	if (level < 31) return {
+		title: 'ARCHIMAGE VERBAL',
+		subtitle: 'Maitre des incantations',
+		icon: Wand2,
+		color: 'from-violet-400 to-violet-600',
+		glow: 'shadow-violet-400/50',
+		badge: 'bg-violet-500'
+	}
+	if (level < 51) return {
+		title: 'DRAGON LEGENDAIRE',
+		subtitle: 'Terreur des examens',
+		icon: Crown,
+		color: 'from-amber-400 to-amber-600',
+		glow: 'shadow-amber-400/50',
+		badge: 'bg-amber-500'
+	}
+	return {
+		title: 'DIVINITE LINGUISTIQUE',
+		subtitle: 'Au-dela de la maitrise',
+		icon: Sparkles,
+		color: 'from-rose-400 via-purple-500 to-cyan-400',
+		glow: 'shadow-rose-400/50',
+		badge: 'bg-gradient-to-r from-rose-500 to-cyan-500'
+	}
+}
+
+// ============================================
+// MAGICAL CRYSTAL ORB - Animated Power Source
+// ============================================
+const MagicCrystal = ({ value, maxValue, label, type, icon: Icon, isDark }) => {
+	const fillPercent = maxValue ? Math.min((value / maxValue) * 100, 100) : 100
+
+	const crystalConfig = {
+		xp: {
+			baseColor: 'from-blue-600 via-cyan-500 to-blue-400',
+			glowColor: 'shadow-cyan-500/60',
+			particleColor: 'bg-cyan-400',
+			ringColor: 'ring-cyan-400/50',
+			textColor: isDark ? 'text-cyan-300' : 'text-cyan-600',
+		},
+		streak: {
+			baseColor: 'from-orange-600 via-amber-500 to-yellow-400',
+			glowColor: 'shadow-orange-500/60',
+			particleColor: 'bg-orange-400',
+			ringColor: 'ring-orange-400/50',
+			textColor: isDark ? 'text-orange-300' : 'text-orange-600',
+		},
+		gold: {
+			baseColor: 'from-yellow-600 via-amber-400 to-yellow-300',
+			glowColor: 'shadow-amber-400/60',
+			particleColor: 'bg-amber-300',
+			ringColor: 'ring-amber-400/50',
+			textColor: isDark ? 'text-amber-300' : 'text-amber-600',
+		},
+	}
+
+	const config = crystalConfig[type]
+
+	return (
+		<div className="flex flex-col items-center">
+			{/* Crystal Container */}
+			<div className="relative">
+				{/* Outer magical ring */}
+				<div className={cn(
+					'absolute -inset-4 rounded-full opacity-30 animate-pulse',
+					'bg-gradient-to-r',
+					config.baseColor,
+					'blur-xl'
+				)} />
+
+				{/* Crystal shape */}
+				<div className={cn(
+					'relative w-40 h-40 md:w-48 md:h-48',
+					'rounded-full overflow-hidden',
+					'ring-4',
+					config.ringColor,
+					'shadow-2xl',
+					config.glowColor
+				)}>
+					{/* Inner glow background */}
+					<div className={cn(
+						'absolute inset-0',
+						'bg-gradient-to-br',
+						isDark ? 'from-slate-900 via-slate-800 to-slate-900' : 'from-slate-100 via-white to-slate-100'
+					)} />
+
+					{/* Magical liquid fill */}
+					<div
+						className={cn(
+							'absolute bottom-0 left-0 right-0',
+							'bg-gradient-to-t',
+							config.baseColor,
+							'transition-all duration-1000 ease-out'
+						)}
+						style={{ height: `${fillPercent}%` }}
+					>
+						{/* Wave animation */}
+						<div className="absolute -top-2 left-0 right-0 h-4 overflow-hidden">
+							<svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-[200%] h-full animate-wave-slow">
+								<path d="M0 5 Q 12.5 0, 25 5 T 50 5 T 75 5 T 100 5 V 10 H 0 Z" fill="rgba(255,255,255,0.3)" />
+							</svg>
+						</div>
+
+						{/* Sparkle particles */}
+						<div className={cn('absolute top-2 left-4 w-2 h-2 rounded-full animate-float-slow', config.particleColor, 'opacity-80')} />
+						<div className={cn('absolute top-6 right-6 w-1.5 h-1.5 rounded-full animate-float-medium', config.particleColor, 'opacity-60')} />
+						<div className={cn('absolute bottom-8 left-8 w-1 h-1 rounded-full animate-float-fast', config.particleColor, 'opacity-70')} />
+					</div>
+
+					{/* Center content */}
+					<div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+						<Icon className={cn('w-8 h-8 md:w-10 md:h-10 mb-1', config.textColor)} />
+						<span className={cn('text-3xl md:text-4xl font-black', config.textColor)}>
+							{typeof value === 'number' ? value.toLocaleString() : value}
+						</span>
+						<span className={cn(
+							'text-xs md:text-sm font-bold uppercase tracking-wider',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{label}
+						</span>
+					</div>
+
+					{/* Glass reflection */}
+					<div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
+				</div>
+
+				{/* Floating runes around crystal */}
+				<div className="absolute -top-2 left-1/2 -translate-x-1/2 text-xl animate-bounce-slow opacity-60">
+					{type === 'xp' && '✧'}
+					{type === 'streak' && '🔥'}
+					{type === 'gold' && '💎'}
+				</div>
+			</div>
+
+			{/* Info plate below crystal */}
+			{maxValue && (
+				<div className={cn(
+					'mt-4 px-4 py-2 rounded-lg',
+					'bg-gradient-to-r',
+					isDark ? 'from-slate-800/80 to-slate-900/80' : 'from-slate-100 to-slate-200',
+					'border',
+					isDark ? 'border-slate-700' : 'border-slate-300'
+				)}>
+					<p className={cn('text-sm font-bold text-center', config.textColor)}>
+						{value} / {maxValue} XP
+					</p>
+					<div className="w-32 h-1.5 bg-slate-700/50 rounded-full mt-1 overflow-hidden">
+						<div
+							className={cn('h-full rounded-full bg-gradient-to-r', config.baseColor)}
+							style={{ width: `${fillPercent}%` }}
+						/>
+					</div>
+				</div>
+			)}
+		</div>
+	)
+}
+
+// ============================================
+// QUEST SCROLL - Goals as Epic Quests
+// ============================================
+const QuestScroll = ({ goal, type, isDark, t }) => {
+	if (!goal) return null
+
+	const progress = Math.min((goal.current_xp / goal.target_xp) * 100, 100)
+	const isComplete = progress >= 100
+
+	const questConfig = {
+		daily: {
+			title: t('dailyGoal'),
+			icon: CircleDot,
+			rarity: 'COMMUNE',
+			rarityColor: 'text-emerald-400',
+			borderColor: isDark ? 'border-emerald-500/40' : 'border-emerald-400',
+			bgGradient: isDark ? 'from-emerald-950/50 to-slate-900' : 'from-emerald-50 to-white',
+			progressColor: 'from-emerald-500 to-emerald-400',
+			glowColor: 'shadow-emerald-500/30',
+		},
+		weekly: {
+			title: t('weeklyGoal'),
+			icon: Shield,
+			rarity: 'RARE',
+			rarityColor: 'text-blue-400',
+			borderColor: isDark ? 'border-blue-500/40' : 'border-blue-400',
+			bgGradient: isDark ? 'from-blue-950/50 to-slate-900' : 'from-blue-50 to-white',
+			progressColor: 'from-blue-500 to-cyan-400',
+			glowColor: 'shadow-blue-500/30',
+		},
+		monthly: {
+			title: t('monthlyGoal'),
+			icon: Crown,
+			rarity: 'EPIQUE',
+			rarityColor: 'text-violet-400',
+			borderColor: isDark ? 'border-violet-500/40' : 'border-violet-400',
+			bgGradient: isDark ? 'from-violet-950/50 to-slate-900' : 'from-violet-50 to-white',
+			progressColor: 'from-violet-500 to-purple-400',
+			glowColor: 'shadow-violet-500/30',
+		},
+	}
+
+	const config = questConfig[type]
+	const QuestIcon = config.icon
+
+	return (
+		<div className={cn(
+			'relative rounded-xl overflow-hidden',
+			'border-2',
+			config.borderColor,
+			'bg-gradient-to-br',
+			config.bgGradient,
+			'shadow-lg',
+			config.glowColor,
+			'transition-all duration-300 hover:scale-[1.02]',
+			isComplete && 'ring-2 ring-amber-400/50'
+		)}>
+			{/* Parchment texture overlay */}
+			<div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iI2ZmZiI+PC9yZWN0Pgo8Y2lyY2xlIGN4PSIyNSIgY3k9IjI1IiByPSIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAuNSI+PC9jaXJjbGU+Cjwvc3ZnPg==')]" />
+
+			{/* Header with rarity */}
+			<div className={cn(
+				'px-4 py-2 border-b',
+				isDark ? 'border-slate-700/50' : 'border-slate-200',
+				'flex items-center justify-between'
+			)}>
+				<div className="flex items-center gap-2">
+					<QuestIcon className={cn('w-5 h-5', config.rarityColor)} />
+					<span className={cn('font-bold', isDark ? 'text-white' : 'text-slate-800')}>
+						{config.title}
+					</span>
+				</div>
+				<span className={cn('text-xs font-black uppercase tracking-wider', config.rarityColor)}>
+					{config.rarity}
+				</span>
+			</div>
+
+			{/* Quest content */}
+			<div className="p-4">
+				{/* Progress circle */}
+				<div className="flex items-center justify-center mb-4">
+					<div className="relative w-24 h-24">
+						<svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+							<circle
+								cx="50" cy="50" r="42"
+								fill="none"
+								stroke={isDark ? 'rgba(51,65,85,0.5)' : 'rgba(203,213,225,0.8)'}
+								strokeWidth="8"
+							/>
+							<circle
+								cx="50" cy="50" r="42"
+								fill="none"
+								stroke={`url(#quest-gradient-${type})`}
+								strokeWidth="8"
+								strokeLinecap="round"
+								strokeDasharray={`${2 * Math.PI * 42}`}
+								strokeDashoffset={`${2 * Math.PI * 42 * (1 - progress / 100)}`}
+								className="transition-all duration-1000"
+							/>
+							<defs>
+								<linearGradient id={`quest-gradient-${type}`} x1="0%" y1="0%" x2="100%" y2="100%">
+									{type === 'daily' && <><stop offset="0%" stopColor="#10b981" /><stop offset="100%" stopColor="#34d399" /></>}
+									{type === 'weekly' && <><stop offset="0%" stopColor="#3b82f6" /><stop offset="100%" stopColor="#06b6d4" /></>}
+									{type === 'monthly' && <><stop offset="0%" stopColor="#8b5cf6" /><stop offset="100%" stopColor="#a855f7" /></>}
+								</linearGradient>
+							</defs>
+						</svg>
+						<div className="absolute inset-0 flex items-center justify-center">
+							{isComplete ? (
+								<Trophy className="w-8 h-8 text-amber-400 animate-bounce" />
+							) : (
+								<span className={cn('text-2xl font-black', config.rarityColor)}>
+									{Math.floor(progress)}%
+								</span>
+							)}
+						</div>
+					</div>
+				</div>
+
+				{/* XP info */}
+				<div className="text-center">
+					<p className={cn(
+						'text-lg font-bold',
+						isDark ? 'text-slate-200' : 'text-slate-700'
+					)}>
+						{goal.current_xp.toLocaleString()} / {goal.target_xp.toLocaleString()} XP
+					</p>
+					<p className={cn(
+						'text-sm mt-1',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
+						{isComplete
+							? 'Quete accomplie !'
+							: `Encore ${(goal.target_xp - goal.current_xp).toLocaleString()} XP`
+						}
+					</p>
+				</div>
+
+				{/* Reward preview */}
+				<div className={cn(
+					'mt-4 py-2 px-3 rounded-lg',
+					'bg-gradient-to-r from-amber-500/10 to-amber-600/10',
+					'border border-amber-500/30',
+					'flex items-center justify-center gap-2'
+				)}>
+					<Gem className="w-4 h-4 text-amber-400" />
+					<span className={cn('text-sm font-medium', isDark ? 'text-amber-300' : 'text-amber-600')}>
+						Recompense: +{type === 'daily' ? '10' : type === 'weekly' ? '50' : '200'} Gold
+					</span>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+// ============================================
+// TROPHY CABINET - Badges Display (Round badges)
+// ============================================
+const TrophyCabinet = ({ badge, category, index, isDark }) => {
+	const isUnlocked = badge.isUnlocked
+
+	return (
+		<div className={cn(
+			'relative group',
+			'flex flex-col items-center gap-2'
+		)}>
+			{/* Round badge container */}
+			<div className="relative">
+				{/* Glow effect for unlocked badges */}
+				{isUnlocked && (
+					<div
+						className="absolute -inset-1 rounded-full opacity-40 blur-md transition-opacity group-hover:opacity-60"
+						style={{ backgroundColor: category.color }}
+					/>
+				)}
+
+				{/* Badge circle */}
+				<div className={cn(
+					'relative w-20 h-20 sm:w-24 sm:h-24',
+					'rounded-full overflow-hidden',
+					'transition-all duration-300',
+					isUnlocked
+						? 'ring-3 shadow-xl group-hover:scale-110'
+						: 'opacity-70',
+				)}
+				style={{
+					ringColor: isUnlocked ? category.color : isDark ? '#475569' : '#cbd5e1',
+					boxShadow: isUnlocked ? `0 0 25px ${category.color}50` : undefined
+				}}
+				>
+					{/* Badge image - visible for both locked and unlocked */}
+					<div className={cn(
+						'relative w-full h-full flex items-center justify-center',
+						!isUnlocked && 'grayscale-[50%] opacity-60'
+					)}>
+						{badge.icon}
+					</div>
+
+					{/* Subtle dark overlay for locked badges */}
+					{!isUnlocked && (
+						<div className={cn(
+							'absolute inset-0 rounded-full',
+							isDark ? 'bg-slate-900/30' : 'bg-slate-500/20'
+						)} />
+					)}
+
+					{/* Shine effect for unlocked */}
+					{isUnlocked && (
+						<div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+					)}
+				</div>
+
+				{/* Lock icon OUTSIDE the overflow-hidden container */}
+				{!isUnlocked && (
+					<div className={cn(
+						'absolute -bottom-1 -right-1 w-7 h-7 rounded-full',
+						'flex items-center justify-center',
+						'bg-slate-600 border-2 shadow-lg',
+						isDark ? 'border-slate-500' : 'border-slate-300',
+						'z-10'
+					)}>
+						<Lock className="w-3.5 h-3.5 text-white" />
+					</div>
+				)}
+			</div>
+
+			{/* Value plate */}
+			<div className={cn(
+				'px-3 py-1 rounded-full',
+				'font-black text-sm tracking-wider',
+				isUnlocked
+					? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-500/30'
+					: cn(isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-300 text-slate-500')
+			)}>
+				{badge.value}
+			</div>
+		</div>
+	)
+}
+
+// ============================================
+// GRIMOIRE CARD - Vocabulary/Materials Stats
+// ============================================
+const GrimoireCard = ({ title, value, icon: Icon, type, isDark }) => {
+	const typeConfig = {
+		emerald: { gradient: 'from-emerald-600 to-emerald-500', glow: 'shadow-emerald-500/30', text: 'text-emerald-400' },
+		blue: { gradient: 'from-blue-600 to-blue-500', glow: 'shadow-blue-500/30', text: 'text-blue-400' },
+		amber: { gradient: 'from-amber-600 to-amber-500', glow: 'shadow-amber-500/30', text: 'text-amber-400' },
+		violet: { gradient: 'from-violet-600 to-violet-500', glow: 'shadow-violet-500/30', text: 'text-violet-400' },
+	}
+
+	const config = typeConfig[type]
+
+	return (
+		<div className={cn(
+			'relative rounded-xl overflow-hidden',
+			'transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1',
+			isDark
+				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
+				: 'bg-gradient-to-br from-white to-slate-50',
+			'border',
+			isDark ? 'border-slate-700/50' : 'border-slate-200',
+			'shadow-xl',
+			config.glow
+		)}>
+			{/* Top accent bar */}
+			<div className={cn('h-1.5 bg-gradient-to-r', config.gradient)} />
+
+			{/* Decorative corner runes */}
+			<div className={cn('absolute top-2 right-2 text-lg opacity-20', config.text)}>✧</div>
+			<div className={cn('absolute bottom-2 left-2 text-lg opacity-20 rotate-180', config.text)}>✧</div>
+
+			<div className="p-5 text-center">
+				{/* Icon in magical circle */}
+				<div className="flex justify-center mb-4">
+					<div className={cn(
+						'w-16 h-16 rounded-full',
+						'flex items-center justify-center',
+						'bg-gradient-to-br',
+						config.gradient,
+						'shadow-lg',
+						config.glow,
+						'ring-4 ring-white/10'
+					)}>
+						<Icon className="w-8 h-8 text-white" />
+					</div>
+				</div>
+
+				{/* Value */}
+				<p className={cn(
+					'text-4xl font-black mb-2',
+					isDark ? 'text-white' : 'text-slate-800'
+				)}>
+					{value}
+				</p>
+
+				{/* Title */}
+				<p className={cn(
+					'text-sm font-medium',
+					isDark ? 'text-slate-400' : 'text-slate-500'
+				)}>
+					{title}
+				</p>
+			</div>
+		</div>
+	)
+}
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
 const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const [expandedBadges, setExpandedBadges] = useState({})
 
-	// Helper function to get translation
 	const t = (key) => translations[key] || key
 
-	// Vocabulary cards
-	const vocabularyCards = [
-		{
-			title: t('wordsReviewedToday'),
-			value: stats?.wordsReviewedToday || 0,
-			icon: <FaRedo />,
-			color: '#10B981',
-			gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-		},
-		{
-			title: t('wordsReviewedThisWeek'),
-			value: stats?.wordsReviewedThisWeek || 0,
-			icon: <FaRedo />,
-			color: '#3B82F6',
-			gradient: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-		},
-		{
-			title: t('wordsReviewedThisMonth'),
-			value: stats?.wordsReviewedThisMonth || 0,
-			icon: <FaRedo />,
-			color: '#F59E0B',
-			gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-		},
-		{
-			title: t('totalWordsReviewed'),
-			value: stats?.totalWordsReviewed || 0,
-			icon: <FaRedo />,
-			color: '#8B5CF6',
-			gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-		},
-	]
-
-	// Calculate next streak milestone
 	const getNextStreakMilestone = (currentStreak) => {
 		const milestones = [7, 30, 60, 90, 180, 365]
-		const nextMilestone = milestones.find(m => m > currentStreak)
-		return nextMilestone || 365 // If beyond 365, keep showing 365
+		return milestones.find(m => m > currentStreak) || 365
 	}
 
 	const streakMilestone = xpProfile ? getNextStreakMilestone(xpProfile.dailyStreak) : 7
-	const daysRemaining = xpProfile ? streakMilestone - xpProfile.dailyStreak : 0
+	const rankInfo = xpProfile ? getRankInfo(xpProfile.currentLevel) : getRankInfo(0)
+	const RankIcon = rankInfo.icon
 
-	// Materials cards
+	// Vocabulary cards config
+	const vocabularyCards = [
+		{ title: t('wordsReviewedToday'), value: stats?.wordsReviewedToday || 0, icon: RefreshCw, type: 'emerald' },
+		{ title: t('wordsReviewedThisWeek'), value: stats?.wordsReviewedThisWeek || 0, icon: RefreshCw, type: 'blue' },
+		{ title: t('wordsReviewedThisMonth'), value: stats?.wordsReviewedThisMonth || 0, icon: RefreshCw, type: 'amber' },
+		{ title: t('totalWordsReviewed'), value: stats?.totalWordsReviewed || 0, icon: RefreshCw, type: 'violet' },
+	]
+
 	const materialsCards = [
-		{
-			title: t('materialsStarted'),
-			value: stats?.materialsStarted || 0,
-			icon: <FaVideo />,
-			color: '#3B82F6',
-			gradient: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-		},
-		{
-			title: t('materialsFinished'),
-			value: stats?.materialsFinished || 0,
-			icon: <FaCheckCircle />,
-			color: '#10B981',
-			gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-		},
+		{ title: t('materialsStarted'), value: stats?.materialsStarted || 0, icon: Video, type: 'blue' },
+		{ title: t('materialsFinished'), value: stats?.materialsFinished || 0, icon: CheckCircle, type: 'emerald' },
 	]
 
 	// Badges configuration
 	const badgesConfig = {
 		levels: {
 			title: t('levelBadges'),
-			icon: <FaStar />,
+			icon: Star,
 			color: '#8b5cf6',
-			gradient: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-			badges: [5, 10, 15, 20, 30, 50, 60].map((level, index) => {
-				return {
-					value: level,
-					icon: (
-						<Image
-							src={getUIImageUrl(`xp_${index + 1}.webp`)}
-							alt={`Level ${level}`}
-							width={90}
-							height={90}
-							style={{ objectFit: 'cover', borderRadius: '50%' }}
-						/>
-					),
-					isUnlocked: xpProfile ? xpProfile.currentLevel >= level : false,
-				}
-			}),
-			getCurrentValue: () => xpProfile ? xpProfile.currentLevel : 0,
+			badges: [5, 10, 15, 20, 30, 50, 60].map((level, index) => ({
+				value: level,
+				icon: (
+					<Image
+						src={getUIImageUrl(`xp_${index + 1}.webp`)}
+						alt={`Level ${level}`}
+						width={90}
+						height={90}
+						className="object-cover rounded-full"
+					/>
+				),
+				isUnlocked: xpProfile ? xpProfile.currentLevel >= level : false,
+			})),
 		},
 		reviewedWords: {
 			title: t('wordsReviewedBadges'),
-			icon: <FaRedo />,
-			color: '#8B5CF6',
-			gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-			badges: [50, 100, 250, 500, 1000, 5000, 10000].map((count, index) => {
-				return {
-					value: count,
-					icon: (
-						<Image
-							src={getUIImageUrl(`0${index + 1}_reviewed_words_badge.webp`)}
-							alt={`${count} words`}
-							width={90}
-							height={90}
-							style={{ objectFit: 'cover', borderRadius: '50%' }}
-						/>
-					),
-					isUnlocked: stats ? (stats.totalWordsReviewed || 0) >= count : false,
-				}
-			}),
-			getCurrentValue: () => stats ? (stats.totalWordsReviewed || 0) : 0,
+			icon: RefreshCw,
+			color: '#3b82f6',
+			badges: [50, 100, 250, 500, 1000, 5000, 10000].map((count, index) => ({
+				value: count,
+				icon: (
+					<Image
+						src={getUIImageUrl(`0${index + 1}_reviewed_words_badge.webp`)}
+						alt={`${count} words`}
+						width={90}
+						height={90}
+						className="object-cover rounded-full"
+					/>
+				),
+				isUnlocked: stats ? (stats.totalWordsReviewed || 0) >= count : false,
+			})),
 		},
 	}
 
 	return (
-		<Container maxWidth="xl" sx={{ pt: { xs: '5.5rem', md: '6rem' }, py: { xs: 3, md: 4 }, pb: 8 }}>
-			{/* XP Profile Card - Circular Design */}
-			{xpProfile && (
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: { xs: 0, md: 4 },
-						p: { xs: 3, md: 4 },
-						mb: { xs: 2, md: 4 },
-						background: isDark
-							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
-						backdropFilter: 'blur(20px)',
-						boxShadow: { xs: 'none', md: isDark ? '0 8px 32px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.15)' : '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.08)' },
-						border: { xs: 'none', md: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)' },
-						position: 'relative',
-						overflow: 'hidden',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							height: '4px',
-							background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
-						},
-					}}>
-					{/* Motivational message - Epic banner */}
-					<Box
-						sx={{
-							position: 'relative',
-							textAlign: 'center',
-							mb: 4,
-							py: 2.5,
-							px: 3,
-							borderRadius: 2,
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)',
-							border: '2px solid',
-							borderImage: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4)) 1',
-							boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 16px rgba(139, 92, 246, 0.15)',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: 0,
-								left: 0,
-								right: 0,
-								bottom: 0,
-								background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.03) 50%, transparent 100%)',
-								pointerEvents: 'none',
-							},
-						}}>
-						<Typography
-							variant="h5"
-							sx={{
-								fontWeight: 800,
-								color: isDark ? '#f1f5f9' : '#1E293B',
-								textTransform: 'uppercase',
-								letterSpacing: '1px',
-								textShadow: '0 2px 4px rgba(139, 92, 246, 0.1)',
-								position: 'relative',
-								zIndex: 1,
-							}}>
-							{xpProfile.currentLevel < 6
-								? `⚔️ APPRENTI`
-								: xpProfile.currentLevel < 11
-								? `🗡️ GUERRIER`
-								: xpProfile.currentLevel < 21
-								? `🛡️ VÉTÉRAN`
-								: xpProfile.currentLevel < 31
-								? `👑 CHAMPION`
-								: xpProfile.currentLevel < 51
-								? `⚡ LÉGENDE`
-								: `🔥 MAÎTRE ABSOLU`
-							}
-						</Typography>
-					</Box>
+		<div className={cn(
+			'min-h-screen pt-20 md:pt-24 pb-24',
+			isDark
+				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
+				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
+		)}>
+			{/* Magical particles background */}
+			<div className="fixed inset-0 pointer-events-none overflow-hidden">
+				<div className={cn('absolute top-20 left-10 w-2 h-2 rounded-full animate-float-slow', isDark ? 'bg-violet-400/30' : 'bg-violet-300/50')} />
+				<div className={cn('absolute top-40 right-20 w-1.5 h-1.5 rounded-full animate-float-medium', isDark ? 'bg-cyan-400/30' : 'bg-cyan-300/50')} />
+				<div className={cn('absolute bottom-40 left-1/4 w-1 h-1 rounded-full animate-float-fast', isDark ? 'bg-amber-400/30' : 'bg-amber-300/50')} />
+				<div className={cn('absolute top-1/3 right-1/3 w-2 h-2 rounded-full animate-float-slow', isDark ? 'bg-emerald-400/20' : 'bg-emerald-300/40')} />
+			</div>
 
-					<Grid container spacing={4} alignItems="center" justifyContent="center">
-						{/* Circular XP Progress */}
-						<Grid item xs={12} sm={6} md={4}>
-							<Box
-								sx={{
-									position: 'relative',
-									display: 'inline-flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									width: '100%',
-								}}>
-								<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-									{/* Background circle */}
-									<Box
-										sx={{
-											width: 200,
-											height: 200,
-											borderRadius: '50%',
-											background: 'linear-gradient(135deg, rgba(147, 197, 253, 0.5) 0%, rgba(96, 165, 250, 0.5) 100%)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											position: 'relative',
-											overflow: 'hidden',
-											border: '4px solid rgba(59, 130, 246, 0.5)',
-										}}>
-										{/* Simple water fill */}
-										<Box
-											sx={{
-												position: 'absolute',
-												bottom: 0,
-												left: 0,
-												right: 0,
-												height: `${xpProfile.progressPercent}%`,
-												background: '#60A5FA',
-												transition: 'height 1.5s ease-out',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													top: '-12px',
-													left: '-10%',
-													right: '-10%',
-													height: '28px',
-													background: 'linear-gradient(to bottom, rgba(96, 165, 250, 0.8), #60A5FA)',
-													animation: 'wave1 7s ease-in-out infinite',
-												},
-												'&::after': {
-													content: '""',
-													position: 'absolute',
-													top: '-10px',
-													left: '-10%',
-													right: '-10%',
-													height: '26px',
-													background: 'linear-gradient(to bottom, rgba(147, 197, 253, 0.5), rgba(96, 165, 250, 0.7))',
-													animation: 'wave2 9s ease-in-out infinite',
-												},
-												'@keyframes wave1': {
-													'0%, 100%': {
-														borderRadius: '65% 35% 40% 60%',
-														transform: 'translateX(0) translateY(0) scaleY(1)',
-													},
-													'33%': {
-														borderRadius: '40% 60% 50% 50%',
-														transform: 'translateX(6%) translateY(3px) scaleY(0.85)',
-													},
-													'66%': {
-														borderRadius: '50% 50% 60% 40%',
-														transform: 'translateX(-4%) translateY(2px) scaleY(0.88)',
-													},
-												},
-												'@keyframes wave2': {
-													'0%, 100%': {
-														borderRadius: '45% 55% 48% 52%',
-														transform: 'translateX(5%) translateY(1px) scaleY(0.95)',
-													},
-													'33%': {
-														borderRadius: '58% 42% 55% 45%',
-														transform: 'translateX(-3%) translateY(0) scaleY(1)',
-													},
-													'66%': {
-														borderRadius: '42% 58% 45% 55%',
-														transform: 'translateX(7%) translateY(2px) scaleY(0.87)',
-													},
-												},
-											}}
-										/>
+			<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-										{/* Center content */}
-										<Box sx={{ textAlign: 'center', zIndex: 1, position: 'relative' }}>
-											<WaterDrop
-												sx={{
-													fontSize: '3rem',
-													color: 'white',
-													mb: 1,
-												}}
-											/>
-											<Typography
-												variant="h2"
-												sx={{
-													fontWeight: 800,
-													lineHeight: 1,
-													color: 'white',
-												}}>
-												{xpProfile.currentLevel}
-											</Typography>
-											<Typography
-												variant="body2"
-												sx={{
-													opacity: 1,
-													textTransform: 'uppercase',
-													letterSpacing: 1,
-													color: 'white',
-													fontWeight: 600,
-													textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-												}}>
-												{t('level')}
-											</Typography>
-										</Box>
-									</Box>
-								</Box>
-								<Box
-									sx={{
-										mt: 3,
-										textAlign: 'center',
-										background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(37, 99, 235, 0.12) 100%)',
-										borderRadius: 3,
-										p: 2,
-										border: '2px solid rgba(59, 130, 246, 0.4)',
-										boxShadow: '0 2px 8px rgba(59, 130, 246, 0.1)',
-									}}>
-									<Typography
-										variant="h5"
-										sx={{
-											fontWeight: 700,
-											color: isDark ? '#93c5fd' : '#1E40AF',
-											fontSize: { xs: '1.2rem', md: '1.5rem' },
-										}}>
-										{xpProfile.xpInCurrentLevel} / {xpProfile.xpForNextLevel} XP
-									</Typography>
-									<Typography
-										variant="body1"
-										sx={{
-											mt: 0.5,
-											fontWeight: 600,
-											color: isDark ? '#cbd5e1' : '#64748B',
-										}}>
-										{xpProfile.progressPercent >= 75
-											? `💪 Plus que ${xpProfile.xpForNextLevel - xpProfile.xpInCurrentLevel} XP pour le niveau ${xpProfile.currentLevel + 1} !`
-											: xpProfile.progressPercent >= 50
-											? `🎯 À mi-chemin du niveau ${xpProfile.currentLevel + 1} !`
-											: `🌟 Continue d'apprendre pour progresser !`
-										}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
+				{/* ============================================ */}
+				{/* HERO - Character Card */}
+				{/* ============================================ */}
+				{xpProfile && (
+					<div className={cn(
+						'relative rounded-none md:rounded-3xl p-6 md:p-10 mb-8 overflow-hidden',
+						isDark
+							? 'bg-gradient-to-br from-slate-900/95 via-violet-950/50 to-slate-900/95'
+							: 'bg-gradient-to-br from-white via-violet-50/50 to-white',
+						'md:border-2',
+						isDark ? 'md:border-violet-500/30' : 'md:border-violet-200',
+						'md:shadow-2xl md:shadow-violet-500/20'
+					)}>
+						{/* Decorative frame corners */}
+						<div className="hidden md:block absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-violet-500/50 rounded-tl-lg" />
+						<div className="hidden md:block absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-violet-500/50 rounded-tr-lg" />
+						<div className="hidden md:block absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-violet-500/50 rounded-bl-lg" />
+						<div className="hidden md:block absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-violet-500/50 rounded-br-lg" />
 
-						{/* Circular Streak */}
-						<Grid item xs={12} sm={6} md={4}>
-							<Box
-								sx={{
-									position: 'relative',
-									display: 'inline-flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									width: '100%',
-								}}>
-								<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-									{/* Background circle */}
-									<Box
-										sx={{
-											width: 200,
-											height: 200,
-											borderRadius: '50%',
-											background: 'linear-gradient(135deg, rgba(134, 239, 172, 0.5) 0%, rgba(74, 222, 128, 0.5) 100%)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											position: 'relative',
-											overflow: 'hidden',
-											border: '4px solid rgba(34, 197, 94, 0.5)',
-										}}>
-										{/* Forest and earth fill */}
-										<Box
-											sx={{
-												position: 'absolute',
-												bottom: 0,
-												left: 0,
-												right: 0,
-												height: `${Math.min((xpProfile.dailyStreak / streakMilestone) * 100, 100)}%`,
-												background: '#4ADE80',
-												transition: 'height 1.5s ease-out',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													top: '-12px',
-													left: '-10%',
-													right: '-10%',
-													height: '28px',
-													background: 'linear-gradient(to bottom, rgba(74, 222, 128, 0.8), #4ADE80)',
-													animation: 'forestWave1 7s ease-in-out infinite',
-												},
-												'&::after': {
-													content: '""',
-													position: 'absolute',
-													top: '-10px',
-													left: '-10%',
-													right: '-10%',
-													height: '26px',
-													background: 'linear-gradient(to bottom, rgba(134, 239, 172, 0.5), rgba(74, 222, 128, 0.7))',
-													animation: 'forestWave2 9s ease-in-out infinite',
-												},
-												'@keyframes forestWave1': {
-													'0%, 100%': {
-														borderRadius: '65% 35% 40% 60%',
-														transform: 'translateX(0) translateY(0) scaleY(1)',
-													},
-													'33%': {
-														borderRadius: '40% 60% 50% 50%',
-														transform: 'translateX(6%) translateY(3px) scaleY(0.85)',
-													},
-													'66%': {
-														borderRadius: '50% 50% 60% 40%',
-														transform: 'translateX(-4%) translateY(2px) scaleY(0.88)',
-													},
-												},
-												'@keyframes forestWave2': {
-													'0%, 100%': {
-														borderRadius: '45% 55% 48% 52%',
-														transform: 'translateX(5%) translateY(1px) scaleY(0.95)',
-													},
-													'33%': {
-														borderRadius: '58% 42% 55% 45%',
-														transform: 'translateX(-3%) translateY(0) scaleY(1)',
-													},
-													'66%': {
-														borderRadius: '42% 58% 45% 55%',
-														transform: 'translateX(7%) translateY(2px) scaleY(0.87)',
-													},
-												},
-											}}
-										/>
+						{/* Top gradient bar */}
+						<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
 
-										{/* Center content */}
-										<Box sx={{ textAlign: 'center', zIndex: 1, position: 'relative' }}>
-											<FaFire
-												style={{
-													fontSize: '3rem',
-													color: 'white',
-													marginBottom: '0.5rem',
-												}}
-											/>
-											<Typography
-												variant="h2"
-												sx={{
-													fontWeight: 800,
-													lineHeight: 1,
-													color: 'white',
-												}}>
-												{xpProfile.dailyStreak}
-											</Typography>
-											<Typography
-												variant="body2"
-												sx={{
-													opacity: 1,
-													textTransform: 'uppercase',
-													letterSpacing: 1,
-													color: 'white',
-													fontWeight: 600,
-													textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-												}}>
-												{t('dayStreak')}
-											</Typography>
-										</Box>
-									</Box>
-								</Box>
-								<Box
-									sx={{
-										mt: 3,
-										textAlign: 'center',
-										background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.08) 100%)',
-										borderRadius: 3,
-										p: 2,
-										border: '2px solid rgba(34, 197, 94, 0.4)',
-										boxShadow: '0 2px 8px rgba(34, 197, 94, 0.1)',
-									}}>
-									<Typography
-										variant="h5"
-										sx={{
-											fontWeight: 700,
-											color: isDark ? '#86efac' : '#15803D',
-											fontSize: { xs: '1.2rem', md: '1.5rem' },
-										}}>
-										{xpProfile.dailyStreak} {xpProfile.dailyStreak === 1 ? 'jour' : 'jours'} 🔥
-									</Typography>
-									<Typography
-										variant="body1"
-										sx={{
-											mt: 0.5,
-											fontWeight: 600,
-											color: isDark ? '#cbd5e1' : '#64748B',
-										}}>
-										{xpProfile.dailyStreak === 0
-											? `🎯 Commence ta série aujourd'hui !`
-											: xpProfile.dailyStreak === 1
-											? `🌟 Super début ! Reviens demain !`
-											: xpProfile.dailyStreak < 7
-											? `💪 ${7 - xpProfile.dailyStreak} jour${7 - xpProfile.dailyStreak > 1 ? 's' : ''} pour atteindre 1 semaine !`
-											: xpProfile.dailyStreak < 30
-											? `🚀 ${30 - xpProfile.dailyStreak} jour${30 - xpProfile.dailyStreak > 1 ? 's' : ''} pour 1 mois de série !`
-											: `🏆 Tu es en feu ! Continue !`
-										}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
+						{/* Character Rank Banner */}
+						<div className="text-center mb-10">
+							<div className={cn(
+								'inline-flex items-center gap-4 px-8 py-4 rounded-2xl',
+								'bg-gradient-to-r',
+								rankInfo.color,
+								'shadow-2xl',
+								rankInfo.glow
+							)}>
+								<RankIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+								<div className="text-left">
+									<h1 className="text-xl md:text-2xl font-black text-white tracking-wide">
+										{rankInfo.title}
+									</h1>
+									<p className="text-sm text-white/80 font-medium">
+										{rankInfo.subtitle}
+									</p>
+								</div>
+								<RankIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+							</div>
+						</div>
 
-						{/* Gold Circle */}
-						<Grid item xs={12} sm={6} md={4}>
-							<Box
-								sx={{
-									position: 'relative',
-									display: 'inline-flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									width: '100%',
-								}}>
-								<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-									{/* Background circle */}
-									<Box
-										sx={{
-											width: 200,
-											height: 200,
-											borderRadius: '50%',
-											background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.5) 0%, rgba(245, 158, 11, 0.5) 100%)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											position: 'relative',
-											overflow: 'hidden',
-											border: '4px solid rgba(245, 158, 11, 0.6)',
-										}}>
-										{/* Simple gold fill - always filled since gold accumulates without levels */}
-										<Box
-											sx={{
-												position: 'absolute',
-												bottom: 0,
-												left: 0,
-												right: 0,
-												height: '100%',
-												background: '#FBBF24',
-												transition: 'opacity 1.5s ease-out',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													top: '-12px',
-													left: '-10%',
-													right: '-10%',
-													height: '28px',
-													background: 'linear-gradient(to bottom, rgba(251, 191, 36, 0.8), #FBBF24)',
-													animation: 'goldWave1 7s ease-in-out infinite',
-												},
-												'&::after': {
-													content: '""',
-													position: 'absolute',
-													top: '-10px',
-													left: '-10%',
-													right: '-10%',
-													height: '26px',
-													background: 'linear-gradient(to bottom, rgba(252, 211, 77, 0.5), rgba(251, 191, 36, 0.7))',
-													animation: 'goldWave2 9s ease-in-out infinite',
-												},
-												'@keyframes goldWave1': {
-													'0%, 100%': {
-														borderRadius: '65% 35% 40% 60%',
-														transform: 'translateX(0) translateY(0) scaleY(1)',
-													},
-													'33%': {
-														borderRadius: '40% 60% 50% 50%',
-														transform: 'translateX(6%) translateY(3px) scaleY(0.85)',
-													},
-													'66%': {
-														borderRadius: '50% 50% 60% 40%',
-														transform: 'translateX(-4%) translateY(2px) scaleY(0.88)',
-													},
-												},
-												'@keyframes goldWave2': {
-													'0%, 100%': {
-														borderRadius: '45% 55% 48% 52%',
-														transform: 'translateX(5%) translateY(1px) scaleY(0.95)',
-													},
-													'33%': {
-														borderRadius: '58% 42% 55% 45%',
-														transform: 'translateX(-3%) translateY(0) scaleY(1)',
-													},
-													'66%': {
-														borderRadius: '42% 58% 45% 55%',
-														transform: 'translateX(7%) translateY(2px) scaleY(0.87)',
-													},
-												},
-											}}
-										/>
+						{/* Power Crystals Grid */}
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 justify-items-center">
+							{/* XP Crystal */}
+							<MagicCrystal
+								value={xpProfile.currentLevel}
+								maxValue={null}
+								label={t('level')}
+								type="xp"
+								icon={Zap}
+								isDark={isDark}
+							/>
 
-										{/* Center content */}
-										<Box sx={{ textAlign: 'center', zIndex: 1, position: 'relative' }}>
-											<FaCoins
-												style={{
-													fontSize: '3rem',
-													color: 'white',
-													marginBottom: '0.5rem',
-												}}
-											/>
-											<Typography
-												variant="h2"
-												sx={{
-													fontWeight: 800,
-													lineHeight: 1,
-													color: 'white',
-												}}>
-												{xpProfile.totalGold}
-											</Typography>
-											<Typography
-												variant="body2"
-												sx={{
-													opacity: 1,
-													textTransform: 'uppercase',
-													letterSpacing: 1,
-													color: 'white',
-													fontWeight: 600,
-													textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-												}}>
-												{t('gold')}
-											</Typography>
-										</Box>
-									</Box>
-								</Box>
-								<Box
-									sx={{
-										mt: 3,
-										textAlign: 'center',
-										background: 'linear-gradient(135deg, rgba(252, 211, 77, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%)',
-										borderRadius: 3,
-										p: 2,
-										border: '2px solid rgba(245, 158, 11, 0.4)',
-										boxShadow: '0 2px 8px rgba(245, 158, 11, 0.1)',
-									}}>
-									<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-										<Typography
-											variant="h5"
-											sx={{
-												fontWeight: 700,
-												color: isDark ? '#fcd34d' : '#D97706',
-												fontSize: { xs: '1.2rem', md: '1.5rem' },
-											}}>
-											{xpProfile.totalGold}
-										</Typography>
-										<FaCoins style={{ fontSize: '1.5rem', color: isDark ? '#fcd34d' : '#D97706' }} />
-									</Box>
-									<Typography
-										variant="body1"
-										sx={{
-											mt: 0.5,
-											fontWeight: 600,
-											color: isDark ? '#cbd5e1' : '#64748B',
-										}}>
-										{xpProfile.totalGold === 0
-											? `💰 Ton trésor commence ici !`
-											: xpProfile.totalGold < 100
-											? `🌟 Tu accumules tes premières pièces !`
-											: xpProfile.totalGold < 500
-											? `💎 Belle collection de gold !`
-											: `👑 Tu es riche ! Continue comme ça !`
-										}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
+							{/* Streak Crystal */}
+							<MagicCrystal
+								value={xpProfile.dailyStreak}
+								maxValue={null}
+								label={t('dayStreak')}
+								type="streak"
+								icon={Flame}
+								isDark={isDark}
+							/>
 
-						{/* Record Streak (optional) */}
+							{/* Gold Crystal */}
+							<MagicCrystal
+								value={xpProfile.totalGold}
+								maxValue={null}
+								label={t('gold')}
+								type="gold"
+								icon={Coins}
+								isDark={isDark}
+							/>
+						</div>
+
+						{/* XP Progress Bar */}
+						<div className={cn(
+							'mt-10 max-w-2xl mx-auto p-4 rounded-xl',
+							isDark ? 'bg-slate-800/50' : 'bg-slate-100',
+							'border',
+							isDark ? 'border-slate-700' : 'border-slate-200'
+						)}>
+							<div className="flex items-center justify-between mb-2">
+								<span className={cn('text-sm font-bold', isDark ? 'text-slate-300' : 'text-slate-600')}>
+									Progression vers niveau {xpProfile.currentLevel + 1}
+								</span>
+								<span className={cn('text-sm font-bold', isDark ? 'text-cyan-400' : 'text-cyan-600')}>
+									{xpProfile.xpInCurrentLevel} / {xpProfile.xpForNextLevel} XP
+								</span>
+							</div>
+							<div className="h-4 bg-slate-700/30 rounded-full overflow-hidden">
+								<div
+									className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500 rounded-full transition-all duration-1000 relative"
+									style={{ width: `${xpProfile.progressPercent}%` }}
+								>
+									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+								</div>
+							</div>
+							<p className={cn('text-center mt-2 text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
+								{xpProfile.progressPercent >= 75
+									? `Plus que ${xpProfile.xpForNextLevel - xpProfile.xpInCurrentLevel} XP pour monter de niveau !`
+									: xpProfile.progressPercent >= 50
+									? `A mi-chemin du niveau suivant !`
+									: `Continue ton aventure linguistique !`
+								}
+							</p>
+						</div>
+
+						{/* Record Streak */}
 						{xpProfile.longestStreak > xpProfile.dailyStreak && (
-							<Grid item xs={12} sm={6} md={4}>
-								<Box
-									sx={{
-										position: 'relative',
-										display: 'inline-flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										width: '100%',
-									}}>
-									<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-										<Box
-											sx={{
-												width: 200,
-												height: 200,
-												borderRadius: '50%',
-												background: 'rgba(255, 255, 255, 0.15)',
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												border: '3px dashed rgba(255, 255, 255, 0.4)',
-											}}>
-											<Box sx={{ textAlign: 'center' }}>
-												<Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
-													{xpProfile.longestStreak}
-												</Typography>
-												<Typography variant="body2" sx={{ opacity: 0.9, textTransform: 'uppercase', letterSpacing: 1 }}>
-													{t('record')}
-												</Typography>
-											</Box>
-										</Box>
-									</Box>
-									<Box
-										sx={{
-											mt: 3,
-											textAlign: 'center',
-											background: 'rgba(255, 255, 255, 0.2)',
-											borderRadius: 3,
-											p: 2,
-											backdropFilter: 'blur(10px)',
-											border: '1px solid rgba(255, 255, 255, 0.3)',
-										}}>
-										<Typography
-											variant="h5"
-											sx={{
-												fontWeight: 700,
-												color: 'white',
-												textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-												fontSize: { xs: '1.2rem', md: '1.5rem' },
-											}}>
-											{t('bestStreak')}
-										</Typography>
-									</Box>
-								</Box>
-							</Grid>
+							<div className={cn(
+								'mt-6 text-center py-3 px-6 rounded-xl mx-auto max-w-xs',
+								'bg-gradient-to-r from-amber-500/10 to-orange-500/10',
+								'border border-amber-500/30'
+							)}>
+								<div className="flex items-center justify-center gap-2">
+									<Trophy className="w-5 h-5 text-amber-400" />
+									<span className={cn('font-bold', isDark ? 'text-amber-300' : 'text-amber-600')}>
+										Record: {xpProfile.longestStreak} jours
+									</span>
+									<Trophy className="w-5 h-5 text-amber-400" />
+								</div>
+							</div>
 						)}
-					</Grid>
-				</Paper>
-			)}
+					</div>
+				)}
 
-			{/* Goals - Epic Quest Board */}
-			{goals && (
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: { xs: 0, md: 3 },
-						p: { xs: 3, md: 5 },
-						mb: { xs: 2, md: 4 },
-						background: isDark
-							? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-							: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-						border: { xs: 'none', md: isDark ? '2px solid rgba(139, 92, 246, 0.3)' : '2px solid transparent' },
-						backgroundImage: {
-							xs: 'none',
-							md: isDark ? `
-								linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
-								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-							` : `
-								linear-gradient(white, white),
-								linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-							`
-						},
-						backgroundOrigin: 'border-box',
-						backgroundClip: 'padding-box, border-box',
-						boxShadow: {
-							xs: 'none',
-							md: isDark ? `
-								0 10px 40px rgba(139, 92, 246, 0.25),
-								0 2px 8px rgba(0, 0, 0, 0.08),
-								inset 0 1px 0 rgba(139, 92, 246, 0.1)
-							` : `
-								0 10px 40px rgba(139, 92, 246, 0.12),
-								0 2px 8px rgba(0, 0, 0, 0.04),
-								inset 0 1px 0 rgba(255, 255, 255, 0.9)
-							`
-						},
-						position: 'relative',
-						overflow: 'hidden',
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: 0,
-							left: 0,
-							right: 0,
-							height: '3px',
-							background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-							backgroundSize: '200% 100%',
-							animation: 'shimmer 4s ease-in-out infinite',
-							'@keyframes shimmer': {
-								'0%, 100%': { backgroundPosition: '0% 0%' },
-								'50%': { backgroundPosition: '100% 0%' },
-							},
-						},
-					}}>
-					<Box
-						sx={{
-							textAlign: 'center',
-							mb: 5,
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
-							<Box
-								sx={{
-									width: 48,
-									height: 48,
-									borderRadius: 2,
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
-								}}>
-								<FaTrophy style={{ fontSize: '1.5rem', color: 'white' }} />
-							</Box>
-							<Typography
-								variant="h4"
-								sx={{
-									fontWeight: 800,
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									backgroundClip: 'text',
-									fontSize: { xs: '1.8rem', md: '2.2rem' },
-									letterSpacing: '-0.5px',
-								}}>
-								{t('goals') || 'Objectifs'}
-							</Typography>
-						</Box>
-						<Typography
-							variant="body1"
-							sx={{
-								color: isDark ? '#cbd5e1' : '#64748B',
-								fontWeight: 500,
-								fontSize: { xs: '0.95rem', md: '1rem' },
-							}}>
-							Atteins tes objectifs et deviens encore meilleur ! 🎯
-						</Typography>
-					</Box>
-					<Grid container spacing={4} justifyContent="center">
-						{/* Daily Goal */}
-						{goals.daily && (
-							<Grid item xs={12} sm={4} md={4}>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-									}}>
-									<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-										<svg width="140" height="140" style={{ transform: 'rotate(-90deg)' }}>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="#E2E8F0"
-												strokeWidth="10"
-											/>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="url(#gradientDaily)"
-												strokeWidth="10"
-												strokeDasharray={`${2 * Math.PI * 60}`}
-												strokeDashoffset={`${2 * Math.PI * 60 * (1 - Math.min((goals.daily.current_xp / goals.daily.target_xp), 1))}`}
-												strokeLinecap="round"
-												style={{ transition: 'stroke-dashoffset 1s ease' }}
-											/>
-											<defs>
-												<linearGradient id="gradientDaily" x1="0%" y1="0%" x2="100%" y2="100%">
-													<stop offset="0%" stopColor="#667eea" />
-													<stop offset="100%" stopColor="#764ba2" />
-												</linearGradient>
-											</defs>
-										</svg>
-										<Box
-											sx={{
-												position: 'absolute',
-												top: '50%',
-												left: '50%',
-												transform: 'translate(-50%, -50%)',
-												textAlign: 'center',
-											}}>
-											<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#a78bfa' : '#667eea', lineHeight: 1 }}>
-												{Math.floor((goals.daily.current_xp / goals.daily.target_xp) * 100)}%
-											</Typography>
-										</Box>
-									</Box>
-									<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
-										📅 {t('dailyGoal')}
-									</Typography>
-									<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
-										{goals.daily.current_xp} / {goals.daily.target_xp} XP
-									</Typography>
-								</Box>
-							</Grid>
-						)}
+				{/* ============================================ */}
+				{/* QUEST BOARD - Goals Section */}
+				{/* ============================================ */}
+				{goals && (
+					<div className={cn(
+						'relative rounded-none md:rounded-3xl p-6 md:p-8 mb-8 overflow-hidden',
+						isDark
+							? 'bg-gradient-to-br from-slate-900/90 to-slate-800/90'
+							: 'bg-gradient-to-br from-white to-slate-50',
+						'md:border-2',
+						isDark ? 'md:border-amber-500/30' : 'md:border-amber-200',
+						'md:shadow-xl md:shadow-amber-500/10'
+					)}>
+						{/* Parchment texture */}
+						<div className="absolute inset-0 opacity-[0.02] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8ZmlsdGVyIGlkPSJub2lzZSI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44IiBudW1PY3RhdmVzPSI0IiAvPgogIDwvZmlsdGVyPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjEiLz4KPC9zdmc+')]" />
 
-						{/* Weekly Goal */}
-						{goals.weekly && (
-							<Grid item xs={12} sm={4} md={4}>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-									}}>
-									<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-										<svg width="140" height="140" style={{ transform: 'rotate(-90deg)' }}>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="#E2E8F0"
-												strokeWidth="10"
-											/>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="url(#gradientWeekly)"
-												strokeWidth="10"
-												strokeDasharray={`${2 * Math.PI * 60}`}
-												strokeDashoffset={`${2 * Math.PI * 60 * (1 - Math.min((goals.weekly.current_xp / goals.weekly.target_xp), 1))}`}
-												strokeLinecap="round"
-												style={{ transition: 'stroke-dashoffset 1s ease' }}
-											/>
-											<defs>
-												<linearGradient id="gradientWeekly" x1="0%" y1="0%" x2="100%" y2="100%">
-													<stop offset="0%" stopColor="#3B82F6" />
-													<stop offset="100%" stopColor="#2563EB" />
-												</linearGradient>
-											</defs>
-										</svg>
-										<Box
-											sx={{
-												position: 'absolute',
-												top: '50%',
-												left: '50%',
-												transform: 'translate(-50%, -50%)',
-												textAlign: 'center',
-											}}>
-											<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#93c5fd' : '#3B82F6', lineHeight: 1 }}>
-												{Math.floor((goals.weekly.current_xp / goals.weekly.target_xp) * 100)}%
-											</Typography>
-										</Box>
-									</Box>
-									<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
-										📊 {t('weeklyGoal')}
-									</Typography>
-									<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
-										{goals.weekly.current_xp} / {goals.weekly.target_xp} XP
-									</Typography>
-								</Box>
-							</Grid>
-						)}
+						{/* Header */}
+						<div className="flex items-center justify-center gap-4 mb-8">
+							<div className="hidden sm:block h-px flex-1 bg-gradient-to-r from-transparent to-amber-500/50" />
+							<div className="flex items-center gap-3">
+								<Scroll className={cn('w-8 h-8', isDark ? 'text-amber-400' : 'text-amber-600')} />
+								<h2 className={cn(
+									'text-2xl md:text-3xl font-black',
+									'bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent'
+								)}>
+									Tableau des Quetes
+								</h2>
+								<Scroll className={cn('w-8 h-8', isDark ? 'text-amber-400' : 'text-amber-600')} />
+							</div>
+							<div className="hidden sm:block h-px flex-1 bg-gradient-to-l from-transparent to-amber-500/50" />
+						</div>
 
-						{/* Monthly Goal */}
-						{goals.monthly && (
-							<Grid item xs={12} sm={4} md={4}>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-									}}>
-									<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-										<svg width="140" height="140" style={{ transform: 'rotate(-90deg)' }}>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="#E2E8F0"
-												strokeWidth="10"
-											/>
-											<circle
-												cx="70"
-												cy="70"
-												r="60"
-												fill="none"
-												stroke="url(#gradientMonthly)"
-												strokeWidth="10"
-												strokeDasharray={`${2 * Math.PI * 60}`}
-												strokeDashoffset={`${2 * Math.PI * 60 * (1 - Math.min((goals.monthly.current_xp / goals.monthly.target_xp), 1))}`}
-												strokeLinecap="round"
-												style={{ transition: 'stroke-dashoffset 1s ease' }}
-											/>
-											<defs>
-												<linearGradient id="gradientMonthly" x1="0%" y1="0%" x2="100%" y2="100%">
-													<stop offset="0%" stopColor="#10B981" />
-													<stop offset="100%" stopColor="#059669" />
-												</linearGradient>
-											</defs>
-										</svg>
-										<Box
-											sx={{
-												position: 'absolute',
-												top: '50%',
-												left: '50%',
-												transform: 'translate(-50%, -50%)',
-												textAlign: 'center',
-											}}>
-											<Typography variant="h3" sx={{ fontWeight: 800, color: isDark ? '#86efac' : '#10B981', lineHeight: 1 }}>
-												{Math.floor((goals.monthly.current_xp / goals.monthly.target_xp) * 100)}%
-											</Typography>
-										</Box>
-									</Box>
-									<Typography variant="h6" sx={{ fontWeight: 700, mt: 2, color: isDark ? '#f1f5f9' : '#1E293B' }}>
-										📆 {t('monthlyGoal')}
-									</Typography>
-									<Typography variant="body1" sx={{ color: isDark ? '#cbd5e1' : '#64748B', mt: 0.5 }}>
-										{goals.monthly.current_xp} / {goals.monthly.target_xp} XP
-									</Typography>
-								</Box>
-							</Grid>
-						)}
-					</Grid>
-				</Paper>
-			)}
+						{/* Quest Scrolls Grid */}
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+							<QuestScroll goal={goals.daily} type="daily" isDark={isDark} t={t} />
+							<QuestScroll goal={goals.weekly} type="weekly" isDark={isDark} t={t} />
+							<QuestScroll goal={goals.monthly} type="monthly" isDark={isDark} t={t} />
+						</div>
+					</div>
+				)}
 
-			{/* Badges Section - Hall of Achievements */}
-			<Paper
-				elevation={0}
-				sx={{
-					borderRadius: { xs: 0, md: 3 },
-					p: { xs: 3, sm: 4, md: 5 },
-					mb: { xs: 0, md: 4 },
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.9) 100%)',
-					border: { xs: 'none', md: isDark ? '2px solid rgba(139, 92, 246, 0.3)' : '2px solid transparent' },
-					backgroundImage: {
-						xs: 'none',
-						md: isDark ? `
-							linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
-							linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-						` : `
-							linear-gradient(white, white),
-							linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)
-						`
-					},
-					backgroundOrigin: 'border-box',
-					backgroundClip: 'padding-box, border-box',
-					boxShadow: {
-						xs: 'none',
-						md: isDark ? `
-							0 10px 40px rgba(139, 92, 246, 0.25),
-							0 2px 8px rgba(0, 0, 0, 0.08),
-							inset 0 1px 0 rgba(139, 92, 246, 0.1)
-						` : `
-							0 10px 40px rgba(139, 92, 246, 0.12),
-							0 2px 8px rgba(0, 0, 0, 0.04),
-							inset 0 1px 0 rgba(255, 255, 255, 0.9)
-						`
-					},
-					position: 'relative',
-					overflow: 'hidden',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						height: '3px',
-						background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-						backgroundSize: '200% 100%',
-						animation: 'shimmer 4s ease-in-out infinite',
-						'@keyframes shimmer': {
-							'0%, 100%': { backgroundPosition: '0% 0%' },
-							'50%': { backgroundPosition: '100% 0%' },
-						},
-					},
-				}}>
-				<Box
-					sx={{
-						textAlign: 'center',
-						mb: 5,
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
-						<Box
-							sx={{
-								width: 48,
-								height: 48,
-								borderRadius: 2,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
-							}}>
-							<FaTrophy style={{ fontSize: '1.5rem', color: 'white' }} />
-						</Box>
-						<Typography
-							variant="h4"
-							sx={{
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								fontSize: { xs: '1.8rem', md: '2.2rem' },
-								letterSpacing: '-0.5px',
-							}}>
-							{t('badges')}
-						</Typography>
-					</Box>
-					<Typography
-						variant="body1"
-						sx={{
-							color: isDark ? '#cbd5e1' : '#64748B',
-							fontWeight: 500,
-							fontSize: { xs: '0.95rem', md: '1rem' },
-						}}>
-						Collectionne tous les badges et montre ta progression ! 🏅
-					</Typography>
-				</Box>
+				{/* ============================================ */}
+				{/* TROPHY HALL - Badges Section */}
+				{/* ============================================ */}
+				<div className={cn(
+					'relative rounded-none md:rounded-3xl p-6 md:p-8 mb-8 overflow-hidden',
+					isDark
+						? 'bg-gradient-to-br from-slate-900/90 to-slate-800/90'
+						: 'bg-gradient-to-br from-white to-slate-50',
+					'md:border-2',
+					isDark ? 'md:border-violet-500/30' : 'md:border-violet-200',
+					'md:shadow-xl md:shadow-violet-500/10'
+				)}>
+					{/* Header */}
+					<div className="flex items-center justify-center gap-4 mb-8">
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-r from-transparent to-violet-500/50" />
+						<div className="flex items-center gap-3">
+							<Castle className={cn('w-8 h-8', isDark ? 'text-violet-400' : 'text-violet-600')} />
+							<h2 className={cn(
+								'text-2xl md:text-3xl font-black',
+								'bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent'
+							)}>
+								Salle des Trophees
+							</h2>
+							<Castle className={cn('w-8 h-8', isDark ? 'text-violet-400' : 'text-violet-600')} />
+						</div>
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-l from-transparent to-violet-500/50" />
+					</div>
 
-				{/* Badges Grid */}
-				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-					{Object.entries(badgesConfig).map(([key, category]) => {
-						const isExpandedMobile = expandedBadges[key]
-						const toggleExpanded = () => {
-							setExpandedBadges(prev => ({
-								...prev,
-								[key]: !prev[key]
-							}))
-						}
+					{/* Badge Categories */}
+					<div className="space-y-8">
+						{Object.entries(badgesConfig).map(([key, category]) => {
+							const isExpanded = expandedBadges[key]
+							const CategoryIcon = category.icon
+							const unlockedCount = category.badges.filter(b => b.isUnlocked).length
 
-						return (
-							<Box key={key}>
-								{/* Category Header */}
-								<Box
-									onClick={toggleExpanded}
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: 2,
-										mb: 3,
-										pb: 2,
-										borderBottom: '2px solid #E2E8F0',
-										cursor: { xs: 'pointer', md: 'default' },
-										transition: 'all 0.3s ease',
-										'&:hover': {
-											backgroundColor: { xs: alpha(category.color, 0.05), md: 'transparent' },
-										},
-									}}>
-									<Box
-										sx={{
-											width: 40,
-											height: 40,
-											borderRadius: 2,
-											background: category.color,
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											color: 'white',
-										}}>
-										{category.icon}
-									</Box>
-									<Typography
-										variant="h6"
-										sx={{
-											fontWeight: 700,
-											color: isDark ? '#f1f5f9' : '#1E293B',
-											fontSize: { xs: '1.1rem', md: '1.25rem' },
-											flex: 1,
-										}}>
-										{category.title}
-									</Typography>
-									<Box
-										sx={{
-											display: { xs: 'flex', md: 'none' },
-											alignItems: 'center',
-											justifyContent: 'center',
-											width: 32,
-											height: 32,
-											borderRadius: '50%',
-											background: alpha(category.color, 0.1),
-											color: category.color,
-											transition: 'all 0.3s ease',
-										}}>
-										{isExpandedMobile ? <ExpandLess /> : <ExpandMore />}
-									</Box>
-								</Box>
+							return (
+								<div key={key} className={cn(
+									'rounded-xl overflow-hidden',
+									isDark ? 'bg-slate-800/50' : 'bg-slate-100/50',
+									'border',
+									isDark ? 'border-slate-700/50' : 'border-slate-200'
+								)}>
+									{/* Category Header */}
+									<button
+										onClick={() => setExpandedBadges(prev => ({ ...prev, [key]: !prev[key] }))}
+										className={cn(
+											'w-full flex items-center gap-4 p-4',
+											'transition-colors',
+											isDark ? 'hover:bg-slate-700/30' : 'hover:bg-slate-200/50'
+										)}
+									>
+										<div
+											className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+											style={{ backgroundColor: category.color }}
+										>
+											<CategoryIcon className="w-6 h-6 text-white" />
+										</div>
+										<div className="flex-1 text-left">
+											<span className={cn(
+												'text-lg font-bold',
+												isDark ? 'text-white' : 'text-slate-800'
+											)}>
+												{category.title}
+											</span>
+											<div className="flex items-center gap-2 mt-1">
+												<div className="flex gap-1">
+													{category.badges.map((b, i) => (
+														<div
+															key={i}
+															className={cn(
+																'w-2 h-2 rounded-full',
+																b.isUnlocked
+																	? 'bg-amber-400'
+																	: isDark ? 'bg-slate-600' : 'bg-slate-300'
+															)}
+														/>
+													))}
+												</div>
+												<span className={cn(
+													'text-sm',
+													isDark ? 'text-slate-400' : 'text-slate-500'
+												)}>
+													{unlockedCount}/{category.badges.length}
+												</span>
+											</div>
+										</div>
+										<div className="md:hidden">
+											{isExpanded ? (
+												<ChevronUp className={cn('w-6 h-6', isDark ? 'text-slate-400' : 'text-slate-500')} />
+											) : (
+												<ChevronDown className={cn('w-6 h-6', isDark ? 'text-slate-400' : 'text-slate-500')} />
+											)}
+										</div>
+									</button>
 
-								{/* Badges Row */}
-								<Box
-									sx={{
-										display: { xs: isExpandedMobile ? 'flex' : 'none', md: 'flex' },
-										flexWrap: 'wrap',
-										gap: 2.5,
-										justifyContent: { xs: 'center', sm: 'flex-start' },
-									}}>
-								{category.badges.map((badge, index) => {
-									return (
-										<Box
-											key={index}
-											sx={{
-												position: 'relative',
-												display: 'flex',
-												flexDirection: 'column',
-												alignItems: 'center',
-												gap: 1,
-											}}>
-											{/* Badge circle */}
-											<Box sx={{ position: 'relative', display: 'inline-flex' }}>
-												<Box
-													sx={{
-														width: { xs: 90, sm: 100 },
-														height: { xs: 90, sm: 100 },
-														borderRadius: '50%',
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														position: 'relative',
-														overflow: 'hidden',
-														border: badge.isUnlocked
-															? `3px solid ${category.color}`
-															: '3px solid rgba(203, 213, 225, 0.5)',
-														boxShadow: badge.isUnlocked
-															? `0 4px 12px ${alpha(category.color, 0.3)}`
-															: '0 2px 8px rgba(0, 0, 0, 0.08)',
-														transition: 'all 0.3s ease',
-													}}>
-													{/* Circle content - only the icon */}
-													<Box sx={{
-														textAlign: 'center',
-														zIndex: 1,
-														position: 'relative',
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														width: '100%',
-														height: '100%',
-														filter: badge.isUnlocked ? 'none' : 'grayscale(100%) opacity(0.4)',
-														transition: 'filter 0.3s ease',
-													}}>
-														{badge.icon}
-													</Box>
-												</Box>
-											</Box>
+									{/* Badges Display */}
+									<div className={cn(
+										'px-4 pb-4',
+										'md:block',
+										isExpanded ? 'block' : 'hidden md:block'
+									)}>
+										<div className="flex flex-wrap gap-4 justify-center sm:justify-start pt-2">
+											{category.badges.map((badge, index) => (
+												<TrophyCabinet
+													key={index}
+													badge={badge}
+													category={category}
+													index={index}
+													isDark={isDark}
+												/>
+											))}
+										</div>
+									</div>
+								</div>
+							)
+						})}
+					</div>
+				</div>
 
-											{/* Number under circle - Medieval Fantasy Design */}
-											<Box
-												sx={{
-													mt: 1.5,
-													position: 'relative',
-													display: 'inline-flex',
-												}}>
-												<Box
-													sx={{
-														position: 'relative',
-														px: { xs: 2.5, sm: 3 },
-														py: { xs: 1, sm: 1.2 },
-														borderRadius: '8px',
-														background: badge.isUnlocked
-															? 'linear-gradient(145deg, #2d2416 0%, #1a1410 100%)'
-															: 'linear-gradient(145deg, #4a5568 0%, #2d3748 100%)',
-														boxShadow: badge.isUnlocked
-															? `0 4px 8px rgba(0, 0, 0, 0.6), inset 0 1px 1px ${alpha(category.color, 0.3)}, inset 0 -1px 1px rgba(0, 0, 0, 0.8)`
-															: '0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
-														border: badge.isUnlocked
-															? `3px solid ${category.color}`
-															: '2px solid rgba(100, 116, 139, 0.6)',
-														transition: 'all 0.3s ease',
-														'&::before': {
-															content: '""',
-															position: 'absolute',
-															top: 0,
-															left: 0,
-															right: 0,
-															bottom: 0,
-															borderRadius: '6px',
-															background: badge.isUnlocked
-																? `radial-gradient(circle at 30% 30%, ${alpha(category.color, 0.15)} 0%, transparent 70%)`
-																: 'none',
-															pointerEvents: 'none',
-														},
-														'&::after': {
-															content: '""',
-															position: 'absolute',
-															top: 0,
-															left: 0,
-															right: 0,
-															bottom: 0,
-															borderRadius: '6px',
-															background: badge.isUnlocked
-																? `
-																	repeating-linear-gradient(
-																		0deg,
-																		transparent,
-																		transparent 2px,
-																		rgba(0, 0, 0, 0.03) 2px,
-																		rgba(0, 0, 0, 0.03) 4px
-																	),
-																	repeating-linear-gradient(
-																		90deg,
-																		transparent,
-																		transparent 2px,
-																		rgba(0, 0, 0, 0.03) 2px,
-																		rgba(0, 0, 0, 0.03) 4px
-																	)
-																`
-																: 'none',
-															opacity: 0.3,
-															pointerEvents: 'none',
-														},
-													}}>
-													<Typography
-														variant="h5"
-														sx={{
-															fontWeight: 800,
-															color: badge.isUnlocked ? category.color : isDark ? '#64748b' : '#94a3b8',
-															fontSize: { xs: '1.1rem', sm: '1.25rem' },
-															textAlign: 'center',
-															lineHeight: 1,
-															letterSpacing: '2px',
-															textShadow: badge.isUnlocked
-																? `0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 0 ${alpha(category.color, 0.5)}`
-																: '0 1px 2px rgba(0, 0, 0, 0.6)',
-															position: 'relative',
-															zIndex: 1,
-															fontFamily: '"Cinzel", serif',
-														}}>
-														{badge.value}
-													</Typography>
-												</Box>
-											</Box>
-										</Box>
-									)
-								})}
-								</Box>
-							</Box>
-						)
-					})}
-				</Box>
-			</Paper>
+				{/* ============================================ */}
+				{/* GRIMOIRE - Vocabulary Stats */}
+				{/* ============================================ */}
+				<div className={cn(
+					'relative rounded-none md:rounded-3xl p-6 md:p-8 mb-8 overflow-hidden',
+					isDark
+						? 'bg-gradient-to-br from-slate-900/90 to-slate-800/90'
+						: 'bg-gradient-to-br from-white to-slate-50',
+					'md:border-2',
+					isDark ? 'md:border-emerald-500/30' : 'md:border-emerald-200',
+					'md:shadow-xl md:shadow-emerald-500/10'
+				)}>
+					{/* Header */}
+					<div className="flex items-center justify-center gap-4 mb-8">
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-r from-transparent to-emerald-500/50" />
+						<div className="flex items-center gap-3">
+							<BookOpen className={cn('w-8 h-8', isDark ? 'text-emerald-400' : 'text-emerald-600')} />
+							<h2 className={cn(
+								'text-2xl md:text-3xl font-black',
+								'bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent'
+							)}>
+								{t('vocabularySection')}
+							</h2>
+							<BookOpen className={cn('w-8 h-8', isDark ? 'text-emerald-400' : 'text-emerald-600')} />
+						</div>
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-l from-transparent to-emerald-500/50" />
+					</div>
 
-			{/* Vocabulary Section */}
-			<Box sx={{ mb: 6 }}>
-				<Box
-					sx={{
-						mb: 4,
-						display: 'flex',
-						alignItems: 'center',
-						gap: 2,
-					}}>
-					<Box
-						sx={{
-							width: 48,
-							height: 48,
-							borderRadius: 2,
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							boxShadow: '0 4px 16px rgba(139, 92, 246, 0.3)',
-						}}>
-						<FaBook style={{ fontSize: '1.5rem', color: 'white' }} />
-					</Box>
-					<Box>
-						<Typography
-							variant="h4"
-							sx={{
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								fontSize: { xs: '1.8rem', md: '2rem' },
-								letterSpacing: '-0.5px',
-							}}>
-							{t('vocabularySection')}
-						</Typography>
-						<Typography
-							variant="body1"
-							sx={{
-								color: isDark ? '#cbd5e1' : '#64748B',
-								fontWeight: 500,
-								fontSize: { xs: '0.9rem', md: '1rem' },
-								mt: 0.5,
-							}}>
-							Ton vocabulaire grandit chaque jour ! 📚✨
-						</Typography>
-					</Box>
-				</Box>
-				<Grid container spacing={3} sx={{ mb: 4 }}>
-					{vocabularyCards.map((card, index) => (
-						<Grid item xs={12} sm={6} md={3} key={index}>
-							<Card
-								elevation={0}
-								sx={{
-									borderRadius: 2,
-									overflow: 'visible',
-									position: 'relative',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									border: '2px solid transparent',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
-									backgroundImage: isDark ? `
-										linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
-										linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
-									` : `
-										linear-gradient(white, white),
-										linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
-									`,
-									backgroundOrigin: 'border-box',
-									backgroundClip: 'padding-box, border-box',
-									boxShadow: isDark ? `
-										0 8px 24px ${alpha(card.color, 0.2)},
-										0 2px 6px rgba(0, 0, 0, 0.08),
-										inset 0 1px 0 ${alpha(card.color, 0.1)}
-									` : `
-										0 8px 24px ${alpha(card.color, 0.12)},
-										0 2px 6px rgba(0, 0, 0, 0.04),
-										inset 0 1px 0 rgba(255, 255, 255, 0.9)
-									`,
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										height: '3px',
-										background: card.gradient,
-										zIndex: 1,
-										borderRadius: '2px 2px 0 0',
-									},
-									'&:hover': {
-										transform: 'translateY(-8px)',
-										boxShadow: isDark ? `
-											0 12px 32px ${alpha(card.color, 0.3)},
-											0 4px 12px rgba(0, 0, 0, 0.12),
-											inset 0 1px 0 ${alpha(card.color, 0.15)}
-										` : `
-											0 12px 32px ${alpha(card.color, 0.25)},
-											0 4px 12px rgba(0, 0, 0, 0.08),
-											inset 0 1px 0 rgba(255, 255, 255, 0.9)
-										`,
-										'& .card-icon': {
-											transform: 'scale(1.15)',
-											filter: `drop-shadow(0 4px 8px ${alpha(card.color, 0.4)})`,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										height: 0,
-									}}
-								/>
-								<CardContent sx={{ p: 3.5 }}>
-									<Box
-										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											mb: 3,
-										}}>
-										<Box
-											className="card-icon"
-											sx={{
-												width: 72,
-												height: 72,
-												borderRadius: 2,
-												background: `linear-gradient(135deg, ${alpha(card.color, 0.12)} 0%, ${alpha(card.color, 0.08)} 100%)`,
-												border: `2px solid ${alpha(card.color, 0.3)}`,
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												color: card.color,
-												fontSize: '2rem',
-												transition: 'all 0.3s ease',
-												boxShadow: `
-													inset 0 1px 0 rgba(255, 255, 255, 0.5),
-													0 4px 12px ${alpha(card.color, 0.2)}
-												`,
-												position: 'relative',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													inset: 0,
-													background: `linear-gradient(135deg, transparent 0%, ${alpha(card.color, 0.05)} 100%)`,
-													borderRadius: 2,
-												},
-											}}>
-											{card.icon}
-										</Box>
-									</Box>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 900,
-											color: isDark ? '#f1f5f9' : '#1E293B',
-											mb: 1.5,
-											textAlign: 'center',
-											fontSize: '2.5rem',
-										}}>
-										{card.value}
-									</Typography>
-									<Typography
-										variant='body2'
-										sx={{
-											color: isDark ? '#cbd5e1' : '#64748B',
-											fontWeight: 600,
-											textAlign: 'center',
-											lineHeight: 1.5,
-										}}>
-										{card.title}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-					))}
-				</Grid>
-			</Box>
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+						{vocabularyCards.map((card, index) => (
+							<GrimoireCard
+								key={index}
+								title={card.title}
+								value={card.value}
+								icon={card.icon}
+								type={card.type}
+								isDark={isDark}
+							/>
+						))}
+					</div>
+				</div>
 
-			{/* Materials Section */}
-			<Box sx={{ mb: 6 }}>
-				<Box
-					sx={{
-						mb: 4,
-						display: 'flex',
-						alignItems: 'center',
-						gap: 2,
-					}}>
-					<Box
-						sx={{
-							width: 48,
-							height: 48,
-							borderRadius: 2,
-							background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
-						}}>
-						<FaVideo style={{ fontSize: '1.5rem', color: 'white' }} />
-					</Box>
-					<Box>
-						<Typography
-							variant="h4"
-							sx={{
-								fontWeight: 800,
-								background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-								backgroundClip: 'text',
-								fontSize: { xs: '1.8rem', md: '2rem' },
-								letterSpacing: '-0.5px',
-							}}>
-							{t('materialsSection')}
-						</Typography>
-						<Typography
-							variant="body1"
-							sx={{
-								color: isDark ? '#cbd5e1' : '#64748B',
-								fontWeight: 500,
-								fontSize: { xs: '0.9rem', md: '1rem' },
-								mt: 0.5,
-							}}>
-							Explore et apprends avec tes contenus favoris ! 🎬🎧
-						</Typography>
-					</Box>
-				</Box>
-				<Grid container spacing={3} sx={{ mb: 4 }}>
-					{materialsCards.map((card, index) => (
-						<Grid item xs={12} sm={6} md={6} key={index}>
-							<Card
-								elevation={0}
-								sx={{
-									borderRadius: 2,
-									overflow: 'visible',
-									position: 'relative',
-									transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-									border: '2px solid transparent',
-									background: isDark
-										? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-										: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.95) 100%)',
-									backgroundImage: isDark ? `
-										linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.95)),
-										linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
-									` : `
-										linear-gradient(white, white),
-										linear-gradient(135deg, ${alpha(card.color, 0.3)} 0%, ${alpha(card.color, 0.15)} 100%)
-									`,
-									backgroundOrigin: 'border-box',
-									backgroundClip: 'padding-box, border-box',
-									boxShadow: isDark ? `
-										0 8px 24px ${alpha(card.color, 0.2)},
-										0 2px 6px rgba(0, 0, 0, 0.08),
-										inset 0 1px 0 ${alpha(card.color, 0.1)}
-									` : `
-										0 8px 24px ${alpha(card.color, 0.12)},
-										0 2px 6px rgba(0, 0, 0, 0.04),
-										inset 0 1px 0 rgba(255, 255, 255, 0.9)
-									`,
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										height: '3px',
-										background: card.gradient,
-										zIndex: 1,
-										borderRadius: '2px 2px 0 0',
-									},
-									'&:hover': {
-										transform: 'translateY(-8px)',
-										boxShadow: isDark ? `
-											0 12px 32px ${alpha(card.color, 0.3)},
-											0 4px 12px rgba(0, 0, 0, 0.12),
-											inset 0 1px 0 ${alpha(card.color, 0.15)}
-										` : `
-											0 12px 32px ${alpha(card.color, 0.25)},
-											0 4px 12px rgba(0, 0, 0, 0.08),
-											inset 0 1px 0 rgba(255, 255, 255, 0.9)
-										`,
-										'& .card-icon': {
-											transform: 'scale(1.15)',
-											filter: `drop-shadow(0 4px 8px ${alpha(card.color, 0.4)})`,
-										},
-									},
-								}}>
-								<Box
-									sx={{
-										height: 0,
-									}}
-								/>
-								<CardContent sx={{ p: 3.5 }}>
-									<Box
-										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											mb: 3,
-										}}>
-										<Box
-											className="card-icon"
-											sx={{
-												width: 72,
-												height: 72,
-												borderRadius: 2,
-												background: `linear-gradient(135deg, ${alpha(card.color, 0.12)} 0%, ${alpha(card.color, 0.08)} 100%)`,
-												border: `2px solid ${alpha(card.color, 0.3)}`,
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												color: card.color,
-												fontSize: '2rem',
-												transition: 'all 0.3s ease',
-												boxShadow: `
-													inset 0 1px 0 rgba(255, 255, 255, 0.5),
-													0 4px 12px ${alpha(card.color, 0.2)}
-												`,
-												position: 'relative',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													inset: 0,
-													background: `linear-gradient(135deg, transparent 0%, ${alpha(card.color, 0.05)} 100%)`,
-													borderRadius: 2,
-												},
-											}}>
-											{card.icon}
-										</Box>
-									</Box>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 900,
-											color: isDark ? '#f1f5f9' : '#1E293B',
-											mb: 1.5,
-											textAlign: 'center',
-											fontSize: '2.5rem',
-										}}>
-										{card.value}
-									</Typography>
-									<Typography
-										variant='body2'
-										sx={{
-											color: isDark ? '#cbd5e1' : '#64748B',
-											fontWeight: 600,
-											textAlign: 'center',
-											lineHeight: 1.5,
-										}}>
-										{card.title}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-					))}
-				</Grid>
-			</Box>
-		</Container>
+				{/* ============================================ */}
+				{/* ADVENTURE LOG - Materials Stats */}
+				{/* ============================================ */}
+				<div className={cn(
+					'relative rounded-none md:rounded-3xl p-6 md:p-8 overflow-hidden',
+					isDark
+						? 'bg-gradient-to-br from-slate-900/90 to-slate-800/90'
+						: 'bg-gradient-to-br from-white to-slate-50',
+					'md:border-2',
+					isDark ? 'md:border-blue-500/30' : 'md:border-blue-200',
+					'md:shadow-xl md:shadow-blue-500/10'
+				)}>
+					{/* Header */}
+					<div className="flex items-center justify-center gap-4 mb-8">
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-r from-transparent to-blue-500/50" />
+						<div className="flex items-center gap-3">
+							<Video className={cn('w-8 h-8', isDark ? 'text-blue-400' : 'text-blue-600')} />
+							<h2 className={cn(
+								'text-2xl md:text-3xl font-black',
+								'bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent'
+							)}>
+								{t('materialsSection')}
+							</h2>
+							<Video className={cn('w-8 h-8', isDark ? 'text-blue-400' : 'text-blue-600')} />
+						</div>
+						<div className="hidden sm:block h-px flex-1 bg-gradient-to-l from-transparent to-blue-500/50" />
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+						{materialsCards.map((card, index) => (
+							<GrimoireCard
+								key={index}
+								title={card.title}
+								value={card.value}
+								icon={card.icon}
+								type={card.type}
+								isDark={isDark}
+							/>
+						))}
+					</div>
+				</div>
+			</div>
+
+			{/* Global Animations */}
+			<style jsx global>{`
+				@keyframes float-slow {
+					0%, 100% { transform: translateY(0px) rotate(0deg); }
+					50% { transform: translateY(-20px) rotate(5deg); }
+				}
+				@keyframes float-medium {
+					0%, 100% { transform: translateY(0px) rotate(0deg); }
+					50% { transform: translateY(-15px) rotate(-5deg); }
+				}
+				@keyframes float-fast {
+					0%, 100% { transform: translateY(0px); }
+					50% { transform: translateY(-10px); }
+				}
+				@keyframes wave-slow {
+					0% { transform: translateX(0); }
+					100% { transform: translateX(-50%); }
+				}
+				@keyframes bounce-slow {
+					0%, 100% { transform: translateX(-50%) translateY(0); }
+					50% { transform: translateX(-50%) translateY(-5px); }
+				}
+				@keyframes shimmer {
+					0% { transform: translateX(-100%); }
+					100% { transform: translateX(100%); }
+				}
+				.animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+				.animate-float-medium { animation: float-medium 4s ease-in-out infinite; }
+				.animate-float-fast { animation: float-fast 3s ease-in-out infinite; }
+				.animate-wave-slow { animation: wave-slow 4s linear infinite; }
+				.animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+				.animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+			`}</style>
+		</div>
 	)
 }
 

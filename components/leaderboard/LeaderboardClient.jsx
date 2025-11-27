@@ -1,116 +1,117 @@
 'use client'
 
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
+import { getAvatarUrl, getAvatarBorderColor } from '@/utils/avatars'
 import {
-	Box,
-	Container,
-	Typography,
-	Paper,
-	Tabs,
-	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Avatar,
-	Chip,
-	alpha,
-	useTheme,
-	useMediaQuery,
-	Pagination as MuiPagination,
-	PaginationItem,
-} from '@mui/material'
-import {
-	EmojiEvents as TrophyIcon,
+	Trophy,
 	TrendingUp,
-	CalendarViewWeek,
-	CalendarMonth,
+	CalendarDays,
+	CalendarRange,
+	Coins,
+	Flame,
 	ChevronLeft,
 	ChevronRight,
-} from '@mui/icons-material'
-import { FaFire, FaCoins } from 'react-icons/fa'
-import { useTranslations } from 'next-intl'
-import { getAvatarUrl, getAvatarBorderColor } from '@/utils/avatars'
+	Crown,
+	Medal,
+	Award,
+	Sparkles,
+	Zap,
+	Target,
+	Shield,
+	Swords,
+} from 'lucide-react'
 
-export default function LeaderboardClient({ leaderboardData, isGuest = false }) {
-	const t = useTranslations('common')
-	const theme = useTheme()
-	const [tabValue, setTabValue] = useState(0)
-	const [currentPage, setCurrentPage] = useState(1)
-	const usersPerPage = 10
+// Tab configuration
+const TABS = [
+	{ id: 'xp', icon: TrendingUp, color: 'blue', label: 'totalXPTab', labelMobile: 'totalXPTabMobile' },
+	{ id: 'weekly', icon: CalendarDays, color: 'violet', label: 'weeklyTab', labelMobile: 'weeklyTabMobile' },
+	{ id: 'monthly', icon: CalendarRange, color: 'pink', label: 'monthlyTab', labelMobile: 'monthlyTabMobile' },
+	{ id: 'gold', icon: Coins, color: 'amber', label: 'goldTab', labelMobile: 'goldTab' },
+	{ id: 'streak', icon: Flame, color: 'emerald', label: 'streakTab', labelMobile: 'streakTab' },
+]
 
-	// Fix hydration mismatch: sync theme and media query only on client
-	const [isDark, setIsDark] = useState(false)
-	const [isMobile, setIsMobile] = useState(false)
+const TAB_COLORS = {
+	blue: { active: 'text-blue-500', bg: 'bg-blue-500', border: 'border-blue-500', light: 'text-blue-400', dark: 'text-blue-300' },
+	violet: { active: 'text-violet-500', bg: 'bg-violet-500', border: 'border-violet-500', light: 'text-violet-400', dark: 'text-violet-300' },
+	pink: { active: 'text-pink-500', bg: 'bg-pink-500', border: 'border-pink-500', light: 'text-pink-400', dark: 'text-pink-300' },
+	amber: { active: 'text-amber-500', bg: 'bg-amber-500', border: 'border-amber-500', light: 'text-amber-400', dark: 'text-amber-300' },
+	emerald: { active: 'text-emerald-500', bg: 'bg-emerald-500', border: 'border-emerald-500', light: 'text-emerald-400', dark: 'text-emerald-300' },
+}
 
-	useEffect(() => {
-		setIsDark(theme.palette.mode === 'dark')
-	}, [theme.palette.mode])
-
-	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 600px)')
-		setIsMobile(mediaQuery.matches)
-
-		const handler = e => setIsMobile(e.matches)
-		mediaQuery.addEventListener('change', handler)
-		return () => mediaQuery.removeEventListener('change', handler)
-	}, [])
-
-	const handleTabChange = (event, newValue) => {
-		setTabValue(newValue)
-		setCurrentPage(1)
+// Rank styling for top 3
+const getRankStyle = (rank, isDark) => {
+	if (rank === 1) return {
+		bg: isDark ? 'bg-gradient-to-r from-amber-900/40 via-amber-800/30 to-amber-900/40' : 'bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100',
+		border: 'border-l-4 border-l-amber-500',
+		icon: Crown,
+		color: 'text-amber-500',
+		glow: 'shadow-amber-500/20',
 	}
-
-	const handlePageChange = (event, value) => {
-		setCurrentPage(value)
-		window.scrollTo({ top: 0, behavior: 'smooth' })
+	if (rank === 2) return {
+		bg: isDark ? 'bg-gradient-to-r from-slate-700/40 via-slate-600/30 to-slate-700/40' : 'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200',
+		border: 'border-l-4 border-l-slate-400',
+		icon: Medal,
+		color: 'text-slate-400',
+		glow: 'shadow-slate-400/20',
 	}
-
-	const getRankColor = rank => {
-		if (rank === 1) return '#FFD700' // Gold
-		if (rank === 2) return '#C0C0C0' // Silver
-		if (rank === 3) return '#CD7F32' // Bronze
-		return '#64748B' // Default
+	if (rank === 3) return {
+		bg: isDark ? 'bg-gradient-to-r from-orange-900/40 via-orange-800/30 to-orange-900/40' : 'bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100',
+		border: 'border-l-4 border-l-orange-600',
+		icon: Award,
+		color: 'text-orange-600',
+		glow: 'shadow-orange-500/20',
 	}
+	return null
+}
 
-	const getRankIcon = rank => {
-		if (rank === 1) return '🥇'
-		if (rank === 2) return '🥈'
-		if (rank === 3) return '🥉'
-		return `#${rank}`
-	}
+// Stat Card for user stats
+const StatCard = ({ label, value, icon: Icon, gradient, isDark }) => (
+	<div className={cn(
+		'flex flex-col items-center justify-center p-3 rounded-xl',
+		isDark ? 'bg-slate-800/50' : 'bg-slate-50',
+		'border',
+		isDark ? 'border-slate-700/50' : 'border-slate-200'
+	)}>
+		<div className={cn(
+			'w-8 h-8 rounded-lg flex items-center justify-center mb-1',
+			'bg-gradient-to-br',
+			gradient
+		)}>
+			<Icon className="w-4 h-4 text-white" />
+		</div>
+		<span className={cn(
+			'text-lg font-bold',
+			isDark ? 'text-white' : 'text-slate-800'
+		)}>
+			{value}
+		</span>
+		<span className={cn(
+			'text-xs font-medium uppercase tracking-wide',
+			isDark ? 'text-slate-400' : 'text-slate-500'
+		)}>
+			{label}
+		</span>
+	</div>
+)
 
-	const getTabData = () => {
-		if (!leaderboardData) return []
+// Leaderboard Row Component
+const LeaderboardRow = ({ entry, tabValue, isDark, isMobile, t }) => {
+	const rankStyle = getRankStyle(entry.rank, isDark)
+	const isTopThree = entry.rank <= 3
+	const tabColor = TAB_COLORS[TABS[tabValue].color]
+
+	const getValueLabel = () => {
 		switch (tabValue) {
 			case 0:
-				return leaderboardData.topXp
 			case 1:
-				return leaderboardData.topWeekly || []
-			case 2:
-				return leaderboardData.topMonthly || []
-			case 3:
-				return leaderboardData.topGold
-			case 4:
-				return leaderboardData.topStreak
-			default:
-				return []
-		}
-	}
-
-	const getValueLabel = entry => {
-		switch (tabValue) {
-			case 0:
-				return `${entry.value.toLocaleString()} XP`
-			case 1:
-				return `${entry.value.toLocaleString()} XP`
 			case 2:
 				return `${entry.value.toLocaleString()} XP`
 			case 3:
-				return `${entry.value.toLocaleString()} 💰`
+				return `${entry.value.toLocaleString()}`
 			case 4:
 				return `${entry.value} ${t('days')}`
 			default:
@@ -118,936 +119,578 @@ export default function LeaderboardClient({ leaderboardData, isGuest = false }) 
 		}
 	}
 
-	const getUserRank = () => {
-		if (!leaderboardData || !leaderboardData.userRanks) return null
+	return (
+		<div className={cn(
+			'flex items-center gap-3 md:gap-4 p-3 md:p-4 transition-all duration-200',
+			isTopThree && rankStyle?.bg,
+			isTopThree && rankStyle?.border,
+			!isTopThree && (isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'),
+			entry.isCurrentUser && !isTopThree && (isDark ? 'bg-violet-900/20 border-r-4 border-r-violet-500' : 'bg-violet-50 border-r-4 border-r-violet-500'),
+			entry.isCurrentUser && isTopThree && 'border-r-4 border-r-violet-500',
+			'border-b',
+			isDark ? 'border-slate-700/50' : 'border-slate-100'
+		)}>
+			{/* Rank */}
+			<div className="w-12 md:w-16 flex-shrink-0">
+				{isTopThree ? (
+					<div className={cn(
+						'w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center',
+						'bg-gradient-to-br',
+						entry.rank === 1 && 'from-amber-400 to-amber-600',
+						entry.rank === 2 && 'from-slate-300 to-slate-500',
+						entry.rank === 3 && 'from-orange-400 to-orange-600',
+						'shadow-lg',
+						rankStyle?.glow
+					)}>
+						{rankStyle?.icon && <rankStyle.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />}
+					</div>
+				) : (
+					<span className={cn(
+						'text-lg md:text-xl font-bold',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
+						#{entry.rank}
+					</span>
+				)}
+			</div>
+
+			{/* Avatar & Username */}
+			<div className="flex items-center gap-3 flex-1 min-w-0">
+				<div className="relative flex-shrink-0">
+					<Image
+						src={getAvatarUrl(entry.avatarId || entry.avatar_id)}
+						alt={entry.username}
+						width={isMobile ? 48 : 56}
+						height={isMobile ? 48 : 56}
+						className={cn(
+							'rounded-full',
+							isTopThree && 'ring-2 ring-offset-2',
+							entry.rank === 1 && 'ring-amber-500',
+							entry.rank === 2 && 'ring-slate-400',
+							entry.rank === 3 && 'ring-orange-500',
+							isDark ? 'ring-offset-slate-900' : 'ring-offset-white'
+						)}
+						style={{
+							borderWidth: '3px',
+							borderStyle: 'solid',
+							borderColor: getAvatarBorderColor(entry.avatarId || entry.avatar_id)
+						}}
+					/>
+					{isTopThree && (
+						<div className={cn(
+							'absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold',
+							entry.rank === 1 && 'bg-amber-500 text-white',
+							entry.rank === 2 && 'bg-slate-400 text-white',
+							entry.rank === 3 && 'bg-orange-500 text-white',
+						)}>
+							{entry.rank}
+						</div>
+					)}
+				</div>
+				<div className="min-w-0">
+					<div className="flex items-center gap-2">
+						<span className={cn(
+							'font-bold truncate',
+							isDark ? 'text-white' : 'text-slate-800'
+						)}>
+							{entry.username}
+						</span>
+						{entry.isCurrentUser && (
+							<span className={cn(
+								'px-2 py-0.5 text-xs font-bold rounded-full',
+								'bg-gradient-to-r from-violet-500 to-cyan-500 text-white'
+							)}>
+								{t('youBadge')}
+							</span>
+						)}
+					</div>
+					{!isMobile && (
+						<span className={cn(
+							'text-sm',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{t('levelShort')} {entry.level || 1}
+						</span>
+					)}
+				</div>
+			</div>
+
+			{/* Level badge - mobile only in compact form */}
+			{isMobile && (
+				<div className={cn(
+					'px-2 py-1 rounded-lg text-xs font-bold',
+					'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+				)}>
+					{entry.level || 1}
+				</div>
+			)}
+
+			{/* Value */}
+			<div className="text-right flex-shrink-0">
+				<span className={cn(
+					'text-lg md:text-xl font-black',
+					isDark ? tabColor.dark : tabColor.active
+				)}>
+					{getValueLabel()}
+				</span>
+				{tabValue === 3 && (
+					<Coins className={cn('inline-block ml-1 w-4 h-4', isDark ? 'text-amber-400' : 'text-amber-500')} />
+				)}
+				{tabValue === 4 && (
+					<Flame className={cn('inline-block ml-1 w-4 h-4', isDark ? 'text-emerald-400' : 'text-emerald-500')} />
+				)}
+			</div>
+		</div>
+	)
+}
+
+// Pagination Component
+const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
+	if (totalPages <= 1) return null
+
+	const getVisiblePages = () => {
+		const pages = []
+		const delta = 2
+		const start = Math.max(1, currentPage - delta)
+		const end = Math.min(totalPages, currentPage + delta)
+
+		for (let i = start; i <= end; i++) {
+			pages.push(i)
+		}
+		return pages
+	}
+
+	return (
+		<div className="flex items-center justify-center gap-2 py-4">
+			<button
+				onClick={() => onPageChange(currentPage - 1)}
+				disabled={currentPage === 1}
+				className={cn(
+					'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
+					'border-2',
+					currentPage === 1
+						? 'opacity-40 cursor-not-allowed'
+						: 'hover:scale-105',
+					isDark
+						? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
+						: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
+				)}
+			>
+				<ChevronLeft className="w-5 h-5" />
+			</button>
+
+			{getVisiblePages().map(page => (
+				<button
+					key={page}
+					onClick={() => onPageChange(page)}
+					className={cn(
+						'w-10 h-10 rounded-xl font-bold transition-all',
+						'border-2',
+						page === currentPage
+							? 'bg-gradient-to-br from-violet-500 to-cyan-500 text-white border-transparent shadow-lg shadow-violet-500/30 scale-110'
+							: isDark
+								? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
+								: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
+					)}
+				>
+					{page}
+				</button>
+			))}
+
+			<button
+				onClick={() => onPageChange(currentPage + 1)}
+				disabled={currentPage === totalPages}
+				className={cn(
+					'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
+					'border-2',
+					currentPage === totalPages
+						? 'opacity-40 cursor-not-allowed'
+						: 'hover:scale-105',
+					isDark
+						? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
+						: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
+				)}
+			>
+				<ChevronRight className="w-5 h-5" />
+			</button>
+		</div>
+	)
+}
+
+export default function LeaderboardClient({ leaderboardData, isGuest = false }) {
+	const t = useTranslations('common')
+	const { isDark } = useThemeMode()
+	const [tabValue, setTabValue] = useState(0)
+	const [currentPage, setCurrentPage] = useState(1)
+	const [isMobile, setIsMobile] = useState(false)
+	const usersPerPage = 10
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 640px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = e => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
+
+	const handleTabChange = (newValue) => {
+		setTabValue(newValue)
+		setCurrentPage(1)
+	}
+
+	const handlePageChange = (value) => {
+		setCurrentPage(value)
+		window.scrollTo({ top: 0, behavior: 'smooth' })
+	}
+
+	const getTabData = () => {
+		if (!leaderboardData) return []
 		switch (tabValue) {
-			case 0:
-				return leaderboardData.userRanks.xp
-			case 1:
-				return leaderboardData.userRanks.weekly
-			case 2:
-				return leaderboardData.userRanks.monthly
-			case 3:
-				return leaderboardData.userRanks.gold
-			case 4:
-				return leaderboardData.userRanks.streak
-			default:
-				return null
+			case 0: return leaderboardData.topXp
+			case 1: return leaderboardData.topWeekly || []
+			case 2: return leaderboardData.topMonthly || []
+			case 3: return leaderboardData.topGold
+			case 4: return leaderboardData.topStreak
+			default: return []
+		}
+	}
+
+	const getUserRank = () => {
+		if (!leaderboardData?.userRanks) return null
+		switch (tabValue) {
+			case 0: return leaderboardData.userRanks.xp
+			case 1: return leaderboardData.userRanks.weekly
+			case 2: return leaderboardData.userRanks.monthly
+			case 3: return leaderboardData.userRanks.gold
+			case 4: return leaderboardData.userRanks.streak
+			default: return null
 		}
 	}
 
 	const tabData = getTabData()
 	const userRank = getUserRank()
-
-	// Pagination
-	const indexOfLastUser = currentPage * usersPerPage
-	const indexOfFirstUser = indexOfLastUser - usersPerPage
-	const currentUsers = tabData.slice(indexOfFirstUser, indexOfLastUser)
+	const currentUsers = tabData.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage)
 	const totalPages = Math.ceil(tabData.length / usersPerPage)
+	const currentTab = TABS[tabValue]
+	const tabColor = TAB_COLORS[currentTab.color]
 
 	return (
-		<>
-			{/* Compact Header - Desktop only */}
-			<Box
-				sx={{
-					display: { xs: 'none', lg: 'block' },
-					pt: '6rem',
-					pb: 3,
-					borderBottom: '1px solid rgba(139, 92, 246, 0.15)',
-					bgcolor: 'background.paper',
-				}}>
-				<Container maxWidth='lg'>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							gap: 2,
-							mb: 1,
-						}}>
-						<TrophyIcon
-							sx={{
-								fontSize: '2.25rem',
-								color: '#F59E0B',
-							}}
-						/>
-						<Typography
-							variant='h4'
-							sx={{
-								fontWeight: 700,
-								fontSize: '2rem',
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								WebkitBackgroundClip: 'text',
-								WebkitTextFillColor: 'transparent',
-							}}>
+		<div className={cn(
+			'min-h-screen pt-20 md:pt-24 pb-24',
+			isDark
+				? 'bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950'
+				: 'bg-gradient-to-b from-slate-50 via-white to-slate-50'
+		)}>
+			{/* Header - Desktop only */}
+			<div className={cn(
+				'hidden lg:block pb-6 mb-6',
+				'border-b',
+				isDark ? 'border-violet-500/20' : 'border-violet-100'
+			)}>
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<div className="flex items-center justify-center gap-3 mb-2">
+						<div className={cn(
+							'w-12 h-12 rounded-xl flex items-center justify-center',
+							'bg-gradient-to-br from-amber-400 to-amber-600',
+							'shadow-lg shadow-amber-500/30'
+						)}>
+							<Trophy className="w-6 h-6 text-white" />
+						</div>
+						<h1 className={cn(
+							'text-3xl font-black',
+							'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+						)}>
 							{t('leaderboard')}
-						</Typography>
-					</Box>
-					<Typography
-						variant='body1'
-						align='center'
-						sx={{
-							color: '#64748b',
-							fontSize: '1rem',
-						}}>
+						</h1>
+					</div>
+					<p className={cn(
+						'text-sm',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
 						{t('leaderboardDescription')}
-					</Typography>
-				</Container>
-			</Box>
+					</p>
+				</div>
+			</div>
 
-			<Container
-				maxWidth='lg'
-				sx={{
-					pt: { xs: 0, sm: 'calc(80px + 32px)', lg: 3 },
-					pb: 8,
-					px: { xs: 0, sm: 2, md: 3 },
-					mt: 0,
-				}}>
-				{/* User Stats Card - Compact version */}
-				{/* Guest Banner - Motivation to sign up */}
+			<div className="max-w-6xl mx-auto px-0 sm:px-4">
+				{/* Guest Banner */}
 				{isGuest && (
-					<Paper
-						elevation={0}
-						sx={{
-							borderRadius: { xs: 0, sm: 3 },
-							p: { xs: 2, sm: 3 },
-							mb: { xs: 1.5, sm: 4 },
-							background:
-								'linear-gradient(145deg, #4c1d95 0%, #2e1065 100%)',
-							border: { xs: 'none', sm: '2px solid #8b5cf6' },
-							position: 'relative',
-							overflow: 'hidden',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: -2,
-								left: -2,
-								right: -2,
-								bottom: -2,
-								background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-								zIndex: -1,
-							},
-						}}>
-						<Box sx={{ textAlign: 'center' }}>
-							<Typography
-								variant='h6'
-								sx={{
-									fontWeight: 700,
-									color: 'white',
-									mb: 1,
-								}}>
-								{t('guest_leaderboard_title')}
-							</Typography>
-							<Typography
-								variant='body2'
-								sx={{
-									color: 'rgba(255, 255, 255, 0.8)',
-									mb: 2,
-								}}>
-								{t('guest_leaderboard_description')}
-							</Typography>
-						</Box>
-					</Paper>
+					<div className={cn(
+						'relative rounded-none sm:rounded-2xl p-4 sm:p-6 mb-4 overflow-hidden',
+						'bg-gradient-to-br from-violet-900 via-purple-900 to-violet-900',
+						'sm:border-2 sm:border-violet-500/50',
+						'sm:shadow-xl sm:shadow-violet-500/20'
+					)}>
+						<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400" />
+						<div className="flex items-center gap-4">
+							<div className="w-12 h-12 rounded-xl bg-violet-500/30 flex items-center justify-center">
+								<Sparkles className="w-6 h-6 text-violet-300" />
+							</div>
+							<div>
+								<h3 className="text-lg font-bold text-white">{t('guest_leaderboard_title')}</h3>
+								<p className="text-sm text-violet-200/80">{t('guest_leaderboard_description')}</p>
+							</div>
+						</div>
+					</div>
 				)}
 
+				{/* User Stats Card */}
 				{leaderboardData?.userStats && (
-					<Paper
-						elevation={0}
-						sx={{
-							borderRadius: { xs: 0, sm: 3 },
-							pt: { xs: 0, sm: 3 },
-							px: { xs: 1.5, sm: 3 },
-							pb: { xs: 1.5, sm: 3 },
-							mb: { xs: 1.5, sm: 4 },
-							mt: 0,
-							background:
-								'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-							border: { xs: 'none', sm: '2px solid' },
-							borderColor: { sm: alpha('#667eea', 0.3) },
-							borderBottom: {
-								xs: '1px solid rgba(102, 126, 234, 0.2)',
-								sm: 'none',
-							},
-						}}>
+					<div className={cn(
+						'relative rounded-none sm:rounded-2xl p-4 mb-4 overflow-hidden',
+						isDark
+							? 'bg-gradient-to-br from-slate-800 to-slate-900'
+							: 'bg-gradient-to-br from-violet-50 to-purple-50',
+						'sm:border-2',
+						isDark ? 'sm:border-violet-500/30' : 'sm:border-violet-200'
+					)}>
 						{/* Desktop version */}
-						<Box
-							sx={{
-								display: { xs: 'none', sm: 'flex' },
-								alignItems: 'center',
-								justifyContent: 'space-between',
-								gap: 3,
-							}}>
-							<Box>
-								<Typography
-									variant='subtitle2'
-									sx={{
-										color: 'white',
-										fontWeight: 700,
-										mb: 0.5,
-										textTransform: 'uppercase',
-										letterSpacing: 0.5,
-										background:
-											'linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.8) 100%)',
-										px: 2,
-										py: 0.75,
-										borderRadius: 2,
-										display: 'inline-block',
-										boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
-									}}>
+						<div className="hidden sm:flex items-center justify-between gap-6">
+							<div>
+								<span className={cn(
+									'inline-block px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider mb-2',
+									'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+								)}>
 									{t('yourRanking')}
-								</Typography>
+								</span>
 								{userRank ? (
-									<Typography
-										variant='h4'
-										sx={{ fontWeight: 800, color: '#667eea' }}>
-										{getRankIcon(userRank)}
-									</Typography>
+									<p className={cn(
+										'text-3xl font-black',
+										'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+									)}>
+										#{userRank}
+									</p>
 								) : (
-									<Typography
-										variant='h5'
-										sx={{
-											fontWeight: 700,
-											color: '#94A3B8',
-											fontStyle: 'italic',
-										}}>
+									<p className={cn(
+										'text-lg font-medium italic',
+										isDark ? 'text-slate-400' : 'text-slate-500'
+									)}>
 										{tabValue === 1 && t('noXPThisWeek')}
 										{tabValue === 2 && t('noXPThisMonth')}
-										{(tabValue === 0 || tabValue === 3 || tabValue === 4) &&
-											t('notRanked')}
-									</Typography>
+										{(tabValue === 0 || tabValue === 3 || tabValue === 4) && t('notRanked')}
+									</p>
 								)}
-							</Box>
-							<Box sx={{ display: 'flex', gap: 3 }}>
-								<Box>
-									<Typography
-										variant='subtitle2'
-										sx={{
-											color: 'white',
-											fontWeight: 700,
-											textTransform: 'uppercase',
-											letterSpacing: 0.5,
-											background:
-												'linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(59, 130, 246, 0.8) 100%)',
-											px: 2,
-											py: 0.5,
-											borderRadius: 2,
-											display: 'inline-block',
-											boxShadow: '0 2px 8px rgba(30, 64, 175, 0.3)',
-											mb: 0.5,
-										}}>
-										{t('totalXP')}
-									</Typography>
-									<Typography variant='h6' sx={{ fontWeight: 700 }}>
-										{leaderboardData.userStats.total_xp.toLocaleString()}
-									</Typography>
-								</Box>
-								<Box>
-									<Typography
-										variant='subtitle2'
-										sx={{
-											color: 'white',
-											fontWeight: 700,
-											textTransform: 'uppercase',
-											letterSpacing: 0.5,
-											background:
-												'linear-gradient(135deg, rgba(21, 128, 61, 0.9) 0%, rgba(34, 197, 94, 0.8) 100%)',
-											px: 2,
-											py: 0.5,
-											borderRadius: 2,
-											display: 'inline-block',
-											boxShadow: '0 2px 8px rgba(21, 128, 61, 0.3)',
-											mb: 0.5,
-										}}>
-										{t('streak')}
-									</Typography>
-									<Typography variant='h6' sx={{ fontWeight: 700 }}>
-										{leaderboardData.userStats.daily_streak} 🔥
-									</Typography>
-								</Box>
-								<Box>
-									<Typography
-										variant='subtitle2'
-										sx={{
-											color: 'white',
-											fontWeight: 700,
-											textTransform: 'uppercase',
-											letterSpacing: 0.5,
-											background:
-												'linear-gradient(135deg, rgba(217, 119, 6, 0.9) 0%, rgba(251, 146, 60, 0.8) 100%)',
-											px: 2,
-											py: 0.5,
-											borderRadius: 2,
-											display: 'inline-block',
-											boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
-											mb: 0.5,
-										}}>
-										{t('gold')}
-									</Typography>
-									<Typography variant='h6' sx={{ fontWeight: 700 }}>
-										{(
-											leaderboardData.userStats.total_gold || 0
-										).toLocaleString()}{' '}
-										💰
-									</Typography>
-								</Box>
-							</Box>
-						</Box>
+							</div>
+							<div className="flex gap-4">
+								<StatCard
+									label={t('totalXP')}
+									value={leaderboardData.userStats.total_xp.toLocaleString()}
+									icon={Zap}
+									gradient="from-blue-500 to-blue-600"
+									isDark={isDark}
+								/>
+								<StatCard
+									label={t('streak')}
+									value={`${leaderboardData.userStats.daily_streak}`}
+									icon={Flame}
+									gradient="from-emerald-500 to-emerald-600"
+									isDark={isDark}
+								/>
+								<StatCard
+									label={t('gold')}
+									value={(leaderboardData.userStats.total_gold || 0).toLocaleString()}
+									icon={Coins}
+									gradient="from-amber-500 to-amber-600"
+									isDark={isDark}
+								/>
+							</div>
+						</div>
 
-						{/* Mobile version - Compact 2x2 grid */}
-						<Box
-							sx={{
-								display: { xs: 'grid', sm: 'none' },
-								gridTemplateColumns: 'repeat(2, 1fr)',
-								gap: 1,
-								p: 1.5,
-							}}>
-							{/* Votre Classement */}
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									justifyContent: 'center',
-									p: 1,
-									borderRadius: 2,
-									background:
-										'linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%)',
-								}}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: '#667eea',
-										fontWeight: 700,
-										fontSize: '0.65rem',
-										textTransform: 'uppercase',
-										mb: 0.25,
-									}}>
+						{/* Mobile version - 2x2 grid */}
+						<div className="sm:hidden grid grid-cols-2 gap-2">
+							<div className={cn(
+								'flex flex-col items-center justify-center p-3 rounded-xl',
+								isDark ? 'bg-violet-900/30' : 'bg-violet-100/50'
+							)}>
+								<span className={cn(
+									'text-xs font-bold uppercase mb-1',
+									isDark ? 'text-violet-300' : 'text-violet-600'
+								)}>
 									{t('yourRanking')}
-								</Typography>
-								{userRank ? (
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 800,
-											color: '#667eea',
-											fontSize: '1.1rem',
-										}}>
-										{getRankIcon(userRank)}
-									</Typography>
-								) : (
-									<Typography
-										variant='caption'
-										sx={{
-											fontWeight: 600,
-											color: '#94A3B8',
-											fontSize: '0.7rem',
-										}}>
-										-
-									</Typography>
-								)}
-							</Box>
-
-							{/* XP Total */}
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									justifyContent: 'center',
-									p: 1,
-									borderRadius: 2,
-									background:
-										'linear-gradient(135deg, rgba(30, 64, 175, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%)',
-								}}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: '#1E40AF',
-										fontWeight: 700,
-										fontSize: '0.65rem',
-										textTransform: 'uppercase',
-										mb: 0.25,
-									}}>
+								</span>
+								<span className={cn(
+									'text-xl font-black',
+									isDark ? 'text-violet-300' : 'text-violet-600'
+								)}>
+									{userRank ? `#${userRank}` : '-'}
+								</span>
+							</div>
+							<div className={cn(
+								'flex flex-col items-center justify-center p-3 rounded-xl',
+								isDark ? 'bg-blue-900/30' : 'bg-blue-100/50'
+							)}>
+								<span className={cn(
+									'text-xs font-bold uppercase mb-1',
+									isDark ? 'text-blue-300' : 'text-blue-600'
+								)}>
 									XP
-								</Typography>
-								<Typography
-									variant='h6'
-									sx={{ fontWeight: 700, fontSize: '1rem', color: '#1E40AF' }}>
+								</span>
+								<span className={cn(
+									'text-xl font-black',
+									isDark ? 'text-blue-300' : 'text-blue-600'
+								)}>
 									{leaderboardData.userStats.total_xp.toLocaleString()}
-								</Typography>
-							</Box>
-
-							{/* Streak */}
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									justifyContent: 'center',
-									p: 1,
-									borderRadius: 2,
-									background:
-										'linear-gradient(135deg, rgba(21, 128, 61, 0.12) 0%, rgba(34, 197, 94, 0.08) 100%)',
-								}}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: '#15803D',
-										fontWeight: 700,
-										fontSize: '0.65rem',
-										textTransform: 'uppercase',
-										mb: 0.25,
-									}}>
+								</span>
+							</div>
+							<div className={cn(
+								'flex flex-col items-center justify-center p-3 rounded-xl',
+								isDark ? 'bg-emerald-900/30' : 'bg-emerald-100/50'
+							)}>
+								<span className={cn(
+									'text-xs font-bold uppercase mb-1',
+									isDark ? 'text-emerald-300' : 'text-emerald-600'
+								)}>
 									Streak
-								</Typography>
-								<Typography
-									variant='h6'
-									sx={{ fontWeight: 700, fontSize: '1rem', color: '#15803D' }}>
-									{leaderboardData.userStats.daily_streak} 🔥
-								</Typography>
-							</Box>
-
-							{/* Gold */}
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'center',
-									justifyContent: 'center',
-									p: 1,
-									borderRadius: 2,
-									background:
-										'linear-gradient(135deg, rgba(217, 119, 6, 0.12) 0%, rgba(251, 146, 60, 0.08) 100%)',
-								}}>
-								<Typography
-									variant='caption'
-									sx={{
-										color: '#D97706',
-										fontWeight: 700,
-										fontSize: '0.65rem',
-										textTransform: 'uppercase',
-										mb: 0.25,
-									}}>
+								</span>
+								<span className={cn(
+									'text-xl font-black',
+									isDark ? 'text-emerald-300' : 'text-emerald-600'
+								)}>
+									{leaderboardData.userStats.daily_streak}
+								</span>
+							</div>
+							<div className={cn(
+								'flex flex-col items-center justify-center p-3 rounded-xl',
+								isDark ? 'bg-amber-900/30' : 'bg-amber-100/50'
+							)}>
+								<span className={cn(
+									'text-xs font-bold uppercase mb-1',
+									isDark ? 'text-amber-300' : 'text-amber-600'
+								)}>
 									Gold
-								</Typography>
-								<Typography
-									variant='h6'
-									sx={{ fontWeight: 700, fontSize: '1rem', color: '#D97706' }}>
-									{(leaderboardData.userStats.total_gold || 0).toLocaleString()}{' '}
-									💰
-								</Typography>
-							</Box>
-						</Box>
-					</Paper>
+								</span>
+								<span className={cn(
+									'text-xl font-black',
+									isDark ? 'text-amber-300' : 'text-amber-600'
+								)}>
+									{(leaderboardData.userStats.total_gold || 0).toLocaleString()}
+								</span>
+							</div>
+						</div>
+					</div>
 				)}
 
-				{/* Tabs */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: { xs: 0, sm: 4 },
-						overflow: 'hidden',
-						border: { xs: 'none', sm: '1px solid #E2E8F0' },
-						mt: { xs: 0, sm: 0 },
-					}}>
-					<Box
-						sx={{
-							borderBottom: 1,
-							borderColor: 'divider',
-							background: isDark
-								? 'linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%)',
-						}}>
-						<Tabs
-							value={tabValue}
-							onChange={handleTabChange}
-							variant={isMobile ? 'scrollable' : 'standard'}
-							scrollButtons={isMobile ? 'auto' : false}
-							centered={!isMobile}
-							sx={{
-								'& .MuiTab-root': {
-									fontWeight: 700,
-									fontSize: { xs: '0.875rem', md: '1rem' },
-									textTransform: 'none',
-									py: 2,
-									color: isDark ? '#cbd5e1' : 'inherit',
-								},
-								'& .MuiTabs-indicator': {
-									backgroundColor:
-										tabValue === 0
-											? '#3B82F6'
-											: tabValue === 1
-											? '#8B5CF6'
-											: tabValue === 2
-											? '#EC4899'
-											: tabValue === 3
-											? '#F59E0B'
-											: '#10B981',
-									height: 3,
-								},
-							}}>
-							<Tab
-								icon={
-									<TrendingUp
-										sx={{ color: tabValue === 0 ? '#3B82F6' : 'inherit' }}
-									/>
-								}
-								iconPosition='start'
-								label={isMobile ? t('totalXPTabMobile') : t('totalXPTab')}
-								sx={{
-									'&.Mui-selected': {
-										color: '#3B82F6 !important',
-									},
-								}}
-							/>
-							<Tab
-								icon={
-									<CalendarViewWeek
-										sx={{ color: tabValue === 1 ? '#8B5CF6' : 'inherit' }}
-									/>
-								}
-								iconPosition='start'
-								label={isMobile ? t('weeklyTabMobile') : t('weeklyTab')}
-								sx={{
-									'&.Mui-selected': {
-										color: '#8B5CF6 !important',
-									},
-								}}
-							/>
-							<Tab
-								icon={
-									<CalendarMonth
-										sx={{ color: tabValue === 2 ? '#EC4899' : 'inherit' }}
-									/>
-								}
-								iconPosition='start'
-								label={isMobile ? t('monthlyTabMobile') : t('monthlyTab')}
-								sx={{
-									'&.Mui-selected': {
-										color: '#EC4899 !important',
-									},
-								}}
-							/>
-							<Tab
-								icon={
-									<FaCoins
-										style={{
-											fontSize: '1.25rem',
-											color: tabValue === 3 ? '#F59E0B' : 'inherit',
-										}}
-									/>
-								}
-								iconPosition='start'
-								label={t('goldTab')}
-								sx={{
-									'&.Mui-selected': {
-										color: '#F59E0B !important',
-									},
-								}}
-							/>
-							<Tab
-								icon={
-									<FaFire
-										style={{
-											fontSize: '1.25rem',
-											color: tabValue === 4 ? '#10B981' : 'inherit',
-										}}
-									/>
-								}
-								iconPosition='start'
-								label={t('streakTab')}
-								sx={{
-									'&.Mui-selected': {
-										color: '#10B981 !important',
-									},
-								}}
-							/>
-						</Tabs>
-					</Box>
+				{/* Tabs & Table */}
+				<div className={cn(
+					'rounded-none sm:rounded-2xl overflow-hidden',
+					isDark
+						? 'bg-slate-900'
+						: 'bg-white',
+					'sm:border',
+					isDark ? 'sm:border-slate-700' : 'sm:border-slate-200',
+					'sm:shadow-xl'
+				)}>
+					{/* Tabs */}
+					<div className={cn(
+						'flex overflow-x-auto',
+						'border-b',
+						isDark ? 'border-slate-700' : 'border-slate-200',
+						isDark ? 'bg-slate-800/50' : 'bg-slate-50',
+						'[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+					)}>
+						{TABS.map((tab, index) => {
+							const TabIcon = tab.icon
+							const color = TAB_COLORS[tab.color]
+							const isActive = tabValue === index
 
-					{/* Leaderboard Table */}
-					<TableContainer>
-						<Table>
-							<TableHead>
-								<TableRow
-									sx={{
-										background: isDark
-											? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
-											: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-									}}>
-									<TableCell
-										sx={{
-											fontWeight: 700,
-											color: isDark ? '#f1f5f9' : '#1E293B',
-											width: { xs: 60, md: 80 },
-										}}>
-										{t('rankHeader')}
-									</TableCell>
-									<TableCell
-										sx={{
-											fontWeight: 700,
-											color: isDark ? '#f1f5f9' : '#1E293B',
-										}}>
-										{t('userHeader')}
-									</TableCell>
-									{!isMobile && (
-										<TableCell
-											sx={{
-												fontWeight: 700,
-												color: isDark ? '#f1f5f9' : '#1E293B',
-												width: { xs: 100, md: 120 },
-											}}>
-											{t('levelHeader')}
-										</TableCell>
+							return (
+								<button
+									key={tab.id}
+									onClick={() => handleTabChange(index)}
+									className={cn(
+										'flex items-center gap-2 px-4 py-3 font-bold text-sm whitespace-nowrap transition-all',
+										'border-b-3 -mb-px',
+										isActive
+											? `${color.active} ${color.border}`
+											: cn(
+												'border-transparent',
+												isDark ? 'text-slate-400 hover:text-slate-300' : 'text-slate-500 hover:text-slate-700'
+											)
 									)}
-									<TableCell
-										align='right'
-										sx={{
-											fontWeight: 700,
-											color: isDark
-												? tabValue === 0
-													? '#93c5fd'
-													: tabValue === 1
-													? '#c4b5fd'
-													: tabValue === 2
-													? '#f9a8d4'
-													: tabValue === 3
-													? '#fcd34d'
-													: '#86efac'
-												: tabValue === 0
-												? '#1E40AF'
-												: tabValue === 1
-												? '#7C3AED'
-												: tabValue === 2
-												? '#DB2777'
-												: tabValue === 3
-												? '#D97706'
-												: '#15803D',
-											width: { xs: 120, md: 150 },
-										}}>
-										{tabValue === 0 && t('xpHeader')}
-										{tabValue === 1 && t('weeklyXPHeader')}
-										{tabValue === 2 && t('monthlyXPHeader')}
-										{tabValue === 3 && t('goldHeader')}
-										{tabValue === 4 && t('daysHeader')}
-									</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{currentUsers.map(entry => {
-									// Définir les couleurs et styles pour le top 3
-									const getTopThreeStyle = rank => {
-										if (rank === 1) {
-											return {
-												background:
-													'linear-gradient(90deg, rgba(255, 215, 0, 0.28) 0%, rgba(255, 235, 150, 0.20) 50%, rgba(255, 215, 0, 0.28) 100%)',
-												borderLeft: '4px solid #FFD700',
-												'&:hover': {
-													background:
-														'linear-gradient(90deg, rgba(255, 215, 0, 0.38) 0%, rgba(255, 235, 150, 0.30) 50%, rgba(255, 215, 0, 0.38) 100%)',
-												},
-											}
-										}
-										if (rank === 2) {
-											return {
-												background:
-													'linear-gradient(90deg, rgba(192, 192, 192, 0.28) 0%, rgba(220, 220, 220, 0.20) 50%, rgba(192, 192, 192, 0.28) 100%)',
-												borderLeft: '4px solid #C0C0C0',
-												'&:hover': {
-													background:
-														'linear-gradient(90deg, rgba(192, 192, 192, 0.38) 0%, rgba(220, 220, 220, 0.30) 50%, rgba(192, 192, 192, 0.38) 100%)',
-												},
-											}
-										}
-										if (rank === 3) {
-											return {
-												background:
-													'linear-gradient(90deg, rgba(205, 127, 50, 0.28) 0%, rgba(222, 184, 135, 0.20) 50%, rgba(205, 127, 50, 0.28) 100%)',
-												borderLeft: '4px solid #CD7F32',
-												'&:hover': {
-													background:
-														'linear-gradient(90deg, rgba(205, 127, 50, 0.38) 0%, rgba(222, 184, 135, 0.30) 50%, rgba(205, 127, 50, 0.38) 100%)',
-												},
-											}
-										}
-										return {}
-									}
+								>
+									<TabIcon className={cn(
+										'w-5 h-5',
+										isActive && color.active
+									)} />
+									<span className="hidden sm:inline">
+										{t(tab.label)}
+									</span>
+									<span className="sm:hidden">
+										{t(tab.labelMobile)}
+									</span>
+								</button>
+							)
+						})}
+					</div>
 
-									const topThreeStyle = getTopThreeStyle(entry.rank)
-									const isTopThree = entry.rank <= 3
+					{/* Table Header */}
+					<div className={cn(
+						'hidden sm:flex items-center gap-4 px-4 py-3',
+						'text-sm font-bold uppercase tracking-wider',
+						isDark
+							? 'bg-gradient-to-r from-violet-900/30 to-cyan-900/30 text-slate-300'
+							: 'bg-gradient-to-r from-violet-50 to-cyan-50 text-slate-600'
+					)}>
+						<div className="w-16">{t('rankHeader')}</div>
+						<div className="flex-1">{t('userHeader')}</div>
+						<div className="w-24">{t('levelHeader')}</div>
+						<div className={cn('w-32 text-right', isDark ? tabColor.dark : tabColor.active)}>
+							{tabValue === 0 && t('xpHeader')}
+							{tabValue === 1 && t('weeklyXPHeader')}
+							{tabValue === 2 && t('monthlyXPHeader')}
+							{tabValue === 3 && t('goldHeader')}
+							{tabValue === 4 && t('daysHeader')}
+						</div>
+					</div>
 
-									return (
-										<TableRow
-											key={entry.userId}
-											sx={{
-												background: isTopThree
-													? topThreeStyle.background
-													: entry.isCurrentUser
-													? alpha('#667eea', 0.08)
-													: 'transparent',
-												borderLeft: isTopThree
-													? topThreeStyle.borderLeft
-													: 'none',
-												borderRight:
-													entry.isCurrentUser && isTopThree
-														? '4px solid #667eea'
-														: 'none',
-												'&:hover': isTopThree
-													? topThreeStyle['&:hover']
-													: entry.isCurrentUser
-													? {
-															background: alpha('#667eea', 0.12),
-													  }
-													: {
-															background: alpha('#F8FAFC', 1),
-													  },
-												transition: 'all 0.2s ease',
-												position: 'relative',
-											}}>
-											<TableCell>
-												<Box
-													sx={{
-														display: 'flex',
-														alignItems: 'center',
-														gap: 1,
-													}}>
-													<Typography
-														variant='h6'
-														sx={{
-															fontWeight: 800,
-															color: getRankColor(entry.rank),
-															fontSize: { xs: '1.1rem', md: '1.3rem' },
-															filter: isTopThree
-																? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
-																: 'none',
-															animation:
-																entry.rank === 1
-																	? 'pulse 2s ease-in-out infinite'
-																	: 'none',
-															'@keyframes pulse': {
-																'0%, 100%': {
-																	transform: 'scale(1)',
-																},
-																'50%': {
-																	transform: 'scale(1.1)',
-																},
-															},
-														}}>
-														{getRankIcon(entry.rank)}
-													</Typography>
-												</Box>
-											</TableCell>
-											<TableCell>
-												<Box
-													sx={{
-														display: 'flex',
-														alignItems: 'center',
-														gap: 2,
-													}}>
-													<Avatar
-														src={getAvatarUrl(
-															entry.avatarId || entry.avatar_id
-														)}
-														alt={entry.username}
-														sx={{
-															width: { xs: 56, md: 64 },
-															height: { xs: 56, md: 64 },
-															border: `3px solid ${getAvatarBorderColor(
-																entry.avatarId || entry.avatar_id
-															)}`,
-															boxShadow: isTopThree
-																? '0 4px 12px rgba(0, 0, 0, 0.2)'
-																: '0 2px 8px rgba(0, 0, 0, 0.1)',
-														}}>
-														{entry.username.charAt(0).toUpperCase()}
-													</Avatar>
-													<Box>
-														<Typography
-															variant='body1'
-															sx={{
-																fontWeight: 700,
-																color: isDark ? '#f1f5f9' : '#1E293B',
-																fontSize: { xs: '0.9rem', md: '1rem' },
-															}}>
-															{entry.username}
-														</Typography>
-														{entry.isCurrentUser && (
-															<Chip
-																label={t('youBadge')}
-																size='small'
-																sx={{
-																	height: 20,
-																	fontSize: '0.7rem',
-																	background: '#667eea',
-																	color: 'white',
-																	fontWeight: 700,
-																}}
-															/>
-														)}
-													</Box>
-												</Box>
-											</TableCell>
-											{!isMobile && (
-												<TableCell>
-													<Chip
-														label={`${t('levelShort')} ${entry.level || 1}`}
-														size='small'
-														sx={{
-															background:
-																'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-															color: 'white',
-															fontWeight: 700,
-														}}
-													/>
-												</TableCell>
-											)}
-											<TableCell align='right'>
-												<Typography
-													variant='h6'
-													sx={{
-														fontWeight: 800,
-														color: isDark
-															? tabValue === 0
-																? '#93c5fd'
-																: tabValue === 1
-																? '#c4b5fd'
-																: tabValue === 2
-																? '#f9a8d4'
-																: tabValue === 3
-																? '#fcd34d'
-																: '#86efac'
-															: tabValue === 0
-															? '#1E40AF'
-															: tabValue === 1
-															? '#7C3AED'
-															: tabValue === 2
-															? '#DB2777'
-															: tabValue === 3
-															? '#D97706'
-															: '#15803D',
-														fontSize: { xs: '1rem', md: '1.2rem' },
-													}}>
-													{getValueLabel(entry)}
-												</Typography>
-											</TableCell>
-										</TableRow>
-									)
-								})}
-							</TableBody>
-						</Table>
-					</TableContainer>
+					{/* Table Body */}
+					<div className="divide-y divide-slate-100 dark:divide-slate-800">
+						{currentUsers.map(entry => (
+							<LeaderboardRow
+								key={entry.userId}
+								entry={entry}
+								tabValue={tabValue}
+								isDark={isDark}
+								isMobile={isMobile}
+								t={t}
+							/>
+						))}
+					</div>
 
 					{/* Pagination */}
-					{totalPages > 1 && (
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								mt: 4,
-								mb: 2,
-							}}>
-							<MuiPagination
-								count={totalPages}
-								page={currentPage}
-								onChange={handlePageChange}
-								size='large'
-								renderItem={item => (
-									<PaginationItem
-										slots={{ previous: ChevronLeft, next: ChevronRight }}
-										{...item}
-										sx={{
-											fontWeight: 700,
-											fontSize: '1rem',
-											border: '1px solid',
-											borderColor: item.selected
-												? 'rgba(139, 92, 246, 0.6)'
-												: 'rgba(139, 92, 246, 0.2)',
-											background: item.selected
-												? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)'
-												: 'white',
-											color: item.selected ? 'white' : '#4a5568',
-											borderRadius: 2,
-											minWidth: '44px',
-											height: '44px',
-											mx: 0.5,
-											transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-											position: 'relative',
-											overflow: 'hidden',
-											boxShadow: item.selected
-												? '0 4px 12px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.2)'
-												: '0 2px 6px rgba(139, 92, 246, 0.08)',
-											'&::before': {
-												content: '""',
-												position: 'absolute',
-												top: 0,
-												left: '-100%',
-												width: '100%',
-												height: '100%',
-												background:
-													'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-												transition: 'left 0.5s ease',
-											},
-											'&:hover': {
-												borderColor: 'rgba(139, 92, 246, 0.8)',
-												background: item.selected
-													? 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)'
-													: 'rgba(139, 92, 246, 0.08)',
-												transform: 'translateY(-2px) scale(1.05)',
-												boxShadow: item.selected
-													? '0 6px 16px rgba(139, 92, 246, 0.5), 0 0 25px rgba(6, 182, 212, 0.3)'
-													: '0 4px 12px rgba(139, 92, 246, 0.25)',
-												'&::before': {
-													left: '100%',
-												},
-											},
-											'&.Mui-disabled': {
-												backgroundColor: '#f5f5f5',
-												borderColor: 'rgba(139, 92, 246, 0.1)',
-												opacity: 0.4,
-											},
-										}}
-									/>
-								)}
-								sx={{
-									'& .MuiPagination-ul': {
-										flexWrap: 'wrap',
-										justifyContent: 'center',
-										gap: 0.5,
-									},
-								}}
-							/>
-						</Box>
-					)}
-				</Paper>
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPageChange={handlePageChange}
+						isDark={isDark}
+					/>
+				</div>
 
 				{/* Footer Message */}
-				<Box
-					sx={{
-						textAlign: 'center',
-						mt: { xs: 3, sm: 6 },
-						p: { xs: 2, sm: 3 },
-						borderRadius: { xs: 0, sm: 3 },
-						background:
-							'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-					}}>
-					<Typography
-						variant='h6'
-						sx={{
-							color: '#64748B',
-							fontWeight: 600,
-							mb: 1,
-						}}>
-						{t('keepLearning')}
-					</Typography>
-					<Typography
-						variant='body2'
-						sx={{
-							color: '#94A3B8',
-						}}>
+				<div className={cn(
+					'text-center mt-6 py-6 px-4 rounded-none sm:rounded-2xl',
+					isDark
+						? 'bg-gradient-to-br from-violet-900/20 to-cyan-900/20'
+						: 'bg-gradient-to-br from-violet-50 to-cyan-50'
+				)}>
+					<div className="flex items-center justify-center gap-2 mb-2">
+						<Target className={cn('w-5 h-5', isDark ? 'text-violet-400' : 'text-violet-500')} />
+						<span className={cn(
+							'font-bold',
+							isDark ? 'text-slate-300' : 'text-slate-600'
+						)}>
+							{t('keepLearning')}
+						</span>
+					</div>
+					<p className={cn(
+						'text-sm',
+						isDark ? 'text-slate-400' : 'text-slate-500'
+					)}>
 						{t('realTimeUpdate')}
-					</Typography>
-				</Box>
-			</Container>
-		</>
+					</p>
+				</div>
+			</div>
+		</div>
 	)
 }

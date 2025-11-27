@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { Container, Box, Typography, IconButton, Alert } from '@mui/material'
-import { ArrowBack } from '@mui/icons-material'
+import { ArrowLeft, Info, AlertCircle } from 'lucide-react'
 import { useUserContext } from '@/context/user'
 import { createBrowserClient } from '@/lib/supabase'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
@@ -80,37 +79,47 @@ const PreviewExercise = () => {
 	if (!exercise) {
 		return (
 			<>
-				<AdminNavbar />
-				<Container maxWidth="lg" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
-					<Alert severity="error">{t('exerciseNotFound')}</Alert>
-				</Container>
+				<AdminNavbar activePage="exercises" />
+				<div className="max-w-4xl mx-auto px-4 pt-16 md:pt-24 pb-8">
+					<div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+						<AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+						<p className="text-red-700">{t('exerciseNotFound')}</p>
+					</div>
+				</div>
 			</>
 		)
 	}
 
 	return (
 		<>
-			<AdminNavbar />
+			<AdminNavbar activePage="exercises" />
 
-			<Container maxWidth="md" sx={{ pt: { xs: '4rem', md: '7rem' }, pb: 4 }}>
-				<Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-					<IconButton onClick={() => router.back()}>
-						<ArrowBack />
-					</IconButton>
-					<Box>
-						<Typography variant="h4" sx={{ fontWeight: 700 }}>
+			<div className="max-w-3xl mx-auto px-4 pt-16 md:pt-24 pb-8">
+				{/* Header */}
+				<div className="flex items-center gap-3 mb-6">
+					<button
+						onClick={() => router.back()}
+						className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+					>
+						<ArrowLeft className="w-5 h-5" />
+					</button>
+					<div>
+						<h1 className="text-2xl font-bold text-slate-800">
 							{exercise.title}
-						</Typography>
-						<Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+						</h1>
+						<p className="text-sm text-slate-500 mt-0.5">
 							{t('previewMode')}
-						</Typography>
-					</Box>
-				</Box>
+						</p>
+					</div>
+				</div>
 
-				<Alert severity="info" sx={{ mb: 3 }}>
-					{t('previewInfo')}
-				</Alert>
+				{/* Info Alert */}
+				<div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+					<Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+					<p className="text-blue-700">{t('previewInfo')}</p>
+				</div>
 
+				{/* Exercise Component */}
 				{exercise.type === 'fill_in_blank' && (
 					<FillInTheBlank
 						exercise={exercise}
@@ -129,7 +138,7 @@ const PreviewExercise = () => {
 						onComplete={handleComplete}
 					/>
 				)}
-			</Container>
+			</div>
 		</>
 	)
 }

@@ -23,6 +23,7 @@ import {
 	EmojiEventsRounded,
 	SettingsRounded,
 	VerifiedRounded,
+	FitnessCenterRounded,
 } from '@mui/icons-material'
 import { Link } from '@/i18n/navigation'
 
@@ -424,6 +425,14 @@ const UserMenu = () => {
 							<EmojiEventsRounded />
 						</ListItemIcon>
 						{t('leaderboard')}
+					</MenuItem>
+				</Link>
+				<Link href='/training'>
+					<MenuItem>
+						<ListItemIcon>
+							<FitnessCenterRounded />
+						</ListItemIcon>
+						{t('training')}
 					</MenuItem>
 				</Link>
 				<Link href='/settings'>

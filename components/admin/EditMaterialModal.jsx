@@ -1,36 +1,19 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import {
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-	TextField,
-	Select,
-	MenuItem,
-	FormControl,
-	InputLabel,
-	Box,
-	Typography,
-	IconButton,
-	Grid,
-	Alert,
-	CircularProgress,
-	ListSubheader,
-	Divider,
-} from '@mui/material'
-import { Close, Save, CloudUpload } from '@mui/icons-material'
 import { useTranslations } from 'next-intl'
 import { useUpdateMaterial } from '@/lib/admin-client'
 import { optimizeImage } from '@/utils/imageOptimizer'
 import { logger } from '@/utils/logger'
+import { cn } from '@/lib/utils'
+import { X, Save, Upload, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 /**
- * Modal optimisé pour l'édition de materials
- * ✅ Utilise React Query + Server Actions
- * ✅ Optimisation d'images côté serveur (Sharp)
- * ✅ Validation Zod côté serveur
- * ✅ Sécurisé (admin vérifié côté serveur)
+ * Modal optimise pour l'edition de materials
+ * - Utilise React Query + Server Actions
+ * - Optimisation d'images cote serveur (Sharp)
+ * - Validation Zod cote serveur
+ * - Securise (admin verifie cote serveur)
  */
 const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 	const t = useTranslations('admin')
@@ -40,9 +23,9 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 
 	// Form state
 	const [formData, setFormData] = useState({})
-	const [files, setFiles] = useState([]) // Fichiers à uploader
+	const [files, setFiles] = useState([])
 
-	// Charger les données du material quand le modal s'ouvre
+	// Charger les donnees du material quand le modal s'ouvre
 	useEffect(() => {
 		if (material) {
 			setFormData({
@@ -55,23 +38,17 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 				image_filename: material.image_filename || '',
 				audio_filename: material.audio_filename || '',
 				video_url: material.video_url || '',
-				// Convertir <br> en \n pour l'édition
 				content: material.content?.replace(/<br\s*\/?>/gi, '\n') || '',
 				content_accented: material.content_accented?.replace(/<br\s*\/?>/gi, '\n') || '',
 			})
-			// Réinitialiser les fichiers
 			setFiles([])
 		}
 	}, [material, open])
 
 	const handleChange = (field, value) => {
-		setFormData(prev => ({
-			...prev,
-			[field]: value,
-		}))
+		setFormData(prev => ({ ...prev, [field]: value }))
 	}
 
-	// Gestion des uploads de fichiers
 	const handleFileUpload = async (e, fileType) => {
 		const file = e.target.files?.[0]
 		if (!file) return
@@ -79,39 +56,27 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 		let processedFile = file
 		let fileName = file.name
 
-		// Optimiser l'image côté client avant upload
 		if (fileType === 'image') {
 			try {
 				const optimized = await optimizeImage(file)
 				processedFile = optimized.main.file
 				fileName = optimized.main.fileName
-
-				logger.info(`Image optimized: ${file.name} (${(file.size / 1024).toFixed(0)}KB) → ${optimized.main.fileName} (${(optimized.main.size / 1024).toFixed(0)}KB)`)
+				logger.info(`Image optimized: ${file.name} → ${optimized.main.fileName}`)
 			} catch (error) {
 				logger.error('Image optimization failed, using original file:', error)
-				// Fallback : utiliser le fichier original
-				processedFile = file
-				fileName = file.name
 			}
 		}
 
-		// Ajouter le fichier à la liste des fichiers à uploader
 		setFiles(prev => {
-			// Supprimer l'ancien fichier du même type s'il existe
 			const filtered = prev.filter(f => f.fileType !== fileType)
 			return [...filtered, { file: processedFile, fileName, fileType }]
 		})
 
-		// Mettre à jour le nom dans formData
 		const fieldName = fileType === 'image' ? 'image_filename' : 'audio_filename'
-		setFormData(prev => ({
-			...prev,
-			[fieldName]: fileName,
-		}))
+		setFormData(prev => ({ ...prev, [fieldName]: fileName }))
 	}
 
 	const handleSave = async () => {
-		// Préparer les données
 		const materialData = {
 			lang: formData.lang,
 			section: formData.section,
@@ -122,7 +87,6 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			video_url: formData.video_url || '',
 		}
 
-		// Ajouter les champs spécifiques pour book-chapters
 		if (formData.section === 'book-chapters') {
 			materialData.book_id = formData.book_id ? parseInt(formData.book_id) : null
 			materialData.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
@@ -131,7 +95,6 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			materialData.chapter_number = null
 		}
 
-		// Si pas de nouveaux fichiers mais des noms de fichiers dans le form, les garder
 		if (!files.find(f => f.fileType === 'image') && formData.image_filename) {
 			materialData.image_filename = formData.image_filename
 		}
@@ -139,474 +102,331 @@ const EditMaterialModal = ({ open, onClose, material, onSuccess }) => {
 			materialData.audio_filename = formData.audio_filename
 		}
 
-		// Appeler la mutation
 		updateMaterialMutation.mutate(
-			{
-				materialId: material.id,
-				materialData,
-				files,
-			},
+			{ materialId: material.id, materialData, files },
 			{
 				onSuccess: () => {
-					if (onSuccess) {
-						onSuccess()
-					}
+					if (onSuccess) onSuccess()
 					onClose()
 				},
 			}
 		)
 	}
 
-	// Déterminer quels champs afficher selon la section
 	const isBookChapter = formData.section === 'book-chapters'
 	const needsImage = !isBookChapter
 	const needsAudio = formData.section && [
-		'dialogues',
-		'culture',
-		'legends',
-		'slices-of-life',
-		'beautiful-places',
-		'podcasts',
-		'short-stories',
+		'dialogues', 'culture', 'legends', 'slices-of-life',
+		'beautiful-places', 'podcasts', 'short-stories',
 	].includes(formData.section)
 	const needsVideo = formData.section && [
-		'movie-trailers',
-		'movie-clips',
-		'cartoons',
-		'various-materials',
-		'rock',
-		'pop',
-		'folk',
-		'variety',
-		'kids',
-		'eralash',
-		'galileo',
+		'movie-trailers', 'movie-clips', 'cartoons', 'various-materials',
+		'rock', 'pop', 'folk', 'variety', 'kids', 'eralash', 'galileo',
 	].includes(formData.section)
 
 	const isLoading = updateMaterialMutation.isPending
 
+	if (!open) return null
+
 	return (
-		<Dialog
-			open={open}
-			onClose={onClose}
-			maxWidth="lg"
-			fullWidth
-			PaperProps={{
-				sx: {
-					borderRadius: 3,
-					maxHeight: '90vh',
-					m: 2,
-				},
-			}}>
-			<DialogTitle
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					pb: 2,
-					bgcolor: 'background.paper',
-					borderBottom: '1px solid',
-					borderColor: 'divider',
-				}}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-					<Box
-						sx={{
-							width: 48,
-							height: 48,
-							borderRadius: 2,
-							bgcolor: '#667eea',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							color: 'white',
-						}}>
-						<Save />
-					</Box>
-					<Box>
-						<Typography variant="h6" sx={{ fontWeight: 700, color: '#1E293B' }}>
-							{t('editContent')}
-						</Typography>
-						<Typography variant="body2" sx={{ color: '#64748B' }}>
-							{material?.title}
-						</Typography>
-					</Box>
-				</Box>
-				<IconButton onClick={onClose} size="small" disabled={isLoading}>
-					<Close />
-				</IconButton>
-			</DialogTitle>
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+			<div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+				{/* Header */}
+				<div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white">
+					<div className="flex items-center gap-4">
+						<div className="w-12 h-12 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
+							<Save className="w-6 h-6" />
+						</div>
+						<div>
+							<h2 className="text-lg font-bold text-slate-800">{t('editContent')}</h2>
+							<p className="text-sm text-slate-500">{material?.title}</p>
+						</div>
+					</div>
+					<button
+						onClick={onClose}
+						disabled={isLoading}
+						className="p-2 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+					>
+						<X className="w-5 h-5 text-slate-500" />
+					</button>
+				</div>
 
-			<DialogContent sx={{ pt: 6, pb: 4, px: { xs: 2, sm: 3, md: 4 } }}>
-				{updateMaterialMutation.isError && (
-					<Alert severity="error" sx={{ mb: 3 }}>
-						{updateMaterialMutation.error?.message || 'An error occurred'}
-					</Alert>
-				)}
+				{/* Content */}
+				<div className="flex-1 overflow-y-auto p-6 space-y-6">
+					{updateMaterialMutation.isError && (
+						<div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+							<AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+							<span className="text-sm text-red-700">
+								{updateMaterialMutation.error?.message || 'An error occurred'}
+							</span>
+						</div>
+					)}
 
-				<Grid container spacing={3}>
-					{/* Langue */}
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth>
-							<InputLabel>{t('language')}</InputLabel>
-							<Select
+					{/* Language, Level, Section */}
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+						<div className="space-y-1.5">
+							<label className="block text-sm font-medium text-slate-700">{t('language')}</label>
+							<select
 								value={formData.lang || ''}
-								label={t('language')}
 								onChange={(e) => handleChange('lang', e.target.value)}
 								disabled={isLoading}
-								sx={{ borderRadius: 2 }}>
-								<MenuItem value="fr">Français</MenuItem>
-								<MenuItem value="ru">Русский</MenuItem>
-								<MenuItem value="en">English</MenuItem>
-							</Select>
-						</FormControl>
-					</Grid>
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
+							>
+								<option value="">--</option>
+								<option value="fr">Francais</option>
+								<option value="ru">Russkiy</option>
+								<option value="en">English</option>
+							</select>
+						</div>
 
-					{/* Niveau */}
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth>
-							<InputLabel>{t('level')}</InputLabel>
-							<Select
+						<div className="space-y-1.5">
+							<label className="block text-sm font-medium text-slate-700">{t('level')}</label>
+							<select
 								value={formData.level || ''}
-								label={t('level')}
 								onChange={(e) => handleChange('level', e.target.value)}
 								disabled={isLoading}
-								sx={{ borderRadius: 2 }}>
-								<MenuItem value="beginner">{t('beginner')}</MenuItem>
-								<MenuItem value="intermediate">{t('intermediate')}</MenuItem>
-								<MenuItem value="advanced">{t('advanced')}</MenuItem>
-							</Select>
-						</FormControl>
-					</Grid>
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
+							>
+								<option value="">--</option>
+								<option value="beginner">{t('beginner')}</option>
+								<option value="intermediate">{t('intermediate')}</option>
+								<option value="advanced">{t('advanced')}</option>
+							</select>
+						</div>
 
-					{/* Section */}
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth>
-							<InputLabel>{t('section')}</InputLabel>
-							<Select
+						<div className="space-y-1.5">
+							<label className="block text-sm font-medium text-slate-700">{t('section')}</label>
+							<select
 								value={formData.section || ''}
-								label={t('section')}
 								onChange={(e) => handleChange('section', e.target.value)}
 								disabled={isLoading}
-								sx={{ borderRadius: 2 }}>
-								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF' }}>
-									📝 {t('textAndAudio')}
-								</ListSubheader>
-								<MenuItem value="dialogues">Dialogues</MenuItem>
-								<MenuItem value="culture">Culture</MenuItem>
-								<MenuItem value="legends">Légendes</MenuItem>
-								<MenuItem value="slices-of-life">Tranches de vie</MenuItem>
-								<MenuItem value="beautiful-places">Beaux endroits</MenuItem>
-								<MenuItem value="podcasts">Podcasts</MenuItem>
-								<MenuItem value="short-stories">Nouvelles</MenuItem>
-								<MenuItem value="book-chapters">Chapitres de livre</MenuItem>
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
+							>
+								<option value="">--</option>
+								<optgroup label="📝 Text & Audio">
+									<option value="dialogues">Dialogues</option>
+									<option value="culture">Culture</option>
+									<option value="legends">Legends</option>
+									<option value="slices-of-life">Slices of Life</option>
+									<option value="beautiful-places">Beautiful Places</option>
+									<option value="podcasts">Podcasts</option>
+									<option value="short-stories">Short Stories</option>
+									<option value="book-chapters">Book Chapters</option>
+								</optgroup>
+								<optgroup label="🎬 Video">
+									<option value="movie-trailers">Movie Trailers</option>
+									<option value="movie-clips">Movie Clips</option>
+									<option value="cartoons">Cartoons</option>
+									<option value="eralash">Eralash</option>
+									<option value="galileo">Galileo</option>
+									<option value="various-materials">Various Materials</option>
+								</optgroup>
+								<optgroup label="🎵 Music">
+									<option value="rock">Rock</option>
+									<option value="pop">Pop</option>
+									<option value="folk">Folk</option>
+									<option value="variety">Variety</option>
+									<option value="kids">Kids</option>
+								</optgroup>
+							</select>
+						</div>
+					</div>
 
-								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF', mt: 1 }}>
-									🎬 Vidéos
-								</ListSubheader>
-								<MenuItem value="movie-trailers">Bandes-annonces</MenuItem>
-								<MenuItem value="movie-clips">Extraits de films</MenuItem>
-								<MenuItem value="cartoons">Dessins animés</MenuItem>
-								<MenuItem value="eralash">Eralash</MenuItem>
-								<MenuItem value="galileo">Galileo</MenuItem>
-								<MenuItem value="various-materials">Divers</MenuItem>
-
-								<ListSubheader sx={{ fontWeight: 700, color: '#667eea', bgcolor: '#F5F3FF', mt: 1 }}>
-									🎵 Musique
-								</ListSubheader>
-								<MenuItem value="rock">Rock</MenuItem>
-								<MenuItem value="pop">Pop</MenuItem>
-								<MenuItem value="folk">Folk</MenuItem>
-								<MenuItem value="variety">Variété</MenuItem>
-								<MenuItem value="kids">Enfants</MenuItem>
-							</Select>
-						</FormControl>
-					</Grid>
-
-					{/* Titre */}
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							label={t('title')}
+					{/* Title */}
+					<div className="space-y-1.5">
+						<label className="block text-sm font-medium text-slate-700">{t('title')}</label>
+						<input
+							type="text"
 							value={formData.title || ''}
 							onChange={(e) => handleChange('title', e.target.value)}
 							placeholder={t('materialTitlePlaceholder')}
 							disabled={isLoading}
-							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+							className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 						/>
-					</Grid>
+					</div>
 
-					{/* Champs spécifiques pour book-chapters */}
+					{/* Book Chapter fields */}
 					{isBookChapter && (
-						<>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									fullWidth
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="space-y-1.5">
+								<label className="block text-sm font-medium text-slate-700">{t('bookId')}</label>
+								<input
 									type="number"
-									label={t('bookId')}
 									value={formData.book_id || ''}
 									onChange={(e) => handleChange('book_id', e.target.value)}
 									disabled={isLoading}
-									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+									className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									fullWidth
+							</div>
+							<div className="space-y-1.5">
+								<label className="block text-sm font-medium text-slate-700">{t('chapterNumber')}</label>
+								<input
 									type="number"
-									label={t('chapterNumber')}
 									value={formData.chapter_number || ''}
 									onChange={(e) => handleChange('chapter_number', e.target.value)}
 									disabled={isLoading}
-									sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+									className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 								/>
-							</Grid>
-						</>
+							</div>
+						</div>
 					)}
 
-					{/* Image */}
+					{/* Image Upload */}
 					{needsImage && (
-						<Grid item xs={12}>
-							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
-								{t('image')}
-							</Typography>
-
-							{/* Option 1: Upload de fichier */}
-							<Button
-								component='label'
-								variant='outlined'
-								startIcon={<CloudUpload />}
-								fullWidth
-								disabled={isLoading}
-								sx={{
-									py: 2,
-									borderColor: '#667eea',
-									color: '#667eea',
-									fontWeight: 600,
-									borderStyle: 'dashed',
-									borderWidth: 2,
-									textTransform: 'none',
-									borderRadius: 2,
-									'&:hover': {
-										borderColor: '#5568d3',
-										bgcolor: 'rgba(102, 126, 234, 0.05)',
-									},
-								}}>
-								{t('uploadImage')}
+						<div>
+							<p className="text-sm font-semibold text-slate-600 mb-3">{t('image')}</p>
+							<label className={cn(
+								'flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed rounded-xl cursor-pointer transition-colors',
+								isLoading
+									? 'border-slate-200 text-slate-400 cursor-not-allowed'
+									: 'border-indigo-300 text-indigo-600 hover:border-indigo-400 hover:bg-indigo-50/50'
+							)}>
+								<Upload className="w-5 h-5" />
+								<span className="font-semibold">{t('uploadImage')}</span>
 								<input
+									type="file"
+									accept="image/*"
 									onChange={(e) => handleFileUpload(e, 'image')}
-									hidden
-									type='file'
-									accept='image/*'
 									disabled={isLoading}
+									className="hidden"
 								/>
-							</Button>
+							</label>
 
-							{/* OU divider */}
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
-								<Divider sx={{ flex: 1 }} />
-								<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
-									{t('or')}
-								</Typography>
-								<Divider sx={{ flex: 1 }} />
-							</Box>
+							<div className="flex items-center gap-4 my-4">
+								<div className="flex-1 border-t border-slate-200" />
+								<span className="text-sm font-semibold text-slate-400">{t('or')}</span>
+								<div className="flex-1 border-t border-slate-200" />
+							</div>
 
-							{/* Option 2: Saisie manuelle du nom de fichier */}
-							<TextField
-								fullWidth
-								label="Nom du fichier image"
+							<input
+								type="text"
 								value={formData.image_filename || ''}
 								onChange={(e) => handleChange('image_filename', e.target.value)}
 								placeholder="exemple: mon-image.webp"
 								disabled={isLoading}
-								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-								helperText={t('fileNameOnlyHelper')}
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 							/>
+							<p className="text-xs text-slate-500 mt-1">{t('fileNameOnlyHelper')}</p>
 
 							{formData.image_filename && (
-								<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
-									<Typography variant='caption' sx={{ fontWeight: 600 }}>
-										✓ {formData.image_filename}
-									</Typography>
-								</Alert>
+								<div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2">
+									<CheckCircle className="w-4 h-4 text-emerald-500" />
+									<span className="text-sm font-semibold text-emerald-700">{formData.image_filename}</span>
+								</div>
 							)}
-						</Grid>
+						</div>
 					)}
 
-					{/* Audio */}
+					{/* Audio Upload */}
 					{needsAudio && (
-						<Grid item xs={12}>
-							<Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#475569' }}>
-								{t('audio')}
-							</Typography>
-
-							{/* Option 1: Upload de fichier */}
-							<Button
-								component='label'
-								variant='outlined'
-								startIcon={<CloudUpload />}
-								fullWidth
-								disabled={isLoading}
-								sx={{
-									py: 2,
-									borderColor: '#667eea',
-									color: '#667eea',
-									fontWeight: 600,
-									borderStyle: 'dashed',
-									borderWidth: 2,
-									textTransform: 'none',
-									borderRadius: 2,
-									'&:hover': {
-										borderColor: '#5568d3',
-										bgcolor: 'rgba(102, 126, 234, 0.05)',
-									},
-								}}>
-								{t('uploadAudio')}
+						<div>
+							<p className="text-sm font-semibold text-slate-600 mb-3">{t('audio')}</p>
+							<label className={cn(
+								'flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed rounded-xl cursor-pointer transition-colors',
+								isLoading
+									? 'border-slate-200 text-slate-400 cursor-not-allowed'
+									: 'border-indigo-300 text-indigo-600 hover:border-indigo-400 hover:bg-indigo-50/50'
+							)}>
+								<Upload className="w-5 h-5" />
+								<span className="font-semibold">{t('uploadAudio')}</span>
 								<input
+									type="file"
+									accept="audio/*"
 									onChange={(e) => handleFileUpload(e, 'audio')}
-									hidden
-									type='file'
-									accept='audio/*'
 									disabled={isLoading}
+									className="hidden"
 								/>
-							</Button>
+							</label>
 
-							{/* OU divider */}
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 2 }}>
-								<Divider sx={{ flex: 1 }} />
-								<Typography variant='body2' sx={{ color: '#94a3b8', fontWeight: 600 }}>
-									{t('or')}
-								</Typography>
-								<Divider sx={{ flex: 1 }} />
-							</Box>
+							<div className="flex items-center gap-4 my-4">
+								<div className="flex-1 border-t border-slate-200" />
+								<span className="text-sm font-semibold text-slate-400">{t('or')}</span>
+								<div className="flex-1 border-t border-slate-200" />
+							</div>
 
-							{/* Option 2: Saisie manuelle du nom de fichier */}
-							<TextField
-								fullWidth
-								label="Nom du fichier audio"
+							<input
+								type="text"
 								value={formData.audio_filename || ''}
 								onChange={(e) => handleChange('audio_filename', e.target.value)}
 								placeholder="exemple: mon-audio.mp3"
 								disabled={isLoading}
-								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-								helperText={t('fileNameOnlyHelper')}
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 							/>
+							<p className="text-xs text-slate-500 mt-1">{t('fileNameOnlyHelper')}</p>
 
 							{formData.audio_filename && (
-								<Alert severity='success' sx={{ mt: 2, borderRadius: 2 }}>
-									<Typography variant='caption' sx={{ fontWeight: 600 }}>
-										✓ {formData.audio_filename}
-									</Typography>
-								</Alert>
+								<div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2">
+									<CheckCircle className="w-4 h-4 text-emerald-500" />
+									<span className="text-sm font-semibold text-emerald-700">{formData.audio_filename}</span>
+								</div>
 							)}
-						</Grid>
+						</div>
 					)}
 
-					{/* Vidéo */}
+					{/* Video URL */}
 					{needsVideo && (
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								label={t('videoUrl')}
+						<div className="space-y-1.5">
+							<label className="block text-sm font-medium text-slate-700">{t('videoUrl')}</label>
+							<input
+								type="text"
 								value={formData.video_url || ''}
 								onChange={(e) => handleChange('video_url', e.target.value)}
 								placeholder="https://www.youtube.com/watch?v=..."
 								disabled={isLoading}
-								sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50"
 							/>
-						</Grid>
+						</div>
 					)}
 
-					{/* Texte sans accents */}
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							multiline
-							minRows={12}
-							maxRows={25}
-							label={t('textWithoutAccents')}
+					{/* Content without accents */}
+					<div className="space-y-1.5">
+						<label className="block text-sm font-medium text-slate-700">{t('textWithoutAccents')}</label>
+						<textarea
 							value={formData.content || ''}
 							onChange={(e) => handleChange('content', e.target.value)}
 							placeholder={t('textWithoutAccentsPlaceholder')}
 							disabled={isLoading}
-							sx={{
-								'& .MuiOutlinedInput-root': {
-									borderRadius: 2,
-								},
-								'& .MuiInputBase-inputMultiline': {
-									minHeight: '30vh',
-									maxHeight: '50vh',
-								}
-							}}
+							rows={12}
+							className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50 resize-none"
 						/>
-					</Grid>
+					</div>
 
-					{/* Texte avec accents - uniquement pour le russe */}
+					{/* Content with accents (Russian only) */}
 					{formData.lang === 'ru' && (
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								multiline
-								minRows={12}
-								maxRows={25}
-								label={t('textWithAccents')}
+						<div className="space-y-1.5">
+							<label className="block text-sm font-medium text-slate-700">{t('textWithAccents')}</label>
+							<textarea
 								value={formData.content_accented || ''}
 								onChange={(e) => handleChange('content_accented', e.target.value)}
 								placeholder={t('textWithAccentsPlaceholder')}
 								disabled={isLoading}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 2,
-									},
-									'& .MuiInputBase-inputMultiline': {
-										minHeight: '30vh',
-										maxHeight: '50vh',
-									}
-								}}
+								rows={12}
+								className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white disabled:bg-slate-50 resize-none"
 							/>
-						</Grid>
+						</div>
 					)}
-				</Grid>
-			</DialogContent>
+				</div>
 
-			<DialogActions sx={{ p: 3, pt: 2, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
-				<Button
-					onClick={onClose}
-					disabled={isLoading}
-					sx={{
-						textTransform: 'none',
-						fontWeight: 600,
-						color: '#64748B',
-						px: 3,
-					}}>
-					{t('cancel')}
-				</Button>
-				<Button
-					onClick={handleSave}
-					disabled={isLoading}
-					variant="contained"
-					startIcon={isLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Save />}
-					sx={{
-						bgcolor: '#667eea',
-						color: 'white',
-						px: 3,
-						py: 1.2,
-						borderRadius: 2,
-						textTransform: 'none',
-						fontWeight: 600,
-						boxShadow: 'none',
-						'&:hover': {
-							bgcolor: '#5568d3',
-							boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-						},
-						'&:disabled': {
-							bgcolor: '#CBD5E1',
-							color: 'white',
-						},
-					}}>
-					{isLoading ? t('saving') : t('save')}
-				</Button>
-			</DialogActions>
-		</Dialog>
+				{/* Footer */}
+				<div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 bg-white">
+					<button
+						onClick={onClose}
+						disabled={isLoading}
+						className="px-4 py-2.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+					>
+						{t('cancel')}
+					</button>
+					<button
+						onClick={handleSave}
+						disabled={isLoading}
+						className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-colors"
+					>
+						{isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+						{isLoading ? t('saving') : t('save')}
+					</button>
+				</div>
+			</div>
+		</div>
 	)
 }
 

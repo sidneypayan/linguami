@@ -1,279 +1,178 @@
-import {
-	Box,
-	Typography,
-	Card,
-	CardContent,
-	Stack,
-	Chip,
-	Alert,
-} from '@mui/material'
-import { FormRow, FormRowSelect } from '@/components'
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
+import { FileText, Info, Image as ImageIcon, Type } from 'lucide-react'
 import { lang } from '@/utils/constants'
-import {
-	Article,
-	Image as ImageIcon,
-	TextFields,
-	Info,
-} from '@mui/icons-material'
-import { useTranslations, useLocale } from 'next-intl'
+
+// Simple input component
+const FormInput = ({ label, value, onChange, name, placeholder, type = 'text', multiline = false, rows = 4 }) => {
+	if (multiline) {
+		return (
+			<div className="space-y-1.5">
+				{label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
+				<textarea
+					name={name}
+					value={value}
+					onChange={onChange}
+					placeholder={placeholder}
+					rows={rows}
+					className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none bg-white"
+				/>
+			</div>
+		)
+	}
+	return (
+		<div className="space-y-1.5">
+			{label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
+			<input
+				type={type}
+				name={name}
+				value={value}
+				onChange={onChange}
+				placeholder={placeholder}
+				className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+			/>
+		</div>
+	)
+}
+
+// Simple select component
+const FormSelect = ({ label, value, onChange, name, options }) => {
+	return (
+		<div className="space-y-1.5">
+			{label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
+			<select
+				name={name}
+				value={value}
+				onChange={onChange}
+				className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white appearance-none cursor-pointer"
+			>
+				<option value="">--</option>
+				{options.map(opt => (
+					<option key={opt} value={opt}>{opt}</option>
+				))}
+			</select>
+		</div>
+	)
+}
 
 const CreatePostForm = ({ formData, handleChange }) => {
 	const t = useTranslations('admin')
+
 	return (
-		<Stack spacing={4}>
+		<div className="space-y-6">
 			{/* Header */}
-			<Box>
-				<Typography
-					variant='h6'
-					sx={{ fontWeight: 700, color: '#1E293B', mb: 1 }}>
-					{t('createArticle')}
-				</Typography>
-				<Typography variant='body2' sx={{ color: '#64748B' }}>
-					{t('createArticleDesc')}
-				</Typography>
-			</Box>
+			<div>
+				<h3 className="text-lg font-bold text-slate-800 mb-1">{t('createArticle')}</h3>
+				<p className="text-sm text-slate-500">{t('createArticleDesc')}</p>
+			</div>
 
 			{/* Basic Info Card */}
-			<Card
-				elevation={0}
-				sx={{
-					border: '1px solid #E2E8F0',
-					borderRadius: 2,
-					overflow: 'hidden',
-				}}>
-				<Box
-					sx={{
-						bgcolor: 'background.paper',
-						px: 3,
-						py: 2,
-						borderBottom: '1px solid #E2E8F0',
-						display: 'flex',
-						alignItems: 'center',
-						gap: 1,
-					}}>
-					<Article sx={{ color: '#667eea', fontSize: 20 }} />
-					<Typography
-						variant='subtitle2'
-						sx={{ fontWeight: 700, color: '#475569' }}>
-						{t('basicInfo')}
-					</Typography>
-				</Box>
-				<CardContent sx={{ p: 3 }}>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-							gap: 3,
-						}}>
-						<FormRowSelect
-							label={t('language')}
-							value={formData.locale ?? ''}
-							handleChange={handleChange}
-							name='lang'
-							list={lang}
-						/>
-						<FormRow
-							label={t('articleTitle')}
-							value={formData.title ?? ''}
-							handleChange={handleChange}
-							name='title'
-							placeholder={t('articleTitlePlaceholder')}
-						/>
-					</Box>
-				</CardContent>
-			</Card>
+			<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+				<div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center gap-2">
+					<FileText className="w-5 h-5 text-indigo-500" />
+					<span className="text-sm font-bold text-slate-600">{t('basicInfo')}</span>
+				</div>
+				<div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<FormSelect
+						label={t('language')}
+						value={formData.locale ?? ''}
+						onChange={handleChange}
+						name="lang"
+						options={lang}
+					/>
+					<FormInput
+						label={t('articleTitle')}
+						value={formData.title ?? ''}
+						onChange={handleChange}
+						name="title"
+						placeholder={t('articleTitlePlaceholder')}
+					/>
+				</div>
+			</div>
 
 			{/* Description Card */}
-			<Card
-				elevation={0}
-				sx={{
-					border: '1px solid #E2E8F0',
-					borderRadius: 2,
-					overflow: 'hidden',
-				}}>
-				<Box
-					sx={{
-						bgcolor: 'background.paper',
-						px: 3,
-						py: 2,
-						borderBottom: '1px solid #E2E8F0',
-						display: 'flex',
-						alignItems: 'center',
-						gap: 1,
-					}}>
-					<Info sx={{ color: '#667eea', fontSize: 20 }} />
-					<Typography
-						variant='subtitle2'
-						sx={{ fontWeight: 700, color: '#475569' }}>
-						{t('description')}
-					</Typography>
-				</Box>
-				<CardContent sx={{ p: 3 }}>
-					<FormRow
+			<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+				<div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center gap-2">
+					<Info className="w-5 h-5 text-indigo-500" />
+					<span className="text-sm font-bold text-slate-600">{t('description')}</span>
+				</div>
+				<div className="p-4">
+					<FormInput
 						label={t('shortDescription')}
 						value={formData.description ?? ''}
-						handleChange={handleChange}
-						name='description'
+						onChange={handleChange}
+						name="description"
 						multiline={true}
 						rows={3}
 						placeholder={t('shortDescriptionPlaceholder')}
 					/>
-					<Alert
-						severity='info'
-						icon={<Info />}
-						sx={{
-							mt: 2,
-							borderRadius: 2,
-							bgcolor: '#EFF6FF',
-							border: '1px solid #BFDBFE',
-							'& .MuiAlert-icon': { color: '#3B82F6' },
-						}}>
-						<Typography variant='caption' sx={{ color: '#1E40AF' }}>
-							{t('descriptionInfo')}
-						</Typography>
-					</Alert>
-				</CardContent>
-			</Card>
+					<div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-start gap-2">
+						<Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+						<p className="text-xs text-blue-700">{t('descriptionInfo')}</p>
+					</div>
+				</div>
+			</div>
 
 			{/* Image Card */}
-			<Card
-				elevation={0}
-				sx={{
-					border: '1px solid #E2E8F0',
-					borderRadius: 2,
-					overflow: 'hidden',
-				}}>
-				<Box
-					sx={{
-						bgcolor: 'background.paper',
-						px: 3,
-						py: 2,
-						borderBottom: '1px solid #E2E8F0',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-						<ImageIcon sx={{ color: '#667eea', fontSize: 20 }} />
-						<Typography
-							variant='subtitle2'
-							sx={{ fontWeight: 700, color: '#475569' }}>
-							{t('coverImage')}
-						</Typography>
-					</Box>
-					<Chip
-						label={t('optional')}
-						size='small'
-						sx={{
-							bgcolor: '#F1F5F9',
-							color: '#475569',
-							fontWeight: 600,
-							fontSize: '0.7rem',
-						}}
-					/>
-				</Box>
-				<CardContent sx={{ p: 3 }}>
-					<FormRow
+			<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+				<div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+					<div className="flex items-center gap-2">
+						<ImageIcon className="w-5 h-5 text-indigo-500" />
+						<span className="text-sm font-bold text-slate-600">{t('coverImage')}</span>
+					</div>
+					<span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">{t('optional')}</span>
+				</div>
+				<div className="p-4">
+					<FormInput
 						label={t('imageUrl')}
 						value={formData.img ?? ''}
-						handleChange={handleChange}
-						name='img'
+						onChange={handleChange}
+						name="img"
 						placeholder={t('imageUrlPlaceholder')}
 					/>
-				</CardContent>
-			</Card>
+				</div>
+			</div>
 
 			{/* Content Card */}
-			<Card
-				elevation={0}
-				sx={{
-					border: '1px solid #E2E8F0',
-					borderRadius: 2,
-					overflow: 'hidden',
-				}}>
-				<Box
-					sx={{
-						bgcolor: 'background.paper',
-						px: 3,
-						py: 2,
-						borderBottom: '1px solid #E2E8F0',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-					}}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-						<TextFields sx={{ color: '#667eea', fontSize: 20 }} />
-						<Typography
-							variant='subtitle2'
-							sx={{ fontWeight: 700, color: '#475569' }}>
-							{t('articleContent')}
-						</Typography>
-					</Box>
-					<Chip
-						label={t('required')}
-						size='small'
-						sx={{
-							bgcolor: '#FEF3C7',
-							color: '#92400E',
-							fontWeight: 600,
-							fontSize: '0.7rem',
-						}}
-					/>
-				</Box>
-				<CardContent sx={{ p: 3 }}>
-					<FormRow
+			<div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+				<div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+					<div className="flex items-center gap-2">
+						<Type className="w-5 h-5 text-indigo-500" />
+						<span className="text-sm font-bold text-slate-600">{t('articleContent')}</span>
+					</div>
+					<span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">{t('required')}</span>
+				</div>
+				<div className="p-4">
+					<FormInput
 						label={t('articleBody')}
 						value={formData.body ?? ''}
-						handleChange={handleChange}
-						name='body'
+						onChange={handleChange}
+						name="body"
 						multiline={true}
 						rows={25}
 						placeholder={t('articleBodyPlaceholder')}
 					/>
-					<Box
-						sx={{
-							mt: 2,
-							p: 2,
-							bgcolor: 'background.paper',
-							borderRadius: 2,
-							border: '1px solid #E2E8F0',
-						}}>
-						<Typography
-							variant='caption'
-							sx={{ color: '#64748B', fontWeight: 600 }}>
-							{t('writingTips')}
-						</Typography>
-						<Box component='ul' sx={{ mt: 1, pl: 2, m: 0 }}>
-							<Typography
-								component='li'
-								variant='caption'
-								sx={{ color: '#64748B', mb: 0.5 }}>
-								{t('tip1')}
-							</Typography>
-							<Typography
-								component='li'
-								variant='caption'
-								sx={{ color: '#64748B', mb: 0.5 }}>
-								{t('tip2')}
-							</Typography>
-							<Typography
-								component='li'
-								variant='caption'
-								sx={{ color: '#64748B' }}>
-								{t('tip3')}
-							</Typography>
-						</Box>
-					</Box>
-				</CardContent>
-			</Card>
+
+					<div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+						<p className="text-xs font-semibold text-slate-600 mb-2">{t('writingTips')}</p>
+						<ul className="space-y-1 text-xs text-slate-500 list-disc pl-4">
+							<li>{t('tip1')}</li>
+							<li>{t('tip2')}</li>
+							<li>{t('tip3')}</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 
 			{/* Character Count */}
-			<Box sx={{ textAlign: 'center' }}>
-				<Typography variant='caption' sx={{ color: '#94A3B8' }}>
+			<div className="text-center">
+				<span className="text-sm text-slate-400">
 					{formData.body?.length || 0} {t('characters')}
-				</Typography>
-			</Box>
-		</Stack>
+				</span>
+			</div>
+		</div>
 	)
 }
 

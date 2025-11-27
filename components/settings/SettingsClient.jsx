@@ -1,83 +1,45 @@
 'use client'
+
 import React from 'react'
 import { useState, useEffect, useMemo } from 'react'
+import Image from 'next/image'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { useLocale } from 'next-intl'
 import toast from '@/utils/toast'
 import { AVATARS, getAvatarUrl } from '@/utils/avatars'
-import {
-	Container,
-	Box,
-	Typography,
-	Paper,
-	TextField,
-	Button,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	IconButton,
-	Divider,
-	Grid,
-	Avatar,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	useMediaQuery,
-	useTheme,
-	Switch,
-	FormControlLabel,
-	Slider,
-	LinearProgress,
-} from '@mui/material'
-import {
-	PersonRounded,
-	EmailRounded,
-	LanguageRounded,
-	EditRounded,
-	CheckRounded,
-	CloseRounded,
-	SettingsRounded,
-	LockRounded,
-	DeleteForeverRounded,
-	TrackChangesRounded,
-	CheckCircleRounded,
-	CancelRounded,
-} from '@mui/icons-material'
-// Head removed - use metadata in App Router
-
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 import { useRouter } from 'next/navigation'
 import { logger } from '@/utils/logger'
 import { changePassword, deleteAccount } from '@/app/actions/auth'
-
-// Import section components
-import { ProfileSection } from './ProfileSection'
-import { LanguagePreferencesSection } from './LanguagePreferencesSection'
-import { GoalsSection } from './GoalsSection'
-import { SecuritySection } from './SecuritySection'
+import {
+	User,
+	Mail,
+	Globe,
+	Edit3,
+	Check,
+	X,
+	Settings,
+	Lock,
+	Trash2,
+	Target,
+	Shield,
+	Sparkles,
+	Crown,
+	Flame,
+	Coins,
+	Zap,
+	Eye,
+	EyeOff,
+} from 'lucide-react'
 
 const SettingsClient = ({ translations }) => {
 	const { userProfile, updateUserProfile, logout } = useUserContext()
 	const router = useRouter()
-	const theme = useTheme()
-
-	// Fix hydration mismatch: sync theme and media query only on client
-	const [isDark, setIsDark] = useState(false)
-	const [isMobile, setIsMobile] = useState(false)
-
-	useEffect(() => {
-		setIsDark(theme.palette.mode === 'dark')
-	}, [theme.palette.mode])
-
-	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 600px)')
-		setIsMobile(mediaQuery.matches)
-
-		const handler = (e) => setIsMobile(e.matches)
-		mediaQuery.addEventListener('change', handler)
-		return () => mediaQuery.removeEventListener('change', handler)
-	}, [])
+	const { isDark } = useThemeMode()
 
 	const [formData, setFormData] = useState({
 		username: '',
@@ -98,7 +60,6 @@ const SettingsClient = ({ translations }) => {
 		dailyXpGoal: false,
 	})
 	const [avatarDialogOpen, setAvatarDialogOpen] = useState(false)
-	const [isAvatarHovered, setIsAvatarHovered] = useState(false)
 	const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
 	const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false)
 	const [passwordData, setPasswordData] = useState({
@@ -106,31 +67,21 @@ const SettingsClient = ({ translations }) => {
 		newPassword: '',
 		confirmPassword: '',
 	})
-
-	// Password validation (modern NIST approach: 12 characters minimum)
-	const passwordValidation = useMemo(() => {
-		const { newPassword } = passwordData
-		return {
-			minLength: newPassword.length >= 12,
-		}
-	}, [passwordData.newPassword])
+	const [showPasswords, setShowPasswords] = useState({
+		current: false,
+		new: false,
+		confirm: false,
+	})
 
 	const passwordStrength = useMemo(() => {
 		const { newPassword } = passwordData
 		if (newPassword.length === 0) return 0
-
-		// Calculate strength based on length and diversity
 		let score = 0
-
-		// Length (0-40 points)
 		score += Math.min(newPassword.length * 2, 40)
-
-		// Character diversity (0-60 points)
 		if (/[a-z]/.test(newPassword)) score += 15
 		if (/[A-Z]/.test(newPassword)) score += 15
 		if (/[0-9]/.test(newPassword)) score += 15
 		if (/[^a-zA-Z0-9]/.test(newPassword)) score += 15
-
 		return Math.min(score, 100)
 	}, [passwordData.newPassword])
 
@@ -138,7 +89,6 @@ const SettingsClient = ({ translations }) => {
 		return passwordData.newPassword.length >= 12
 	}, [passwordData.newPassword])
 
-	// Charger les données du profil utilisateur
 	useEffect(() => {
 		if (userProfile) {
 			setFormData({
@@ -153,54 +103,35 @@ const SettingsClient = ({ translations }) => {
 		}
 	}, [userProfile])
 
-	const handleChange = field => event => {
-		setFormData({
-			...formData,
-			[field]: event.target.value,
-		})
+	const handleChange = (field, value) => {
+		setFormData({ ...formData, [field]: value })
 	}
 
-	const handleToggle = field => async event => {
-		const newValue = event.target.checked
-		setFormData({
-			...formData,
-			[field]: newValue,
-		})
+	const handleToggle = async (field) => {
+		const newValue = !formData[field]
+		setFormData({ ...formData, [field]: newValue })
 
-		// Auto-save toggles
 		setLoading(true)
 		try {
-			const fieldMapping = {
-				showInLeaderboard: 'show_in_leaderboard',
-			}
-
+			const fieldMapping = { showInLeaderboard: 'show_in_leaderboard' }
 			await updateUserProfile({ [fieldMapping[field]]: newValue })
 			toast.success(translations.updateSuccess)
 		} catch (error) {
 			logger.error('Error updating toggle:', error)
 			toast.error(error.message || translations.updateError)
-			// Revert on error
-			setFormData({
-				...formData,
-				[field]: !newValue,
-			})
+			setFormData({ ...formData, [field]: !newValue })
 		} finally {
 			setLoading(false)
 		}
 	}
 
-	const toggleEditMode = field => {
-		setEditMode({
-			...editMode,
-			[field]: !editMode[field],
-		})
+	const toggleEditMode = (field) => {
+		setEditMode({ ...editMode, [field]: !editMode[field] })
 	}
 
-	const handleSave = async field => {
+	const handleSave = async (field) => {
 		setLoading(true)
 		try {
-			const updateData = {}
-
 			const fieldMapping = {
 				username: 'name',
 				email: 'email',
@@ -209,25 +140,18 @@ const SettingsClient = ({ translations }) => {
 				dailyXpGoal: 'daily_xp_goal',
 			}
 
-			updateData[fieldMapping[field]] = formData[field]
+			await updateUserProfile({ [fieldMapping[field]]: formData[field] })
 
-			await updateUserProfile(updateData)
-
-			// Clear materials filters from localStorage when language level changes
-			// This ensures filters are reset with the new level on next visit
 			if (field === 'languageLevel') {
 				try {
 					localStorage.removeItem('materials_list_filters')
-					// Also clear section filters
 					const storageKeys = Object.keys(localStorage)
-					storageKeys.forEach(key => {
+					storageKeys.forEach((key) => {
 						if (key.startsWith('materials_section_')) {
 							localStorage.removeItem(key)
 						}
 					})
-				} catch (e) {
-					// Ignore localStorage errors
-				}
+				} catch (e) {}
 			}
 
 			toast.success(translations.updateSuccess)
@@ -240,9 +164,8 @@ const SettingsClient = ({ translations }) => {
 		}
 	}
 
-	const handleCancel = field => {
+	const handleCancel = (field) => {
 		toggleEditMode(field)
-		// Reset to original value
 		if (userProfile) {
 			const fieldMapping = {
 				username: 'name',
@@ -251,10 +174,7 @@ const SettingsClient = ({ translations }) => {
 				learningLanguage: 'learning_language',
 				dailyXpGoal: 'daily_xp_goal',
 			}
-			setFormData({
-				...formData,
-				[field]: userProfile[fieldMapping[field]] || '',
-			})
+			setFormData({ ...formData, [field]: userProfile[fieldMapping[field]] || '' })
 		}
 	}
 
@@ -263,12 +183,10 @@ const SettingsClient = ({ translations }) => {
 			toast.error(translations.fillAllFields)
 			return
 		}
-
 		if (passwordData.newPassword !== passwordData.confirmPassword) {
 			toast.error(translations.passwordMismatch)
 			return
 		}
-
 		if (!isPasswordValid) {
 			toast.error(translations.passwordRequirements)
 			return
@@ -276,7 +194,6 @@ const SettingsClient = ({ translations }) => {
 
 		setLoading(true)
 		try {
-			// Use Server Action instead of fetch()
 			const result = await changePassword({
 				currentPassword: passwordData.currentPassword,
 				newPassword: passwordData.newPassword,
@@ -288,11 +205,7 @@ const SettingsClient = ({ translations }) => {
 
 			toast.success(translations.passwordChanged)
 			setChangePasswordDialogOpen(false)
-			setPasswordData({
-				currentPassword: '',
-				newPassword: '',
-				confirmPassword: '',
-			})
+			setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
 		} catch (error) {
 			logger.error('Error changing password:', error)
 			toast.error(error.message || translations.changePasswordError)
@@ -304,19 +217,12 @@ const SettingsClient = ({ translations }) => {
 	const handleDeleteAccount = async () => {
 		setLoading(true)
 		try {
-			// Use Server Action instead of fetch()
 			const result = await deleteAccount()
-
 			if (!result.success) {
 				throw new Error(result.error || translations.deleteAccountError)
 			}
-
 			toast.success(translations.accountDeleted)
-
-			// Clear client-side session
 			await logout()
-
-			// Redirect to home page
 			router.push('/')
 		} catch (error) {
 			logger.error('Error deleting account:', error)
@@ -326,7 +232,7 @@ const SettingsClient = ({ translations }) => {
 		}
 	}
 
-	const handleAvatarChange = async newAvatarId => {
+	const handleAvatarChange = async (newAvatarId) => {
 		setLoading(true)
 		try {
 			await updateUserProfile({ avatar_id: newAvatarId })
@@ -341,679 +247,684 @@ const SettingsClient = ({ translations }) => {
 		}
 	}
 
+	const goals = [
+		{ value: 50, emoji: '🌱', label: translations.goalRelaxed, time: translations.goal5to10min, color: 'emerald' },
+		{ value: 100, emoji: '⭐', label: translations.goalRegular, time: translations.goal15to20min, color: 'amber', recommended: true },
+		{ value: 200, emoji: '🔥', label: translations.goalMotivated, time: translations.goal30min, color: 'orange' },
+		{ value: 300, emoji: '💪', label: translations.goalIntensive, time: translations.goal45minPlus, color: 'red' },
+		{ value: 0, emoji: '🎯', label: translations.goalNone, time: translations.goalAtMyPace, color: 'violet' },
+	]
+
+	const handleGoalClick = async (goalValue) => {
+		setFormData({ ...formData, dailyXpGoal: goalValue })
+		setLoading(true)
+		try {
+			await updateUserProfile({ daily_xp_goal: goalValue })
+			toast.success(translations.updateSuccess)
+		} catch (error) {
+			logger.error('Error updating goal:', error)
+			toast.error(error.message || translations.updateError)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const getLevelLabel = (level) => {
+		const labels = {
+			beginner: translations.beginner,
+			intermediate: translations.intermediate,
+			advanced: translations.advanced,
+		}
+		return labels[level] || level
+	}
 
 	return (
-		<>
-			<Box sx={{ bgcolor: 'background.paper', minHeight: '100vh', py: 4, pt: { xs: 12, md: 10 } }}>
-				<Container maxWidth='md'>
-					{/* Carte de personnage héroïque */}
-					<Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-						<Box
-							sx={{
-								position: 'relative',
-								width: { xs: 280, sm: 320 },
-								background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
-								borderRadius: 4,
-								p: 3,
-								boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: -2,
-									left: -2,
-									right: -2,
-									bottom: -2,
-									borderRadius: 4,
-									background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-									zIndex: -1,
-								},
-								'&::after': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									borderRadius: 4,
-									background: 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.2) 0%, transparent 50%)',
-									pointerEvents: 'none',
-								},
-							}}
-							onMouseEnter={() => setIsAvatarHovered(true)}
-							onMouseLeave={() => setIsAvatarHovered(false)}>
-							{/* Ornement décoratif haut */}
-							<Box
-								sx={{
-									position: 'absolute',
-									top: -1,
-									left: '50%',
-									transform: 'translateX(-50%)',
-									width: 60,
-									height: 8,
-									background: 'linear-gradient(90deg, transparent 0%, #06b6d4 50%, transparent 100%)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: '50%',
-										left: '50%',
-										transform: 'translate(-50%, -50%)',
-										width: 12,
-										height: 12,
-										background: '#06b6d4',
-										borderRadius: '50%',
-										boxShadow: '0 0 15px rgba(6, 182, 212, 0.8)',
-									},
-								}}
-							/>
+		<div className={cn('min-h-screen py-8 pt-24 md:pt-20', isDark ? 'bg-slate-950' : 'bg-slate-50')}>
+			<div className="max-w-4xl mx-auto px-4">
+				{/* Hero Card - Character Portrait */}
+				<div className="flex justify-center mb-8">
+					<div
+						className={cn(
+							'relative w-80 rounded-2xl p-6 overflow-hidden',
+							'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+							'border-2 border-violet-500/30 shadow-2xl shadow-violet-500/20'
+						)}
+					>
+						{/* Glow effects */}
+						<div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+						<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
+						<div className="absolute -top-20 -right-20 w-40 h-40 bg-violet-500/20 rounded-full blur-3xl" />
 
-							{/* Nom du personnage */}
-							<Box
-								sx={{
-									textAlign: 'center',
-									mb: 2,
-									pb: 2,
-									borderBottom: '1px solid rgba(139, 92, 246, 0.3)',
-								}}>
-								<Typography
-									variant='h5'
-									sx={{
-										fontWeight: 700,
-										background: 'linear-gradient(145deg, #a78bfa 0%, #06b6d4 50%, #a78bfa 100%)',
-										WebkitBackgroundClip: 'text',
-										WebkitTextFillColor: 'transparent',
-										textShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
-										letterSpacing: '0.05em',
-										fontSize: { xs: '1.3rem', sm: '1.5rem' },
-									}}>
-									{userProfile?.name || 'Aventurier'}
-								</Typography>
-							</Box>
+						{/* Character Name */}
+						<div className="text-center mb-4 pb-4 border-b border-violet-500/30">
+							<h2 className="text-2xl font-bold bg-gradient-to-r from-violet-300 via-cyan-300 to-violet-300 bg-clip-text text-transparent">
+								{userProfile?.name || 'Aventurier'}
+							</h2>
+						</div>
 
-							{/* Portrait avec cadre */}
-							<Box sx={{ position: 'relative', mb: 2 }}>
-								<Box
-									sx={{
-										position: 'relative',
-										width: '100%',
-										display: 'flex',
-										justifyContent: 'center',
-									}}>
-									<Box
-										sx={{
-											position: 'relative',
-											width: 160,
-											height: 160,
-											borderRadius: '50%',
-											background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 100%)',
-											p: 0.5,
-											boxShadow: '0 8px 32px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
-										}}>
-										<Avatar
-											src={getAvatarUrl(selectedAvatar)}
-											alt='User avatar'
-											sx={{
-												width: '100%',
-												height: '100%',
-												border: '4px solid #0f172a',
-												boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
-												transition: 'all 0.3s ease',
-												cursor: 'pointer',
-											}}
-										/>
-										<IconButton
-											onClick={() => setAvatarDialogOpen(true)}
-											sx={{
-												position: 'absolute',
-												bottom: 5,
-												right: 5,
-												bgcolor: '#06b6d4',
-												width: 36,
-												height: 36,
-												boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-												opacity: isAvatarHovered ? 1 : 0,
-												transition: 'all 0.3s ease',
-												'&:hover': {
-													bgcolor: '#0891b2',
-													transform: 'scale(1.1)',
-												},
-											}}>
-											<EditRounded sx={{ fontSize: 20, color: 'white' }} />
-										</IconButton>
-									</Box>
-								</Box>
-							</Box>
+						{/* Avatar */}
+						<div className="relative flex justify-center mb-4">
+							<div
+								className="relative w-40 h-40 rounded-full p-1 bg-gradient-to-br from-violet-500 to-cyan-500 shadow-lg shadow-violet-500/30 cursor-pointer group"
+								onClick={() => setAvatarDialogOpen(true)}
+							>
+								<img
+									src={getAvatarUrl(selectedAvatar)}
+									alt="Avatar"
+									className="w-full h-full rounded-full border-4 border-slate-900 object-cover"
+								/>
+								<div className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-cyan-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+									<Edit3 className="w-4 h-4 text-white" />
+								</div>
+							</div>
+						</div>
 
-							{/* Statistiques */}
-							<Box
-								sx={{
-									display: 'grid',
-									gridTemplateColumns: '1fr 1fr 1fr',
-									gap: 2,
-									mt: 2,
-									pt: 2,
-									borderTop: '1px solid rgba(139, 92, 246, 0.3)',
-									alignItems: 'end',
-								}}>
-								{/* XP */}
-								<Box sx={{ textAlign: 'center' }}>
-									<Typography
-										variant='caption'
-										sx={{
-											color: 'rgba(6, 182, 212, 0.8)',
-											fontSize: '0.7rem',
-											fontWeight: 600,
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-										}}>
-										XP
-									</Typography>
-									<Typography
-										variant='h5'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(145deg, #06b6d4 0%, #67e8f9 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											lineHeight: 1,
-											mt: 0.5,
-										}}>
-										{userProfile?.xp || 0}
-									</Typography>
-								</Box>
+						{/* Stats */}
+						<div className="grid grid-cols-3 gap-2 pt-4 border-t border-violet-500/30">
+							<div className="text-center">
+								<p className="text-xs text-cyan-400/80 uppercase tracking-wider font-semibold">XP</p>
+								<p className="text-xl font-bold bg-gradient-to-b from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
+									{userProfile?.xp || 0}
+								</p>
+							</div>
+							<div className="text-center">
+								<p className="text-xs text-violet-400/80 uppercase tracking-wider font-semibold">Niveau</p>
+								<p className="text-3xl font-extrabold bg-gradient-to-b from-violet-300 to-violet-500 bg-clip-text text-transparent">
+									{userProfile?.level || 1}
+								</p>
+							</div>
+							<div className="text-center">
+								<p className="text-xs text-cyan-400/80 uppercase tracking-wider font-semibold">Or</p>
+								<p className="text-xl font-bold bg-gradient-to-b from-amber-300 to-amber-500 bg-clip-text text-transparent">
+									{userProfile?.gold || 0}
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
 
-								{/* Niveau */}
-								<Box sx={{ textAlign: 'center' }}>
-									<Typography
-										variant='caption'
-										sx={{
-											color: 'rgba(167, 139, 250, 0.8)',
-											fontSize: '0.75rem',
-											fontWeight: 700,
-											textTransform: 'uppercase',
-											letterSpacing: '0.12em',
-										}}>
-										Niveau
-									</Typography>
-									<Typography
-										variant='h3'
-										sx={{
-											fontWeight: 800,
-											background: 'linear-gradient(145deg, #a78bfa 0%, #c4b5fd 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											lineHeight: 1,
-											mt: 0.5,
-											textShadow: '0 0 20px rgba(139, 92, 246, 0.3)',
-										}}>
-										{userProfile?.level || 1}
-									</Typography>
-								</Box>
+				{/* Settings Grid */}
+				<div className="grid gap-6 md:grid-cols-2">
+					{/* Profile Section */}
+					<div className={cn(
+						'rounded-2xl border-2 overflow-hidden transition-all hover:shadow-xl',
+						isDark
+							? 'bg-gradient-to-br from-slate-900 to-slate-800 border-violet-500/30 hover:shadow-violet-500/10'
+							: 'bg-white border-violet-200 hover:shadow-violet-200/50'
+					)}>
+						<div className="p-4 bg-gradient-to-r from-violet-600 to-purple-600 text-center">
+							<h3 className="font-bold text-white uppercase tracking-wider text-sm">
+								{translations.personalInfo}
+							</h3>
+						</div>
 
-								{/* Or */}
-								<Box sx={{ textAlign: 'center' }}>
-									<Typography
-										variant='caption'
-										sx={{
-											color: 'rgba(6, 182, 212, 0.8)',
-											fontSize: '0.7rem',
-											fontWeight: 600,
-											textTransform: 'uppercase',
-											letterSpacing: '0.1em',
-										}}>
-										Or
-									</Typography>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 700,
-											background: 'linear-gradient(145deg, #06b6d4 0%, #67e8f9 100%)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											lineHeight: 1.2,
-											mt: 0.5,
-											fontSize: '1rem',
-										}}>
-										{userProfile?.gold || 0}
-									</Typography>
-								</Box>
-							</Box>
-
-							{/* Ornement décoratif bas */}
-							<Box
-								sx={{
-									position: 'absolute',
-									bottom: -1,
-									left: '50%',
-									transform: 'translateX(-50%)',
-									width: 60,
-									height: 8,
-									background: 'linear-gradient(90deg, transparent 0%, #8b5cf6 50%, transparent 100%)',
-									'&::before': {
-										content: '""',
-										position: 'absolute',
-										top: '50%',
-										left: '50%',
-										transform: 'translate(-50%, -50%)',
-										width: 12,
-										height: 12,
-										background: '#8b5cf6',
-										borderRadius: '50%',
-										boxShadow: '0 0 15px rgba(139, 92, 246, 0.8)',
-									},
-								}}
-							/>
-						</Box>
-					</Box>
-
-					{/* Sections en grille */}
-					<Grid container spacing={{ xs: 3, md: 4 }}>
-						<ProfileSection
+						{/* Username Field */}
+						<SettingsField
+							icon={<User className="w-5 h-5" />}
+							label={translations.username}
+							value={formData.username}
+							isEditing={editMode.username}
 							isDark={isDark}
-							translations={translations}
-							editMode={editMode}
-							formData={formData}
+							color="violet"
+							onEdit={() => toggleEditMode('username')}
+							onSave={() => handleSave('username')}
+							onCancel={() => handleCancel('username')}
+							onChange={(val) => handleChange('username', val)}
 							loading={loading}
-							handleChange={handleChange}
-							handleSave={handleSave}
-							handleCancel={handleCancel}
-							toggleEditMode={toggleEditMode}
 						/>
 
-						<LanguagePreferencesSection
+						{/* Email Field */}
+						<SettingsField
+							icon={<Mail className="w-5 h-5" />}
+							label={translations.email}
+							value={formData.email}
+							isEditing={false}
 							isDark={isDark}
-							translations={translations}
-							editMode={editMode}
-							formData={formData}
-							loading={loading}
-							handleChange={handleChange}
-							handleSave={handleSave}
-							handleCancel={handleCancel}
-							toggleEditMode={toggleEditMode}
+							color="violet"
+							readonly
+							hint={translations.emailNotEditable}
 						/>
+					</div>
 
-						<GoalsSection
+					{/* Language Preferences */}
+					<div className={cn(
+						'rounded-2xl border-2 overflow-hidden transition-all hover:shadow-xl',
+						isDark
+							? 'bg-gradient-to-br from-slate-900 to-slate-800 border-cyan-500/30 hover:shadow-cyan-500/10'
+							: 'bg-white border-cyan-200 hover:shadow-cyan-200/50'
+					)}>
+						<div className="p-4 bg-gradient-to-r from-cyan-600 to-teal-600 text-center">
+							<h3 className="font-bold text-white uppercase tracking-wider text-sm">
+								{translations.languagePreferences}
+							</h3>
+						</div>
+
+						<SettingsField
+							icon={<Globe className="w-5 h-5" />}
+							label={translations.languageLevel}
+							value={getLevelLabel(formData.languageLevel)}
+							rawValue={formData.languageLevel}
+							isEditing={editMode.languageLevel}
 							isDark={isDark}
-							translations={translations}
-							formData={formData}
-							setFormData={setFormData}
+							color="cyan"
+							type="select"
+							options={[
+								{ value: 'beginner', label: translations.beginner },
+								{ value: 'intermediate', label: translations.intermediate },
+								{ value: 'advanced', label: translations.advanced },
+							]}
+							onEdit={() => toggleEditMode('languageLevel')}
+							onSave={() => handleSave('languageLevel')}
+							onCancel={() => handleCancel('languageLevel')}
+							onChange={(val) => handleChange('languageLevel', val)}
 							loading={loading}
-							setLoading={setLoading}
-							updateUserProfile={updateUserProfile}
 						/>
+					</div>
 
+					{/* Goals Section */}
+					<div className={cn(
+						'rounded-2xl border-2 overflow-hidden transition-all hover:shadow-xl',
+						isDark
+							? 'bg-gradient-to-br from-slate-900 to-slate-800 border-rose-500/30 hover:shadow-rose-500/10'
+							: 'bg-white border-rose-200 hover:shadow-rose-200/50'
+					)}>
+						<div className="p-4 bg-gradient-to-r from-rose-600 to-pink-600 text-center">
+							<h3 className="font-bold text-white uppercase tracking-wider text-sm">
+								{translations.goalsAndMotivation}
+							</h3>
+						</div>
 
-						<SecuritySection
-							isDark={isDark}
-							translations={translations}
-							formData={formData}
-							loading={loading}
-							handleToggle={handleToggle}
-							setChangePasswordDialogOpen={setChangePasswordDialogOpen}
-							setDeleteAccountDialogOpen={setDeleteAccountDialogOpen}
-						/>
+						<div className="p-4">
+							<p className={cn(
+								'text-xs font-semibold uppercase tracking-wider text-center mb-4',
+								isDark ? 'text-rose-400' : 'text-rose-600'
+							)}>
+								{translations.dailyXpGoal}
+							</p>
 
+							<div className="space-y-2">
+								{goals.map((goal) => {
+									const isSelected = formData.dailyXpGoal === goal.value
+									return (
+										<button
+											key={goal.value}
+											onClick={() => !loading && handleGoalClick(goal.value)}
+											disabled={loading}
+											className={cn(
+												'relative w-full p-3 rounded-xl border-2 transition-all text-left',
+												isSelected
+													? `border-${goal.color}-500 bg-${goal.color}-500/10 shadow-lg shadow-${goal.color}-500/20`
+													: isDark
+														? 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+														: 'border-slate-200 hover:border-slate-300 bg-slate-50',
+												loading && 'opacity-50 cursor-not-allowed'
+											)}
+										>
+											{goal.recommended && (
+												<Badge className="absolute -top-2 right-3 bg-amber-500 text-white text-[10px] px-2">
+													{translations.recommended}
+												</Badge>
+											)}
 
-					</Grid>
-				</Container>
+											<div className="flex items-center gap-3">
+												<div className={cn(
+													'w-12 h-12 rounded-full flex items-center justify-center text-2xl',
+													`bg-${goal.color}-500/20 border-2 border-${goal.color}-500/50`
+												)}>
+													{goal.emoji}
+												</div>
 
-				{/* Dialog pour changer d'avatar */}
-				<Dialog
-					open={avatarDialogOpen}
-					onClose={() => setAvatarDialogOpen(false)}
-					maxWidth='md'
-					fullWidth
-					fullScreen={isMobile}
-					PaperProps={{
-						sx: {
-							borderRadius: { xs: 0, sm: 4 },
-							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
-							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.4)',
-							position: 'relative',
-							overflow: 'hidden',
-							m: { xs: 0, sm: 3 },
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: -2,
-								left: -2,
-								right: -2,
-								bottom: -2,
-								borderRadius: { xs: 0, sm: 4 },
-								background: 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 50%, #8b5cf6 100%)',
-								zIndex: -1,
-							},
-						},
-					}}>
-					<DialogContent
-						sx={{
-							p: { xs: 2, sm: 3, md: 4 },
-							background: 'transparent',
-							overflow: 'auto',
-							position: 'relative',
-							'&::-webkit-scrollbar': {
-								display: 'none',
-							},
-							scrollbarWidth: 'none',
-							msOverflowStyle: 'none',
-						}}>
-						{/* Bouton de fermeture */}
-						<Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-							<IconButton
-								onClick={() => setAvatarDialogOpen(false)}
-								sx={{
-									color: 'white',
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%)',
-									border: '2px solid rgba(139, 92, 246, 0.5)',
-									boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
-									width: { xs: 48, sm: 56 },
-									height: { xs: 48, sm: 56 },
-									'&:hover': {
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.5) 100%)',
-										transform: 'scale(1.1) rotate(90deg)',
-										boxShadow: '0 6px 20px rgba(139, 92, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)',
-										borderColor: '#06b6d4',
-									},
-									transition: 'all 0.3s ease',
-								}}>
-								<CloseRounded sx={{ fontSize: { xs: 28, sm: 32 } }} />
-							</IconButton>
-						</Box>
+												<div className="flex-1">
+													<div className="flex items-baseline gap-2">
+														<span className={cn(
+															'font-bold',
+															isSelected
+																? `text-${goal.color}-500`
+																: isDark ? 'text-white' : 'text-slate-900'
+														)}>
+															{goal.label}
+														</span>
+														{goal.value > 0 && (
+															<span className={cn('text-sm font-semibold', `text-${goal.color}-500`)}>
+																{goal.value} XP
+															</span>
+														)}
+													</div>
+													<p className={cn('text-xs', isDark ? 'text-slate-500' : 'text-slate-400')}>
+														{goal.time}
+													</p>
+												</div>
 
-						<Box
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
-								gap: { xs: 1.5, sm: 2, md: 3 },
-							}}>
-							{AVATARS.map(avatar => {
+												{isSelected && (
+													<div className={cn('w-7 h-7 rounded-full flex items-center justify-center', `bg-${goal.color}-500`)}>
+														<Check className="w-4 h-4 text-white" />
+													</div>
+												)}
+											</div>
+										</button>
+									)
+								})}
+							</div>
+						</div>
+					</div>
+
+					{/* Security Section */}
+					<div className={cn(
+						'rounded-2xl border-2 overflow-hidden transition-all hover:shadow-xl',
+						isDark
+							? 'bg-gradient-to-br from-slate-900 to-slate-800 border-red-500/30 hover:shadow-red-500/10'
+							: 'bg-white border-red-200 hover:shadow-red-200/50'
+					)}>
+						<div className="p-4 bg-gradient-to-r from-red-600 to-rose-600 text-center">
+							<h3 className="font-bold text-white uppercase tracking-wider text-sm">
+								{translations.privacyAndSecurity}
+							</h3>
+						</div>
+
+						<div className="p-4 space-y-4">
+							{/* Leaderboard Toggle */}
+							<div className="flex items-center justify-between">
+								<div>
+									<p className={cn('font-semibold', isDark ? 'text-white' : 'text-slate-900')}>
+										{translations.showInLeaderboard}
+									</p>
+									<p className={cn('text-xs', isDark ? 'text-slate-500' : 'text-slate-400')}>
+										{translations.showInLeaderboardDesc}
+									</p>
+								</div>
+								<button
+									onClick={() => handleToggle('showInLeaderboard')}
+									disabled={loading}
+									className={cn(
+										'w-12 h-7 rounded-full transition-all relative',
+										formData.showInLeaderboard
+											? 'bg-emerald-500'
+											: isDark ? 'bg-slate-700' : 'bg-slate-300'
+									)}
+								>
+									<div className={cn(
+										'absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-all',
+										formData.showInLeaderboard ? 'left-6' : 'left-1'
+									)} />
+								</button>
+							</div>
+
+							{/* Change Password */}
+							<Button
+								variant="outline"
+								className={cn(
+									'w-full gap-2 border-2',
+									'border-red-500/50 text-red-500 hover:bg-red-500/10'
+								)}
+								onClick={() => setChangePasswordDialogOpen(true)}
+							>
+								<Lock className="w-4 h-4" />
+								{translations.changePassword}
+							</Button>
+
+							{/* Delete Account */}
+							<Button
+								variant="outline"
+								className={cn(
+									'w-full gap-2 border-2',
+									'border-red-600/50 text-red-600 hover:bg-red-600/10'
+								)}
+								onClick={() => setDeleteAccountDialogOpen(true)}
+							>
+								<Trash2 className="w-4 h-4" />
+								{translations.deleteAccount}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* Avatar Dialog */}
+			{avatarDialogOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+					<div className={cn(
+						'relative w-full max-w-2xl max-h-[90vh] overflow-auto rounded-2xl p-6',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-violet-500/30 shadow-2xl'
+					)}>
+						<button
+							onClick={() => setAvatarDialogOpen(false)}
+							className="absolute top-4 right-4 w-10 h-10 rounded-full bg-violet-500/20 border border-violet-500/50 flex items-center justify-center text-white hover:bg-violet-500/30 transition-all"
+						>
+							<X className="w-5 h-5" />
+						</button>
+
+						<h3 className="text-xl font-bold text-center text-white mb-6">
+							Choisir un avatar
+						</h3>
+
+						<div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+							{AVATARS.map((avatar) => {
 								const isSelected = selectedAvatar === avatar.id
 								return (
-									<Box
+									<button
 										key={avatar.id}
 										onClick={() => !loading && handleAvatarChange(avatar.id)}
-										sx={{
-											cursor: loading ? 'not-allowed' : 'pointer',
-											display: 'flex',
-											flexDirection: 'column',
-											alignItems: 'center',
-											gap: { xs: 1, sm: 1.5 },
-											p: { xs: 1.5, sm: 2, md: 2.5 },
-											borderRadius: 3,
-											background: isSelected
-												? 'linear-gradient(145deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
-												: 'linear-gradient(145deg, rgba(30, 27, 75, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%)',
-											border: isSelected ? '3px solid' : '2px solid rgba(139, 92, 246, 0.3)',
-											borderColor: isSelected ? '#8b5cf6' : 'rgba(139, 92, 246, 0.3)',
-											transition: 'all 0.3s ease',
-											opacity: loading ? 0.6 : 1,
-											boxShadow: isSelected
-												? '0 8px 24px rgba(139, 92, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.3)'
-												: '0 4px 12px rgba(0, 0, 0, 0.3)',
-											'&:hover': {
-												transform: loading ? 'none' : 'translateY(-4px) scale(1.02)',
-												borderColor: isSelected ? '#06b6d4' : '#8b5cf6',
-												boxShadow: isSelected
-													? '0 12px 32px rgba(6, 182, 212, 0.5), 0 0 30px rgba(6, 182, 212, 0.4)'
-													: '0 8px 24px rgba(139, 92, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.3)',
-												background: isSelected
-													? 'linear-gradient(145deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.25) 100%)'
-													: 'linear-gradient(145deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)',
-											},
-										}}>
-										<Box sx={{ position: 'relative' }}>
-											<Box
-												sx={{
-													position: 'relative',
-													width: { xs: 80, sm: 90, md: 100 },
-													height: { xs: 80, sm: 90, md: 100 },
-													borderRadius: '50%',
-													background: isSelected
-														? 'linear-gradient(145deg, #8b5cf6 0%, #06b6d4 100%)'
-														: 'linear-gradient(145deg, rgba(139, 92, 246, 0.5) 0%, rgba(6, 182, 212, 0.5) 100%)',
-													p: 0.4,
-													boxShadow: isSelected
-														? '0 8px 24px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3)'
-														: '0 4px 12px rgba(139, 92, 246, 0.3)',
-												}}>
-												<Avatar
-													src={avatar.url}
-													alt={translations[avatar.nameKey]}
-													sx={{
-														width: '100%',
-														height: '100%',
-														border: '3px solid #0f172a',
-														boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
-													}}
-												/>
-											</Box>
+										disabled={loading}
+										className={cn(
+											'p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2',
+											isSelected
+												? 'border-violet-500 bg-violet-500/20 shadow-lg shadow-violet-500/30'
+												: 'border-slate-700 hover:border-violet-500/50 bg-slate-800/50',
+											loading && 'opacity-50'
+										)}
+									>
+										<div className={cn(
+											'relative w-20 h-20 rounded-full p-0.5',
+											isSelected
+												? 'bg-gradient-to-br from-violet-500 to-cyan-500'
+												: 'bg-gradient-to-br from-violet-500/50 to-cyan-500/50'
+										)}>
+											<img
+												src={avatar.url}
+												alt={translations[avatar.nameKey]}
+												className="w-full h-full rounded-full border-2 border-slate-900 object-cover"
+											/>
 											{isSelected && (
-												<Box
-													sx={{
-														position: 'absolute',
-														top: { xs: -4, sm: -6 },
-														right: { xs: -4, sm: -6 },
-														width: { xs: 24, sm: 28, md: 32 },
-														height: { xs: 24, sm: 28, md: 32 },
-														borderRadius: '50%',
-														background: 'linear-gradient(145deg, #06b6d4 0%, #0891b2 100%)',
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														boxShadow: '0 4px 12px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.4)',
-														border: '2px solid #0f172a',
-													}}>
-													<CheckRounded
-														sx={{
-															fontSize: { xs: 16, sm: 18, md: 20 },
-															color: 'white',
-														}}
-													/>
-												</Box>
+												<div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center border-2 border-slate-900">
+													<Check className="w-3 h-3 text-white" />
+												</div>
 											)}
-										</Box>
-									</Box>
+										</div>
+									</button>
 								)
 							})}
-						</Box>
-					</DialogContent>
-				</Dialog>
+						</div>
+					</div>
+				</div>
+			)}
 
-				{/* Dialog pour changer le mot de passe */}
-				<Dialog
-					open={changePasswordDialogOpen}
-					onClose={() => setChangePasswordDialogOpen(false)}
-					maxWidth='sm'
-					fullWidth
-					PaperProps={{
-						sx: {
-							borderRadius: 4,
-							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
-							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.4)',
-							border: '2px solid rgba(239, 68, 68, 0.3)',
-						},
-					}}>
-					<DialogTitle sx={{ textAlign: 'center', color: '#fca5a5', fontWeight: 700 }}>
-						{translations.changePassword}
-					</DialogTitle>
-					<DialogContent>
-						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-							<TextField
-								fullWidth
-								type='password'
+			{/* Change Password Dialog */}
+			{changePasswordDialogOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+					<div className={cn(
+						'relative w-full max-w-md rounded-2xl p-6',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-red-500/30 shadow-2xl'
+					)}>
+						<h3 className="text-xl font-bold text-center text-red-300 mb-6">
+							{translations.changePassword}
+						</h3>
+
+						<div className="space-y-4">
+							<PasswordInput
 								label={translations.currentPassword}
 								value={passwordData.currentPassword}
-								onChange={e => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										'& fieldset': { borderColor: '#ef4444' },
-										'&:hover fieldset': { borderColor: '#dc2626' },
-										'&.Mui-focused fieldset': { borderColor: '#ef4444' },
-									},
-									'& .MuiInputLabel-root': { color: '#fca5a5' },
-									'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
-								}}
+								onChange={(val) => setPasswordData({ ...passwordData, currentPassword: val })}
+								show={showPasswords.current}
+								onToggleShow={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+								isDark={isDark}
 							/>
-							<Box>
-								<TextField
-									fullWidth
-									type='password'
+
+							<div>
+								<PasswordInput
 									label={translations.newPassword}
 									value={passwordData.newPassword}
-									onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-									sx={{
-										'& .MuiOutlinedInput-root': {
-											'& fieldset': { borderColor: '#ef4444' },
-											'&:hover fieldset': { borderColor: '#dc2626' },
-											'&.Mui-focused fieldset': { borderColor: '#ef4444' },
-										},
-										'& .MuiInputLabel-root': { color: '#fca5a5' },
-										'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
-									}}
+									onChange={(val) => setPasswordData({ ...passwordData, newPassword: val })}
+									show={showPasswords.new}
+									onToggleShow={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+									isDark={isDark}
 								/>
-
-								{/* Indicateur de force du mot de passe */}
 								{passwordData.newPassword && (
-									<Box sx={{ mt: 2 }}>
-										<LinearProgress
-											variant='determinate'
+									<div className="mt-2">
+										<Progress
 											value={passwordStrength}
-											sx={{
-												height: 6,
-												borderRadius: 3,
-												backgroundColor: 'rgba(255, 255, 255, 0.1)',
-												'& .MuiLinearProgress-bar': {
-													borderRadius: 3,
-													background:
-														passwordStrength < 50
-															? 'linear-gradient(90deg, #EF4444, #F87171)'
-															: passwordStrength < 75
-															? 'linear-gradient(90deg, #F59E0B, #FBBF24)'
-															: 'linear-gradient(90deg, #10B981, #34D399)',
-												},
-											}}
+											className={cn(
+												'h-1.5',
+												isDark ? 'bg-slate-800' : 'bg-slate-200'
+											)}
 										/>
-										<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-											{[
-												{ key: 'minLength', label: translations.passwordMinLength12 || 'At least 12 characters' },
-											].map(({ key, label }) => (
-												<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-													{passwordValidation[key] ? (
-														<CheckCircleRounded sx={{ fontSize: '1.1rem', color: '#10B981' }} />
-													) : (
-														<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
-													)}
-													<Typography variant='body2' sx={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
-														{label}
-													</Typography>
-												</Box>
-											))}
-										</Box>
-									</Box>
+										<div className="flex items-center gap-2 mt-2">
+											{isPasswordValid ? (
+												<Check className="w-4 h-4 text-emerald-500" />
+											) : (
+												<X className="w-4 h-4 text-red-500" />
+											)}
+											<span className="text-xs text-slate-400">
+												{translations.passwordMinLength12 || 'Au moins 12 caracteres'}
+											</span>
+										</div>
+									</div>
 								)}
-							</Box>
-							<TextField
-								fullWidth
-								type='password'
+							</div>
+
+							<PasswordInput
 								label={translations.confirmPassword}
 								value={passwordData.confirmPassword}
-								onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										'& fieldset': { borderColor: '#ef4444' },
-										'&:hover fieldset': { borderColor: '#dc2626' },
-										'&.Mui-focused fieldset': { borderColor: '#ef4444' },
-									},
-									'& .MuiInputLabel-root': { color: '#fca5a5' },
-									'& .MuiInputLabel-root.Mui-focused': { color: '#ef4444' },
-								}}
+								onChange={(val) => setPasswordData({ ...passwordData, confirmPassword: val })}
+								show={showPasswords.confirm}
+								onToggleShow={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+								isDark={isDark}
 							/>
-						</Box>
-					</DialogContent>
-					<DialogActions sx={{ p: 3, pt: 0 }}>
-						<Button
-							onClick={() => setChangePasswordDialogOpen(false)}
-							sx={{
-								color: '#94a3b8',
-								'&:hover': { bgcolor: 'rgba(148, 163, 184, 0.1)' },
-							}}>
-							{translations.cancel}
-						</Button>
-						<Button
-							onClick={handleChangePassword}
-							disabled={loading}
-							variant='contained'
-							sx={{
-								bgcolor: '#ef4444',
-								'&:hover': { bgcolor: '#dc2626' },
-								'&:disabled': { bgcolor: 'rgba(239, 68, 68, 0.5)' },
-							}}>
-							{translations.save}
-						</Button>
-					</DialogActions>
-				</Dialog>
+						</div>
 
-				{/* Dialog pour supprimer le compte */}
-				<Dialog
-					open={deleteAccountDialogOpen}
-					onClose={() => setDeleteAccountDialogOpen(false)}
-					maxWidth='sm'
-					fullWidth
-					PaperProps={{
-						sx: {
-							borderRadius: 4,
-							background: 'linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%)',
-							boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(220, 38, 38, 0.4)',
-							border: '2px solid rgba(220, 38, 38, 0.3)',
-						},
-					}}>
-					<DialogTitle sx={{ textAlign: 'center', color: '#fca5a5', fontWeight: 700 }}>
-						{translations.deleteAccountConfirm}
-					</DialogTitle>
-					<DialogContent>
-						<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: 2,
-									p: 2,
-									borderRadius: 2,
-									bgcolor: 'rgba(220, 38, 38, 0.1)',
-									border: '1px solid rgba(220, 38, 38, 0.3)',
-								}}>
-								<DeleteForeverRounded sx={{ fontSize: 40, color: '#dc2626' }} />
-								<Typography variant='body2' sx={{ color: '#fca5a5', whiteSpace: 'pre-line' }}>
-									{translations.deleteAccountWarning}
-								</Typography>
-							</Box>
-						</Box>
-					</DialogContent>
-					<DialogActions sx={{ p: 3, pt: 0 }}>
-						<Button
-							onClick={() => setDeleteAccountDialogOpen(false)}
-							sx={{
-								color: '#94a3b8',
-								'&:hover': { bgcolor: 'rgba(148, 163, 184, 0.1)' },
-							}}>
-							{translations.cancel}
-						</Button>
-						<Button
-							onClick={handleDeleteAccount}
-							disabled={loading}
-							variant='contained'
-							startIcon={<DeleteForeverRounded />}
-							sx={{
-								bgcolor: '#dc2626',
-								'&:hover': { bgcolor: '#b91c1c' },
-								'&:disabled': { bgcolor: 'rgba(220, 38, 38, 0.5)' },
-							}}>
-							{translations.deleteAccount}
-						</Button>
-					</DialogActions>
-				</Dialog>
-			</Box>
-		</>
+						<div className="flex gap-3 mt-6">
+							<Button
+								variant="ghost"
+								className="flex-1 text-slate-400 hover:text-white"
+								onClick={() => setChangePasswordDialogOpen(false)}
+							>
+								{translations.cancel}
+							</Button>
+							<Button
+								className="flex-1 bg-red-500 hover:bg-red-600"
+								onClick={handleChangePassword}
+								disabled={loading}
+							>
+								{translations.save}
+							</Button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Delete Account Dialog */}
+			{deleteAccountDialogOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+					<div className={cn(
+						'relative w-full max-w-md rounded-2xl p-6',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-red-600/50 shadow-2xl'
+					)}>
+						<h3 className="text-xl font-bold text-center text-red-300 mb-4">
+							{translations.deleteAccountConfirm}
+						</h3>
+
+						<div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 mb-6">
+							<Trash2 className="w-8 h-8 text-red-500 flex-shrink-0" />
+							<p className="text-sm text-red-200 whitespace-pre-line">
+								{translations.deleteAccountWarning}
+							</p>
+						</div>
+
+						<div className="flex gap-3">
+							<Button
+								variant="ghost"
+								className="flex-1 text-slate-400 hover:text-white"
+								onClick={() => setDeleteAccountDialogOpen(false)}
+							>
+								{translations.cancel}
+							</Button>
+							<Button
+								className="flex-1 bg-red-600 hover:bg-red-700 gap-2"
+								onClick={handleDeleteAccount}
+								disabled={loading}
+							>
+								<Trash2 className="w-4 h-4" />
+								{translations.deleteAccount}
+							</Button>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
 	)
 }
+
+// Reusable Settings Field Component
+const SettingsField = ({
+	icon,
+	label,
+	value,
+	rawValue,
+	isEditing,
+	isDark,
+	color = 'violet',
+	type = 'text',
+	options = [],
+	onEdit,
+	onSave,
+	onCancel,
+	onChange,
+	loading,
+	readonly,
+	hint,
+}) => {
+	const colorClasses = {
+		violet: {
+			icon: isDark ? 'bg-violet-500/20 border-violet-500/30 text-violet-400' : 'bg-violet-100 border-violet-200 text-violet-600',
+			label: isDark ? 'text-violet-400' : 'text-violet-600',
+			border: isDark ? 'border-violet-500/30' : 'border-violet-200',
+		},
+		cyan: {
+			icon: isDark ? 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400' : 'bg-cyan-100 border-cyan-200 text-cyan-600',
+			label: isDark ? 'text-cyan-400' : 'text-cyan-600',
+			border: isDark ? 'border-cyan-500/30' : 'border-cyan-200',
+		},
+	}
+
+	const colors = colorClasses[color]
+
+	return (
+		<div className={cn('p-4 border-b last:border-b-0', colors.border)}>
+			<div className="flex items-center gap-3">
+				<div className={cn('w-10 h-10 rounded-full flex items-center justify-center border', colors.icon)}>
+					{icon}
+				</div>
+
+				<div className="flex-1 min-w-0">
+					<p className={cn('text-xs font-semibold uppercase tracking-wider mb-1', colors.label)}>
+						{label}
+					</p>
+
+					{isEditing ? (
+						type === 'select' ? (
+							<select
+								value={rawValue || value}
+								onChange={(e) => onChange(e.target.value)}
+								className={cn(
+									'w-full px-3 py-2 rounded-lg border-2 focus:outline-none',
+									isDark
+										? 'bg-slate-800 border-slate-700 text-white focus:border-violet-500'
+										: 'bg-white border-slate-200 text-slate-900 focus:border-violet-500'
+								)}
+							>
+								{options.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						) : (
+							<input
+								type={type}
+								value={value}
+								onChange={(e) => onChange(e.target.value)}
+								className={cn(
+									'w-full px-3 py-2 rounded-lg border-2 focus:outline-none',
+									isDark
+										? 'bg-slate-800 border-slate-700 text-white focus:border-violet-500'
+										: 'bg-white border-slate-200 text-slate-900 focus:border-violet-500'
+								)}
+							/>
+						)
+					) : (
+						<>
+							<p className={cn('font-semibold', isDark ? 'text-white' : 'text-slate-900')}>
+								{value || '-'}
+							</p>
+							{hint && (
+								<p className={cn('text-xs italic mt-1', isDark ? 'text-slate-500' : 'text-slate-400')}>
+									{hint}
+								</p>
+							)}
+						</>
+					)}
+				</div>
+
+				{!readonly && (
+					<div className="flex gap-2">
+						{isEditing ? (
+							<>
+								<button
+									onClick={onSave}
+									disabled={loading}
+									className={cn(
+										'w-8 h-8 rounded-full flex items-center justify-center transition-all',
+										'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg hover:scale-110'
+									)}
+								>
+									<Check className="w-4 h-4" />
+								</button>
+								<button
+									onClick={onCancel}
+									disabled={loading}
+									className={cn(
+										'w-8 h-8 rounded-full flex items-center justify-center transition-all',
+										'bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-lg hover:scale-110'
+									)}
+								>
+									<X className="w-4 h-4" />
+								</button>
+							</>
+						) : (
+							<button
+								onClick={onEdit}
+								className={cn(
+									'w-8 h-8 rounded-full flex items-center justify-center transition-all',
+									isDark
+										? 'bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30'
+										: 'bg-violet-100 border border-violet-200 text-violet-600 hover:bg-violet-200'
+								)}
+							>
+								<Edit3 className="w-4 h-4" />
+							</button>
+						)}
+					</div>
+				)}
+			</div>
+		</div>
+	)
+}
+
+// Password Input Component
+const PasswordInput = ({ label, value, onChange, show, onToggleShow, isDark }) => (
+	<div>
+		<label className="block text-sm font-medium text-red-300 mb-1">{label}</label>
+		<div className="relative">
+			<input
+				type={show ? 'text' : 'password'}
+				value={value}
+				onChange={(e) => onChange(e.target.value)}
+				className={cn(
+					'w-full px-4 py-2.5 pr-10 rounded-lg border-2 focus:outline-none',
+					'bg-slate-800/50 border-red-500/30 text-white focus:border-red-500'
+				)}
+			/>
+			<button
+				type="button"
+				onClick={onToggleShow}
+				className="absolute right-3 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-300"
+			>
+				{show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+			</button>
+		</div>
+	</div>
+)
 
 export default React.memo(SettingsClient)
