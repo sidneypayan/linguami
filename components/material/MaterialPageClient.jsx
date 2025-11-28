@@ -139,7 +139,7 @@ const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 const EpicHeader = ({ isDark, title, onBack }) => {
 	return (
 		<div className={cn(
-			'pt-8 md:pt-24 pb-4 md:pb-6',
+			'pt-20 md:pt-24 pb-4 md:pb-6',
 			'border-b',
 			isDark ? 'border-violet-500/20 bg-slate-950' : 'border-violet-200/50 bg-white'
 		)}>
@@ -332,7 +332,7 @@ const FinishButton = ({ isCompleted, onClick, disabled, children, isDark }) => {
 // ============================================
 // FLOATING ACTION BUTTON - Gaming Style
 // ============================================
-const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', position, isVideoDisplayed }) => {
+const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', className }) => {
 	const { isDark } = useThemeMode()
 
 	const variants = {
@@ -351,14 +351,13 @@ const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', positi
 	return (
 		<button
 			className={cn(
-				'lg:hidden fixed z-50',
-				'right-4',
-				isVideoDisplayed ? 'bottom-24' : 'bottom-52',
+				'lg:hidden',
 				'group relative w-14 h-14',
 				'flex items-center justify-center',
 				'transition-all duration-300',
 				'hover:scale-110',
-				variant === 'danger' && 'hover:rotate-90'
+				variant === 'danger' && 'hover:rotate-90',
+				className
 			)}
 			onClick={onClick}
 		>
@@ -380,12 +379,6 @@ const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', positi
 
 			{/* Icon */}
 			<Icon className="w-6 h-6 text-white relative z-10" />
-
-			{/* Sparkle */}
-			<Sparkles className={cn(
-				'absolute -top-1 -right-1 w-4 h-4 text-amber-300 animate-pulse',
-				'opacity-0 group-hover:opacity-100 transition-opacity'
-			)} />
 		</button>
 	)
 }
@@ -752,11 +745,13 @@ const Material = ({
 
 							{/* Content Paper - Ornate Frame */}
 							<div className="relative">
-								{/* Scroll label - positioned outside OrnateFrame to avoid overflow:hidden */}
-								<div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
-									<Scroll className="w-3 h-3" />
-									<span>Texte</span>
-								</div>
+								{/* Section label - positioned outside OrnateFrame to avoid overflow:hidden (hidden for book chapters) */}
+								{!isBookChapter && (
+									<div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
+										<Scroll className="w-3 h-3" />
+										<span>{t(params?.section)}</span>
+									</div>
+								)}
 								<OrnateFrame
 									isDark={isDark}
 									glowColor="violet"
@@ -903,14 +898,7 @@ const Material = ({
 						</div>
 					</div>
 
-					{/* Floating button for mobile - Gaming style */}
-					<FloatingActionButton
-						onClick={() => setShowWordsContainer(true)}
-						icon={BookOpen}
-						variant="primary"
-						isVideoDisplayed={isVideoDisplayed}
-					/>
-
+	
 					{/* Desktop WordsContainer */}
 					<div className={cn(
 						'hidden lg:block',
@@ -934,7 +922,7 @@ const Material = ({
 								onClick={() => setShowWordsContainer(false)}
 								icon={X}
 								variant="danger"
-								isVideoDisplayed={isVideoDisplayed}
+								className="fixed right-4 bottom-44 z-50"
 							/>
 							<WordsContainer />
 						</div>
@@ -952,11 +940,24 @@ const Material = ({
 				/>
 			)}
 
-			{/* Report Button */}
+			{/* Words Container Button & Report Button - Mobile */}
 			<div className={cn(
-				'fixed z-50',
-				'bottom-72 sm:bottom-6',
-				'right-4 sm:right-6'
+				'lg:hidden fixed z-50',
+				'bottom-44 right-4',
+				'flex flex-col items-center gap-3'
+			)}>
+				<FloatingActionButton
+					onClick={() => setShowWordsContainer(true)}
+					icon={BookOpen}
+					variant="primary"
+				/>
+				<ReportButton materialId={currentMaterial.id} />
+			</div>
+
+			{/* Report Button - Desktop only */}
+			<div className={cn(
+				'hidden lg:block fixed z-50',
+				'bottom-6 right-6'
 			)}>
 				<ReportButton materialId={currentMaterial.id} />
 			</div>

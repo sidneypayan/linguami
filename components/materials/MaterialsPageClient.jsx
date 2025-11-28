@@ -293,6 +293,7 @@ const CategoryBanner = ({ icon: Icon, title, isDark, colorClass = 'violet' }) =>
 
 				{/* Icon shield */}
 				<div className={cn(
+					'relative flex-shrink-0',
 					'w-14 h-14 md:w-16 md:h-16 rounded-xl rotate-45',
 					'bg-gradient-to-br',
 					c.iconBg,
@@ -351,8 +352,14 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 	]
 
 	return (
-		<OrnateFrame isDark={isDark} className="p-4 mb-8">
-			<div className="flex items-center gap-2 mb-4">
+		<div className={cn(
+			'relative rounded-2xl p-4 mb-8',
+			'border-2',
+			isDark ? 'border-amber-500/20 bg-slate-900/80' : 'border-amber-600/10 bg-white/90',
+			'shadow-lg',
+			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
+		)}>
+			<div className="hidden sm:flex items-center gap-2 mb-4">
 				<SlidersHorizontal className={cn('w-5 h-5', isDark ? 'text-amber-400' : 'text-amber-600')} />
 				<span className={cn(
 					'font-bold text-sm uppercase tracking-wider',
@@ -362,7 +369,7 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 				</span>
 			</div>
 
-			<div className="flex flex-wrap gap-2">
+			<div className="flex justify-center gap-1 sm:gap-2">
 				{categories.map((cat) => {
 					const Icon = cat.icon
 					const isSelected = selectedCategory === cat.key
@@ -393,9 +400,9 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 							key={cat.key}
 							onClick={() => onCategoryChange(cat.key)}
 							className={cn(
-								'relative px-4 py-2.5 rounded-xl font-bold text-sm',
+								'relative px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-[0.7rem] sm:text-sm',
 								'transition-all duration-300',
-								'flex items-center gap-2',
+								'flex items-center gap-1 sm:gap-2',
 								'border-2',
 								isSelected
 									? [
@@ -409,16 +416,16 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 									]
 							)}
 						>
-							<Icon className="w-4 h-4" />
+							<Icon className="w-3 h-3 sm:w-4 sm:h-4" />
 							<span>{cat.label}</span>
 							{isSelected && (
-								<Star className="w-3 h-3 ml-1 animate-pulse" />
+								<Star className="hidden sm:block w-3 h-3 ml-1 animate-pulse" />
 							)}
 						</button>
 					)
 				})}
 			</div>
-		</OrnateFrame>
+		</div>
 	)
 }
 
@@ -427,13 +434,13 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 // ============================================
 const DisplayModeToggle = ({ displayMode, setDisplayMode, isDark, t }) => {
 	return (
-		<div className="flex justify-center gap-3 mb-8">
+		<div className="flex justify-center gap-2 sm:gap-3 mb-8">
 			<button
 				onClick={() => setDisplayMode('category')}
 				className={cn(
-					'group relative px-6 py-3 rounded-xl font-bold text-sm',
+					'group relative px-3 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm',
 					'transition-all duration-300',
-					'flex items-center gap-2',
+					'flex items-center gap-1.5 sm:gap-2',
 					'border-2',
 					displayMode === 'category'
 						? [
@@ -447,16 +454,16 @@ const DisplayModeToggle = ({ displayMode, setDisplayMode, isDark, t }) => {
 						]
 				)}
 			>
-				<LayoutGrid className="w-5 h-5" />
+				<LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />
 				<span>{t('categoryView')}</span>
 			</button>
 
 			<button
 				onClick={() => setDisplayMode('list')}
 				className={cn(
-					'group relative px-6 py-3 rounded-xl font-bold text-sm',
+					'group relative px-3 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm',
 					'transition-all duration-300',
-					'flex items-center gap-2',
+					'flex items-center gap-1.5 sm:gap-2',
 					'border-2',
 					displayMode === 'list'
 						? [
@@ -470,7 +477,7 @@ const DisplayModeToggle = ({ displayMode, setDisplayMode, isDark, t }) => {
 						]
 				)}
 			>
-				<ListFilter className="w-5 h-5" />
+				<ListFilter className="w-4 h-4 sm:w-5 sm:h-5" />
 				<span>{t('listView')}</span>
 			</button>
 		</div>
@@ -722,17 +729,6 @@ const FilterBar = ({
 			'shadow-lg',
 			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
 		)}>
-			{/* Header */}
-			<div className="flex items-center gap-2 mb-4">
-				<Wand2 className={cn('w-5 h-5', isDark ? 'text-violet-400' : 'text-violet-600')} />
-				<span className={cn(
-					'font-bold text-sm uppercase tracking-wider',
-					isDark ? 'text-violet-300' : 'text-violet-700'
-				)}>
-					{t('search')}
-				</span>
-			</div>
-
 			<div className="space-y-4">
 				{/* Search + View Toggle */}
 				<div className="flex gap-3 items-center">
@@ -1344,16 +1340,20 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 			<MagicalParticles isDark={isDark} />
 
 			<div className="relative max-w-7xl mx-auto px-4">
-				{/* Epic Header */}
-				<EpicHeader isDark={isDark} t={t} />
+				{/* Epic Header - Hidden on mobile, shown on md+ */}
+				<div className="hidden md:block">
+					<EpicHeader isDark={isDark} t={t} />
+				</div>
 
 				{/* Display Mode Toggle */}
-				<DisplayModeToggle
-					displayMode={displayMode}
-					setDisplayMode={setDisplayMode}
-					isDark={isDark}
-					t={t}
-				/>
+				<div className="mt-8 md:mt-0">
+					<DisplayModeToggle
+						displayMode={displayMode}
+						setDisplayMode={setDisplayMode}
+						isDark={isDark}
+						t={t}
+					/>
+				</div>
 
 				{/* Content */}
 				{displayMode === 'category' ? (

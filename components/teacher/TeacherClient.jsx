@@ -275,7 +275,7 @@ export default function TeacherClient() {
 			{/* ============================================ */}
 			{/* HERO SECTION */}
 			{/* ============================================ */}
-			<section className="relative pt-24 md:pt-32 pb-20 md:pb-28 overflow-hidden">
+			<section className="relative pt-28 md:pt-32 pb-20 md:pb-28 overflow-hidden">
 				{/* Animated background orbs */}
 				<div className="absolute inset-0 overflow-hidden pointer-events-none">
 					<div className={cn(
@@ -320,15 +320,6 @@ export default function TeacherClient() {
 								className="w-full h-full object-cover"
 							/>
 						</div>
-						{/* Sparkle decorations */}
-						<Sparkles className={cn(
-							'absolute -top-2 -right-2 w-8 h-8',
-							isDark ? 'text-amber-400' : 'text-amber-500'
-						)} />
-						<Sparkles className={cn(
-							'absolute -bottom-2 -left-2 w-6 h-6',
-							isDark ? 'text-cyan-400' : 'text-cyan-500'
-						)} />
 					</div>
 
 					{/* Title */}
@@ -430,32 +421,59 @@ export default function TeacherClient() {
 			{/* ============================================ */}
 			{/* ABOUT SECTION */}
 			{/* ============================================ */}
-			<section className="py-16 md:py-20 px-4">
+			<section className="py-10 md:py-20 px-4">
 				<div className="max-w-3xl mx-auto">
-					<OrnateFrame isDark={isDark} className="p-8 md:p-12">
-						<div className="text-center">
-							<div className={cn(
-								'w-16 h-16 mx-auto mb-6 rounded-full',
-								'bg-gradient-to-br from-violet-500 to-cyan-500',
-								'flex items-center justify-center',
-								'shadow-lg shadow-violet-500/30'
-							)}>
-								<GraduationCap className="w-8 h-8 text-white" />
-							</div>
-							<h2 className={cn(
-								'text-2xl md:text-3xl font-bold mb-6',
-								isDark ? 'text-slate-100' : 'text-slate-800'
-							)}>
-								{t(isLearningRussian ? 'aboutTitleRussian' : 'aboutTitleFrench')}
-							</h2>
-							<p className={cn(
-								'text-base md:text-lg leading-relaxed',
-								isDark ? 'text-slate-300' : 'text-slate-600'
-							)}>
-								{t(isLearningRussian ? 'textRussian' : 'textFrench')}
-							</p>
+					{/* Mobile: no frame */}
+					<div className="md:hidden text-center px-2">
+						<div className={cn(
+							'w-14 h-14 mx-auto mb-4 rounded-full',
+							'bg-gradient-to-br from-violet-500 to-cyan-500',
+							'flex items-center justify-center',
+							'shadow-lg shadow-violet-500/30'
+						)}>
+							<GraduationCap className="w-7 h-7 text-white" />
 						</div>
-					</OrnateFrame>
+						<h2 className={cn(
+							'text-xl font-bold mb-4',
+							isDark ? 'text-slate-100' : 'text-slate-800'
+						)}>
+							{t(isLearningRussian ? 'aboutTitleRussian' : 'aboutTitleFrench')}
+						</h2>
+						<p className={cn(
+							'text-sm leading-relaxed',
+							isDark ? 'text-slate-300' : 'text-slate-600'
+						)}>
+							{t(isLearningRussian ? 'textRussian' : 'textFrench')}
+						</p>
+					</div>
+
+					{/* Desktop: with OrnateFrame */}
+					<div className="hidden md:block">
+						<OrnateFrame isDark={isDark} className="p-8 md:p-12">
+							<div className="text-center">
+								<div className={cn(
+									'w-16 h-16 mx-auto mb-6 rounded-full',
+									'bg-gradient-to-br from-violet-500 to-cyan-500',
+									'flex items-center justify-center',
+									'shadow-lg shadow-violet-500/30'
+								)}>
+									<GraduationCap className="w-8 h-8 text-white" />
+								</div>
+								<h2 className={cn(
+									'text-2xl md:text-3xl font-bold mb-6',
+									isDark ? 'text-slate-100' : 'text-slate-800'
+								)}>
+									{t(isLearningRussian ? 'aboutTitleRussian' : 'aboutTitleFrench')}
+								</h2>
+								<p className={cn(
+									'text-base md:text-lg leading-relaxed',
+									isDark ? 'text-slate-300' : 'text-slate-600'
+								)}>
+									{t(isLearningRussian ? 'textRussian' : 'textFrench')}
+								</p>
+							</div>
+						</OrnateFrame>
+					</div>
 				</div>
 			</section>
 
@@ -512,48 +530,48 @@ export default function TeacherClient() {
 							</div>
 
 							{/* Navigation buttons */}
-							<button
-								onClick={scrollPrev}
-								disabled={!canScrollPrev}
-								className={cn(
-									'absolute top-1/2 -left-4 md:-left-6 -translate-y-1/2',
-									'w-12 h-12 rounded-full',
-									'flex items-center justify-center',
-									'border-2 transition-all duration-300',
-									isDark
-										? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
-										: 'bg-white/80 border-violet-300 hover:border-violet-500',
-									'shadow-lg backdrop-blur-sm',
-									'hover:scale-110',
-									'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
-								)}
-							>
-								<ChevronLeft className={cn(
-									'w-6 h-6',
-									isDark ? 'text-violet-400' : 'text-violet-600'
-								)} />
-							</button>
-							<button
-								onClick={scrollNext}
-								disabled={!canScrollNext}
-								className={cn(
-									'absolute top-1/2 -right-4 md:-right-6 -translate-y-1/2',
-									'w-12 h-12 rounded-full',
-									'flex items-center justify-center',
-									'border-2 transition-all duration-300',
-									isDark
-										? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
-										: 'bg-white/80 border-violet-300 hover:border-violet-500',
-									'shadow-lg backdrop-blur-sm',
-									'hover:scale-110',
-									'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
-								)}
-							>
-								<ChevronRight className={cn(
-									'w-6 h-6',
-									isDark ? 'text-violet-400' : 'text-violet-600'
-								)} />
-							</button>
+							<div className="flex items-center justify-center gap-4 mt-8">
+								<button
+									onClick={scrollPrev}
+									disabled={!canScrollPrev}
+									className={cn(
+										'w-12 h-12 rounded-full',
+										'flex items-center justify-center',
+										'border-2 transition-all duration-300',
+										isDark
+											? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
+											: 'bg-white/80 border-violet-300 hover:border-violet-500',
+										'shadow-lg backdrop-blur-sm',
+										'hover:scale-110',
+										'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
+									)}
+								>
+									<ChevronLeft className={cn(
+										'w-6 h-6',
+										isDark ? 'text-violet-400' : 'text-violet-600'
+									)} />
+								</button>
+								<button
+									onClick={scrollNext}
+									disabled={!canScrollNext}
+									className={cn(
+										'w-12 h-12 rounded-full',
+										'flex items-center justify-center',
+										'border-2 transition-all duration-300',
+										isDark
+											? 'bg-slate-800/80 border-violet-500/30 hover:border-violet-400'
+											: 'bg-white/80 border-violet-300 hover:border-violet-500',
+										'shadow-lg backdrop-blur-sm',
+										'hover:scale-110',
+										'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100'
+									)}
+								>
+									<ChevronRight className={cn(
+										'w-6 h-6',
+										isDark ? 'text-violet-400' : 'text-violet-600'
+									)} />
+								</button>
+							</div>
 						</div>
 
 						{/* Pagination dots */}
