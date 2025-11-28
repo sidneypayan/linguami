@@ -1,367 +1,176 @@
-import { useTranslations, useLocale } from 'next-intl'
-import { Box, Button, Stack, Typography, useTheme } from '@mui/material'
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import { primaryButton } from '@/utils/buttonStyles'
 import { getUIImageUrl } from '@/utils/mediaUrls'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Sparkles, ArrowRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const Hero = () => {
 	const t = useTranslations('home')
-	const locale = useLocale()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
 
 	return (
-		<Box
-			sx={{
-				position: 'relative',
-				padding: {
-					xs: '2.5rem 0 calc(1.5rem + 40px) 0',
-					md: '5.5rem 0 calc(4rem + 80px) 0',
-				},
-				background: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
-				clipPath: {
-					xs: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%)',
-					md: 'polygon(0 0, 100% 0, 100% calc(100% - 80px), 0 100%)',
-				},
-				overflow: 'hidden',
-				'&::before': {
-					content: '""',
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					background:
-						'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
-					pointerEvents: 'none',
-				},
-				'&::after': {
-					content: '""',
-					position: 'absolute',
-					top: '20%',
-					left: '10%',
-					width: '500px',
-					height: '500px',
-					background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-					filter: 'blur(80px)',
-					pointerEvents: 'none',
-					animation: 'pulse 4s ease-in-out infinite',
-				},
-				'@keyframes pulse': {
-					'0%, 100%': {
-						opacity: 0.5,
-						transform: 'scale(1)',
-					},
-					'50%': {
-						opacity: 0.8,
-						transform: 'scale(1.1)',
-					},
-				},
-			}}>
-			<Stack
-				direction='row'
-				width={1440}
-				maxWidth='100%'
-				sx={{
-					padding: { xs: '1.25rem', md: '3rem' },
-					margin: '0 auto',
-					justifyContent: {
-						xs: 'center',
-						lg: 'space-between',
-					},
-					textAlign: {
-						xs: 'center',
-						lg: 'left',
-					},
-					position: 'relative',
-					zIndex: 1,
-				}}>
-				<Box maxWidth={825}>
-					{/* Badge */}
-					<Box
-						sx={{
-							display: 'inline-flex',
-							alignItems: 'center',
-							gap: 1,
-							px: { xs: 2, md: 3 },
-							py: { xs: 0.6, md: 1 },
-							mb: { xs: 1.5, md: 3 },
-							borderRadius: 50,
-							background: 'rgba(139, 92, 246, 0.2)',
-							border: '1px solid rgba(139, 92, 246, 0.3)',
-							backdropFilter: 'blur(10px)',
-							animation: 'fadeInUp 0.6s ease-out',
-							'@keyframes fadeInUp': {
-								from: {
-									opacity: 0,
-									transform: 'translateY(20px)',
-								},
-								to: {
-									opacity: 1,
-									transform: 'translateY(0)',
-								},
-							},
-						}}>
-						<Box
-							sx={{
-								width: 8,
-								height: 8,
-								borderRadius: '50%',
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								boxShadow: '0 0 10px rgba(139, 92, 246, 0.8)',
-							}}
-						/>
-						<Typography
-							sx={{
-								fontSize: '0.9rem',
-								fontWeight: 600,
-								color: 'rgba(255, 255, 255, 0.95)',
-							}}>
+		<section
+			className="relative overflow-hidden py-10 pb-[calc(1.5rem+40px)] md:py-22 md:pb-[calc(4rem+80px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900"
+			style={{
+				clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%)',
+			}}
+		>
+			{/* Animated background effects */}
+			<div className="absolute inset-0 overflow-hidden pointer-events-none">
+				{/* Purple glow orb */}
+				<div
+					className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full opacity-40 blur-[80px] animate-pulse-slow"
+					style={{
+						background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)',
+					}}
+				/>
+				{/* Cyan glow orb */}
+				<div
+					className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] rounded-full opacity-30 blur-[60px] animate-pulse-slow"
+					style={{
+						background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
+						animationDelay: '2s',
+					}}
+				/>
+				{/* Gaming grid overlay */}
+				<div
+					className="absolute inset-0 opacity-[0.03]"
+					style={{
+						backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.5) 1px, transparent 1px)',
+						backgroundSize: '50px 50px',
+					}}
+				/>
+				{/* Radial gradients overlay */}
+				<div
+					className="absolute inset-0"
+					style={{
+						background: 'radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.2) 0%, transparent 50%)',
+					}}
+				/>
+			</div>
+
+			<div className="relative z-10 max-w-[1440px] mx-auto px-5 md:px-12">
+				<div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-8 lg:gap-12 text-center lg:text-left">
+					{/* Content */}
+					<div className="max-w-[825px]">
+						{/* Badge with shadcn */}
+						<Badge
+							variant="outline"
+							className={cn(
+								"mb-4 md:mb-6 px-4 py-1.5 md:px-5 md:py-2",
+								"bg-violet-500/20 border-violet-500/30 backdrop-blur-sm",
+								"text-white/95 font-semibold text-sm",
+								"animate-fade-in-up rounded-full"
+							)}
+						>
+							<Sparkles className="w-4 h-4 mr-2 text-violet-400 animate-pulse" />
 							{t('platformTagline')}
-						</Typography>
-					</Box>
+						</Badge>
 
-					<Typography
-						variant='h2'
-						component='h1'
-						mb={{ xs: 1.5, md: 3 }}
-						sx={{
-							fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
-							fontWeight: 800,
-							lineHeight: 1.2,
-							background: 'linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #06b6d4 100%)',
-							backgroundSize: '200% 200%',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							animation: 'fadeInUp 0.6s ease-out 0.1s both, gradientShift 8s ease infinite',
-							'@keyframes gradientShift': {
-								'0%': {
-									backgroundPosition: '0% 50%',
-								},
-								'50%': {
-									backgroundPosition: '100% 50%',
-								},
-								'100%': {
-									backgroundPosition: '0% 50%',
-								},
-							},
-						}}>
-						<Box component='span' sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
-							{t('hero')}
-						</Box>
-						{t('title')}
-					</Typography>
+						{/* Title with gradient */}
+						<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 md:mb-6 animate-fade-in-up [animation-delay:100ms]">
+							<span className="block text-white/90 font-semibold mb-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+								{t('hero')}
+							</span>
+							<span
+								className="bg-gradient-to-r from-white via-violet-300 to-cyan-300 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_200%]"
+							>
+								{t('title')}
+							</span>
+						</h1>
 
-					<>
-						<Typography
-							mb={{ xs: 2, md: 5 }}
-							variant='h5'
-							sx={{
-								display: { xs: 'block', md: 'none' },
-								fontSize: '0.95rem',
-								fontWeight: 500,
-								lineHeight: 1.6,
-								color: 'rgba(255, 255, 255, 0.85)',
-								animation: 'fadeInUp 0.6s ease-out 0.2s both',
-							}}>
+						{/* Subtitle - Mobile */}
+						<p className="block md:hidden text-white/80 text-base font-medium leading-relaxed mb-6 animate-fade-in-up [animation-delay:200ms]">
 							{t('subtitleMobile')}
-						</Typography>
-						<Typography
-							mb={5}
-							variant='h5'
-							sx={{
-								display: { xs: 'none', md: 'block' },
-								fontSize: '1.5rem',
-								fontWeight: 500,
-								lineHeight: 1.7,
-								color: 'rgba(255, 255, 255, 0.85)',
-								animation: 'fadeInUp 0.6s ease-out 0.2s both',
-							}}>
+						</p>
+						{/* Subtitle - Desktop */}
+						<p className="hidden md:block text-white/85 text-xl lg:text-2xl font-medium leading-relaxed mb-8 animate-fade-in-up [animation-delay:200ms]">
 							{t('subtitle')}
-						</Typography>
-					</>
+						</p>
 
-					<Link href={`/materials`}>
-						<Button
-							align='center'
-							size='large'
-							variant='contained'
-							sx={{
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								color: 'white',
-								fontWeight: 700,
-								fontSize: { xs: '1rem', md: '1.125rem' },
-								textTransform: 'none',
-								px: { xs: 4, md: 5 },
-								py: { xs: 1.5, md: 2 },
-								borderRadius: 3,
-								boxShadow: '0 8px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(6, 182, 212, 0.3)',
-								border: '1px solid rgba(139, 92, 246, 0.5)',
-								display: 'block',
-								margin: { xs: '0 auto', lg: '0' },
-								minWidth: { xs: '200px', md: '220px' },
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								animation: 'fadeInUp 0.6s ease-out 0.4s both',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:hover': {
-									background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									transform: 'translateY(-4px) scale(1.02)',
-									boxShadow: '0 12px 40px rgba(139, 92, 246, 0.6), 0 0 30px rgba(6, 182, 212, 0.4)',
-									'&::before': {
-										left: '100%',
-									},
-								},
-								'&:active': {
-									transform: 'translateY(-2px) scale(1)',
-								},
-							}}>
-							{t('start')} →
-						</Button>
-					</Link>
-				</Box>
+						{/* CTA Button with shadcn */}
+						<div className="animate-fade-in-up [animation-delay:400ms]">
+							<Link href="/materials">
+								<Button
+									size="lg"
+									className={cn(
+										"group relative overflow-hidden",
+										"px-8 py-6 md:px-10 md:py-7 text-base md:text-lg font-bold",
+										"bg-gradient-to-r from-violet-600 to-cyan-500",
+										"hover:from-violet-500 hover:to-cyan-400",
+										"border border-violet-400/50 hover:border-violet-300/70",
+										"shadow-[0_8px_30px_rgba(139,92,246,0.4),0_0_20px_rgba(6,182,212,0.3)]",
+										"hover:shadow-[0_12px_40px_rgba(139,92,246,0.6),0_0_30px_rgba(6,182,212,0.4)]",
+										"hover:-translate-y-1 hover:scale-[1.02]",
+										"transition-all duration-300 ease-out",
+										"rounded-xl mx-auto lg:mx-0"
+									)}
+								>
+									{/* Shine effect */}
+									<span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+									<span className="relative flex items-center gap-2">
+										{t('start')}
+										<ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+									</span>
+								</Button>
+							</Link>
+						</div>
+					</div>
 
-				<Box
-					sx={{
-						display: {
-							xs: 'none',
-							lg: 'flex',
-						},
-						alignItems: 'center',
-						justifyContent: 'center',
-						position: 'relative',
-						width: 320,
-						height: 320,
-						animation: 'float 3s ease-in-out infinite',
-						'@keyframes float': {
-							'0%, 100%': {
-								transform: 'translateY(0px)',
-							},
-							'50%': {
-								transform: 'translateY(-20px)',
-							},
-						},
-					}}>
-					{/* Cercles de fond animés */}
-					<Box
-						sx={{
-							position: 'absolute',
-							width: '120%',
-							height: '120%',
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-							borderRadius: '50%',
-							filter: 'blur(60px)',
-							animation: 'pulse 3s ease-in-out infinite',
-							'@keyframes pulse': {
-								'0%, 100%': {
-									opacity: 0.5,
-									transform: 'scale(1)',
-								},
-								'50%': {
-									opacity: 0.8,
-									transform: 'scale(1.1)',
-								},
-							},
-						}}
-					/>
-
-					{/* Cadre stylisé avec glassmorphism */}
-					<Box
-						sx={{
-							position: 'absolute',
-							width: '100%',
-							height: '100%',
-							borderRadius: '50%',
-							background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-							border: '3px solid rgba(255, 255, 255, 0.2)',
-							backdropFilter: 'blur(10px)',
-							boxShadow: `
-								0 0 40px rgba(139, 92, 246, 0.5),
-								inset 0 0 40px rgba(6, 182, 212, 0.2),
-								0 8px 32px rgba(0, 0, 0, 0.2)
-							`,
-							animation: 'rotate 20s linear infinite',
-							'@keyframes rotate': {
-								'0%': {
-									transform: 'rotate(0deg)',
-								},
-								'100%': {
-									transform: 'rotate(360deg)',
-								},
-							},
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								inset: '-3px',
-								borderRadius: '50%',
-								padding: '3px',
-								background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
-								WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-								WebkitMaskComposite: 'xor',
-								maskComposite: 'exclude',
-								opacity: 0.6,
-								animation: 'rotateGradient 3s linear infinite',
-							},
-							'@keyframes rotateGradient': {
-								'0%': {
-									transform: 'rotate(0deg)',
-								},
-								'100%': {
-									transform: 'rotate(360deg)',
-								},
-							},
-						}}
-					/>
-
-					{/* Conteneur de l'image avec overflow hidden */}
-					<Box
-						sx={{
-							position: 'relative',
-							width: '90%',
-							height: '90%',
-							borderRadius: '50%',
-							overflow: 'hidden',
-							zIndex: 2,
-						}}>
-						<Box
-							component='img'
-							src={getUIImageUrl('hero.webp')}
-							alt='Linguami hero'
-							sx={{
-								width: '100%',
-								height: '100%',
-								objectFit: 'cover',
-								filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
+					{/* Hero Image - Desktop only */}
+					<div className="hidden lg:flex relative w-80 h-80 items-center justify-center animate-float">
+						{/* Animated glow background */}
+						<div
+							className="absolute w-[120%] h-[120%] rounded-full blur-[60px] animate-pulse-slow"
+							style={{
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(6, 182, 212, 0.3) 100%)',
 							}}
 						/>
 
-						{/* Overlay pour masquer le logo Gemini en bas à droite */}
-						<Box
-							sx={{
-								position: 'absolute',
-								bottom: 0,
-								right: 0,
-								width: '35%',
-								height: '20%',
-								background: 'linear-gradient(135deg, transparent 0%, rgba(15, 23, 42, 0.95) 40%)',
-								zIndex: 3,
+						{/* Rotating border frame */}
+						<div
+							className="absolute w-full h-full rounded-full animate-spin-slow"
+							style={{
+								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+								border: '3px solid rgba(255, 255, 255, 0.2)',
+								backdropFilter: 'blur(10px)',
+								boxShadow: '0 0 40px rgba(139, 92, 246, 0.5), inset 0 0 40px rgba(6, 182, 212, 0.2), 0 8px 32px rgba(0, 0, 0, 0.2)',
 							}}
-						/>
-					</Box>
-				</Box>
-			</Stack>
-		</Box>
+						>
+							{/* Gradient border ring */}
+							<div
+								className="absolute -inset-[3px] rounded-full p-[3px] opacity-60"
+								style={{
+									background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+									WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+									WebkitMaskComposite: 'xor',
+									maskComposite: 'exclude',
+								}}
+							/>
+						</div>
+
+						{/* Image container */}
+						<div className="relative w-[90%] h-[90%] rounded-full overflow-hidden z-10">
+							<img
+								src={getUIImageUrl('hero.webp')}
+								alt="Linguami hero"
+								className="w-full h-full object-cover drop-shadow-[0_10px_30px_rgba(139,92,246,0.4)]"
+							/>
+							{/* Corner overlay to hide watermark */}
+							<div
+								className="absolute bottom-0 right-0 w-[35%] h-[20%] z-20"
+								style={{
+									background: 'linear-gradient(135deg, transparent 0%, rgba(15, 23, 42, 0.95) 40%)',
+								}}
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 	)
 }
 

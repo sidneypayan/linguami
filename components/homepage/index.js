@@ -2,433 +2,187 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import Hero from './Hero'
+import FeatureCard from './FeatureCard'
+import MultimediaCard from './MultimediaCard'
 import { Link } from '@/i18n/navigation'
 import { getUIImageUrl } from '@/utils/mediaUrls'
-import {
-	Box,
-	Button,
-	Container,
-	Grid,
-	styled,
-	Typography,
-	Modal,
-	Chip,
-	IconButton,
-	Backdrop,
-	useTheme,
-} from '@mui/material'
-
-import { Stack } from '@mui/system'
-import { primaryButton } from '@/utils/buttonStyles'
-import { PlayArrow, AutoAwesome, Close, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useThemeMode } from '@/context/ThemeContext'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 
-const StyledGridItem = styled(Grid)(({ theme }) => ({
-	display: 'flex',
-	flexDirection: 'column',
-	alignItems: 'center',
-	gap: '1rem',
-	textAlign: 'center',
-	marginBottom: '2rem',
-	[theme.breakpoints.down('sm')]: {
-		marginBottom: '1rem',
-	},
-}))
+// Composant séparé pour gérer le hover dynamique sur desktop
+const DesktopMultimediaCard = ({ icon, index, isDark }) => {
+	const [isHovered, setIsHovered] = useState(false)
 
-const FeatureCard = ({ title, subtitle, imageSrc, imageAlt, onShowClick, reverse, marginTop, badge, offsetDirection, buttonText }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const centerIndex = 2
+	const distance = Math.abs(index - centerIndex)
+	const baseScale = 1 + (0.15 - distance * 0.05)
+	const baseTranslateZ = 80 - distance * 25
+	const baseZIndex = 15 - distance * 2
+	const shadowIntensity = 0.45 - distance * 0.1
 
-	const getOffset = () => {
-		if (!offsetDirection || offsetDirection === 'center') return {};
-		return {
-			marginLeft: offsetDirection === 'left' ? { xs: 0, md: '0' } : { xs: 0, md: 'auto' },
-			marginRight: offsetDirection === 'right' ? { xs: 0, md: '0' } : { xs: 0, md: 'auto' },
-			transform: {
-				xs: 'translateX(0)',
-				md: offsetDirection === 'left' ? 'translateX(-25px)' : offsetDirection === 'right' ? 'translateX(25px)' : 'translateX(0)'
-			}
-		};
-	};
+	const scale = isHovered ? baseScale * 1.08 : baseScale
+	const translateZ = isHovered ? baseTranslateZ + 30 : baseTranslateZ
+	const translateY = isHovered ? -12 : 0
+	const zIndex = isHovered ? 100 : baseZIndex
+	const shadow = isHovered
+		? '0 20px 60px rgba(139, 92, 246, 0.6), 0 0 40px rgba(6, 182, 212, 0.4)'
+		: `0 ${4 + baseTranslateZ * 0.3}px ${15 + baseTranslateZ * 0.8}px rgba(139, 92, 246, ${shadowIntensity})`
 
 	return (
-		<Box
-			sx={{
-				width: { xs: '100%', md: '850px', lg: '900px' },
-				maxWidth: '100%',
-				margin: '0 auto',
-				marginTop: typeof marginTop === 'object' ? marginTop : { xs: '3rem', md: marginTop || '5rem' },
-				position: 'relative',
-				...getOffset(),
-				transition: 'transform 0.4s ease',
-			}}>
-			{/* Decorative corners */}
-			<Box
-				sx={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					width: { xs: '30px', md: '40px' },
-					height: { xs: '30px', md: '40px' },
-					borderTop: '3px solid rgba(139, 92, 246, 0.4)',
-					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
-					borderRadius: { xs: '15px 0 0 0', md: '20px 0 0 0' },
-					zIndex: 2,
-					transition: 'all 0.4s ease',
-				}}
-				className="corner-tl"
-			/>
-			<Box
-				sx={{
-					position: 'absolute',
-					top: 0,
-					right: 0,
-					width: { xs: '30px', md: '40px' },
-					height: { xs: '30px', md: '40px' },
-					borderTop: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRadius: { xs: '0 15px 0 0', md: '0 20px 0 0' },
-					zIndex: 2,
-					transition: 'all 0.4s ease',
-				}}
-				className="corner-tr"
-			/>
-			<Box
-				sx={{
-					position: 'absolute',
-					bottom: 0,
-					left: 0,
-					width: { xs: '30px', md: '40px' },
-					height: { xs: '30px', md: '40px' },
-					borderBottom: '3px solid rgba(139, 92, 246, 0.4)',
-					borderLeft: '3px solid rgba(139, 92, 246, 0.4)',
-					borderRadius: { xs: '0 0 0 15px', md: '0 0 0 20px' },
-					zIndex: 2,
-					transition: 'all 0.4s ease',
-				}}
-				className="corner-bl"
-			/>
-			<Box
-				sx={{
-					position: 'absolute',
-					bottom: 0,
-					right: 0,
-					width: { xs: '30px', md: '40px' },
-					height: { xs: '30px', md: '40px' },
-					borderBottom: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRight: '3px solid rgba(6, 182, 212, 0.4)',
-					borderRadius: { xs: '0 0 15px 0', md: '0 0 20px 0' },
-					zIndex: 2,
-					transition: 'all 0.4s ease',
-				}}
-				className="corner-br"
-			/>
-			{/* Glow effect background */}
-			<Box
-				sx={{
-					position: 'absolute',
-					top: '50%',
-					left: '50%',
-					transform: 'translate(-50%, -50%)',
-					width: '120%',
-					height: '120%',
-					background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-					filter: 'blur(60px)',
-					pointerEvents: 'none',
-					opacity: 0,
-					transition: 'opacity 0.5s ease',
-				}}
-				className="glow-bg"
-			/>
-
-			<Stack
-				sx={{
-					flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
-					alignItems: 'center',
-					gap: { xs: 2, md: 4, lg: 4.5 },
-					padding: { xs: '1.25rem 1.25rem', sm: '2.5rem', md: '3rem 3.5rem', lg: '3rem 3.5rem' },
-					borderRadius: 5,
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%)',
-					backdropFilter: 'blur(20px)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)',
-					boxShadow: isDark
-						? '0 8px 32px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
-						: '0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
-					position: 'relative',
-					overflow: 'hidden',
+		<Link
+			href={icon.link}
+			className="flex justify-center h-full"
+			style={{ marginLeft: index === 0 ? '0' : '-18px', zIndex }}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+		>
+			<div
+				className="h-full w-[210px]"
+				style={{
+					transform: `scale(${scale}) translateZ(${translateZ}px) translateY(${translateY}px)`,
+					transformStyle: 'preserve-3d',
 					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%)',
-						opacity: 0,
-						transition: 'opacity 0.4s ease',
-					},
-					'&::after': {
-						content: '""',
-						position: 'absolute',
-						top: '-50%',
-						left: '-50%',
-						width: '200%',
-						height: '200%',
-						background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 50%)',
-						opacity: 0,
-						transition: 'opacity 0.4s ease',
-						pointerEvents: 'none',
-					},
-				}}>
-				{/* Image Section */}
-				<Box
-					sx={{
-						width: { xs: '100%', md: '42%' },
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						position: 'relative',
-						zIndex: 1,
-					}}>
-					<Box
-						sx={{
-							position: 'relative',
-							width: { xs: 160, md: 200, lg: 220 },
-							height: { xs: 160, md: 200, lg: 220 },
-							animation: 'float 3s ease-in-out infinite',
-							'@keyframes float': {
-								'0%, 100%': {
-									transform: 'translateY(0px)',
-								},
-								'50%': {
-									transform: 'translateY(-10px)',
-								},
-							},
-						}}>
-						{/* Cercle de fond animé blur */}
-						<Box
-							sx={{
-								position: 'absolute',
-								width: '120%',
-								height: '120%',
-								top: '50%',
-								left: '50%',
-								transform: 'translate(-50%, -50%)',
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-								borderRadius: '50%',
-								filter: 'blur(60px)',
-								animation: 'pulse 3s ease-in-out infinite',
-								'@keyframes pulse': {
-									'0%, 100%': {
-										opacity: 0.5,
-										transform: 'translate(-50%, -50%) scale(1)',
-									},
-									'50%': {
-										opacity: 0.8,
-										transform: 'translate(-50%, -50%) scale(1.1)',
-									},
-								},
-							}}
-						/>
+					boxShadow: shadow,
+					borderRadius: '16px',
+				}}
+			>
+				<div
+					className={cn(
+						"h-full flex flex-col items-center gap-2 text-center rounded-2xl overflow-hidden",
+						"border-2 border-transparent cursor-pointer relative",
+						"[background-origin:border-box] [background-clip:padding-box,border-box]",
+						isDark
+							? "bg-gradient-to-br from-slate-800/[0.98] to-slate-900/95 [background-image:linear-gradient(rgba(30,41,59,1),rgba(30,41,59,1)),linear-gradient(135deg,rgba(139,92,246,0.5),rgba(6,182,212,0.5),rgba(139,92,246,0.5))]"
+							: "bg-gradient-to-br from-white/[0.98] to-violet-50/95 [background-image:linear-gradient(white,white),linear-gradient(135deg,rgba(139,92,246,0.4),rgba(6,182,212,0.4),rgba(139,92,246,0.4))]"
+					)}
+				>
+					{/* Shine effect */}
+					<div
+						className="absolute inset-0 pointer-events-none transition-transform duration-500"
+						style={{
+							background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
+							transform: isHovered ? 'translateX(100%)' : 'translateX(-100%)',
+						}}
+					/>
 
-						{/* Cadre stylisé avec glassmorphism */}
-						<Box
-							sx={{
-								position: 'absolute',
-								width: '100%',
-								height: '100%',
-								borderRadius: '50%',
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-								border: '3px solid rgba(255, 255, 255, 0.2)',
-								backdropFilter: 'blur(10px)',
-								boxShadow: `
-									0 0 40px rgba(139, 92, 246, 0.5),
-									inset 0 0 40px rgba(6, 182, 212, 0.2),
-									0 8px 32px rgba(0, 0, 0, 0.2)
-								`,
-								animation: 'rotate 20s linear infinite',
-								'@keyframes rotate': {
-									'0%': {
-										transform: 'rotate(0deg)',
-									},
-									'100%': {
-										transform: 'rotate(360deg)',
-									},
-								},
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									inset: '-3px',
-									borderRadius: '50%',
-									padding: '3px',
-									background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
-									WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-									WebkitMaskComposite: 'xor',
-									maskComposite: 'exclude',
-									opacity: 0.6,
-									animation: 'rotateGradient 3s linear infinite',
-								},
-								'@keyframes rotateGradient': {
-									'0%': {
-										transform: 'rotate(0deg)',
-									},
-									'100%': {
-										transform: 'rotate(360deg)',
-									},
-								},
-							}}
-						/>
-
-						{/* Conteneur de l'image avec overflow hidden */}
-						<Box
-							className="feature-image-container"
-							sx={{
-								position: 'relative',
-								width: '90%',
-								height: '90%',
-								top: '50%',
-								left: '50%',
-								transform: 'translate(-50%, -50%)',
-								borderRadius: '50%',
-								overflow: 'hidden',
-								zIndex: 2,
-								transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-							}}>
-							<Box
-								component='img'
-								src={imageSrc}
-								alt={imageAlt}
-								sx={{
-									width: '100%',
-									height: '100%',
-									objectFit: 'cover',
-									filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
+					<div className="flex flex-col items-center gap-2 px-5 py-4 h-full">
+						{/* Image container */}
+						<div className="relative w-[95px] h-[95px] flex-shrink-0">
+							{/* Animated blur background */}
+							<div
+								className="absolute w-[120%] h-[120%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl blur-[35px] animate-pulse-slow"
+								style={{
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
 								}}
 							/>
-						</Box>
-					</Box>
-				</Box>
 
-				{/* Content Section */}
-				<Stack
-					gap={{ xs: 2, md: 2.5 }}
-					sx={{
-						width: { xs: '100%', md: '58%' },
-						textAlign: { xs: 'center', md: 'left' },
-						position: 'relative',
-						zIndex: 1,
-					}}>
-					{/* Badge */}
-					{badge && (
-						<Chip
-							className="feature-badge"
-							icon={<AutoAwesome sx={{ fontSize: '1rem !important', color: '#8b5cf6 !important' }} />}
-							label={badge}
-							size="small"
-							sx={{
-								alignSelf: { xs: 'center', md: 'flex-start' },
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								backdropFilter: 'blur(10px)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								color: '#8b5cf6',
-								fontWeight: 700,
-								fontSize: '0.75rem',
-								height: 28,
-								transition: 'all 0.3s ease',
-								'& .MuiChip-label': {
-									px: 1.5,
-								},
+							{/* Outer frame */}
+							<div
+								className="absolute w-full h-full rounded-xl transition-all duration-400"
+								style={{
+									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
+									border: '3px solid rgba(255, 255, 255, 0.2)',
+									backdropFilter: 'blur(10px)',
+									boxShadow: '0 0 30px rgba(139, 92, 246, 0.5), inset 0 0 30px rgba(6, 182, 212, 0.2), 0 6px 24px rgba(0, 0, 0, 0.2)',
+									transform: isHovered ? 'translate(-3px, -3px) rotate(-2deg)' : 'none',
+								}}
+							>
+								<div
+									className="absolute -inset-[3px] rounded-xl p-[3px] opacity-60"
+									style={{
+										background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
+										WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+										WebkitMaskComposite: 'xor',
+										maskComposite: 'exclude',
+									}}
+								/>
+							</div>
+
+							{/* Image */}
+							<div
+								className="relative w-[90%] h-[90%] top-1/2 left-1/2 rounded-lg overflow-hidden z-10 transition-all duration-400"
+								style={{
+									transform: isHovered
+										? 'translate(-47%, -47%) rotate(2deg)'
+										: 'translate(-50%, -50%)',
+								}}
+							>
+								<img
+									src={icon.img}
+									alt={icon.title}
+									className="w-full h-full object-cover drop-shadow-[0_10px_30px_rgba(139,92,246,0.4)]"
+								/>
+								<div
+									className="absolute bottom-0 right-0 w-[40%] h-[25%] z-10"
+									style={{
+										background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.15) 40%)',
+									}}
+								/>
+							</div>
+						</div>
+
+						{/* Title */}
+						<h6
+							className="text-[1rem] font-extrabold uppercase tracking-wide relative"
+							style={{
+								background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+								backgroundSize: '200% 200%',
+								WebkitBackgroundClip: 'text',
+								WebkitTextFillColor: 'transparent',
+								backgroundClip: 'text',
 							}}
-						/>
-					)}
+						>
+							{icon.title}
+							<span
+								className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3/5 h-px"
+								style={{
+									background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
+								}}
+							/>
+						</h6>
 
-					{/* Title */}
-					<Typography
-						variant='h3'
-						sx={{
-							fontSize: { xs: '1.875rem', md: '2rem', lg: '2.25rem' },
-							fontWeight: 800,
-							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
-							backgroundSize: '200% 200%',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							lineHeight: 1.2,
-							mb: 0.5,
-						}}>
-						{title}
-					</Typography>
+						{/* Decorative separator */}
+						<div className="flex items-center justify-center gap-2 my-1">
+							<span
+								className="w-5 h-px"
+								style={{ background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.6))' }}
+							/>
+							<span
+								className="w-1.5 h-1.5 rounded-full animate-glow"
+								style={{
+									background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
+									boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)',
+								}}
+							/>
+							<span
+								className="w-5 h-px"
+								style={{ background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.6))' }}
+							/>
+						</div>
 
-					{/* Subtitle */}
-					<Typography
-						variant='body1'
-						sx={{
-							color: isDark ? '#cbd5e1' : '#64748b',
-							fontWeight: 500,
-							lineHeight: 1.8,
-							fontSize: { xs: '0.95rem', md: '1rem', lg: '1.05rem' },
-						}}>
-						{subtitle}
-					</Typography>
-
-					{/* Button */}
-					<Button
-						onClick={onShowClick}
-						variant='contained'
-						size='large'
-						startIcon={<PlayArrow />}
-						sx={{
-							alignSelf: { xs: 'center', md: 'flex-start' },
-							minWidth: { xs: '180px', md: '200px', lg: '210px' },
-							height: { xs: 48, md: 52, lg: 54 },
-							fontSize: { xs: '0.95rem', md: '0.98rem', lg: '1.02rem' },
-							fontWeight: 700,
-							textTransform: 'none',
-							borderRadius: 3,
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
-							border: '1px solid rgba(139, 92, 246, 0.5)',
-							position: 'relative',
-							overflow: 'hidden',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: 0,
-								left: '-100%',
-								width: '100%',
-								height: '100%',
-								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-								transition: 'left 0.5s ease',
-							},
-							'&:hover': {
-								background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-								transform: 'translateY(-2px) scale(1.02)',
-								boxShadow: '0 8px 40px rgba(139, 92, 246, 0.6)',
-								border: '1px solid rgba(139, 92, 246, 0.7)',
-								'&::before': {
-									left: '100%',
-								},
-							},
-							'&:active': {
-								transform: 'translateY(0) scale(1)',
-							},
-						}}>
-						{buttonText}
-					</Button>
-				</Stack>
-			</Stack>
-		</Box>
+						{/* Description */}
+						<p className={cn(
+							"relative font-medium text-[0.82rem] leading-relaxed italic px-1 flex-1",
+							isDark ? "text-slate-300" : "text-slate-600"
+						)}>
+							<span className="absolute -left-1 -top-2 text-xl font-serif text-violet-500/30">&ldquo;</span>
+							{icon.subtitle}
+							<span className="absolute -right-1 -bottom-1 text-xl font-serif text-cyan-500/30">&rdquo;</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</Link>
 	)
 }
 
 const Homepage = ({ translations, jsonLd }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const [open, setOpen] = useState(false)
 	const [videoSrc, setVideoSrc] = useState('')
 	const [modalName, setModalName] = useState('')
@@ -529,1235 +283,343 @@ const Homepage = ({ translations, jsonLd }) => {
 				/>
 			)}
 			<Hero />
-			<Box
-				sx={{
-					position: 'relative',
-					overflow: 'hidden',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
+
+			{/* Main content wrapper */}
+			<div className={cn(
+				"relative overflow-hidden",
+				isDark ? "bg-slate-900" : "bg-white"
+			)}>
+				{/* Background gradient effects */}
+				<div
+					className="absolute inset-0 pointer-events-none"
+					style={{
 						backgroundImage: `
 							radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
 							radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.03) 0%, transparent 50%)
 						`,
-						backgroundSize: '100% 100%, 100% 100%',
-						pointerEvents: 'none',
-						zIndex: 0,
-					},
-				}}>
-				<Container
-					maxWidth={false}
-					sx={{
-						margin: { xs: '2rem auto', md: '5rem auto' },
-						padding: { xs: '0 0.25rem', md: '0 1.5rem' },
-						maxWidth: '1350px',
-						position: 'relative',
-						zIndex: 1,
-					}}>
-					{/* Section Apprentissage multisupport */}
-					<Box
-						sx={{
-							position: 'relative',
-							mb: 6,
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: '50%',
-								left: '50%',
-								transform: 'translate(-50%, -50%)',
-								width: { xs: '90%', md: '70%' },
-								height: '150%',
+					}}
+				/>
+
+				{/* Container */}
+				<div className="relative z-10 max-w-[1350px] mx-auto my-8 md:my-20 px-1 md:px-6">
+
+					{/* Section Multimedia Learning */}
+					<div className="relative mb-12">
+						{/* Background glow */}
+						<div
+							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[70%] h-[150%] rounded-full blur-[40px] pointer-events-none"
+							style={{
 								background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.05) 0%, transparent 70%)',
-								borderRadius: '50%',
-								filter: 'blur(40px)',
-								pointerEvents: 'none',
-								zIndex: 0,
-							},
-						}}>
-						<Box>
-				<Typography
-					variant='h3'
-					align='center'
-					sx={{
-						fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem', lg: '3rem' },
-						fontWeight: 800,
-						mb: { xs: 1.5, md: 2 },
-						px: { xs: 2, sm: 3 },
-						background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
-						backgroundSize: '200% 200%',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
-						position: 'relative',
-						animation: 'gradientShift 8s ease infinite',
-						filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
-						letterSpacing: '-0.02em',
-						'@keyframes gradientShift': {
-							'0%': {
-								backgroundPosition: '0% 50%',
-							},
-							'50%': {
-								backgroundPosition: '100% 50%',
-							},
-							'100%': {
-								backgroundPosition: '0% 50%',
-							},
-						},
-					}}>
-					{translations.multimedia}
-				</Typography>
+							}}
+						/>
 
-				<Typography
-					variant='subtitle1'
-					align='center'
-					sx={{
-						color: isDark ? '#cbd5e1' : '#64748b',
-						fontSize: { xs: '0.95rem', sm: '1.05rem', md: '1.125rem' },
-						mb: { xs: 4, md: 6 },
-						px: { xs: 2, sm: 3 },
-						maxWidth: '700px',
-						mx: 'auto',
-						fontWeight: 500,
-						lineHeight: 1.6,
-						letterSpacing: '0.01em',
-					}}>
-					{translations.discoverResources}
-				</Typography>
+						<div className="relative z-10">
+							{/* Section Title */}
+							<h2
+								className="text-center text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] lg:text-[3rem] font-extrabold mb-4 md:mb-6 px-4 sm:px-6 tracking-tight animate-gradient-shift"
+								style={{
+									background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+									backgroundSize: '200% 200%',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
+								}}
+							>
+								{translations.multimedia}
+							</h2>
 
-				{/* Carousel pour mobile et tablette */}
-				<Box
-					sx={{
-						display: { xs: 'block', lg: 'none' },
-						mt: 4,
-						mb: 6,
-					}}>
-					<Box ref={emblaRef} sx={{ overflow: 'hidden' }}>
-						<Box
-							sx={{
-								display: 'flex',
-								gap: { xs: '20px', sm: '20px', md: '24px' },
-								px: 2,
-								pb: '60px',
-								'& > *': {
-									flex: '0 0 100%',
-									minWidth: 0,
-									'@media (min-width: 600px)': {
-										flex: '0 0 calc(50% - 10px)',
-									},
-									'@media (min-width: 900px)': {
-										flex: '0 0 calc(33.333% - 16px)',
-									},
-								},
-							}}>
-							{multimedia.map((icon, index) => (
-								<Box key={index} sx={{ display: 'flex', justifyContent: 'center' }}>
-									<Link href={icon.link} style={{ textDecoration: 'none', display: 'block', width: '100%', maxWidth: '220px' }}>
-										<Box
-											sx={{
-												display: 'flex',
-												flexDirection: 'column',
-												alignItems: 'center',
-												gap: 2,
-												textAlign: 'center',
-												p: { xs: 2.5, sm: 3.5 },
-												height: '100%',
-												minHeight: { xs: '280px', sm: '320px' },
-												borderRadius: 4,
-												background: isDark ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)' : 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
-												border: '2px solid transparent',
-												backgroundImage: isDark ? 'linear-gradient(rgba(30, 41, 59, 1), rgba(30, 41, 59, 1)), linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5), rgba(139, 92, 246, 0.5))' : 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
-												backgroundOrigin: 'border-box',
-												backgroundClip: 'padding-box, border-box',
-												boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
-												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-												cursor: 'pointer',
-												position: 'relative',
-												overflow: 'hidden',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													top: 0,
-													left: '-100%',
-													width: '100%',
-													height: '100%',
-													background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
-													transition: 'left 0.5s ease',
-												},
-												'&:hover': {
-													transform: 'translateY(-8px) scale(1.02)',
-													boxShadow: '0 12px 40px rgba(139, 92, 246, 0.45), 0 0 20px rgba(6, 182, 212, 0.25)',
-													borderColor: 'rgba(139, 92, 246, 0.5)',
-													'&::before': {
-														left: '100%',
-													},
-													'& .outer-frame': {
-														transform: 'translate(-3px, -3px) rotate(-2deg)',
-													},
-													'& .icon-container': {
-														transform: 'translate(-47%, -47%) rotate(2deg)',
-													},
-												},
-											}}>
-											<Box
-												sx={{
-													position: 'relative',
-													width: { xs: 100, sm: 120 },
-													height: { xs: 100, sm: 120 },
-												}}>
-												{/* Cercle de fond animé blur */}
-												<Box
-													sx={{
-														position: 'absolute',
-														width: '120%',
-														height: '120%',
-														top: '50%',
-														left: '50%',
-														transform: 'translate(-50%, -50%)',
-														background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-														borderRadius: 4,
-														filter: 'blur(40px)',
-														animation: 'pulse 3s ease-in-out infinite',
-														'@keyframes pulse': {
-															'0%, 100%': {
-																opacity: 0.5,
-																transform: 'translate(-50%, -50%) scale(1)',
-															},
-															'50%': {
-																opacity: 0.8,
-																transform: 'translate(-50%, -50%) scale(1.1)',
-															},
-														},
-													}}
+							{/* Section Subtitle */}
+							<p className={cn(
+								"text-center text-[0.95rem] sm:text-[1.05rem] md:text-lg mb-12 md:mb-16 px-4 sm:px-6 max-w-[700px] mx-auto font-medium leading-relaxed tracking-wide",
+								isDark ? "text-slate-300" : "text-slate-500"
+							)}>
+								{translations.discoverResources}
+							</p>
+
+							{/* Carousel for mobile and tablet */}
+							<div className="block lg:hidden mb-12">
+								<div ref={emblaRef} className="overflow-hidden">
+									<div className="flex gap-5 sm:gap-5 md:gap-6 px-4 pt-4 pb-[60px]">
+										{multimedia.map((icon, index) => (
+											<div
+												key={index}
+												className="flex-[0_0_100%] sm:flex-[0_0_calc(50%-10px)] md:flex-[0_0_calc(33.333%-16px)] min-w-0 flex justify-center"
+											>
+												<MultimediaCard
+													img={icon.img}
+													title={icon.title}
+													subtitle={icon.subtitle}
+													subtitleMobile={icon.subtitleMobile}
+													link={icon.link}
 												/>
+											</div>
+										))}
+									</div>
+								</div>
 
-												{/* Cadre stylisé avec glassmorphism */}
-												<Box
-													className="outer-frame"
-													sx={{
-														position: 'absolute',
-														width: '100%',
-														height: '100%',
-														borderRadius: 3,
-														background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-														border: '3px solid rgba(255, 255, 255, 0.2)',
-														backdropFilter: 'blur(10px)',
-														boxShadow: `
-															0 0 30px rgba(139, 92, 246, 0.5),
-															inset 0 0 30px rgba(6, 182, 212, 0.2),
-															0 6px 24px rgba(0, 0, 0, 0.2)
-														`,
-														transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-														'&::before': {
-															content: '""',
-															position: 'absolute',
-															inset: '-3px',
-															borderRadius: 3,
-															padding: '3px',
-															background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
-															WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-															WebkitMaskComposite: 'xor',
-															maskComposite: 'exclude',
-															opacity: 0.6,
-														},
-													}}
-												/>
+								{/* Pagination dots */}
+								<div className="flex justify-center gap-2 mt-6 mb-4">
+									{multimedia.map((_, index) => (
+										<button
+											key={index}
+											onClick={() => scrollTo(index)}
+											className={cn(
+												"h-2.5 rounded-full transition-all duration-300 cursor-pointer",
+												selectedIndex === index
+													? "w-6 bg-gradient-to-r from-violet-500 to-cyan-500 shadow-[0_2px_8px_rgba(139,92,246,0.4)]"
+													: "w-2.5 bg-violet-500/30 hover:bg-violet-500/50"
+											)}
+										/>
+									))}
+								</div>
 
-												{/* Conteneur de l'image avec overflow hidden */}
-												<Box
-													className="icon-container"
-													sx={{
-														position: 'relative',
-														width: '90%',
-														height: '90%',
-														top: '50%',
-														left: '50%',
-														transform: 'translate(-50%, -50%)',
-														borderRadius: 2.5,
-														overflow: 'hidden',
-														zIndex: 2,
-														transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-													}}>
-													<Box
-														component='img'
-														src={icon.img}
-														alt={icon.title}
-														sx={{
-															width: '100%',
-															height: '100%',
-															objectFit: 'cover',
-															filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
-														}}
-													/>
+								{/* Navigation buttons */}
+								<div className="flex justify-center gap-4 mt-2">
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={scrollPrev}
+										disabled={!canScrollPrev}
+										className={cn(
+											"w-12 h-12 rounded-full",
+											"bg-gradient-to-br from-violet-500/15 to-cyan-500/10",
+											"border-2 border-violet-500/30",
+											"hover:from-violet-500/25 hover:to-cyan-500/20",
+											"hover:scale-110 hover:shadow-[0_4px_15px_rgba(139,92,246,0.4)]",
+											"transition-all duration-300",
+											"disabled:opacity-30"
+										)}
+									>
+										<ChevronLeft className="w-5 h-5 text-violet-500" />
+									</Button>
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={scrollNext}
+										disabled={!canScrollNext}
+										className={cn(
+											"w-12 h-12 rounded-full",
+											"bg-gradient-to-br from-violet-500/15 to-cyan-500/10",
+											"border-2 border-violet-500/30",
+											"hover:from-violet-500/25 hover:to-cyan-500/20",
+											"hover:scale-110 hover:shadow-[0_4px_15px_rgba(139,92,246,0.4)]",
+											"transition-all duration-300",
+											"disabled:opacity-30"
+										)}
+									>
+										<ChevronRight className="w-5 h-5 text-violet-500" />
+									</Button>
+								</div>
+							</div>
 
-													{/* Overlay pour masquer le logo Gemini en bas à droite */}
-													<Box
-														sx={{
-															position: 'absolute',
-															bottom: 0,
-															right: 0,
-															width: '40%',
-															height: '25%',
-															background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.15) 40%)',
-															zIndex: 3,
-														}}
-													/>
-												</Box>
-											</Box>
-											<Box sx={{ width: '100%', px: 1 }}>
-												{/* Titre avec effet heroic fantasy */}
-												<Typography
-													variant='h6'
-													sx={{
-														fontSize: { xs: '1.1rem', sm: '1.15rem' },
-														fontWeight: 800,
-														background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
-														backgroundSize: '200% 200%',
-														WebkitBackgroundClip: 'text',
-														WebkitTextFillColor: 'transparent',
-														backgroundClip: 'text',
-														textTransform: 'uppercase',
-														letterSpacing: '0.5px',
-														mb: 1,
-														textShadow: '0 2px 4px rgba(139, 92, 246, 0.2)',
-														position: 'relative',
-														'&::after': {
-															content: '""',
-															position: 'absolute',
-															bottom: -4,
-															left: '50%',
-															transform: 'translateX(-50%)',
-															width: '60%',
-															height: '1px',
-															background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
-														},
-													}}>
-													{icon.title}
-												</Typography>
+							{/* Grid for desktop */}
+							<div
+								className="hidden lg:grid grid-cols-5 items-stretch mx-auto mt-16 mb-8 max-w-[1100px]"
+								style={{ perspective: '2000px', perspectiveOrigin: 'center center' }}
+							>
+								{multimedia.map((icon, index) => (
+									<DesktopMultimediaCard
+										key={index}
+										icon={icon}
+										index={index}
+										isDark={isDark}
+									/>
+								))}
+							</div>
+						</div>
+					</div>
 
-												{/* Séparateur décoratif */}
-												<Box
-													sx={{
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'center',
-														gap: 1,
-														my: 1.5,
-													}}>
-													<Box
-														sx={{
-															width: '20px',
-															height: '1px',
-															background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.6))',
-														}}
-													/>
-													<Box
-														sx={{
-															width: '6px',
-															height: '6px',
-															borderRadius: '50%',
-															background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
-															boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)',
-														}}
-													/>
-													<Box
-														sx={{
-															width: '20px',
-															height: '1px',
-															background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.6))',
-														}}
-													/>
-												</Box>
-
-												{/* Description avec style parchemin */}
-												<>
-													<Typography
-														variant='body2'
-														sx={{
-															display: { xs: 'block', sm: 'none' },
-															color: isDark ? '#cbd5e1' : '#475569',
-															fontWeight: 500,
-															fontSize: '0.8rem',
-															lineHeight: 1.6,
-															fontStyle: 'italic',
-															px: 0.5,
-															textAlign: 'center',
-															position: 'relative',
-															'&::before': {
-																content: '"“"',
-																position: 'absolute',
-																left: -4,
-																top: -8,
-																fontSize: '1.5rem',
-																color: 'rgba(139, 92, 246, 0.3)',
-																fontFamily: 'Georgia, serif',
-															},
-															'&::after': {
-																content: '"”"',
-																position: 'absolute',
-																right: -4,
-																bottom: -8,
-																fontSize: '1.5rem',
-																color: 'rgba(6, 182, 212, 0.3)',
-																fontFamily: 'Georgia, serif',
-															},
-														}}>
-														{icon.subtitleMobile}
-													</Typography>
-													<Typography
-														variant='body2'
-														sx={{
-															display: { xs: 'none', sm: 'block' },
-															color: isDark ? '#cbd5e1' : '#475569',
-															fontWeight: 500,
-															fontSize: '0.85rem',
-															lineHeight: 1.6,
-															fontStyle: 'italic',
-															px: 0.5,
-															textAlign: 'center',
-															position: 'relative',
-															'&::before': {
-																content: '"“"',
-																position: 'absolute',
-																left: -4,
-																top: -8,
-																fontSize: '1.5rem',
-																color: 'rgba(139, 92, 246, 0.3)',
-																fontFamily: 'Georgia, serif',
-															},
-															'&::after': {
-																content: '"”"',
-																position: 'absolute',
-																right: -4,
-																bottom: -8,
-																fontSize: '1.5rem',
-																color: 'rgba(6, 182, 212, 0.3)',
-																fontFamily: 'Georgia, serif',
-															},
-														}}>
-														{icon.subtitle}
-													</Typography>
-												</>
-											</Box>
-										</Box>
-									</Link>
-								</Box>
-							))}
-						</Box>
-					</Box>
-
-					{/* Indicateurs de pagination (dots) */}
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							gap: 1,
-							mt: 3,
-							mb: 2,
-						}}>
-						{multimedia.map((_, index) => (
-							<Box
-								key={index}
-								onClick={() => scrollTo(index)}
-								sx={{
-									width: selectedIndex === index ? '24px' : '10px',
-									height: '10px',
-									borderRadius: selectedIndex === index ? '5px' : '50%',
-									background: selectedIndex === index
-										? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-										: 'rgba(139, 92, 246, 0.3)',
-									boxShadow: selectedIndex === index ? '0 2px 8px rgba(139, 92, 246, 0.4)' : 'none',
-									cursor: 'pointer',
-									transition: 'all 0.3s ease',
-									'&:hover': {
-										background: selectedIndex === index
-											? 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)'
-											: 'rgba(139, 92, 246, 0.5)',
-									},
+					{/* Video Dialog */}
+					<Dialog open={open} onOpenChange={setOpen}>
+						<DialogContent className={cn(
+							"max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] xl:max-w-[1100px] p-0",
+							"bg-gradient-to-br backdrop-blur-xl",
+							isDark
+								? "from-slate-800/95 to-slate-900/90 border-violet-500/40"
+								: "from-white/95 to-white/90 border-violet-500/20",
+							"shadow-[0_20px_80px_rgba(139,92,246,0.3)]",
+							"rounded-[20px] overflow-hidden"
+						)}>
+							{/* Decorative gradient overlay */}
+							<div
+								className="absolute inset-0 pointer-events-none"
+								style={{
+									background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.08) 0%, transparent 50%)',
 								}}
 							/>
-						))}
-					</Box>
 
-					{/* Boutons de navigation personnalisés */}
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							gap: 2,
-							mt: 1,
-						}}>
-						<IconButton
-							onClick={scrollPrev}
-						disabled={!canScrollPrev}
-							sx={{
-								width: 48,
-								height: 48,
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '2px solid rgba(139, 92, 246, 0.3)',
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-									transform: 'scale(1.1)',
-									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-								},
-								'&.Mui-disabled': {
-							opacity: 0.3,
-						},
-							}}>
-							<ArrowBackIosNew sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
-						</IconButton>
-						<IconButton
-							onClick={scrollNext}
-						disabled={!canScrollNext}
-							sx={{
-								width: 48,
-								height: 48,
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '2px solid rgba(139, 92, 246, 0.3)',
-								transition: 'all 0.3s ease',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-									transform: 'scale(1.1)',
-									boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-								},
-								'&.Mui-disabled': {
-							opacity: 0.3,
-						},
-							}}>
-							<ArrowForwardIos sx={{ color: '#8b5cf6', fontSize: '1.2rem' }} />
-						</IconButton>
-					</Box>
-				</Box>
-
-				{/* Grille pour desktop */}
-				<Grid
-					container
-					spacing={{ xs: 2, sm: 2, md: 3, lg: 0 }}
-					justifyContent='center'
-					sx={{
-						display: { xs: 'none', lg: 'flex' },
-						margin: { xs: '2rem auto', md: '4rem auto' },
-						maxWidth: '1200px',
-						perspective: { xs: 'none', md: 'none', lg: '2000px' },
-						perspectiveOrigin: 'center center',
-					}}>
-					{multimedia.map((icon, index) => {
-						// Effet de profondeur 3D - la carte centrale (index 2) est la plus avancée
-						const centerIndex = 2
-						const distance = Math.abs(index - centerIndex)
-						const scale = 1 + (0.25 - distance * 0.08) // Centre: 1.25, -1: 1.17, -2: 1.09
-						const translateZ = 100 - distance * 35 // Centre: 100px, -1: 65px, -2: 30px (augmenté pour plus de profondeur)
-						const zIndex = 15 - distance * 2 // Centre: 15, -1: 13, -2: 11 (augmenté pour plus de contraste)
-						const shadowIntensity = 0.5 - distance * 0.12
-
-						// Marges négatives pour créer le chevauchement progressif - désactivé sur tablette
-						const getMarginLeft = (idx) => {
-							if (idx === 0) return '0';
-							// Chevauchement progressif : chaque carte chevauche la précédente
-							return { sm: '0', md: '0', lg: '-18px' };
-						};
-						const marginLeft = getMarginLeft(index);
-
-						return (
-						<Grid
-							key={index}
-							item
-							xs={6}
-							sm={6}
-							md={4}
-							lg={2.4}
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								zIndex: { xs: 1, lg: zIndex },
-								ml: marginLeft,
-							}}>
-							<Link href={icon.link} style={{ textDecoration: 'none', width: '100%', maxWidth: '210px' }}>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										gap: 2,
-										textAlign: 'center',
-										p: { xs: 2.5, sm: 3, md: 3.5, lg: 3 },
-										height: '100%',
-										width: '100%',
-										minHeight: { xs: '280px', sm: '300px', md: '340px', lg: '320px' },
-										borderRadius: 4,
-										background: isDark ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)' : 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 255, 0.95) 100%)',
-										border: '2px solid transparent',
-										backgroundImage: isDark ? 'linear-gradient(rgba(30, 41, 59, 1), rgba(30, 41, 59, 1)), linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5), rgba(139, 92, 246, 0.5))' : 'linear-gradient(white, white), linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4))',
-										backgroundOrigin: 'border-box',
-										backgroundClip: 'padding-box, border-box',
-										boxShadow: {
-											xs: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
-											sm: '0 4px 20px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
-											md: '0 6px 24px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
-											lg: `0 ${4 + translateZ * 0.4}px ${20 + translateZ}px rgba(139, 92, 246, ${shadowIntensity}), inset 0 1px 0 rgba(255, 255, 255, 0.8)`
-										},
-										transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-										cursor: 'pointer',
-										position: 'relative',
-										overflow: 'hidden',
-										transform: {
-											xs: 'scale(1)',
-											sm: 'scale(1)',
-											md: 'scale(1)',
-											lg: `scale(${scale}) translateZ(${translateZ}px)`
-										},
-										transformStyle: { xs: 'flat', lg: 'preserve-3d' },
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: '-100%',
-											width: '100%',
-											height: '100%',
-											background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent)',
-											transition: 'left 0.5s ease',
-										},
-										'&:hover': {
-											transform: {
-												xs: 'scale(1.05)',
-												sm: 'scale(1.05)',
-												md: 'scale(1.05)',
-												lg: `scale(${scale * 1.08}) translateZ(${translateZ + 30}px) translateY(-10px)`
-											},
-											zIndex: { xs: 1, lg: 100 },
-											boxShadow: {
-												xs: '0 8px 32px rgba(139, 92, 246, 0.4), 0 0 16px rgba(6, 182, 212, 0.2)',
-												md: '0 8px 32px rgba(139, 92, 246, 0.35), 0 0 24px rgba(6, 182, 212, 0.2)',
-												lg: '0 20px 60px rgba(139, 92, 246, 0.6), 0 0 40px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
-											},
-											'&::before': {
-												left: '100%',
-											},
-											'& .outer-frame': {
-												transform: 'translate(-3px, -3px) rotate(-2deg)',
-											},
-											'& .icon-container': {
-												transform: 'translate(-47%, -47%) rotate(2deg)',
-											},
-										},
-									}}>
-									<Box
-										sx={{
-											position: 'relative',
-											width: { xs: 90, sm: 100, md: 120, lg: 110 },
-											height: { xs: 90, sm: 100, md: 120, lg: 110 },
-										}}>
-										{/* Cercle de fond animé blur */}
-										<Box
-											sx={{
-												position: 'absolute',
-												width: '120%',
-												height: '120%',
-												top: '50%',
-												left: '50%',
-												transform: 'translate(-50%, -50%)',
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%)',
-												borderRadius: 4,
-												filter: 'blur(40px)',
-												animation: 'pulse 3s ease-in-out infinite',
-												'@keyframes pulse': {
-													'0%, 100%': {
-														opacity: 0.5,
-														transform: 'translate(-50%, -50%) scale(1)',
-													},
-													'50%': {
-														opacity: 0.8,
-														transform: 'translate(-50%, -50%) scale(1.1)',
-													},
-												},
-											}}
-										/>
-
-										{/* Cadre stylisé avec glassmorphism */}
-										<Box
-											className="outer-frame"
-											sx={{
-												position: 'absolute',
-												width: '100%',
-												height: '100%',
-												borderRadius: 3,
-												background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%)',
-												border: '3px solid rgba(255, 255, 255, 0.2)',
-												backdropFilter: 'blur(10px)',
-												boxShadow: `
-													0 0 30px rgba(139, 92, 246, 0.5),
-													inset 0 0 30px rgba(6, 182, 212, 0.2),
-													0 6px 24px rgba(0, 0, 0, 0.2)
-												`,
-												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-												'&::before': {
-													content: '""',
-													position: 'absolute',
-													inset: '-3px',
-													borderRadius: 3,
-													padding: '3px',
-													background: 'linear-gradient(135deg, #8b5cf6, #06b6d4, #8b5cf6)',
-													WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-													WebkitMaskComposite: 'xor',
-													maskComposite: 'exclude',
-													opacity: 0.6,
-												},
-											}}
-										/>
-
-										{/* Conteneur de l'image avec overflow hidden */}
-										<Box
-											className="icon-container"
-											sx={{
-												position: 'relative',
-												width: '90%',
-												height: '90%',
-												top: '50%',
-												left: '50%',
-												transform: 'translate(-50%, -50%)',
-												borderRadius: 2.5,
-												overflow: 'hidden',
-												zIndex: 2,
-												transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-											}}>
-											<Box
-												component='img'
-												src={icon.img}
-												alt={icon.title}
-												sx={{
-													width: '100%',
-													height: '100%',
-													objectFit: 'cover',
-													filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.4))',
-												}}
-											/>
-
-											{/* Overlay pour masquer le logo Gemini en bas à droite */}
-											<Box
-												sx={{
-													position: 'absolute',
-													bottom: 0,
-													right: 0,
-													width: '40%',
-													height: '25%',
-													background: 'linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.15) 40%)',
-													zIndex: 3,
-												}}
-											/>
-										</Box>
-									</Box>
-									<Box sx={{ width: '100%', px: 1 }}>
-										{/* Titre avec effet heroic fantasy */}
-										<Typography
-											variant='h6'
-											sx={{
-												fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem', lg: '1.05rem' },
-												fontWeight: 800,
-												background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
-												backgroundSize: '200% 200%',
-												WebkitBackgroundClip: 'text',
-												WebkitTextFillColor: 'transparent',
-												backgroundClip: 'text',
-												textTransform: 'uppercase',
-												letterSpacing: '0.5px',
-												mb: 1,
-												textShadow: '0 2px 4px rgba(139, 92, 246, 0.2)',
-												position: 'relative',
-												'&::after': {
-													content: '""',
-													position: 'absolute',
-													bottom: -4,
-													left: '50%',
-													transform: 'translateX(-50%)',
-													width: '60%',
-													height: '1px',
-													background: 'linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent)',
-												},
-											}}>
-											{icon.title}
-										</Typography>
-
-										{/* Séparateur décoratif */}
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												gap: 1,
-												my: 1.5,
-											}}>
-											<Box
-												sx={{
-													width: '20px',
-													height: '1px',
-													background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.6))',
-												}}
-											/>
-											<Box
-												sx={{
-													width: '6px',
-													height: '6px',
-													borderRadius: '50%',
-													background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
-													boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)',
-												}}
-											/>
-											<Box
-												sx={{
-													width: '20px',
-													height: '1px',
-													background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.6))',
-												}}
-											/>
-										</Box>
-
-										{/* Description avec style parchemin */}
-										<>
-											<Typography
-												variant='body2'
-												sx={{
-													display: { xs: 'block', sm: 'none' },
-													color: isDark ? '#cbd5e1' : '#475569',
-													fontWeight: 500,
-													fontSize: '0.8rem',
-													lineHeight: 1.6,
-													fontStyle: 'italic',
-													px: 0.5,
-													textAlign: 'center',
-													position: 'relative',
-													'&::before': {
-														content: '"\u201C"',
-														position: 'absolute',
-														left: -4,
-														top: -8,
-														fontSize: '1.5rem',
-														color: 'rgba(139, 92, 246, 0.3)',
-														fontFamily: 'Georgia, serif',
-													},
-													'&::after': {
-														content: '"\u201D"',
-														position: 'absolute',
-														right: -4,
-														bottom: -8,
-														fontSize: '1.5rem',
-														color: 'rgba(6, 182, 212, 0.3)',
-														fontFamily: 'Georgia, serif',
-													},
-												}}>
-												{icon.subtitleMobile}
-											</Typography>
-											<Typography
-												variant='body2'
-												sx={{
-													display: { xs: 'none', sm: 'block' },
-													color: isDark ? '#cbd5e1' : '#475569',
-													fontWeight: 500,
-													fontSize: { sm: '0.85rem', md: '0.9rem', lg: '0.85rem' },
-													lineHeight: 1.6,
-													fontStyle: 'italic',
-													px: 0.5,
-													textAlign: 'center',
-													position: 'relative',
-													'&::before': {
-														content: '"\u201C"',
-														position: 'absolute',
-														left: -4,
-														top: -8,
-														fontSize: '1.5rem',
-														color: 'rgba(139, 92, 246, 0.3)',
-														fontFamily: 'Georgia, serif',
-													},
-													'&::after': {
-														content: '"\u201D"',
-														position: 'absolute',
-														right: -4,
-														bottom: -8,
-														fontSize: '1.5rem',
-														color: 'rgba(6, 182, 212, 0.3)',
-														fontFamily: 'Georgia, serif',
-													},
-												}}>
-												{icon.subtitle}
-											</Typography>
-										</>
-									</Box>
-								</Box>
-							</Link>
-						</Grid>
-						)
-					})}
-				</Grid>
-						</Box>
-					</Box>
-
-				<Modal
-					open={open}
-					onClose={handleClose}
-					aria-labelledby='modal-modal-title'
-					aria-describedby='modal-modal-description'
-					closeAfterTransition
-					slots={{ backdrop: Backdrop }}
-					slotProps={{
-						backdrop: {
-							timeout: 500,
-							sx: {
-								backgroundColor: 'rgba(15, 23, 42, 0.8)',
-								backdropFilter: 'blur(12px)',
-							},
-						},
-					}}>
-					<Box
-						sx={{
-							position: 'absolute',
-							top: '50%',
-							left: '50%',
-							transform: 'translate(-50%, -50%)',
-							width: {
-								xs: '95%',
-								sm: '85%',
-								md: '75%',
-								lg: '65%',
-							},
-							maxWidth: '1100px',
-							outline: 'none',
-							animation: open ? 'modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-							'@keyframes modalFadeIn': {
-								'0%': {
-									opacity: 0,
-									transform: 'translate(-50%, -48%) scale(0.95)',
-								},
-								'100%': {
-									opacity: 1,
-									transform: 'translate(-50%, -50%) scale(1)',
-								},
-							},
-						}}>
-						{/* Modal Container */}
-						<Box
-							sx={{
-								position: 'relative',
-								background: isDark
-									? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-									: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-								backdropFilter: 'blur(20px)',
-								borderRadius: 5,
-								border: isDark ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid rgba(139, 92, 246, 0.2)',
-								boxShadow: isDark
-									? '0 20px 80px rgba(139, 92, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
-									: '0 20px 80px rgba(139, 92, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.08) 0%, transparent 50%)',
-									pointerEvents: 'none',
-									zIndex: 0,
-								},
-							}}>
-							{/* Header */}
-							<Box
-								sx={{
-									position: 'relative',
-									zIndex: 1,
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'space-between',
-									p: { xs: 2, md: 3 },
-									borderBottom: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.15)',
-									background: isDark
-										? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.08) 100%)'
-										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.03) 100%)',
-								}}>
+							<DialogHeader className={cn(
+								"relative z-10 flex flex-row items-center justify-between p-4 md:p-6",
+								"border-b",
+								isDark ? "border-violet-500/30" : "border-violet-500/15",
+								"bg-gradient-to-r",
+								isDark
+									? "from-violet-500/10 to-cyan-500/8"
+									: "from-violet-500/5 to-cyan-500/3"
+							)}>
 								{modalName && (
-									<Typography
-										id='modal-modal-title'
-										variant='h5'
-										sx={{
-											fontWeight: 700,
+									<DialogTitle
+										className="text-xl md:text-2xl font-bold"
+										style={{
 											background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 60%, #06b6d4 100%)',
 											WebkitBackgroundClip: 'text',
 											WebkitTextFillColor: 'transparent',
 											backgroundClip: 'text',
-											fontSize: { xs: '1.25rem', md: '1.5rem' },
-										}}>
+										}}
+									>
 										{modalName}
-									</Typography>
+									</DialogTitle>
 								)}
-								<IconButton
-									onClick={handleClose}
-									sx={{
-										ml: 'auto',
-										width: 42,
-										height: 42,
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-										border: '1px solid rgba(139, 92, 246, 0.3)',
-										transition: 'all 0.3s ease',
-										'&:hover': {
-											background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%)',
-											transform: 'rotate(90deg) scale(1.1)',
-											boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-										},
-									}}>
-									<Close sx={{ color: '#8b5cf6' }} />
-								</IconButton>
-							</Box>
+							</DialogHeader>
 
 							{/* Video Container */}
-							<Box
-								sx={{
-									position: 'relative',
-									zIndex: 1,
-									p: { xs: 2, md: 3 },
-								}}>
-								<Box
-									sx={{
-										position: 'relative',
-										borderRadius: 3,
-										overflow: 'hidden',
-										boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-										border: '1px solid rgba(139, 92, 246, 0.2)',
-										'&::after': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: 0,
-											right: 0,
-											bottom: 0,
-											border: '1px solid rgba(255, 255, 255, 0.3)',
-											borderRadius: 3,
-											pointerEvents: 'none',
-										},
-									}}>
+							<div className="relative z-10 p-4 md:p-6">
+								<div className={cn(
+									"relative rounded-xl overflow-hidden",
+									"shadow-[0_8px_32px_rgba(0,0,0,0.15)]",
+									"border border-violet-500/20"
+								)}>
 									<video
 										controls
 										autoPlay
 										loop
-										style={{
-											width: '100%',
-											display: 'block',
-											borderRadius: '12px',
-										}}
+										className="w-full block rounded-xl"
 										src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/video/${videoSrc}`}
 									/>
-								</Box>
-							</Box>
-						</Box>
-					</Box>
-				</Modal>
+								</div>
+							</div>
+						</DialogContent>
+					</Dialog>
 
-				{/* Séparateur élégant entre les sections */}
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						my: { xs: '3.5rem', md: '8rem' },
-						position: 'relative',
-					}}>
-					{/* Ligne gauche */}
-					<Box
-						sx={{
-							flex: 1,
-							height: '2px',
-							background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.3) 50%, rgba(139, 92, 246, 0.6))',
-							maxWidth: { xs: '30%', md: '40%' },
-						}}
-					/>
-					{/* Élément central décoratif */}
-					<Box
-						sx={{
-							mx: 3,
-							width: { xs: 50, md: 70 },
-							height: { xs: 50, md: 70 },
-							position: 'relative',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-						}}>
-						{/* Cercle externe pulsant */}
-						<Box
-							sx={{
-								position: 'absolute',
-								width: '100%',
-								height: '100%',
-								borderRadius: '50%',
-								border: '2px solid rgba(139, 92, 246, 0.3)',
-								animation: 'expandPulse 3s ease-in-out infinite',
-								'@keyframes expandPulse': {
-									'0%, 100%': {
-										transform: 'scale(1)',
-										opacity: 0.5,
-									},
-									'50%': {
-										transform: 'scale(1.2)',
-										opacity: 0.8,
-									},
-								},
+					{/* Elegant separator between sections */}
+					<div className="flex items-center justify-center my-14 md:my-32 relative">
+						{/* Left line */}
+						<div
+							className="flex-1 h-0.5 max-w-[30%] md:max-w-[40%]"
+							style={{
+								background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.3) 50%, rgba(139, 92, 246, 0.6))',
 							}}
 						/>
-						{/* Cercle interne avec gradient */}
-						<Box
-							sx={{
-								width: '70%',
-								height: '70%',
-								borderRadius: '50%',
-								background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-								boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.3)',
-								position: 'relative',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									inset: 4,
-									borderRadius: '50%',
-									background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%)',
-								},
+
+						{/* Central decorative element */}
+						<div className="mx-6 w-[50px] md:w-[70px] h-[50px] md:h-[70px] relative flex items-center justify-center">
+							{/* Pulsing outer circle */}
+							<div className="absolute w-full h-full rounded-full border-2 border-violet-500/30 animate-[expandPulse_3s_ease-in-out_infinite]" />
+							{/* Inner gradient circle */}
+							<div
+								className="w-[70%] h-[70%] rounded-full relative"
+								style={{
+									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+									boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.3)',
+								}}
+							>
+								<div
+									className="absolute inset-1 rounded-full"
+									style={{
+										background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%)',
+									}}
+								/>
+							</div>
+						</div>
+
+						{/* Right line */}
+						<div
+							className="flex-1 h-0.5 max-w-[30%] md:max-w-[40%]"
+							style={{
+								background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.3) 50%, rgba(6, 182, 212, 0.6))',
 							}}
 						/>
-					</Box>
-					{/* Ligne droite */}
-					<Box
-						sx={{
-							flex: 1,
-							height: '2px',
-							background: 'linear-gradient(to left, transparent, rgba(6, 182, 212, 0.3) 50%, rgba(6, 182, 212, 0.6))',
-							maxWidth: { xs: '30%', md: '40%' },
-						}}
-					/>
-				</Box>
+					</div>
 
-				{/* Section Outils d'apprentissage */}
-				<Box
-					sx={{
-						position: 'relative',
-						mt: 0,
-						mb: { xs: '2rem', md: '5rem' },
-						'&::before': {
-							content: '""',
-							position: 'absolute',
-							top: '50%',
-							left: '50%',
-							transform: 'translate(-50%, -50%)',
-							width: { xs: '90%', md: '70%' },
-							height: '150%',
-							background: 'radial-gradient(ellipse, rgba(6, 182, 212, 0.05) 0%, transparent 70%)',
-							borderRadius: '50%',
-							filter: 'blur(40px)',
-							pointerEvents: 'none',
-							zIndex: 0,
-						},
-					}}>
-					<Box>
-					<Typography
-						variant='h3'
-						align='center'
-						sx={{
-							fontSize: { xs: '1.75rem', md: '3rem' },
-							fontWeight: 800,
-							mb: { xs: 1.5, md: 2 },
-							background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
-							backgroundSize: '200% 200%',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-							position: 'relative',
-							animation: 'gradientShift 8s ease infinite',
-							filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
-							letterSpacing: '-0.02em',
-							'@keyframes gradientShift': {
-								'0%': {
-									backgroundPosition: '0% 50%',
-								},
-								'50%': {
-									backgroundPosition: '100% 50%',
-								},
-								'100%': {
-									backgroundPosition: '0% 50%',
-								},
-							},
-						}}>
-						{translations.learning_tools_title}
-					</Typography>
+					{/* Section Learning Tools */}
+					<div className="relative mt-0 mb-8 md:mb-20">
+						{/* Background glow */}
+						<div
+							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[70%] h-[150%] rounded-full blur-[40px] pointer-events-none"
+							style={{
+								background: 'radial-gradient(ellipse, rgba(6, 182, 212, 0.05) 0%, transparent 70%)',
+							}}
+						/>
 
-					<Typography
-						variant='subtitle1'
-						align='center'
-						sx={{
-							color: isDark ? '#cbd5e1' : '#64748b',
-							fontSize: { xs: '0.95rem', md: '1.125rem' },
-							maxWidth: '700px',
-							mx: 'auto',
-							fontWeight: 500,
-							lineHeight: 1.6,
-							letterSpacing: '0.01em',
-						}}>
-						{translations.learning_tools_subtitle}
-					</Typography>
-					</Box>
-				</Box>
+						<div className="relative z-10">
+							{/* Section Title */}
+							<h2
+								className="text-center text-[1.75rem] md:text-[3rem] font-extrabold mb-4 md:mb-6 tracking-tight animate-gradient-shift"
+								style={{
+									background: 'linear-gradient(135deg, #1e1b4b 0%, #8b5cf6 50%, #06b6d4 100%)',
+									backgroundSize: '200% 200%',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))',
+								}}
+							>
+								{translations.learning_tools_title}
+							</h2>
 
-				<FeatureCard
-					title={translations.translator}
-					subtitle={translations.translatorsubtitle}
-					imageSrc={getUIImageUrl('translator.webp')}
-					imageAlt="translator"
-					onShowClick={() => handleOpen('translator.mp4', translations.translator)}
-					reverse={true}
-					marginTop="0"
-					badge={translations.badgeEssential}
-					offsetDirection="center"
-					buttonText={translations.viewDemo}
-				/>
+							{/* Section Subtitle */}
+							<p className={cn(
+								"text-center text-[0.95rem] md:text-lg max-w-[700px] mx-auto font-medium leading-relaxed tracking-wide",
+								isDark ? "text-slate-300" : "text-slate-500"
+							)}>
+								{translations.learning_tools_subtitle}
+							</p>
+						</div>
+					</div>
 
-				<FeatureCard
-					title={translations.dictionary}
-					subtitle={translations.giftranslatorsubtitle}
-					imageSrc={getUIImageUrl('dictionary.webp')}
-					imageAlt="dictionary"
-					onShowClick={() => handleOpen('dictionary.mp4', translations.dictionary)}
-					reverse={false}
-					marginTop={{ xs: '3rem', md: '8rem' }}
-					badge={translations.badgeNew}
-					offsetDirection="left"
-					buttonText={translations.viewDemo}
-				/>
-
-				<FeatureCard
-					title={translations.flashcards}
-					subtitle={translations.gifflashcardssubtitle}
-					imageSrc={getUIImageUrl('flashcards.webp')}
-					imageAlt="flashcards"
-					onShowClick={() => handleOpen('flashcards.mp4', translations.flashcards)}
-					reverse={true}
-					marginTop={{ xs: '3rem', md: '8rem' }}
-					badge={translations.badgePopular}
-					offsetDirection="right"
-					buttonText={translations.viewDemo}
-				/>
-
-				<Link href='/teacher' style={{ textDecoration: 'none' }}>
+					{/* Feature Cards */}
 					<FeatureCard
-						title={translations.teacher}
-						subtitle={translations.teachersubtitle}
-						imageSrc={getUIImageUrl('teacher.webp')}
-						imageAlt="teacher"
-						onShowClick={() => {}}
+						title={translations.translator}
+						subtitle={translations.translatorsubtitle}
+						imageSrc={getUIImageUrl('translator.webp')}
+						imageAlt="translator"
+						onShowClick={() => handleOpen('translator.mp4', translations.translator)}
+						reverse={true}
+						marginTop="0"
+						offsetDirection="center"
+						buttonText={translations.viewDemo}
+					/>
+
+					<FeatureCard
+						title={translations.dictionary}
+						subtitle={translations.giftranslatorsubtitle}
+						imageSrc={getUIImageUrl('dictionary.webp')}
+						imageAlt="dictionary"
+						onShowClick={() => handleOpen('dictionary.mp4', translations.dictionary)}
 						reverse={false}
-						marginTop={{ xs: '3rem', md: '8rem' }}
-						badge={translations.badgePremium}
+						marginTop="3rem"
 						offsetDirection="left"
 						buttonText={translations.viewDemo}
 					/>
-				</Link>
-			</Container>
-			</Box>
+
+					<FeatureCard
+						title={translations.flashcards}
+						subtitle={translations.gifflashcardssubtitle}
+						imageSrc={getUIImageUrl('flashcards.webp')}
+						imageAlt="flashcards"
+						onShowClick={() => handleOpen('flashcards.mp4', translations.flashcards)}
+						reverse={true}
+						marginTop="3rem"
+						offsetDirection="right"
+						buttonText={translations.viewDemo}
+					/>
+
+					<Link href='/teacher' className="block">
+						<FeatureCard
+							title={translations.teacher}
+							subtitle={translations.teachersubtitle}
+							imageSrc={getUIImageUrl('teacher.webp')}
+							imageAlt="teacher"
+							onShowClick={() => {}}
+							reverse={false}
+							marginTop="3rem"
+							offsetDirection="left"
+							buttonText={translations.viewDemo}
+						/>
+					</Link>
+				</div>
+			</div>
 		</>
 	)
 }
