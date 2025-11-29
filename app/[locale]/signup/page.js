@@ -1,8 +1,9 @@
 'use client'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
+import { useTheme } from '@/context/ThemeContext'
 import { supabase } from '@/lib/supabase'
 import { AVATARS } from '@/utils/avatars'
 import AuthLayout from '@/components/auth/AuthLayout'
@@ -10,45 +11,41 @@ import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import { FrenchFlag, RussianFlag, EnglishFlag } from '@/components/auth/FlagIcons'
-// Head removed - use metadata in App Router
-
 import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
 import { verifyTurnstile } from '@/app/actions/auth'
 import {
-	Box,
-	Button,
-	TextField,
-	Typography,
-	InputAdornment,
-	Divider,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	LinearProgress,
-	Avatar,
-	Collapse,
-	useTheme,
-} from '@mui/material'
+	UserPlus,
+	AtSign,
+	KeyRound,
+	User,
+	GraduationCap,
+	MessageCircle,
+	CheckCircle2,
+	XCircle,
+	SignalLow,
+	SignalMedium,
+	SignalHigh,
+	ChevronDown,
+	ChevronUp,
+	Eye,
+	EyeOff,
+	TrendingUp
+} from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Progress } from '@/components/ui/progress'
 import {
-	AlternateEmailRounded,
-	KeyRounded,
-	BadgeRounded,
-	SchoolRounded,
-	RecordVoiceOverRounded,
-	CheckCircleRounded,
-	CancelRounded,
-	SignalCellular1Bar,
-	SignalCellular2Bar,
-	SignalCellular3Bar,
-	KeyboardArrowDownRounded,
-	KeyboardArrowUpRounded,
-	HowToRegRounded,
-	Visibility,
-	VisibilityOff,
-	TrendingUpRounded,
-} from '@mui/icons-material'
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
 
 const initialState = {
 	email: '',
@@ -63,8 +60,7 @@ const initialState = {
 const Signup = () => {
 	const t = useTranslations('register')
 	const { register, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useTheme()
 	const [values, setValues] = useState(initialState)
 	const [showAvatars, setShowAvatars] = useState(false)
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
@@ -72,7 +68,7 @@ const Signup = () => {
 	const [turnstileToken, setTurnstileToken] = useState(null)
 	const turnstileRef = useRef(null)
 
-	// Liste de mots de passe communs à bloquer
+	// Liste de mots de passe communs a bloquer
 	const commonPasswords = useMemo(() => [
 		'password', 'password123', '123456', '12345678', '123456789',
 		'qwerty', 'azerty', 'admin', 'letmein', 'welcome', 'monkey',
@@ -102,13 +98,13 @@ const Signup = () => {
 		const { password } = values
 		if (password.length === 0) return 0
 
-		// Calcul de la force basé sur la longueur et la diversité
+		// Calcul de la force base sur la longueur et la diversite
 		let score = 0
 
 		// Longueur (0-40 points)
 		score += Math.min(password.length * 2, 40)
 
-		// Diversité de caractères (0-60 points)
+		// Diversite de caracteres (0-60 points)
 		if (/[a-z]/.test(password)) score += 15
 		if (/[A-Z]/.test(password)) score += 15
 		if (/[0-9]/.test(password)) score += 15
@@ -125,11 +121,15 @@ const Signup = () => {
 		const name = e.target.name
 		let value = e.target.value
 
-		// Sécurisation: nettoyer les caractères dangereux sauf pour le password
+		// Securisation: nettoyer les caracteres dangereux sauf pour le password
 		if (name !== 'password' && name !== 'email') {
 			value = value.replace(/[<>]/g, '')
 		}
 
+		setValues({ ...values, [name]: value })
+	}
+
+	const handleSelectChange = (name, value) => {
 		setValues({ ...values, [name]: value })
 	}
 
@@ -138,7 +138,7 @@ const Signup = () => {
 		setShowAvatars(false)
 	}
 
-	// Mapper les noms de langues vers les codes de langue pour la base de données
+	// Mapper les noms de langues vers les codes de langue pour la base de donnees
 	const mapLanguageToCode = languageName => {
 		const languageMap = {
 			english: 'en',
@@ -160,7 +160,7 @@ const Signup = () => {
 		return allLanguages.filter(lang => lang.value !== values.spokenLanguage)
 	}, [values.spokenLanguage, t])
 
-	// Réinitialiser la langue d'apprentissage si elle devient invalide
+	// Reinitialiser la langue d'apprentissage si elle devient invalide
 	useEffect(() => {
 		if (values.learningLanguage && values.spokenLanguage === values.learningLanguage) {
 			setValues(prev => ({ ...prev, learningLanguage: '' }))
@@ -185,31 +185,31 @@ const Signup = () => {
 			return
 		}
 
-		logger.log('📝 Signup form submitted')
+		logger.log('Signup form submitted')
 		logger.log('Turnstile token in state:', turnstileToken ? 'YES' : 'NO')
 
 		// Verify Turnstile token
 		if (!turnstileToken) {
-			logger.error('❌ No Turnstile token found in state')
-			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
+			logger.error('No Turnstile token found in state')
+			toast.error(t('pleaseSolveCaptcha') || 'Veuillez completer la verification anti-bot')
 			return
 		}
 
-		logger.log('🔐 Verifying token with backend...')
+		logger.log('Verifying token with backend...')
 
 		// Verify token with backend
 		try {
 			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
-				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
+				toast.error(t('captchaVerificationFailed') || 'Echec de la verification anti-bot')
 				setTurnstileToken(null)
 				turnstileRef.current?.reset()
 				return
 			}
 		} catch (error) {
 			logger.error('Turnstile verification error:', error)
-			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
+			toast.error(t('captchaVerificationError') || 'Erreur lors de la verification anti-bot')
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
 			return
@@ -230,7 +230,7 @@ const Signup = () => {
 			return
 		}
 
-		// Vérifier l'unicité du pseudo
+		// Verifier l'unicite du pseudo
 		try {
 			const { data: existingUser, error: checkError } = await supabase
 				.from('users_profile')
@@ -269,597 +269,386 @@ const Signup = () => {
 		}
 	}
 
-	const textFieldStyles = {
-		'& .MuiOutlinedInput-root': {
-			borderRadius: 2.5,
-			transition: 'all 0.3s ease',
-			backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'transparent',
-			color: isDark ? '#f1f5f9' : 'inherit',
-			'& fieldset': {
-				borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
-				borderWidth: '2px',
-			},
-			'&:hover fieldset': {
-				borderColor: 'rgba(102, 126, 234, 0.4)',
-			},
-			'&.Mui-focused fieldset': {
-				borderColor: '#667eea',
-				borderWidth: 2,
-			},
-		},
-		'& .MuiInputLabel-root': {
-			color: isDark ? '#94a3b8' : '#718096',
-			'&.Mui-focused': {
-				color: '#667eea',
-			},
-		},
-		'& .MuiInputBase-input::placeholder': {
-			color: isDark ? '#94a3b8' : 'inherit',
-			opacity: 1,
-		},
-		'& .MuiFormHelperText-root': {
-			color: isDark ? '#94a3b8' : 'inherit',
-		},
-	}
+	const inputClassName = cn(
+		'h-12 rounded-xl border-2 transition-all',
+		isDark
+			? 'bg-slate-800/60 border-violet-500/30 focus:border-indigo-500'
+			: 'bg-white border-indigo-500/20 focus:border-indigo-500'
+	)
 
 	return (
-		<>
-			<AuthLayout icon={<HowToRegRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
-				{/* Titre */}
-				<Typography
-					variant="h4"
-					align="center"
-					sx={{
-						fontWeight: 800,
-						mb: { xs: 3, sm: 1 },
-						fontSize: { xs: '1.5rem', sm: '2.125rem' },
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
-					}}>
-					{t('signupTitle')}
-				</Typography>
+		<AuthLayout icon={<UserPlus className="w-8 h-8 sm:w-9 sm:h-9 text-white" />}>
+			{/* Titre */}
+			<h1 className="text-center text-2xl sm:text-4xl font-extrabold mb-3 sm:mb-2 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+				{t('signupTitle')}
+			</h1>
 
-				<Typography
-					variant="body1"
-					align="center"
-					sx={{
-						color: isDark ? '#94a3b8' : '#718096',
-						mb: { xs: 3, sm: 4 },
-					display: { xs: 'none', sm: 'block' },
-						fontSize: '1rem',
-					}}>
-					{t('signupSubtitle')}
-				</Typography>
+			<p className={cn(
+				'text-center mb-6 sm:mb-8 hidden sm:block',
+				isDark ? 'text-slate-400' : 'text-slate-500'
+			)}>
+				{t('signupSubtitle')}
+			</p>
 
-				{/* Boutons OAuth */}
-				<OAuthButtons
-					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
-					onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
-				/>
+			{/* Boutons OAuth */}
+			<OAuthButtons
+				onGoogleClick={() => loginWithThirdPartyOAuth('google')}
+				onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
+			/>
 
-				<Divider sx={{ my: { xs: 2.5, sm: 3.5 }, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+			<div className="relative my-6 sm:my-8">
+				<Separator />
+				<span className={cn(
+					'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-3 text-sm font-medium',
+					isDark ? 'bg-slate-900 text-slate-400' : 'bg-white text-slate-500'
+				)}>
 					{t('or')}
-				</Divider>
+				</span>
+			</div>
 
-				{/* Formulaire */}
-				<Box
-					component="form"
-					onSubmit={handleSubmit}
-					sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, sm: 3 } }}>
-
-					{/* Pseudo */}
-					<TextField
-						fullWidth
-						onChange={handleChange}
-						type="text"
-						label={t('username')}
-						name="username"
-						value={values.username}
-						autoComplete="username"
-						id="username"
-						required
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<BadgeRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
-								</InputAdornment>
-							),
-						}}
-						helperText={t('usernameHelper')}
-						sx={textFieldStyles}
-					/>
-
-					{/* Email */}
-					<TextField
-						fullWidth
-						onChange={handleChange}
-						type="email"
-						label={t('email')}
-						name="email"
-						value={values.email}
-						autoComplete="email"
-						id="email"
-						required
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<AlternateEmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
-								</InputAdornment>
-							),
-						}}
-						sx={textFieldStyles}
-					/>
-
-					{/* Password */}
-					<Box>
-						<TextField
-							fullWidth
+			{/* Formulaire */}
+			<form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6">
+				{/* Pseudo */}
+				<div className="space-y-2">
+					<Label htmlFor="username" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('username')}
+					</Label>
+					<div className="relative">
+						<User className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Input
+							type="text"
+							name="username"
+							id="username"
+							value={values.username}
 							onChange={handleChange}
-							type={showPassword ? 'text' : 'password'}
-							label={t('password')}
-							name="password"
-							value={values.password}
-							autoComplete="new-password"
-							id="password"
+							autoComplete="username"
 							required
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">
-										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
-									</InputAdornment>
-								),
-								endAdornment: (
-									<InputAdornment position="end">
-										<Button
-											onClick={() => setShowPassword(!showPassword)}
-											sx={{
-												minWidth: 'auto',
-												p: 1,
-												color: isDark ? '#94a3b8' : '#718096',
-												'&:hover': {
-													bgcolor: 'rgba(102, 126, 234, 0.1)',
-												},
-											}}
-											aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
-											{showPassword ? <VisibilityOff /> : <Visibility />}
-										</Button>
-									</InputAdornment>
-								),
-							}}
-							sx={textFieldStyles}
+							className={cn(inputClassName, 'pl-10')}
 						/>
+					</div>
+					<p className={cn('text-xs', isDark ? 'text-slate-400' : 'text-slate-500')}>
+						{t('usernameHelper')}
+					</p>
+				</div>
 
-						{/* Indicateur de force du mot de passe */}
-						{values.password && (
-							<Box sx={{ mt: 2 }}>
-								<LinearProgress
-									variant="determinate"
-									value={passwordStrength}
-									sx={{
-										height: 6,
-										borderRadius: 3,
-										backgroundColor: '#E5E7EB',
-										'& .MuiLinearProgress-bar': {
-											borderRadius: 3,
-											background:
-												passwordStrength < 50
-													? 'linear-gradient(90deg, #EF4444, #F87171)'
-													: passwordStrength < 75
-													? 'linear-gradient(90deg, #F59E0B, #FBBF24)'
-													: 'linear-gradient(90deg, #10B981, #34D399)',
-										},
-									}}
-								/>
-								<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-									{[
-										{ key: 'minLength', label: t('passwordMinLength12') },
-										{ key: 'maxLength', label: t('passwordMaxLength') },
-										{ key: 'notCommon', label: t('passwordNotCommon') },
-										{ key: 'notPersonal', label: t('passwordNotPersonal') },
-									].map(({ key, label }) => (
-										<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-											{passwordValidation[key] ? (
-												<CheckCircleRounded sx={{ fontSize: '1.1rem', color: '#10B981' }} />
-											) : (
-												<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
-											)}
-											<Typography variant="body2" sx={{ fontSize: '0.8125rem', color: isDark ? '#94a3b8' : '#64748B' }}>
-												{label}
-											</Typography>
-										</Box>
-									))}
-								</Box>
-							</Box>
-						)}
-					</Box>
-
-					{/* Langue parlée */}
-					<FormControl fullWidth required sx={textFieldStyles}>
-						<InputLabel id="spoken-language-label">{t('spokenLanguage')}</InputLabel>
-						<Select
-							labelId="spoken-language-label"
-							id="spokenLanguage"
-							name="spokenLanguage"
-							value={values.spokenLanguage}
-							label={t('spokenLanguage')}
+				{/* Email */}
+				<div className="space-y-2">
+					<Label htmlFor="email" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('email')}
+					</Label>
+					<div className="relative">
+						<AtSign className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Input
+							type="email"
+							name="email"
+							id="email"
+							value={values.email}
 							onChange={handleChange}
-							startAdornment={
-								<InputAdornment position="start">
-									<RecordVoiceOverRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
-								</InputAdornment>
-							}
-							renderValue={(selected) => {
-								const flags = {
-									english: <EnglishFlag size={20} />,
-									french: <FrenchFlag size={20} />,
-									russian: <RussianFlag size={20} />,
-								}
-								const names = {
-									english: t('english'),
-									french: t('french'),
-									russian: t('russian'),
-								}
-								return (
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-										{flags[selected]}
-										<Typography>{names[selected]}</Typography>
-									</Box>
-								)
-							}}>
+							autoComplete="email"
+							required
+							className={cn(inputClassName, 'pl-10')}
+						/>
+					</div>
+				</div>
+
+				{/* Password */}
+				<div className="space-y-2">
+					<Label htmlFor="password" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('password')}
+					</Label>
+					<div className="relative">
+						<KeyRound className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Input
+							type={showPassword ? 'text' : 'password'}
+							name="password"
+							id="password"
+							value={values.password}
+							onChange={handleChange}
+							autoComplete="new-password"
+							required
+							className={cn(inputClassName, 'pl-10 pr-12')}
+						/>
+						<button
+							type="button"
+							onClick={() => setShowPassword(!showPassword)}
+							className={cn(
+								'absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors',
+								isDark ? 'text-slate-400 hover:text-slate-300' : 'text-slate-500 hover:text-slate-700'
+							)}
+							aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+							{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+						</button>
+					</div>
+
+					{/* Indicateur de force du mot de passe */}
+					{values.password && (
+						<div className="mt-3 space-y-3">
+							<Progress
+								value={passwordStrength}
+								className="h-1.5"
+								style={{
+									background: '#E5E7EB',
+								}}
+							/>
+							<div className="flex flex-col gap-1.5">
+								{[
+									{ key: 'minLength', label: t('passwordMinLength12') },
+									{ key: 'maxLength', label: t('passwordMaxLength') },
+									{ key: 'notCommon', label: t('passwordNotCommon') },
+									{ key: 'notPersonal', label: t('passwordNotPersonal') },
+								].map(({ key, label }) => (
+									<div key={key} className="flex items-center gap-2">
+										{passwordValidation[key] ? (
+											<CheckCircle2 className="h-4 w-4 text-emerald-500" />
+										) : (
+											<XCircle className="h-4 w-4 text-red-500" />
+										)}
+										<span className={cn('text-xs', isDark ? 'text-slate-400' : 'text-slate-500')}>
+											{label}
+										</span>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+				</div>
+
+				{/* Langue parlee */}
+				<div className="space-y-2">
+					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('spokenLanguage')}
+					</Label>
+					<Select value={values.spokenLanguage} onValueChange={(val) => handleSelectChange('spokenLanguage', val)}>
+						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+							<MessageCircle className={cn(
+								'absolute left-3 h-5 w-5',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)} />
+							<SelectValue placeholder={t('selectLanguage')} />
+						</SelectTrigger>
+						<SelectContent>
 							{[
 								{ value: 'english', label: t('english'), Flag: EnglishFlag },
 								{ value: 'french', label: t('french'), Flag: FrenchFlag },
 								{ value: 'russian', label: t('russian'), Flag: RussianFlag },
 							].map(({ value, label, Flag }) => (
-								<MenuItem key={value} value={value}>
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-										<Flag size={24} />
-										<Typography sx={{ fontWeight: 500 }}>{label}</Typography>
-									</Box>
-								</MenuItem>
+								<SelectItem key={value} value={value}>
+									<div className="flex items-center gap-2">
+										<Flag size={20} />
+										<span>{label}</span>
+									</div>
+								</SelectItem>
 							))}
-						</Select>
-					</FormControl>
+						</SelectContent>
+					</Select>
+				</div>
 
-					{/* Langue d'apprentissage */}
-					<FormControl fullWidth required sx={textFieldStyles} disabled={!values.spokenLanguage}>
-						<InputLabel id="learning-language-label">{t('learningLanguage')}</InputLabel>
-						<Select
-							labelId="learning-language-label"
-							id="learningLanguage"
-							name="learningLanguage"
-							value={values.learningLanguage}
-							label={t('learningLanguage')}
-							onChange={handleChange}
-							startAdornment={
-								<InputAdornment position="start">
-									<SchoolRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
-								</InputAdornment>
-							}
-							renderValue={(selected) => {
-								const flags = {
-									english: <EnglishFlag size={20} />,
-									french: <FrenchFlag size={20} />,
-									russian: <RussianFlag size={20} />,
-								}
-								const names = {
-									english: t('english'),
-									french: t('french'),
-									russian: t('russian'),
-								}
-								return (
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-										{flags[selected]}
-										<Typography>{names[selected]}</Typography>
-									</Box>
-								)
-							}}>
+				{/* Langue d'apprentissage */}
+				<div className="space-y-2">
+					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('learningLanguage')}
+					</Label>
+					<Select
+						value={values.learningLanguage}
+						onValueChange={(val) => handleSelectChange('learningLanguage', val)}
+						disabled={!values.spokenLanguage}>
+						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+							<GraduationCap className={cn(
+								'absolute left-3 h-5 w-5',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)} />
+							<SelectValue placeholder={t('selectLanguage')} />
+						</SelectTrigger>
+						<SelectContent>
 							{availableLearningLanguages.map(({ value, label, flag: Flag }) => (
-								<MenuItem key={value} value={value}>
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-										<Flag size={24} />
-										<Typography sx={{ fontWeight: 500 }}>{label}</Typography>
-									</Box>
-								</MenuItem>
+								<SelectItem key={value} value={value}>
+									<div className="flex items-center gap-2">
+										<Flag size={20} />
+										<span>{label}</span>
+									</div>
+								</SelectItem>
 							))}
-						</Select>
-					</FormControl>
+						</SelectContent>
+					</Select>
+				</div>
 
-					{/* Niveau de langue */}
-					<FormControl fullWidth required sx={textFieldStyles}>
-						<InputLabel id="language-level-label">{t('languageLevel')}</InputLabel>
-						<Select
-							labelId="language-level-label"
-							id="languageLevel"
-							name="languageLevel"
-							value={values.languageLevel}
-							label={t('languageLevel')}
-							onChange={handleChange}
-							startAdornment={
-								<InputAdornment position="start">
-									<TrendingUpRounded sx={{ color: isDark ? '#94a3b8' : '#718096', ml: 1 }} />
-								</InputAdornment>
-							}
-							renderValue={(selected) => {
-								const levels = {
-									beginner: { icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, name: t('beginner') },
-									intermediate: { icon: <SignalCellular2Bar sx={{ color: '#a855f7' }} />, name: t('intermediate') },
-									advanced: { icon: <SignalCellular3Bar sx={{ color: '#fbbf24' }} />, name: t('advanced') },
-								}
-								return (
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-										{levels[selected]?.icon}
-										<Typography>{levels[selected]?.name}</Typography>
-									</Box>
-								)
-							}}>
+				{/* Niveau de langue */}
+				<div className="space-y-2">
+					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('languageLevel')}
+					</Label>
+					<Select value={values.languageLevel} onValueChange={(val) => handleSelectChange('languageLevel', val)}>
+						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+							<TrendingUp className={cn(
+								'absolute left-3 h-5 w-5',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)} />
+							<SelectValue placeholder={t('selectLevel')} />
+						</SelectTrigger>
+						<SelectContent>
 							{[
-								{ value: 'beginner', icon: <SignalCellular1Bar sx={{ color: '#10b981' }} />, label: t('beginner') },
-								{ value: 'intermediate', icon: <SignalCellular2Bar sx={{ color: '#a855f7' }} />, label: t('intermediate') },
-								{ value: 'advanced', icon: <SignalCellular3Bar sx={{ color: '#fbbf24' }} />, label: t('advanced') },
+								{ value: 'beginner', icon: <SignalLow className="h-5 w-5 text-emerald-500" />, label: t('beginner') },
+								{ value: 'intermediate', icon: <SignalMedium className="h-5 w-5 text-purple-500" />, label: t('intermediate') },
+								{ value: 'advanced', icon: <SignalHigh className="h-5 w-5 text-amber-400" />, label: t('advanced') },
 							].map(({ value, icon, label }) => (
-								<MenuItem key={value} value={value}>
-									<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+								<SelectItem key={value} value={value}>
+									<div className="flex items-center gap-2">
 										{icon}
-										<Typography sx={{ fontWeight: 500 }}>{label}</Typography>
-									</Box>
-								</MenuItem>
+										<span>{label}</span>
+									</div>
+								</SelectItem>
 							))}
-						</Select>
-					</FormControl>
+						</SelectContent>
+					</Select>
+				</div>
 
-					{/* Sélection d'avatar */}
-					<Box>
-						<Typography
-							variant="body2"
-							sx={{
-								color: '#667eea',
-								mb: 1.5,
-								fontWeight: 600,
-								fontSize: '0.9375rem',
-							}}>
-							{t('chooseAvatar')}
-						</Typography>
+				{/* Selection d'avatar */}
+				<div className="space-y-2">
+					<Label className="text-indigo-500 font-semibold">
+						{t('chooseAvatar')}
+					</Label>
 
-						<Button
-							fullWidth
-							onClick={() => setShowAvatars(!showAvatars)}
-							sx={{
-								py: 2,
-								px: 2.5,
-								borderRadius: 2.5,
-								border: '2px solid',
-								borderColor: showAvatars ? '#667eea' : 'rgba(102, 126, 234, 0.2)',
-								background: showAvatars
-									? 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)'
-									: 'linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%)',
-								transition: 'all 0.3s ease',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-								textTransform: 'none',
-								'&:hover': {
-									borderColor: '#667eea',
-									background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
-								},
-							}}>
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-								<Avatar
+					<button
+						type="button"
+						onClick={() => setShowAvatars(!showAvatars)}
+						className={cn(
+							'w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between',
+							showAvatars
+								? 'border-indigo-500 bg-gradient-to-br from-indigo-500/10 to-purple-500/10'
+								: cn(
+									'hover:border-indigo-500',
+									isDark
+										? 'border-violet-500/30 bg-slate-800/60'
+										: 'border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-purple-500/5'
+								)
+						)}>
+						<div className="flex items-center gap-3">
+							<Avatar className="h-14 w-14 border-[3px] border-indigo-500 shadow-lg">
+								<AvatarImage
 									src={AVATARS.find(a => a.id === values.selectedAvatar)?.url}
 									alt={t('selectedAvatar')}
-									sx={{
-										width: 56,
-										height: 56,
-										border: '3px solid #667eea',
-										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-									}}
 								/>
-								<Box sx={{ textAlign: 'left' }}>
-									<Typography
-										sx={{
-											fontWeight: 600,
-											color: isDark ? '#f1f5f9' : '#2d3748',
-											fontSize: '1rem',
-										}}>
-										{t(AVATARS.find(a => a.id === values.selectedAvatar)?.nameKey)}
-									</Typography>
-									<Typography
-										sx={{
-											fontSize: '0.8125rem',
-											color: isDark ? '#94a3b8' : '#718096',
-										}}>
-										{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
-									</Typography>
-								</Box>
-							</Box>
-							{showAvatars ? (
-								<KeyboardArrowUpRounded sx={{ color: '#667eea' }} />
-							) : (
-								<KeyboardArrowDownRounded sx={{ color: '#718096' }} />
-							)}
-						</Button>
+								<AvatarFallback>AV</AvatarFallback>
+							</Avatar>
+							<div className="text-left">
+								<p className={cn('font-semibold', isDark ? 'text-slate-100' : 'text-slate-800')}>
+									{t(AVATARS.find(a => a.id === values.selectedAvatar)?.nameKey)}
+								</p>
+								<p className={cn('text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
+									{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
+								</p>
+							</div>
+						</div>
+						{showAvatars ? (
+							<ChevronUp className="h-6 w-6 text-indigo-500" />
+						) : (
+							<ChevronDown className="h-6 w-6 text-slate-500" />
+						)}
+					</button>
 
-						<Collapse in={showAvatars}>
-							<Box
-								sx={{
-									mt: 2,
-									display: 'grid',
-									gridTemplateColumns: 'repeat(4, 1fr)',
-									gap: 2,
-									p: 2.5,
-									borderRadius: 2.5,
-									background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%)',
-									border: '2px solid rgba(102, 126, 234, 0.15)',
-								}}>
-								{AVATARS.map(avatar => {
-									const isSelected = values.selectedAvatar === avatar.id
-									return (
-										<Box
-											key={avatar.id}
-											onClick={() => handleAvatarSelect(avatar.id)}
-											sx={{
-												cursor: 'pointer',
-												display: 'flex',
-												flexDirection: 'column',
-												alignItems: 'center',
-												gap: 1,
-												transition: 'all 0.2s ease',
-												'&:hover': {
-													transform: 'scale(1.08)',
-												},
-											}}>
-											<Box sx={{ position: 'relative' }}>
-												<Avatar
-													src={avatar.url}
-													alt={avatar.name}
-													sx={{
-														width: { xs: 64, sm: 72 },
-														height: { xs: 64, sm: 72 },
-														border: isSelected
-															? '3px solid #667eea'
-															: '2px solid transparent',
-														boxShadow: isSelected
-															? '0 0 0 4px rgba(102, 126, 234, 0.2)'
-															: '0 2px 8px rgba(0,0,0,0.1)',
-														transition: 'all 0.2s ease',
-													}}
-												/>
-												{isSelected && (
-													<Box
-														sx={{
-															position: 'absolute',
-															top: -6,
-															right: -6,
-															width: 24,
-															height: 24,
-															borderRadius: '50%',
-															background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-															display: 'flex',
-															alignItems: 'center',
-															justifyContent: 'center',
-															boxShadow: '0 2px 8px rgba(102, 126, 234, 0.4)',
-														}}>
-														<CheckCircleRounded
-															sx={{
-																fontSize: '1rem',
-																color: 'white',
-															}}
-														/>
-													</Box>
-												)}
-											</Box>
-											<Typography
-												variant="caption"
-												sx={{
-													fontSize: '0.75rem',
-													color: isSelected ? '#667eea' : (isDark ? '#94a3b8' : '#64748B'),
-													fontWeight: isSelected ? 600 : 400,
-													textAlign: 'center',
-												}}>
-												{t(avatar.nameKey)}
-											</Typography>
-										</Box>
-									)
-								})}
-							</Box>
-						</Collapse>
-					</Box>
+					{showAvatars && (
+						<div className={cn(
+							'mt-3 p-4 rounded-xl border-2 grid grid-cols-4 gap-3',
+							isDark
+								? 'border-violet-500/30 bg-slate-800/60'
+								: 'border-indigo-500/15 bg-gradient-to-br from-indigo-500/5 to-purple-500/5'
+						)}>
+							{AVATARS.map(avatar => {
+								const isSelected = values.selectedAvatar === avatar.id
+								return (
+									<button
+										key={avatar.id}
+										type="button"
+										onClick={() => handleAvatarSelect(avatar.id)}
+										className="flex flex-col items-center gap-1.5 transition-transform hover:scale-105">
+										<div className="relative">
+											<Avatar className={cn(
+												'h-14 w-14 sm:h-16 sm:w-16 transition-all',
+												isSelected
+													? 'border-[3px] border-indigo-500 shadow-[0_0_0_4px_rgba(102,126,234,0.2)]'
+													: 'border-2 border-transparent shadow-md'
+											)}>
+												<AvatarImage src={avatar.url} alt={avatar.name} />
+												<AvatarFallback>AV</AvatarFallback>
+											</Avatar>
+											{isSelected && (
+												<div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+													<CheckCircle2 className="h-4 w-4 text-white" />
+												</div>
+											)}
+										</div>
+										<span className={cn(
+											'text-xs text-center',
+											isSelected
+												? 'text-indigo-500 font-semibold'
+												: isDark ? 'text-slate-400' : 'text-slate-500'
+										)}>
+											{t(avatar.nameKey)}
+										</span>
+									</button>
+								)
+							})}
+						</div>
+					)}
+				</div>
 
-					{/* Turnstile Anti-Bot Widget */}
-					<TurnstileWidget
-						ref={turnstileRef}
-						onSuccess={(token) => {
-							logger.log('🔑 Signup page: Turnstile token received')
-							setTurnstileToken(token)
-						}}
-						onError={(error) => {
-							logger.error('❌ Signup page: Turnstile error or expiration:', error)
-							setTurnstileToken(null)
-							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
-						}}
-						action="signup"
-					/>
-
-					{/* Bouton de soumission */}
-					<Button
-						fullWidth
-						type="submit"
-						variant="contained"
-						size="large"
-						sx={{
-							py: { xs: 1.75, sm: 2 },
-							mt: 1,
-							borderRadius: 2.5,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							fontWeight: 700,
-							fontSize: '1.0625rem',
-							textTransform: 'none',
-							boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							position: 'relative',
-							overflow: 'hidden',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: 0,
-								left: '-100%',
-								width: '100%',
-								height: '100%',
-								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-								transition: 'left 0.5s ease',
-							},
-							'&:hover': {
-								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-								transform: 'translateY(-2px)',
-								boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
-								'&::before': {
-									left: '100%',
-								},
-							},
-							'&:active': {
-								transform: 'translateY(0)',
-							},
-						}}>
-						{t('signupBtn')}
-					</Button>
-
-					{/* Lien vers connexion */}
-					<Box sx={{ textAlign: 'center', mt: { xs: 2, sm: 2 } }}>
-						<Typography
-							variant="body2"
-							sx={{
-								color: isDark ? '#94a3b8' : '#718096',
-								fontSize: '0.9375rem',
-							}}>
-							{t('haveAccountQuestion')}{' '}
-							<Link href="/login" style={{ textDecoration: 'none' }}>
-								<Box
-									component="span"
-									sx={{
-										color: '#667eea',
-										fontWeight: 700,
-										transition: 'all 0.2s ease',
-										'&:hover': {
-											textDecoration: 'underline',
-											color: '#764ba2',
-										},
-									}}>
-									{t('haveaccount')}
-								</Box>
-							</Link>
-						</Typography>
-					</Box>
-				</Box>
-
-				<MagicLinkDialog
-					open={magicLinkDialogOpen}
-					onClose={() => setMagicLinkDialogOpen(false)}
-					onSend={sendMagicLink}
+				{/* Turnstile Anti-Bot Widget */}
+				<TurnstileWidget
+					ref={turnstileRef}
+					onSuccess={(token) => {
+						logger.log('Signup page: Turnstile token received')
+						setTurnstileToken(token)
+					}}
+					onError={(error) => {
+						logger.error('Signup page: Turnstile error or expiration:', error)
+						setTurnstileToken(null)
+						toast.error(t('captchaExpired') || 'Le captcha a expire, veuillez le refaire')
+					}}
+					action="signup"
 				/>
-			</AuthLayout>
-		</>
+
+				{/* Bouton de soumission */}
+				<Button
+					type="submit"
+					size="lg"
+					className={cn(
+						'w-full h-12 sm:h-14 rounded-xl font-bold text-base sm:text-lg mt-2',
+						'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
+						'shadow-[0_8px_24px_rgba(102,126,234,0.4)] hover:shadow-[0_12px_32px_rgba(102,126,234,0.5)]',
+						'transition-all duration-300 hover:-translate-y-0.5'
+					)}>
+					{t('signupBtn')}
+				</Button>
+
+				{/* Lien vers connexion */}
+				<p className={cn(
+					'text-center text-sm sm:text-base mt-2',
+					isDark ? 'text-slate-400' : 'text-slate-500'
+				)}>
+					{t('haveAccountQuestion')}{' '}
+					<Link
+						href="/login"
+						className="font-bold text-indigo-500 hover:text-purple-600 hover:underline transition-colors">
+						{t('haveaccount')}
+					</Link>
+				</p>
+			</form>
+
+			<MagicLinkDialog
+				open={magicLinkDialogOpen}
+				onClose={() => setMagicLinkDialogOpen(false)}
+				onSend={sendMagicLink}
+			/>
+		</AuthLayout>
 	)
 }
 

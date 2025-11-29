@@ -42,7 +42,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 			<ReadingProgress />
 
 			{/* Header Section */}
-			<header className="pt-[72px] sm:pt-[88px] pb-8 sm:pb-10 max-w-3xl mx-auto px-4 sm:px-6">
+			<header className="pt-24 sm:pt-28 pb-8 sm:pb-10 max-w-3xl mx-auto px-4 sm:px-6">
 				{/* Back Button */}
 				<Link
 					href="/blog"

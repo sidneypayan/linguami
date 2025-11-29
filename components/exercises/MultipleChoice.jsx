@@ -1,26 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  Alert,
-  LinearProgress,
-  useTheme,
-  Chip,
-} from "@mui/material";
-import { CheckCircle, Cancel, Refresh, EmojiEvents } from "@mui/icons-material";
+import { useState } from "react";
 import { useUserContext } from "@/context/user";
+import { useThemeMode } from "@/context/ThemeContext";
 import toast from "@/utils/toast";
-import { useTranslations, useLocale } from "next-intl";
-import { useRouter, usePathname, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
+import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 /**
  * Multiple Choice Questions Exercise Component
@@ -30,11 +20,8 @@ import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
  */
 const MultipleChoice = ({ exercise, onComplete }) => {
   const t = useTranslations("exercises");
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const { isDark } = useThemeMode();
   const { user } = useUserContext();
-  const router = useRouter();
-  const pathname = usePathname();
   const params = useParams();
 
   // State
@@ -88,25 +75,11 @@ const MultipleChoice = ({ exercise, onComplete }) => {
     },
   };
 
-  // Fonction pour obtenir le titre traduit
-  const getTranslatedTitle = () => {
-    const locale = params.locale || "fr";
-    const originalTitle = exercise?.title || "";
-
-    // Si une traduction existe pour ce titre
-    if (titleTranslations[originalTitle]) {
-      return titleTranslations[originalTitle][locale] || originalTitle;
-    }
-
-    // Sinon, retourner le titre original
-    return originalTitle;
-  };
-
   // Handle answer selection
-  const handleAnswerChange = (event) => {
+  const handleAnswerChange = (optionKey) => {
     setUserAnswers((prev) => ({
       ...prev,
-      [currentQuestionIndex]: event.target.value,
+      [currentQuestionIndex]: optionKey,
     }));
   };
 
@@ -135,9 +108,9 @@ const MultipleChoice = ({ exercise, onComplete }) => {
 
     // Show feedback
     if (isCorrect) {
-      toast.success("✅ Bonne réponse !");
+      toast.success("Bonne reponse !");
     } else {
-      toast.error("❌ Mauvaise réponse");
+      toast.error("Mauvaise reponse");
     }
   };
 
@@ -195,78 +168,72 @@ const MultipleChoice = ({ exercise, onComplete }) => {
   };
 
   if (!exercise || questions.length === 0) {
-    return <Alert severity="info">Aucun exercice disponible</Alert>;
+    return (
+      <div className={cn(
+        "p-4 rounded-xl border-2",
+        isDark
+          ? "bg-blue-500/10 border-blue-500/30 text-blue-300"
+          : "bg-blue-50 border-blue-200 text-blue-700"
+      )}>
+        Aucun exercice disponible
+      </div>
+    );
   }
 
   // Exercise completion screen
   if (exerciseCompleted) {
     return (
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          background: isDark
-            ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-            : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.3)"
-            : "1px solid rgba(139, 92, 246, 0.2)",
-          textAlign: "center",
-        }}
-      >
-        <EmojiEvents sx={{ fontSize: "4rem", color: "#fbbf24", mb: 2 }} />
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+      <Card className={cn(
+        "p-6 md:p-8 rounded-2xl text-center",
+        isDark
+          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+      )}>
+        <Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
+        <h4 className={cn(
+          "text-2xl font-bold mb-2",
+          isDark ? "text-slate-100" : "text-slate-800"
+        )}>
           {t("exerciseCompleted")}
-        </Typography>
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-            background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        </h4>
+        <p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
           {t("yourScore")} : {totalScore}%
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: isDark ? "#cbd5e1" : "#64748b" }}
-        >
+        </p>
+        <p className={cn(
+          "mb-6",
+          isDark ? "text-slate-400" : "text-slate-600"
+        )}>
           {totalScore === 100 && t("perfectScore")}
           {totalScore >= 80 && totalScore < 100 && t("greatJob")}
           {totalScore >= 60 && totalScore < 80 && t("goodWork")}
           {totalScore < 60 && t("keepPracticing")}
-        </Typography>
+        </p>
         {totalScore === 100 && isFirstCompletion && (
-          <Chip
-            label={`+${exercise.xp_reward} XP`}
-            color="primary"
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 700,
-              mb: 3,
-            }}
-          />
+          <span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
+            +{exercise.xp_reward} XP
+          </span>
         )}
         {totalScore < 100 && (
           <>
-            <Alert severity="info" sx={{ mb: 3, textAlign: "left" }}>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                💡 {t("perfectScoreForXP")}
-              </Typography>
-            </Alert>
+            <div className={cn(
+              "p-4 rounded-xl border-2 mb-6 text-left",
+              isDark
+                ? "bg-blue-500/10 border-blue-500/30"
+                : "bg-blue-50 border-blue-200"
+            )}>
+              <p className={cn(
+                "font-semibold",
+                isDark ? "text-blue-300" : "text-blue-700"
+              )}>
+                {t("perfectScoreForXP")}
+              </p>
+            </div>
 
             {/* Correction Section */}
-            <Box sx={{ mb: 4, textAlign: "left" }}>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 700, mb: 2, color: "#ef4444" }}
-              >
+            <div className="mb-6 text-left">
+              <h6 className="font-bold mb-4 text-red-500">
                 {t("corrections")}
-              </Typography>
+              </h6>
               {questions.map((question, qIndex) => {
                 const result = results[qIndex];
                 if (!result || result.correct) return null;
@@ -277,95 +244,75 @@ const MultipleChoice = ({ exercise, onComplete }) => {
                 );
 
                 return (
-                  <Paper
+                  <Card
                     key={qIndex}
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      mb: 2,
-                      borderRadius: 2,
-                      border: "2px solid #ef4444",
-                      backgroundColor: isDark
-                        ? "rgba(239, 68, 68, 0.1)"
-                        : "rgba(239, 68, 68, 0.05)",
-                    }}
+                    className={cn(
+                      "p-4 mb-4 rounded-xl border-2 border-red-500",
+                      isDark ? "bg-red-500/10" : "bg-red-50"
+                    )}
                   >
-                    <Typography variant="body1" sx={{ mb: 2, fontWeight: 600 }}>
+                    <p className="font-semibold mb-4">
                       {t("question")} {qIndex + 1}: {localizedQuestion.question}
-                    </Typography>
-                    <Box sx={{ mb: 1.5 }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          mb: 0.5,
-                        }}
-                      >
-                        <Cancel sx={{ color: "#ef4444", fontSize: "1.2rem" }} />
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 600, color: "#ef4444" }}
-                        >
+                    </p>
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <XCircle className="w-5 h-5 text-red-500" />
+                        <span className="font-semibold text-red-500 text-sm">
                           {t("yourAnswer")}:{" "}
                           {localizedQuestion.options.find(
                             (opt) => opt.key === result.userAnswer,
                           )?.text || t("empty")}
-                        </Typography>
-                      </Box>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <CheckCircle
-                          sx={{ color: "#10b981", fontSize: "1.2rem" }}
-                        />
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 600, color: "#10b981" }}
-                        >
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                        <span className="font-semibold text-emerald-500 text-sm">
                           {t("correctAnswer")}:{" "}
                           {
                             localizedQuestion.options.find(
                               (opt) => opt.key === result.correctAnswer,
                             )?.text
                           }
-                        </Typography>
-                      </Box>
-                    </Box>
+                        </span>
+                      </div>
+                    </div>
                     {localizedQuestion.explanation && (
-                      <Alert severity="info" sx={{ mt: 2 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 600, mb: 0.5 }}
-                        >
+                      <div className={cn(
+                        "p-3 rounded-lg mt-4",
+                        isDark
+                          ? "bg-blue-500/10 border border-blue-500/30"
+                          : "bg-blue-50 border border-blue-200"
+                      )}>
+                        <p className={cn(
+                          "font-semibold text-sm mb-1",
+                          isDark ? "text-blue-300" : "text-blue-700"
+                        )}>
                           {t("explanation")}:
-                        </Typography>
-                        {localizedQuestion.explanation}
-                      </Alert>
+                        </p>
+                        <p className={cn(
+                          "text-sm",
+                          isDark ? "text-blue-200" : "text-blue-600"
+                        )}>
+                          {localizedQuestion.explanation}
+                        </p>
+                      </div>
                     )}
-                  </Paper>
+                  </Card>
                 );
               })}
-            </Box>
+            </div>
           </>
         )}
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+        <div className="flex gap-4 justify-center">
           <Button
-            variant="contained"
             onClick={handleReset}
-            startIcon={<Refresh />}
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
           >
+            <RotateCcw className="w-5 h-5 mr-2" />
             {t("tryAgain")}
           </Button>
-        </Box>
-      </Paper>
+        </div>
+      </Card>
     );
   }
 
@@ -373,229 +320,185 @@ const MultipleChoice = ({ exercise, onComplete }) => {
   const result = results[currentQuestionIndex];
 
   return (
-    <Box>
+    <div>
       {/* Progress bar */}
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+      <div className="mb-6">
+        <div className="flex justify-between mb-2">
+          <span className="text-sm font-semibold">
             Question {currentQuestionIndex + 1} / {totalQuestions}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: isDark ? "#a78bfa" : "#8b5cf6" }}
-          >
+          </span>
+          <span className={cn(
+            "text-sm",
+            isDark ? "text-violet-400" : "text-violet-600"
+          )}>
             {Math.round(
               ((currentQuestionIndex + (submitted ? 1 : 0)) / totalQuestions) *
                 100,
             )}
             %
-          </Typography>
-        </Box>
-        <LinearProgress
-          variant="determinate"
-          value={
-            ((currentQuestionIndex + (submitted ? 1 : 0)) / totalQuestions) *
-            100
-          }
-          sx={{
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: isDark
-              ? "rgba(139, 92, 246, 0.2)"
-              : "rgba(139, 92, 246, 0.1)",
-            "& .MuiLinearProgress-bar": {
-              background: "linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)",
-              borderRadius: 4,
-            },
-          }}
-        />
-      </Box>
+          </span>
+        </div>
+        <div className={cn(
+          "h-2 rounded-full overflow-hidden",
+          isDark ? "bg-violet-500/20" : "bg-violet-500/10"
+        )}>
+          <div
+            className="h-full bg-gradient-to-r from-violet-500 to-cyan-500 rounded-full transition-all duration-300"
+            style={{
+              width: `${((currentQuestionIndex + (submitted ? 1 : 0)) / totalQuestions) * 100}%`
+            }}
+          />
+        </div>
+      </div>
 
       {/* Question */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 3, md: 4 },
-          mb: 3,
-          borderRadius: 4,
-          background: isDark
-            ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-            : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.3)"
-            : "1px solid rgba(139, 92, 246, 0.2)",
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 600,
-            mb: 4,
-            fontSize: { xs: "1.25rem", md: "1.5rem" },
-            lineHeight: 1.6,
-          }}
-        >
+      <Card className={cn(
+        "p-6 md:p-8 mb-6 rounded-2xl",
+        isDark
+          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+      )}>
+        <h5 className={cn(
+          "font-semibold mb-8 text-xl md:text-2xl leading-relaxed",
+          isDark ? "text-slate-100" : "text-slate-800"
+        )}>
           {currentQuestion?.question}
-        </Typography>
+        </h5>
 
         {/* Options */}
-        <FormControl component="fieldset" fullWidth>
-          <RadioGroup value={userAnswer || ""} onChange={handleAnswerChange}>
-            {currentQuestion?.options?.map((option, index) => {
-              const optionKey = option.key || String.fromCharCode(65 + index); // A, B, C, D
-              const isSelected = userAnswer === optionKey;
-              const isCorrect = result?.correctAnswer === optionKey;
-              const showCorrect = submitted && isCorrect;
-              const showIncorrect = submitted && isSelected && !result?.correct;
+        <div className="space-y-3">
+          {currentQuestion?.options?.map((option, index) => {
+            const optionKey = option.key || String.fromCharCode(65 + index); // A, B, C, D
+            const isSelected = userAnswer === optionKey;
+            const isCorrect = result?.correctAnswer === optionKey;
+            const showCorrect = submitted && isCorrect;
+            const showIncorrect = submitted && isSelected && !result?.correct;
 
-              return (
-                <Paper
-                  key={optionKey}
-                  elevation={0}
-                  sx={{
-                    mb: 2,
-                    p: 2,
-                    borderRadius: 3,
-                    border: "2px solid",
-                    borderColor: showCorrect
-                      ? "#10b981"
+            return (
+              <button
+                key={optionKey}
+                onClick={() => !submitted && handleAnswerChange(optionKey)}
+                disabled={submitted}
+                className={cn(
+                  "w-full p-4 rounded-xl border-2 text-left transition-all duration-200",
+                  showCorrect
+                    ? "border-emerald-500 bg-emerald-500/10"
+                    : showIncorrect
+                      ? "border-red-500 bg-red-500/10"
+                      : isSelected
+                        ? "border-violet-500 bg-violet-500/5"
+                        : isDark
+                          ? "border-violet-500/20 hover:border-violet-500 hover:bg-violet-500/5"
+                          : "border-violet-500/10 hover:border-violet-500 hover:bg-violet-500/5",
+                  submitted ? "cursor-default" : "cursor-pointer"
+                )}
+              >
+                <div className="flex items-center gap-3 w-full">
+                  {/* Radio circle */}
+                  <div className={cn(
+                    "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0",
+                    showCorrect
+                      ? "border-emerald-500"
                       : showIncorrect
-                        ? "#ef4444"
+                        ? "border-red-500"
                         : isSelected
-                          ? "#8b5cf6"
+                          ? "border-violet-500"
                           : isDark
-                            ? "rgba(139, 92, 246, 0.2)"
-                            : "rgba(139, 92, 246, 0.1)",
-                    backgroundColor: showCorrect
-                      ? "rgba(16, 185, 129, 0.1)"
+                            ? "border-violet-400"
+                            : "border-violet-500"
+                  )}>
+                    {isSelected && (
+                      <div className={cn(
+                        "w-2.5 h-2.5 rounded-full",
+                        showCorrect
+                          ? "bg-emerald-500"
+                          : showIncorrect
+                            ? "bg-red-500"
+                            : "bg-violet-500"
+                      )} />
+                    )}
+                  </div>
+
+                  {/* Option key chip */}
+                  <span className={cn(
+                    "px-2 py-1 rounded text-xs font-bold text-white",
+                    showCorrect
+                      ? "bg-emerald-500"
                       : showIncorrect
-                        ? "rgba(239, 68, 68, 0.1)"
-                        : isSelected
-                          ? "rgba(139, 92, 246, 0.05)"
-                          : "transparent",
-                    cursor: submitted ? "default" : "pointer",
-                    transition: "all 0.2s",
-                    "&:hover": {
-                      borderColor: submitted ? undefined : "#8b5cf6",
-                      backgroundColor: submitted
-                        ? undefined
-                        : "rgba(139, 92, 246, 0.05)",
-                    },
-                  }}
-                >
-                  <FormControlLabel
-                    value={optionKey}
-                    disabled={submitted}
-                    control={
-                      <Radio
-                        sx={{
-                          color: isDark ? "#a78bfa" : "#8b5cf6",
-                          "&.Mui-checked": {
-                            color: showCorrect
-                              ? "#10b981"
-                              : showIncorrect
-                                ? "#ef4444"
-                                : "#8b5cf6",
-                          },
-                        }}
-                      />
-                    }
-                    label={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          width: "100%",
-                        }}
-                      >
-                        <Chip
-                          label={optionKey}
-                          size="small"
-                          sx={{
-                            fontWeight: 700,
-                            backgroundColor: showCorrect
-                              ? "#10b981"
-                              : showIncorrect
-                                ? "#ef4444"
-                                : "#8b5cf6",
-                            color: "white",
-                          }}
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: { xs: "1rem", md: "1.1rem" },
-                            fontWeight: isSelected ? 600 : 400,
-                            color: isDark ? "#f1f5f9" : "#1a202c",
-                          }}
-                        >
-                          {option.text}
-                        </Typography>
-                        {showCorrect && (
-                          <CheckCircle sx={{ color: "#10b981", ml: "auto" }} />
-                        )}
-                        {showIncorrect && (
-                          <Cancel sx={{ color: "#ef4444", ml: "auto" }} />
-                        )}
-                      </Box>
-                    }
-                    sx={{ width: "100%", m: 0 }}
-                  />
-                </Paper>
-              );
-            })}
-          </RadioGroup>
-        </FormControl>
+                        ? "bg-red-500"
+                        : "bg-violet-500"
+                  )}>
+                    {optionKey}
+                  </span>
+
+                  {/* Option text */}
+                  <span className={cn(
+                    "flex-1 text-base md:text-lg",
+                    isSelected ? "font-semibold" : "font-normal",
+                    isDark ? "text-slate-100" : "text-slate-800"
+                  )}>
+                    {option.text}
+                  </span>
+
+                  {/* Result icons */}
+                  {showCorrect && (
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500 ml-auto" />
+                  )}
+                  {showIncorrect && (
+                    <XCircle className="w-6 h-6 text-red-500 ml-auto" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
 
         {/* Explanation after submission */}
         {submitted && currentQuestion?.explanation && (
-          <Alert severity="info" sx={{ mt: 3 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+          <div className={cn(
+            "mt-6 p-4 rounded-xl border",
+            isDark
+              ? "bg-blue-500/10 border-blue-500/30"
+              : "bg-blue-50 border-blue-200"
+          )}>
+            <p className={cn(
+              "font-semibold mb-1",
+              isDark ? "text-blue-300" : "text-blue-700"
+            )}>
               Explication :
-            </Typography>
-            {currentQuestion.explanation}
-          </Alert>
+            </p>
+            <p className={cn(
+              "text-sm",
+              isDark ? "text-blue-200" : "text-blue-600"
+            )}>
+              {currentQuestion.explanation}
+            </p>
+          </div>
         )}
 
         {/* Action buttons */}
-        <Box
-          sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}
-        >
+        <div className="flex gap-4 justify-end mt-6">
           {!submitted ? (
             <Button
-              variant="contained"
               onClick={handleSubmit}
               disabled={!userAnswer}
-              sx={{
-                background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-                px: 4,
-                py: 1.5,
-                fontSize: "1rem",
-                fontWeight: 600,
-              }}
+              className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 disabled:opacity-50"
             >
               {t("checkAnswer")}
             </Button>
           ) : (
             <Button
-              variant="contained"
               onClick={handleNext}
-              sx={{
-                background: "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)",
-                px: 4,
-                py: 1.5,
-                fontSize: "1rem",
-                fontWeight: 600,
-              }}
+              className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
             >
               {currentQuestionIndex < totalQuestions - 1
                 ? t("next")
                 : t("finish")}
             </Button>
           )}
-        </Box>
-      </Paper>
-    </Box>
+        </div>
+      </Card>
+    </div>
   );
 };
 

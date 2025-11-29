@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation'
 import * as gtm from '@/lib/gtm'
 import { cn } from '@/lib/utils'
 import { X, Rocket } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /**
  * Widget sticky qui apparait apres un certain scroll
@@ -64,40 +65,38 @@ export default function StickySignupWidget() {
 	if (isUserLoggedIn || dismissed || !visible) return null
 
 	return (
-		<div
-			className={cn(
-				'fixed z-50 p-4 rounded-2xl',
-				'border-2 backdrop-blur-xl',
-				// Mobile: full width with margins
-				'bottom-20 left-4 right-4 w-[calc(100%-2rem)]',
-				// Desktop: fixed width, bottom right
-				'md:left-auto md:right-6 md:w-[340px] md:bottom-6',
-				isDark
-					? 'bg-slate-900/95 border-violet-500/30'
-					: 'bg-white/95 border-violet-600/20',
-				'shadow-2xl',
-				isDark ? 'shadow-violet-500/20' : 'shadow-violet-400/30',
-				'animate-in slide-in-from-bottom-10 duration-500'
-			)}
-		>
+		<div className={cn(
+			'fixed bottom-20 md:bottom-6 left-4 md:left-auto md:right-6',
+			'w-[calc(100vw-32px)] max-w-[380px]',
+			'p-4 sm:p-6 rounded-2xl',
+			'box-border overflow-hidden break-words',
+			'border-2 backdrop-blur-xl',
+			isDark
+				? 'bg-slate-900/95 border-violet-500/30'
+				: 'bg-white/95 border-violet-600/20',
+			'shadow-2xl',
+			isDark ? 'shadow-violet-500/20' : 'shadow-violet-400/30',
+			'z-50',
+			'animate-in slide-in-from-bottom-10 duration-500'
+		)}>
 			{/* Close button */}
-			<button
+			<Button
+				variant="ghost"
+				size="icon"
 				onClick={handleDismiss}
 				className={cn(
 					'absolute top-3 right-3',
 					'w-8 h-8 rounded-lg',
-					'flex items-center justify-center',
-					'transition-all duration-200',
 					isDark
 						? 'text-slate-400 hover:text-violet-400 hover:bg-violet-500/10'
 						: 'text-slate-500 hover:text-violet-500 hover:bg-violet-500/10'
 				)}
 			>
 				<X className="w-5 h-5" />
-			</button>
+			</Button>
 
 			{/* Icon with glow effect */}
-			<div className="relative mb-3">
+			<div className="mb-4">
 				<div className={cn(
 					'w-12 h-12 rounded-2xl',
 					'bg-gradient-to-br from-violet-500 to-cyan-500',
@@ -125,17 +124,19 @@ export default function StickySignupWidget() {
 
 			{/* CTA Button */}
 			<Link href="/signup" onClick={handleClick} className="block">
-				<button className={cn(
-					'w-full py-3 px-4 rounded-xl',
-					'font-bold text-sm text-white',
-					'bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-600',
-					'shadow-lg shadow-violet-500/30',
-					'transition-all duration-300',
-					'hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/40',
-					'active:translate-y-0'
-				)}>
+				<Button
+					className={cn(
+						'w-full py-3 px-4 rounded-xl',
+						'font-bold text-sm text-white',
+						'bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-600',
+						'shadow-lg shadow-violet-500/30',
+						'transition-all duration-300',
+						'hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/40',
+						'active:translate-y-0'
+					)}
+				>
 					{t('signup_widget_button') || 'Inscription gratuite'}
-				</button>
+				</Button>
 			</Link>
 		</div>
 	)

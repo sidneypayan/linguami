@@ -145,7 +145,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							<span className="relative z-10">{t('speak')}</span>
 							{locale && (
 								<div className="w-8 h-8 rounded-full overflow-hidden border border-white/50 shadow-md flex items-center justify-center bg-white/10">
-									{getFlag(locale, 80)}
+									{getFlag(locale, 32)}
 								</div>
 							)}
 						</div>
@@ -174,13 +174,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-10 h-10 rounded-full overflow-hidden flex items-center justify-center',
+									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
 									'border bg-white/10',
 									isSelected
 										? 'border-violet-500 shadow-lg shadow-violet-500/30'
 										: 'border-slate-300/30'
 								)}>
-									{getFlag(language.lang, 90)}
+									{getFlag(language.lang, 32)}
 								</div>
 								<span className={cn(
 									'flex-1 font-medium',
@@ -215,7 +215,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 					>
 						{locale && (
 							<div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-white/70 flex items-center justify-center bg-white/10">
-								{getFlag(locale, 70)}
+								{getFlag(locale, 32)}
 							</div>
 						)}
 						<Languages className={cn(
@@ -249,13 +249,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-10 h-10 rounded-full overflow-hidden flex items-center justify-center',
+									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
 									'border bg-white/10',
 									isSelected
 										? 'border-violet-500 shadow-lg shadow-violet-500/30'
 										: 'border-slate-300/30'
 								)}>
-									{getFlag(language.lang, 90)}
+									{getFlag(language.lang, 32)}
 								</div>
 								<span className={cn(
 									'flex-1 font-medium',

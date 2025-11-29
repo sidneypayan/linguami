@@ -1,197 +1,118 @@
-import { Box, Paper, Typography, Button, useTheme } from '@mui/material'
-import { Lock, Star, CheckCircle } from '@mui/icons-material'
+'use client'
+
+import { Lock, Star, CheckCircle } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
+import { useTheme } from '@/context/ThemeContext'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 /**
  * PaywallBlock - Encourage users to sign up or purchase the method
  */
 const PaywallBlock = ({ isLoggedIn }) => {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useTheme()
 	const t = useTranslations('common')
 
+	const benefits = [
+		t('paywall_benefit_1', 'Acces a toutes les lecons A1 → C2'),
+		t('paywall_benefit_2', 'Exercices interactifs avec corrections'),
+		t('paywall_benefit_3', 'Audio professionnel pour chaque dialogue'),
+		t('paywall_benefit_4', 'Suivi de progression personnalise'),
+	]
+
 	return (
-		<Paper
-			elevation={0}
-			sx={{
-				p: { xs: 3, sm: 5 },
-				my: 4,
-				borderRadius: 3,
-				border: '3px solid',
-				borderColor: '#f59e0b',
-				background: isDark
-					? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(30, 41, 59, 0.95) 100%)'
-					: 'linear-gradient(135deg, rgba(254, 243, 199, 0.6) 0%, rgba(255, 255, 255, 0.95) 100%)',
-				textAlign: 'center',
-			}}>
+		<Card
+			className={cn(
+				'p-6 sm:p-10 my-8 rounded-xl border-[3px] border-amber-500 text-center',
+				isDark
+					? 'bg-gradient-to-br from-amber-500/10 to-slate-800/95'
+					: 'bg-gradient-to-br from-amber-100/60 to-white/95'
+			)}>
 			{/* Icon */}
-			<Box
-				sx={{
-					display: 'inline-flex',
-					p: 2,
-					borderRadius: '50%',
-					background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-					mb: 3,
-				}}>
-				<Lock sx={{ fontSize: 40, color: 'white' }} />
-			</Box>
+			<div className="inline-flex p-4 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 mb-6">
+				<Lock className="h-10 w-10 text-white" />
+			</div>
 
 			{/* Title */}
-			<Typography
-				variant="h4"
-				sx={{
-					fontWeight: 800,
-					mb: 2,
-					background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-					WebkitBackgroundClip: 'text',
-					WebkitTextFillColor: 'transparent',
-					backgroundClip: 'text',
-				}}>
+			<h2 className="text-2xl sm:text-3xl font-extrabold mb-4 bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
 				{isLoggedIn
-					? t('paywall_title_logged_in', 'Débloquez toutes les leçons')
-					: t('paywall_title_guest', 'Vous aimez notre méthode ?')}
-			</Typography>
+					? t('paywall_title_logged_in', 'Debloquez toutes les lecons')
+					: t('paywall_title_guest', 'Vous aimez notre methode ?')}
+			</h2>
 
 			{/* Subtitle */}
-			<Typography
-				variant="h6"
-				sx={{
-					mb: 4,
-					color: isDark ? '#cbd5e1' : '#475569',
-					fontWeight: 500,
-				}}>
+			<p className={cn(
+				'text-lg mb-8 font-medium',
+				isDark ? 'text-slate-300' : 'text-slate-600'
+			)}>
 				{isLoggedIn
-					? t(
-							'paywall_subtitle_logged_in',
-							'Achetez la méthode complète pour continuer votre apprentissage'
-					  )
-					: t(
-							'paywall_subtitle_guest',
-							'Créez un compte gratuit et débloquez toutes les leçons !'
-					  )}
-			</Typography>
+					? t('paywall_subtitle_logged_in', 'Achetez la methode complete pour continuer votre apprentissage')
+					: t('paywall_subtitle_guest', 'Creez un compte gratuit et debloquez toutes les lecons !')}
+			</p>
 
 			{/* Benefits */}
-			<Box sx={{ mb: 4, textAlign: 'left', maxWidth: 500, mx: 'auto' }}>
-				{[
-					{
-						icon: <CheckCircle sx={{ color: '#10b981' }} />,
-						text: t('paywall_benefit_1', 'Accès à toutes les leçons A1 → C2'),
-					},
-					{
-						icon: <CheckCircle sx={{ color: '#10b981' }} />,
-						text: t('paywall_benefit_2', 'Exercices interactifs avec corrections'),
-					},
-					{
-						icon: <CheckCircle sx={{ color: '#10b981' }} />,
-						text: t('paywall_benefit_3', 'Audio professionnel pour chaque dialogue'),
-					},
-					{
-						icon: <CheckCircle sx={{ color: '#10b981' }} />,
-						text: t('paywall_benefit_4', 'Suivi de progression personnalisé'),
-					},
-				].map((benefit, index) => (
-					<Box
+			<div className="mb-8 text-left max-w-md mx-auto">
+				{benefits.map((benefit, index) => (
+					<div
 						key={index}
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 2,
-							mb: 2,
-							p: 1.5,
-							borderRadius: 2,
-							background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-						}}>
-						{benefit.icon}
-						<Typography sx={{ fontWeight: 500 }}>{benefit.text}</Typography>
-					</Box>
+						className={cn(
+							'flex items-center gap-3 mb-3 p-3 rounded-lg',
+							isDark ? 'bg-white/5' : 'bg-black/5'
+						)}>
+						<CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+						<span className="font-medium">{benefit}</span>
+					</div>
 				))}
-			</Box>
+			</div>
 
 			{/* CTA Buttons */}
-			<Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+			<div className="flex gap-4 justify-center flex-wrap">
 				{!isLoggedIn && (
-					<Link href="/signup" passHref legacyBehavior>
+					<Link href="/signup">
 						<Button
-							variant="contained"
-							size="large"
-							startIcon={<Star />}
-							sx={{
-								px: 4,
-								py: 1.5,
-								fontSize: '1.1rem',
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
-								},
-							}}>
-							{t('paywall_cta_register', 'Créer un compte gratuit')}
+							size="lg"
+							className="px-8 py-6 text-lg font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white">
+							<Star className="h-5 w-5 mr-2" />
+							{t('paywall_cta_register', 'Creer un compte gratuit')}
 						</Button>
 					</Link>
 				)}
 
 				{isLoggedIn && (
-					<Link href="/pricing" passHref legacyBehavior>
+					<Link href="/pricing">
 						<Button
-							variant="contained"
-							size="large"
-							startIcon={<Star />}
-							sx={{
-								px: 4,
-								py: 1.5,
-								fontSize: '1.1rem',
-								fontWeight: 700,
-								background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
-								},
-							}}>
-							{t('paywall_cta_purchase', 'Acheter la méthode')}
+							size="lg"
+							className="px-8 py-6 text-lg font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white">
+							<Star className="h-5 w-5 mr-2" />
+							{t('paywall_cta_purchase', 'Acheter la methode')}
 						</Button>
 					</Link>
 				)}
 
 				{!isLoggedIn && (
-					<Link href="/login" passHref legacyBehavior>
+					<Link href="/login">
 						<Button
-							variant="outlined"
-							size="large"
-							sx={{
-								px: 4,
-								py: 1.5,
-								fontSize: '1.1rem',
-								fontWeight: 600,
-								borderColor: '#f59e0b',
-								color: '#f59e0b',
-								'&:hover': {
-									borderColor: '#d97706',
-									background: 'rgba(245, 158, 11, 0.1)',
-								},
-							}}>
+							variant="outline"
+							size="lg"
+							className="px-8 py-6 text-lg font-semibold border-amber-500 text-amber-500 hover:bg-amber-500/10 hover:border-amber-600">
 							{t('paywall_cta_login', 'Se connecter')}
 						</Button>
 					</Link>
 				)}
-			</Box>
+			</div>
 
 			{/* Small print */}
-			<Typography
-				variant="body2"
-				sx={{
-					mt: 3,
-					color: isDark ? '#94a3b8' : '#64748b',
-					fontStyle: 'italic',
-				}}>
+			<p className={cn(
+				'mt-6 text-sm italic',
+				isDark ? 'text-slate-400' : 'text-slate-500'
+			)}>
 				{isLoggedIn
-					? t('paywall_note_logged_in', 'Paiement sécurisé • Garantie satisfait ou remboursé')
-					: t(
-							'paywall_note_guest',
-							'Inscription gratuite • Sans engagement • Annulation possible à tout moment'
-					  )}
-			</Typography>
-		</Paper>
+					? t('paywall_note_logged_in', 'Paiement securise - Garantie satisfait ou rembourse')
+					: t('paywall_note_guest', 'Inscription gratuite - Sans engagement - Annulation possible a tout moment')}
+			</p>
+		</Card>
 	)
 }
 

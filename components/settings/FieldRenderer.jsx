@@ -1,35 +1,22 @@
+'use client'
+
 import React from 'react'
+import { Pencil, Check, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
-	Box,
-	Typography,
-	TextField,
-	FormControl,
 	Select,
-	MenuItem,
-	IconButton,
-} from '@mui/material'
-import { EditRounded, CheckRounded, CloseRounded } from '@mui/icons-material'
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
 /**
  * Reusable field renderer for Settings sections
  * Handles both display and edit modes with consistent styling
- *
- * @param {Object} props
- * @param {string} props.field - Field name in formData
- * @param {string} props.label - Field label to display
- * @param {React.ReactNode} props.icon - Icon to display
- * @param {string} props.type - Input type (text, email, etc.)
- * @param {Array} props.options - Select options [{value, label}] or null for TextField
- * @param {boolean} props.isEditing - Whether field is in edit mode
- * @param {any} props.value - Current field value
- * @param {boolean} props.isDark - Dark mode flag
- * @param {boolean} props.loading - Loading state
- * @param {Object} props.translations - Translation object
- * @param {Function} props.handleChange - Change handler (field) => (event) => void
- * @param {Function} props.handleSave - Save handler (field) => void
- * @param {Function} props.handleCancel - Cancel handler (field) => void
- * @param {Function} props.toggleEditMode - Toggle edit mode (field) => void
- * @param {boolean} props.isEmailField - Whether this is the email field (non-editable)
  */
 export const FieldRenderer = ({
 	field,
@@ -48,274 +35,155 @@ export const FieldRenderer = ({
 	toggleEditMode,
 	isEmailField = false,
 }) => {
-	// Déterminer les couleurs selon le type de champ - Dark Fantasy Theme
 	const isLanguageField = field === 'languageLevel'
-	const iconBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.2)' : 'rgba(139, 92, 246, 0.2)'
-	const iconColor = isLanguageField ? '#06b6d4' : '#8b5cf6'
-	const hoverBgColor = isLanguageField ? 'rgba(6, 182, 212, 0.15)' : 'rgba(139, 92, 246, 0.15)'
+	const accentColor = isLanguageField ? 'cyan' : 'violet'
 
-	// Traduire les valeurs affichées pour le niveau de langue
 	const getDisplayValue = () => {
 		if (!value) return '-'
 		if (field === 'languageLevel') {
-			return translations[value] // Traduit beginner/intermediate/advanced
+			return translations[value]
 		}
 		return value
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				py: 2.5,
-				px: 3,
-				borderBottom: `1px solid ${
+		<div
+			className={cn(
+				'flex items-center py-4 px-4 border-b transition-all duration-300 relative group',
+				isLanguageField
+					? 'border-cyan-500/20 hover:bg-cyan-500/10'
+					: 'border-violet-500/20 hover:bg-violet-500/10',
+				'last:border-b-0'
+			)}>
+			{/* Left accent bar on hover */}
+			<div
+				className={cn(
+					'absolute left-0 top-0 bottom-0 w-1 opacity-0 group-hover:opacity-100 transition-opacity',
 					isLanguageField
-						? isDark
-							? 'rgba(6, 182, 212, 0.25)'
-							: 'rgba(6, 182, 212, 0.15)'
-						: isDark
-						? 'rgba(139, 92, 246, 0.25)'
-						: 'rgba(139, 92, 246, 0.15)'
-				}`,
-				'&:last-child': {
-					borderBottom: 'none',
-				},
-				transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-				position: 'relative',
-				'&:hover': {
-					bgcolor: isLanguageField
-						? isDark
-							? 'rgba(6, 182, 212, 0.15)'
-							: 'rgba(6, 182, 212, 0.1)'
-						: isDark
-						? 'rgba(139, 92, 246, 0.15)'
-						: 'rgba(139, 92, 246, 0.1)',
-					'&::before': {
-						opacity: 1,
-					},
-				},
-				'&::before': {
-					content: '""',
-					position: 'absolute',
-					left: 0,
-					top: 0,
-					bottom: 0,
-					width: 3,
-					background: isLanguageField
-						? 'linear-gradient(180deg, #06b6d4 0%, #0891b2 100%)'
-						: 'linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%)',
-					opacity: 0,
-					transition: 'opacity 0.3s ease',
-					boxShadow: isLanguageField
-						? '0 0 10px rgba(6, 182, 212, 0.5)'
-						: '0 0 10px rgba(139, 92, 246, 0.5)',
-				},
-			}}>
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					width: 44,
-					height: 44,
-					borderRadius: '50%',
-					background: isLanguageField
-						? 'linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(8, 145, 178, 0.25) 100%)'
-						: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.25) 100%)',
-					border: `2px solid ${isLanguageField ? 'rgba(6, 182, 212, 0.3)' : 'rgba(139, 92, 246, 0.3)'}`,
-					color: iconColor,
-					mr: 2,
-					boxShadow: isLanguageField
-						? '0 4px 12px rgba(6, 182, 212, 0.2)'
-						: '0 4px 12px rgba(139, 92, 246, 0.2)',
-					transition: 'all 0.3s ease',
-					'&:hover': {
-						transform: 'scale(1.1) rotate(5deg)',
-						boxShadow: isLanguageField
-							? '0 6px 20px rgba(6, 182, 212, 0.4)'
-							: '0 6px 20px rgba(139, 92, 246, 0.4)',
-					},
-				}}>
-				{icon}
-			</Box>
+						? 'bg-gradient-to-b from-cyan-500 to-cyan-600 shadow-[0_0_10px_rgba(6,182,212,0.5)]'
+						: 'bg-gradient-to-b from-violet-500 to-violet-600 shadow-[0_0_10px_rgba(139,92,246,0.5)]'
+				)}
+			/>
 
-			<Box sx={{ flex: 1, minWidth: 0 }}>
-				<Typography
-					variant='body2'
-					sx={{
-						color: isLanguageField
-							? isDark
-								? '#67e8f9'
-								: '#0891b2'
-							: isDark
-							? '#c4b5fd'
-							: '#7c3aed',
-						fontSize: '0.7rem',
-						fontWeight: 600,
-						mb: 0.5,
-						textTransform: 'uppercase',
-						letterSpacing: '0.08em',
-					}}>
+			{/* Icon */}
+			<div
+				className={cn(
+					'flex items-center justify-center w-11 h-11 rounded-full mr-3 transition-all duration-300',
+					'border-2 group-hover:scale-110 group-hover:rotate-[5deg]',
+					isLanguageField
+						? 'bg-gradient-to-br from-cyan-500/25 to-cyan-600/25 border-cyan-500/30 text-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.2)] group-hover:shadow-[0_6px_20px_rgba(6,182,212,0.4)]'
+						: 'bg-gradient-to-br from-violet-500/25 to-violet-600/25 border-violet-500/30 text-violet-500 shadow-[0_4px_12px_rgba(139,92,246,0.2)] group-hover:shadow-[0_6px_20px_rgba(139,92,246,0.4)]'
+				)}>
+				{icon}
+			</div>
+
+			{/* Content */}
+			<div className="flex-1 min-w-0">
+				<Label
+					className={cn(
+						'text-[0.7rem] font-semibold uppercase tracking-wider mb-1 block',
+						isLanguageField
+							? isDark ? 'text-cyan-300' : 'text-cyan-700'
+							: isDark ? 'text-violet-300' : 'text-violet-700'
+					)}>
 					{label}
-				</Typography>
+				</Label>
 
 				{isEditing ? (
 					options ? (
-						<FormControl fullWidth size='small'>
-							<Select
-								value={value}
-								onChange={handleChange(field)}
-								sx={{
-									fontSize: '0.95rem',
-									color: isDark ? '#f1f5f9' : '#2d3748',
-									'& .MuiOutlinedInput-notchedOutline': {
-										borderColor: iconColor,
-									},
-									'&:hover .MuiOutlinedInput-notchedOutline': {
-										borderColor: iconColor,
-									},
-									'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-										borderColor: iconColor,
-										borderWidth: '2px',
-										boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
-									},
-									'& .MuiSvgIcon-root': {
-										color: iconColor,
-									},
-								}}>
+						<Select value={value} onValueChange={(val) => handleChange(field)({ target: { value: val } })}>
+							<SelectTrigger
+								className={cn(
+									'w-full text-sm',
+									isLanguageField
+										? 'border-cyan-500 focus:ring-cyan-500/40'
+										: 'border-violet-500 focus:ring-violet-500/40'
+								)}>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
 								{options.map(option => (
-									<MenuItem key={option.value} value={option.value}>
+									<SelectItem key={option.value} value={option.value}>
 										{option.label}
-									</MenuItem>
+									</SelectItem>
 								))}
-							</Select>
-						</FormControl>
+							</SelectContent>
+						</Select>
 					) : (
-						<TextField
-							fullWidth
-							size='small'
+						<Input
 							type={type}
 							value={value}
 							onChange={handleChange(field)}
-							sx={{
-								'& .MuiOutlinedInput-root': {
-									fontSize: '0.95rem',
-									color: isDark ? '#f1f5f9' : '#2d3748',
-									'& fieldset': {
-										borderColor: iconColor,
-									},
-									'&:hover fieldset': {
-										borderColor: iconColor,
-									},
-									'&.Mui-focused fieldset': {
-										borderColor: iconColor,
-										borderWidth: '2px',
-										boxShadow: `0 0 10px ${isLanguageField ? 'rgba(6, 182, 212, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
-									},
-								},
-							}}
+							className={cn(
+								'text-sm',
+								isLanguageField
+									? 'border-cyan-500 focus-visible:ring-cyan-500/40'
+									: 'border-violet-500 focus-visible:ring-violet-500/40'
+							)}
 						/>
 					)
 				) : (
 					<>
-						<Typography
-							sx={{
-								fontSize: '0.95rem',
-								fontWeight: 600,
-								color: isDark ? '#f1f5f9' : '#2d3748',
-							}}>
+						<p className={cn(
+							'text-sm font-semibold',
+							isDark ? 'text-slate-100' : 'text-slate-800'
+						)}>
 							{getDisplayValue()}
-						</Typography>
+						</p>
 						{isEmailField && (
-							<Typography
-								variant='caption'
-								sx={{
-									color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)',
-									fontSize: '0.7rem',
-									fontStyle: 'italic',
-									mt: 0.5,
-								}}>
+							<p className={cn(
+								'text-[0.7rem] italic mt-0.5',
+								isDark ? 'text-white/50' : 'text-black/50'
+							)}>
 								{translations.emailNotEditable}
-							</Typography>
+							</p>
 						)}
 					</>
 				)}
-			</Box>
+			</div>
 
-			<Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
+			{/* Action buttons */}
+			<div className="flex gap-2 ml-3">
 				{isEditing ? (
 					<>
-						<IconButton
-							size='small'
+						<Button
+							size="icon"
 							onClick={() => handleSave(field)}
 							disabled={loading}
-							sx={{
-								color: 'white',
-								background: isLanguageField
-									? 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)'
-									: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-								border: `1px solid ${iconColor}`,
-								boxShadow: isLanguageField
-									? '0 4px 12px rgba(6, 182, 212, 0.3)'
-									: '0 4px 12px rgba(139, 92, 246, 0.3)',
-								'&:hover': {
-									transform: 'scale(1.1)',
-									boxShadow: isLanguageField
-										? '0 6px 16px rgba(6, 182, 212, 0.5)'
-										: '0 6px 16px rgba(139, 92, 246, 0.5)',
-								},
-							}}>
-							<CheckRounded fontSize='small' />
-						</IconButton>
-						<IconButton
-							size='small'
+							className={cn(
+								'h-8 w-8 text-white border transition-all hover:scale-110',
+								isLanguageField
+									? 'bg-gradient-to-br from-cyan-500 to-cyan-600 border-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.3)] hover:shadow-[0_6px_16px_rgba(6,182,212,0.5)]'
+									: 'bg-gradient-to-br from-violet-500 to-violet-600 border-violet-500 shadow-[0_4px_12px_rgba(139,92,246,0.3)] hover:shadow-[0_6px_16px_rgba(139,92,246,0.5)]'
+							)}>
+							<Check className="h-4 w-4" />
+						</Button>
+						<Button
+							size="icon"
 							onClick={() => handleCancel(field)}
 							disabled={loading}
-							sx={{
-								color: 'white',
-								background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-								border: '1px solid #ef4444',
-								boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
-								'&:hover': {
-									transform: 'scale(1.1)',
-									boxShadow: '0 6px 16px rgba(239, 68, 68, 0.5)',
-								},
-							}}>
-							<CloseRounded fontSize='small' />
-						</IconButton>
+							className="h-8 w-8 text-white bg-gradient-to-br from-red-500 to-red-600 border border-red-500 shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:shadow-[0_6px_16px_rgba(239,68,68,0.5)] hover:scale-110 transition-all">
+							<X className="h-4 w-4" />
+						</Button>
 					</>
 				) : (
 					!isEmailField && (
-						<IconButton
-							size='small'
+						<Button
+							size="icon"
+							variant="ghost"
 							onClick={() => toggleEditMode(field)}
-							sx={{
-								color: 'white',
-								background: isLanguageField
-									? 'linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(8, 145, 178, 0.3) 100%)'
-									: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 100%)',
-								border: `1px solid ${iconColor}`,
-								boxShadow: isLanguageField
-									? '0 4px 12px rgba(6, 182, 212, 0.2)'
-									: '0 4px 12px rgba(139, 92, 246, 0.2)',
-								'&:hover': {
-									background: isLanguageField
-										? 'linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(8, 145, 178, 0.5) 100%)'
-										: 'linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.5) 100%)',
-									transform: 'scale(1.1) rotate(15deg)',
-									boxShadow: isLanguageField
-										? '0 6px 16px rgba(6, 182, 212, 0.4)'
-										: '0 6px 16px rgba(139, 92, 246, 0.4)',
-								},
-							}}>
-							<EditRounded fontSize='small' />
-						</IconButton>
+							className={cn(
+								'h-8 w-8 text-white border transition-all hover:scale-110 hover:rotate-[15deg]',
+								isLanguageField
+									? 'bg-gradient-to-br from-cyan-500/30 to-cyan-600/30 border-cyan-500 shadow-[0_4px_12px_rgba(6,182,212,0.2)] hover:from-cyan-500/50 hover:to-cyan-600/50 hover:shadow-[0_6px_16px_rgba(6,182,212,0.4)]'
+									: 'bg-gradient-to-br from-violet-500/30 to-violet-600/30 border-violet-500 shadow-[0_4px_12px_rgba(139,92,246,0.2)] hover:from-violet-500/50 hover:to-violet-600/50 hover:shadow-[0_6px_16px_rgba(139,92,246,0.4)]'
+							)}>
+							<Pencil className="h-4 w-4" />
+						</Button>
 					)
 				)}
-			</Box>
-		</Box>
+			</div>
+		</div>
 	)
 }
 

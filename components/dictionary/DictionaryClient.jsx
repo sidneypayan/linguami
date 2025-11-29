@@ -16,6 +16,10 @@ import AddWordModal from '@/components/dictionary/AddWordModal'
 import EditWordModal from '@/components/dictionary/EditWordModal'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import { SessionConfigModal } from '@/components/flashcards/SessionConfigModal'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import {
 	Search,
 	Plus,
@@ -27,11 +31,7 @@ import {
 	ChevronRight,
 	BookOpen,
 	Bookmark,
-	Sparkles,
 	ScrollText,
-	Sword,
-	Shield,
-	Trophy,
 	Library,
 	Quote,
 	ArrowRight,
@@ -44,15 +44,13 @@ import {
 // ============================================
 const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) => {
 	return (
-		<div className={cn(
-			'group relative rounded-xl overflow-hidden',
+		<Card className={cn(
+			'group relative overflow-hidden',
 			'transition-all duration-300',
 			'hover:scale-[1.01] hover:-translate-y-1',
 			isDark
-				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
-				: 'bg-gradient-to-br from-white to-slate-50',
-			'border',
-			isDark ? 'border-violet-500/20' : 'border-violet-200/50',
+				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/20'
+				: 'bg-gradient-to-br from-white to-slate-50 border-violet-200/50',
 			'shadow-lg hover:shadow-xl',
 			isDark ? 'hover:shadow-violet-500/20' : 'hover:shadow-violet-300/30',
 			'hover:border-violet-500/40'
@@ -60,24 +58,19 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 			{/* Left accent bar */}
 			<div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-500 to-cyan-500" />
 
-			<div className="p-4 pl-5">
+			<CardContent className="p-4 pl-5">
 				{/* Word row */}
 				<div className="flex items-center justify-between gap-3">
 					<div className="flex items-center gap-3 flex-wrap flex-1 min-w-0">
 						{/* Source word badge */}
-						<div className={cn(
-							'px-3 py-1.5 rounded-lg',
+						<Badge variant="outline" className={cn(
+							'px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base',
 							'bg-gradient-to-r from-violet-500/20 to-cyan-500/20',
-							'border border-violet-500/30',
-							'backdrop-blur-sm'
+							'border-violet-500/30 backdrop-blur-sm',
+							isDark ? 'text-violet-300' : 'text-violet-600'
 						)}>
-							<span className={cn(
-								'font-bold text-sm sm:text-base',
-								isDark ? 'text-violet-300' : 'text-violet-600'
-							)}>
-								{sourceWord || '—'}
-							</span>
-						</div>
+							{sourceWord || '—'}
+						</Badge>
 
 						{/* Arrow */}
 						<ArrowRight className={cn(
@@ -96,26 +89,30 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 
 					{/* Action buttons */}
 					<div className="flex gap-1 flex-shrink-0 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-						<button
+						<Button
+							variant="ghost"
+							size="icon"
 							onClick={onEdit}
 							className={cn(
-								'p-2 rounded-lg transition-all',
+								'h-9 w-9 rounded-lg',
 								'hover:bg-blue-500/20 hover:scale-110',
 								isDark ? 'text-blue-400' : 'text-blue-500'
 							)}
 						>
 							<Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon"
 							onClick={onDelete}
 							className={cn(
-								'p-2 rounded-lg transition-all',
+								'h-9 w-9 rounded-lg',
 								'hover:bg-red-500/20 hover:scale-110',
 								isDark ? 'text-red-400' : 'text-red-500'
 							)}
 						>
 							<Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-						</button>
+						</Button>
 					</div>
 				</div>
 
@@ -140,40 +137,8 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 						</div>
 					</div>
 				)}
-			</div>
-		</div>
-	)
-}
-
-// ============================================
-// ACTION BUTTON - Styled gaming button
-// ============================================
-const ActionButton = ({ children, icon: Icon, onClick, variant = 'primary', className, fullWidth }) => {
-	const variants = {
-		primary: 'from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 shadow-violet-500/30',
-		secondary: 'from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-amber-500/30',
-		success: 'from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 shadow-emerald-500/30',
-	}
-
-	return (
-		<button
-			onClick={onClick}
-			className={cn(
-				'relative px-5 py-3 rounded-xl font-bold text-white',
-				'bg-gradient-to-r',
-				variants[variant],
-				'shadow-lg hover:shadow-xl',
-				'transition-all duration-300',
-				'hover:-translate-y-0.5',
-				'active:translate-y-0',
-				'flex items-center justify-center gap-2',
-				fullWidth && 'w-full',
-				className
-			)}
-		>
-			{Icon && <Icon className="w-5 h-5" />}
-			{children}
-		</button>
+			</CardContent>
+		</Card>
 	)
 }
 
@@ -207,17 +172,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 	}
 
 	return (
-		<div className={cn(
-			'flex items-center justify-center gap-2 py-8 mt-6',
-		)}>
+		<div className="flex items-center justify-center gap-2 py-8 mt-6">
 			{/* Previous button */}
-			<button
+			<Button
+				variant="outline"
+				size="icon"
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage === 1}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
-					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'w-11 h-11 rounded-xl border-2',
 					currentPage === 1
 						? 'opacity-40 cursor-not-allowed'
 						: 'hover:scale-110 hover:-translate-x-0.5',
@@ -229,12 +192,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
 				)}
 			>
-				<div className={cn(
-					'absolute inset-0 bg-gradient-to-r from-violet-500/20 to-transparent',
-					'opacity-0 group-hover:opacity-100 transition-opacity'
-				)} />
-				<ChevronLeft className="w-5 h-5 relative z-10" />
-			</button>
+				<ChevronLeft className="w-5 h-5" />
+			</Button>
 
 			{/* Page numbers */}
 			<div className={cn(
@@ -255,18 +214,19 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 							···
 						</span>
 					) : (
-						<button
+						<Button
 							key={page}
+							variant="ghost"
+							size="sm"
 							onClick={() => onPageChange(page)}
 							className={cn(
-								'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
-								'overflow-hidden',
+								'w-10 h-10 rounded-lg font-bold p-0',
 								page === currentPage
 									? [
 										'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
 										'shadow-lg shadow-violet-500/40',
-										'scale-110 z-10',
-										'ring-2 ring-white/20'
+										'scale-110',
+										'hover:from-violet-500 hover:to-cyan-500'
 									]
 									: [
 										isDark ? 'text-slate-300' : 'text-slate-600',
@@ -277,23 +237,20 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 									]
 							)}
 						>
-							{page === currentPage && (
-								<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-							)}
-							<span className="relative z-10">{page}</span>
-						</button>
+							{page}
+						</Button>
 					)
 				))}
 			</div>
 
 			{/* Next button */}
-			<button
+			<Button
+				variant="outline"
+				size="icon"
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
-					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'w-11 h-11 rounded-xl border-2',
 					currentPage === totalPages
 						? 'opacity-40 cursor-not-allowed'
 						: 'hover:scale-110 hover:translate-x-0.5',
@@ -305,12 +262,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
 				)}
 			>
-				<div className={cn(
-					'absolute inset-0 bg-gradient-to-l from-violet-500/20 to-transparent',
-					'opacity-0 group-hover:opacity-100 transition-opacity'
-				)} />
-				<ChevronRight className="w-5 h-5 relative z-10" />
-			</button>
+				<ChevronRight className="w-5 h-5" />
+			</Button>
 		</div>
 	)
 }
@@ -335,98 +288,107 @@ const EmptyState = ({ translations, t, isDark, onAddWord }) => {
 		)}>
 			<div className="max-w-2xl mx-auto">
 				{/* Empty grimoire card */}
-				<div className={cn(
-					'relative rounded-3xl p-8 md:p-10 overflow-hidden',
+				<Card className={cn(
+					'relative overflow-hidden border-2',
 					isDark
-						? 'bg-gradient-to-br from-slate-900/95 via-violet-950/30 to-slate-900/95'
-						: 'bg-gradient-to-br from-white via-violet-50/30 to-white',
-					'border-2',
-					isDark ? 'border-violet-500/30' : 'border-violet-200',
+						? 'bg-gradient-to-br from-slate-900/95 via-violet-950/30 to-slate-900/95 border-violet-500/30'
+						: 'bg-gradient-to-br from-white via-violet-50/30 to-white border-violet-200',
 					'shadow-2xl',
 					isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30'
 				)}>
-					{/* Decorative corners */}
-					<div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-violet-500/50 rounded-tl-lg" />
-					<div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-violet-500/50 rounded-tr-lg" />
-					<div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-violet-500/50 rounded-bl-lg" />
-					<div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-violet-500/50 rounded-br-lg" />
+					<CardContent className="p-8 md:p-10">
+						{/* Decorative corners */}
+						<div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-violet-500/50 rounded-tl-lg" />
+						<div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-violet-500/50 rounded-tr-lg" />
+						<div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-violet-500/50 rounded-bl-lg" />
+						<div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-violet-500/50 rounded-br-lg" />
 
-					{/* Icon */}
-					<div className="flex justify-center mb-6">
-						<div className={cn(
-							'w-20 h-20 rounded-2xl',
-							'bg-gradient-to-br from-violet-500 to-cyan-500',
-							'flex items-center justify-center',
-							'shadow-xl shadow-violet-500/30'
-						)}>
-							<ScrollText className="w-10 h-10 text-white" />
+						{/* Icon */}
+						<div className="flex justify-center mb-6">
+							<div className={cn(
+								'w-20 h-20 rounded-2xl',
+								'bg-gradient-to-br from-violet-500 to-cyan-500',
+								'flex items-center justify-center',
+								'shadow-xl shadow-violet-500/30'
+							)}>
+								<ScrollText className="w-10 h-10 text-white" />
+							</div>
 						</div>
-					</div>
 
-					{/* Title */}
-					<h1 className={cn(
-						'text-2xl md:text-3xl font-black text-center mb-2',
-						'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
-					)}>
-						{translations.dictionary_empty_title}
-					</h1>
+						{/* Title */}
+						<h1 className={cn(
+							'text-2xl md:text-3xl font-black text-center mb-2',
+							'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+						)}>
+							{translations.dictionary_empty_title}
+						</h1>
 
-					<p className={cn(
-						'text-center mb-8',
-						isDark ? 'text-slate-400' : 'text-slate-500'
-					)}>
-						{t('nowords')}
-					</p>
+						<p className={cn(
+							'text-center mb-8',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{t('nowords')}
+						</p>
 
-					{/* Features list */}
-					<div className="space-y-3 mb-8">
-						{features.map((feature, index) => (
-							<div
-								key={index}
+						{/* Features list */}
+						<div className="space-y-3 mb-8">
+							{features.map((feature, index) => (
+								<div
+									key={index}
+									className={cn(
+										'flex items-center gap-4 p-4 rounded-xl',
+										'transition-all duration-300',
+										'hover:translate-x-2',
+										isDark
+											? 'bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20'
+											: 'bg-violet-50 hover:bg-violet-100 border border-violet-200/50'
+									)}
+								>
+									<div className={cn(
+										'w-11 h-11 rounded-xl flex items-center justify-center',
+										'bg-gradient-to-br from-violet-500 to-cyan-500',
+										'shadow-lg shadow-violet-500/30'
+									)}>
+										<feature.icon className="w-5 h-5 text-white" />
+									</div>
+									<span className={cn(
+										'font-semibold',
+										isDark ? 'text-slate-200' : 'text-slate-700'
+									)}>
+										{feature.text}
+									</span>
+								</div>
+							))}
+						</div>
+
+						{/* Action buttons */}
+						<div className="flex flex-col sm:flex-row gap-3">
+							<Link href="/materials" className="flex-1">
+								<Button className={cn(
+									'w-full px-5 py-6 rounded-xl font-bold text-white',
+									'bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500',
+									'shadow-lg shadow-violet-500/30 hover:shadow-xl',
+									'transition-all duration-300 hover:-translate-y-0.5'
+								)}>
+									<GraduationCap className="w-5 h-5 mr-2" />
+									{translations.start}
+								</Button>
+							</Link>
+							<Button
+								onClick={onAddWord}
 								className={cn(
-									'flex items-center gap-4 p-4 rounded-xl',
-									'transition-all duration-300',
-									'hover:translate-x-2',
-									isDark
-										? 'bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20'
-										: 'bg-violet-50 hover:bg-violet-100 border border-violet-200/50'
+									'flex-1 px-5 py-6 rounded-xl font-bold text-white',
+									'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500',
+									'shadow-lg shadow-emerald-500/30 hover:shadow-xl',
+									'transition-all duration-300 hover:-translate-y-0.5'
 								)}
 							>
-								<div className={cn(
-									'w-11 h-11 rounded-xl flex items-center justify-center',
-									'bg-gradient-to-br from-violet-500 to-cyan-500',
-									'shadow-lg shadow-violet-500/30'
-								)}>
-									<feature.icon className="w-5 h-5 text-white" />
-								</div>
-								<span className={cn(
-									'font-semibold',
-									isDark ? 'text-slate-200' : 'text-slate-700'
-								)}>
-									{feature.text}
-								</span>
-							</div>
-						))}
-					</div>
-
-					{/* Action buttons */}
-					<div className="flex flex-col sm:flex-row gap-3">
-						<Link href="/materials" className="flex-1">
-							<ActionButton variant="primary" icon={GraduationCap} fullWidth>
-								{translations.start}
-							</ActionButton>
-						</Link>
-						<ActionButton
-							variant="success"
-							icon={Plus}
-							onClick={onAddWord}
-							fullWidth
-							className="flex-1"
-						>
-							{translations.add_word_btn}
-						</ActionButton>
-					</div>
-				</div>
+								<Plus className="w-5 h-5 mr-2" />
+								{translations.add_word_btn}
+							</Button>
+						</div>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	)
@@ -630,150 +592,146 @@ const DictionaryClient = ({ translations }) => {
 				{/* Action Buttons */}
 				<div className="space-y-3 mb-8">
 					<div className="flex gap-3">
-						<ActionButton
-							variant="primary"
-							icon={Zap}
+						<Button
 							onClick={() => openFlashcards()}
-							fullWidth
-							className="flex-1"
+							className={cn(
+								'flex-1 px-5 py-6 rounded-xl font-bold text-white',
+								'bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500',
+								'shadow-lg shadow-violet-500/30 hover:shadow-xl',
+								'transition-all duration-300 hover:-translate-y-0.5'
+							)}
 						>
+							<Zap className="w-5 h-5 mr-2" />
 							<span className="hidden sm:inline">{translations.repeatwords}</span>
 							<span className="sm:hidden">{t('srs_review_short')}</span>
-						</ActionButton>
-						<ActionButton
-							variant="secondary"
-							icon={Settings2}
+						</Button>
+						<Button
 							onClick={() => setIsSessionConfigOpen(true)}
-							fullWidth
-							className="flex-1"
+							className={cn(
+								'flex-1 px-5 py-6 rounded-xl font-bold text-white',
+								'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500',
+								'shadow-lg shadow-amber-500/30 hover:shadow-xl',
+								'transition-all duration-300 hover:-translate-y-0.5'
+							)}
 						>
+							<Settings2 className="w-5 h-5 mr-2" />
 							<span className="hidden sm:inline">{t('custom_session')}</span>
 							<span className="sm:hidden">{t('custom_session_short')}</span>
-						</ActionButton>
+						</Button>
 					</div>
-					<ActionButton
-						variant="success"
-						icon={Plus}
+					<Button
 						onClick={() => setIsAddWordModalOpen(true)}
-						fullWidth
+						className={cn(
+							'w-full px-5 py-6 rounded-xl font-bold text-white',
+							'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500',
+							'shadow-lg shadow-emerald-500/30 hover:shadow-xl',
+							'transition-all duration-300 hover:-translate-y-0.5'
+						)}
 					>
+						<Plus className="w-5 h-5 mr-2" />
 						{translations.add_word_btn}
-					</ActionButton>
+					</Button>
 				</div>
 
 				{/* Controls Panel */}
-				<div className={cn(
-					'relative rounded-2xl p-4 mb-6 overflow-hidden',
+				<Card className={cn(
+					'relative overflow-hidden mb-6',
 					isDark
-						? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
-						: 'bg-white',
-					'border',
-					isDark ? 'border-violet-500/20' : 'border-violet-200/50',
+						? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/20'
+						: 'bg-white border-violet-200/50',
 					'shadow-xl',
 					isDark ? 'shadow-violet-500/10' : 'shadow-violet-200/30'
 				)}>
 					{/* Top accent */}
 					<div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 via-cyan-500 to-violet-500" />
 
-					<div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-						{/* Search */}
-						<div className="relative w-full sm:w-64">
-							<Search className={cn(
-								'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
-								isDark ? 'text-violet-400' : 'text-violet-500'
-							)} />
-							<input
-								type="text"
-								placeholder={translations.search_words}
-								value={searchQuery}
-								onChange={(e) => {
-									setSearchQuery(e.target.value)
-									setCurrentPage(1)
-								}}
-								className={cn(
-									'w-full pl-10 pr-4 py-2.5 rounded-xl',
-									'border transition-all',
-									isDark
-										? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
-										: 'bg-slate-50 border-violet-200 text-slate-800 placeholder:text-slate-400',
-									'focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500'
-								)}
-							/>
-						</div>
+					<CardContent className="p-4">
+						<div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+							{/* Search */}
+							<div className="relative w-full sm:w-64">
+								<Search className={cn(
+									'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
+									isDark ? 'text-violet-400' : 'text-violet-500'
+								)} />
+								<Input
+									type="text"
+									placeholder={translations.search_words}
+									value={searchQuery}
+									onChange={(e) => {
+										setSearchQuery(e.target.value)
+										setCurrentPage(1)
+									}}
+									className={cn(
+										'pl-10 pr-4 py-2.5 rounded-xl h-11',
+										'border transition-all',
+										isDark
+											? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
+											: 'bg-slate-50 border-violet-200 text-slate-800 placeholder:text-slate-400',
+										'focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500'
+									)}
+								/>
+							</div>
 
-						{/* Words per page */}
-						<div className={cn(
-							'flex items-center gap-3 p-2 rounded-xl',
-							isDark ? 'bg-slate-900/50' : 'bg-slate-50',
-							'border',
-							isDark ? 'border-violet-500/20' : 'border-violet-200/50'
-						)}>
-							<span className={cn(
-								'text-xs font-semibold uppercase tracking-wide whitespace-nowrap px-2',
-								isDark ? 'text-violet-400' : 'text-violet-600'
+							{/* Words per page */}
+							<div className={cn(
+								'flex items-center gap-3 p-2 rounded-xl',
+								isDark ? 'bg-slate-900/50' : 'bg-slate-50',
+								'border',
+								isDark ? 'border-violet-500/20' : 'border-violet-200/50'
 							)}>
-								{translations.words_per_page}
-							</span>
-							<div className="flex gap-1 p-1 rounded-lg bg-gradient-to-r from-violet-500/10 to-cyan-500/10">
-								{[20, 50, 100, 'all'].map((value) => {
-									const isActive = wordsPerPage === value || (value === 'all' && wordsPerPage === filteredUserWords.length)
-									return (
-										<button
-											key={value}
-											onClick={() => handleWordsPerPageChange(value)}
-											className={cn(
-												'relative px-3 py-1.5 rounded-md text-sm font-bold transition-all duration-300',
-												'overflow-hidden',
-												isActive
-													? [
-														'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
-														'shadow-md shadow-violet-500/40',
-														'scale-105'
-													]
-													: [
-														isDark ? 'text-slate-400' : 'text-slate-500',
-														'hover:scale-105',
-														isDark
-															? 'hover:text-violet-300 hover:bg-violet-500/20'
-															: 'hover:text-violet-600 hover:bg-violet-100'
-													]
-											)}
-										>
-											{isActive && (
-												<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-											)}
-											<span className="relative z-10">
+								<span className={cn(
+									'text-xs font-semibold uppercase tracking-wide whitespace-nowrap px-2',
+									isDark ? 'text-violet-400' : 'text-violet-600'
+								)}>
+									{translations.words_per_page}
+								</span>
+								<div className="flex gap-1 p-1 rounded-lg bg-gradient-to-r from-violet-500/10 to-cyan-500/10">
+									{[20, 50, 100, 'all'].map((value) => {
+										const isActive = wordsPerPage === value || (value === 'all' && wordsPerPage === filteredUserWords.length)
+										return (
+											<Button
+												key={value}
+												variant="ghost"
+												size="sm"
+												onClick={() => handleWordsPerPageChange(value)}
+												className={cn(
+													'px-3 py-1.5 rounded-md text-sm font-bold h-auto',
+													isActive
+														? [
+															'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
+															'shadow-md shadow-violet-500/40',
+															'scale-105',
+															'hover:from-violet-500 hover:to-cyan-500'
+														]
+														: [
+															isDark ? 'text-slate-400' : 'text-slate-500',
+															'hover:scale-105',
+															isDark
+																? 'hover:text-violet-300 hover:bg-violet-500/20'
+																: 'hover:text-violet-600 hover:bg-violet-100'
+														]
+												)}
+											>
 												{value === 'all' ? translations.all : value}
-											</span>
-										</button>
-									)
-								})}
+											</Button>
+										)
+									})}
+								</div>
 							</div>
-						</div>
 
-						{/* Word count badge */}
-						<div className={cn(
-							'relative group px-5 py-2.5 rounded-xl overflow-hidden',
-							'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
-							'shadow-lg shadow-violet-500/40',
-							'border border-white/20'
-						)}>
-							{/* Shine effect */}
-							<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-							{/* Inner glow */}
-							<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-							<div className="relative z-10 flex items-center gap-2">
-								<BookMarked className="w-4 h-4 text-white/80" />
-								<span className="font-black text-white text-sm tracking-wide">
-									{filteredUserWords.length}
-								</span>
-								<span className="font-medium text-white/80 text-sm">
-									{filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
-								</span>
-							</div>
+							{/* Word count badge */}
+							<Badge className={cn(
+								'px-5 py-2.5 rounded-xl',
+								'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
+								'shadow-lg shadow-violet-500/40',
+								'border border-white/20 text-white font-black'
+							)}>
+								<BookMarked className="w-4 h-4 mr-2 text-white/80" />
+								{filteredUserWords.length} {filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
+							</Badge>
 						</div>
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 
 				{/* Words List */}
 				<div className="space-y-3">

@@ -1,30 +1,16 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import {
-	Box,
-	Typography,
-	TextField,
-	Button,
-	Paper,
-	Chip,
-	Alert,
-	useTheme,
-	IconButton,
-} from '@mui/material'
-import {
-	CheckCircle,
-	Cancel,
-	Refresh,
-	EmojiEvents,
-	PlayArrow,
-	Pause,
-} from '@mui/icons-material'
-import { useUserContext } from '../../context/user'
-import toast from '../../utils/toast'
-import { useTranslations, useLocale } from 'next-intl'
-import { useRouter, usePathname, useParams } from 'next/navigation'
-import { getLocalizedField } from '../../utils/exerciseHelpers'
+import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
+import toast from '@/utils/toast'
+import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
+import { CheckCircle2, XCircle, RotateCcw, Trophy, Play, Pause } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 /**
  * Audio Dictation Exercise Component
@@ -35,11 +21,8 @@ import { getLocalizedField } from '../../utils/exerciseHelpers'
  */
 const AudioDictation = ({ exercise, onComplete }) => {
 	const t = useTranslations('exercises')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const { user } = useUserContext()
-	const router = useRouter()
-	const pathname = usePathname()
 	const params = useParams()
 
 	// State
@@ -239,249 +222,223 @@ const AudioDictation = ({ exercise, onComplete }) => {
 
 	if (!exercise || sentences.length === 0) {
 		return (
-			<Alert severity="info">
+			<div className={cn(
+				"p-4 rounded-xl border-2",
+				isDark
+					? "bg-blue-500/10 border-blue-500/30 text-blue-300"
+					: "bg-blue-50 border-blue-200 text-blue-700"
+			)}>
 				{t('noExerciseAvailable')}
-			</Alert>
+			</div>
 		)
 	}
 
 	// Exercise completion screen
 	if (exerciseCompleted) {
 		return (
-			<Paper
-				elevation={0}
-				sx={{
-					p: { xs: 3, md: 4 },
-					borderRadius: 4,
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-					textAlign: 'center',
-				}}>
-				<EmojiEvents sx={{ fontSize: '4rem', color: '#fbbf24', mb: 2 }} />
-				<Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+			<Card className={cn(
+				"p-6 md:p-8 rounded-2xl text-center",
+				isDark
+					? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+					: "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+			)}>
+				<Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
+				<h4 className={cn(
+					"text-2xl font-bold mb-2",
+					isDark ? "text-slate-100" : "text-slate-800"
+				)}>
 					{t('exerciseCompleted')}
-				</Typography>
-				<Typography variant="h3" sx={{
-					fontWeight: 800,
-					mb: 3,
-					background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-					WebkitBackgroundClip: 'text',
-					WebkitTextFillColor: 'transparent',
-				}}>
+				</h4>
+				<p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
 					{t('yourScore')} : {totalScore}%
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 3, color: isDark ? '#cbd5e1' : '#64748b' }}>
+				</p>
+				<p className={cn(
+					"mb-6",
+					isDark ? "text-slate-400" : "text-slate-600"
+				)}>
 					{totalScore === 100 && t('perfectScore')}
 					{totalScore >= 80 && totalScore < 100 && t('greatJob')}
 					{totalScore >= 60 && totalScore < 80 && t('goodWork')}
 					{totalScore < 60 && t('keepPracticing')}
-				</Typography>
+				</p>
 				{totalScore === 100 && isFirstCompletion && (
-					<Chip
-						label={`+${exercise.xp_reward} XP`}
-						color="primary"
-						sx={{
-							fontSize: '1rem',
-							fontWeight: 700,
-							mb: 3,
-						}}
-					/>
+					<span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
+						+{exercise.xp_reward} XP
+					</span>
 				)}
 				{totalScore < 100 && (
-					<Alert severity="info" sx={{ mb: 3, textAlign: 'left' }}>
-						<Typography variant="body2" sx={{ fontWeight: 600 }}>
-							💡 {t('perfectScoreForXP')}
-						</Typography>
-					</Alert>
+					<div className={cn(
+						"p-4 rounded-xl border-2 mb-6 text-left",
+						isDark
+							? "bg-blue-500/10 border-blue-500/30"
+							: "bg-blue-50 border-blue-200"
+					)}>
+						<p className={cn(
+							"font-semibold",
+							isDark ? "text-blue-300" : "text-blue-700"
+						)}>
+							{t('perfectScoreForXP')}
+						</p>
+					</div>
 				)}
 				<Button
-					variant="contained"
 					onClick={handleReset}
-					startIcon={<Refresh />}
-					sx={{
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						px: 4,
-						py: 1.5,
-						fontSize: '1rem',
-						fontWeight: 600,
-					}}>
+					className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
+				>
+					<RotateCcw className="w-5 h-5 mr-2" />
 					{t('tryAgain')}
 				</Button>
-			</Paper>
+			</Card>
 		)
 	}
 
 	// Main exercise view
 	return (
-		<Box>
+		<div>
 			{/* Exercise Instructions */}
-			<Paper
-				elevation={0}
-				sx={{
-					p: { xs: 2, md: 3 },
-					mb: 3,
-					borderRadius: 3,
-					background: isDark
-						? 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)'
-						: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.2)' : '1px solid rgba(139, 92, 246, 0.15)',
-				}}>
-				<Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: '#8b5cf6' }}>
+			<Card className={cn(
+				"p-4 md:p-6 mb-6 rounded-xl",
+				isDark
+					? "bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border-violet-500/20"
+					: "bg-gradient-to-r from-violet-500/5 to-cyan-500/5 border-violet-500/15"
+			)}>
+				<h6 className="font-semibold mb-2 text-violet-500">
 					{getTranslatedTitle()}
-				</Typography>
-				<Alert severity="info" sx={{ mb: 0, backgroundColor: isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.1)' }}>
-					<Typography variant="body2" sx={{ fontWeight: 600 }}>
-						🎧 {t('listenAndType')}
-					</Typography>
-				</Alert>
-			</Paper>
+				</h6>
+				<div className={cn(
+					"p-3 rounded-lg",
+					isDark
+						? "bg-cyan-500/15"
+						: "bg-cyan-500/10"
+				)}>
+					<p className={cn(
+						"font-semibold text-sm",
+						isDark ? "text-cyan-300" : "text-cyan-700"
+					)}>
+						{t('listenAndType')}
+					</p>
+				</div>
+			</Card>
 
 			{/* Sentences */}
 			{sentences.map((sentence, index) => {
 				const result = results[sentence.id]
 				const isCorrect = result?.correct
 				// Use base field (in material language), not translated version
-			const sentenceWithBlank = sentence.sentenceWithBlank
+				const sentenceWithBlank = sentence.sentenceWithBlank
 				const { before, after } = parseSentence(sentenceWithBlank)
 
 				return (
-					<Paper
+					<Card
 						key={sentence.id}
-						elevation={0}
-						sx={{
-							p: { xs: 2, md: 3 },
-							mb: 2,
-							borderRadius: 3,
-							background: isDark
-								? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-								: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-							border: submitted
+						className={cn(
+							"p-4 md:p-6 mb-4 rounded-xl",
+							submitted
 								? isCorrect
-									? '2px solid #10b981'
-									: '2px solid #ef4444'
-								: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-						}}>
+									? "border-2 border-emerald-500"
+									: "border-2 border-red-500"
+								: isDark
+									? "border-violet-500/30"
+									: "border-violet-500/20",
+							isDark
+								? "bg-gradient-to-br from-slate-800/95 to-slate-900/90"
+								: "bg-gradient-to-br from-white/95 to-white/90"
+						)}
+					>
 						{/* Sentence with inline blank */}
-						<Box
-							sx={{
-								fontSize: { xs: '1rem', md: '1.1rem' },
-								lineHeight: 1.8,
-								display: 'flex',
-								alignItems: 'center',
-								gap: 2,
-							}}>
-							<Typography variant="h6" sx={{ fontWeight: 700, color: '#8b5cf6', flexShrink: 0 }}>
+						<div className="flex items-center gap-4 text-base md:text-lg leading-relaxed">
+							<span className="font-bold text-violet-500 flex-shrink-0">
 								{index + 1}.
-							</Typography>
-							<IconButton
+							</span>
+							<button
+								type="button"
 								onClick={() => toggleAudio(sentence.id)}
-								sx={{
-									background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-									color: 'white',
-									flexShrink: 0,
-									'&:hover': {
-										background: 'linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)',
-									}
-								}}>
-								{playingAudio[sentence.id] ? <Pause /> : <PlayArrow />}
-							</IconButton>
+								className={cn(
+									"w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+									"bg-gradient-to-r from-violet-600 to-cyan-600 text-white",
+									"hover:from-violet-700 hover:to-cyan-700 transition-all"
+								)}
+							>
+								{playingAudio[sentence.id] ? (
+									<Pause className="w-5 h-5" />
+								) : (
+									<Play className="w-5 h-5 ml-0.5" />
+								)}
+							</button>
 							<audio
 								ref={(el) => audioRefs.current[sentence.id] = el}
 								src={sentence.audioUrl}
 								onEnded={() => handleAudioEnded(sentence.id)}
 								preload="metadata"
 							/>
-							<Box sx={{ flex: 1, fontSize: 'inherit', lineHeight: 'inherit' }}>
-								<Typography component="span" sx={{ fontSize: 'inherit' }}>
-									{before}
-								</Typography>
-								<TextField
-									size="small"
+							<div className="flex-1 flex flex-wrap items-center gap-1">
+								<span>{before}</span>
+								<Input
 									value={userAnswers[sentence.id] || ''}
 									onChange={(e) => handleAnswerChange(sentence.id, e.target.value)}
 									disabled={submitted}
 									placeholder="___"
-									sx={{
-										minWidth: { xs: '120px', sm: '180px' },
-										display: 'inline-flex',
-										verticalAlign: 'middle',
-										mx: 0.5,
-										'& .MuiOutlinedInput-root': {
-											height: '40px',
-											backgroundColor: submitted
-												? isCorrect
-													? 'rgba(16, 185, 129, 0.1)'
-													: 'rgba(239, 68, 68, 0.1)'
-												: isDark ? 'rgba(139, 92, 246, 0.05)' : 'white',
-											borderColor: submitted
-												? isCorrect ? '#10b981' : '#ef4444'
-												: undefined,
-											'& fieldset': {
-												borderColor: submitted
-													? isCorrect ? '#10b981 !important' : '#ef4444 !important'
-													: undefined,
-											},
-											'& input': {
-												padding: '8px 12px',
-												fontSize: '1rem',
-											}
-										}
-									}}
+									className={cn(
+										"w-[120px] sm:w-[180px] h-10 px-3 text-base inline-block",
+										submitted
+											? isCorrect
+												? "border-emerald-500 bg-emerald-500/10"
+												: "border-red-500 bg-red-500/10"
+											: isDark
+												? "bg-violet-500/5"
+												: "bg-white"
+									)}
 								/>
 								{submitted && (
-									<Box component="span" sx={{ display: 'inline-flex', verticalAlign: 'middle', mx: 0.5 }}>
+									<span className="inline-flex">
 										{isCorrect ? (
-											<CheckCircle sx={{ color: '#10b981', fontSize: '1.5rem' }} />
+											<CheckCircle2 className="w-6 h-6 text-emerald-500" />
 										) : (
-											<Cancel sx={{ color: '#ef4444', fontSize: '1.5rem' }} />
+											<XCircle className="w-6 h-6 text-red-500" />
 										)}
-									</Box>
+									</span>
 								)}
-								<Typography component="span" sx={{ fontSize: 'inherit' }}>
-									{after}
-								</Typography>
-							</Box>
-						</Box>
+								<span>{after}</span>
+							</div>
+						</div>
 
 						{submitted && result && !isCorrect && (
-							<Box sx={{ mt: 2 }}>
-								<Alert severity="error" icon={<Cancel />}>
-									<Typography variant="body2">
-										<strong>{t('yourAnswer')}:</strong> {result.userAnswer || t('empty')}
-									</Typography>
-									<Typography variant="body2">
-										<strong>{t('correctAnswer')}:</strong> {result.correctAnswer}
-									</Typography>
-								</Alert>
-							</Box>
+							<div className={cn(
+								"mt-4 p-3 rounded-lg",
+								isDark
+									? "bg-red-500/10 border border-red-500/30"
+									: "bg-red-50 border border-red-200"
+							)}>
+								<p className={cn(
+									"text-sm",
+									isDark ? "text-red-300" : "text-red-700"
+								)}>
+									<strong>{t('yourAnswer')}:</strong> {result.userAnswer || t('empty')}
+								</p>
+								<p className={cn(
+									"text-sm",
+									isDark ? "text-red-300" : "text-red-700"
+								)}>
+									<strong>{t('correctAnswer')}:</strong> {result.correctAnswer}
+								</p>
+							</div>
 						)}
-					</Paper>
+					</Card>
 				)
 			})}
 
 			{/* Submit Button */}
-			<Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+			<div className="flex justify-center mt-6">
 				<Button
-					variant="contained"
 					onClick={submitted ? handleReset : handleSubmit}
-					startIcon={submitted ? <Refresh /> : null}
 					disabled={!submitted && !allFieldsFilled()}
-					sx={{
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						px: 4,
-						py: 1.5,
-						fontSize: '1rem',
-						fontWeight: 600,
-						'&:disabled': {
-							background: isDark ? 'rgba(100, 116, 139, 0.3)' : 'rgba(203, 213, 225, 0.5)',
-						}
-					}}>
+					className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 disabled:opacity-50"
+				>
+					{submitted && <RotateCcw className="w-5 h-5 mr-2" />}
 					{submitted ? t('tryAgain') : t('checkAnswer')}
 				</Button>
-			</Box>
-		</Box>
+			</div>
+		</div>
 	)
 }
 

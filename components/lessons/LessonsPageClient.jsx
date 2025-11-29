@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import LessonsMenu from '@/components/lessons/LessonsMenu'
 import Lesson from '@/components/lessons/Lesson'
-import { Stack } from '@mui/material'
 
 const LessonsPageClient = ({ initialLessons }) => {
 	const router = useRouter()
@@ -72,27 +71,7 @@ const LessonsPageClient = ({ initialLessons }) => {
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 			/>
 
-			<Stack
-				direction={{ xs: 'column', md: 'row' }}
-				spacing={{ xs: 0, md: 4 }}
-				sx={{
-					width: {
-						xs: '100%',
-						lg: '85%',
-						xl: '80%',
-					},
-					margin: 'auto',
-					px: { xs: 0, md: 2 },
-					mt: {
-						xs: '6rem',
-						md: '8rem',
-					},
-					mb: {
-						xs: '6rem',
-						md: '8rem',
-					},
-					alignItems: 'flex-start',
-				}}>
+			<div className="flex flex-col md:flex-row gap-0 md:gap-8 w-full lg:w-[85%] xl:w-[80%] mx-auto px-0 md:px-4 mt-24 md:mt-32 mb-24 md:mb-32 items-start">
 				<LessonsMenu
 					lessonSlug={slug}
 					lessonsInfos={lessonsInfos}
@@ -102,7 +81,7 @@ const LessonsPageClient = ({ initialLessons }) => {
 				/>
 
 				<Lesson lesson={selectedLesson} />
-			</Stack>
+			</div>
 		</>
 	)
 }

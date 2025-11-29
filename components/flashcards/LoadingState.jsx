@@ -2,34 +2,28 @@
  * Loading state component for flashcards
  */
 
-import { IconButton } from '@mui/material'
-import { CloseRounded } from '@mui/icons-material'
+import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 import styles from '@/styles/FlashCards.module.css'
 
 export function LoadingState({ onClose, isDark }) {
 	const t = useTranslations('words')
 
-	const closeButtonStyle = {
-		position: 'absolute',
-		top: '1rem',
-		right: '1rem',
-		color: isDark ? '#a78bfa' : '#667eea',
-		transition: 'all 0.2s ease',
-		'&:hover': {
-			background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(102, 126, 234, 0.1)',
-			transform: 'rotate(90deg) scale(1.1)',
-		},
-	}
-
 	return (
 		<div className={isDark ? styles.containerDark : styles.container}>
-			<IconButton
+			<button
 				onClick={onClose}
-				className={styles.closeIcon}
-				sx={closeButtonStyle}>
-				<CloseRounded sx={{ fontSize: '2rem' }} />
-			</IconButton>
+				className={cn(
+					"absolute top-4 right-4 p-2 rounded-lg transition-all duration-200",
+					isDark
+						? "text-violet-400 hover:bg-violet-500/20"
+						: "text-violet-600 hover:bg-violet-500/10",
+					"hover:rotate-90 hover:scale-110"
+				)}
+			>
+				<X className="w-8 h-8" />
+			</button>
 			<div className={styles.wordsContainer}>
 				<p className={styles.statsText}>{t('loading')}</p>
 			</div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { Box, CircularProgress, Typography } from '@mui/material'
+import { Loader2 } from 'lucide-react'
 import { logger } from '@/utils/logger'
 import { exchangeVkCode, validateVkAuth } from '@/app/actions/vkauth'
 
@@ -47,7 +47,7 @@ export default function AuthCallback() {
 						})
 
 						if (!exchangeResult.success) {
-							logger.error('❌ Exchange failed with error:', exchangeResult.error)
+							logger.error('Exchange failed with error:', exchangeResult.error)
 							throw new Error(exchangeResult.error || 'Failed to exchange code')
 						}
 
@@ -67,7 +67,7 @@ export default function AuthCallback() {
 						})
 
 						if (!data.success) {
-							logger.error('❌ Validation failed with error:', data.error)
+							logger.error('Validation failed with error:', data.error)
 							throw new Error(data.error || 'Authentication failed')
 						}
 
@@ -88,7 +88,7 @@ export default function AuthCallback() {
 						router.replace('/materials')
 						return
 					} catch (vkError) {
-						logger.error('❌ VK ID authentication error:', vkError)
+						logger.error('VK ID authentication error:', vkError)
 						logger.error('Error name:', vkError.name)
 						logger.error('Error message:', vkError.message)
 						logger.error('Error stack:', vkError.stack)
@@ -122,7 +122,7 @@ export default function AuthCallback() {
 					const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
 					if (sessionError || !session) {
-						logger.error('❌ No session after PKCE exchange:', sessionError)
+						logger.error('No session after PKCE exchange:', sessionError)
 						router.replace('/login?error=auth_failed')
 						return
 					}
@@ -144,7 +144,7 @@ export default function AuthCallback() {
 					const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
 					if (sessionError || !session) {
-						logger.error('❌ No session after PKCE exchange:', sessionError)
+						logger.error('No session after PKCE exchange:', sessionError)
 						router.replace('/reset-password?error=access_denied&error_code=otp_expired')
 						return
 					}
@@ -217,43 +217,14 @@ export default function AuthCallback() {
 	}, [router, searchParams])
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-			}}>
-			<CircularProgress
-				size={60}
-				sx={{
-					color: 'white',
-					mb: 3,
-				}}
-			/>
-			<Typography
-				variant="h5"
-				sx={{
-					color: 'white',
-					fontWeight: 600,
-					textAlign: 'center',
-					px: 3,
-				}}>
+		<div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+			<Loader2 className="h-16 w-16 text-white mb-6 animate-spin" />
+			<h1 className="text-2xl text-white font-semibold text-center px-6">
 				{statusMessage}
-			</Typography>
-			<Typography
-				variant="body1"
-				sx={{
-					color: 'rgba(255, 255, 255, 0.8)',
-					mt: 1,
-					textAlign: 'center',
-					px: 3,
-				}}>
+			</h1>
+			<p className="text-white/80 mt-2 text-center px-6">
 				You will be redirected in a moment
-			</Typography>
-		</Box>
+			</p>
+		</div>
 	)
 }
-

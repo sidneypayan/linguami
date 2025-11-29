@@ -16,6 +16,7 @@ module.exports = {
   			'gradient-shift': 'gradient-shift 8s ease infinite',
   			'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
   			'glow': 'glow 2s ease-in-out infinite alternate',
+  			'shimmer': 'shimmer 2s infinite',
   		},
   		keyframes: {
   			'float': {
@@ -42,6 +43,10 @@ module.exports = {
   			'expandPulse': {
   				'0%, 100%': { transform: 'scale(1)', opacity: '0.5' },
   				'50%': { transform: 'scale(1.2)', opacity: '0.8' },
+  			},
+  			'shimmer': {
+  				'0%': { transform: 'translateX(-100%)' },
+  				'100%': { transform: 'translateX(100%)' },
   			},
   		},
   		borderRadius: {

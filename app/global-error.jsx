@@ -2,7 +2,6 @@
 
 import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
-import { Box, Button, Container, Typography } from '@mui/material'
 
 export default function GlobalError({ error, reset }) {
 	useEffect(() => {
@@ -13,27 +12,21 @@ export default function GlobalError({ error, reset }) {
 	return (
 		<html>
 			<body>
-				<Container maxWidth="sm" sx={{ py: 8 }}>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							gap: 3,
-							textAlign: 'center',
-						}}
-					>
-						<Typography variant="h4" component="h1" gutterBottom>
+				<div className="max-w-md mx-auto py-16 px-4">
+					<div className="flex flex-col items-center gap-6 text-center">
+						<h1 className="text-2xl font-bold">
 							Oops! Something went wrong
-						</Typography>
-						<Typography variant="body1" color="text.secondary">
+						</h1>
+						<p className="text-gray-600">
 							We have been notified and are working on it.
-						</Typography>
-						<Button variant="contained" onClick={() => reset()}>
+						</p>
+						<button
+							onClick={() => reset()}
+							className="px-6 py-3 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-600 transition-colors">
 							Try again
-						</Button>
-					</Box>
-				</Container>
+						</button>
+					</div>
+				</div>
 			</body>
 		</html>
 	)

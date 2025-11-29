@@ -3,18 +3,18 @@
  */
 
 import { useState, useEffect } from 'react'
-import { IconButton } from '@mui/material'
 import {
-	CloseRounded,
-	SwapHorizRounded,
-	PauseCircleRounded,
-	ThumbDownRounded,
-	ThumbUpRounded,
-	SentimentSatisfiedAltRounded,
-	SentimentVeryDissatisfiedRounded,
-} from '@mui/icons-material'
+	X,
+	ArrowLeftRight,
+	PauseCircle,
+	ThumbsDown,
+	ThumbsUp,
+	Smile,
+	Frown,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { BUTTON_TYPES, CARD_STATES } from '@/utils/spacedRepetition'
+import { cn } from '@/lib/utils'
 import styles from '@/styles/FlashCards.module.css'
 
 export function FlashcardReviewCard({
@@ -49,18 +49,6 @@ export function FlashcardReviewCard({
 		setShowAnswer(false)
 	}, [currentCard?.id])
 
-	const closeButtonStyle = {
-		position: 'absolute',
-		top: '1rem',
-		right: '1rem',
-		color: isDark ? '#a78bfa' : '#667eea',
-		transition: 'all 0.2s ease',
-		'&:hover': {
-			background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(102, 126, 234, 0.1)',
-			transform: 'rotate(90deg) scale(1.1)',
-		},
-	}
-
 	// Get source and translation words
 	const sourceWord = currentCard?.[`word_${userLearningLanguage}`]
 	const translationWord = currentCard?.[`word_${locale}`]
@@ -78,12 +66,18 @@ export function FlashcardReviewCard({
 	return (
 		<div className={isDark ? styles.containerDark : styles.container}>
 			{/* Close button */}
-			<IconButton
+			<button
 				onClick={onClose}
-				className={styles.closeIcon}
-				sx={closeButtonStyle}>
-				<CloseRounded sx={{ fontSize: '2rem' }} />
-			</IconButton>
+				className={cn(
+					"absolute top-4 right-4 p-2 rounded-lg transition-all duration-200",
+					isDark
+						? "text-violet-400 hover:bg-violet-500/20"
+						: "text-violet-600 hover:bg-violet-500/10",
+					"hover:rotate-90 hover:scale-110"
+				)}
+			>
+				<X className="w-8 h-8" />
+			</button>
 
 			{/* Time up banner */}
 			{isTimeUp && (
@@ -127,7 +121,7 @@ export function FlashcardReviewCard({
 						className={styles.reverseBtn}
 						onClick={onToggleReversed}
 						title={t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}>
-						<SwapHorizRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
+						<ArrowLeftRight className="w-5 h-5 mr-1" />
 						{t(isReversed ? 'reverse_btn_fr_ru' : 'reverse_btn_ru_fr')}
 					</button>
 				</div>
@@ -156,7 +150,7 @@ export function FlashcardReviewCard({
 								className={styles.againBtn}
 								onClick={() => handleReviewClick(BUTTON_TYPES.AGAIN)}
 								title={t('again_btn')}>
-								<SentimentVeryDissatisfiedRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
+								<Frown className="w-6 h-6 mb-1" />
 								<span className={styles.btnLabel}>{t('again_btn')}</span>
 							</button>
 
@@ -164,7 +158,7 @@ export function FlashcardReviewCard({
 								className={styles.hardBtn}
 								onClick={() => handleReviewClick(BUTTON_TYPES.HARD)}
 								title={t('hard_btn')}>
-								<ThumbDownRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
+								<ThumbsDown className="w-5 h-5 mb-1" />
 								<span className={styles.btnLabel}>{t('hard_btn')}</span>
 							</button>
 
@@ -172,7 +166,7 @@ export function FlashcardReviewCard({
 								className={styles.goodBtn}
 								onClick={() => handleReviewClick(BUTTON_TYPES.GOOD)}
 								title={t('good_btn')}>
-								<ThumbUpRounded sx={{ fontSize: '1.4rem', mb: 0.5 }} />
+								<ThumbsUp className="w-5 h-5 mb-1" />
 								<span className={styles.btnLabel}>{t('good_btn')}</span>
 							</button>
 
@@ -180,7 +174,7 @@ export function FlashcardReviewCard({
 								className={styles.easyBtn}
 								onClick={() => handleReviewClick(BUTTON_TYPES.EASY)}
 								title={t('easy_btn')}>
-								<SentimentSatisfiedAltRounded sx={{ fontSize: '1.5rem', mb: 0.5 }} />
+								<Smile className="w-6 h-6 mb-1" />
 								<span className={styles.btnLabel}>{t('easy_btn')}</span>
 							</button>
 						</div>
@@ -190,7 +184,7 @@ export function FlashcardReviewCard({
 							className={styles.suspendBtn}
 							onClick={onSuspend}
 							title={t('suspend_btn')}>
-							<PauseCircleRounded sx={{ fontSize: '1.2rem', mr: 0.5 }} />
+							<PauseCircle className="w-5 h-5 mr-1" />
 							{t('suspend_btn')}
 						</button>
 					</>

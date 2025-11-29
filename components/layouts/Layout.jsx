@@ -6,44 +6,33 @@ import BottomNav from './BottomNav'
 import EmailVerificationBanner from '../auth/EmailVerificationBanner'
 import { useFlashcards } from '@/context/flashcards'
 import FlashCards from '../games/Flashcards'
-import { Box, useTheme, CssBaseline } from '@mui/material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 const Layout = ({ children }) => {
 	const { isFlashcardsOpen } = useFlashcards()
-	const theme = useTheme()
+	const { isDark } = useThemeMode()
 
 	return isFlashcardsOpen ? (
 		<FlashCards />
 	) : (
-		<>
-			<CssBaseline />
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					minHeight: '100vh',
-					bgcolor: 'background.default',
-					background: theme.palette.mode === 'dark'
-						? 'background.default'
-						: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
-					color: 'text.primary',
-					transition: 'background-color 0.3s ease, color 0.3s ease',
-				}}>
-				<Navbar />
-				<EmailVerificationBanner />
-				<Box
-					component='main'
-					sx={{
-						flex: 1,
-						display: 'flex',
-						flexDirection: 'column',
-					}}>
-					{children}
-				</Box>
-				<Footer />
-				<BottomNav />
-			</Box>
-		</>
+		<div
+			className={cn(
+				'flex flex-col min-h-screen',
+				'transition-colors duration-300',
+				isDark
+					? 'bg-slate-950 text-slate-100'
+					: 'bg-gradient-to-b from-slate-50 to-white text-slate-900'
+			)}
+		>
+			<Navbar />
+			<EmailVerificationBanner />
+			<main className="flex-1 flex flex-col">
+				{children}
+			</main>
+			<Footer />
+			<BottomNav />
+		</div>
 	)
 }
 
