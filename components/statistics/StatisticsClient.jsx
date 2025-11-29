@@ -596,9 +596,9 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 						<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
 
 						{/* Character Rank Banner */}
-						<div className="max-w-3xl mx-auto mb-10">
+						<div className="max-w-3xl mx-auto mb-10 shadow-xl rounded-2xl">
 							{/* Image */}
-							<div className="relative rounded-t-2xl overflow-hidden shadow-lg h-40 md:h-52">
+							<div className="relative rounded-t-2xl overflow-hidden h-40 md:h-52">
 								<div
 									className="absolute inset-0"
 									style={{
