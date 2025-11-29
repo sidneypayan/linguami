@@ -445,7 +445,7 @@
     "accessDenied": "Accès refusé",
     "accessDeniedMessage": "Cette page est réservée aux administrateurs. Vous n'avez pas les permissions nécessaires pour y accéder.",
     "guest_mode": "Mode Invité",
-    "guest_mode_description": "Créez un compte pour sauvegarder vos progrès !",
+    "guest_mode_description": "Créez un compte pour commencer l'aventure et sauvegarder vos progrès",
     "guest_leaderboard_title": "Rejoignez la compétition !",
     "guest_leaderboard_description": "Créez un compte pour gagner de l'XP et de l'or, débloquer des récompenses, grimper dans le classement et défier d'autres apprenants !",
     "create_account": "Créer un compte",

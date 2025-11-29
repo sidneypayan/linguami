@@ -110,8 +110,8 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 					<GraduationCap className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
 					<span className="relative z-10">{t('learn')}</span>
 					{userLearningLanguage && (
-						<div className="p-[3px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
-							<div className="w-6 h-6 rounded-full overflow-hidden">
+						<div className="p-[2px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
+							<div className="w-5 h-5 rounded-full overflow-hidden">
 								{getFlag(userLearningLanguage)}
 							</div>
 						</div>
@@ -141,8 +141,8 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 								<GraduationCap className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
 								<span className="relative z-10">{t('learn')}</span>
 								{userLearningLanguage && (
-									<div className="p-[3px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
-										<div className="w-6 h-6 rounded-full overflow-hidden">
+									<div className="p-[2px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
+										<div className="w-5 h-5 rounded-full overflow-hidden">
 											{getFlag(userLearningLanguage)}
 										</div>
 									</div>

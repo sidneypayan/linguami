@@ -61,59 +61,79 @@ const GuestHeader = ({ t, isDark, size = 'normal', onClose, avatarUrl }) => (
 	<div className={cn(
 		'relative overflow-hidden',
 		'bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900',
-		size === 'large' ? 'p-6 sm:p-8' : 'p-5'
+		size === 'large' ? 'p-5 sm:p-6' : 'p-4'
 	)}>
 		{/* Background glow */}
 		<div className="absolute inset-0 pointer-events-none">
 			<div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-violet-500/30 rounded-full blur-3xl" />
-			{size === 'large' && (
-				<div className="absolute bottom-0 right-0 w-32 h-32 bg-cyan-500/20 rounded-full blur-3xl" />
-			)}
 		</div>
 
-		<div className="relative z-10 text-center">
-			{/* Avatar */}
-			{size === 'large' && (
-				<div className="flex justify-center mb-4">
-					<div className={cn(
-						'w-24 h-24 sm:w-28 sm:h-28 rounded-full',
-						'bg-gradient-to-br from-violet-500 to-cyan-500 p-1',
-						'shadow-lg shadow-violet-500/50'
-					)}>
-						<Avatar className="w-full h-full border-[3px] border-slate-900">
-							<AvatarImage src={avatarUrl} alt="Guest" />
-							<AvatarFallback className="bg-slate-800">
-								<User className="w-12 h-12 text-violet-300" />
-							</AvatarFallback>
-						</Avatar>
-					</div>
-				</div>
-			)}
-
-			<h3 className={cn(
-				'font-bold text-white',
-				size === 'large' ? 'text-xl sm:text-2xl mb-3' : 'text-lg mb-2'
+		<div className="relative z-10">
+			{/* Title */}
+			<div className={cn(
+				'text-center border-b border-violet-500/30',
+				size === 'large' ? 'mb-3 pb-3' : 'mb-2 pb-2'
 			)}>
-				{t('guest_mode')}
-			</h3>
+				<h3 className={cn(
+					'font-bold tracking-wide',
+					'bg-gradient-to-r from-violet-300 via-cyan-300 to-violet-300',
+					'bg-clip-text text-transparent',
+					size === 'large' ? 'text-xl sm:text-2xl' : 'text-lg'
+				)}>
+					{t('guest_mode')}
+				</h3>
+			</div>
+
+			{/* Avatar */}
+			<div className={cn(
+				'flex justify-center',
+				size === 'large' ? 'mb-3' : 'mb-2'
+			)}>
+				<div className={cn(
+					'relative rounded-full',
+					'bg-gradient-to-br from-violet-500 to-cyan-500 p-1',
+					'shadow-lg shadow-violet-500/50',
+					size === 'large' ? 'w-28 h-28 sm:w-32 sm:h-32' : 'w-24 h-24'
+				)}>
+					<Avatar className="w-full h-full border-[3px] border-slate-900">
+						<AvatarImage src={avatarUrl} alt="Guest" />
+						<AvatarFallback className="bg-slate-800">
+							<User className={cn(
+								'text-violet-300',
+								size === 'large' ? 'w-12 h-12' : 'w-9 h-9'
+							)} />
+						</AvatarFallback>
+					</Avatar>
+				</div>
+			</div>
+
+			{/* Subtitle */}
 			<p className={cn(
-				'text-white/80',
-				size === 'large' ? 'text-base mb-6 max-w-xs mx-auto' : 'text-sm mb-4'
+				'text-center font-medium text-violet-200/80',
+				size === 'large' ? 'text-base mb-6 max-w-xs mx-auto' : 'text-sm mb-5'
 			)}>
 				{t('guest_mode_description')}
 			</p>
+
+			{/* Button with shine effect */}
 			<Link href="/signup" onClick={onClose}>
 				<Button
 					className={cn(
+						'relative overflow-hidden group',
 						'bg-gradient-to-r from-cyan-500 to-violet-500',
-						'text-white font-bold',
-						'shadow-lg shadow-cyan-500/30',
-						'hover:from-cyan-600 hover:to-violet-600',
-						'hover:shadow-xl hover:shadow-cyan-500/40',
-						size === 'large' ? 'w-full py-3 text-base' : 'w-full py-2.5'
+						'text-white font-bold tracking-wide',
+						'shadow-lg shadow-cyan-500/40',
+						'border border-white/20',
+						'transition-all duration-300',
+						'hover:shadow-xl hover:shadow-violet-500/50',
+						'hover:scale-[1.02] hover:-translate-y-0.5',
+						'active:scale-[0.98]',
+						size === 'large' ? 'w-full py-2.5 text-base' : 'w-full py-2'
 					)}
 				>
-					{t('create_account')}
+					{/* Shine effect */}
+					<span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+					<span className="relative z-10">{t('create_account')}</span>
 				</Button>
 			</Link>
 		</div>
@@ -126,25 +146,52 @@ const GuestHeader = ({ t, isDark, size = 'normal', onClose, avatarUrl }) => (
 const MenuItem = ({ href, icon: Icon, label, isDark, size = 'normal', onClick }) => (
 	<Link href={href} onClick={onClick}>
 		<div className={cn(
-			'flex items-center gap-3 rounded-xl cursor-pointer',
-			'font-medium transition-all duration-300',
-			isDark ? 'text-slate-200' : 'text-slate-700',
+			'relative flex items-center gap-3 rounded-xl cursor-pointer overflow-hidden',
+			'font-[450] tracking-wide transition-all duration-300',
+			isDark ? 'text-slate-300' : 'text-slate-600',
 			'hover:bg-gradient-to-r',
 			isDark
-				? 'hover:from-violet-500/20 hover:to-cyan-500/15'
-				: 'hover:from-violet-500/10 hover:to-cyan-500/8',
-			'hover:translate-x-1',
-			'border-l-2 border-transparent hover:border-violet-500',
+				? 'hover:from-violet-600/25 hover:via-purple-600/20 hover:to-cyan-600/15'
+				: 'hover:from-violet-500/15 hover:via-purple-500/10 hover:to-cyan-500/10',
+			'hover:translate-x-1.5',
+			'border-l-[3px] border-transparent',
+			'hover:border-l-[3px] hover:border-gradient-to-b hover:border-violet-400',
 			'group',
-			size === 'large' ? 'px-4 py-4 text-base' : 'px-3 py-2.5 text-[0.95rem]'
+			size === 'large' ? 'px-4 py-4 text-base' : 'px-3 py-3 text-[0.95rem]'
 		)}>
-			<Icon className={cn(
-				'transition-all duration-300',
-				isDark ? 'text-violet-400' : 'text-violet-500',
-				'group-hover:text-cyan-400 group-hover:scale-110',
-				size === 'large' ? 'w-6 h-6' : 'w-5 h-5'
+			{/* Magical glow effect on hover */}
+			<div className={cn(
+				'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+				'bg-gradient-to-r from-violet-500/5 via-transparent to-cyan-500/5'
 			)} />
-			<span>{label}</span>
+
+			{/* Icon with enhanced glow */}
+			<div className="relative">
+				<Icon className={cn(
+					'relative z-10 transition-all duration-300',
+					isDark ? 'text-violet-400' : 'text-violet-500',
+					'group-hover:text-cyan-400 group-hover:scale-110',
+					'group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]',
+					size === 'large' ? 'w-6 h-6' : 'w-5 h-5'
+				)} />
+				{/* Icon background glow */}
+				<div className={cn(
+					'absolute inset-0 rounded-full blur-md transition-opacity duration-300',
+					'bg-violet-500/40 opacity-0 group-hover:opacity-100',
+					size === 'large' ? '-m-1' : '-m-0.5'
+				)} />
+			</div>
+
+			{/* Text with magical gradient on hover */}
+			<span className={cn(
+				'relative z-10 transition-all duration-300',
+				'group-hover:text-transparent group-hover:bg-clip-text',
+				isDark
+					? 'group-hover:bg-gradient-to-r group-hover:from-violet-200 group-hover:via-cyan-300 group-hover:to-violet-200'
+					: 'group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:via-cyan-500 group-hover:to-violet-500'
+			)}>
+				{label}
+			</span>
 		</div>
 	</Link>
 )
@@ -241,11 +288,21 @@ const GuestMenu = () => {
 							))}
 						</div>
 
-						{/* Separator */}
-						<div className={cn(
-							'mx-6 h-px',
-							isDark ? 'bg-violet-500/30' : 'bg-violet-500/20'
-						)} />
+						{/* Ornate separator */}
+						<div className="relative py-3 px-6">
+							<div className={cn(
+								'h-px',
+								isDark ? 'bg-violet-500/30' : 'bg-violet-500/20'
+							)} />
+							{/* Center diamond ornament */}
+							<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+								<div className={cn(
+									'w-2.5 h-2.5 rotate-45',
+									isDark ? 'bg-violet-500/50' : 'bg-violet-500/30',
+									'shadow-[0_0_10px_rgba(139,92,246,0.4)]'
+								)} />
+							</div>
+						</div>
 
 						{/* Auth Items */}
 						<div className="p-4 space-y-1">
@@ -292,69 +349,130 @@ const GuestMenu = () => {
 					)}
 				>
 					{/* Guest Header */}
-					<GuestHeader t={t} isDark={isDark} />
+					<GuestHeader t={t} isDark={isDark} avatarUrl={avatarUrl} />
 
 					{/* Menu Items */}
-					<div className="py-2">
+					<div className="py-2 space-y-0.5">
 						{menuItems.map((item) => {
 							const Icon = item.icon
 							return (
 								<Link key={item.href} href={item.href}>
 									<DropdownMenuItem className={cn(
-										'mx-2 rounded-xl cursor-pointer',
-										'font-medium text-[0.95rem]',
+										'relative mx-2 rounded-xl cursor-pointer overflow-hidden',
+										'font-[450] tracking-wide text-[0.95rem]',
 										'transition-all duration-300',
-										isDark ? 'text-slate-200' : 'text-slate-700',
+										isDark ? 'text-slate-300' : 'text-slate-600',
 										'hover:bg-gradient-to-r',
 										isDark
-											? 'hover:from-violet-500/20 hover:to-cyan-500/15'
-											: 'hover:from-violet-500/10 hover:to-cyan-500/8',
-										'hover:translate-x-1',
-										'hover:border-l-2 hover:border-violet-500',
+											? 'hover:from-violet-600/25 hover:via-purple-600/20 hover:to-cyan-600/15'
+											: 'hover:from-violet-500/15 hover:via-purple-500/10 hover:to-cyan-500/10',
+										'hover:translate-x-1.5',
+										'border-l-[3px] border-transparent',
+										'hover:border-violet-400',
 										'group'
 									)}>
-										<Icon className={cn(
-											'w-5 h-5 transition-all duration-300',
-											isDark ? 'text-violet-400' : 'text-violet-500',
-											'group-hover:text-cyan-400 group-hover:scale-110'
+										{/* Magical glow effect */}
+										<div className={cn(
+											'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+											'bg-gradient-to-r from-violet-500/5 via-transparent to-cyan-500/5'
 										)} />
-										<span>{item.label}</span>
+
+										{/* Icon with glow */}
+										<div className="relative">
+											<Icon className={cn(
+												'relative z-10 w-5 h-5 transition-all duration-300',
+												isDark ? 'text-violet-400' : 'text-violet-500',
+												'group-hover:text-cyan-400 group-hover:scale-110',
+												'group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+											)} />
+											<div className={cn(
+												'absolute inset-0 -m-0.5 rounded-full blur-md transition-opacity duration-300',
+												'bg-violet-500/40 opacity-0 group-hover:opacity-100'
+											)} />
+										</div>
+
+										{/* Text with magical gradient */}
+										<span className={cn(
+											'relative z-10 transition-all duration-300',
+											'group-hover:text-transparent group-hover:bg-clip-text',
+											isDark
+												? 'group-hover:bg-gradient-to-r group-hover:from-violet-200 group-hover:via-cyan-300 group-hover:to-violet-200'
+												: 'group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:via-cyan-500 group-hover:to-violet-500'
+										)}>
+											{item.label}
+										</span>
 									</DropdownMenuItem>
 								</Link>
 							)
 						})}
 					</div>
 
-					<DropdownMenuSeparator className={cn(
-						'mx-4',
-						isDark ? 'bg-violet-500/30' : 'bg-violet-500/20'
-					)} />
+					{/* Ornate separator */}
+					<div className="relative py-2 px-4">
+						<div className={cn(
+							'h-px',
+							isDark ? 'bg-violet-500/30' : 'bg-violet-500/20'
+						)} />
+						{/* Center diamond ornament */}
+						<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+							<div className={cn(
+								'w-2 h-2 rotate-45',
+								isDark ? 'bg-violet-500/50' : 'bg-violet-500/30',
+								'shadow-[0_0_8px_rgba(139,92,246,0.3)]'
+							)} />
+						</div>
+					</div>
 
 					{/* Auth Items */}
-					<div className="py-2">
+					<div className="py-2 space-y-0.5">
 						{authItems.map((item) => {
 							const Icon = item.icon
 							return (
 								<Link key={item.href} href={item.href}>
 									<DropdownMenuItem className={cn(
-										'mx-2 rounded-xl cursor-pointer',
-										'font-medium text-[0.95rem]',
+										'relative mx-2 rounded-xl cursor-pointer overflow-hidden',
+										'font-[450] tracking-wide text-[0.95rem]',
 										'transition-all duration-300',
-										isDark ? 'text-slate-200' : 'text-slate-700',
+										isDark ? 'text-slate-300' : 'text-slate-600',
 										'hover:bg-gradient-to-r',
 										isDark
-											? 'hover:from-violet-500/20 hover:to-cyan-500/15'
-											: 'hover:from-violet-500/10 hover:to-cyan-500/8',
-										'hover:translate-x-1',
-										'hover:border-l-2 hover:border-violet-500',
+											? 'hover:from-violet-600/25 hover:via-purple-600/20 hover:to-cyan-600/15'
+											: 'hover:from-violet-500/15 hover:via-purple-500/10 hover:to-cyan-500/10',
+										'hover:translate-x-1.5',
+										'border-l-[3px] border-transparent',
+										'hover:border-violet-400',
 										'group'
 									)}>
-										<Icon className={cn(
-											'w-5 h-5 transition-all duration-300',
-											isDark ? 'text-violet-400' : 'text-violet-500',
-											'group-hover:text-cyan-400 group-hover:scale-110'
+										{/* Magical glow effect */}
+										<div className={cn(
+											'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+											'bg-gradient-to-r from-violet-500/5 via-transparent to-cyan-500/5'
 										)} />
-										<span>{item.label}</span>
+
+										{/* Icon with glow */}
+										<div className="relative">
+											<Icon className={cn(
+												'relative z-10 w-5 h-5 transition-all duration-300',
+												isDark ? 'text-violet-400' : 'text-violet-500',
+												'group-hover:text-cyan-400 group-hover:scale-110',
+												'group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+											)} />
+											<div className={cn(
+												'absolute inset-0 -m-0.5 rounded-full blur-md transition-opacity duration-300',
+												'bg-violet-500/40 opacity-0 group-hover:opacity-100'
+											)} />
+										</div>
+
+										{/* Text with magical gradient */}
+										<span className={cn(
+											'relative z-10 transition-all duration-300',
+											'group-hover:text-transparent group-hover:bg-clip-text',
+											isDark
+												? 'group-hover:bg-gradient-to-r group-hover:from-violet-200 group-hover:via-cyan-300 group-hover:to-violet-200'
+												: 'group-hover:bg-gradient-to-r group-hover:from-violet-500 group-hover:via-cyan-500 group-hover:to-violet-500'
+										)}>
+											{item.label}
+										</span>
 									</DropdownMenuItem>
 								</Link>
 							)

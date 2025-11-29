@@ -155,7 +155,7 @@ export function SessionConfigModal({ open, onClose, onStart, totalWords = 0 }) {
 										key={minutes}
 										onClick={() => setTimeLimit(minutes)}
 										className={cn(
-											"flex-1 min-w-[70px] py-3 px-2 rounded-xl font-bold text-base transition-all",
+											"flex-1 min-w-[70px] py-3 px-2 rounded-xl font-bold text-base transition-all whitespace-nowrap",
 											"border-2",
 											timeLimit === minutes
 												? "bg-gradient-to-r from-violet-500/90 to-cyan-500/80 text-white border-violet-500/60"
