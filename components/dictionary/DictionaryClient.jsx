@@ -64,7 +64,7 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 					<div className="flex items-center gap-3 flex-wrap flex-1 min-w-0">
 						{/* Source word badge */}
 						<Badge variant="outline" className={cn(
-							'px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base',
+							'px-3 py-1.5 rounded-lg font-bold text-base sm:text-lg',
 							'bg-gradient-to-r from-violet-500/20 to-cyan-500/20',
 							'border-violet-500/30 backdrop-blur-sm',
 							isDark ? 'text-violet-300' : 'text-violet-600'
@@ -74,13 +74,13 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 
 						{/* Arrow */}
 						<ArrowRight className={cn(
-							'w-4 h-4 flex-shrink-0',
+							'w-5 h-5 flex-shrink-0',
 							isDark ? 'text-slate-500' : 'text-slate-400'
 						)} />
 
 						{/* Translation */}
 						<span className={cn(
-							'font-semibold text-sm sm:text-base',
+							'font-semibold text-base sm:text-lg',
 							isDark ? 'text-slate-200' : 'text-slate-700'
 						)}>
 							{translation || '—'}
@@ -125,11 +125,11 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 					)}>
 						<div className="flex items-start gap-2">
 							<Quote className={cn(
-								'w-4 h-4 flex-shrink-0 mt-0.5',
+								'w-5 h-5 flex-shrink-0 mt-0.5',
 								isDark ? 'text-violet-400/60' : 'text-violet-400'
 							)} />
 							<p className={cn(
-								'text-sm italic',
+								'text-base italic',
 								isDark ? 'text-slate-400' : 'text-slate-500'
 							)}>
 								{word.word_sentence}
@@ -324,7 +324,7 @@ const EmptyState = ({ translations, t, isDark, onAddWord }) => {
 						</h1>
 
 						<p className={cn(
-							'text-center mb-8',
+							'text-center text-base mb-8',
 							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}>
 							{t('nowords')}
@@ -352,7 +352,7 @@ const EmptyState = ({ translations, t, isDark, onAddWord }) => {
 										<feature.icon className="w-5 h-5 text-white" />
 									</div>
 									<span className={cn(
-										'font-semibold',
+										'font-semibold text-base',
 										isDark ? 'text-slate-200' : 'text-slate-700'
 									)}>
 										{feature.text}
@@ -582,7 +582,7 @@ const DictionaryClient = ({ translations }) => {
 						</h1>
 					</div>
 					<p className={cn(
-						'text-sm',
+						'text-base',
 						isDark ? 'text-slate-400' : 'text-slate-500'
 					)}>
 						Ta collection de mots magiques
@@ -662,7 +662,7 @@ const DictionaryClient = ({ translations }) => {
 										setCurrentPage(1)
 									}}
 									className={cn(
-										'pl-10 pr-4 py-2.5 rounded-xl h-11',
+										'pl-10 pr-4 py-2.5 rounded-xl h-12 text-base',
 										'border transition-all',
 										isDark
 											? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
@@ -680,7 +680,7 @@ const DictionaryClient = ({ translations }) => {
 								isDark ? 'border-violet-500/20' : 'border-violet-200/50'
 							)}>
 								<span className={cn(
-									'text-xs font-semibold uppercase tracking-wide whitespace-nowrap px-2',
+									'text-sm font-semibold uppercase tracking-wide whitespace-nowrap px-2',
 									isDark ? 'text-violet-400' : 'text-violet-600'
 								)}>
 									{translations.words_per_page}
@@ -695,7 +695,7 @@ const DictionaryClient = ({ translations }) => {
 												size="sm"
 												onClick={() => handleWordsPerPageChange(value)}
 												className={cn(
-													'px-3 py-1.5 rounded-md text-sm font-bold h-auto',
+													'px-3 py-1.5 rounded-md text-base font-bold h-auto',
 													isActive
 														? [
 															'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
@@ -721,12 +721,12 @@ const DictionaryClient = ({ translations }) => {
 
 							{/* Word count badge */}
 							<Badge className={cn(
-								'px-5 py-2.5 rounded-xl',
+								'px-5 py-2.5 rounded-xl text-base',
 								'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
 								'shadow-lg shadow-violet-500/40',
 								'border border-white/20 text-white font-black'
 							)}>
-								<BookMarked className="w-4 h-4 mr-2 text-white/80" />
+								<BookMarked className="w-5 h-5 mr-2 text-white/80" />
 								{filteredUserWords.length} {filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
 							</Badge>
 						</div>

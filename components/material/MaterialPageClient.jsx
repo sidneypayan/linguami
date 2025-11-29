@@ -816,7 +816,7 @@ const Material = ({
 							</div>
 
 							{/* Exercise Section */}
-							{isUserAdmin && <ExerciseSection materialId={currentMaterial.id} />}
+							<ExerciseSection materialId={currentMaterial.id} />
 
 							{/* Finish button */}
 							{isUserLoggedIn && (() => {

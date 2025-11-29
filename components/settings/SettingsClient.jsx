@@ -329,7 +329,7 @@ const SettingsClient = ({ translations }) => {
 							{translations.settingsTitle || 'Grimoire du Heros'}
 						</h1>
 					</div>
-					<p className={cn('text-sm', isDark ? 'text-slate-500' : 'text-slate-400')}>
+					<p className={cn('text-base', isDark ? 'text-slate-500' : 'text-slate-400')}>
 						{translations.settingsSubtitle || 'Personnalisez votre aventure'}
 					</p>
 				</div>
@@ -457,7 +457,7 @@ const SettingsClient = ({ translations }) => {
 									<User className="w-5 h-5 text-white" />
 								</div>
 								<CardTitle className={cn(
-									'font-bold uppercase tracking-wider text-sm',
+									'font-bold uppercase tracking-wider text-base',
 									isDark ? 'text-violet-300' : 'text-violet-700'
 								)}>
 									{translations.personalInfo}
@@ -512,7 +512,7 @@ const SettingsClient = ({ translations }) => {
 									<Globe className="w-5 h-5 text-white" />
 								</div>
 								<CardTitle className={cn(
-									'font-bold uppercase tracking-wider text-sm',
+									'font-bold uppercase tracking-wider text-base',
 									isDark ? 'text-cyan-300' : 'text-cyan-700'
 								)}>
 									{translations.languagePreferences}
@@ -561,7 +561,7 @@ const SettingsClient = ({ translations }) => {
 									<Target className="w-5 h-5 text-white" />
 								</div>
 								<CardTitle className={cn(
-									'font-bold uppercase tracking-wider text-sm',
+									'font-bold uppercase tracking-wider text-base',
 									isDark ? 'text-amber-300' : 'text-amber-700'
 								)}>
 									{translations.goalsAndMotivation}
@@ -571,7 +571,7 @@ const SettingsClient = ({ translations }) => {
 
 						<CardContent>
 							<p className={cn(
-								'text-xs font-semibold uppercase tracking-wider mb-4',
+								'text-sm font-semibold uppercase tracking-wider mb-4',
 								isDark ? 'text-amber-400/70' : 'text-amber-600/70'
 							)}>
 								{translations.dailyXpGoal}
@@ -624,7 +624,7 @@ const SettingsClient = ({ translations }) => {
 
 												<div>
 													<span className={cn(
-														'font-bold text-sm block',
+														'font-bold text-base block',
 														isSelected
 															? colors.text
 															: isDark ? 'text-white' : 'text-slate-900'
@@ -632,12 +632,12 @@ const SettingsClient = ({ translations }) => {
 														{goal.label}
 													</span>
 													{goal.value > 0 && (
-														<span className={cn('text-xs font-bold', colors.text)}>
+														<span className={cn('text-sm font-bold', colors.text)}>
 															{goal.value} XP
 														</span>
 													)}
 												</div>
-												<p className={cn('text-[10px]', isDark ? 'text-slate-500' : 'text-slate-400')}>
+												<p className={cn('text-xs', isDark ? 'text-slate-500' : 'text-slate-400')}>
 													{goal.time}
 												</p>
 
@@ -672,7 +672,7 @@ const SettingsClient = ({ translations }) => {
 									<Shield className="w-5 h-5 text-white" />
 								</div>
 								<CardTitle className={cn(
-									'font-bold uppercase tracking-wider text-sm',
+									'font-bold uppercase tracking-wider text-base',
 									isDark ? 'text-red-300' : 'text-red-700'
 								)}>
 									{translations.privacyAndSecurity}
@@ -682,13 +682,18 @@ const SettingsClient = ({ translations }) => {
 
 						<CardContent className="space-y-4">
 							{/* Leaderboard Toggle */}
-							<div className="flex items-center justify-between p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+							<div className={cn(
+								'flex items-center justify-between p-3 rounded-xl border',
+								isDark
+									? 'bg-slate-800/30 border-slate-700/30'
+									: 'bg-slate-100 border-slate-200'
+							)}>
 								<div>
-									<p className={cn('font-semibold text-sm', isDark ? 'text-white' : 'text-slate-900')}>
+									<p className={cn('font-semibold text-base', isDark ? 'text-white' : 'text-slate-900')}>
 										<Trophy className="w-4 h-4 inline mr-2 text-amber-500" />
 										{translations.showInLeaderboard}
 									</p>
-									<p className={cn('text-xs mt-0.5', isDark ? 'text-slate-500' : 'text-slate-400')}>
+									<p className={cn('text-sm mt-0.5', isDark ? 'text-slate-500' : 'text-slate-400')}>
 										{translations.showInLeaderboardDesc}
 									</p>
 								</div>
@@ -703,13 +708,13 @@ const SettingsClient = ({ translations }) => {
 							<Button
 								variant="outline"
 								className={cn(
-									'w-full gap-2 border-2 h-11',
+									'w-full gap-2 border-2 h-12 text-base',
 									'border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500',
 									'transition-all hover:scale-[1.02]'
 								)}
 								onClick={() => setChangePasswordDialogOpen(true)}
 							>
-								<Lock className="w-4 h-4" />
+								<Lock className="w-5 h-5" />
 								{translations.changePassword}
 							</Button>
 
@@ -717,13 +722,13 @@ const SettingsClient = ({ translations }) => {
 							<Button
 								variant="outline"
 								className={cn(
-									'w-full gap-2 border-2 h-11',
+									'w-full gap-2 border-2 h-12 text-base',
 									'border-red-600/40 text-red-500 hover:bg-red-600/10 hover:border-red-600',
 									'transition-all hover:scale-[1.02]'
 								)}
 								onClick={() => setDeleteAccountDialogOpen(true)}
 							>
-								<Trash2 className="w-4 h-4" />
+								<Trash2 className="w-5 h-5" />
 								{translations.deleteAccount}
 							</Button>
 						</CardContent>
@@ -966,7 +971,7 @@ const SettingsField = ({
 				</div>
 
 				<div className="flex-1 min-w-0">
-					<p className={cn('text-[10px] font-bold uppercase tracking-wider mb-0.5', colors.label)}>
+					<p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', colors.label)}>
 						{label}
 					</p>
 
@@ -974,7 +979,7 @@ const SettingsField = ({
 						type === 'select' ? (
 							<Select value={rawValue || value} onValueChange={onChange}>
 								<SelectTrigger className={cn(
-									'w-full h-10 rounded-lg border-2',
+									'w-full h-11 rounded-lg border-2 text-base',
 									isDark
 										? 'bg-slate-800/80 border-slate-600 text-white'
 										: 'bg-white border-slate-200 text-slate-900',
@@ -991,7 +996,7 @@ const SettingsField = ({
 											key={opt.value}
 											value={opt.value}
 											className={cn(
-												'rounded-md cursor-pointer',
+												'rounded-md cursor-pointer text-base',
 												isDark ? 'focus:bg-violet-500/20' : 'focus:bg-violet-50'
 											)}
 										>
@@ -1006,7 +1011,7 @@ const SettingsField = ({
 								value={value}
 								onChange={(e) => onChange(e.target.value)}
 								className={cn(
-									'h-10 rounded-lg border-2',
+									'h-11 rounded-lg border-2 text-base',
 									isDark
 										? 'bg-slate-800/80 border-slate-600 text-white'
 										: 'bg-white border-slate-200 text-slate-900',
@@ -1016,11 +1021,11 @@ const SettingsField = ({
 						)
 					) : (
 						<>
-							<p className={cn('font-semibold text-sm', isDark ? 'text-white' : 'text-slate-900')}>
+							<p className={cn('font-semibold text-base', isDark ? 'text-white' : 'text-slate-900')}>
 								{value || '-'}
 							</p>
 							{hint && (
-								<p className={cn('text-[10px] italic mt-0.5', isDark ? 'text-slate-500' : 'text-slate-400')}>
+								<p className={cn('text-xs italic mt-0.5', isDark ? 'text-slate-500' : 'text-slate-400')}>
 									{hint}
 								</p>
 							)}
@@ -1083,14 +1088,14 @@ const SettingsField = ({
 // Password Input Component
 const PasswordInput = ({ label, value, onChange, show, onToggleShow, isDark }) => (
 	<div>
-		<label className="block text-xs font-bold uppercase tracking-wider text-red-300 mb-2">{label}</label>
+		<label className="block text-sm font-bold uppercase tracking-wider text-red-300 mb-2">{label}</label>
 		<div className="relative">
 			<Input
 				type={show ? 'text' : 'password'}
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				className={cn(
-					'h-11 pr-10 rounded-lg border-2',
+					'h-12 pr-10 rounded-lg border-2 text-base',
 					'bg-slate-800/50 border-red-500/30 text-white',
 					'focus-visible:ring-red-500 focus-visible:border-red-500'
 				)}
