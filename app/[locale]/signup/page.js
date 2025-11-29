@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
-import { useTheme } from '@/context/ThemeContext'
+import { useThemeMode } from '@/context/ThemeContext'
 import { supabase } from '@/lib/supabase'
 import { AVATARS } from '@/utils/avatars'
 import AuthLayout from '@/components/auth/AuthLayout'
@@ -60,7 +60,7 @@ const initialState = {
 const Signup = () => {
 	const t = useTranslations('register')
 	const { register, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
-	const { isDark } = useTheme()
+	const { isDark } = useThemeMode()
 	const [values, setValues] = useState(initialState)
 	const [showAvatars, setShowAvatars] = useState(false)
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)

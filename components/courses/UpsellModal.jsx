@@ -2,7 +2,7 @@
 
 import { X, CheckCircle, Trophy, BookOpen, Zap } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useTheme } from '@/context/ThemeContext'
+import { useThemeMode } from '@/context/ThemeContext'
 import {
 	Dialog,
 	DialogContent,
@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils'
 
 const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }) => {
 	const t = useTranslations('common')
-	const { isDark } = useTheme()
+	const { isDark } = useThemeMode()
 
 	// Prix selon le statut premium
 	const regularPrice = 20

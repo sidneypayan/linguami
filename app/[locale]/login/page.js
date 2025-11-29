@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useState, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
-import { useTheme } from '@/context/ThemeContext'
+import { useThemeMode } from '@/context/ThemeContext'
 import AuthLayout from '@/components/auth/AuthLayout'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 const Login = () => {
 	const t = useTranslations('register')
 	const { login, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
-	const { isDark } = useTheme()
+	const { isDark } = useThemeMode()
 	const [values, setValues] = useState({ email: '', password: '' })
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 	const [turnstileToken, setTurnstileToken] = useState(null)

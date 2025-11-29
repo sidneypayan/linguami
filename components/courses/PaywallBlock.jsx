@@ -3,7 +3,7 @@
 import { Lock, Star, CheckCircle } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
-import { useTheme } from '@/context/ThemeContext'
+import { useThemeMode } from '@/context/ThemeContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
  * PaywallBlock - Encourage users to sign up or purchase the method
  */
 const PaywallBlock = ({ isLoggedIn }) => {
-	const { isDark } = useTheme()
+	const { isDark } = useThemeMode()
 	const t = useTranslations('common')
 
 	const benefits = [
