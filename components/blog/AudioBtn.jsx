@@ -1,10 +1,13 @@
-import { Button } from '@mui/material'
-import React from 'react'
+'use client'
 
-const AudioBtn = () => {
-	const handleClick = () => {}
+import { Button } from '@/components/ui/button'
 
-	return <Button onClick={() => audio.play()}>{children}</Button>
+const AudioBtn = ({ audio, children }) => {
+	return (
+		<Button onClick={() => audio?.play()} variant="outline">
+			{children}
+		</Button>
+	)
 }
 
 export default AudioBtn

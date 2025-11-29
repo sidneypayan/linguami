@@ -1,19 +1,16 @@
+'use client'
+
 import React from 'react'
-import { Paper, Box, Typography, Grid, FormControlLabel, Switch, Button } from '@mui/material'
-import { LockRounded, DeleteForeverRounded } from '@mui/icons-material'
+import { Lock, Trash2 } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 
 /**
  * Privacy & Security Section
  * Displays privacy toggle and security actions
- *
- * @param {Object} props
- * @param {boolean} props.isDark - Dark mode flag
- * @param {Object} props.translations - Translation object
- * @param {Object} props.formData - Form data object
- * @param {boolean} props.loading - Loading state
- * @param {Function} props.handleToggle - Toggle handler (field) => (event) => void
- * @param {Function} props.setChangePasswordDialogOpen - Set change password dialog state
- * @param {Function} props.setDeleteAccountDialogOpen - Set delete account dialog state
  */
 export const SecuritySection = ({
 	isDark,
@@ -25,143 +22,71 @@ export const SecuritySection = ({
 	setDeleteAccountDialogOpen,
 }) => {
 	return (
-		<Grid item xs={12} md={6}>
-			<Paper
-				elevation={0}
-				sx={{
-					borderRadius: 4,
-					overflow: 'hidden',
-					height: '100%',
-					position: 'relative',
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%)',
-					backdropFilter: 'blur(20px)',
-					border: '2px solid rgba(239, 68, 68, 0.2)',
-					boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.05) inset',
-					transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background: 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.08) 0%, transparent 50%)',
-						pointerEvents: 'none',
-						opacity: 0,
-						transition: 'opacity 0.4s ease',
-					},
-					'&:hover': {
-						transform: 'translateY(-4px)',
-						boxShadow: '0 12px 48px rgba(239, 68, 68, 0.25), 0 0 0 1px rgba(239, 68, 68, 0.3) inset',
-						borderColor: 'rgba(239, 68, 68, 0.4)',
-						'&::before': {
-							opacity: 1,
-						},
-					},
-				}}>
-				<Box
-					sx={{
-						px: 3,
-						py: 2.5,
-						background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.85) 0%, rgba(185, 28, 28, 0.85) 100%)',
-						borderBottom: '1px solid rgba(239, 68, 68, 0.3)',
-						position: 'relative',
-						'&::after': {
-							content: '""',
-							position: 'absolute',
-							bottom: -1,
-							left: '50%',
-							transform: 'translateX(-50%)',
-							width: '60%',
-							height: 2,
-							background: 'linear-gradient(90deg, transparent 0%, #ef4444 50%, transparent 100%)',
-							boxShadow: '0 0 10px rgba(239, 68, 68, 0.6)',
-						},
-					}}>
-					<Typography
-						variant='h6'
-						sx={{
-							fontWeight: 700,
-							background: 'linear-gradient(135deg, #fff 0%, #fca5a5 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							fontSize: '1rem',
-							textTransform: 'uppercase',
-							letterSpacing: '0.1em',
-							textAlign: 'center',
-							textShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-						}}>
-						{translations.privacyAndSecurity}
-					</Typography>
-				</Box>
+		<Card
+			className={cn(
+				'h-full overflow-hidden border-2 border-red-500/20 transition-all duration-400',
+				'hover:-translate-y-1 hover:border-red-500/40',
+				'shadow-[0_8px_32px_rgba(239,68,68,0.15),0_0_0_1px_rgba(239,68,68,0.05)_inset]',
+				'hover:shadow-[0_12px_48px_rgba(239,68,68,0.25),0_0_0_1px_rgba(239,68,68,0.3)_inset]',
+				isDark
+					? 'bg-gradient-to-br from-slate-800/95 to-slate-900/98'
+					: 'bg-gradient-to-br from-white/95 to-slate-50/98',
+				'backdrop-blur-xl'
+			)}>
+			{/* Header */}
+			<CardHeader
+				className={cn(
+					'px-4 py-3 border-b border-red-500/30 relative',
+					'bg-gradient-to-r from-red-600/85 to-red-700/85'
+				)}>
+				{/* Glow line */}
+				<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_10px_rgba(239,68,68,0.6)]" />
+				<CardTitle className="text-center text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-white to-red-300 bg-clip-text text-transparent">
+					{translations.privacyAndSecurity}
+				</CardTitle>
+			</CardHeader>
 
-				<Box sx={{ p: 3 }}>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={formData.showInLeaderboard}
-								onChange={handleToggle('showInLeaderboard')}
-								disabled={loading}
-								sx={{
-									'& .MuiSwitch-switchBase.Mui-checked': {
-										color: '#10b981',
-									},
-									'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-										backgroundColor: '#10b981',
-									},
-								}}
-							/>
-						}
-						label={
-							<Box>
-								<Typography variant='body2' sx={{ fontWeight: 600 }}>
-									{translations.showInLeaderboard}
-								</Typography>
-								<Typography variant='caption' sx={{ color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)' }}>
-									{translations.showInLeaderboardDesc}
-								</Typography>
-							</Box>
-						}
-						sx={{ mb: 3 }}
+			<CardContent className="p-4 space-y-4">
+				{/* Leaderboard Toggle */}
+				<div className="flex items-center justify-between mb-6">
+					<div className="space-y-1">
+						<Label className="text-sm font-semibold">
+							{translations.showInLeaderboard}
+						</Label>
+						<p className={cn(
+							'text-xs',
+							isDark ? 'text-white/50' : 'text-black/50'
+						)}>
+							{translations.showInLeaderboardDesc}
+						</p>
+					</div>
+					<Switch
+						checked={formData.showInLeaderboard}
+						onCheckedChange={(checked) => handleToggle('showInLeaderboard')({ target: { checked } })}
+						disabled={loading}
+						className="data-[state=checked]:bg-emerald-500"
 					/>
+				</div>
 
-					<Button
-						fullWidth
-						variant='outlined'
-						startIcon={<LockRounded />}
-						onClick={() => setChangePasswordDialogOpen(true)}
-						sx={{
-							mb: 2,
-							borderColor: '#ef4444',
-							color: '#ef4444',
-							'&:hover': {
-								borderColor: '#dc2626',
-								bgcolor: 'rgba(239, 68, 68, 0.05)',
-							},
-						}}>
-						{translations.changePassword}
-					</Button>
+				{/* Change Password Button */}
+				<Button
+					variant="outline"
+					className="w-full border-red-500 text-red-500 hover:bg-red-500/10 hover:border-red-600"
+					onClick={() => setChangePasswordDialogOpen(true)}>
+					<Lock className="h-4 w-4 mr-2" />
+					{translations.changePassword}
+				</Button>
 
-					<Button
-						fullWidth
-						variant='outlined'
-						startIcon={<DeleteForeverRounded />}
-						onClick={() => setDeleteAccountDialogOpen(true)}
-						sx={{
-							borderColor: '#dc2626',
-							color: '#dc2626',
-							'&:hover': {
-								borderColor: '#b91c1c',
-								bgcolor: 'rgba(220, 38, 38, 0.05)',
-							},
-						}}>
-						{translations.deleteAccount}
-					</Button>
-				</Box>
-			</Paper>
-		</Grid>
+				{/* Delete Account Button */}
+				<Button
+					variant="outline"
+					className="w-full border-red-600 text-red-600 hover:bg-red-600/10 hover:border-red-700"
+					onClick={() => setDeleteAccountDialogOpen(true)}>
+					<Trash2 className="h-4 w-4 mr-2" />
+					{translations.deleteAccount}
+				</Button>
+			</CardContent>
+		</Card>
 	)
 }
 

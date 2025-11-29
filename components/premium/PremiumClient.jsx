@@ -1,18 +1,9 @@
 'use client'
 
-import {
-	Container,
-	Stack,
-	Card,
-	Typography,
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	Divider,
-	Button,
-} from '@mui/material'
-import { CheckCircle } from '@mui/icons-material'
+import { CheckCircle } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 
 export default function PremiumClient({ translations, jsonLd }) {
 	const pricingCards = [
@@ -24,7 +15,7 @@ export default function PremiumClient({ translations, jsonLd }) {
 		{
 			duration: '3 mois',
 			price: '15€',
-			priceId: 'price_3MonthsId', // Update with actual price ID
+			priceId: 'price_3MonthsId',
 		},
 	]
 
@@ -49,106 +40,76 @@ export default function PremiumClient({ translations, jsonLd }) {
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			)}
-			<Container sx={{ margin: '5rem auto', maxWidth: '100%', width: '800px' }}>
-			<Typography variant='h3' component='h1' textAlign='center' mb={5}>
-				Nos offres premium
-			</Typography>
-			<Divider sx={{ marginBottom: '4rem' }} />
-			<Stack
-				gap={5}
-				sx={{
-					flexDirection: {
-						sm: 'row',
-					},
-				}}>
-				{pricingCards.map((card, index) => (
-					<Card
-						key={index}
-						sx={{
-							padding: '1rem',
-							maxWidth: '350px',
-							margin: '0 auto',
-							textAlign: 'center',
-						}}>
-						<Stack
-							padding='0 1rem'
-							direction='row'
-							justifyContent='space-between'>
-							<Typography variant='h5' component='h2' mb={3}>
-								{card.duration}
-							</Typography>
-							<Typography variant='h5' component='h2' mb={3}>
-								{card.price}
-							</Typography>
-						</Stack>
-						<Divider />
-						<List
-							sx={{
-								marginTop: '1rem',
-								width: '100%',
-								maxWidth: 360,
-								bgcolor: 'background.paper',
-							}}
-							aria-label='features'>
-							{premiumFeatures.map((feature, featureIndex) => (
-								<ListItem key={featureIndex} disablePadding>
-									<ListItemIcon>
-										<CheckCircle sx={{ color: '#1e6091' }} />
-									</ListItemIcon>
-									<ListItemText primary={feature} />
-								</ListItem>
-							))}
-						</List>
-						{index === 0 && (
-							<form action='/create-checkout-session' method='POST'>
-								<input type='hidden' name='priceId' value={card.priceId} />
-								<Button
-									type='submit'
-									variant='contained'
-									size='large'
-									sx={{ backgroundColor: '#1e6091', margin: '1rem' }}>
-									Choisir
-								</Button>
-							</form>
-						)}
-						{index === 1 && (
-							<Button
-								variant='contained'
-								size='large'
-								sx={{ backgroundColor: '#1e6091', margin: '1rem' }}>
-								Choisir
-							</Button>
-						)}
-					</Card>
-				))}
-			</Stack>
+			<div className="max-w-[800px] mx-auto mt-20 mb-20 px-4">
+				<h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+					Nos offres premium
+				</h1>
+				<Separator className="mb-16" />
 
-			<Card
-				sx={{
-					padding: '1rem',
-					marginTop: '5rem',
-				}}>
-				<Typography textAlign='center' variant='h4' mb={3}>
-					Grâce à votre soutien nous pouvons :
-				</Typography>
-				<Divider />
-				<List
-					sx={{
-						marginTop: '1rem',
-						bgcolor: 'background.paper',
-					}}
-					aria-label='support'>
-					{supportFeatures.map((feature, index) => (
-						<ListItem key={index} disablePadding>
-							<ListItemIcon>
-								<CheckCircle sx={{ color: '#1e6091' }} />
-							</ListItemIcon>
-							<ListItemText primary={feature} />
-						</ListItem>
+				<div className="flex flex-col sm:flex-row gap-8">
+					{pricingCards.map((card, index) => (
+						<Card
+							key={index}
+							className="max-w-[350px] mx-auto text-center flex-1">
+							<CardHeader className="pb-2">
+								<div className="flex justify-between items-center px-2">
+									<CardTitle className="text-xl">{card.duration}</CardTitle>
+									<span className="text-xl font-semibold">{card.price}</span>
+								</div>
+							</CardHeader>
+							<Separator />
+							<CardContent className="pt-4">
+								<ul className="space-y-3 mb-6">
+									{premiumFeatures.map((feature, featureIndex) => (
+										<li key={featureIndex} className="flex items-center gap-3">
+											<CheckCircle className="h-5 w-5 text-[#1e6091] flex-shrink-0" />
+											<span className="text-left">{feature}</span>
+										</li>
+									))}
+								</ul>
+
+								{index === 0 && (
+									<form action='/create-checkout-session' method='POST'>
+										<input type='hidden' name='priceId' value={card.priceId} />
+										<Button
+											type='submit'
+											size="lg"
+											className="bg-[#1e6091] hover:bg-[#1a5580] text-white">
+											Choisir
+										</Button>
+									</form>
+								)}
+								{index === 1 && (
+									<Button
+										size="lg"
+										className="bg-[#1e6091] hover:bg-[#1a5580] text-white">
+										Choisir
+									</Button>
+								)}
+							</CardContent>
+						</Card>
 					))}
-				</List>
-			</Card>
-		</Container>
+				</div>
+
+				<Card className="mt-20">
+					<CardHeader>
+						<CardTitle className="text-center text-2xl">
+							Grace a votre soutien nous pouvons :
+						</CardTitle>
+					</CardHeader>
+					<Separator />
+					<CardContent className="pt-6">
+						<ul className="space-y-3">
+							{supportFeatures.map((feature, index) => (
+								<li key={index} className="flex items-center gap-3">
+									<CheckCircle className="h-5 w-5 text-[#1e6091] flex-shrink-0" />
+									<span>{feature}</span>
+								</li>
+							))}
+						</ul>
+					</CardContent>
+				</Card>
+			</div>
 		</>
 	)
 }

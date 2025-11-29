@@ -1,185 +1,108 @@
 'use client'
 
-import { Container, Box, Typography, useTheme } from '@mui/material'
-import { Shield } from '@mui/icons-material'
+import { Shield } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import { useThemeMode } from '@/context/ThemeContext'
+import { cn } from '@/lib/utils'
 
 export default function PrivacyClient({ translations, formattedDate, sections }) {
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useTheme()
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				pt: { xs: '5rem', md: '6rem' },
-				pb: 8,
-				background: isDark
-					? 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)'
-					: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 50%, #e0e7ff 100%)',
-			}}>
-			<Container maxWidth="md">
+		<div
+			className={cn(
+				'min-h-screen pt-20 md:pt-24 pb-16',
+				isDark
+					? 'bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900'
+					: 'bg-gradient-to-br from-white via-slate-50 to-indigo-100'
+			)}>
+			<div className="max-w-3xl mx-auto px-4">
 				{/* Header */}
-				<Box
-					sx={{
-						textAlign: 'center',
-						mb: 6,
-					}}>
-					<Box
-						sx={{
-							display: 'inline-flex',
-							p: 2,
-							borderRadius: 3,
-							background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%)',
-							mb: 3,
-						}}>
-						<Shield sx={{ fontSize: '3rem', color: '#667eea' }} />
-					</Box>
+				<div className="text-center mb-12">
+					<div className="inline-flex p-4 rounded-xl bg-gradient-to-br from-indigo-500/15 to-purple-500/15 mb-6">
+						<Shield className="h-12 w-12 text-indigo-500" />
+					</div>
 
-					<Typography
-						variant="h2"
-						sx={{
-							fontWeight: 800,
-							fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-							mb: 2,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-						}}>
+					<h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
 						{translations.title}
-					</Typography>
+					</h1>
 
-					<Typography
-						variant="body1"
-						sx={{
-							color: 'text.secondary',
-							fontSize: '1.125rem',
-							maxWidth: '600px',
-							mx: 'auto',
-						}}>
+					<p className={cn(
+						'text-lg max-w-xl mx-auto',
+						isDark ? 'text-slate-400' : 'text-slate-600'
+					)}>
 						{translations.subtitle}
-					</Typography>
+					</p>
 
-					<Typography
-						variant="caption"
-						sx={{
-							display: 'block',
-							color: 'text.secondary',
-							mt: 2,
-							fontSize: '0.875rem',
-						}}>
+					<p className={cn(
+						'mt-4 text-sm',
+						isDark ? 'text-slate-500' : 'text-slate-500'
+					)}>
 						{translations.last_updated} {formattedDate}
-					</Typography>
-				</Box>
+					</p>
+				</div>
 
 				{/* Introduction */}
-				<Box
-					sx={{
-						mb: 6,
-						p: 4,
-						borderRadius: 3,
-						background: isDark
-							? 'rgba(139, 92, 246, 0.1)'
-							: 'rgba(102, 126, 234, 0.05)',
-						border: '1px solid',
-						borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
-					}}>
-					<Typography
-						variant="body1"
-						sx={{ lineHeight: 1.8 }}
+				<div
+					className={cn(
+						'mb-12 p-6 rounded-xl border',
+						isDark
+							? 'bg-violet-500/10 border-violet-500/30'
+							: 'bg-indigo-500/5 border-indigo-500/20'
+					)}>
+					<div
+						className="leading-relaxed"
 						dangerouslySetInnerHTML={{ __html: translations.intro }}
 					/>
-				</Box>
+				</div>
 
 				{/* Sections */}
 				{sections.map((section, index) => (
-					<Box
+					<div
 						key={index}
-						sx={{
-							mb: 5,
-							p: 4,
-							borderRadius: 3,
-							background: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
-							border: '1px solid',
-							borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-							transition: 'all 0.3s ease',
-							'&:hover': {
-								transform: 'translateY(-2px)',
-								boxShadow: isDark
-									? '0 8px 24px rgba(139, 92, 246, 0.2)'
-									: '0 8px 24px rgba(0, 0, 0, 0.08)',
-							},
-						}}>
-						<Typography
-							variant="h5"
-							sx={{
-								fontWeight: 700,
-								mb: 2,
-								color: '#667eea',
-								fontSize: { xs: '1.25rem', sm: '1.5rem' },
-							}}>
+						className={cn(
+							'mb-8 p-6 rounded-xl border transition-all duration-300',
+							'hover:-translate-y-0.5',
+							isDark
+								? 'bg-slate-800/60 border-white/10 hover:shadow-[0_8px_24px_rgba(139,92,246,0.2)]'
+								: 'bg-white border-black/10 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]'
+						)}>
+						<h2 className="text-xl sm:text-2xl font-bold mb-4 text-indigo-500">
 							{section.title}
-						</Typography>
-						<Typography
-							variant="body1"
-							sx={{
-								lineHeight: 1.8,
-								whiteSpace: 'pre-line',
-								color: 'text.primary',
-							}}>
+						</h2>
+						<p className={cn(
+							'leading-relaxed whitespace-pre-line',
+							isDark ? 'text-slate-300' : 'text-slate-700'
+						)}>
 							{section.content}
-						</Typography>
-					</Box>
+						</p>
+					</div>
 				))}
 
 				{/* Footer CTA */}
-				<Box
-					sx={{
-						mt: 8,
-						p: 4,
-						borderRadius: 3,
-						textAlign: 'center',
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						color: 'white',
-					}}>
-					<Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+				<div className="mt-16 p-6 rounded-xl text-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+					<h3 className="text-xl font-bold mb-3">
 						{translations.cta_title}
-					</Typography>
-					<Typography variant="body1" sx={{ mb: 3, opacity: 0.9 }}>
+					</h3>
+					<p className="mb-4 opacity-90">
 						{translations.cta_subtitle}
-					</Typography>
-					<Link href="mailto:contact@linguami.com" style={{ textDecoration: 'none' }}>
-						<Typography
-							sx={{
-								color: 'white',
-								fontWeight: 600,
-								fontSize: '1.125rem',
-								textDecoration: 'underline',
-								'&:hover': {
-									opacity: 0.8,
-								},
-							}}>
-							contact@linguami.com
-						</Typography>
+					</p>
+					<Link
+						href="mailto:contact@linguami.com"
+						className="text-lg font-semibold underline hover:opacity-80 transition-opacity">
+						contact@linguami.com
 					</Link>
-				</Box>
+				</div>
 
 				{/* Link to Terms */}
-				<Box sx={{ mt: 4, textAlign: 'center' }}>
-					<Link href="/terms" style={{ textDecoration: 'none' }}>
-						<Typography
-							sx={{
-								color: '#667eea',
-								fontWeight: 600,
-								'&:hover': {
-									textDecoration: 'underline',
-								},
-							}}>
-							{translations.footer_link}
-						</Typography>
+				<div className="mt-8 text-center">
+					<Link
+						href="/terms"
+						className="text-indigo-500 font-semibold hover:underline">
+						{translations.footer_link}
 					</Link>
-				</Box>
-			</Container>
-		</Box>
+				</div>
+			</div>
+		</div>
 	)
 }

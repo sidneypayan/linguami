@@ -1,7 +1,6 @@
-import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
+import { useRef, useImperativeHandle, forwardRef } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
-import { Box } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { useThemeMode } from '@/context/ThemeContext'
 import { logger } from '@/utils/logger'
 
 /**
@@ -14,7 +13,7 @@ import { logger } from '@/utils/logger'
  * @param {string} action - Optional action name for analytics (e.g., 'signup', 'login')
  */
 const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, ref) => {
-	const theme = useTheme()
+	const { isDark } = useThemeMode()
 	const turnstileRef = useRef(null)
 
 	// Expose reset method to parent
@@ -29,7 +28,7 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 	const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 	if (!siteKey) {
-		logger.error('❌ NEXT_PUBLIC_TURNSTILE_SITE_KEY is not defined in environment variables')
+		logger.error('NEXT_PUBLIC_TURNSTILE_SITE_KEY is not defined in environment variables')
 		return null
 	}
 
@@ -37,33 +36,26 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 		if (onSuccess) {
 			onSuccess(token)
 		} else {
-			logger.error('❌ onSuccess callback is not defined!')
+			logger.error('onSuccess callback is not defined!')
 		}
 	}
 
 	const handleError = (error) => {
-		logger.error('❌ Turnstile error:', error)
+		logger.error('Turnstile error:', error)
 		if (onError) {
 			onError(error)
 		}
 	}
 
 	const handleExpire = () => {
-		logger.warn('⚠️ Turnstile token expired')
+		logger.warn('Turnstile token expired')
 		if (onError) {
 			onError('Token expired')
 		}
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				my: 2,
-			}}
-		>
+		<div className="flex justify-center items-center my-4">
 			<Turnstile
 				ref={turnstileRef}
 				siteKey={siteKey}
@@ -72,13 +64,13 @@ const TurnstileWidget = forwardRef(({ onSuccess, onError, action = 'submit' }, r
 				onExpire={handleExpire}
 				options={{
 					action: action,
-					theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
+					theme: isDark ? 'dark' : 'light',
 					size: 'normal',
 					retry: 'auto',
 					language: 'auto',
 				}}
 			/>
-		</Box>
+		</div>
 	)
 })
 

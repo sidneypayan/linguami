@@ -3,33 +3,31 @@
 import { useState, useEffect } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { validateWordPair } from '@/utils/validation'
 import { updateWordAction } from '@/app/actions/update-word-action'
 import toast from '@/utils/toast'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
+import { X, Pencil, Loader2 } from 'lucide-react'
 import {
 	Dialog,
-	DialogTitle,
 	DialogContent,
-	DialogActions,
-	TextField,
-	Button,
-	Box,
-	Typography,
-	IconButton,
-	CircularProgress,
-	useTheme,
-} from '@mui/material'
-import { Close, Edit } from '@mui/icons-material'
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 import { logger } from '@/utils/logger'
 
 const EditWordModal = ({ open, onClose, word }) => {
 	const t = useTranslations('words')
 	const queryClient = useQueryClient()
 	const params = useParams()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const { user, userLearningLanguage } = useUserContext()
 	const locale = params.locale
 
@@ -116,86 +114,42 @@ const EditWordModal = ({ open, onClose, word }) => {
 	if (!word) return null
 
 	return (
-		<Dialog
-			open={open}
-			onClose={handleClose}
-			maxWidth='sm'
-			fullWidth
-			PaperProps={{
-				sx: {
-					borderRadius: 4,
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)'
-						: 'linear-gradient(135deg, #fdfbfb 0%, #f7f7f7 100%)',
-					boxShadow: isDark
-						? '0 20px 60px rgba(139, 92, 246, 0.3)'
-						: '0 20px 60px rgba(0,0,0,0.15)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : 'none',
-				},
-			}}>
-			<DialogTitle sx={{ pb: 2, pt: 3, px: 4 }}>
-				<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-						<Box
-							sx={{
-								width: 40,
-								height: 40,
-								borderRadius: 2,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
-							}}>
-							<Edit sx={{ color: 'white' }} />
-						</Box>
-						<Typography variant='h5' component='div' sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
+		<Dialog open={open} onOpenChange={handleClose}>
+			<DialogContent className={cn(
+				"sm:max-w-md rounded-2xl border-2",
+				isDark
+					? "bg-slate-900 border-violet-500/30"
+					: "bg-white border-slate-200",
+				"shadow-2xl"
+			)}>
+				<DialogHeader className="pb-4">
+					<DialogTitle className="flex items-center gap-3">
+						<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+							<Pencil className="w-5 h-5 text-white" />
+						</div>
+						<span className={cn(
+							"text-xl font-bold",
+							isDark ? "text-slate-100" : "text-slate-800"
+						)}>
 							Modifier la traduction
-						</Typography>
-					</Box>
-					<IconButton
-						onClick={handleClose}
-						size='small'
-						sx={{
-							backgroundColor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0,0,0,0.04)',
-							color: isDark ? '#cbd5e1' : 'inherit',
-							'&:hover': {
-								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(0,0,0,0.08)',
-							},
-						}}>
-						<Close />
-					</IconButton>
-				</Box>
-			</DialogTitle>
+						</span>
+					</DialogTitle>
+				</DialogHeader>
 
-			<form onSubmit={handleSubmit}>
-				<DialogContent sx={{ px: { xs: 2, sm: 3, md: 4 }, py: 3 }}>
-					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+				<form onSubmit={handleSubmit}>
+					<div className="space-y-5 py-2">
 						{/* Champ pour le mot dans la langue d'apprentissage */}
-						<Box>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: 1,
-									mb: 1.5,
-								}}>
-								<Box
-									sx={{
-										width: 8,
-										height: 24,
-										borderRadius: 1,
-										background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-									}}
-								/>
-								<Typography
-									variant='subtitle1'
-									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
+						<div>
+							<div className="flex items-center gap-2 mb-2">
+								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-violet-500 to-purple-600" />
+								<label className={cn(
+									"font-semibold",
+									isDark ? "text-slate-100" : "text-slate-800"
+								)}>
 									{t('word_in_learning_language', { lang: getLearningLanguageName() })}
-								</Typography>
-							</Box>
-							<TextField
-								fullWidth
+								</label>
+							</div>
+							<Input
 								value={learningLangWord}
 								onChange={e => {
 									setLearningLangWord(e.target.value)
@@ -204,67 +158,35 @@ const EditWordModal = ({ open, onClose, word }) => {
 									}
 								}}
 								placeholder={`${t('example')}: ${userLearningLanguage === 'ru' ? 'привет' : 'bonjour'}`}
-								variant='outlined'
 								required
 								autoFocus
-								error={!!errors.learningLangWord}
-								helperText={errors.learningLangWord}
 								disabled={updateWordMutation.isPending}
-								inputProps={{ maxLength: 200 }}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 2,
-										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
-										color: isDark ? '#f1f5f9' : 'inherit',
-										fontSize: '1.1rem',
-										'& fieldset': {
-											borderWidth: 2,
-											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
-										},
-										'&:hover fieldset': {
-											borderColor: '#667eea',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: '#667eea',
-											borderWidth: 2,
-										},
-									},
-									'& .MuiInputBase-input::placeholder': {
-										color: isDark ? '#94a3b8' : 'inherit',
-										opacity: 1,
-									},
-									'& .MuiFormHelperText-root': {
-										color: isDark ? '#94a3b8' : 'inherit',
-									},
-								}}
+								maxLength={200}
+								className={cn(
+									"h-12 text-base rounded-xl border-2",
+									isDark
+										? "bg-slate-800/60 border-violet-500/30 focus:border-violet-500"
+										: "bg-white border-slate-200 focus:border-violet-500",
+									errors.learningLangWord && "border-red-500"
+								)}
 							/>
-						</Box>
+							{errors.learningLangWord && (
+								<p className="text-red-500 text-sm mt-1">{errors.learningLangWord}</p>
+							)}
+						</div>
 
 						{/* Champ pour le mot dans la langue du navigateur */}
-						<Box>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: 1,
-									mb: 1.5,
-								}}>
-								<Box
-									sx={{
-										width: 8,
-										height: 24,
-										borderRadius: 1,
-										background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-									}}
-								/>
-								<Typography
-									variant='subtitle1'
-									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
+						<div>
+							<div className="flex items-center gap-2 mb-2">
+								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-pink-400 to-rose-500" />
+								<label className={cn(
+									"font-semibold",
+									isDark ? "text-slate-100" : "text-slate-800"
+								)}>
 									{t('word_in_browser_language', { lang: getBrowserLanguageName() })}
-								</Typography>
-							</Box>
-							<TextField
-								fullWidth
+								</label>
+							</div>
+							<Input
 								value={browserLangWord}
 								onChange={e => {
 									setBrowserLangWord(e.target.value)
@@ -273,77 +195,40 @@ const EditWordModal = ({ open, onClose, word }) => {
 									}
 								}}
 								placeholder={`${t('example')}: ${locale === 'fr' ? 'bonjour' : 'привет'}`}
-								variant='outlined'
 								required
-								error={!!errors.browserLangWord}
-								helperText={errors.browserLangWord}
 								disabled={updateWordMutation.isPending}
-								inputProps={{ maxLength: 200 }}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 2,
-										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
-										color: isDark ? '#f1f5f9' : 'inherit',
-										fontSize: '1.1rem',
-										'& fieldset': {
-											borderWidth: 2,
-											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
-										},
-										'&:hover fieldset': {
-											borderColor: '#f093fb',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: '#f093fb',
-											borderWidth: 2,
-										},
-									},
-									'& .MuiInputBase-input::placeholder': {
-										color: isDark ? '#94a3b8' : 'inherit',
-										opacity: 1,
-									},
-									'& .MuiFormHelperText-root': {
-										color: isDark ? '#94a3b8' : 'inherit',
-									},
-								}}
+								maxLength={200}
+								className={cn(
+									"h-12 text-base rounded-xl border-2",
+									isDark
+										? "bg-slate-800/60 border-violet-500/30 focus:border-pink-500"
+										: "bg-white border-slate-200 focus:border-pink-500",
+									errors.browserLangWord && "border-red-500"
+								)}
 							/>
-						</Box>
+							{errors.browserLangWord && (
+								<p className="text-red-500 text-sm mt-1">{errors.browserLangWord}</p>
+							)}
+						</div>
 
 						{/* Champ optionnel pour la phrase de contexte */}
-						<Box>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: 1,
-									mb: 1.5,
-								}}>
-								<Box
-									sx={{
-										width: 8,
-										height: 24,
-										borderRadius: 1,
-										background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-									}}
-								/>
-								<Typography
-									variant='subtitle1'
-									sx={{ fontWeight: 700, color: isDark ? '#f1f5f9' : '#333' }}>
+						<div>
+							<div className="flex items-center gap-2 mb-2">
+								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
+								<label className={cn(
+									"font-semibold",
+									isDark ? "text-slate-100" : "text-slate-800"
+								)}>
 									{t('context_sentence_label')}
-								</Typography>
-								<Typography
-									variant='caption'
-									sx={{
-										color: isDark ? '#94a3b8' : '#718096',
-										fontStyle: 'italic',
-										fontWeight: 500,
-									}}>
+								</label>
+								<span className={cn(
+									"text-sm italic",
+									isDark ? "text-slate-400" : "text-slate-500"
+								)}>
 									({t('optional')})
-								</Typography>
-							</Box>
-							<TextField
-								fullWidth
-								multiline
-								rows={2}
+								</span>
+							</div>
+							<Textarea
 								value={contextSentence}
 								onChange={e => {
 									setContextSentence(e.target.value)
@@ -352,101 +237,67 @@ const EditWordModal = ({ open, onClose, word }) => {
 									}
 								}}
 								placeholder={t('context_sentence_placeholder')}
-								variant='outlined'
-								error={!!errors.contextSentence}
-								helperText={errors.contextSentence || t('context_sentence_helper')}
 								disabled={updateWordMutation.isPending}
-								inputProps={{ maxLength: 500 }}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 2,
-										backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'white',
-										color: isDark ? '#f1f5f9' : 'inherit',
-										fontSize: '1rem',
-										'& fieldset': {
-											borderWidth: 2,
-											borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
-										},
-										'&:hover fieldset': {
-											borderColor: '#10b981',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: '#10b981',
-											borderWidth: 2,
-										},
-									},
-									'& .MuiInputBase-input::placeholder': {
-										color: isDark ? '#94a3b8' : 'inherit',
-										opacity: 1,
-									},
-									'& .MuiFormHelperText-root': {
-										color: isDark ? '#94a3b8' : 'inherit',
-									},
-								}}
+								maxLength={500}
+								rows={2}
+								className={cn(
+									"text-base rounded-xl border-2 resize-none",
+									isDark
+										? "bg-slate-800/60 border-violet-500/30 focus:border-emerald-500"
+										: "bg-white border-slate-200 focus:border-emerald-500",
+									errors.contextSentence && "border-red-500"
+								)}
 							/>
-						</Box>
-					</Box>
-				</DialogContent>
+							{errors.contextSentence ? (
+								<p className="text-red-500 text-sm mt-1">{errors.contextSentence}</p>
+							) : (
+								<p className={cn(
+									"text-sm mt-1",
+									isDark ? "text-slate-400" : "text-slate-500"
+								)}>
+									{t('context_sentence_helper')}
+								</p>
+							)}
+						</div>
+					</div>
 
-				<DialogActions sx={{ px: { xs: 2, sm: 3, md: 4 }, pb: 3, pt: 2, gap: 2 }}>
-					<Button
-						onClick={handleClose}
-						variant='outlined'
-						size='large'
-						disabled={updateWordMutation.isPending}
-						sx={{
-							flex: { xs: 1, sm: 0 },
-							borderWidth: 2,
-							borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : '#e0e0e0',
-							color: isDark ? '#cbd5e1' : '#666',
-							fontWeight: 600,
-							textTransform: 'none',
-							borderRadius: 2,
-							minWidth: 120,
-							'&:hover': {
-								borderWidth: 2,
-								borderColor: isDark ? 'rgba(139, 92, 246, 0.5)' : '#bbb',
-								backgroundColor: isDark ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0,0,0,0.02)',
-							},
-						}}>
-						{t('cancel')}
-					</Button>
-					<Button
-						type='submit'
-						variant='contained'
-						size='large'
-						disabled={updateWordMutation.isPending}
-						sx={{
-							flex: { xs: 1, sm: 0 },
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-							fontWeight: 700,
-							textTransform: 'none',
-							borderRadius: 2,
-							minWidth: 140,
-							fontSize: '1rem',
-							transition: 'all 0.3s ease',
-							'&:hover': {
-								transform: 'translateY(-2px)',
-								boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
-								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-							},
-							'&.Mui-disabled': {
-								background: '#ccc',
-								color: 'white',
-							},
-						}}>
-						{updateWordMutation.isPending ? (
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-								<CircularProgress size={20} sx={{ color: 'white' }} />
-								Mise à jour...
-							</Box>
-						) : (
-							'Enregistrer'
-						)}
-					</Button>
-				</DialogActions>
-			</form>
+					<DialogFooter className="pt-4 gap-3">
+						<Button
+							type="button"
+							variant="outline"
+							onClick={handleClose}
+							disabled={updateWordMutation.isPending}
+							className={cn(
+								"flex-1 sm:flex-none min-w-[120px] rounded-xl border-2 font-semibold",
+								isDark
+									? "border-violet-500/30 text-slate-300 hover:bg-violet-500/10"
+									: "border-slate-200 hover:bg-slate-50"
+							)}
+						>
+							{t('cancel')}
+						</Button>
+						<Button
+							type="submit"
+							disabled={updateWordMutation.isPending}
+							className={cn(
+								"flex-1 sm:flex-none min-w-[140px] rounded-xl font-bold",
+								"bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700",
+								"shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50",
+								"transition-all hover:-translate-y-0.5"
+							)}
+						>
+							{updateWordMutation.isPending ? (
+								<>
+									<Loader2 className="w-5 h-5 mr-2 animate-spin" />
+									Mise à jour...
+								</>
+							) : (
+								'Enregistrer'
+							)}
+						</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
 		</Dialog>
 	)
 }

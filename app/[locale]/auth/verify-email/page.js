@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useTranslations, useLocale } from 'next-intl'
-import { Box, Typography, CircularProgress, Button, Card, Container } from '@mui/material'
-import { CheckCircleOutline, ErrorOutline, HomeRounded } from '@mui/icons-material'
+import { useTranslations } from 'next-intl'
+import { CheckCircle, XCircle, Home, Loader2 } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { verifyEmail } from '@/lib/emailVerification'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export default function VerifyEmail() {
 	const router = useRouter()
@@ -42,80 +44,34 @@ export default function VerifyEmail() {
 	}, [searchParams, router, t])
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				position: 'relative',
-				overflow: 'hidden',
-				py: 4,
-			}}>
-			<Container maxWidth='sm' sx={{ position: 'relative', zIndex: 1 }}>
-				<Card
-					sx={{
-						p: { xs: 3, sm: 5 },
-						borderRadius: 4,
-						boxShadow: '0 24px 60px rgba(0, 0, 0, 0.3)',
-						background: 'white',
-						textAlign: 'center',
-					}}>
+		<div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center py-8">
+			<div className="relative z-10 w-full max-w-md mx-auto px-4">
+				<Card className="p-6 sm:p-10 rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.3)] bg-white text-center">
 					{status === 'loading' && (
 						<>
-							<CircularProgress
-								size={80}
-								sx={{
-									color: '#667eea',
-									mb: 3,
-								}}
-							/>
-							<Typography variant='h5' sx={{ fontWeight: 600, color: '#2d3748' }}>
+							<Loader2 className="h-20 w-20 text-indigo-500 mx-auto mb-6 animate-spin" />
+							<h2 className="text-xl font-semibold text-slate-800">
 								{t('verifying') || 'Verifying...'}
-							</Typography>
+							</h2>
 						</>
 					)}
 
 					{status === 'success' && (
 						<>
-							<CheckCircleOutline
-								sx={{
-									fontSize: 100,
-									color: '#48bb78',
-									mb: 3,
-								}}
-							/>
-							<Typography
-								variant='h4'
-								sx={{
-									fontWeight: 800,
-									mb: 2,
-									background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									backgroundClip: 'text',
-								}}>
+							<CheckCircle className="h-24 w-24 text-emerald-500 mx-auto mb-6" />
+							<h1 className="text-2xl sm:text-3xl font-extrabold mb-3 bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">
 								{t('emailVerified') || 'Email Verified!'}
-							</Typography>
-							<Typography variant='body1' sx={{ color: '#718096', mb: 4 }}>
+							</h1>
+							<p className="text-slate-500 mb-8">
 								{t('emailVerifiedMessage') || 'Your email has been successfully verified. Redirecting...'}
-							</Typography>
-							<Link href='/' style={{ textDecoration: 'none' }}>
+							</p>
+							<Link href="/">
 								<Button
-									variant='contained'
-									startIcon={<HomeRounded />}
-									sx={{
-										background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-										color: 'white',
-										fontWeight: 600,
-										py: 1.5,
-										px: 4,
-										borderRadius: 2,
-										'&:hover': {
-											background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-										},
-									}}>
+									className={cn(
+										'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
+										'px-8 py-3 rounded-xl font-semibold'
+									)}>
+									<Home className="h-5 w-5 mr-2" />
 									{t('goHome') || 'Go Home'}
 								</Button>
 							</Link>
@@ -124,54 +80,26 @@ export default function VerifyEmail() {
 
 					{status === 'error' && (
 						<>
-							<ErrorOutline
-								sx={{
-									fontSize: 100,
-									color: '#f56565',
-									mb: 3,
-								}}
-							/>
-							<Typography
-								variant='h4'
-								sx={{
-									fontWeight: 800,
-									mb: 2,
-									background: 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)',
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									backgroundClip: 'text',
-								}}>
+							<XCircle className="h-24 w-24 text-red-500 mx-auto mb-6" />
+							<h1 className="text-2xl sm:text-3xl font-extrabold mb-3 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
 								{t('verificationFailed') || 'Verification Failed'}
-							</Typography>
-							<Typography variant='body1' sx={{ color: '#718096', mb: 1 }}>
-								{error}
-							</Typography>
-							<Typography variant='body2' sx={{ color: '#a0aec0', mb: 4 }}>
+							</h1>
+							<p className="text-slate-600 mb-2">{error}</p>
+							<p className="text-slate-400 text-sm mb-8">
 								{t('tokenExpiredMessage') || 'The link may have expired. You can request a new one from your profile.'}
-							</Typography>
-							<Link href='/' style={{ textDecoration: 'none' }}>
+							</p>
+							<Link href="/">
 								<Button
-									variant='outlined'
-									startIcon={<HomeRounded />}
-									sx={{
-										borderColor: '#667eea',
-										color: '#667eea',
-										fontWeight: 600,
-										py: 1.5,
-										px: 4,
-										borderRadius: 2,
-										'&:hover': {
-											borderColor: '#764ba2',
-											background: 'rgba(102, 126, 234, 0.05)',
-										},
-									}}>
+									variant="outline"
+									className="border-indigo-500 text-indigo-500 hover:bg-indigo-500/5 px-8 py-3 rounded-xl font-semibold">
+									<Home className="h-5 w-5 mr-2" />
 									{t('goHome') || 'Go Home'}
 								</Button>
 							</Link>
 						</>
 					)}
 				</Card>
-			</Container>
-		</Box>
+			</div>
+		</div>
 	)
 }

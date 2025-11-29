@@ -1,10 +1,14 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
-import { Box, Container, Typography, Button, Card } from '@mui/material'
-import { CheckCircleRounded } from '@mui/icons-material'
+import { CheckCircle } from 'lucide-react'
 import { useLessonStatus, useMarkLessonAsStudied } from '@/lib/lessons-client'
 import { useUserContext } from '@/context/user'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import toast from '@/utils/toast'
 import { getToastMessage } from '@/utils/toastMessages'
+import { cn } from '@/lib/utils'
 
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
@@ -32,231 +36,116 @@ const Lesson = ({ lesson }) => {
 
 	if (!lesson || !lesson.blocks || lesson.blocks.length === 0) {
 		return (
-			<Box
-				sx={{
-					display: { xs: 'none', md: 'block' },
-					margin: '0 auto',
-					backgroundColor: 'clrCardBg',
-					borderRadius: 5,
-					position: 'sticky',
-					top: '160px',
-				}}
-				maxWidth='md'
-				flex={1}
-				p={4}>
-				<Typography gutterBottom variant='h4'>
-					{t('title')}
-				</Typography>
-				<Typography variant='body1' color='text.secondary'>
-					{t('subtitle')}
-				</Typography>
-			</Box>
+			<div className="hidden md:block mx-auto bg-white rounded-2xl sticky top-40 flex-1 p-8 max-w-2xl">
+				<h2 className="text-2xl font-bold mb-2 text-slate-800">{t('title')}</h2>
+				<p className="text-slate-500">{t('subtitle')}</p>
+			</div>
 		)
 	}
 
 	return (
-		<Container
-			maxWidth='md'
-			sx={{
-				mt: { xs: '2rem', md: 0 },
-				mb: { xs: 8, md: 4 },
-			}}>
-			<Card
-				sx={{
-					p: { xs: 3, sm: 4, md: 5 },
-					borderRadius: 4,
-					boxShadow: '0 8px 32px rgba(102, 126, 234, 0.12)',
-					border: '1px solid rgba(102, 126, 234, 0.1)',
-					background: 'white',
-				}}>
-				{lesson.blocks.map((block, index) => {
-					switch (block.type) {
-						case 'mainTitle':
-							return (
-								<Typography
-									key={index}
-									align='center'
-									variant='h3'
-									component='h1'
-									sx={{
-										fontWeight: 800,
-										fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-										mb: 2,
-										background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-										WebkitBackgroundClip: 'text',
-										WebkitTextFillColor: 'transparent',
-										backgroundClip: 'text',
-									}}>
-									{block.text}
-								</Typography>
-							)
-						case 'subtitle':
-							return (
-								<Typography
-									key={index}
-									align='center'
-									variant='h5'
-									component='h2'
-									sx={{
-										mb: { xs: 5, md: 8 },
-										color: '#718096',
-										fontWeight: 500,
-										fontSize: { xs: '1.125rem', sm: '1.25rem' },
-									}}>
-									{block.text}
-								</Typography>
-							)
-						case 'title':
-							return (
-								<Typography
-									key={index}
-									variant='h5'
-									sx={{
-										mt: 5,
-										mb: 2,
-										fontWeight: 700,
-										fontSize: { xs: '1.25rem', sm: '1.5rem' },
-										color: '#2d3748',
-										position: 'relative',
-										pl: 2,
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											left: 0,
-											top: '50%',
-											transform: 'translateY(-50%)',
-											width: 4,
-											height: '80%',
-											borderRadius: 2,
-											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-										},
-									}}>
-									{block.text}
-								</Typography>
-							)
-						case 'paragraph':
-							return (
-								<Typography
-									key={index}
-									sx={{
-										mt: 2,
-										mb: 3,
-										color: '#4a5568',
-										fontSize: { xs: '1rem', sm: '1.0625rem' },
-										lineHeight: 1.8,
-									}}
-									dangerouslySetInnerHTML={{ __html: block.text }}
-								/>
-							)
-						case 'list':
-							return (
-								<Box
-									component='ul'
-									sx={{
-										mt: 2,
-										mb: 3,
-										pl: { xs: 3, sm: 4 },
-										'& li': {
-											mb: 1.5,
-											color: '#4a5568',
-											fontSize: { xs: '1rem', sm: '1.0625rem' },
-											lineHeight: 1.8,
-											'&::marker': {
-												color: '#667eea',
-											},
-										},
-									}}
-									key={index}>
-									{block.items.map((item, itemIndex) => (
-										<li key={itemIndex}>
-											<Typography
-												component='span'
-												dangerouslySetInnerHTML={{ __html: item }}
+		<div className="w-full max-w-2xl mx-auto mt-8 md:mt-0 mb-16 md:mb-8 px-4 md:px-0">
+			<Card className="p-6 sm:p-8 md:p-10 rounded-2xl shadow-[0_8px_32px_rgba(102,126,234,0.12)] border border-indigo-500/10 bg-white">
+				<CardContent className="p-0">
+					{lesson.blocks.map((block, index) => {
+						switch (block.type) {
+							case 'mainTitle':
+								return (
+									<h1
+										key={index}
+										className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+										{block.text}
+									</h1>
+								)
+							case 'subtitle':
+								return (
+									<h2
+										key={index}
+										className="text-center text-lg sm:text-xl font-medium text-slate-500 mb-10 md:mb-16">
+										{block.text}
+									</h2>
+								)
+							case 'title':
+								return (
+									<h3
+										key={index}
+										className="relative mt-10 mb-4 text-xl sm:text-2xl font-bold text-slate-800 pl-4 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-4/5 before:rounded-full before:bg-gradient-to-b before:from-indigo-500 before:to-purple-600">
+										{block.text}
+									</h3>
+								)
+							case 'paragraph':
+								return (
+									<p
+										key={index}
+										className="mt-4 mb-6 text-slate-600 text-base sm:text-[1.0625rem] leading-relaxed"
+										dangerouslySetInnerHTML={{ __html: block.text }}
+									/>
+								)
+							case 'list':
+								return (
+									<ul
+										key={index}
+										className="mt-4 mb-6 pl-6 sm:pl-8 list-disc marker:text-indigo-500">
+										{block.items.map((item, itemIndex) => (
+											<li
+												key={itemIndex}
+												className="mb-3 text-slate-600 text-base sm:text-[1.0625rem] leading-relaxed">
+												<span dangerouslySetInnerHTML={{ __html: item }} />
+											</li>
+										))}
+									</ul>
+								)
+							case 'examples':
+								return (
+									<div
+										key={index}
+										className={cn(
+											'relative mt-4 mb-6 p-5 sm:p-6 rounded-xl overflow-hidden',
+											'bg-gradient-to-br from-indigo-500/5 to-purple-500/5',
+											'border-2 border-indigo-500/15',
+											'shadow-[0_4px_12px_rgba(102,126,234,0.08)]',
+											'before:absolute before:left-0 before:top-0 before:w-1 before:h-full before:bg-gradient-to-b before:from-indigo-500 before:to-purple-600'
+										)}>
+										{block.items.map((example, exampleIndex) => (
+											<p
+												key={exampleIndex}
+												className={cn(
+													'italic text-slate-600 text-sm sm:text-base leading-relaxed pl-4',
+													exampleIndex < block.items.length - 1 && 'mb-4'
+												)}
+												dangerouslySetInnerHTML={{ __html: example }}
 											/>
-										</li>
-									))}
-								</Box>
-							)
-
-						case 'examples':
-							return (
-								<Card
-									sx={{
-										background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-										p: { xs: 2.5, sm: 3 },
-										borderRadius: 3,
-										mb: 3,
-										mt: 2,
-										border: '2px solid rgba(102, 126, 234, 0.15)',
-										boxShadow: '0 4px 12px rgba(102, 126, 234, 0.08)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: 0,
-											width: 4,
-											height: '100%',
-											background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-										},
-									}}
-									key={index}>
-									{block.items.map((example, exampleIndex) => (
-										<Typography
-											key={exampleIndex}
-											variant='body1'
-											sx={{
-												fontStyle: 'italic',
-												color: '#4a5568',
-												fontSize: { xs: '0.9375rem', sm: '1rem' },
-												lineHeight: 1.8,
-												mb: exampleIndex < block.items.length - 1 ? 2 : 0,
-												pl: 2,
-											}}
-											dangerouslySetInnerHTML={{ __html: example }}></Typography>
-									))}
-								</Card>
-							)
-
-						default:
-							return null
-					}
-				})}
+										))}
+									</div>
+								)
+							default:
+								return null
+						}
+					})}
+				</CardContent>
 			</Card>
 
 			{!isLessonStudied && (
-				<Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
+				<div className="mt-10 flex justify-center">
 					<Button
-						variant='contained'
-						size='large'
-						startIcon={<CheckCircleRounded />}
+						size="lg"
 						onClick={handleMarkAsStudied}
 						disabled={isMarking}
-						sx={{
-							background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-							color: 'white',
-							fontWeight: 700,
-							fontSize: { xs: '1rem', sm: '1.125rem' },
-							padding: { xs: '14px 32px', sm: '16px 48px' },
-							borderRadius: 3,
-							textTransform: 'none',
-							boxShadow: '0 8px 24px rgba(16, 185, 129, 0.3)',
-							transition: 'all 0.3s ease',
-							'&:hover': {
-								background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-								transform: 'translateY(-3px)',
-								boxShadow: '0 12px 32px rgba(16, 185, 129, 0.4)',
-							},
-							'&:active': {
-								transform: 'translateY(-1px)',
-							},
-						}}>
-						{isMarking ? t('saving') || 'Saving...' : t('lessonlearnt')}
+						className={cn(
+							'bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold',
+							'text-base sm:text-lg px-8 sm:px-12 py-4 sm:py-5 rounded-xl',
+							'shadow-[0_8px_24px_rgba(16,185,129,0.3)]',
+							'transition-all duration-300',
+							'hover:from-green-600 hover:to-emerald-700',
+							'hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(16,185,129,0.4)]',
+							'active:-translate-y-0.5'
+						)}>
+						<CheckCircle className="h-5 w-5 mr-2" />
+						{isMarking ? (t('saving') || 'Saving...') : t('lessonlearnt')}
 					</Button>
-				</Box>
+				</div>
 			)}
-		</Container>
+		</div>
 	)
 }
 

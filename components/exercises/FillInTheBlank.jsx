@@ -1,29 +1,17 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Chip,
-  Alert,
-  useTheme,
-  IconButton,
-} from "@mui/material";
-import {
-  CheckCircle,
-  Cancel,
-  Lightbulb,
-  Refresh,
-  EmojiEvents,
-} from "@mui/icons-material";
+import React, { useState, useRef } from "react";
 import { useUserContext } from "@/context/user";
+import { useThemeMode } from "@/context/ThemeContext";
 import toast from "@/utils/toast";
-import { useTranslations, useLocale } from "next-intl";
-import { useRouter, usePathname, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
+import { CheckCircle2, XCircle, Lightbulb, RotateCcw, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 /**
  * Fill in the Blank Exercise Component
@@ -34,11 +22,8 @@ import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
  */
 const FillInTheBlank = ({ exercise, onComplete }) => {
   const t = useTranslations("exercises");
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const { isDark } = useThemeMode();
   const { user } = useUserContext();
-  const router = useRouter();
-  const pathname = usePathname();
   const params = useParams();
 
   // State
@@ -310,78 +295,72 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
   };
 
   if (!exercise || questions.length === 0) {
-    return <Alert severity="info">{t("noExerciseAvailable")}</Alert>;
+    return (
+      <div className={cn(
+        "p-4 rounded-xl border-2",
+        isDark
+          ? "bg-blue-500/10 border-blue-500/30 text-blue-300"
+          : "bg-blue-50 border-blue-200 text-blue-700"
+      )}>
+        {t("noExerciseAvailable")}
+      </div>
+    );
   }
 
   // Exercise completion screen
   if (exerciseCompleted) {
     return (
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          background: isDark
-            ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-            : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.3)"
-            : "1px solid rgba(139, 92, 246, 0.2)",
-          textAlign: "center",
-        }}
-      >
-        <EmojiEvents sx={{ fontSize: "4rem", color: "#fbbf24", mb: 2 }} />
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+      <Card className={cn(
+        "p-6 md:p-8 rounded-2xl text-center",
+        isDark
+          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+      )}>
+        <Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
+        <h4 className={cn(
+          "text-2xl font-bold mb-2",
+          isDark ? "text-slate-100" : "text-slate-800"
+        )}>
           {t("exerciseCompleted")}
-        </Typography>
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-            background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        </h4>
+        <p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
           {t("yourScore")} : {totalScore}%
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: isDark ? "#cbd5e1" : "#64748b" }}
-        >
+        </p>
+        <p className={cn(
+          "mb-6",
+          isDark ? "text-slate-400" : "text-slate-600"
+        )}>
           {totalScore === 100 && t("perfectScore")}
           {totalScore >= 80 && totalScore < 100 && t("greatJob")}
           {totalScore >= 60 && totalScore < 80 && t("goodWork")}
           {totalScore < 60 && t("keepPracticing")}
-        </Typography>
+        </p>
         {totalScore === 100 && isFirstCompletion && (
-          <Chip
-            label={`+${exercise.xp_reward} XP`}
-            color="primary"
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 700,
-              mb: 3,
-            }}
-          />
+          <span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
+            +{exercise.xp_reward} XP
+          </span>
         )}
         {totalScore < 100 && (
           <>
-            <Alert severity="info" sx={{ mb: 3, textAlign: "left" }}>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                💡 {t("perfectScoreForXP")}
-              </Typography>
-            </Alert>
+            <div className={cn(
+              "p-4 rounded-xl border-2 mb-6 text-left",
+              isDark
+                ? "bg-blue-500/10 border-blue-500/30"
+                : "bg-blue-50 border-blue-200"
+            )}>
+              <p className={cn(
+                "font-semibold",
+                isDark ? "text-blue-300" : "text-blue-700"
+              )}>
+                {t("perfectScoreForXP")}
+              </p>
+            </div>
 
             {/* Correction Section */}
-            <Box sx={{ mb: 4, textAlign: "left" }}>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 700, mb: 2, color: "#ef4444" }}
-              >
+            <div className="mb-6 text-left">
+              <h6 className="font-bold mb-4 text-red-500">
                 {t("corrections")}
-              </Typography>
+              </h6>
               {questions.map((question, qIndex) => {
                 const blanks = question.blanks || [];
                 const hasError = blanks.some((blank, bIndex) => {
@@ -392,163 +371,101 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
                 if (!hasError) return null;
 
                 return (
-                  <Paper
+                  <Card
                     key={qIndex}
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      mb: 2,
-                      borderRadius: 2,
-                      border: "2px solid #ef4444",
-                      backgroundColor: isDark
-                        ? "rgba(239, 68, 68, 0.1)"
-                        : "rgba(239, 68, 68, 0.05)",
-                    }}
+                    className={cn(
+                      "p-4 mb-4 rounded-xl border-2 border-red-500",
+                      isDark ? "bg-red-500/10" : "bg-red-50"
+                    )}
                   >
-                    <Typography variant="body1" sx={{ mb: 2, fontWeight: 600 }}>
+                    <p className="font-semibold mb-4">
                       {t("question")} {qIndex + 1}
-                    </Typography>
+                    </p>
                     {blanks.map((blank, bIndex) => {
                       const result = results[qIndex]?.[bIndex];
                       if (!result || result.correct) return null;
 
                       return (
-                        <Box key={bIndex} sx={{ mb: 1.5 }}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                              mb: 0.5,
-                            }}
-                          >
-                            <Cancel
-                              sx={{ color: "#ef4444", fontSize: "1.2rem" }}
-                            />
-                            <Typography
-                              variant="body2"
-                              sx={{ fontWeight: 600, color: "#ef4444" }}
-                            >
+                        <div key={bIndex} className="mb-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <XCircle className="w-5 h-5 text-red-500" />
+                            <span className="font-semibold text-red-500 text-sm">
                               {t("yourAnswer")}:{" "}
                               {result.userAnswer || t("empty")}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <CheckCircle
-                              sx={{ color: "#10b981", fontSize: "1.2rem" }}
-                            />
-                            <Typography
-                              variant="body2"
-                              sx={{ fontWeight: 600, color: "#10b981" }}
-                            >
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                            <span className="font-semibold text-emerald-500 text-sm">
                               {t("correctAnswer")}:{" "}
                               {result.correctAnswers.join(" / ")}
-                            </Typography>
-                          </Box>
-                        </Box>
+                            </span>
+                          </div>
+                        </div>
                       );
                     })}
-                  </Paper>
+                  </Card>
                 );
               })}
-            </Box>
+            </div>
           </>
         )}
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+        <div className="flex gap-4 justify-center">
           <Button
-            variant="contained"
             onClick={handleReset}
-            startIcon={<Refresh />}
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
           >
+            <RotateCcw className="w-5 h-5 mr-2" />
             {t("tryAgain")}
           </Button>
-        </Box>
-      </Paper>
+        </div>
+      </Card>
     );
   }
 
   // Main exercise view - display all questions at once
   return (
-    <Box>
+    <div>
       {/* Exercise Instructions */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 2, md: 3 },
-          mb: 3,
-          borderRadius: 3,
-          background: isDark
-            ? "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)"
-            : "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.2)"
-            : "1px solid rgba(139, 92, 246, 0.15)",
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: 600, mb: 1, color: "#8b5cf6" }}
-        >
+      <Card className={cn(
+        "p-4 md:p-6 mb-6 rounded-xl",
+        isDark
+          ? "bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border-violet-500/20"
+          : "bg-gradient-to-r from-violet-500/5 to-cyan-500/5 border-violet-500/15"
+      )}>
+        <h6 className="font-semibold mb-2 text-violet-500">
           {getTranslatedTitle()}
-        </Typography>
-        <Alert
-          severity="info"
-          sx={{
-            mb: 0,
-            backgroundColor: isDark
-              ? "rgba(6, 182, 212, 0.15)"
-              : "rgba(6, 182, 212, 0.1)",
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            🎧 {t("listenToAudio")}
-          </Typography>
-        </Alert>
-      </Paper>
+        </h6>
+        <div className={cn(
+          "p-3 rounded-lg",
+          isDark
+            ? "bg-cyan-500/15"
+            : "bg-cyan-500/10"
+        )}>
+          <p className={cn(
+            "font-semibold text-sm",
+            isDark ? "text-cyan-300" : "text-cyan-700"
+          )}>
+            {t("listenToAudio")}
+          </p>
+        </div>
+      </Card>
 
       {/* All Questions displayed as continuous text */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 3, md: 4 },
-          mb: 3,
-          borderRadius: 4,
-          background: isDark
-            ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-            : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.3)"
-            : "1px solid rgba(139, 92, 246, 0.2)",
-        }}
-      >
+      <Card className={cn(
+        "p-6 md:p-8 mb-6 rounded-2xl",
+        isDark
+          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+      )}>
         {questions.map((question, qIndex) => {
           const parsedText = parseQuestionText(question.text);
           const blanks = question.blanks || [];
 
           return (
-            <Box key={question.id || qIndex} sx={{ mb: 0 }}>
+            <div key={question.id || qIndex} className="mb-0">
               {/* Question text with inline blanks */}
-              <Typography
-                component="div"
-                sx={{
-                  fontSize: { xs: "1rem", md: "1.1rem" },
-                  lineHeight: 1.8,
-                  mb: 0,
-                }}
-              >
+              <div className="text-base md:text-lg leading-loose">
                 {parsedText.map((part, partIndex) => {
                   if (part.isBlank) {
                     const blankIndex = part.blankIndex;
@@ -559,16 +476,11 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
                     const showHint = showHints[`${qIndex}-${blankIndex}`];
 
                     return (
-                      <Box
+                      <span
                         key={partIndex}
-                        sx={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                        }}
+                        className="inline-flex items-center gap-1"
                       >
-                        <TextField
-                          size="small"
+                        <Input
                           value={userAnswer}
                           onChange={(e) =>
                             handleAnswerChange(
@@ -582,60 +494,38 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
                           }
                           disabled={submitted}
                           placeholder="___"
-                          inputRef={(el) => {
+                          ref={(el) => {
                             const key = `${qIndex}-${blankIndex}`;
                             inputRefs.current[key] = el;
                           }}
-                          sx={{
-                            width: { xs: "120px", sm: "150px" },
-                            "& .MuiOutlinedInput-root": {
-                              height: "28px",
-                              backgroundColor: submitted
-                                ? isCorrect
-                                  ? "rgba(16, 185, 129, 0.1)"
-                                  : "rgba(239, 68, 68, 0.1)"
-                                : isDark
-                                  ? "rgba(139, 92, 246, 0.05)"
-                                  : "white",
-                              borderColor: submitted
-                                ? isCorrect
-                                  ? "#10b981"
-                                  : "#ef4444"
-                                : undefined,
-                              "& fieldset": {
-                                borderColor: submitted
-                                  ? isCorrect
-                                    ? "#10b981 !important"
-                                    : "#ef4444 !important"
-                                  : undefined,
-                              },
-                              "& input": {
-                                padding: "4px 8px",
-                                fontSize: "0.95rem",
-                              },
-                            },
-                          }}
+                          className={cn(
+                            "w-[120px] sm:w-[150px] h-7 px-2 text-sm inline-block",
+                            submitted
+                              ? isCorrect
+                                ? "border-emerald-500 bg-emerald-500/10"
+                                : "border-red-500 bg-red-500/10"
+                              : isDark
+                                ? "bg-violet-500/5"
+                                : "bg-white"
+                          )}
                         />
-                        {submitted &&
-                          (isCorrect ? (
-                            <CheckCircle
-                              sx={{ color: "#10b981", fontSize: "1.2rem" }}
-                            />
+                        {submitted && (
+                          isCorrect ? (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                           ) : (
-                            <Cancel
-                              sx={{ color: "#ef4444", fontSize: "1.2rem" }}
-                            />
-                          ))}
-                        {!submitted && blank?.hint && (
-                          <IconButton
-                            size="small"
-                            onClick={() => toggleHint(qIndex, blankIndex)}
-                            sx={{ color: "#8b5cf6" }}
-                          >
-                            <Lightbulb fontSize="small" />
-                          </IconButton>
+                            <XCircle className="w-5 h-5 text-red-500" />
+                          )
                         )}
-                      </Box>
+                        {!submitted && blank?.hint && (
+                          <button
+                            type="button"
+                            onClick={() => toggleHint(qIndex, blankIndex)}
+                            className="p-1 text-violet-500 hover:text-violet-600"
+                          >
+                            <Lightbulb className="w-4 h-4" />
+                          </button>
+                        )}
+                      </span>
                     );
                   } else {
                     // Texte normal ou ponctuation
@@ -654,7 +544,7 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
                     );
                   }
                 })}
-              </Typography>
+              </div>
 
               {/* Show hints if requested */}
               {blanks.map((blank, bIndex) => {
@@ -662,99 +552,107 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
                 if (!showHint || !blank.hint) return null;
 
                 return (
-                  <Alert
+                  <div
                     key={bIndex}
-                    severity="info"
-                    icon={<Lightbulb />}
-                    sx={{ mt: 2 }}
+                    className={cn(
+                      "mt-4 p-3 rounded-lg flex items-start gap-2",
+                      isDark
+                        ? "bg-blue-500/10 border border-blue-500/30"
+                        : "bg-blue-50 border border-blue-200"
+                    )}
                   >
-                    <Typography variant="body2">💡 {blank.hint}</Typography>
-                  </Alert>
+                    <Lightbulb className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <p className={cn(
+                      "text-sm",
+                      isDark ? "text-blue-300" : "text-blue-700"
+                    )}>
+                      {blank.hint}
+                    </p>
+                  </div>
                 );
               })}
 
               {/* Show correction after submission */}
               {submitted && results[qIndex] && (
-                <Box sx={{ mt: 2 }}>
+                <div className="mt-4">
                   {blanks.map((blank, bIndex) => {
                     const result = results[qIndex]?.[bIndex];
                     if (!result || result.correct) return null;
 
                     return (
-                      <Alert key={bIndex} severity="error" sx={{ mt: 1 }}>
-                        <Typography variant="body2">
+                      <div
+                        key={bIndex}
+                        className={cn(
+                          "mt-2 p-3 rounded-lg",
+                          isDark
+                            ? "bg-red-500/10 border border-red-500/30"
+                            : "bg-red-50 border border-red-200"
+                        )}
+                      >
+                        <p className={cn(
+                          "text-sm",
+                          isDark ? "text-red-300" : "text-red-700"
+                        )}>
                           <strong>{t("yourAnswer")}:</strong>{" "}
                           {result.userAnswer || "(vide)"} →
                           <strong> {t("correctAnswer")}:</strong>{" "}
                           {result.correctAnswer}
-                        </Typography>
+                        </p>
                         {blank.hint && (
-                          <Typography
-                            variant="caption"
-                            display="block"
-                            sx={{ mt: 0.5 }}
-                          >
-                            💡 {blank.hint}
-                          </Typography>
+                          <p className={cn(
+                            "text-xs mt-1",
+                            isDark ? "text-red-400" : "text-red-600"
+                          )}>
+                            {blank.hint}
+                          </p>
                         )}
-                      </Alert>
+                      </div>
                     );
                   })}
                   {question.explanation && (
-                    <Alert severity="info" sx={{ mt: 1 }}>
-                      <Typography variant="body2">
+                    <div className={cn(
+                      "mt-2 p-3 rounded-lg",
+                      isDark
+                        ? "bg-blue-500/10 border border-blue-500/30"
+                        : "bg-blue-50 border border-blue-200"
+                    )}>
+                      <p className={cn(
+                        "text-sm",
+                        isDark ? "text-blue-300" : "text-blue-700"
+                      )}>
                         <strong>{t("explanation")}:</strong>{" "}
                         {question.explanation}
-                      </Typography>
-                    </Alert>
+                      </p>
+                    </div>
                   )}
-                </Box>
+                </div>
               )}
-            </Box>
+            </div>
           );
         })}
-      </Paper>
+      </Card>
 
       {/* Submit Button */}
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+      <div className="flex justify-center gap-4">
         {!submitted ? (
           <Button
-            variant="contained"
             onClick={handleSubmit}
             disabled={!allBlanksFilled()}
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-              "&:disabled": {
-                background: isDark
-                  ? "rgba(100, 116, 139, 0.3)"
-                  : "rgba(203, 213, 225, 0.5)",
-              },
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 disabled:opacity-50"
           >
             {t("checkAnswer")}
           </Button>
         ) : (
           <Button
-            variant="contained"
             onClick={handleReset}
-            startIcon={<Refresh />}
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
           >
+            <RotateCcw className="w-5 h-5 mr-2" />
             {t("tryAgain")}
           </Button>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

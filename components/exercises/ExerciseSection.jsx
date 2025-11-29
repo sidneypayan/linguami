@@ -1,27 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-	Box,
-	Typography,
-	Button,
-	Paper,
-	Alert,
-	Collapse,
-	useTheme,
-	Chip,
-} from '@mui/material'
-import { School, ExpandMore, ExpandLess, LockOpen, EmojiEvents, TrendingUp } from '@mui/icons-material'
+import { useThemeMode } from '@/context/ThemeContext'
+import { GraduationCap, ChevronDown, ChevronUp, LockOpen, Trophy, TrendingUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { createBrowserClient } from '@/lib/supabase'
 import { useUserContext } from '@/context/user'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import toast from '@/utils/toast'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import FillInTheBlank from './FillInTheBlank'
 import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
 import DragAndDrop from './DragAndDrop'
-import LoadingSpinner from '../shared/LoadingSpinner'
 import { logger } from '@/utils/logger'
 import { submitExercise } from '@/lib/exercises-client'
 
@@ -33,36 +26,34 @@ import { submitExercise } from '@/lib/exercises-client'
  */
 const ExerciseSection = ({ materialId }) => {
 	const t = useTranslations('materials')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const { user, isUserLoggedIn, refreshUserProfile } = useUserContext()
 	const supabase = createBrowserClient()
 	const router = useRouter()
-	const pathname = usePathname()
 	const params = useParams()
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [activeExerciseId, setActiveExerciseId] = useState(null)
 	const [expanded, setExpanded] = useState(false)
-	const [exerciseProgress, setExerciseProgress] = useState({}) // { exerciseId: { score, attempts } }
+	const [exerciseProgress, setExerciseProgress] = useState({})
 
 	// Traductions des titres d'exercices
 	const titleTranslations = {
-		"Compréhension de l'audio": {
+		"Comprehension de l'audio": {
 			en: "Audio comprehension",
 			ru: "Понимание аудио",
-			fr: "Compréhension de l'audio"
+			fr: "Comprehension de l'audio"
 		},
-		"Compréhension du texte": {
+		"Comprehension du texte": {
 			en: "Text comprehension",
 			ru: "Понимание текста",
-			fr: "Compréhension du texte"
+			fr: "Comprehension du texte"
 		},
-		"Questions de compréhension": {
+		"Questions de comprehension": {
 			en: "Comprehension questions",
 			ru: "Вопросы на понимание",
-			fr: "Questions de compréhension"
+			fr: "Questions de comprehension"
 		},
 		"Association de vocabulaire": {
 			en: "Vocabulary matching",
@@ -71,27 +62,20 @@ const ExerciseSection = ({ materialId }) => {
 		}
 	}
 
-	// Fonction pour obtenir le titre traduit
 	const getTranslatedTitle = (exerciseTitle) => {
 		const locale = params.locale || 'fr'
-
-		// Si une traduction existe pour ce titre
 		if (titleTranslations[exerciseTitle]) {
 			return titleTranslations[exerciseTitle][locale] || exerciseTitle
 		}
-
-		// Sinon, retourner le titre original
 		return exerciseTitle
 	}
 
-	// Load exercises for this material
 	useEffect(() => {
 		const loadData = async () => {
 			if (!materialId) return
 
 			setLoading(true)
 
-			// Load exercises
 			const { data: exercisesData, error: exercisesError } = await supabase
 				.from('exercises')
 				.select('*')
@@ -102,12 +86,10 @@ const ExerciseSection = ({ materialId }) => {
 				logger.error('Error loading exercises:', exercisesError)
 			} else {
 				setExercises(exercisesData || [])
-				// Auto-expand if there are exercises
 				if (exercisesData && exercisesData.length > 0) {
 					setExpanded(true)
 				}
 
-				// Load user progress for these exercises if logged in
 				if (isUserLoggedIn && user && exercisesData && exercisesData.length > 0) {
 					const exerciseIds = exercisesData.map(ex => ex.id)
 					const { data: progressData } = await supabase
@@ -135,7 +117,6 @@ const ExerciseSection = ({ materialId }) => {
 		loadData()
 	}, [materialId, isUserLoggedIn, user, supabase])
 
-	// Handle exercise completion
 	const handleExerciseComplete = async (result) => {
 		if (!isUserLoggedIn) {
 			toast.info('Connectez-vous pour sauvegarder votre progression !')
@@ -146,7 +127,6 @@ const ExerciseSection = ({ materialId }) => {
 			const data = await submitExercise(result)
 
 			if (data.success) {
-				// Reload progress for this exercise
 				const { data: progressData } = await supabase
 					.from('user_exercise_progress')
 					.select('*')
@@ -164,7 +144,6 @@ const ExerciseSection = ({ materialId }) => {
 					}))
 				}
 
-				// Refresh user profile to update XP and Gold display
 				if (data.xpAwarded > 0 || data.goldAwarded > 0) {
 					await refreshUserProfile()
 				}
@@ -172,7 +151,6 @@ const ExerciseSection = ({ materialId }) => {
 				if (data.isFirstCompletion && data.xpAwarded > 0) {
 					toast.success(t('exerciseCompletedXP', { xp: data.xpAwarded }))
 				} else if (result.score === 100 && !data.isFirstCompletion) {
-					// 100% but already completed before - show different message
 					toast.info(t('exerciseCompletedAlready'))
 				} else {
 					toast.success(t('exerciseCompleted'))
@@ -189,93 +167,77 @@ const ExerciseSection = ({ materialId }) => {
 		}
 	}
 
-	// Start exercise
 	const handleStartExercise = (exerciseId) => {
 		setActiveExerciseId(exerciseId)
 	}
 
-	// Close exercise
 	const handleCloseExercise = () => {
 		setActiveExerciseId(null)
 	}
 
 	if (loading) {
-		return null // Don't show anything while loading
+		return null
 	}
 
 	if (exercises.length === 0) {
-		return null // Don't show section if no exercises
+		return null
 	}
 
 	const activeExercise = exercises.find(e => e.id === activeExerciseId)
 
 	return (
-		<Box sx={{ mb: 4 }}>
+		<div className="mb-8">
 			{/* Section Header */}
-			<Paper
-				elevation={0}
-				sx={{
-					p: 3,
-					borderRadius: 4,
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-					cursor: 'pointer',
-				}}
-				onClick={() => !activeExerciseId && setExpanded(!expanded)}>
-				<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-						<Box
-							sx={{
-								width: 48,
-								height: 48,
-								borderRadius: 3,
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)',
-								border: '1px solid rgba(139, 92, 246, 0.3)',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-							}}>
-							<School sx={{ fontSize: '1.75rem', color: '#8b5cf6' }} />
-						</Box>
-						<Box>
-							<Typography
-								variant="h5"
-								sx={{
-									fontWeight: 700,
-									fontSize: { xs: '1.25rem', md: '1.5rem' },
-								}}>
+			<Card
+				className={cn(
+					'p-4 rounded-2xl cursor-pointer',
+					isDark
+						? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30'
+						: 'bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20'
+				)}
+				onClick={() => !activeExerciseId && setExpanded(!expanded)}
+			>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-4">
+						<div className={cn(
+							'w-12 h-12 rounded-xl flex items-center justify-center',
+							'bg-gradient-to-br from-violet-500/15 to-cyan-500/10',
+							'border border-violet-500/30'
+						)}>
+							<GraduationCap className="w-7 h-7 text-violet-500" />
+						</div>
+						<div>
+							<h3 className={cn('font-bold text-xl md:text-2xl', isDark ? 'text-white' : 'text-slate-900')}>
 								{t('exercises')}
-							</Typography>
-							<Typography variant="body2" sx={{ color: isDark ? '#94a3b8' : '#64748b' }}>
+							</h3>
+							<p className={cn('text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
 								{t('exercisesAvailable', { count: exercises.length })}
-							</Typography>
-						</Box>
-					</Box>
+							</p>
+						</div>
+					</div>
 					{!activeExerciseId && (
 						expanded ? (
-							<ExpandLess sx={{ color: '#8b5cf6', fontSize: '2rem' }} />
+							<ChevronUp className="w-8 h-8 text-violet-500" />
 						) : (
-							<ExpandMore sx={{ color: '#8b5cf6', fontSize: '2rem' }} />
+							<ChevronDown className="w-8 h-8 text-violet-500" />
 						)
 					)}
-				</Box>
-			</Paper>
+				</div>
+			</Card>
 
 			{/* Exercises List or Active Exercise */}
-			<Collapse in={expanded}>
-				<Box sx={{ mt: 2 }}>
+			{expanded && (
+				<div className="mt-4">
 					{activeExercise ? (
-						<Box>
+						<div>
 							<Button
-								variant="text"
+								variant="ghost"
 								onClick={handleCloseExercise}
-								sx={{ mb: 2 }}>
+								className="mb-4"
+							>
 								{t('backToExercises')}
 							</Button>
 							{activeExercise.type === 'fill_in_blank' && (
-								// Check if it's an audio dictation exercise (has sentences with audioUrl)
 								activeExercise.data?.sentences?.[0]?.audioUrl ? (
 									<AudioDictation
 										exercise={activeExercise}
@@ -300,347 +262,201 @@ const ExerciseSection = ({ materialId }) => {
 									onComplete={handleExerciseComplete}
 								/>
 							)}
-						</Box>
+						</div>
 					) : (
-						<Box sx={{ display: 'grid', gap: 2 }}>
+						<div className="grid gap-4">
 							{!isUserLoggedIn && (
-								<Paper
-									elevation={0}
-									sx={{
-										p: 4,
-										borderRadius: 4,
-										background: isDark
-											? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
-											: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)',
-										border: isDark ? '2px solid rgba(139, 92, 246, 0.4)' : '2px solid rgba(139, 92, 246, 0.3)',
-										position: 'relative',
-										overflow: 'hidden',
-										'&::before': {
-											content: '""',
-											position: 'absolute',
-											top: 0,
-											left: 0,
-											right: 0,
-											height: '4px',
-											background: 'linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%)',
-										}
-									}}>
-									<Box sx={{ textAlign: 'center' }}>
+								<Card
+									className={cn(
+										'p-6 rounded-2xl relative overflow-hidden',
+										isDark
+											? 'bg-gradient-to-br from-violet-500/15 to-cyan-500/15 border-2 border-violet-500/40'
+											: 'bg-gradient-to-br from-violet-500/8 to-cyan-500/8 border-2 border-violet-500/30'
+									)}
+								>
+									{/* Top gradient bar */}
+									<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-cyan-500" />
+
+									<div className="text-center">
 										{/* Icon */}
-										<Box
-											sx={{
-												display: 'inline-flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												width: 80,
-												height: 80,
-												borderRadius: '50%',
-												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-												mb: 3,
-												boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3)',
-											}}>
-											<LockOpen sx={{ fontSize: '2.5rem', color: 'white' }} />
-										</Box>
+										<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 mb-6 shadow-lg shadow-violet-500/30">
+											<LockOpen className="w-10 h-10 text-white" />
+										</div>
 
 										{/* Title */}
-										<Typography
-											variant="h5"
-											sx={{
-												fontWeight: 700,
-												mb: 2,
-												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-												WebkitBackgroundClip: 'text',
-												WebkitTextFillColor: 'transparent',
-												backgroundClip: 'text',
-												fontSize: { xs: '1.5rem', md: '1.75rem' },
-											}}>
+										<h4 className="font-bold text-2xl md:text-3xl mb-4 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
 											{t('unlockExercisesTitle')}
-										</Typography>
+										</h4>
 
 										{/* Description */}
-										<Typography
-											variant="body1"
-											sx={{
-												color: isDark ? '#cbd5e1' : '#475569',
-												mb: 3,
-												fontSize: { xs: '0.95rem', md: '1.05rem' },
-												lineHeight: 1.6,
-											}}>
+										<p className={cn(
+											'mb-6 text-base md:text-lg leading-relaxed',
+											isDark ? 'text-slate-300' : 'text-slate-600'
+										)}>
 											{t('unlockExercisesDescription')}
-										</Typography>
+										</p>
 
 										{/* Benefits */}
-										<Box
-											sx={{
-												display: 'grid',
-												gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-												gap: 2,
-												mb: 4,
-											}}>
-											<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-												<EmojiEvents sx={{ fontSize: '2rem', color: '#fbbf24' }} />
-												<Typography
-													variant="body2"
-													sx={{
-														fontWeight: 600,
-														color: isDark ? '#e2e8f0' : '#334155',
-														textAlign: 'center',
-													}}>
+										<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+											<div className="flex flex-col items-center gap-2">
+												<Trophy className="w-8 h-8 text-amber-400" />
+												<p className={cn('font-semibold text-sm text-center', isDark ? 'text-slate-200' : 'text-slate-700')}>
 													{t('earnXP')}
 													<br />
-													<Typography component="span" variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b' }}>
+													<span className={cn('font-normal text-xs', isDark ? 'text-slate-400' : 'text-slate-500')}>
 														{t('levelUp')}
-													</Typography>
-												</Typography>
-											</Box>
-											<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-												<TrendingUp sx={{ fontSize: '2rem', color: '#10b981' }} />
-												<Typography
-													variant="body2"
-													sx={{
-														fontWeight: 600,
-														color: isDark ? '#e2e8f0' : '#334155',
-														textAlign: 'center',
-													}}>
+													</span>
+												</p>
+											</div>
+											<div className="flex flex-col items-center gap-2">
+												<TrendingUp className="w-8 h-8 text-emerald-500" />
+												<p className={cn('font-semibold text-sm text-center', isDark ? 'text-slate-200' : 'text-slate-700')}>
 													{t('trackProgress')}
 													<br />
-													<Typography component="span" variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b' }}>
+													<span className={cn('font-normal text-xs', isDark ? 'text-slate-400' : 'text-slate-500')}>
 														{t('overTime')}
-													</Typography>
-												</Typography>
-											</Box>
-											<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-												<School sx={{ fontSize: '2rem', color: '#8b5cf6' }} />
-												<Typography
-													variant="body2"
-													sx={{
-														fontWeight: 600,
-														color: isDark ? '#e2e8f0' : '#334155',
-														textAlign: 'center',
-													}}>
+													</span>
+												</p>
+											</div>
+											<div className="flex flex-col items-center gap-2">
+												<GraduationCap className="w-8 h-8 text-violet-500" />
+												<p className={cn('font-semibold text-sm text-center', isDark ? 'text-slate-200' : 'text-slate-700')}>
 													{t('exercisesCount', { count: exercises.length })}
 													<br />
-													<Typography component="span" variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b' }}>
+													<span className={cn('font-normal text-xs', isDark ? 'text-slate-400' : 'text-slate-500')}>
 														{t('forThisMaterial')}
-													</Typography>
-												</Typography>
-											</Box>
-										</Box>
+													</span>
+												</p>
+											</div>
+										</div>
 
 										{/* CTA Button */}
 										<Button
-											variant="contained"
-											size="large"
+											size="lg"
 											onClick={() => router.push('/signup')}
-											sx={{
-												background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-												color: 'white',
-												px: 4,
-												py: 1.5,
-												fontSize: '1rem',
-												fontWeight: 700,
-												borderRadius: 3,
-												textTransform: 'none',
-												boxShadow: '0 4px 14px rgba(139, 92, 246, 0.4)',
-												transition: 'all 0.3s',
-												'&:hover': {
-													transform: 'translateY(-2px)',
-													boxShadow: '0 6px 20px rgba(139, 92, 246, 0.5)',
-												},
-											}}>
+											className={cn(
+												'px-8 py-6 text-base font-bold rounded-xl',
+												'bg-gradient-to-r from-violet-500 to-cyan-500 text-white',
+												'shadow-lg shadow-violet-500/40',
+												'hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/50',
+												'transition-all duration-300'
+											)}
+										>
 											{t('createFreeAccount')}
 										</Button>
 
 										{/* Small text */}
-										<Typography
-											variant="caption"
-											sx={{
-												display: 'block',
-												mt: 2,
-												color: isDark ? '#94a3b8' : '#64748b',
-												fontSize: '0.85rem',
-											}}>
+										<p className={cn('mt-4 text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
 											{t('alreadyHaveAccount')}{' '}
-											<Typography
-												component="span"
-												sx={{
-													color: '#8b5cf6',
-													fontWeight: 600,
-													cursor: 'pointer',
-													'&:hover': {
-														textDecoration: 'underline',
-													},
-												}}
-												onClick={() => router.push('/login')}>
+											<span
+												className="text-violet-500 font-semibold cursor-pointer hover:underline"
+												onClick={() => router.push('/login')}
+											>
 												{t('signIn')}
-											</Typography>
-										</Typography>
-									</Box>
-								</Paper>
+											</span>
+										</p>
+									</div>
+								</Card>
 							)}
+
 							{exercises.map((exercise) => {
 								const progress = exerciseProgress[exercise.id]
 								const isCompleted = progress?.score === 100
 								const hasProgress = progress && progress.score > 0 && progress.score < 100
 
 								return (
-									<Paper
+									<Card
 										key={exercise.id}
-										elevation={0}
-										sx={{
-											p: 3,
-											borderRadius: 3,
-											border: isCompleted
-												? '2px solid #10b981'
+										className={cn(
+											'p-4 rounded-xl transition-all duration-200',
+											!isUserLoggedIn && 'opacity-70',
+											isCompleted
+												? 'border-2 border-emerald-500 bg-gradient-to-br from-emerald-500/8 to-emerald-500/3'
 												: hasProgress
-													? '2px solid #fbbf24'
-													: isDark ? '1px solid rgba(139, 92, 246, 0.2)' : '1px solid rgba(139, 92, 246, 0.1)',
-											transition: 'all 0.2s',
-											opacity: !isUserLoggedIn ? 0.7 : 1,
-											background: isCompleted
-												? isDark
-													? 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.03) 100%)'
-													: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%)'
+													? 'border-2 border-amber-400 bg-gradient-to-br from-amber-400/8 to-amber-400/3'
+													: isDark
+														? 'border-violet-500/20'
+														: 'border-violet-500/10',
+											'hover:-translate-y-0.5',
+											isCompleted
+												? 'hover:shadow-lg hover:shadow-emerald-500/30'
 												: hasProgress
-													? isDark
-														? 'linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(251, 191, 36, 0.03) 100%)'
-														: 'linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, rgba(251, 191, 36, 0.02) 100%)'
-													: 'transparent',
-											'&:hover': {
-												borderColor: isCompleted ? '#10b981' : hasProgress ? '#fbbf24' : '#8b5cf6',
-												transform: 'translateY(-2px)',
-												boxShadow: isCompleted
-													? '0 4px 12px rgba(16, 185, 129, 0.3)'
-													: hasProgress
-														? '0 4px 12px rgba(251, 191, 36, 0.3)'
-														: '0 4px 12px rgba(139, 92, 246, 0.2)',
-											}
-										}}>
-									<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-										<Box sx={{ flex: 1 }}>
-											<Typography
-												variant="h6"
-												sx={{
-													fontWeight: 600,
-													mb: 1,
-													fontSize: { xs: '1rem', md: '1.25rem' }
-												}}>
-												{getTranslatedTitle(exercise.title)}
-											</Typography>
-											<Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-												<Typography
-													variant="caption"
-													sx={{
-														px: 1.5,
-														py: 0.5,
-														borderRadius: 2,
-														backgroundColor: exercise.level === 'beginner'
-															? 'rgba(16, 185, 129, 0.1)'
-															: exercise.level === 'intermediate'
-																? 'rgba(251, 191, 36, 0.1)'
-																: 'rgba(239, 68, 68, 0.1)',
-														color: exercise.level === 'beginner'
-															? '#10b981'
-															: exercise.level === 'intermediate'
-																? '#fbbf24'
-																: '#ef4444',
-														fontWeight: 600,
-													}}>
-													{t(exercise.level)}
-												</Typography>
-												<Typography
-													variant="caption"
-													sx={{
-														px: 1.5,
-														py: 0.5,
-														borderRadius: 2,
-														backgroundColor: 'rgba(139, 92, 246, 0.1)',
-														color: '#8b5cf6',
-														fontWeight: 600,
-													}}>
-													{t('questionsCount', { count: exercise.data?.questions?.length || exercise.data?.sentences?.length || 0 })}
-												</Typography>
-												<Typography
-													variant="caption"
-													sx={{
-														px: 1.5,
-														py: 0.5,
-														borderRadius: 2,
-														backgroundColor: 'rgba(6, 182, 212, 0.1)',
-														color: '#06b6d4',
-														fontWeight: 600,
-													}}>
-													+{exercise.xp_reward} XP
-												</Typography>
-												{isUserLoggedIn && exerciseProgress[exercise.id] && (
-													<Typography
-														variant="caption"
-														sx={{
-															px: 1.5,
-															py: 0.5,
-															borderRadius: 2,
-															backgroundColor: exerciseProgress[exercise.id].score === 100
-																? '#10b981'
-																: 'rgba(251, 191, 36, 0.1)',
-															color: exerciseProgress[exercise.id].score === 100
-																? 'white'
-																: '#fbbf24',
-															fontWeight: exerciseProgress[exercise.id].score === 100 ? 700 : 600,
-															boxShadow: exerciseProgress[exercise.id].score === 100
-																? '0 2px 8px rgba(16, 185, 129, 0.3)'
-																: 'none',
-														}}>
-														{exerciseProgress[exercise.id].score === 100 ? (
-															<>✅ {t('completed')}</>
-														) : (
-															<>
-																{Math.round((exerciseProgress[exercise.id].score / 100) * (exercise.data?.questions?.length || exercise.data?.sentences?.length || 0))}/{exercise.data?.questions?.length || exercise.data?.sentences?.length || 0} {t('correct')}
-															</>
-														)}
-													</Typography>
-												)}
-											</Box>
-										</Box>
-										{isUserLoggedIn ? (
-											<Button
-												variant="contained"
-												onClick={() => handleStartExercise(exercise.id)}
-												sx={{
-													background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-													px: 3,
-													py: 1,
-													fontSize: '0.875rem',
-													fontWeight: 600,
-													whiteSpace: 'nowrap',
-												}}>
-												{t('startExercise')}
-											</Button>
-										) : (
-											<Button
-												variant="outlined"
-												disabled
-												sx={{
-													px: 3,
-													py: 1,
-													fontSize: '0.875rem',
-													fontWeight: 600,
-													whiteSpace: 'nowrap',
-													borderColor: '#8b5cf6',
-													color: '#8b5cf6',
-													opacity: 0.6,
-												}}>
-												{t('lockedExercise')}
-											</Button>
+													? 'hover:shadow-lg hover:shadow-amber-400/30'
+													: 'hover:shadow-lg hover:shadow-violet-500/20 hover:border-violet-500'
 										)}
-									</Box>
-								</Paper>
-							)
-						})}
-						</Box>
+									>
+										<div className="flex justify-between items-start gap-4">
+											<div className="flex-1">
+												<h4 className={cn(
+													'font-semibold text-base md:text-lg mb-2',
+													isDark ? 'text-white' : 'text-slate-900'
+												)}>
+													{getTranslatedTitle(exercise.title)}
+												</h4>
+												<div className="flex gap-2 flex-wrap">
+													<span className={cn(
+														'px-2.5 py-1 rounded-lg text-xs font-semibold',
+														exercise.level === 'beginner'
+															? 'bg-emerald-500/10 text-emerald-500'
+															: exercise.level === 'intermediate'
+																? 'bg-amber-400/10 text-amber-500'
+																: 'bg-red-500/10 text-red-500'
+													)}>
+														{t(exercise.level)}
+													</span>
+													<span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-500/10 text-violet-500">
+														{t('questionsCount', { count: exercise.data?.questions?.length || exercise.data?.sentences?.length || 0 })}
+													</span>
+													<span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-500">
+														+{exercise.xp_reward} XP
+													</span>
+													{isUserLoggedIn && exerciseProgress[exercise.id] && (
+														<span className={cn(
+															'px-2.5 py-1 rounded-lg text-xs font-semibold',
+															exerciseProgress[exercise.id].score === 100
+																? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30'
+																: 'bg-amber-400/10 text-amber-500'
+														)}>
+															{exerciseProgress[exercise.id].score === 100 ? (
+																<>&#10003; {t('completed')}</>
+															) : (
+																<>
+																	{Math.round((exerciseProgress[exercise.id].score / 100) * (exercise.data?.questions?.length || exercise.data?.sentences?.length || 0))}/{exercise.data?.questions?.length || exercise.data?.sentences?.length || 0} {t('correct')}
+																</>
+															)}
+														</span>
+													)}
+												</div>
+											</div>
+											{isUserLoggedIn ? (
+												<Button
+													onClick={() => handleStartExercise(exercise.id)}
+													className={cn(
+														'px-4 py-2 font-semibold whitespace-nowrap',
+														'bg-gradient-to-r from-violet-500 to-cyan-500 text-white',
+														'hover:opacity-90'
+													)}
+												>
+													{t('startExercise')}
+												</Button>
+											) : (
+												<Button
+													variant="outline"
+													disabled
+													className="px-4 py-2 font-semibold whitespace-nowrap border-violet-500 text-violet-500 opacity-60"
+												>
+													{t('lockedExercise')}
+												</Button>
+											)}
+										</div>
+									</Card>
+								)
+							})}
+						</div>
 					)}
-				</Box>
-			</Collapse>
-		</Box>
+				</div>
+			)}
+		</div>
 	)
 }
 

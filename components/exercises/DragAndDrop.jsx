@@ -1,27 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Alert,
-  useTheme,
-  Grid,
-  Chip,
-} from "@mui/material";
-import {
-  CheckCircle,
-  Cancel,
-  DragIndicator,
-  CompareArrows,
-  EmojiEvents,
-  Refresh,
-} from "@mui/icons-material";
-import { useTranslations, useLocale } from "next-intl";
-import { useRouter, usePathname, useParams } from "next/navigation";
+import { useThemeMode } from "@/context/ThemeContext";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
+import { CheckCircle2, XCircle, GripVertical, ArrowLeftRight, Trophy, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 /**
  * Matching/Pairing Exercise Component
@@ -32,10 +19,7 @@ import { getLocalizedQuestion } from "@/utils/exerciseHelpers";
  */
 const DragAndDrop = ({ exercise, onComplete }) => {
   const t = useTranslations("exercises");
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
-  const router = useRouter();
-  const pathname = usePathname();
+  const { isDark } = useThemeMode();
   const params = useParams();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -90,20 +74,6 @@ const DragAndDrop = ({ exercise, onComplete }) => {
       ru: "Французско-русский словарь",
       fr: "Vocabulaire français-russe",
     },
-  };
-
-  // Fonction pour obtenir le titre traduit
-  const getTranslatedTitle = () => {
-    const locale = params.locale || "fr";
-    const originalTitle = exercise?.title || "";
-
-    // Si une traduction existe pour ce titre
-    if (titleTranslations[originalTitle]) {
-      return titleTranslations[originalTitle][locale] || originalTitle;
-    }
-
-    // Sinon, retourner le titre original
-    return originalTitle;
   };
 
   // Initialize/shuffle right items when question changes
@@ -243,180 +213,129 @@ const DragAndDrop = ({ exercise, onComplete }) => {
   };
 
   if (!currentQuestion) {
-    return <Alert severity="error">{t("exerciseNotFound")}</Alert>;
+    return (
+      <div className={cn(
+        "p-4 rounded-xl border-2",
+        isDark
+          ? "bg-red-500/10 border-red-500/30 text-red-300"
+          : "bg-red-50 border-red-200 text-red-700"
+      )}>
+        {t("exerciseNotFound")}
+      </div>
+    );
   }
 
   // Exercise completion screen
   if (exerciseCompleted) {
     return (
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          background: isDark
-            ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-            : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-          border: isDark
-            ? "1px solid rgba(139, 92, 246, 0.3)"
-            : "1px solid rgba(139, 92, 246, 0.2)",
-          textAlign: "center",
-        }}
-      >
-        <EmojiEvents sx={{ fontSize: "4rem", color: "#fbbf24", mb: 2 }} />
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+      <Card className={cn(
+        "p-6 md:p-8 rounded-2xl text-center",
+        isDark
+          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+      )}>
+        <Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
+        <h4 className={cn(
+          "text-2xl font-bold mb-2",
+          isDark ? "text-slate-100" : "text-slate-800"
+        )}>
           {t("exerciseCompleted")}
-        </Typography>
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-            background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        </h4>
+        <p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
           {t("yourScore")} : {totalScore}%
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ mb: 3, color: isDark ? "#cbd5e1" : "#64748b" }}
-        >
+        </p>
+        <p className={cn(
+          "mb-6",
+          isDark ? "text-slate-400" : "text-slate-600"
+        )}>
           {totalScore === 100 && t("perfectScore")}
           {totalScore >= 80 && totalScore < 100 && t("greatJob")}
           {totalScore >= 60 && totalScore < 80 && t("goodWork")}
           {totalScore < 60 && t("keepPracticing")}
-        </Typography>
+        </p>
         {totalScore === 100 && isFirstCompletion && (
-          <Chip
-            label={`+${exercise.xp_reward} XP`}
-            color="primary"
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 700,
-              mb: 3,
-            }}
-          />
+          <span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
+            +{exercise.xp_reward} XP
+          </span>
         )}
         {totalScore < 100 && (
           <>
-            <Alert severity="info" sx={{ mb: 3, textAlign: "left" }}>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                💡 {t("perfectScoreForXP")}
-              </Typography>
-            </Alert>
+            <div className={cn(
+              "p-4 rounded-xl border-2 mb-6 text-left",
+              isDark
+                ? "bg-blue-500/10 border-blue-500/30"
+                : "bg-blue-50 border-blue-200"
+            )}>
+              <p className={cn(
+                "font-semibold",
+                isDark ? "text-blue-300" : "text-blue-700"
+              )}>
+                {t("perfectScoreForXP")}
+              </p>
+            </div>
 
             {/* Correction Section */}
-            <Box sx={{ mb: 4, textAlign: "left" }}>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 700, mb: 2, color: "#ef4444" }}
-              >
+            <div className="mb-6 text-left">
+              <h6 className="font-bold mb-4 text-red-500">
                 {t("corrections")}
-              </Typography>
-              {questionResults.map((result, idx) => {
-                if (result.correct) return null;
-
-                return (
-                  <Paper
+              </h6>
+              {questionResults
+                .filter((result) => !result.correct)
+                .map((result, idx) => (
+                  <Card
                     key={idx}
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      mb: 2,
-                      borderRadius: 2,
-                      border: "2px solid #ef4444",
-                      backgroundColor: isDark
-                        ? "rgba(239, 68, 68, 0.1)"
-                        : "rgba(239, 68, 68, 0.05)",
-                    }}
+                    className={cn(
+                      "p-4 mb-4 rounded-xl border-2 border-red-500",
+                      isDark ? "bg-red-500/10" : "bg-red-50"
+                    )}
                   >
-                    <Typography variant="body1" sx={{ mb: 2, fontWeight: 600 }}>
+                    <p className="font-semibold mb-4">
                       {t("question")} {result.questionIndex + 1}
-                    </Typography>
-                    {result.correctPairs.map((pair) => {
-                      const userMatchedId = result.matches[pair.id];
-                      const isIncorrect = userMatchedId !== pair.id;
+                    </p>
+                    {result.correctPairs
+                      .filter((pair) => result.matches[pair.id] !== pair.id)
+                      .map((pair) => {
+                        const userMatchedId = result.matches[pair.id];
+                        const userMatchedPair = result.correctPairs.find(
+                          (p) => p.id === userMatchedId,
+                        );
 
-                      if (!isIncorrect) return null;
-
-                      const userMatchedPair = result.correctPairs.find(
-                        (p) => p.id === userMatchedId,
-                      );
-
-                      return (
-                        <Box key={pair.id} sx={{ mb: 1.5 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontWeight: 600, mb: 0.5 }}
-                          >
-                            {pair.left}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                              mb: 0.5,
-                              ml: 2,
-                            }}
-                          >
-                            <Cancel
-                              sx={{ color: "#ef4444", fontSize: "1.2rem" }}
-                            />
-                            <Typography
-                              variant="body2"
-                              sx={{ color: "#ef4444" }}
-                            >
-                              {t("yourAnswer")}:{" "}
-                              {userMatchedPair?.right || t("empty")}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                              ml: 2,
-                            }}
-                          >
-                            <CheckCircle
-                              sx={{ color: "#10b981", fontSize: "1.2rem" }}
-                            />
-                            <Typography
-                              variant="body2"
-                              sx={{ color: "#10b981" }}
-                            >
-                              {t("correctAnswer")}: {pair.right}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </Paper>
-                );
-              })}
-            </Box>
+                        return (
+                          <div key={pair.id} className="mb-3">
+                            <p className="font-semibold mb-1">
+                              {pair.left}
+                            </p>
+                            <div className="flex items-center gap-2 mb-1 ml-4">
+                              <XCircle className="w-5 h-5 text-red-500" />
+                              <span className="text-red-500 text-sm">
+                                {t("yourAnswer")}:{" "}
+                                {userMatchedPair?.right || t("empty")}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4">
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                              <span className="text-emerald-500 text-sm">
+                                {t("correctAnswer")}: {pair.right}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </Card>
+                ))}
+            </div>
           </>
         )}
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+        <div className="flex gap-4 justify-center">
           <Button
-            variant="contained"
             onClick={handleReset}
-            startIcon={<Refresh />}
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
           >
+            <RotateCcw className="w-5 h-5 mr-2" />
             {t("tryAgain")}
           </Button>
-        </Box>
-      </Paper>
+        </div>
+      </Card>
     );
   }
 
@@ -433,246 +352,218 @@ const DragAndDrop = ({ exercise, onComplete }) => {
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: { xs: 3, md: 4 },
-        borderRadius: 4,
-        border: isDark
-          ? "1px solid rgba(139, 92, 246, 0.3)"
-          : "1px solid rgba(139, 92, 246, 0.2)",
-        background: isDark
-          ? "linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)"
-          : "linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)",
-      }}
-    >
+    <Card className={cn(
+      "p-6 md:p-8 rounded-2xl",
+      isDark
+        ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
+        : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
+    )}>
       {/* Progress */}
-      <Box
-        sx={{
-          mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography
-          variant="body2"
-          sx={{ color: isDark ? "#94a3b8" : "#64748b" }}
-        >
+      <div className="mb-6 flex justify-between items-center">
+        <span className={cn(
+          "text-sm",
+          isDark ? "text-slate-400" : "text-slate-600"
+        )}>
           {t("question")} {currentQuestionIndex + 1} /{" "}
           {exercise.data.questions.length}
-        </Typography>
-        <Typography variant="body2" sx={{ fontWeight: 600, color: "#8b5cf6" }}>
+        </span>
+        <span className="text-sm font-semibold text-violet-500">
           {score} / {exercise.data.questions.length}
-        </Typography>
-      </Box>
+        </span>
+      </div>
 
       {/* Instruction */}
-      <Typography
-        variant="h6"
-        sx={{
-          mb: 3,
-          fontWeight: 600,
-          fontSize: { xs: "1.1rem", md: "1.25rem" },
-        }}
-      >
+      <h6 className={cn(
+        "mb-6 font-semibold text-lg md:text-xl",
+        isDark ? "text-slate-100" : "text-slate-800"
+      )}>
         {currentQuestion.instruction}
-      </Typography>
+      </h6>
 
       {/* Hint */}
-      <Alert severity="info" sx={{ mb: 3 }}>
-        {t("dragInstruction")}
-      </Alert>
+      <div className={cn(
+        "p-3 rounded-lg mb-6",
+        isDark
+          ? "bg-blue-500/10 border border-blue-500/30"
+          : "bg-blue-50 border border-blue-200"
+      )}>
+        <p className={cn(
+          "text-sm",
+          isDark ? "text-blue-300" : "text-blue-700"
+        )}>
+          {t("dragInstruction")}
+        </p>
+      </div>
 
       {/* Two Columns */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Left Column - Fixed items */}
-        <Grid item xs={12} md={6}>
-          <Typography
-            variant="subtitle2"
-            sx={{ mb: 2, fontWeight: 600, color: "#8b5cf6" }}
-          >
+        <div>
+          <p className="text-sm font-semibold text-violet-500 mb-4">
             {t("leftColumn")}
-          </Typography>
+          </p>
           {currentQuestion.pairs.map((pair) => {
             const matchedRight = getMatchedRightItem(pair.id);
             const isCorrectMatch = isChecked && matches[pair.id] === pair.id;
 
             return (
-              <Paper
+              <div
                 key={pair.id}
                 onDragOver={!isChecked ? handleDragOver : undefined}
                 onDrop={
                   !isChecked ? (e) => handleDropOnLeft(e, pair) : undefined
                 }
-                elevation={2}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  minHeight: "60px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 2,
-                  border: isChecked
+                className={cn(
+                  "p-4 mb-3 min-h-[60px] rounded-xl flex items-center justify-between gap-3",
+                  "transition-all duration-200",
+                  isChecked
                     ? isCorrectMatch
-                      ? "2px solid #10b981"
-                      : "2px solid #ef4444"
+                      ? "border-2 border-emerald-500 bg-emerald-500/10"
+                      : "border-2 border-red-500 bg-red-500/10"
                     : matchedRight
-                      ? "2px solid #8b5cf6"
-                      : "2px dashed rgba(139, 92, 246, 0.3)",
-                  background: isChecked
-                    ? isCorrectMatch
-                      ? "rgba(16, 185, 129, 0.1)"
-                      : "rgba(239, 68, 68, 0.1)"
-                    : matchedRight
-                      ? "rgba(139, 92, 246, 0.1)"
-                      : isDark
-                        ? "rgba(30, 41, 59, 0.5)"
-                        : "white",
-                  transition: "all 0.2s",
-                }}
+                      ? "border-2 border-violet-500 bg-violet-500/10"
+                      : cn(
+                          "border-2 border-dashed",
+                          isDark
+                            ? "border-violet-500/30 bg-slate-800/50"
+                            : "border-violet-500/30 bg-white"
+                        )
+                )}
               >
-                <Typography sx={{ fontWeight: 500, flex: 1 }}>
+                <span className={cn(
+                  "font-medium flex-1",
+                  isDark ? "text-slate-200" : "text-slate-700"
+                )}>
                   {pair.left}
-                </Typography>
+                </span>
 
                 {matchedRight ? (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <CompareArrows sx={{ color: "#8b5cf6" }} />
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        px: 2,
-                        py: 1,
-                        backgroundColor: isDark
-                          ? "rgba(139, 92, 246, 0.2)"
-                          : "rgba(139, 92, 246, 0.1)",
-                        border: "1px solid rgba(139, 92, 246, 0.3)",
-                      }}
-                    >
-                      <Typography sx={{ fontWeight: 500, fontSize: "0.9rem" }}>
+                  <div className="flex items-center gap-2">
+                    <ArrowLeftRight className="w-5 h-5 text-violet-500" />
+                    <div className={cn(
+                      "px-3 py-2 rounded-lg",
+                      isDark
+                        ? "bg-violet-500/20 border border-violet-500/30"
+                        : "bg-violet-500/10 border border-violet-500/30"
+                    )}>
+                      <span className="font-medium text-sm">
                         {matchedRight.right}
-                      </Typography>
-                    </Paper>
+                      </span>
+                    </div>
                     {!isChecked && (
-                      <Button
-                        size="small"
+                      <button
                         onClick={() => handleRemoveMatch(pair.id)}
-                        sx={{ minWidth: "auto", p: 0.5 }}
+                        className="p-1 text-slate-400 hover:text-slate-600"
                       >
-                        ✕
-                      </Button>
+                        x
+                      </button>
                     )}
-                    {isChecked &&
-                      (isCorrectMatch ? (
-                        <CheckCircle sx={{ color: "#10b981" }} />
+                    {isChecked && (
+                      isCorrectMatch ? (
+                        <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                       ) : (
-                        <Cancel sx={{ color: "#ef4444" }} />
-                      ))}
-                  </Box>
+                        <XCircle className="w-6 h-6 text-red-500" />
+                      )
+                    )}
+                  </div>
                 ) : (
-                  <Typography
-                    variant="caption"
-                    sx={{ color: isDark ? "#94a3b8" : "#64748b" }}
-                  >
+                  <span className={cn(
+                    "text-xs",
+                    isDark ? "text-slate-500" : "text-slate-400"
+                  )}>
                     {t("dragInstruction").split(" ")[0]}...
-                  </Typography>
+                  </span>
                 )}
-              </Paper>
+              </div>
             );
           })}
-        </Grid>
+        </div>
 
         {/* Right Column - Draggable items */}
-        <Grid item xs={12} md={6}>
-          <Typography
-            variant="subtitle2"
-            sx={{ mb: 2, fontWeight: 600, color: "#06b6d4" }}
-          >
+        <div>
+          <p className="text-sm font-semibold text-cyan-500 mb-4">
             {t("rightColumn")}
-          </Typography>
+          </p>
           {rightItems.map((pair) => {
             const isUsed = isRightItemUsed(pair.id);
             const isDragging = draggedItem?.id === pair.id;
 
             return (
-              <Paper
+              <div
                 key={pair.id}
                 draggable={!isChecked && !isUsed}
                 onDragStart={(e) => !isUsed && handleDragStart(e, pair)}
                 onDragEnd={handleDragEnd}
-                elevation={isDragging ? 4 : 1}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  minHeight: "60px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  cursor: isChecked || isUsed ? "default" : "grab",
-                  opacity: isUsed ? 0.4 : isDragging ? 0.5 : 1,
-                  transition: "all 0.2s",
-                  border: "1px solid rgba(6, 182, 212, 0.2)",
-                  background: isDark ? "rgba(30, 41, 59, 0.5)" : "white",
-                  "&:active": {
-                    cursor: isChecked || isUsed ? "default" : "grabbing",
-                  },
-                  "&:hover": {
-                    transform:
-                      isChecked || isUsed ? "none" : "translateY(-2px)",
-                    boxShadow: isChecked || isUsed ? 1 : 3,
-                  },
-                }}
+                className={cn(
+                  "p-4 mb-3 min-h-[60px] rounded-xl flex items-center gap-3",
+                  "transition-all duration-200",
+                  "border",
+                  isDark
+                    ? "border-cyan-500/20 bg-slate-800/50"
+                    : "border-cyan-500/20 bg-white",
+                  isChecked || isUsed ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+                  isUsed ? "opacity-40" : isDragging ? "opacity-50" : "opacity-100",
+                  !isChecked && !isUsed && "hover:-translate-y-0.5 hover:shadow-md"
+                )}
               >
                 {!isUsed && !isChecked && (
-                  <DragIndicator sx={{ color: "#06b6d4" }} />
+                  <GripVertical className="w-5 h-5 text-cyan-500" />
                 )}
-                <Typography
-                  sx={{
-                    flex: 1,
-                    fontWeight: 500,
-                    textDecoration: isUsed ? "line-through" : "none",
-                  }}
-                >
+                <span className={cn(
+                  "flex-1 font-medium",
+                  isUsed ? "line-through" : "",
+                  isDark ? "text-slate-200" : "text-slate-700"
+                )}>
                   {pair.right}
-                </Typography>
-              </Paper>
+                </span>
+              </div>
             );
           })}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       {/* Result */}
       {isChecked && (
-        <Alert severity={isCorrect ? "success" : "error"} sx={{ mb: 3 }}>
-          <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+        <div className={cn(
+          "p-4 rounded-xl mb-6",
+          isCorrect
+            ? isDark
+              ? "bg-emerald-500/10 border border-emerald-500/30"
+              : "bg-emerald-50 border border-emerald-200"
+            : isDark
+              ? "bg-red-500/10 border border-red-500/30"
+              : "bg-red-50 border border-red-200"
+        )}>
+          <p className={cn(
+            "font-semibold mb-1",
+            isCorrect
+              ? isDark ? "text-emerald-300" : "text-emerald-700"
+              : isDark ? "text-red-300" : "text-red-700"
+          )}>
             {isCorrect ? t("correct") : t("incorrect")}
-          </Typography>
+          </p>
           {currentQuestion.explanation && (
-            <Typography variant="body2">
+            <p className={cn(
+              "text-sm",
+              isCorrect
+                ? isDark ? "text-emerald-200" : "text-emerald-600"
+                : isDark ? "text-red-200" : "text-red-600"
+            )}>
               {currentQuestion.explanation}
-            </Typography>
+            </p>
           )}
-        </Alert>
+        </div>
       )}
 
       {/* Action Buttons */}
-      <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+      <div className="flex gap-4 justify-end">
         {!isChecked ? (
           <Button
-            variant="contained"
             onClick={checkAnswer}
             disabled={
               Object.keys(matches).length !== currentQuestion.pairs.length
             }
-            sx={{
-              background: "linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)",
-              px: 4,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
-            }}
+            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 disabled:opacity-50"
           >
             {t("checkAnswer")}
           </Button>
@@ -680,30 +571,21 @@ const DragAndDrop = ({ exercise, onComplete }) => {
           <>
             {!isCorrect && (
               <Button
-                variant="outlined"
+                variant="outline"
                 onClick={handleTryAgain}
-                sx={{
-                  borderColor: "#8b5cf6",
-                  color: "#8b5cf6",
-                  px: 4,
-                  py: 1.5,
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                }}
+                className={cn(
+                  "px-6 py-3 text-base font-semibold",
+                  isDark
+                    ? "border-violet-500 text-violet-400 hover:bg-violet-500/10"
+                    : "border-violet-500 text-violet-600 hover:bg-violet-500/10"
+                )}
               >
                 {t("tryAgain")}
               </Button>
             )}
             <Button
-              variant="contained"
               onClick={handleNext}
-              sx={{
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                px: 4,
-                py: 1.5,
-                fontSize: "1rem",
-                fontWeight: 600,
-              }}
+              className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
             >
               {currentQuestionIndex < exercise.data.questions.length - 1
                 ? t("next")
@@ -711,8 +593,8 @@ const DragAndDrop = ({ exercise, onComplete }) => {
             </Button>
           </>
         )}
-      </Box>
-    </Paper>
+      </div>
+    </Card>
   );
 };
 

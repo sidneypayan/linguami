@@ -1,32 +1,19 @@
 'use client'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
 import toast from '@/utils/toast'
-import {
-	Box,
-	Button,
-	Typography,
-	TextField,
-	Card,
-	Container,
-	InputAdornment,
-	CircularProgress,
-	LinearProgress,
-} from '@mui/material'
-import {
-	HomeRounded,
-	EmailRounded,
-	LockRounded,
-	CheckCircleRounded,
-	CancelRounded,
-	Visibility,
-	VisibilityOff,
-} from '@mui/icons-material'
+import { Home, Mail, Lock, CheckCircle2, XCircle, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useUserContext } from '@/context/user'
 import { supabase } from '@/lib/supabase'
 import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { cn } from '@/lib/utils'
 
 const initialState = {
 	email: '',
@@ -45,7 +32,7 @@ const UpdatePassword = () => {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 	const { updatePassword, setNewPassword } = useUserContext()
 
-	// Liste de mots de passe communs à bloquer
+	// Liste de mots de passe communs a bloquer
 	const commonPasswords = useMemo(() => [
 		'password', 'password123', '123456', '12345678', '123456789',
 		'qwerty', 'azerty', 'admin', 'letmein', 'welcome', 'monkey',
@@ -85,7 +72,7 @@ const UpdatePassword = () => {
 		return Object.values(passwordValidation).every(Boolean)
 	}, [passwordValidation])
 
-	// Détecter si on arrive depuis l'email avec un token
+	// Detecter si on arrive depuis l'email avec un token
 	useEffect(() => {
 		let mounted = true
 
@@ -95,33 +82,31 @@ const UpdatePassword = () => {
 			const error_code = searchParams.get('error_code')
 			const code = searchParams.get('code')
 
-			logger.log('🔍 URL params:', { error, error_code, code })
+			logger.log('URL params:', { error, error_code, code })
 
-			// Vérifier les paramètres URL pour les erreurs
+			// Verifier les parametres URL pour les erreurs
 			if (error_code === 'otp_expired' || error === 'access_denied') {
-				toast.error(t('resetLinkExpired') || 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.')
+				toast.error(t('resetLinkExpired') || 'Le lien de reinitialisation a expire. Veuillez en demander un nouveau.')
 				setIsResetting(false)
 				setLoading(false)
 				return
 			}
 
-			// Si on a un code dans l'URL, attendre que Supabase l'échange automatiquement
+			// Si on a un code dans l'URL, attendre que Supabase l'echange automatiquement
 			if (code && typeof code === 'string') {
-				logger.log('🔑 Code de récupération détecté dans URL')
-				logger.log('⏳ Attente de l\'événement SIGNED_IN de Supabase...')
-				// Ne rien faire ici - l'auth state listener détectera SIGNED_IN
-				// et déclenchera PASSWORD_RECOVERY automatiquement
+				logger.log('Code de recuperation detecte dans URL')
+				logger.log('Attente de l\'evenement SIGNED_IN de Supabase...')
 				return
 			}
 
-			// 1) Vérifier si une session de récupération existe déjà
+			// 1) Verifier si une session de recuperation existe deja
 			supabase.auth.getSession().then(({ data: { session } }) => {
 				if (!mounted) return
 				if (session?.user) {
-					logger.log('✅ Recovery session found')
+					logger.log('Recovery session found')
 					setIsResetting(true)
 				} else {
-					logger.log('ℹ️ No session yet, waiting for PASSWORD_RECOVERY event')
+					logger.log('No session yet, waiting for PASSWORD_RECOVERY event')
 					setIsResetting(false)
 				}
 				setLoading(false)
@@ -130,20 +115,20 @@ const UpdatePassword = () => {
 
 		initResetFlow()
 
-		// 2) Écouter les événements d'authentification
+		// 2) Ecouter les evenements d'authentification
 		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-			logger.log('🔍 Auth event:', event)
+			logger.log('Auth event:', event)
 
-			// Détecter une connexion suite à un reset password
+			// Detecter une connexion suite a un reset password
 			if (event === 'SIGNED_IN' && searchParams.get('code')) {
-				logger.log('✅ SIGNED_IN détecté avec code de récupération')
+				logger.log('SIGNED_IN detecte avec code de recuperation')
 				setIsResetting(true)
 				setLoading(false)
 			}
 
-			// Détecter l'événement PASSWORD_RECOVERY (ancien flow)
+			// Detecter l'evenement PASSWORD_RECOVERY (ancien flow)
 			if (event === 'PASSWORD_RECOVERY') {
-				logger.log('✅ PASSWORD_RECOVERY event detected')
+				logger.log('PASSWORD_RECOVERY event detected')
 				setIsResetting(true)
 				setLoading(false)
 			}
@@ -167,7 +152,7 @@ const UpdatePassword = () => {
 		e.preventDefault()
 
 		if (isResetting) {
-			// Cas 2 : Définir le nouveau mot de passe
+			// Cas 2 : Definir le nouveau mot de passe
 			const { password, confirmPassword } = values
 
 			if (!password || !confirmPassword) {
@@ -197,356 +182,156 @@ const UpdatePassword = () => {
 
 	if (loading) {
 		return (
-			<Box
-				sx={{
-					minHeight: '100vh',
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-				}}>
-				<CircularProgress sx={{ color: 'white' }} size={60} />
-			</Box>
+			<div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+				<Loader2 className="h-16 w-16 text-white animate-spin" />
+			</div>
 		)
 	}
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				position: 'relative',
-				overflow: 'hidden',
-				py: { xs: 4, sm: 6 },
-				'&::before': {
-					content: '""',
-					position: 'absolute',
-					top: '-10%',
-					right: '-10%',
-					width: '60%',
-					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 70%)',
-					pointerEvents: 'none',
-					filter: 'blur(40px)',
-				},
-				'&::after': {
-					content: '""',
-					position: 'absolute',
-					bottom: '-10%',
-					left: '-10%',
-					width: '60%',
-					height: '60%',
-					background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.15) 30%, transparent 70%)',
-					pointerEvents: 'none',
-					filter: 'blur(40px)',
-				},
-			}}>
-			<Container maxWidth='sm' sx={{ position: 'relative', zIndex: 1 }}>
-				<Card
-					sx={{
-						p: { xs: 3, sm: 5 },
-						borderRadius: 4,
-						boxShadow: '0 24px 60px rgba(0, 0, 0, 0.3)',
-						background: 'white',
-					}}>
+		<div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center relative overflow-hidden py-8 sm:py-12">
+			{/* Background effects */}
+			<div className="absolute -top-[10%] -right-[10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.25),rgba(255,255,255,0.1)_30%,transparent_70%)] blur-[40px] pointer-events-none" />
+			<div className="absolute -bottom-[10%] -left-[10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.3),rgba(0,0,0,0.15)_30%,transparent_70%)] blur-[40px] pointer-events-none" />
+
+			<div className="relative z-10 w-full max-w-md mx-auto px-4">
+				<Card className="p-6 sm:p-10 rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.3)] bg-white">
 					{/* Logo */}
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							mb: 1,
-						}}>
-						<Box
-							sx={{
-								width: 56,
-								height: 56,
-								borderRadius: 3,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-							}}>
-							<HomeRounded sx={{ fontSize: '2rem', color: 'white' }} />
-						</Box>
-					</Box>
+					<div className="flex items-center justify-center mb-2">
+						<div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_8px_24px_rgba(102,126,234,0.4)]">
+							<Home className="h-8 w-8 text-white" />
+						</div>
+					</div>
 
 					{/* Titre */}
-					<Typography
-						variant='h4'
-						align='center'
-						sx={{
-							fontWeight: 800,
-							mb: 1,
-							fontSize: { xs: '1.75rem', sm: '2rem' },
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-							backgroundClip: 'text',
-						}}>
+					<h1 className="text-center text-2xl sm:text-3xl font-extrabold mb-2 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
 						{isResetting ? t('setNewPassword') : t('updatePasswordTitle')}
-					</Typography>
+					</h1>
 
-					<Typography
-						variant='body2'
-						align='center'
-						sx={{
-							color: '#718096',
-							mb: 4,
-						}}>
+					<p className="text-center text-slate-500 mb-8">
 						{isResetting ? t('enterNewPassword') : t('updatePasswordSubtitle')}
-					</Typography>
+					</p>
 
 					{/* Formulaire */}
-					<Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+					<form onSubmit={handleSubmit} className="flex flex-col gap-5">
 						{isResetting ? (
 							<>
 								{/* Nouveau mot de passe */}
-								<Box>
-									<TextField
-										fullWidth
-										onChange={handleChange}
-										type={showPassword ? 'text' : 'password'}
-										label={t('newPassword')}
-										name='password'
-										value={values.password}
-										autoComplete='new-password'
-										id='password'
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													<LockRounded sx={{ color: '#718096' }} />
-												</InputAdornment>
-											),
-											endAdornment: (
-												<InputAdornment position='end'>
-													<Button
-														onClick={() => setShowPassword(!showPassword)}
-														sx={{
-															minWidth: 'auto',
-															p: 0.5,
-															color: '#718096',
-															'&:hover': {
-																bgcolor: 'transparent',
-																color: '#667eea',
-															},
-														}}>
-														{showPassword ? (
-															<VisibilityOff sx={{ fontSize: '1.25rem' }} />
-														) : (
-															<Visibility sx={{ fontSize: '1.25rem' }} />
-														)}
-													</Button>
-												</InputAdornment>
-											),
-										}}
-										sx={{
-											'& .MuiOutlinedInput-root': {
-												borderRadius: 2,
-												'&:hover fieldset': {
-													borderColor: '#667eea',
-												},
-												'&.Mui-focused fieldset': {
-													borderColor: '#667eea',
-													borderWidth: 2,
-												},
-											},
-										}}
-									/>
+								<div className="space-y-2">
+									<Label htmlFor="password">{t('newPassword')}</Label>
+									<div className="relative">
+										<Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+										<Input
+											type={showPassword ? 'text' : 'password'}
+											name="password"
+											id="password"
+											value={values.password}
+											onChange={handleChange}
+											autoComplete="new-password"
+											className="pl-10 pr-12 h-12 rounded-xl border-2 border-indigo-500/20 focus:border-indigo-500"
+										/>
+										<button
+											type="button"
+											onClick={() => setShowPassword(!showPassword)}
+											className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-500 hover:text-indigo-500 transition-colors">
+											{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+										</button>
+									</div>
 
 									{/* Indicateur de force du mot de passe */}
 									{values.password && (
-										<Box sx={{ mt: 2 }}>
-											<LinearProgress
-												variant='determinate'
+										<div className="mt-3 space-y-3">
+											<Progress
 												value={passwordStrength}
-												sx={{
-													height: 6,
-													borderRadius: 3,
-													backgroundColor: '#E5E7EB',
-													'& .MuiLinearProgress-bar': {
-														borderRadius: 3,
-														background:
-															passwordStrength < 50
-																? 'linear-gradient(90deg, #EF4444, #F87171)'
-																: passwordStrength < 75
-																? 'linear-gradient(90deg, #F59E0B, #FBBF24)'
-																: 'linear-gradient(90deg, #10B981, #34D399)',
-													},
-												}}
+												className="h-1.5"
+												style={{ background: '#E5E7EB' }}
 											/>
-											<Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+											<div className="flex flex-col gap-1.5">
 												{[
 													{ key: 'minLength', label: t('passwordMinLength12') },
 													{ key: 'maxLength', label: t('passwordMaxLength') },
 													{ key: 'notCommon', label: t('passwordNotCommon') },
 													{ key: 'notPersonal', label: t('passwordNotPersonal') },
 												].map(({ key, label }) => (
-													<Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													<div key={key} className="flex items-center gap-2">
 														{passwordValidation[key] ? (
-															<CheckCircleRounded sx={{ fontSize: '1.1rem', color: '#10B981' }} />
+															<CheckCircle2 className="h-4 w-4 text-emerald-500" />
 														) : (
-															<CancelRounded sx={{ fontSize: '1.1rem', color: '#EF4444' }} />
+															<XCircle className="h-4 w-4 text-red-500" />
 														)}
-														<Typography variant='body2' sx={{ fontSize: '0.8125rem', color: '#64748B' }}>
-															{label}
-														</Typography>
-													</Box>
+														<span className="text-xs text-slate-500">{label}</span>
+													</div>
 												))}
-											</Box>
-										</Box>
+											</div>
+										</div>
 									)}
-								</Box>
+								</div>
 
 								{/* Confirmation mot de passe */}
-								<TextField
-									fullWidth
-									onChange={handleChange}
-									type={showConfirmPassword ? 'text' : 'password'}
-									label={t('confirmPassword')}
-									name='confirmPassword'
-									value={values.confirmPassword}
-									autoComplete='new-password'
-									id='confirmPassword'
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<LockRounded sx={{ color: '#718096' }} />
-											</InputAdornment>
-										),
-										endAdornment: (
-											<InputAdornment position='end'>
-												<Button
-													onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-													sx={{
-														minWidth: 'auto',
-														p: 0.5,
-														color: '#718096',
-														'&:hover': {
-															bgcolor: 'transparent',
-															color: '#667eea',
-														},
-													}}>
-													{showConfirmPassword ? (
-														<VisibilityOff sx={{ fontSize: '1.25rem' }} />
-													) : (
-														<Visibility sx={{ fontSize: '1.25rem' }} />
-													)}
-												</Button>
-											</InputAdornment>
-										),
-									}}
-									sx={{
-										'& .MuiOutlinedInput-root': {
-											borderRadius: 2,
-											'&:hover fieldset': {
-												borderColor: '#667eea',
-											},
-											'&.Mui-focused fieldset': {
-												borderColor: '#667eea',
-												borderWidth: 2,
-											},
-										},
-									}}
-								/>
+								<div className="space-y-2">
+									<Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
+									<div className="relative">
+										<Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+										<Input
+											type={showConfirmPassword ? 'text' : 'password'}
+											name="confirmPassword"
+											id="confirmPassword"
+											value={values.confirmPassword}
+											onChange={handleChange}
+											autoComplete="new-password"
+											className="pl-10 pr-12 h-12 rounded-xl border-2 border-indigo-500/20 focus:border-indigo-500"
+										/>
+										<button
+											type="button"
+											onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+											className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-500 hover:text-indigo-500 transition-colors">
+											{showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+										</button>
+									</div>
+								</div>
 							</>
 						) : (
-							<TextField
-								fullWidth
-								onChange={handleChange}
-								type='email'
-								label={t('email')}
-								name='email'
-								value={values.email}
-								autoComplete='email'
-								id='email'
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position='start'>
-											<EmailRounded sx={{ color: '#718096' }} />
-										</InputAdornment>
-									),
-								}}
-								sx={{
-									'& .MuiOutlinedInput-root': {
-										borderRadius: 2,
-										'&:hover fieldset': {
-											borderColor: '#667eea',
-										},
-										'&.Mui-focused fieldset': {
-											borderColor: '#667eea',
-											borderWidth: 2,
-										},
-									},
-								}}
-							/>
+							<div className="space-y-2">
+								<Label htmlFor="email">{t('email')}</Label>
+								<div className="relative">
+									<Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+									<Input
+										type="email"
+										name="email"
+										id="email"
+										value={values.email}
+										onChange={handleChange}
+										autoComplete="email"
+										className="pl-10 h-12 rounded-xl border-2 border-indigo-500/20 focus:border-indigo-500"
+									/>
+								</div>
+							</div>
 						)}
 
 						<Button
-							fullWidth
-							type='submit'
-							variant='contained'
-							size='large'
-							sx={{
-								py: 1.75,
-								borderRadius: 2,
-								background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-								fontWeight: 700,
-								fontSize: '1.0625rem',
-								textTransform: 'none',
-								boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-								transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-								position: 'relative',
-								overflow: 'hidden',
-								'&::before': {
-									content: '""',
-									position: 'absolute',
-									top: 0,
-									left: '-100%',
-									width: '100%',
-									height: '100%',
-									background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-									transition: 'left 0.5s ease',
-								},
-								'&:hover': {
-									background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-									transform: 'translateY(-2px)',
-									boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
-									'&::before': {
-										left: '100%',
-									},
-								},
-								'&:active': {
-									transform: 'translateY(0)',
-								},
-							}}>
+							type="submit"
+							size="lg"
+							className={cn(
+								'w-full h-12 rounded-xl font-bold text-lg',
+								'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
+								'shadow-[0_8px_24px_rgba(102,126,234,0.4)] hover:shadow-[0_12px_32px_rgba(102,126,234,0.5)]',
+								'transition-all duration-300 hover:-translate-y-0.5'
+							)}>
 							{isResetting ? t('updatePassword') : t('sendRequest')}
 						</Button>
 
-						<Link href='/login' style={{ textDecoration: 'none' }}>
+						<Link href="/login" className="block">
 							<Button
-								sx={{
-									color: '#667eea',
-									fontWeight: 600,
-									textTransform: 'none',
-									fontSize: '0.9375rem',
-									width: '100%',
-									'&:hover': {
-										background: 'rgba(102, 126, 234, 0.05)',
-										textDecoration: 'underline',
-									},
-								}}>
+								type="button"
+								variant="ghost"
+								className="w-full text-indigo-500 font-semibold hover:text-purple-600 hover:bg-indigo-500/5">
 								{t('backToSignin')}
 							</Button>
 						</Link>
-					</Box>
+					</form>
 				</Card>
-			</Container>
-		</Box>
+			</div>
+		</div>
 	)
 }
 

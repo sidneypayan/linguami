@@ -1,63 +1,97 @@
-import { useTranslations, useLocale } from 'next-intl'
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { useState, useEffect } from 'react'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { useUserContext } from '@/context/user'
 import { useAllLessonStatuses } from '@/lib/lessons-client'
-import {
-	Box,
-	List,
-	ListItemText,
-	ListItemButton,
-	ListItemIcon,
-	Collapse,
-	Divider,
-} from '@mui/material'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { ExpandLess, ExpandMore } from '@mui/icons-material/'
-import { FaSeedling, FaTree, FaGraduationCap } from 'react-icons/fa'
-import { GiSprout } from 'react-icons/gi'
-import {
-	FaTree as FaTreeBig,
-	FaGraduationCap as FaGraduationCapBig,
-} from 'react-icons/fa6'
+import { ChevronDown, ChevronUp, CheckCircle, Inbox, Sprout, TreeDeciduous, GraduationCap } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-const getLevelIcon = level => {
+const getLevelIcon = (level) => {
+	const iconClass = "h-5 w-5"
 	switch (level) {
 		case 'A1':
-			return <FaSeedling />
+			return <Sprout className={iconClass} />
 		case 'A2':
-			return <GiSprout />
+			return <Sprout className={cn(iconClass, "scale-110")} />
 		case 'B1':
-			return <FaTree />
+			return <TreeDeciduous className={iconClass} />
 		case 'B2':
-			return <FaTreeBig />
+			return <TreeDeciduous className={cn(iconClass, "scale-110")} />
 		case 'C1':
-			return <FaGraduationCap />
+			return <GraduationCap className={iconClass} />
 		case 'C2':
-			return <FaGraduationCapBig />
+			return <GraduationCap className={cn(iconClass, "scale-110")} />
 		default:
-			return <InboxIcon />
+			return <Inbox className={iconClass} />
 	}
 }
 
-const getLevelColor = level => {
+const getLevelColors = (level) => {
 	switch (level) {
 		case 'A1':
-			return { bg: '#4ade8015', color: '#22c55e', border: '#4ade80' }
+			return {
+				bg: 'bg-green-500/10',
+				bgHover: 'hover:bg-green-500/20',
+				text: 'text-green-600',
+				border: 'border-green-400',
+				shadow: 'shadow-green-400/20',
+				gradient: 'from-green-500/20 to-green-500/10'
+			}
 		case 'A2':
-			return { bg: '#22d3ee15', color: '#0891b2', border: '#22d3ee' }
+			return {
+				bg: 'bg-cyan-500/10',
+				bgHover: 'hover:bg-cyan-500/20',
+				text: 'text-cyan-600',
+				border: 'border-cyan-400',
+				shadow: 'shadow-cyan-400/20',
+				gradient: 'from-cyan-500/20 to-cyan-500/10'
+			}
 		case 'B1':
-			return { bg: '#f59e0b15', color: '#d97706', border: '#f59e0b' }
+			return {
+				bg: 'bg-amber-500/10',
+				bgHover: 'hover:bg-amber-500/20',
+				text: 'text-amber-600',
+				border: 'border-amber-400',
+				shadow: 'shadow-amber-400/20',
+				gradient: 'from-amber-500/20 to-amber-500/10'
+			}
 		case 'B2':
-			return { bg: '#f97316 15', color: '#ea580c', border: '#f97316' }
+			return {
+				bg: 'bg-orange-500/10',
+				bgHover: 'hover:bg-orange-500/20',
+				text: 'text-orange-600',
+				border: 'border-orange-400',
+				shadow: 'shadow-orange-400/20',
+				gradient: 'from-orange-500/20 to-orange-500/10'
+			}
 		case 'C1':
-			return { bg: '#f093fb15', color: '#c026d3', border: '#f093fb' }
+			return {
+				bg: 'bg-fuchsia-500/10',
+				bgHover: 'hover:bg-fuchsia-500/20',
+				text: 'text-fuchsia-600',
+				border: 'border-fuchsia-400',
+				shadow: 'shadow-fuchsia-400/20',
+				gradient: 'from-fuchsia-500/20 to-fuchsia-500/10'
+			}
 		case 'C2':
-			return { bg: '#a855f715', color: '#9333ea', border: '#a855f7' }
+			return {
+				bg: 'bg-violet-500/10',
+				bgHover: 'hover:bg-violet-500/20',
+				text: 'text-violet-600',
+				border: 'border-violet-400',
+				shadow: 'shadow-violet-400/20',
+				gradient: 'from-violet-500/20 to-violet-500/10'
+			}
 		default:
-			return { bg: '#667eea15', color: '#667eea', border: '#667eea' }
+			return {
+				bg: 'bg-indigo-500/10',
+				bgHover: 'hover:bg-indigo-500/20',
+				text: 'text-indigo-600',
+				border: 'border-indigo-400',
+				shadow: 'shadow-indigo-400/20',
+				gradient: 'from-indigo-500/20 to-indigo-500/10'
+			}
 	}
 }
 
@@ -71,249 +105,171 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	// Fetch all lesson statuses using React Query
 	const { data: userLessonStatuses = [], isLoading } = useAllLessonStatuses(isUserLoggedIn)
 
-	const theme = useTheme()
 	// Fix hydration mismatch: sync media query only on client
 	const [isSmallScreen, setIsSmallScreen] = useState(false)
 
 	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 900px)')
+		const mediaQuery = window.matchMedia('(max-width: 768px)')
 		setIsSmallScreen(mediaQuery.matches)
 
-		const handler = e => setIsSmallScreen(e.matches)
+		const handler = (e) => setIsSmallScreen(e.matches)
 		mediaQuery.addEventListener('change', handler)
 		return () => mediaQuery.removeEventListener('change', handler)
 	}, [])
 
-	const checkIfUserLessonIsStudied = id => {
+	const checkIfUserLessonIsStudied = (id) => {
 		const matchingLessons = userLessonStatuses.find(
-			userLesson => userLesson.lesson_id === id && userLesson.is_studied
+			(userLesson) => userLesson.lesson_id === id && userLesson.is_studied
 		)
 		return !!matchingLessons
 	}
 
-	const toggleLevel = level => {
-		setOpenLevels(prev => ({ ...prev, [level]: !prev[level] }))
+	const toggleLevel = (level) => {
+		setOpenLevels((prev) => ({ ...prev, [level]: !prev[level] }))
 	}
 
 	const CECR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
 	const lessonsByLevel = CECR_LEVELS.reduce((acc, level) => {
-		acc[level] = lessonsInfos.filter(lesson => lesson.lessonLevel === level)
+		acc[level] = lessonsInfos.filter((lesson) => lesson.lessonLevel === level)
 		return acc
 	}, {})
 
 	// Filtrer les niveaux qui ont au moins une leçon
 	const levelsWithLessons = CECR_LEVELS.filter(
-		level => lessonsByLevel[level].length > 0
+		(level) => lessonsByLevel[level].length > 0
 	)
 
 	return (
-		<List
-			sx={{
-				width: { xs: '100%', md: '80%' },
-				maxWidth: { xs: '100%', md: 400 },
-				background: 'white',
-				borderRadius: { xs: 0, md: 4 },
-				overflow: 'hidden',
-				m: { xs: 0, md: '0 auto' },
-				position: { xs: 'static', md: 'sticky' },
-				top: { xs: 0, md: '100px' },
-				p: 0,
-				mb: { xs: 3, md: 0 },
-				boxShadow: { xs: 'none', md: '0 8px 32px rgba(102, 126, 234, 0.15)' },
-				border: { xs: 'none', md: '1px solid rgba(102, 126, 234, 0.1)' },
-			}}
-			component='nav'
-			aria-labelledby='nested-list-subheader'>
+		<nav
+			className={cn(
+				'w-full md:w-4/5 md:max-w-[400px] bg-white md:rounded-2xl overflow-hidden',
+				'md:sticky md:top-[100px] p-0 mb-6 md:mb-0',
+				'md:shadow-[0_8px_32px_rgba(102,126,234,0.15)] md:border md:border-indigo-500/10'
+			)}
+			aria-labelledby="lessons-menu">
 			{levelsWithLessons.map((level, index) => {
-				const levelColors = getLevelColor(level)
+				const colors = getLevelColors(level)
 				return (
 					<div key={level}>
-						<ListItemButton
+						{/* Level Header */}
+						<button
 							onClick={() => toggleLevel(level)}
-							sx={{
-								py: 2.5,
-								px: 3,
-								background: openLevels[level]
-									? `linear-gradient(135deg, ${levelColors.bg.replace('15', '20')}, ${levelColors.bg.replace('15', '10')})`
-									: levelColors.bg,
-								borderLeft: `5px solid ${levelColors.border}`,
-								transition: 'all 0.3s ease',
-								position: 'relative',
-								'&::after': openLevels[level] ? {
-									content: '""',
-									position: 'absolute',
-									bottom: 0,
-									left: 0,
-									right: 0,
-									height: '2px',
-									background: `linear-gradient(90deg, ${levelColors.border}, transparent)`,
-								} : {},
-								'&:hover': {
-									background: `linear-gradient(135deg, ${levelColors.bg.replace('15', '30')}, ${levelColors.bg.replace('15', '15')})`,
-									transform: 'translateX(4px)',
-									boxShadow: `0 4px 12px ${levelColors.border}30`,
-								},
-							}}>
-							<Box
-								sx={{
-									width: 44,
-									height: 44,
-									borderRadius: 2.5,
-									background: `linear-gradient(135deg, ${levelColors.bg.replace('15', '40')}, ${levelColors.bg.replace('15', '20')})`,
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									mr: 2,
-									border: `2px solid ${levelColors.border}30`,
-									boxShadow: `0 2px 8px ${levelColors.border}20`,
-								}}>
-								<ListItemIcon
-									sx={{
-										color: levelColors.color,
-										minWidth: 'auto',
-										fontSize: '1.5rem',
-										display: 'flex',
-										justifyContent: 'center',
-									}}>
-									{getLevelIcon(level)}
-								</ListItemIcon>
-							</Box>
-							<ListItemText
-								primary={`${t('level')} ${level}`}
-								secondary={`${lessonsByLevel[level].length} ${lessonsByLevel[level].length > 1 ? 'leçons' : 'leçon'}`}
-								primaryTypographyProps={{
-									fontWeight: 800,
-									fontSize: '1.125rem',
-									color: levelColors.color,
-									letterSpacing: '-0.3px',
-								}}
-								secondaryTypographyProps={{
-									fontWeight: 600,
-									fontSize: '0.8125rem',
-									color: levelColors.color,
-									opacity: 0.7,
-									mt: 0.25,
-								}}
-							/>
-							{openLevels[level] ? (
-								<ExpandLess
-									sx={{
-										color: levelColors.color,
-										fontSize: '1.75rem',
-										transition: 'transform 0.3s ease',
-									}}
-								/>
-							) : (
-								<ExpandMore
-									sx={{
-										color: levelColors.color,
-										fontSize: '1.75rem',
-										transition: 'transform 0.3s ease',
-									}}
-								/>
-							)}
-						</ListItemButton>
-						<Collapse in={openLevels[level]} timeout='auto' unmountOnExit>
-							<List
-								component='div'
-								disablePadding
-								sx={{
-									background: `linear-gradient(180deg, ${levelColors.bg.replace('15', '08')}, white)`,
-									py: 1,
-								}}>
-								{lessonsByLevel[level].map((lesson, lessonIndex) => (
-									<ListItemButton
-										key={lesson.slug}
-										sx={{
-											pl: 5,
-											pr: 3,
-											py: 2,
-											mx: 2,
-											mb: 1,
-											borderRadius: 2,
-											backgroundColor:
-												lessonSlug === lesson.slug
-													? levelColors.bg.replace('15', '40')
-													: 'transparent',
-											borderLeft:
-												lessonSlug === lesson.slug
-													? `4px solid ${levelColors.border}`
-													: '4px solid transparent',
-											border: lessonSlug === lesson.slug
-												? `1px solid ${levelColors.border}40`
-												: '1px solid transparent',
-											boxShadow: lessonSlug === lesson.slug
-												? `0 2px 8px ${levelColors.border}20`
-												: 'none',
-											transition: 'all 0.3s ease',
-											'&:hover': {
-												backgroundColor: levelColors.bg.replace('15', '25'),
-												transform: 'translateX(4px)',
-												borderLeftColor: levelColors.border,
-												boxShadow: `0 2px 8px ${levelColors.border}15`,
-											},
-										}}
-										onClick={() => {
-											onSelectLesson(lesson.slug)
-											if (isSmallScreen) {
-												setOpenLevels({})
-											}
-										}}>
-										<Box
-											sx={{
-												width: 28,
-												height: 28,
-												borderRadius: 1.5,
-												background: lessonSlug === lesson.slug
-													? `linear-gradient(135deg, ${levelColors.color}, ${levelColors.border})`
-													: levelColors.bg.replace('15', '30'),
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'center',
-												mr: 2,
-												flexShrink: 0,
-											}}>
-											<Box
-												sx={{
-													color: lessonSlug === lesson.slug ? 'white' : levelColors.color,
-													fontSize: '0.75rem',
-													fontWeight: 800,
-												}}>
-												{lessonIndex + 1}
-											</Box>
-										</Box>
-										<ListItemText
-											primary={lesson.titleRu}
-											primaryTypographyProps={{
-												fontWeight: lessonSlug === lesson.slug ? 700 : 600,
-												fontSize: '0.9375rem',
-												color: lessonSlug === lesson.slug ? levelColors.color : '#4a5568',
-												letterSpacing: '-0.2px',
-											}}
-										/>
+							className={cn(
+								'w-full flex items-center py-4 px-4 transition-all duration-300',
+								'border-l-[5px]',
+								colors.border,
+								openLevels[level]
+									? `bg-gradient-to-r ${colors.gradient}`
+									: colors.bg,
+								colors.bgHover,
+								'hover:translate-x-1 hover:shadow-lg',
+								colors.shadow,
+								'relative',
+								openLevels[level] && 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gradient-to-r after:from-current after:to-transparent'
+							)}>
+							{/* Icon container */}
+							<div
+								className={cn(
+									'w-11 h-11 rounded-xl flex items-center justify-center mr-3',
+									'bg-gradient-to-br',
+									colors.gradient,
+									'border-2',
+									colors.border,
+									'border-opacity-30',
+									'shadow-sm',
+									colors.text
+								)}>
+								{getLevelIcon(level)}
+							</div>
 
-										{!isLoading && checkIfUserLessonIsStudied(lesson.id) && (
-											<CheckCircleIcon
-												sx={{
-													color: '#22c55e',
-													fontSize: '1.5rem',
-													ml: 1,
-													filter: 'drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3))',
-												}}
-											/>
-										)}
-									</ListItemButton>
-								))}
-							</List>
-						</Collapse>
+							{/* Text */}
+							<div className="flex-1 text-left">
+								<p className={cn('font-extrabold text-lg tracking-tight', colors.text)}>
+									{t('level')} {level}
+								</p>
+								<p className={cn('text-sm font-semibold opacity-70', colors.text)}>
+									{lessonsByLevel[level].length} {lessonsByLevel[level].length > 1 ? 'leçons' : 'leçon'}
+								</p>
+							</div>
+
+							{/* Chevron */}
+							{openLevels[level] ? (
+								<ChevronUp className={cn('h-6 w-6 transition-transform', colors.text)} />
+							) : (
+								<ChevronDown className={cn('h-6 w-6 transition-transform', colors.text)} />
+							)}
+						</button>
+
+						{/* Lessons List */}
+						<div
+							className={cn(
+								'overflow-hidden transition-all duration-300',
+								openLevels[level] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+							)}>
+							<div className={cn('py-2 bg-gradient-to-b', colors.gradient.replace('20', '05'), 'to-white')}>
+								{lessonsByLevel[level].map((lesson, lessonIndex) => {
+									const isSelected = lessonSlug === lesson.slug
+									return (
+										<button
+											key={lesson.slug}
+											onClick={() => {
+												onSelectLesson(lesson.slug)
+												if (isSmallScreen) {
+													setOpenLevels({})
+												}
+											}}
+											className={cn(
+												'w-[calc(100%-16px)] flex items-center pl-6 pr-4 py-3 mx-2 mb-1 rounded-lg',
+												'transition-all duration-300 text-left',
+												'border-l-4',
+												isSelected
+													? cn(colors.bg.replace('10', '30'), colors.border, 'border shadow', colors.shadow)
+													: 'border-transparent hover:border-current',
+												!isSelected && colors.bgHover,
+												'hover:translate-x-1'
+											)}>
+											{/* Lesson number */}
+											<div
+												className={cn(
+													'w-7 h-7 rounded-md flex items-center justify-center mr-3 flex-shrink-0',
+													'text-xs font-extrabold',
+													isSelected
+														? cn('bg-gradient-to-br', colors.text.replace('text', 'from'), colors.border.replace('border', 'to'), 'text-white')
+														: cn(colors.bg.replace('10', '25'), colors.text)
+												)}>
+												{lessonIndex + 1}
+											</div>
+
+											{/* Lesson title */}
+											<span
+												className={cn(
+													'flex-1 text-[0.9375rem] tracking-tight',
+													isSelected ? cn('font-bold', colors.text) : 'font-semibold text-slate-600'
+												)}>
+												{lesson.titleRu}
+											</span>
+
+											{/* Check icon if studied */}
+											{!isLoading && checkIfUserLessonIsStudied(lesson.id) && (
+												<CheckCircle
+													className="h-5 w-5 text-green-500 ml-2 flex-shrink-0 drop-shadow-[0_2px_4px_rgba(34,197,94,0.3)]"
+												/>
+											)}
+										</button>
+									)
+								})}
+							</div>
+						</div>
+
+						{/* Divider */}
 						{index < levelsWithLessons.length - 1 && (
-							<Divider sx={{ borderBottomWidth: '1px', borderColor: '#e5e7eb' }} />
+							<div className="border-b border-gray-200" />
 						)}
 					</div>
 				)
 			})}
-		</List>
+		</nav>
 	)
 }
 

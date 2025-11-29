@@ -1,39 +1,28 @@
 'use client'
 
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useState, useRef } from 'react'
 import toast from '@/utils/toast'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import AuthLayout from '@/components/auth/AuthLayout'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
-// Head component not needed in App Router - use metadata in layout
 import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
-import {
-	Box,
-	Button,
-	TextField,
-	Typography,
-	InputAdornment,
-	Divider,
-	useTheme,
-} from '@mui/material'
-import {
-	AlternateEmailRounded,
-	KeyRounded,
-	LoginRounded,
-	Visibility,
-	VisibilityOff,
-} from '@mui/icons-material'
+import { LogIn, AtSign, KeyRound, Eye, EyeOff } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { verifyTurnstile } from '@/app/actions/auth'
+import { cn } from '@/lib/utils'
 
 const Login = () => {
 	const t = useTranslations('register')
 	const { login, loginWithThirdPartyOAuth, sendMagicLink } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const [values, setValues] = useState({ email: '', password: '' })
 	const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false)
 	const [turnstileToken, setTurnstileToken] = useState(null)
@@ -48,8 +37,8 @@ const Login = () => {
 		e.preventDefault()
 		// Verify Turnstile token
 		if (!turnstileToken) {
-			logger.error('❌ No Turnstile token found in state')
-			toast.error(t('pleaseSolveCaptcha') || 'Veuillez compléter la vérification anti-bot')
+			logger.error('No Turnstile token found in state')
+			toast.error(t('pleaseSolveCaptcha') || 'Veuillez completer la verification anti-bot')
 			return
 		}
 		logger.log('Token (first 20 chars):', turnstileToken.substring(0, 20) + '...')
@@ -59,14 +48,14 @@ const Login = () => {
 			const verifyData = await verifyTurnstile(turnstileToken)
 
 			if (!verifyData.success) {
-				toast.error(t('captchaVerificationFailed') || 'Échec de la vérification anti-bot')
+				toast.error(t('captchaVerificationFailed') || 'Echec de la verification anti-bot')
 				setTurnstileToken(null)
 				turnstileRef.current?.reset()
 				return
 			}
 		} catch (error) {
 			logger.error('Turnstile verification error:', error)
-			toast.error(t('captchaVerificationError') || 'Erreur lors de la vérification anti-bot')
+			toast.error(t('captchaVerificationError') || 'Erreur lors de la verification anti-bot')
 			setTurnstileToken(null)
 			turnstileRef.current?.reset()
 			return
@@ -82,253 +71,160 @@ const Login = () => {
 		}
 	}
 
-	const textFieldStyles = {
-		'& .MuiOutlinedInput-root': {
-			borderRadius: 2.5,
-			transition: 'all 0.3s ease',
-			backgroundColor: isDark ? 'rgba(30, 41, 59, 0.6)' : 'transparent',
-			color: isDark ? '#f1f5f9' : 'inherit',
-			'& fieldset': {
-				borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
-				borderWidth: '2px',
-			},
-			'&:hover fieldset': {
-				borderColor: 'rgba(102, 126, 234, 0.4)',
-			},
-			'&.Mui-focused fieldset': {
-				borderColor: '#667eea',
-				borderWidth: 2,
-			},
-		},
-		'& .MuiInputLabel-root': {
-			color: isDark ? '#94a3b8' : '#718096',
-			'&.Mui-focused': {
-				color: '#667eea',
-			},
-		},
-		'& .MuiInputBase-input::placeholder': {
-			color: isDark ? '#94a3b8' : 'inherit',
-			opacity: 1,
-		},
-	}
-
 	return (
-		<>
-			<AuthLayout icon={<LoginRounded sx={{ fontSize: { xs: '2rem', sm: '2.25rem' }, color: 'white' }} />}>
-				{/* Titre */}
-				<Typography
-					variant="h4"
-					align="center"
-					sx={{
-						fontWeight: 800,
-						mb: { xs: 3, sm: 1 },
-						fontSize: { xs: '1.5rem', sm: '2.125rem' },
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
-					}}>
-					{t('signinTitle')}
-				</Typography>
+		<AuthLayout icon={<LogIn className="h-8 w-8 sm:h-9 sm:w-9 text-white" />}>
+			{/* Titre */}
+			<h1 className="text-center text-2xl sm:text-4xl font-extrabold mb-3 sm:mb-2 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+				{t('signinTitle')}
+			</h1>
 
-				<Typography
-					variant="body1"
-					align="center"
-					sx={{
-						color: isDark ? '#94a3b8' : '#718096',
-						mb: { xs: 3, sm: 4 },
-				display: { xs: 'none', sm: 'block' },
-						fontSize: '1rem',
-					}}>
-					{t('signinSubtitle')}
-				</Typography>
+			<p className={cn(
+				'text-center mb-6 sm:mb-8 hidden sm:block',
+				isDark ? 'text-slate-400' : 'text-slate-500'
+			)}>
+				{t('signinSubtitle')}
+			</p>
 
-				{/* Boutons OAuth */}
-				<OAuthButtons
-					onGoogleClick={() => loginWithThirdPartyOAuth('google')}
-					onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
-				/>
+			{/* Boutons OAuth */}
+			<OAuthButtons
+				onGoogleClick={() => loginWithThirdPartyOAuth('google')}
+				onMagicLinkClick={() => setMagicLinkDialogOpen(true)}
+			/>
 
-				<Divider sx={{ my: { xs: 2.5, sm: 3.5 }, color: isDark ? '#94a3b8' : '#718096', fontSize: '0.9rem', fontWeight: 500 }}>
+			<div className="relative my-6 sm:my-8">
+				<Separator />
+				<span className={cn(
+					'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-3 text-sm font-medium',
+					isDark ? 'bg-slate-900 text-slate-400' : 'bg-white text-slate-500'
+				)}>
 					{t('or')}
-				</Divider>
+				</span>
+			</div>
 
-				{/* Formulaire */}
-				<Box
-					component="form"
-					onSubmit={handleSubmit}
-					sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, sm: 3 } }}>
-					<TextField
-						fullWidth
-						onChange={handleChange}
-						type="email"
-						label={t('email')}
-						name="email"
-						value={values.email}
-						autoComplete="email"
-						id="email"
-						required
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<AlternateEmailRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
-								</InputAdornment>
-							),
-						}}
-						sx={textFieldStyles}
-					/>
-
-					<Box>
-						<TextField
-							fullWidth
+			{/* Formulaire */}
+			<form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6">
+				{/* Email */}
+				<div className="space-y-2">
+					<Label htmlFor="email" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('email')}
+					</Label>
+					<div className="relative">
+						<AtSign className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Input
+							type="email"
+							name="email"
+							id="email"
+							value={values.email}
 							onChange={handleChange}
-							type={showPassword ? 'text' : 'password'}
-							label={t('password')}
-							name="password"
-							value={values.password}
-							autoComplete="current-password"
-							id="password"
+							autoComplete="email"
 							required
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">
-										<KeyRounded sx={{ color: isDark ? '#94a3b8' : '#718096' }} />
-									</InputAdornment>
-								),
-								endAdornment: (
-									<InputAdornment position="end">
-										<Button
-											onClick={() => setShowPassword(!showPassword)}
-											sx={{
-												minWidth: 'auto',
-												p: 1,
-												color: isDark ? '#94a3b8' : '#718096',
-												'&:hover': {
-													bgcolor: 'rgba(102, 126, 234, 0.1)',
-												},
-											}}
-											aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
-											{showPassword ? <VisibilityOff /> : <Visibility />}
-										</Button>
-									</InputAdornment>
-								),
-							}}
-							sx={textFieldStyles}
+							className={cn(
+								'pl-10 h-12 rounded-xl border-2 transition-all',
+								isDark
+									? 'bg-slate-800/60 border-violet-500/30 focus:border-indigo-500'
+									: 'bg-white border-indigo-500/20 focus:border-indigo-500'
+							)}
 						/>
+					</div>
+				</div>
 
-						{/* Mot de passe oublié */}
-						<Link href="/reset-password" style={{ textDecoration: 'none' }}>
-							<Box
-								component="span"
-								sx={{
-									display: 'block',
-									mt: 1.5,
-									textAlign: 'right',
-									color: '#667eea',
-									fontSize: '0.875rem',
-									fontWeight: 600,
-									transition: 'all 0.2s ease',
-									'&:hover': {
-										textDecoration: 'underline',
-										color: '#764ba2',
-									},
-								}}>
-								{t('forgot')}
-							</Box>
+				{/* Password */}
+				<div className="space-y-2">
+					<Label htmlFor="password" className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+						{t('password')}
+					</Label>
+					<div className="relative">
+						<KeyRound className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Input
+							type={showPassword ? 'text' : 'password'}
+							name="password"
+							id="password"
+							value={values.password}
+							onChange={handleChange}
+							autoComplete="current-password"
+							required
+							className={cn(
+								'pl-10 pr-12 h-12 rounded-xl border-2 transition-all',
+								isDark
+									? 'bg-slate-800/60 border-violet-500/30 focus:border-indigo-500'
+									: 'bg-white border-indigo-500/20 focus:border-indigo-500'
+							)}
+						/>
+						<button
+							type="button"
+							onClick={() => setShowPassword(!showPassword)}
+							className={cn(
+								'absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors',
+								isDark ? 'text-slate-400 hover:text-slate-300' : 'text-slate-500 hover:text-slate-700'
+							)}
+							aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+							{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+						</button>
+					</div>
+
+					{/* Mot de passe oublie */}
+					<div className="text-right mt-2">
+						<Link
+							href="/reset-password"
+							className="text-sm font-semibold text-indigo-500 hover:text-purple-600 hover:underline transition-colors">
+							{t('forgot')}
 						</Link>
-					</Box>
+					</div>
+				</div>
 
-					{/* Turnstile Anti-Bot Widget */}
-					<TurnstileWidget
-						ref={turnstileRef}
-						onSuccess={(token) => {
-							logger.log('Token:', token?.substring(0, 20) + '...')
-							setTurnstileToken(token)
-						}}
-						onError={(error) => {
-							logger.error('❌ Login page: Turnstile error or expiration:', error)
-							setTurnstileToken(null)
-							toast.error(t('captchaExpired') || 'Le captcha a expiré, veuillez le refaire')
-						}}
-						action="login"
-					/>
-
-					<Button
-						fullWidth
-						type="submit"
-						variant="contained"
-						size="large"
-						sx={{
-							py: { xs: 1.75, sm: 2 },
-							borderRadius: 2.5,
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							fontWeight: 700,
-							fontSize: '1.0625rem',
-							textTransform: 'none',
-							boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
-							transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-							position: 'relative',
-							overflow: 'hidden',
-							'&::before': {
-								content: '""',
-								position: 'absolute',
-								top: 0,
-								left: '-100%',
-								width: '100%',
-								height: '100%',
-								background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-								transition: 'left 0.5s ease',
-							},
-							'&:hover': {
-								background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-								transform: 'translateY(-2px)',
-								boxShadow: '0 12px 32px rgba(102, 126, 234, 0.5)',
-								'&::before': {
-									left: '100%',
-								},
-							},
-							'&:active': {
-								transform: 'translateY(0)',
-							},
-						}}>
-						{t('signinBtn')}
-					</Button>
-
-					{/* Lien vers inscription */}
-					<Box sx={{ textAlign: 'center', mt: { xs: 0.75, sm: 1 } }}>
-						<Typography
-							variant="body2"
-							sx={{
-								color: isDark ? '#94a3b8' : '#718096',
-								fontSize: '0.9375rem',
-							}}>
-							{t('noAccountQuestion')}{' '}
-							<Link href="/signup" style={{ textDecoration: 'none' }}>
-								<Box
-									component="span"
-									sx={{
-										color: '#667eea',
-										fontWeight: 700,
-										transition: 'all 0.2s ease',
-										'&:hover': {
-											textDecoration: 'underline',
-											color: '#764ba2',
-										},
-									}}>
-									{t('noaccount')}
-								</Box>
-							</Link>
-						</Typography>
-					</Box>
-				</Box>
-
-				<MagicLinkDialog
-					open={magicLinkDialogOpen}
-					onClose={() => setMagicLinkDialogOpen(false)}
-					onSend={sendMagicLink}
+				{/* Turnstile Anti-Bot Widget */}
+				<TurnstileWidget
+					ref={turnstileRef}
+					onSuccess={(token) => {
+						logger.log('Token:', token?.substring(0, 20) + '...')
+						setTurnstileToken(token)
+					}}
+					onError={(error) => {
+						logger.error('Login page: Turnstile error or expiration:', error)
+						setTurnstileToken(null)
+						toast.error(t('captchaExpired') || 'Le captcha a expire, veuillez le refaire')
+					}}
+					action="login"
 				/>
-			</AuthLayout>
-		</>
+
+				<Button
+					type="submit"
+					size="lg"
+					className={cn(
+						'w-full h-12 sm:h-14 rounded-xl font-bold text-base sm:text-lg',
+						'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
+						'shadow-[0_8px_24px_rgba(102,126,234,0.4)] hover:shadow-[0_12px_32px_rgba(102,126,234,0.5)]',
+						'transition-all duration-300 hover:-translate-y-0.5'
+					)}>
+					{t('signinBtn')}
+				</Button>
+
+				{/* Lien vers inscription */}
+				<p className={cn(
+					'text-center text-sm sm:text-base mt-2',
+					isDark ? 'text-slate-400' : 'text-slate-500'
+				)}>
+					{t('noAccountQuestion')}{' '}
+					<Link
+						href="/signup"
+						className="font-bold text-indigo-500 hover:text-purple-600 hover:underline transition-colors">
+						{t('noaccount')}
+					</Link>
+				</p>
+			</form>
+
+			<MagicLinkDialog
+				open={magicLinkDialogOpen}
+				onClose={() => setMagicLinkDialogOpen(false)}
+				onSend={sendMagicLink}
+			/>
+		</AuthLayout>
 	)
 }
 

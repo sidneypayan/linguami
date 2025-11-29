@@ -1,59 +1,40 @@
 'use client'
 
-import { Box, Button, Typography, Container } from '@mui/material'
-import { SearchOff } from '@mui/icons-material'
+import { Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 export default function NotFound() {
 	return (
-		<Container maxWidth="md">
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					minHeight: '70vh',
-					textAlign: 'center',
-					gap: 3,
-				}}
-			>
-				<SearchOff
-					sx={{
-						fontSize: 120,
-						color: '#666',
-						opacity: 0.6,
-					}}
-				/>
+		<div className="max-w-3xl mx-auto px-4">
+			<div className="flex flex-col items-center justify-center min-h-[70vh] text-center gap-6">
+				<Search className="h-28 w-28 text-slate-500 opacity-60" />
 
-				<Typography variant="h1" fontWeight={700} sx={{ color: '#667eea' }}>
+				<h1 className="text-6xl font-bold text-indigo-500">
 					404
-				</Typography>
+				</h1>
 
-				<Typography variant="h3" component="h1" fontWeight={600}>
+				<h2 className="text-2xl sm:text-3xl font-semibold">
 					Oups ! Page introuvable
-				</Typography>
+				</h2>
 
-				<Typography variant="h6" sx={{ color: '#666', maxWidth: 600 }}>
+				<p className="text-lg text-slate-500 max-w-xl">
 					La page que vous recherchez est introuvable
-				</Typography>
+				</p>
 
 				<Button
-					variant="contained"
-					size="large"
-					component={Link}
-					href="/"
-					sx={{
-						mt: 2,
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						px: 4,
-						py: 1.5,
-						color: 'white',
-					}}
-				>
-					← Retour à l&apos;accueil
+					size="lg"
+					asChild
+					className={cn(
+						'mt-4 bg-gradient-to-r from-indigo-500 to-purple-600',
+						'px-8 py-3 text-white'
+					)}>
+					<Link href="/">
+						&larr; Retour a l&apos;accueil
+					</Link>
 				</Button>
-			</Box>
-		</Container>
+			</div>
+		</div>
 	)
 }

@@ -8,7 +8,7 @@
 import { useUserContext } from '@/context/user'
 import { useState, useCallback, useEffect } from 'react'
 import { useLocale } from 'next-intl'
-import { useTheme } from '@mui/material'
+import { useThemeMode } from '@/context/ThemeContext'
 import { useFlashcards, SESSION_MODE } from '@/context/flashcards'
 import { useAchievementContext } from '../gamification/AchievementProvider'
 import { CARD_STATES } from '@/utils/spacedRepetition'
@@ -29,9 +29,8 @@ import { FlashcardReviewCard } from '@/components/flashcards/FlashcardReviewCard
 
 const Flashcards = () => {
 	const locale = useLocale()
-	const theme = useTheme()
+	const { isDark } = useThemeMode()
 	const { closeFlashcards, sessionOptions } = useFlashcards()
-	const isDark = theme.palette.mode === 'dark'
 	const { userLearningLanguage, isUserLoggedIn } = useUserContext()
 	const { showAchievements } = useAchievementContext()
 

@@ -2,37 +2,31 @@
  * Session complete component - shown when all cards are reviewed
  */
 
-import { IconButton } from '@mui/material'
-import { CloseRounded, CelebrationRounded } from '@mui/icons-material'
+import { X, PartyPopper } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { cn } from '@/lib/utils'
 import styles from '@/styles/FlashCards.module.css'
 
 export function SessionComplete({ reviewedCount, sessionDuration, onClose, isDark }) {
 	const t = useTranslations('words')
 
-	const closeButtonStyle = {
-		position: 'absolute',
-		top: '1rem',
-		right: '1rem',
-		color: isDark ? '#a78bfa' : '#667eea',
-		transition: 'all 0.2s ease',
-		'&:hover': {
-			background: isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(102, 126, 234, 0.1)',
-			transform: 'rotate(90deg) scale(1.1)',
-		},
-	}
-
 	return (
 		<div className={isDark ? styles.containerDark : styles.container}>
-			<IconButton
+			<button
 				onClick={onClose}
-				className={styles.closeIcon}
-				sx={closeButtonStyle}>
-				<CloseRounded sx={{ fontSize: '2rem' }} />
-			</IconButton>
+				className={cn(
+					"absolute top-4 right-4 p-2 rounded-lg transition-all duration-200",
+					isDark
+						? "text-violet-400 hover:bg-violet-500/20"
+						: "text-violet-600 hover:bg-violet-500/10",
+					"hover:rotate-90 hover:scale-110"
+				)}
+			>
+				<X className="w-8 h-8" />
+			</button>
 
 			<h3 className={styles.flashcardsTitle}>
-				<CelebrationRounded sx={{ fontSize: '2.5rem', mb: 1, color: '#667eea' }} />
+				<PartyPopper className="w-10 h-10 mb-2 text-violet-600" />
 				<br />
 				{t('session_congrats')}
 			</h3>

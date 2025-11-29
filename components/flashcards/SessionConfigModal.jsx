@@ -4,44 +4,30 @@
  */
 
 import { useState } from 'react'
+import { Layers, Timer, Zap, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
+import { SESSION_MODE } from '@/context/flashcards'
 import {
 	Dialog,
-	DialogTitle,
 	DialogContent,
-	DialogActions,
-	Button,
-	ToggleButton,
-	ToggleButtonGroup,
-	Box,
-	Typography,
-	useTheme,
-} from '@mui/material'
-import {
-	StyleRounded,
-	TimerRounded,
-	FlashOnRounded,
-	CloseRounded,
-} from '@mui/icons-material'
-import { useTranslations } from 'next-intl'
-import { SESSION_MODE } from '@/context/flashcards'
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const CARDS_OPTIONS = [10, 20, 30, 50, 100]
 const TIME_OPTIONS = [3, 5, 10, 15, 20] // in minutes
 
 export function SessionConfigModal({ open, onClose, onStart, totalWords = 0 }) {
 	const t = useTranslations('words')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const [mode, setMode] = useState(SESSION_MODE.CARDS)
 	const [cardsLimit, setCardsLimit] = useState(20)
 	const [timeLimit, setTimeLimit] = useState(5)
-
-	const handleModeChange = (event, newMode) => {
-		if (newMode !== null) {
-			setMode(newMode)
-		}
-	}
 
 	const handleStart = () => {
 		onStart({
@@ -53,254 +39,171 @@ export function SessionConfigModal({ open, onClose, onStart, totalWords = 0 }) {
 	}
 
 	return (
-		<Dialog
-			open={open}
-			onClose={onClose}
-			maxWidth="sm"
-			fullWidth
-			PaperProps={{
-				sx: {
-					borderRadius: 4,
-					background: isDark
-						? 'linear-gradient(145deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%)'
-						: 'linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%)',
-					border: isDark ? '1px solid rgba(139, 92, 246, 0.3)' : '1px solid rgba(139, 92, 246, 0.2)',
-					boxShadow: '0 25px 50px -12px rgba(139, 92, 246, 0.25)',
-				},
-			}}
-		>
-			<DialogTitle
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					pb: 1,
-				}}
-			>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-					<FlashOnRounded sx={{ color: '#8b5cf6', fontSize: '1.75rem' }} />
-					<Typography
-						variant="h5"
-						sx={{
-							fontWeight: 700,
-							background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-							WebkitBackgroundClip: 'text',
-							WebkitTextFillColor: 'transparent',
-						}}
-					>
-						{t('session_config_title')}
-					</Typography>
-				</Box>
-				<Button
-					onClick={onClose}
-					sx={{ minWidth: 'auto', p: 1, color: isDark ? '#94a3b8' : '#64748b' }}
-				>
-					<CloseRounded />
-				</Button>
-			</DialogTitle>
+		<Dialog open={open} onOpenChange={onClose}>
+			<DialogContent className={cn(
+				"sm:max-w-md rounded-2xl border-2",
+				isDark
+					? "bg-slate-900 border-violet-500/30"
+					: "bg-white border-violet-500/20",
+				"shadow-2xl shadow-violet-500/25"
+			)}>
+				<DialogHeader className="pb-2">
+					<DialogTitle className="flex items-center gap-3">
+						<Zap className="w-7 h-7 text-violet-500" />
+						<span className="text-xl font-bold bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
+							{t('session_config_title')}
+						</span>
+					</DialogTitle>
+				</DialogHeader>
 
-			<DialogContent sx={{ pt: 2 }}>
-				<Typography
-					variant="subtitle2"
-					sx={{
-						mb: 1.5,
-						color: isDark ? '#94a3b8' : '#64748b',
-						fontWeight: 600,
-					}}
-				>
-					{t('session_mode_label')}
-				</Typography>
+				<div className="pt-4">
+					<p className={cn(
+						"text-sm font-semibold mb-3",
+						isDark ? "text-slate-400" : "text-slate-600"
+					)}>
+						{t('session_mode_label')}
+					</p>
 
-				<ToggleButtonGroup
-					value={mode}
-					exclusive
-					onChange={handleModeChange}
-					fullWidth
-					sx={{
-						mb: 3,
-						'& .MuiToggleButton-root': {
-							py: 1.5,
-							border: '1px solid rgba(139, 92, 246, 0.2)',
-							fontWeight: 600,
-							textTransform: 'none',
-							gap: 1,
-							'&.Mui-selected': {
-								background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-								color: 'white',
-								borderColor: 'rgba(139, 92, 246, 0.6)',
-								'&:hover': {
-									background: 'linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(6, 182, 212, 0.9) 100%)',
-								},
-							},
-						},
-					}}
-				>
-					<ToggleButton value={SESSION_MODE.CARDS}>
-						<StyleRounded />
-						{t('session_mode_cards')}
-					</ToggleButton>
-					<ToggleButton value={SESSION_MODE.TIME}>
-						<TimerRounded />
-						{t('session_mode_time')}
-					</ToggleButton>
-				</ToggleButtonGroup>
-
-				{mode === SESSION_MODE.CARDS && (
-					<Box>
-						<Typography
-							variant="subtitle2"
-							sx={{
-								mb: 1.5,
-								color: isDark ? '#94a3b8' : '#64748b',
-								fontWeight: 600,
-							}}
+					{/* Mode Toggle */}
+					<div className="grid grid-cols-2 gap-3 mb-6">
+						<button
+							onClick={() => setMode(SESSION_MODE.CARDS)}
+							className={cn(
+								"py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all",
+								"border-2",
+								mode === SESSION_MODE.CARDS
+									? "bg-gradient-to-r from-violet-500/90 to-cyan-500/80 text-white border-violet-500/60"
+									: isDark
+										? "border-violet-500/20 hover:border-violet-500/40"
+										: "border-violet-500/20 hover:border-violet-500/40"
+							)}
 						>
-							{t('session_cards_count')}
-						</Typography>
-
-						<ToggleButtonGroup
-							value={cardsLimit}
-							exclusive
-							onChange={(e, val) => val !== null && setCardsLimit(val)}
-							fullWidth
-							sx={{
-								flexWrap: 'wrap',
-								gap: 1,
-								'& .MuiToggleButton-root': {
-									flex: '1 1 auto',
-									minWidth: '60px',
-									py: 1.5,
-									border: '1px solid rgba(139, 92, 246, 0.2)',
-									borderRadius: '12px !important',
-									fontWeight: 700,
-									fontSize: '1rem',
-									'&.Mui-selected': {
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-										color: 'white',
-										borderColor: 'rgba(139, 92, 246, 0.6)',
-									},
-								},
-							}}
+							<Layers className="w-5 h-5" />
+							{t('session_mode_cards')}
+						</button>
+						<button
+							onClick={() => setMode(SESSION_MODE.TIME)}
+							className={cn(
+								"py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all",
+								"border-2",
+								mode === SESSION_MODE.TIME
+									? "bg-gradient-to-r from-violet-500/90 to-cyan-500/80 text-white border-violet-500/60"
+									: isDark
+										? "border-violet-500/20 hover:border-violet-500/40"
+										: "border-violet-500/20 hover:border-violet-500/40"
+							)}
 						>
-							{CARDS_OPTIONS.map((count) => (
-								<ToggleButton key={count} value={count} disabled={count > totalWords}>
-									{count}
-								</ToggleButton>
-							))}
-						</ToggleButtonGroup>
+							<Timer className="w-5 h-5" />
+							{t('session_mode_time')}
+						</button>
+					</div>
 
-						{totalWords > 0 && (
-							<Typography
-								variant="caption"
-								sx={{
-									display: 'block',
-									mt: 1.5,
-									color: isDark ? '#64748b' : '#94a3b8',
-									textAlign: 'center',
-								}}
-							>
-								{t('session_available_words', { count: totalWords })}
-							</Typography>
+					{mode === SESSION_MODE.CARDS && (
+						<div>
+							<p className={cn(
+								"text-sm font-semibold mb-3",
+								isDark ? "text-slate-400" : "text-slate-600"
+							)}>
+								{t('session_cards_count')}
+							</p>
+
+							<div className="flex flex-wrap gap-2">
+								{CARDS_OPTIONS.map((count) => (
+									<button
+										key={count}
+										onClick={() => setCardsLimit(count)}
+										disabled={count > totalWords}
+										className={cn(
+											"flex-1 min-w-[60px] py-3 px-2 rounded-xl font-bold text-base transition-all",
+											"border-2",
+											cardsLimit === count
+												? "bg-gradient-to-r from-violet-500/90 to-cyan-500/80 text-white border-violet-500/60"
+												: isDark
+													? "border-violet-500/20 hover:border-violet-500/40"
+													: "border-violet-500/20 hover:border-violet-500/40",
+											count > totalWords && "opacity-40 cursor-not-allowed"
+										)}
+									>
+										{count}
+									</button>
+								))}
+							</div>
+
+							{totalWords > 0 && (
+								<p className={cn(
+									"text-xs text-center mt-3",
+									isDark ? "text-slate-500" : "text-slate-400"
+								)}>
+									{t('session_available_words', { count: totalWords })}
+								</p>
+							)}
+						</div>
+					)}
+
+					{mode === SESSION_MODE.TIME && (
+						<div>
+							<p className={cn(
+								"text-sm font-semibold mb-3",
+								isDark ? "text-slate-400" : "text-slate-600"
+							)}>
+								{t('session_time_duration')}
+							</p>
+
+							<div className="flex flex-wrap gap-2">
+								{TIME_OPTIONS.map((minutes) => (
+									<button
+										key={minutes}
+										onClick={() => setTimeLimit(minutes)}
+										className={cn(
+											"flex-1 min-w-[70px] py-3 px-2 rounded-xl font-bold text-base transition-all",
+											"border-2",
+											timeLimit === minutes
+												? "bg-gradient-to-r from-violet-500/90 to-cyan-500/80 text-white border-violet-500/60"
+												: isDark
+													? "border-violet-500/20 hover:border-violet-500/40"
+													: "border-violet-500/20 hover:border-violet-500/40"
+										)}
+									>
+										{minutes} min
+									</button>
+								))}
+							</div>
+
+							<p className={cn(
+								"text-xs text-center mt-3",
+								isDark ? "text-slate-500" : "text-slate-400"
+							)}>
+								{t('session_time_hint')}
+							</p>
+						</div>
+					)}
+				</div>
+
+				<DialogFooter className="pt-4 gap-3">
+					<Button
+						variant="ghost"
+						onClick={onClose}
+						className={cn(
+							"font-semibold",
+							isDark ? "text-slate-400" : "text-slate-600"
 						)}
-					</Box>
-				)}
-
-				{mode === SESSION_MODE.TIME && (
-					<Box>
-						<Typography
-							variant="subtitle2"
-							sx={{
-								mb: 1.5,
-								color: isDark ? '#94a3b8' : '#64748b',
-								fontWeight: 600,
-							}}
-						>
-							{t('session_time_duration')}
-						</Typography>
-
-						<ToggleButtonGroup
-							value={timeLimit}
-							exclusive
-							onChange={(e, val) => val !== null && setTimeLimit(val)}
-							fullWidth
-							sx={{
-								flexWrap: 'wrap',
-								gap: 1,
-								'& .MuiToggleButton-root': {
-									flex: '1 1 auto',
-									minWidth: '70px',
-									py: 1.5,
-									border: '1px solid rgba(139, 92, 246, 0.2)',
-									borderRadius: '12px !important',
-									fontWeight: 700,
-									fontSize: '1rem',
-									'&.Mui-selected': {
-										background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(6, 182, 212, 0.8) 100%)',
-										color: 'white',
-										borderColor: 'rgba(139, 92, 246, 0.6)',
-									},
-								},
-							}}
-						>
-							{TIME_OPTIONS.map((minutes) => (
-								<ToggleButton key={minutes} value={minutes}>
-									{minutes} min
-								</ToggleButton>
-							))}
-						</ToggleButtonGroup>
-
-						<Typography
-							variant="caption"
-							sx={{
-								display: 'block',
-								mt: 1.5,
-								color: isDark ? '#64748b' : '#94a3b8',
-								textAlign: 'center',
-							}}
-						>
-							{t('session_time_hint')}
-						</Typography>
-					</Box>
-				)}
+					>
+						{t('session_cancel')}
+					</Button>
+					<Button
+						onClick={handleStart}
+						disabled={mode === SESSION_MODE.CARDS && totalWords === 0}
+						className={cn(
+							"px-6 py-2 rounded-xl font-bold",
+							"bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700",
+							"shadow-lg shadow-violet-500/40"
+						)}
+					>
+						<Zap className="w-5 h-5 mr-2" />
+						{t('session_start')}
+					</Button>
+				</DialogFooter>
 			</DialogContent>
-
-			<DialogActions sx={{ p: 3, pt: 2 }}>
-				<Button
-					onClick={onClose}
-					sx={{
-						color: isDark ? '#94a3b8' : '#64748b',
-						fontWeight: 600,
-						textTransform: 'none',
-					}}
-				>
-					{t('session_cancel')}
-				</Button>
-				<Button
-					variant="contained"
-					onClick={handleStart}
-					disabled={mode === SESSION_MODE.CARDS && totalWords === 0}
-					startIcon={<FlashOnRounded />}
-					sx={{
-						px: 3,
-						py: 1,
-						borderRadius: 2,
-						background: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
-						fontWeight: 700,
-						textTransform: 'none',
-						boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
-						'&:hover': {
-							background: 'linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%)',
-							boxShadow: '0 6px 20px rgba(139, 92, 246, 0.5)',
-						},
-						'&:disabled': {
-							background: isDark ? 'rgba(100, 116, 139, 0.3)' : 'rgba(148, 163, 184, 0.3)',
-							color: isDark ? '#64748b' : '#94a3b8',
-						},
-					}}
-				>
-					{t('session_start')}
-				</Button>
-			</DialogActions>
 		</Dialog>
 	)
 }

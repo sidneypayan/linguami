@@ -3,32 +3,19 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import {
-	Box,
-	Container,
-	Typography,
-	Button,
-	Paper,
-	Alert,
-	Fade,
-	IconButton,
-	Chip,
-	LinearProgress,
-} from '@mui/material'
 import { CreatePostForm, CreateMaterialForm } from '@/components'
 import { useCreateMaterial } from '@/lib/admin-client'
 import { materialData, postData } from '@/utils/constants'
-import {
-	ArrowBack,
-	CheckCircle,
-	Article,
-	LibraryBooks,
-	Save,
-} from '@mui/icons-material'
+import { ArrowLeft, CheckCircle, FileText, BookOpen } from 'lucide-react'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import { useUserContext } from '@/context/user'
 import { optimizeImage } from '@/utils/imageOptimizer'
 import { logger } from '@/utils/logger'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
 const CreateMaterial = () => {
 	const t = useTranslations('admin')
@@ -51,21 +38,18 @@ const CreateMaterial = () => {
 	const toggleContent = (type) => {
 		setContentType(type)
 		setFormData(type === 'materials' ? materialData : postData)
-		createMaterialMutation.reset() // Clear any previous errors
+		createMaterialMutation.reset()
 	}
 
 	const handleChange = async e => {
 		let { name, value } = e.target
 
-		// Si c'est un upload de fichier (image_filename ou audio_filename)
 		if ((name === 'image_filename' || name === 'audio_filename') && e.target.files) {
 			const file = e.target.files[0]
 			if (!file) return
 
-			// Garder le fileType comme 'image' ou 'audio' pour la logique d'upload
 			const fileType = name === 'image_filename' ? 'image' : 'audio'
 
-			// Optimiser l'image côté client avant upload
 			if (fileType === 'image') {
 				try {
 					const optimized = await optimizeImage(file)
@@ -82,14 +66,12 @@ const CreateMaterial = () => {
 					logger.info(`Image optimized: ${file.name} (${(file.size / 1024).toFixed(0)}KB) → ${optimized.main.fileName} (${(optimized.main.size / 1024).toFixed(0)}KB)`)
 				} catch (error) {
 					logger.error('Image optimization failed, using original file:', error)
-					// Fallback : utiliser le fichier original
 					value = file.name
 					setFiles(prev => {
 						return [...prev, { file, fileName: value, fileType }]
 					})
 				}
 			} else {
-				// Audio : pas d'optimisation, utiliser le fichier original
 				value = file.name
 				setFiles(prev => {
 					return [...prev, { file, fileName: value, fileType }]
@@ -97,7 +79,6 @@ const CreateMaterial = () => {
 			}
 		}
 
-		// Pour tous les cas (upload ou saisie manuelle), mettre à jour formData
 		setFormData(prev => {
 			return { ...prev, [name]: value }
 		})
@@ -107,12 +88,10 @@ const CreateMaterial = () => {
 		e.preventDefault()
 
 		if (contentType !== 'materials') {
-			// TODO: Handle posts creation when migrating posts
 			return
 		}
 
-		// Prepare material data
-		const materialData = {
+		const materialDataToSubmit = {
 			lang: formData.lang,
 			section: formData.section,
 			level: formData.level,
@@ -122,15 +101,13 @@ const CreateMaterial = () => {
 			video_url: formData.video_url || '',
 		}
 
-		// Add book-specific fields if needed
 		if (formData.section === 'book-chapters') {
-			materialData.book_id = formData.book_id ? parseInt(formData.book_id) : null
-			materialData.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
+			materialDataToSubmit.book_id = formData.book_id ? parseInt(formData.book_id) : null
+			materialDataToSubmit.chapter_number = formData.chapter_number ? parseInt(formData.chapter_number) : null
 		}
 
-		// Submit with mutation
 		createMaterialMutation.mutate(
-			{ materialData, files },
+			{ materialData: materialDataToSubmit, files },
 			{
 				onSuccess: () => {
 					router.back()
@@ -139,8 +116,6 @@ const CreateMaterial = () => {
 		)
 	}
 
-
-	// Validate all required fields for publishing
 	const canPublish = () => {
 		if (contentType === 'posts') {
 			return !!(
@@ -151,7 +126,6 @@ const CreateMaterial = () => {
 				formData.body.trim()
 			)
 		} else {
-			// Materials - vérifier tous les champs obligatoires
 			const hasLang = !!formData.lang
 			const hasLevel = !!formData.level
 			const hasSection = !!formData.section
@@ -160,9 +134,7 @@ const CreateMaterial = () => {
 
 			let basicValid = hasLang && hasLevel && hasSection && hasTitle && hasContent
 
-			// Si book-chapters, vérifier book_id et chapter_number
 			if (formData.section === 'book-chapters') {
-				// Pour les champs numériques, vérifier qu'ils existent et ne sont pas vides
 				const bookIdStr = String(formData.book_id || '').trim()
 				const chapterStr = String(formData.chapter_number || '').trim()
 				const hasBookId = bookIdStr !== '' && bookIdStr !== '0'
@@ -171,31 +143,26 @@ const CreateMaterial = () => {
 				return basicValid && hasBookId && hasChapter
 			}
 
-			// Pour les autres sections, au moins un média est requis
 			const hasMedia = !!(formData.image_filename || formData.audio_filename || formData.video_url)
 			return basicValid && hasMedia
 		}
 	}
 
-	// Calculate form completion based on actual required fields
 	const calculateProgress = () => {
 		if (contentType === 'posts') {
 			const requiredFields = ['lang', 'title', 'body']
 			const filled = requiredFields.filter(field => formData[field] && formData[field].trim()).length
 			return (filled / requiredFields.length) * 100
 		} else {
-			// Materials - base required fields
-			let requiredFieldsCount = 5 // lang, level, section, title, content
+			let requiredFieldsCount = 5
 			let filledCount = 0
 
-			// Vérifier les champs de base
 			if (formData.lang) filledCount++
 			if (formData.level) filledCount++
 			if (formData.section) filledCount++
 			if (formData.title && formData.title.trim()) filledCount++
 			if (formData.content && formData.content.trim()) filledCount++
 
-			// Si book-chapters, ajouter book_id et chapter_number
 			if (formData.section === 'book-chapters') {
 				requiredFieldsCount += 2
 				const bookIdStr = String(formData.book_id || '').trim()
@@ -203,7 +170,6 @@ const CreateMaterial = () => {
 				if (bookIdStr !== '' && bookIdStr !== '0') filledCount++
 				if (chapterStr !== '' && chapterStr !== '0') filledCount++
 			} else {
-				// Pour les autres sections, ajouter le média requis
 				requiredFieldsCount += 1
 				const hasMedia = !!(formData.image_filename || formData.audio_filename || formData.video_url)
 				if (hasMedia) filledCount++
@@ -216,156 +182,86 @@ const CreateMaterial = () => {
 	const progress = calculateProgress()
 	const publishable = canPublish()
 
-	// Show nothing while bootstrapping or not admin
 	if (isBootstrapping || !isUserAdmin) {
 		return null
 	}
 
 	return (
-		<Box
-			sx={{
-				minHeight: '100vh',
-				bgcolor: '#FAFBFC',
-			}}>
-			{/* Admin Navbar */}
+		<div className="min-h-screen bg-slate-50">
 			<AdminNavbar activePage="create" />
 
 			{/* Header */}
-			<Box
-				sx={{
-					bgcolor: 'white',
-					borderBottom: '1px solid',
-					borderColor: 'divider',
-					position: 'sticky',
-					top: 0,
-					zIndex: 1100,
-					boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-				}}>
-				<Container maxWidth="lg">
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-							py: 2,
-							gap: 2,
-							flexWrap: 'wrap',
-						}}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-							<IconButton
+			<div className="bg-white border-b sticky top-0 z-50 shadow-sm">
+				<div className="max-w-5xl mx-auto px-4 sm:px-6">
+					<div className="flex items-center justify-between py-4 gap-4 flex-wrap">
+						<div className="flex items-center gap-4">
+							<Button
+								variant="outline"
+								size="icon"
 								onClick={() => router.back()}
-								sx={{
-									bgcolor: 'background.paper',
-									'&:hover': {
-										bgcolor: '#E2E8F0',
-									},
-								}}>
-								<ArrowBack />
-							</IconButton>
-							<Box>
-								<Typography
-									variant='h5'
-									sx={{
-										fontWeight: 700,
-										color: '#1E293B',
-										letterSpacing: '-0.5px',
-									}}>
+								className="rounded-lg">
+								<ArrowLeft className="h-5 w-5" />
+							</Button>
+							<div>
+								<h1 className="text-xl font-bold text-slate-800 tracking-tight">
 									{t('createContent')}
-								</Typography>
-								<Typography variant='body2' sx={{ color: '#64748B' }}>
+								</h1>
+								<p className="text-sm text-slate-500">
 									{contentType === 'materials' ? t('materialContent') : t('blogArticle')}
-								</Typography>
-							</Box>
-						</Box>
+								</p>
+							</div>
+						</div>
 
-						<Box sx={{ display: 'flex', gap: 1 }}>
-							<Chip
-								icon={<LibraryBooks fontSize='small' />}
-								label={t('material')}
-								onClick={() => toggleContent('materials')}
-								variant={contentType === 'materials' ? 'filled' : 'outlined'}
-								sx={{
-									bgcolor: contentType === 'materials' ? '#667eea' : 'transparent',
-									color: contentType === 'materials' ? 'white' : '#667eea',
-									borderColor: '#667eea',
-									fontWeight: 600,
-									'&:hover': {
-										bgcolor: contentType === 'materials' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
-									},
-								}}
-							/>
-							<Chip
-								icon={<Article fontSize='small' />}
-								label={t('article')}
-								onClick={() => toggleContent('posts')}
-								variant={contentType === 'posts' ? 'filled' : 'outlined'}
-								sx={{
-									bgcolor: contentType === 'posts' ? '#667eea' : 'transparent',
-									color: contentType === 'posts' ? 'white' : '#667eea',
-									borderColor: '#667eea',
-									fontWeight: 600,
-									'&:hover': {
-										bgcolor: contentType === 'posts' ? '#5568d3' : 'rgba(102, 126, 234, 0.1)',
-									},
-								}}
-							/>
-						</Box>
-					</Box>
+						<div className="flex gap-2">
+							<Badge
+								variant={contentType === 'materials' ? 'default' : 'outline'}
+								className={cn(
+									'cursor-pointer px-3 py-1.5 font-semibold',
+									contentType === 'materials'
+										? 'bg-indigo-500 hover:bg-indigo-600'
+										: 'border-indigo-500 text-indigo-500 hover:bg-indigo-50'
+								)}
+								onClick={() => toggleContent('materials')}>
+								<BookOpen className="h-4 w-4 mr-1.5" />
+								{t('material')}
+							</Badge>
+							<Badge
+								variant={contentType === 'posts' ? 'default' : 'outline'}
+								className={cn(
+									'cursor-pointer px-3 py-1.5 font-semibold',
+									contentType === 'posts'
+										? 'bg-indigo-500 hover:bg-indigo-600'
+										: 'border-indigo-500 text-indigo-500 hover:bg-indigo-50'
+								)}
+								onClick={() => toggleContent('posts')}>
+								<FileText className="h-4 w-4 mr-1.5" />
+								{t('article')}
+							</Badge>
+						</div>
+					</div>
 
 					{/* Progress Bar */}
-					<Box sx={{ pb: 2 }}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-							<Typography variant='caption' sx={{ color: '#64748B', fontWeight: 600 }}>
-								{t('progression')}
-							</Typography>
-							<Typography variant='caption' sx={{ color: '#667eea', fontWeight: 700 }}>
-								{Math.round(progress)}%
-							</Typography>
-						</Box>
-						<LinearProgress
-							variant='determinate'
-							value={progress}
-							sx={{
-								height: 6,
-								borderRadius: 3,
-								bgcolor: '#E2E8F0',
-								'& .MuiLinearProgress-bar': {
-									bgcolor: '#667eea',
-									borderRadius: 3,
-								},
-							}}
-						/>
-					</Box>
-				</Container>
-			</Box>
+					<div className="pb-4">
+						<div className="flex items-center gap-3 mb-2">
+							<span className="text-xs font-semibold text-slate-500">{t('progression')}</span>
+							<span className="text-xs font-bold text-indigo-500">{Math.round(progress)}%</span>
+						</div>
+						<Progress value={progress} className="h-1.5" />
+					</div>
+				</div>
+			</div>
 
-			<Container maxWidth="lg" sx={{ py: 4 }}>
+			<div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
 				{/* Error Alert */}
 				{createMaterialMutation.error && (
-					<Fade in>
-						<Alert
-							severity='error'
-							sx={{
-								mb: 3,
-								borderRadius: 2,
-								border: '1px solid',
-								borderColor: 'error.light',
-							}}>
-							{createMaterialMutation.error.message}
-						</Alert>
-					</Fade>
+					<div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">
+						{createMaterialMutation.error.message}
+					</div>
 				)}
 
 				{/* Main Form */}
-				<Paper
-					elevation={0}
-					sx={{
-						borderRadius: 3,
-						overflow: 'hidden',
-						border: '1px solid',
-						borderColor: 'divider',
-					}}>
-					<Box sx={{ p: { xs: 3, md: 4 } }}>
+				<Card className="rounded-2xl border overflow-hidden">
+					<div className="p-6 md:p-8">
 						<form onSubmit={submitContent}>
 							{contentType === 'posts' ? (
 								<CreatePostForm formData={formData} handleChange={handleChange} />
@@ -377,57 +273,29 @@ const CreateMaterial = () => {
 							)}
 
 							{/* Form Actions */}
-							<Box
-								sx={{
-									mt: 4,
-									pt: 3,
-									borderTop: '1px solid',
-									borderColor: 'divider',
-									display: 'flex',
-									justifyContent: 'flex-end',
-									gap: 2,
-								}}>
+							<div className="mt-8 pt-6 border-t flex justify-end gap-3">
 								<Button
-									type='submit'
-									variant='contained'
+									type="submit"
 									disabled={createMaterialMutation.isPending || !publishable}
-									startIcon={<CheckCircle />}
-									sx={{
-										bgcolor: '#10B981',
-										color: 'white',
-										px: 4,
-										py: 1.5,
-										borderRadius: 2,
-										textTransform: 'none',
-										fontWeight: 600,
-										boxShadow: 'none',
-										'&:hover': {
-											bgcolor: '#059669',
-											boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-										},
-										'&:disabled': {
-											bgcolor: '#94A3B8',
-											color: 'white',
-										},
-									}}>
+									className={cn(
+										'px-8 py-3 rounded-xl font-semibold',
+										'bg-emerald-500 hover:bg-emerald-600',
+										'disabled:bg-slate-300'
+									)}>
+									<CheckCircle className="h-5 w-5 mr-2" />
 									{createMaterialMutation.isPending ? t('saving') : t('publish')}
 								</Button>
-							</Box>
+							</div>
 						</form>
-					</Box>
-				</Paper>
+					</div>
+				</Card>
 
 				{/* Help Text */}
-				<Box sx={{ mt: 3, textAlign: 'center' }}>
-					<Typography variant='caption' sx={{ color: '#94A3B8' }}>
-						{!publishable
-							? t('formProgress')
-							: t('formReady')
-						}
-					</Typography>
-				</Box>
-			</Container>
-		</Box>
+				<p className="mt-4 text-center text-sm text-slate-400">
+					{!publishable ? t('formProgress') : t('formReady')}
+				</p>
+			</div>
+		</div>
 	)
 }
 

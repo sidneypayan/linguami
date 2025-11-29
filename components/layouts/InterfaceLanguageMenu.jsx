@@ -1,20 +1,23 @@
 'use client'
 
 import { useTranslations, useLocale } from 'next-intl'
-import { styled, alpha, useTheme } from '@mui/material/styles'
-import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import { ExpandMoreRounded, RecordVoiceOverRounded, CheckCircleRounded } from '@mui/icons-material'
 import { useState } from 'react'
-import { Box, Typography, IconButton } from '@mui/material'
+import { useThemeMode } from '@/context/ThemeContext'
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useUserContext } from '@/context/user'
-import { logger } from '@/utils/logger'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Languages, ChevronDown, CheckCircle } from 'lucide-react'
 
 // Composant drapeau français
 const FrenchFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
 		<defs>
 			<clipPath id="circle-clip-french-interface">
 				<circle cx="16" cy="16" r="16"/>
@@ -31,7 +34,7 @@ const FrenchFlag = ({ size = 32 }) => (
 
 // Composant drapeau russe
 const RussianFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
 		<defs>
 			<clipPath id="circle-clip-russian-interface">
 				<circle cx="16" cy="16" r="16"/>
@@ -48,7 +51,7 @@ const RussianFlag = ({ size = 32 }) => (
 
 // Composant drapeau anglais (UK)
 const EnglishFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid slice" style={{ display: 'block' }}>
+	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
 		<defs>
 			<clipPath id="circle-clip-english-interface">
 				<circle cx="16" cy="16" r="16"/>
@@ -64,74 +67,14 @@ const EnglishFlag = ({ size = 32 }) => (
 	</svg>
 )
 
-const StyledMenu = styled(props => (
-	<Menu
-		elevation={0}
-		anchorOrigin={{
-			vertical: 'bottom',
-			horizontal: 'right',
-		}}
-		transformOrigin={{
-			vertical: 'top',
-			horizontal: 'right',
-		}}
-		{...props}
-	/>
-))(({ theme }) => ({
-	'& .MuiPaper-root': {
-		borderRadius: 12,
-		marginTop: theme.spacing(1),
-		minWidth: 180,
-		color:
-			theme.palette.mode === 'light'
-				? 'rgb(55, 65, 81)'
-				: theme.palette.grey[300],
-		boxShadow:
-			'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-		'& .MuiMenu-list': {
-			padding: '8px',
-		},
-		'& .MuiMenuItem-root': {
-			borderRadius: '8px',
-			padding: '10px 12px',
-			margin: '4px 0',
-			fontSize: '0.95rem',
-			fontWeight: 500,
-			transition: 'all 0.2s ease',
-			display: 'flex',
-			alignItems: 'center',
-			gap: '12px',
-			'& .MuiSvgIcon-root': {
-				fontSize: 20,
-				color: '#667eea',
-				transition: 'transform 0.2s ease',
-			},
-			'&:hover': {
-				backgroundColor: alpha(theme.palette.primary.main, 0.08),
-				transform: 'translateX(4px)',
-				'& .MuiSvgIcon-root': {
-					transform: 'scale(1.1)',
-				},
-			},
-			'&:active': {
-				backgroundColor: alpha(
-					theme.palette.primary.main,
-					theme.palette.action.selectedOpacity
-				),
-			},
-		},
-	},
-}))
-
 const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const router = useNextRouter() // For navigation
+	const router = useNextRouter()
 	const pathname = usePathname()
 	const params = useParams()
 	const { changeSpokenLanguage } = useUserContext()
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 
 	const languages = [
 		{
@@ -156,251 +99,179 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 		return null
 	}
 
-	const [anchorEl, setAnchorEl] = useState(null)
-	const open = Boolean(anchorEl)
-
-	const handleClick = event => {
-		setAnchorEl(event.currentTarget)
-	}
-
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
-
 	const handleLanguageChange = async newLocale => {
-		setAnchorEl(null)
-
-		// ⚠️ IMPORTANT: Attendre que TOUTES les modifications DB soient terminées
-		// avant de naviguer (évite les race conditions)
-
-		// Utiliser la fonction centralisée qui gère :
-		// 1. Update spoken_language en DB ou localStorage
-		// 2. Force learning_language selon les règles métier
 		await changeSpokenLanguage(newLocale)
 
-		// ⚠️ SEULEMENT MAINTENANT: naviguer après que toutes les modifs DB sont faites
 		const currentLocale = params.locale || locale
 		let newPath
 
-		// If pathname starts with /[locale], replace the locale
 		if (pathname.startsWith(`/${currentLocale}`)) {
 			newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`)
 		} else {
-			// If no locale in pathname (e.g., root /), prepend the new locale
 			newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`
 		}
 
 		router.push(newPath)
 
-		// Fermer le drawer mobile si onClose est fourni
 		if (onClose) {
 			setTimeout(() => onClose(), 100)
 		}
 	}
 
 	return (
-		<Box>
+		<div>
 			{/* Version desktop - bouton complet */}
-			<Button
-				id='interface-locale-button'
-				aria-controls={open ? 'interface-locale-menu' : undefined}
-				aria-haspopup='true'
-				aria-expanded={open ? 'true' : undefined}
-				variant='contained'
-				disableElevation
-				disableRipple
-				onClick={handleClick}
-				startIcon={<RecordVoiceOverRounded sx={{ fontSize: '1.3rem' }} />}
-				endIcon={
-					<ExpandMoreRounded
-						sx={{
-							fontSize: '1.3rem',
-							transition: 'transform 0.3s ease',
-							transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-						}}
-					/>
-				}
-				sx={{
-					display: variant === 'full' ? 'flex' : 'none',
-					'@media (min-width: 1400px)': {
-						display: variant === 'full' ? 'flex' : 'flex',
-					},
-					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
-					backdropFilter: 'blur(10px)',
-					color: 'white',
-					fontWeight: 600,
-					textTransform: 'none',
-					px: 2.5,
-					py: 0.75,
-					borderRadius: variant === 'full' ? 3 : 2.5,
-					border: '1px solid rgba(255, 255, 255, 0.2)',
-					transition: 'background 0.2s ease',
-					gap: 1,
-					width: variant === 'full' ? '100%' : 'auto',
-					justifyContent: variant === 'full' ? 'space-between' : 'center',
-					'&:hover': {
-						background: 'rgba(255, 255, 255, 0.25)',
-						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-					},
-				}}>
-				<Typography variant='body2' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-					{t('speak')}
-				</Typography>
-
-				{locale && (
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							width: 26,
-							height: 26,
-							borderRadius: '50%',
-							overflow: 'hidden',
-							border: '2px solid rgba(255, 255, 255, 0.3)',
-							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-						}}>
-						{getFlag(locale, 26)}
-					</Box>
-				)}
-			</Button>
-
-			{/* Version mobile/tablette - IconButton compact avec drapeau */}
-			<IconButton
-				id='interface-locale-button-mobile'
-				aria-controls={open ? 'interface-locale-menu' : undefined}
-				aria-haspopup='true'
-				aria-expanded={open ? 'true' : undefined}
-				onClick={handleClick}
-				sx={{
-					display: variant === 'full' ? 'none' : 'flex',
-					'@media (min-width: 1400px)': {
-						display: 'none',
-					},
-					width: { xs: 40, sm: 44 },
-					height: { xs: 40, sm: 44 },
-					background: open ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.15)',
-					backdropFilter: 'blur(10px)',
-					border: '1px solid rgba(255, 255, 255, 0.2)',
-					transition: 'all 0.3s ease',
-					position: 'relative',
-					'&:hover': {
-						background: 'rgba(255, 255, 255, 0.25)',
-						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-						transform: 'scale(1.05)',
-					},
-				}}>
-				{locale && (
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							width: { xs: 24, sm: 28, lg: 30 },
-							height: { xs: 24, sm: 28, lg: 30 },
-							minWidth: { xs: 24, sm: 28, lg: 30 },
-							minHeight: { xs: 24, sm: 28, lg: 30 },
-							maxWidth: { xs: 24, sm: 28, lg: 30 },
-							maxHeight: { xs: 24, sm: 28, lg: 30 },
-							flexShrink: 0,
-							borderRadius: '50%',
-							overflow: 'hidden',
-							border: '2px solid rgba(255, 255, 255, 0.4)',
-							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-						}}>
-						{getFlag(locale, 28)}
-					</Box>
-				)}
-				<RecordVoiceOverRounded
-					sx={{
-						position: 'absolute',
-						bottom: -2,
-						right: -2,
-						fontSize: '0.9rem',
-						color: 'white',
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-						borderRadius: '50%',
-						padding: '2px',
-						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
-					}}
-				/>
-			</IconButton>
-
-			<StyledMenu
-				id='interface-locale-menu'
-				MenuListProps={{
-					'aria-labelledby': 'interface-locale-button',
-				}}
-				anchorEl={anchorEl}
-				open={open}
-				onClose={handleClose}>
-				{languages.map(language => {
-					const isSelected = locale === language.lang
-					return (
-						<MenuItem
-							key={language.lang}
-							onClick={() => handleLanguageChange(language.lang)}
-							disableRipple
-							sx={{
-								backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
-								position: 'relative',
-								'&:hover': {
-									backgroundColor: isSelected
-										? 'rgba(102, 126, 234, 0.12)'
-										: 'rgba(102, 126, 234, 0.08)',
-								},
-							}}>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									width: 32,
-									height: 32,
-									borderRadius: '50%',
-									overflow: 'hidden',
-									border: isSelected
-										? '2px solid #667eea'
-										: '2px solid rgba(0, 0, 0, 0.1)',
-									boxShadow: isSelected
-										? '0 2px 8px rgba(102, 126, 234, 0.3)'
-										: '0 1px 3px rgba(0, 0, 0, 0.1)',
-									transition: 'all 0.2s ease',
-								}}>
-								{getFlag(language.lang, 32)}
-							</Box>
-							<Typography
-								sx={{
-									fontWeight: isSelected ? 600 : 500,
-									color: isSelected ? '#667eea' : isDark ? '#f1f5f9' : '#2d3748',
-									flex: 1,
-								}}>
-								{language.name}
-							</Typography>
-							{isSelected && (
-								<CheckCircleRounded
-									sx={{
-										fontSize: '1.2rem',
-										color: '#667eea',
-										animation: 'checkAppear 0.3s ease',
-										'@keyframes checkAppear': {
-											'0%': {
-												opacity: 0,
-												transform: 'scale(0.5)',
-											},
-											'100%': {
-												opacity: 1,
-												transform: 'scale(1)',
-											},
-										},
-									}}
-								/>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className={cn(
+							'hidden 2xl:flex items-center gap-2.5',
+							variant === 'full' ? 'flex' : 'hidden',
+							'bg-white/15 backdrop-blur-sm',
+							'text-white font-semibold text-base',
+							'px-5 py-3 h-11',
+							'rounded-lg',
+							'border border-white/20',
+							'transition-all duration-300 relative overflow-hidden group',
+							'hover:bg-white/25 hover:text-white hover:-translate-y-0.5',
+							variant === 'full' && 'w-full justify-between'
+						)}
+					>
+					{/* Shine effect */}
+					<span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+						<div className="flex items-center gap-2 relative z-10">
+							<Languages className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
+							<span className="relative z-10">{t('speak')}</span>
+							{locale && (
+								<div className="w-8 h-8 rounded-full overflow-hidden border border-white/50 shadow-md flex items-center justify-center bg-white/10">
+									{getFlag(locale, 32)}
+								</div>
 							)}
-						</MenuItem>
-					)
-				})}
-			</StyledMenu>
-		</Box>
+						</div>
+						<ChevronDown className="w-4 h-4 opacity-70 relative z-10" />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent
+					align="end"
+					className={cn(
+						'min-w-[180px] rounded-xl',
+						isDark
+							? 'bg-slate-800/95 border-violet-500/40'
+							: 'bg-white/95 border-violet-500/20'
+					)}
+				>
+					{languages.map(language => {
+						const isSelected = locale === language.lang
+						return (
+							<DropdownMenuItem
+								key={language.lang}
+								onClick={() => handleLanguageChange(language.lang)}
+								className={cn(
+									'rounded-lg cursor-pointer',
+									'flex items-center gap-3',
+									isSelected && (isDark ? 'bg-violet-500/20' : 'bg-violet-500/10')
+								)}
+							>
+								<div className={cn(
+									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
+									'border bg-white/10',
+									isSelected
+										? 'border-violet-500 shadow-lg shadow-violet-500/30'
+										: 'border-slate-300/30'
+								)}>
+									{getFlag(language.lang, 32)}
+								</div>
+								<span className={cn(
+									'flex-1 font-medium',
+									isSelected && 'text-violet-500 font-semibold'
+								)}>
+									{language.name}
+								</span>
+								{isSelected && (
+									<CheckCircle className="w-5 h-5 text-violet-500" />
+								)}
+							</DropdownMenuItem>
+						)
+					})}
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			{/* Version mobile - IconButton compact avec drapeau */}
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className={cn(
+							'flex 2xl:hidden',
+							variant === 'full' ? 'hidden' : 'flex',
+							'w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0',
+							'bg-white/15 backdrop-blur-sm',
+							'border border-white/20',
+							'transition-all duration-300',
+							'hover:bg-white/25 hover:shadow-lg hover:scale-105',
+							'relative items-center justify-center'
+						)}
+					>
+						{locale && (
+							<div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-white/70 flex items-center justify-center bg-white/10">
+								{getFlag(locale, 32)}
+							</div>
+						)}
+						<Languages className={cn(
+							'absolute -bottom-0.5 -right-0.5',
+							'w-5 h-5 text-white',
+							'bg-gradient-to-br from-violet-500 to-purple-600',
+							'rounded-full p-0.5',
+							'shadow-lg'
+						)} />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent
+					align="end"
+					className={cn(
+						'min-w-[180px] rounded-xl',
+						isDark
+							? 'bg-slate-800/95 border-violet-500/40'
+							: 'bg-white/95 border-violet-500/20'
+					)}
+				>
+					{languages.map(language => {
+						const isSelected = locale === language.lang
+						return (
+							<DropdownMenuItem
+								key={language.lang}
+								onClick={() => handleLanguageChange(language.lang)}
+								className={cn(
+									'rounded-lg cursor-pointer',
+									'flex items-center gap-3',
+									isSelected && (isDark ? 'bg-violet-500/20' : 'bg-violet-500/10')
+								)}
+							>
+								<div className={cn(
+									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
+									'border bg-white/10',
+									isSelected
+										? 'border-violet-500 shadow-lg shadow-violet-500/30'
+										: 'border-slate-300/30'
+								)}>
+									{getFlag(language.lang, 32)}
+								</div>
+								<span className={cn(
+									'flex-1 font-medium',
+									isSelected && 'text-violet-500 font-semibold'
+								)}>
+									{language.name}
+								</span>
+								{isSelected && (
+									<CheckCircle className="w-5 h-5 text-violet-500" />
+								)}
+							</DropdownMenuItem>
+						)
+					})}
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</div>
 	)
 }
 

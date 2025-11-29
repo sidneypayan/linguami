@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/navigation'
 import { marked } from 'marked'
 import { useThemeMode } from '@/context/ThemeContext'
-import { ArrowLeft, Calendar, Clock, Sparkles } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import TableOfContents from '@/components/blog/TableOfContents'
 import SocialShareButtons from '@/components/blog/SocialShareButtons'
@@ -42,7 +42,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 			<ReadingProgress />
 
 			{/* Header Section */}
-			<header className="pt-[72px] sm:pt-[88px] pb-8 sm:pb-10 max-w-3xl mx-auto px-4 sm:px-6">
+			<header className="pt-24 sm:pt-28 pb-8 sm:pb-10 max-w-3xl mx-auto px-4 sm:px-6">
 				{/* Back Button */}
 				<Link
 					href="/blog"
@@ -57,12 +57,8 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 					<span className="font-medium">{translations.back}</span>
 				</Link>
 
-				{/* Title with decorative element */}
-				<div className="relative mb-6">
-					<Sparkles className={cn(
-						'absolute -left-2 -top-2 w-6 h-6',
-						isDark ? 'text-amber-400/50' : 'text-amber-500/50'
-					)} />
+				{/* Title */}
+				<div className="mb-6">
 					<h1 className={cn(
 						'text-3xl sm:text-4xl md:text-5xl font-black',
 						'leading-tight tracking-tight',

@@ -1,134 +1,76 @@
-import { Button, Box, useTheme, Typography } from '@mui/material'
+'use client'
+
 import Image from 'next/image'
-import { EmailRounded } from '@mui/icons-material'
-import { useTranslations, useLocale } from 'next-intl'
+import { Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useThemeMode } from '@/context/ThemeContext'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import VkIdButton from './VkIdButton'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const OAuthButtons = ({ onGoogleClick, onMagicLinkClick }) => {
 	const t = useTranslations('register')
-	const theme = useTheme()
-	const isDark = theme.palette.mode === 'dark'
+	const { isDark } = useThemeMode()
 	const showVkId = true
 
-	const buttonStyles = {
-		py: { xs: 1.5, sm: 1.75 },
-		px: { xs: 2, sm: 3 },
-		borderRadius: 2.5,
-		border: '2px solid',
-		borderColor: isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(102, 126, 234, 0.2)',
-		color: isDark ? '#cbd5e1' : '#4a5568',
-		textTransform: 'none',
-		fontWeight: 600,
-		fontSize: { xs: '0.875rem', sm: '0.95rem' },
-		transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-		position: 'relative',
-		overflow: 'hidden',
-		background: isDark
-			? 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%)'
-			: 'linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%)',
-		'&::before': {
-			content: '""',
-			position: 'absolute',
-			top: 0,
-			left: '-100%',
-			width: '100%',
-			height: '100%',
-			background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.15), transparent)',
-			transition: 'left 0.6s ease',
-		},
-		'&:hover': {
-			borderColor: '#667eea',
-			background: isDark
-				? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)'
-				: 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)',
-			transform: 'translateY(-2px)',
-			boxShadow: isDark
-				? '0 8px 24px rgba(139, 92, 246, 0.35)'
-				: '0 8px 24px rgba(102, 126, 234, 0.25)',
-			'&::before': {
-				left: '100%',
-			},
-		},
-		'&:active': {
-			transform: 'translateY(0)',
-		},
-	}
-
-	const providers = [
-		{
-			id: 'google',
-			onClick: onGoogleClick,
-			labelLong: t('signInWithGoogle'),
-			labelShort: t('google'),
-			icon: (
-				<Image
-					src={getUIImageUrl('google.webp')}
-					alt="Google"
-					width={24}
-					height={24}
-				/>
-			),
-		},
-		{
-			id: 'email',
-			onClick: onMagicLinkClick,
-			labelLong: t('signInWithEmail'),
-			labelShort: t('magicLink'),
-			icon: <EmailRounded sx={{ fontSize: '1.5rem' }} />,
-		},
-	]
+	const buttonClassName = cn(
+		'w-full py-4 sm:py-5 px-6 sm:px-8 rounded-2xl',
+		'border-2 font-semibold text-base sm:text-lg',
+		'transition-all duration-300',
+		'relative overflow-hidden group',
+		isDark
+			? 'border-violet-500/30 text-slate-300 bg-slate-800/50'
+			: 'border-slate-200 text-slate-700 bg-slate-50 hover:bg-white',
+		'hover:border-indigo-500 hover:-translate-y-0.5',
+		isDark
+			? 'hover:bg-slate-800 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)]'
+			: 'hover:shadow-[0_8px_24px_rgba(102,126,234,0.2)]',
+		'active:translate-y-0'
+	)
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2,
-			}}>
+		<div className="flex flex-col gap-4">
 			{/* Google */}
-			{providers
-				.filter(provider => provider.id === 'google')
-				.map((provider) => (
-					<Button
-						key={provider.id}
-						fullWidth
-						onClick={provider.onClick}
-						sx={buttonStyles}
-						aria-label={provider.labelLong}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
-							{provider.icon}
-							<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
-								{provider.labelShort}
-							</Typography>
-						</Box>
-					</Button>
-				))}
+			<Button
+				variant="outline"
+				onClick={onGoogleClick}
+				className={buttonClassName}
+				aria-label={t('signInWithGoogle')}
+			>
+				<div className="flex items-center gap-3 justify-center">
+					<div className="w-7 h-7 flex items-center justify-center">
+						<Image
+							src={getUIImageUrl('google.webp')}
+							alt="Google"
+							width={24}
+							height={24}
+						/>
+					</div>
+					<span className="font-semibold">{t('google')}</span>
+				</div>
+			</Button>
 
 			{/* VK ID button */}
 			{showVkId && (
-				<VkIdButton buttonStyles={buttonStyles} />
+				<VkIdButton buttonClassName={buttonClassName} />
 			)}
 
 			{/* Email */}
-			{providers
-				.filter(provider => provider.id === 'email')
-				.map((provider) => (
-					<Button
-						key={provider.id}
-						fullWidth
-						onClick={provider.onClick}
-						sx={buttonStyles}
-						aria-label={provider.labelLong}>
-						<Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.25, sm: 1.5 }, justifyContent: 'center' }}>
-							{provider.icon}
-							<Typography sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
-								{provider.labelShort}
-							</Typography>
-						</Box>
-					</Button>
-				))}
-		</Box>
+			<Button
+				variant="outline"
+				onClick={onMagicLinkClick}
+				className={buttonClassName}
+				aria-label={t('signInWithEmail')}
+			>
+				<div className="flex items-center gap-3 justify-center">
+					<div className="w-7 h-7 flex items-center justify-center">
+						<Mail size={24} />
+					</div>
+					<span className="font-semibold">{t('magicLink')}</span>
+				</div>
+			</Button>
+		</div>
 	)
 }
 

@@ -1,71 +1,50 @@
 'use client'
 
-import { Box, Button, Typography, Container } from '@mui/material'
-import { ErrorOutline, Refresh } from '@mui/icons-material'
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 export default function Error({ error, reset }) {
 	const t = useTranslations('common')
 
 	return (
-		<Container maxWidth="md">
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					justifyContent: 'center',
-					minHeight: '70vh',
-					textAlign: 'center',
-					gap: 3,
-				}}
-			>
-				<ErrorOutline
-					sx={{
-						fontSize: 120,
-						color: 'error.main',
-						opacity: 0.8,
-					}}
-				/>
+		<div className="max-w-3xl mx-auto px-4">
+			<div className="flex flex-col items-center justify-center min-h-[70vh] text-center gap-6">
+				<AlertCircle className="h-28 w-28 text-red-500 opacity-80" />
 
-				<Typography variant="h3" component="h1" fontWeight={600}>
+				<h1 className="text-3xl sm:text-4xl font-semibold">
 					{t('genericError')}
-				</Typography>
+				</h1>
 
-				<Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
+				<p className="text-lg text-muted-foreground max-w-xl">
 					{error?.message || t('errorMessage')}
-				</Typography>
+				</p>
 
-				<Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+				<div className="flex gap-4 mt-4">
 					<Button
-						variant="contained"
-						size="large"
-						startIcon={<Refresh />}
+						size="lg"
 						onClick={reset}
-						sx={{
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-							px: 4,
-							py: 1.5,
-						}}
-					>
+						className={cn(
+							'bg-gradient-to-r from-indigo-500 to-purple-600',
+							'px-8 py-3'
+						)}>
+						<RefreshCw className="h-5 w-5 mr-2" />
 						{t('tryAgain')}
 					</Button>
 
 					<Button
-						variant="outlined"
-						size="large"
-						href="/"
-						sx={{
-							px: 4,
-							py: 1.5,
-							borderColor: 'primary.main',
-							color: 'primary.main',
-						}}
-					>
-						{t('backToHome')}
+						variant="outline"
+						size="lg"
+						asChild
+						className="px-8 py-3 border-indigo-500 text-indigo-500">
+						<Link href="/">
+							{t('backToHome')}
+						</Link>
 					</Button>
-				</Box>
-			</Box>
-		</Container>
+				</div>
+			</div>
+		</div>
 	)
 }
