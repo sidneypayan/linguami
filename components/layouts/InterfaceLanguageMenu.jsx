@@ -15,58 +15,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Languages, ChevronDown, CheckCircle } from 'lucide-react'
 
-// Composant drapeau français
-const FrenchFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
-		<defs>
-			<clipPath id="circle-clip-french-interface">
-				<circle cx="16" cy="16" r="16"/>
-			</clipPath>
-		</defs>
-		<g clipPath="url(#circle-clip-french-interface)">
-			<circle cx="16" cy="16" r="16" fill="#ED2939"/>
-			<path d="M 16 0 A 16 16 0 0 0 16 32 L 16 0" fill="#002395"/>
-			<path d="M 16 0 L 16 32 A 16 16 0 0 0 16 0" fill="#ED2939"/>
-			<rect x="10.67" width="10.67" height="32" fill="white"/>
-		</g>
-	</svg>
-)
-
-// Composant drapeau russe
-const RussianFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
-		<defs>
-			<clipPath id="circle-clip-russian-interface">
-				<circle cx="16" cy="16" r="16"/>
-			</clipPath>
-		</defs>
-		<g clipPath="url(#circle-clip-russian-interface)">
-			<circle cx="16" cy="16" r="16" fill="#0039A6"/>
-			<rect width="32" height="10.67" fill="white"/>
-			<rect y="10.67" width="32" height="10.67" fill="#0039A6"/>
-			<rect y="21.33" width="32" height="10.67" fill="#D52B1E"/>
-		</g>
-	</svg>
-)
-
-// Composant drapeau anglais (UK)
-const EnglishFlag = ({ size = 32 }) => (
-	<svg width="100%" height="100%" viewBox="0 0 32 32" preserveAspectRatio="none" style={{ display: 'block' }}>
-		<defs>
-			<clipPath id="circle-clip-english-interface">
-				<circle cx="16" cy="16" r="16"/>
-			</clipPath>
-		</defs>
-		<g clipPath="url(#circle-clip-english-interface)">
-			<rect width="32" height="32" fill="#012169"/>
-			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="white" strokeWidth="5.3"/>
-			<path d="M 0 0 L 32 32 M 32 0 L 0 32" stroke="#C8102E" strokeWidth="3.2"/>
-			<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="white" strokeWidth="8.5"/>
-			<path d="M 16 0 L 16 32 M 0 16 L 32 16" stroke="#C8102E" strokeWidth="5.3"/>
-		</g>
-	</svg>
-)
-
 const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const t = useTranslations('common')
 	const locale = useLocale()
@@ -92,11 +40,19 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	]
 
 	// Helper pour obtenir le drapeau selon la langue
-	const getFlag = (langCode, size = 32) => {
-		if (langCode === 'fr') return <FrenchFlag size={size} />
-		if (langCode === 'ru') return <RussianFlag size={size} />
-		if (langCode === 'en') return <EnglishFlag size={size} />
-		return null
+	const getFlag = (langCode) => {
+		const flags = {
+			fr: 'https://flagcdn.com/w80/fr.png',
+			ru: 'https://flagcdn.com/w80/ru.png',
+			en: 'https://flagcdn.com/w80/gb.png',
+		}
+		return (
+			<img
+				src={flags[langCode]}
+				alt={langCode}
+				className="w-full h-full object-cover"
+			/>
+		)
 	}
 
 	const handleLanguageChange = async newLocale => {
@@ -144,8 +100,10 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							<Languages className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
 							<span className="relative z-10">{t('speak')}</span>
 							{locale && (
-								<div className="w-8 h-8 rounded-full overflow-hidden border border-white/50 shadow-md flex items-center justify-center bg-white/10">
-									{getFlag(locale, 32)}
+								<div className="p-[2px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
+									<div className="w-5 h-5 rounded-full overflow-hidden">
+										{getFlag(locale)}
+									</div>
 								</div>
 							)}
 						</div>
@@ -174,13 +132,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
-									'border bg-white/10',
+									'w-6 h-6 rounded-full overflow-hidden',
+									'ring-2',
 									isSelected
-										? 'border-violet-500 shadow-lg shadow-violet-500/30'
-										: 'border-slate-300/30'
+										? 'ring-violet-500 shadow-lg shadow-violet-500/30'
+										: 'ring-slate-400/30'
 								)}>
-									{getFlag(language.lang, 32)}
+									{getFlag(language.lang)}
 								</div>
 								<span className={cn(
 									'flex-1 font-medium',
@@ -214,8 +172,8 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						)}
 					>
 						{locale && (
-							<div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-white/70 flex items-center justify-center bg-white/10">
-								{getFlag(locale, 32)}
+							<div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center">
+								{getFlag(locale)}
 							</div>
 						)}
 						<Languages className={cn(
@@ -249,13 +207,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-6 h-6 rounded-full overflow-hidden flex items-center justify-center',
-									'border bg-white/10',
+									'w-6 h-6 rounded-full overflow-hidden',
+									'ring-2',
 									isSelected
-										? 'border-violet-500 shadow-lg shadow-violet-500/30'
-										: 'border-slate-300/30'
+										? 'ring-violet-500 shadow-lg shadow-violet-500/30'
+										: 'ring-slate-400/30'
 								)}>
-									{getFlag(language.lang, 32)}
+									{getFlag(language.lang)}
 								</div>
 								<span className={cn(
 									'flex-1 font-medium',

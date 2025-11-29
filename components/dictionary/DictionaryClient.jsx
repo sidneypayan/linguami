@@ -33,6 +33,7 @@ import {
 	Bookmark,
 	ScrollText,
 	Library,
+	Scroll,
 	Quote,
 	ArrowRight,
 	BookMarked,
@@ -64,7 +65,7 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 					<div className="flex items-center gap-3 flex-wrap flex-1 min-w-0">
 						{/* Source word badge */}
 						<Badge variant="outline" className={cn(
-							'px-3 py-1.5 rounded-lg font-bold text-base sm:text-lg',
+							'px-3 py-1.5 rounded-lg font-bold text-sm sm:text-base',
 							'bg-gradient-to-r from-violet-500/20 to-cyan-500/20',
 							'border-violet-500/30 backdrop-blur-sm',
 							isDark ? 'text-violet-300' : 'text-violet-600'
@@ -74,13 +75,13 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 
 						{/* Arrow */}
 						<ArrowRight className={cn(
-							'w-5 h-5 flex-shrink-0',
+							'w-4 h-4 flex-shrink-0',
 							isDark ? 'text-slate-500' : 'text-slate-400'
 						)} />
 
 						{/* Translation */}
 						<span className={cn(
-							'font-semibold text-base sm:text-lg',
+							'font-semibold text-sm sm:text-base',
 							isDark ? 'text-slate-200' : 'text-slate-700'
 						)}>
 							{translation || '—'}
@@ -125,11 +126,11 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 					)}>
 						<div className="flex items-start gap-2">
 							<Quote className={cn(
-								'w-5 h-5 flex-shrink-0 mt-0.5',
+								'w-4 h-4 flex-shrink-0 mt-0.5',
 								isDark ? 'text-violet-400/60' : 'text-violet-400'
 							)} />
 							<p className={cn(
-								'text-base italic',
+								'text-sm italic',
 								isDark ? 'text-slate-400' : 'text-slate-500'
 							)}>
 								{word.word_sentence}
@@ -565,28 +566,38 @@ const DictionaryClient = ({ translations }) => {
 
 			<div className="relative max-w-5xl mx-auto px-4">
 				{/* Header Section */}
-				<div className="text-center mb-8">
-					<div className="flex items-center justify-center gap-3 mb-2">
+				<div className="flex items-center justify-center gap-5 mb-8">
+					{/* Icon with magical glow */}
+					<div className="relative">
 						<div className={cn(
-							'w-12 h-12 rounded-xl flex items-center justify-center',
-							'bg-gradient-to-br from-violet-500 to-cyan-500',
-							'shadow-lg shadow-violet-500/30'
+							'absolute inset-0 rounded-2xl blur-xl opacity-60',
+							'bg-gradient-to-br from-violet-500 to-cyan-500'
+						)} />
+						<div className={cn(
+							'relative w-14 h-14 rounded-2xl flex items-center justify-center',
+							'bg-gradient-to-br from-violet-600 via-purple-600 to-cyan-600',
+							'shadow-lg shadow-violet-500/40',
+							'border border-white/20'
 						)}>
-							<Library className="w-6 h-6 text-white" />
+							<Scroll className="w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
 						</div>
+					</div>
+					{/* Title and subtitle */}
+					<div>
 						<h1 className={cn(
-							'text-2xl md:text-3xl font-black',
-							'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+							'text-2xl md:text-3xl font-black tracking-wide',
+							'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',
+							'drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]'
 						)}>
 							Grimoire
 						</h1>
+						<p className={cn(
+							'text-sm font-medium tracking-wide',
+							isDark ? 'text-violet-300/70' : 'text-violet-500/70'
+						)}>
+							Ta collection de mots magiques
+						</p>
 					</div>
-					<p className={cn(
-						'text-base',
-						isDark ? 'text-slate-400' : 'text-slate-500'
-					)}>
-						Ta collection de mots magiques
-					</p>
 				</div>
 
 				{/* Action Buttons */}
@@ -595,7 +606,7 @@ const DictionaryClient = ({ translations }) => {
 						<Button
 							onClick={() => openFlashcards()}
 							className={cn(
-								'flex-1 px-5 py-6 rounded-xl font-bold text-white',
+								'flex-1 px-5 py-6 rounded-xl font-bold text-base text-white',
 								'bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500',
 								'shadow-lg shadow-violet-500/30 hover:shadow-xl',
 								'transition-all duration-300 hover:-translate-y-0.5'
@@ -608,7 +619,7 @@ const DictionaryClient = ({ translations }) => {
 						<Button
 							onClick={() => setIsSessionConfigOpen(true)}
 							className={cn(
-								'flex-1 px-5 py-6 rounded-xl font-bold text-white',
+								'flex-1 px-5 py-6 rounded-xl font-bold text-base text-white',
 								'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500',
 								'shadow-lg shadow-amber-500/30 hover:shadow-xl',
 								'transition-all duration-300 hover:-translate-y-0.5'
@@ -622,7 +633,7 @@ const DictionaryClient = ({ translations }) => {
 					<Button
 						onClick={() => setIsAddWordModalOpen(true)}
 						className={cn(
-							'w-full px-5 py-6 rounded-xl font-bold text-white',
+							'w-full px-5 py-6 rounded-xl font-bold text-base text-white',
 							'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500',
 							'shadow-lg shadow-emerald-500/30 hover:shadow-xl',
 							'transition-all duration-300 hover:-translate-y-0.5'
@@ -662,7 +673,7 @@ const DictionaryClient = ({ translations }) => {
 										setCurrentPage(1)
 									}}
 									className={cn(
-										'pl-10 pr-4 py-2.5 rounded-xl h-12 text-base',
+										'pl-10 pr-4 py-2.5 rounded-xl h-11 text-sm',
 										'border transition-all',
 										isDark
 											? 'bg-slate-900/50 border-violet-500/20 text-white placeholder:text-slate-500'
@@ -695,7 +706,7 @@ const DictionaryClient = ({ translations }) => {
 												size="sm"
 												onClick={() => handleWordsPerPageChange(value)}
 												className={cn(
-													'px-3 py-1.5 rounded-md text-base font-bold h-auto',
+													'px-3 py-1.5 rounded-md text-sm font-bold h-auto',
 													isActive
 														? [
 															'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
@@ -721,12 +732,12 @@ const DictionaryClient = ({ translations }) => {
 
 							{/* Word count badge */}
 							<Badge className={cn(
-								'px-5 py-2.5 rounded-xl text-base',
+								'px-4 py-2 rounded-xl text-sm',
 								'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
 								'shadow-lg shadow-violet-500/40',
-								'border border-white/20 text-white font-black'
+								'border border-white/20 text-white font-semibold'
 							)}>
-								<BookMarked className="w-5 h-5 mr-2 text-white/80" />
+								<BookMarked className="w-4 h-4 mr-2 text-white/80" />
 								{filteredUserWords.length} {filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
 							</Badge>
 						</div>

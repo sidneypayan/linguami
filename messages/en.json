@@ -445,7 +445,7 @@
     "accessDenied": "Access Denied",
     "accessDeniedMessage": "This page is reserved for administrators. You do not have the necessary permissions to access it.",
     "guest_mode": "Guest Mode",
-    "guest_mode_description": "Create an account to save your progress!",
+    "guest_mode_description": "Create an account to start your adventure and save your progress",
     "guest_leaderboard_title": "Join the Competition!",
     "guest_leaderboard_description": "Create an account to earn XP and gold, unlock rewards, climb the leaderboard, and challenge other learners!",
     "create_account": "Create Account",
