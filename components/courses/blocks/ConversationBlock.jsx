@@ -134,7 +134,7 @@ const ConversationBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-orange-950/50 via-slate-900 to-red-950/30 border-orange-500/30'
 				: 'bg-gradient-to-br from-orange-50 via-white to-amber-50 border-orange-200'
@@ -147,12 +147,12 @@ const ConversationBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-orange-500/20' : 'border-orange-200'
 			)}>
-				<div className="flex items-center gap-4 flex-wrap">
+				<div className="flex items-center gap-3 sm:gap-4 flex-wrap">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-orange-400 to-red-500'
 					)}>
-						<MessageCircle className="w-6 h-6 text-white" />
+						<MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<div className="flex-1 min-w-0">
@@ -251,7 +251,7 @@ const ConversationBlock = ({ block }) => {
 							: 'bg-orange-100 text-orange-800'
 					)}>
 						<MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-						<p className="text-sm italic">{context}</p>
+						<p className="text-sm sm:text-base italic">{context}</p>
 					</div>
 				)}
 

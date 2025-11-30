@@ -14,9 +14,17 @@ const VocabularyBlock = ({ block }) => {
 
 	const { title, words, category } = block
 
+	// Translate category if it's a known key
+	const getTranslatedCategory = (cat) => {
+		const categoryKey = `methode_cat_${cat}`
+		const translated = t(categoryKey)
+		// If translation key doesn't exist, it returns the key itself
+		return translated === categoryKey ? cat : translated
+	}
+
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-emerald-950/50 via-slate-900 to-green-950/30 border-emerald-500/30'
 				: 'bg-gradient-to-br from-emerald-50 via-white to-green-50 border-emerald-200'
@@ -29,12 +37,12 @@ const VocabularyBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-emerald-500/20' : 'border-emerald-200'
 			)}>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3 sm:gap-4">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-emerald-400 to-green-500'
 					)}>
-						<Star className="w-6 h-6 text-white" />
+						<Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<div className="flex-1">
@@ -51,7 +59,7 @@ const VocabularyBlock = ({ block }) => {
 									? 'border-emerald-500/30 text-emerald-400'
 									: 'border-emerald-300 text-emerald-700'
 							)}>
-								{t('methode_category')} : {category}
+								{t('methode_category')} : {getTranslatedCategory(category)}
 							</Badge>
 						)}
 					</div>
@@ -120,14 +128,14 @@ const VocabularyBlock = ({ block }) => {
 									isDark ? 'border-slate-700' : 'border-slate-100'
 								)}>
 									<p className={cn(
-										'text-sm italic',
+										'text-sm sm:text-base italic',
 										isDark ? 'text-slate-400' : 'text-slate-500'
 									)}>
 										{item.example}
 									</p>
 									{item.exampleTranslation && (
 										<p className={cn(
-											'text-xs mt-1',
+											'text-xs sm:text-sm mt-1',
 											isDark ? 'text-slate-500' : 'text-slate-400'
 										)}>
 											{item.exampleTranslation}

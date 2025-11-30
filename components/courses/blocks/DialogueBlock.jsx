@@ -14,6 +14,8 @@ import {
 	Gauge,
 	Check,
 	Sparkles,
+	Eye,
+	EyeOff,
 } from 'lucide-react'
 
 /**
@@ -27,6 +29,7 @@ const DialogueBlock = ({ block }) => {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentLineIndex, setCurrentLineIndex] = useState(null)
 	const [showVocabulary, setShowVocabulary] = useState(false)
+	const [showInlineVocab, setShowInlineVocab] = useState(false) // For mobile toggle
 	const [playbackRate, setPlaybackRate] = useState(1)
 	const [showSpeedMenu, setShowSpeedMenu] = useState(false)
 
@@ -149,7 +152,7 @@ const DialogueBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-blue-950/50 via-slate-900 to-cyan-950/30 border-blue-500/30'
 				: 'bg-gradient-to-br from-blue-50 via-white to-cyan-50 border-blue-200'
@@ -162,12 +165,12 @@ const DialogueBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-blue-500/20' : 'border-blue-200'
 			)}>
-				<div className="flex items-center gap-4 flex-wrap">
+				<div className="flex items-center gap-3 sm:gap-4 flex-wrap">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-blue-400 to-cyan-500'
 					)}>
-						<MessageSquare className="w-6 h-6 text-white" />
+						<MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<div className="flex-1 min-w-0">
@@ -184,6 +187,28 @@ const DialogueBlock = ({ block }) => {
 							{lines?.length || 0} {t('methode_lines')}
 						</p>
 					</div>
+
+					{/* Toggle vocabulaire - Mobile only */}
+					{lines?.some((line) => line.vocab && line.vocab.length > 0) && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setShowInlineVocab(!showInlineVocab)}
+							className={cn(
+								'sm:hidden gap-1.5 border-2',
+								isDark
+									? 'border-blue-500/30 text-blue-300 hover:bg-blue-500/10'
+									: 'border-blue-300 text-blue-700 hover:bg-blue-50'
+							)}
+						>
+							{showInlineVocab ? (
+								<EyeOff className="w-4 h-4" />
+							) : (
+								<Eye className="w-4 h-4" />
+							)}
+							{t('methode_show_vocab')}
+						</Button>
+					)}
 
 					{/* Controles audio */}
 					{(audioUrl || lines?.some((line) => line.audioUrl)) && (
@@ -264,12 +289,12 @@ const DialogueBlock = ({ block }) => {
 			</div>
 
 			{/* Lignes du dialogue */}
-			<div className="p-4 sm:p-5 space-y-3">
+			<div className="p-3 sm:p-5 space-y-2 sm:space-y-3">
 				{lines?.map((line, index) => (
 					<div
 						key={index}
 						className={cn(
-							'p-4 rounded-xl transition-all duration-300',
+							'p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300',
 							currentLineIndex === index
 								? isDark
 									? 'bg-blue-500/20 ring-2 ring-blue-500/50'
@@ -279,60 +304,83 @@ const DialogueBlock = ({ block }) => {
 									: 'bg-white hover:bg-slate-50 shadow-sm'
 						)}
 					>
-						<div className="flex items-start gap-3">
-							{/* Avatar du personnage */}
-							<div className={cn(
-								'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold text-white shadow-md',
+						{/* Nom du personnage */}
+						<div className="flex items-center gap-2 mb-1">
+							<span className={cn(
+								'font-bold text-sm',
 								line.speakerGender === 'male'
-									? 'bg-gradient-to-br from-blue-500 to-indigo-600'
-									: 'bg-gradient-to-br from-pink-500 to-rose-600'
+									? 'text-blue-500'
+									: 'text-pink-500'
 							)}>
-								{line.speaker?.charAt(0) || '?'}
-							</div>
+								{line.speaker}
+							</span>
+							{line.audioUrl && (
+								<button
+									onClick={() => handlePlayLine(index, line.audioUrl)}
+									className={cn(
+										'p-1 rounded-full transition-colors',
+										isDark
+											? 'hover:bg-blue-500/20 text-blue-400'
+											: 'hover:bg-blue-100 text-blue-600'
+									)}
+								>
+									<Volume2 className="w-4 h-4" />
+								</button>
+							)}
+						</div>
 
-							<div className="flex-1 min-w-0">
-								{/* Nom du personnage */}
-								<div className="flex items-center gap-2 mb-1">
-									<span className={cn(
-										'font-bold text-sm',
-										line.speakerGender === 'male'
-											? 'text-blue-500'
-											: 'text-pink-500'
-									)}>
-										{line.speaker}
-									</span>
-									{line.audioUrl && (
-										<button
-											onClick={() => handlePlayLine(index, line.audioUrl)}
+						{/* Texte et vocabulaire */}
+						<div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+							{/* Texte principal */}
+							<p className={cn(
+								'font-medium sm:flex-1 sm:min-w-0',
+								isDark ? 'text-white' : 'text-slate-900'
+							)}>
+								{line.text}
+							</p>
+
+							{/* Vocabulaire - Desktop: toujours visible à droite */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className="hidden sm:flex sm:flex-wrap sm:gap-1.5 sm:flex-1 sm:justify-end">
+									{line.vocab.map((item, idx) => (
+										<Badge
+											key={idx}
+											variant="outline"
 											className={cn(
-												'p-1 rounded-full transition-colors',
+												'text-xs sm:text-sm py-1 px-2 whitespace-nowrap',
 												isDark
-													? 'hover:bg-blue-500/20 text-blue-400'
-													: 'hover:bg-blue-100 text-blue-600'
+													? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+													: 'border-blue-200 bg-blue-50 text-blue-700'
 											)}
 										>
-											<Volume2 className="w-4 h-4" />
-										</button>
-									)}
+											{item.word} = {item.translation}
+										</Badge>
+									))}
 								</div>
+							)}
 
-								{/* Texte */}
+							{/* Traduction simple si pas de vocab */}
+							{line.translation && (!line.vocab || line.vocab.length === 0) && (
 								<p className={cn(
-									'font-medium mb-2',
-									isDark ? 'text-white' : 'text-slate-900'
+									'text-sm sm:text-base italic sm:text-right sm:flex-1',
+									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									{line.text}
+									{line.translation}
 								</p>
+							)}
+						</div>
 
-								{/* Vocabulaire ou traduction */}
-								{line.vocab && line.vocab.length > 0 ? (
+						{/* Vocabulaire - Mobile: toggle */}
+						{line.vocab && line.vocab.length > 0 && (
+							<div className="sm:hidden mt-2">
+								{showInlineVocab && (
 									<div className="flex flex-wrap gap-1.5">
 										{line.vocab.map((item, idx) => (
 											<Badge
 												key={idx}
 												variant="outline"
 												className={cn(
-													'text-xs py-1',
+													'text-xs py-1 px-2',
 													isDark
 														? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
 														: 'border-blue-200 bg-blue-50 text-blue-700'
@@ -342,16 +390,9 @@ const DialogueBlock = ({ block }) => {
 											</Badge>
 										))}
 									</div>
-								) : line.translation ? (
-									<p className={cn(
-										'text-sm italic',
-										isDark ? 'text-slate-400' : 'text-slate-500'
-									)}>
-										{line.translation}
-									</p>
-								) : null}
+								)}
 							</div>
-						</div>
+						)}
 					</div>
 				))}
 			</div>
@@ -399,7 +440,7 @@ const DialogueBlock = ({ block }) => {
 								const categoryConfig = {
 									adjectives: { icon: '🔷', label: t('methode_vocab_adjectives') },
 									verbs: { icon: '⚡', label: t('methode_vocab_verbs') },
-									expressions: { icon: '💬', label: t('methode_vocab_expressions') },
+									expressions: { icon: null, label: t('methode_vocab_expressions') },
 								}
 
 								return (
@@ -408,7 +449,7 @@ const DialogueBlock = ({ block }) => {
 											'font-bold mb-2 flex items-center gap-2',
 											isDark ? 'text-blue-300' : 'text-blue-700'
 										)}>
-											<span>{categoryConfig[category].icon}</span>
+											{categoryConfig[category].icon && <span>{categoryConfig[category].icon}</span>}
 											{categoryConfig[category].label}
 										</h4>
 
@@ -431,6 +472,7 @@ const DialogueBlock = ({ block }) => {
 															{item.word}
 														</span>
 														<span className={cn(
+															'text-sm sm:text-base',
 															isDark ? 'text-slate-300' : 'text-slate-600'
 														)}>
 															→ {item.translation}
@@ -438,7 +480,7 @@ const DialogueBlock = ({ block }) => {
 													</div>
 													{item.example && (
 														<p className={cn(
-															'text-sm mt-1 italic',
+															'text-xs sm:text-sm mt-1 italic',
 															isDark ? 'text-slate-500' : 'text-slate-400'
 														)}>
 															Ex: {item.example}

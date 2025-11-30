@@ -49,7 +49,7 @@ const TipBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			`bg-gradient-to-br ${config.bgGradient}`,
 			config.border
 		)}>
@@ -60,10 +60,10 @@ const TipBlock = ({ block }) => {
 			)} />
 
 			<div className="relative p-4 sm:p-5">
-				<div className="flex items-start gap-4">
+				<div className="flex items-start gap-3 sm:gap-4">
 					{/* Icone */}
 					<div className={cn(
-						'w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg',
+						'w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg',
 						`bg-gradient-to-br ${config.gradient}`
 					)}>
 						<Icon className="w-5 h-5 text-white" />

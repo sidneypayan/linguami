@@ -46,7 +46,7 @@ const GrammarBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-xl sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-violet-950/50 via-slate-900 to-purple-950/30 border-violet-500/30'
 				: 'bg-gradient-to-br from-violet-50 via-white to-purple-50 border-violet-200'
@@ -60,12 +60,12 @@ const GrammarBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-violet-500/20' : 'border-violet-200'
 			)}>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3 sm:gap-4">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-violet-400 to-purple-600'
 					)}>
-						<Shield className="w-6 h-6 text-white" />
+						<Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<h3 className={cn(
@@ -77,7 +77,7 @@ const GrammarBlock = ({ block }) => {
 				</div>
 			</div>
 
-			<div className="relative p-4 sm:p-5 space-y-6">
+			<div className="relative p-4 sm:p-5 space-y-5 sm:space-y-6">
 				{/* Explication */}
 				{explanation && (
 					<div
@@ -94,13 +94,13 @@ const GrammarBlock = ({ block }) => {
 				{/* Exemples */}
 				{examples && examples.length > 0 && (
 					<div>
-						<div className="flex items-center gap-2 mb-4">
+						<div className="flex items-center gap-2 mb-3 sm:mb-4">
 							<Scroll className={cn(
 								'w-5 h-5',
 								isDark ? 'text-violet-400' : 'text-violet-600'
 							)} />
 							<h4 className={cn(
-								'font-bold',
+								'font-bold text-base sm:text-lg',
 								isDark ? 'text-violet-300' : 'text-violet-700'
 							)}>
 								{t('methode_examples')}
@@ -112,7 +112,7 @@ const GrammarBlock = ({ block }) => {
 								<div
 									key={index}
 									className={cn(
-										'p-4 rounded-xl border-l-4 transition-all duration-300',
+										'p-3 sm:p-4 rounded-lg sm:rounded-xl border-l-4 transition-all duration-300',
 										currentPlayingIndex === index
 											? isDark
 												? 'bg-violet-500/20 border-violet-400'
@@ -145,14 +145,14 @@ const GrammarBlock = ({ block }) => {
 												{ex.sentence}
 											</p>
 											<p className={cn(
-												'text-sm italic',
+												'text-sm sm:text-base italic',
 												isDark ? 'text-slate-400' : 'text-slate-500'
 											)}>
 												{ex.translation}
 											</p>
 											{ex.note && (
 												<Badge className={cn(
-													'mt-2',
+													'mt-2 text-xs sm:text-sm py-1.5 px-2.5',
 													'bg-violet-500/20 text-violet-400 border-violet-500/30'
 												)}>
 													→ {ex.note}
@@ -171,7 +171,7 @@ const GrammarBlock = ({ block }) => {
 					<div>
 						{table.title && (
 							<h4 className={cn(
-								'font-bold mb-4',
+								'font-bold text-base sm:text-lg mb-3 sm:mb-4',
 								isDark ? 'text-violet-300' : 'text-violet-700'
 							)}>
 								{table.title}
@@ -179,7 +179,7 @@ const GrammarBlock = ({ block }) => {
 						)}
 
 						<div className={cn(
-							'rounded-xl overflow-hidden border',
+							'rounded-lg sm:rounded-xl overflow-hidden border',
 							isDark ? 'border-violet-500/30' : 'border-violet-200'
 						)}>
 							<table className="w-full">
@@ -194,7 +194,7 @@ const GrammarBlock = ({ block }) => {
 												<th
 													key={index}
 													className={cn(
-														'px-4 py-3 text-left font-bold text-sm',
+														'px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-sm',
 														isDark ? 'text-violet-300' : 'text-violet-700'
 													)}
 												>
@@ -231,7 +231,7 @@ const GrammarBlock = ({ block }) => {
 													<td
 														key={cellIndex}
 														className={cn(
-															'px-4 py-3 text-sm',
+															'px-3 sm:px-4 py-2 sm:py-3 text-sm',
 															isDark ? 'text-slate-300' : 'text-slate-700'
 														)}
 													>
@@ -240,7 +240,7 @@ const GrammarBlock = ({ block }) => {
 																<button
 																	onClick={() => handlePlayExample(`table-${rowIndex}-${cellIndex}`, cellAudio)}
 																	className={cn(
-																		'p-1.5 rounded-lg transition-colors',
+																		'p-1 sm:p-1.5 rounded-lg transition-colors',
 																		isDark
 																			? 'bg-violet-500/20 hover:bg-violet-500/30 text-violet-400'
 																			: 'bg-violet-100 hover:bg-violet-200 text-violet-600'

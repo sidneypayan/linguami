@@ -14,7 +14,7 @@ const SummaryBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-green-950/50 via-slate-900 to-emerald-950/30 border-green-500/30'
 				: 'bg-gradient-to-br from-green-50 via-white to-emerald-50 border-green-200'
@@ -28,12 +28,12 @@ const SummaryBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-green-500/20' : 'border-green-200'
 			)}>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3 sm:gap-4">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-green-400 to-emerald-500'
 					)}>
-						<Trophy className="w-6 h-6 text-white" />
+						<Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<div className="flex-1">
@@ -97,7 +97,7 @@ const SummaryBlock = ({ block }) => {
 									{/* Contexte */}
 									{phrase.context && (
 										<p className={cn(
-											'text-sm italic mt-2',
+											'text-sm sm:text-base italic mt-2',
 											isDark ? 'text-slate-500' : 'text-slate-400'
 										)}>
 											{phrase.context}
