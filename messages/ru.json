@@ -1198,6 +1198,8 @@
     "cancel": "Отмена",
     "add": "Добавить",
     "add_word_btn": "Добавить слово вручную",
+    "add_word_subtitle": "Добавьте слово в свой словарь",
+    "session_config_subtitle": "Настройте свою сессию",
     "custom_translation": "Другой перевод",
     "no_translation_found": "Перевод не найден",
     "translation": "Перевод",

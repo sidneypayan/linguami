@@ -39,20 +39,46 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 		},
 	]
 
-	// Helper pour obtenir le drapeau selon la langue
+	// Composants SVG des drapeaux (format carré pour conteneurs ronds)
+	const flagStyle = {
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		transform: 'translate(-50%, -50%)',
+		width: '140%',
+		height: '140%'
+	}
+
+	const FlagFR = () => (
+		<svg viewBox="0 0 3 3" style={flagStyle}>
+			<rect width="1" height="3" fill="#002654" />
+			<rect x="1" width="1" height="3" fill="#fff" />
+			<rect x="2" width="1" height="3" fill="#CE1126" />
+		</svg>
+	)
+
+	const FlagRU = () => (
+		<svg viewBox="0 0 3 3" style={flagStyle}>
+			<rect width="3" height="1" fill="#fff" />
+			<rect y="1" width="3" height="1" fill="#0039A6" />
+			<rect y="2" width="3" height="1" fill="#D52B1E" />
+		</svg>
+	)
+
+	const FlagGB = () => (
+		<svg viewBox="0 0 60 60" style={flagStyle}>
+			<rect width="60" height="60" fill="#012169" />
+			<path d="M0,0 L60,60 M60,0 L0,60" stroke="#fff" strokeWidth="12" />
+			<path d="M0,0 L60,60 M60,0 L0,60" stroke="#C8102E" strokeWidth="8" />
+			<path d="M30,0 V60 M0,30 H60" stroke="#fff" strokeWidth="20" />
+			<path d="M30,0 V60 M0,30 H60" stroke="#C8102E" strokeWidth="12" />
+		</svg>
+	)
+
 	const getFlag = (langCode) => {
-		const flags = {
-			fr: 'https://flagcdn.com/w80/fr.png',
-			ru: 'https://flagcdn.com/w80/ru.png',
-			en: 'https://flagcdn.com/w80/gb.png',
-		}
-		return (
-			<img
-				src={flags[langCode]}
-				alt={langCode}
-				className="w-full h-full object-cover"
-			/>
-		)
+		const flags = { fr: FlagFR, ru: FlagRU, en: FlagGB }
+		const Flag = flags[langCode]
+		return Flag ? <Flag /> : null
 	}
 
 	const handleLanguageChange = async newLocale => {
@@ -85,7 +111,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							'hidden 2xl:flex items-center gap-2.5',
 							variant === 'full' ? 'flex' : 'hidden',
 							'bg-white/15 backdrop-blur-sm',
-							'text-white font-semibold text-base',
+							'text-white font-semibold text-sm',
 							'px-5 py-3 h-11',
 							'rounded-lg',
 							'border border-white/20',
@@ -100,10 +126,8 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							<Languages className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
 							<span className="relative z-10">{t('speak')}</span>
 							{locale && (
-								<div className="p-[2px] rounded-full bg-gradient-to-br from-white/70 to-white/30 shadow-lg shadow-black/30 hover:scale-105 transition-all duration-200">
-									<div className="w-5 h-5 rounded-full overflow-hidden">
-										{getFlag(locale)}
-									</div>
+								<div className="w-6 h-6 relative z-0 rounded-full overflow-hidden ring-2 ring-white/30">
+									{getFlag(locale)}
 								</div>
 							)}
 						</div>
@@ -132,11 +156,11 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-6 h-6 rounded-full overflow-hidden',
+									'w-6 h-6 relative rounded-full overflow-hidden',
 									'ring-2',
 									isSelected
 										? 'ring-violet-500 shadow-lg shadow-violet-500/30'
-										: 'ring-slate-400/30'
+										: 'ring-white/30'
 								)}>
 									{getFlag(language.lang)}
 								</div>
@@ -163,7 +187,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						className={cn(
 							'flex 2xl:hidden',
 							variant === 'full' ? 'hidden' : 'flex',
-							'w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0',
+							'w-9 h-9 sm:w-12 sm:h-12 rounded-full p-0',
 							'bg-white/15 backdrop-blur-sm',
 							'border border-white/20',
 							'transition-all duration-300',
@@ -172,13 +196,13 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						)}
 					>
 						{locale && (
-							<div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center">
+							<div className="w-6 h-6 relative rounded-full overflow-hidden ring-2 ring-white/30">
 								{getFlag(locale)}
 							</div>
 						)}
 						<Languages className={cn(
 							'absolute -bottom-0.5 -right-0.5',
-							'w-5 h-5 text-white',
+							'w-4 h-4 sm:w-5 sm:h-5 text-white',
 							'bg-gradient-to-br from-violet-500 to-purple-600',
 							'rounded-full p-0.5',
 							'shadow-lg'
@@ -207,11 +231,11 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 								)}
 							>
 								<div className={cn(
-									'w-6 h-6 rounded-full overflow-hidden',
+									'w-6 h-6 relative rounded-full overflow-hidden',
 									'ring-2',
 									isSelected
 										? 'ring-violet-500 shadow-lg shadow-violet-500/30'
-										: 'ring-slate-400/30'
+										: 'ring-white/30'
 								)}>
 									{getFlag(language.lang)}
 								</div>

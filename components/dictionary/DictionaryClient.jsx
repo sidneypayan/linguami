@@ -130,7 +130,7 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 								isDark ? 'text-violet-400/60' : 'text-violet-400'
 							)} />
 							<p className={cn(
-								'text-sm italic',
+								'text-sm',
 								isDark ? 'text-slate-400' : 'text-slate-500'
 							)}>
 								{word.word_sentence}
@@ -657,9 +657,9 @@ const DictionaryClient = ({ translations }) => {
 					<div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 via-cyan-500 to-violet-500" />
 
 					<CardContent className="p-4">
-						<div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-							{/* Search */}
-							<div className="relative w-full sm:w-64">
+						<div className="flex flex-col gap-4">
+							{/* Row 1: Search */}
+							<div className="relative w-full">
 								<Search className={cn(
 									'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
 									isDark ? 'text-violet-400' : 'text-violet-500'
@@ -683,63 +683,66 @@ const DictionaryClient = ({ translations }) => {
 								/>
 							</div>
 
-							{/* Words per page */}
-							<div className={cn(
-								'flex items-center gap-3 p-2 rounded-xl',
-								isDark ? 'bg-slate-900/50' : 'bg-slate-50',
-								'border',
-								isDark ? 'border-violet-500/20' : 'border-violet-200/50'
-							)}>
-								<span className={cn(
-									'text-sm font-semibold uppercase tracking-wide whitespace-nowrap px-2',
-									isDark ? 'text-violet-400' : 'text-violet-600'
+							{/* Row 2: Words per page + Word count */}
+							<div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+								{/* Words per page */}
+								<div className={cn(
+									'flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 sm:p-2 rounded-xl',
+									isDark ? 'bg-slate-900/50' : 'bg-slate-50',
+									'border',
+									isDark ? 'border-violet-500/20' : 'border-violet-200/50'
 								)}>
-									{translations.words_per_page}
-								</span>
-								<div className="flex gap-1 p-1 rounded-lg bg-gradient-to-r from-violet-500/10 to-cyan-500/10">
-									{[20, 50, 100, 'all'].map((value) => {
-										const isActive = wordsPerPage === value || (value === 'all' && wordsPerPage === filteredUserWords.length)
-										return (
-											<Button
-												key={value}
-												variant="ghost"
-												size="sm"
-												onClick={() => handleWordsPerPageChange(value)}
-												className={cn(
-													'px-3 py-1.5 rounded-md text-sm font-bold h-auto',
-													isActive
-														? [
-															'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
-															'shadow-md shadow-violet-500/40',
-															'scale-105',
-															'hover:from-violet-500 hover:to-cyan-500'
-														]
-														: [
-															isDark ? 'text-slate-400' : 'text-slate-500',
-															'hover:scale-105',
-															isDark
-																? 'hover:text-violet-300 hover:bg-violet-500/20'
-																: 'hover:text-violet-600 hover:bg-violet-100'
-														]
-												)}
-											>
-												{value === 'all' ? translations.all : value}
-											</Button>
-										)
-									})}
+									<span className={cn(
+										'text-xs sm:text-sm font-semibold uppercase tracking-wide',
+										isDark ? 'text-violet-400' : 'text-violet-600'
+									)}>
+										{translations.words_per_page}
+									</span>
+									<div className="flex gap-1.5 p-1 rounded-lg bg-gradient-to-r from-violet-500/10 to-cyan-500/10">
+										{[20, 50, 100, 'all'].map((value) => {
+											const isActive = wordsPerPage === value || (value === 'all' && wordsPerPage === filteredUserWords.length)
+											return (
+												<Button
+													key={value}
+													variant="ghost"
+													size="sm"
+													onClick={() => handleWordsPerPageChange(value)}
+													className={cn(
+														'flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-md text-sm font-bold h-auto min-w-[44px]',
+														isActive
+															? [
+																'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
+																'shadow-md shadow-violet-500/40',
+																'scale-105',
+																'hover:from-violet-500 hover:to-cyan-500'
+															]
+															: [
+																isDark ? 'text-slate-400' : 'text-slate-500',
+																'hover:scale-105',
+																isDark
+																	? 'hover:text-violet-300 hover:bg-violet-500/20'
+																	: 'hover:text-violet-600 hover:bg-violet-100'
+															]
+													)}
+												>
+													{value === 'all' ? translations.all : value}
+												</Button>
+											)
+										})}
+									</div>
 								</div>
-							</div>
 
-							{/* Word count badge */}
-							<Badge className={cn(
-								'px-4 py-2 rounded-xl text-sm',
-								'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
-								'shadow-lg shadow-violet-500/40',
-								'border border-white/20 text-white font-semibold'
-							)}>
-								<BookMarked className="w-4 h-4 mr-2 text-white/80" />
-								{filteredUserWords.length} {filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
-							</Badge>
+								{/* Word count badge */}
+								<Badge className={cn(
+									'px-4 py-2.5 rounded-xl text-sm self-center sm:self-auto',
+									'bg-gradient-to-br from-violet-600 via-violet-500 to-cyan-500',
+									'shadow-lg shadow-violet-500/40',
+									'border border-white/20 text-white font-semibold'
+								)}>
+									<BookMarked className="w-4 h-4 mr-2 text-white/80" />
+									{filteredUserWords.length} {filteredUserWords.length > 1 ? translations.words_total_plural : translations.words_total}
+								</Badge>
+							</div>
 						</div>
 					</CardContent>
 				</Card>

@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * Add Word Modal - allows user to manually add a word to their dictionary
+ * Mobile: Full-screen view | Desktop: Centered dialog
+ */
+
 import { useState, useEffect, useMemo } from 'react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
@@ -11,14 +16,14 @@ import { buildWordData } from '@/utils/wordMapping'
 import toast from '@/utils/toast'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { X, Plus, Loader2 } from 'lucide-react'
+import { Plus, Loader2, BookOpen, MessageSquare } from 'lucide-react'
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from '@/components/ui/dialog'
+	MobileModal,
+	MobileModalContent,
+	MobileModalHeader,
+	MobileModalTitle,
+	MobileModalFooter,
+} from '@/components/ui/mobile-modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -208,34 +213,46 @@ const AddWordModal = ({ open, onClose }) => {
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className={cn(
-				"sm:max-w-md rounded-2xl border-2",
-				isDark
-					? "bg-slate-900 border-violet-500/30"
-					: "bg-white border-slate-200",
-				"shadow-2xl"
-			)}>
-				<DialogHeader className="pb-4">
-					<DialogTitle className="flex items-center gap-3">
-						<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg shadow-rose-500/30">
-							<Plus className="w-5 h-5 text-white" />
-						</div>
-						<span className={cn(
-							"text-xl font-bold",
-							isDark ? "text-slate-100" : "text-slate-800"
+		<MobileModal open={open} onOpenChange={handleClose}>
+			<MobileModalContent isDark={isDark} className="sm:max-w-md">
+				<MobileModalHeader>
+					{/* Header with icon */}
+					<div className="flex flex-col items-center sm:flex-row sm:items-center gap-4">
+						<div className={cn(
+							"w-16 h-16 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center",
+							"bg-gradient-to-br from-pink-500 to-rose-500",
+							"shadow-lg shadow-rose-500/30"
 						)}>
-							{t('addword')}
-						</span>
-					</DialogTitle>
-				</DialogHeader>
+							<Plus className="w-8 h-8 sm:w-7 sm:h-7 text-white" />
+						</div>
+						<div className="text-center sm:text-left">
+							<MobileModalTitle className={cn(
+								"text-2xl sm:text-xl",
+								isDark ? "text-slate-100" : "text-slate-800"
+							)}>
+								{t('addword')}
+							</MobileModalTitle>
+							<p className={cn(
+								"text-sm mt-1",
+								isDark ? "text-slate-400" : "text-slate-500"
+							)}>
+								{t('add_word_subtitle') || 'Ajoutez un mot à votre dictionnaire'}
+							</p>
+						</div>
+					</div>
+				</MobileModalHeader>
 
 				<form onSubmit={handleSubmit}>
-					<div className="space-y-5 py-2">
-						{/* Champ pour le mot dans la langue d'apprentissage */}
+					<div className="space-y-5 mt-2">
+						{/* Learning language word */}
 						<div>
 							<div className="flex items-center gap-2 mb-2">
-								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-violet-500 to-purple-600" />
+								<div className={cn(
+									"w-8 h-8 rounded-lg flex items-center justify-center",
+									"bg-gradient-to-br from-violet-500 to-purple-600"
+								)}>
+									<BookOpen className="w-4 h-4 text-white" />
+								</div>
 								<label className={cn(
 									"font-semibold",
 									isDark ? "text-slate-100" : "text-slate-800"
@@ -257,9 +274,9 @@ const AddWordModal = ({ open, onClose }) => {
 								disabled={addWordMutation.isPending}
 								maxLength={200}
 								className={cn(
-									"h-12 text-base rounded-xl border-2",
+									"h-14 sm:h-12 text-lg sm:text-base rounded-xl border-2",
 									isDark
-										? "bg-slate-800/60 border-violet-500/30 focus:border-violet-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-violet-500"
 										: "bg-white border-slate-200 focus:border-violet-500",
 									errors.learningLangWord && "border-red-500"
 								)}
@@ -269,10 +286,15 @@ const AddWordModal = ({ open, onClose }) => {
 							)}
 						</div>
 
-						{/* Champ pour le mot dans la langue du navigateur */}
+						{/* Browser language word */}
 						<div>
 							<div className="flex items-center gap-2 mb-2">
-								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-pink-400 to-rose-500" />
+								<div className={cn(
+									"w-8 h-8 rounded-lg flex items-center justify-center",
+									"bg-gradient-to-br from-pink-500 to-rose-500"
+								)}>
+									<BookOpen className="w-4 h-4 text-white" />
+								</div>
 								<label className={cn(
 									"font-semibold",
 									isDark ? "text-slate-100" : "text-slate-800"
@@ -293,9 +315,9 @@ const AddWordModal = ({ open, onClose }) => {
 								disabled={addWordMutation.isPending}
 								maxLength={200}
 								className={cn(
-									"h-12 text-base rounded-xl border-2",
+									"h-14 sm:h-12 text-lg sm:text-base rounded-xl border-2",
 									isDark
-										? "bg-slate-800/60 border-violet-500/30 focus:border-pink-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-pink-500"
 										: "bg-white border-slate-200 focus:border-pink-500",
 									errors.browserLangWord && "border-red-500"
 								)}
@@ -305,10 +327,15 @@ const AddWordModal = ({ open, onClose }) => {
 							)}
 						</div>
 
-						{/* Champ optionnel pour la phrase de contexte */}
+						{/* Context sentence */}
 						<div>
 							<div className="flex items-center gap-2 mb-2">
-								<div className="w-1.5 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
+								<div className={cn(
+									"w-8 h-8 rounded-lg flex items-center justify-center",
+									"bg-gradient-to-br from-emerald-500 to-teal-500"
+								)}>
+									<MessageSquare className="w-4 h-4 text-white" />
+								</div>
 								<label className={cn(
 									"font-semibold",
 									isDark ? "text-slate-100" : "text-slate-800"
@@ -317,7 +344,7 @@ const AddWordModal = ({ open, onClose }) => {
 								</label>
 								<span className={cn(
 									"text-sm italic",
-									isDark ? "text-slate-400" : "text-slate-500"
+									isDark ? "text-slate-500" : "text-slate-400"
 								)}>
 									({t('optional')})
 								</span>
@@ -333,11 +360,11 @@ const AddWordModal = ({ open, onClose }) => {
 								placeholder={t('context_sentence_placeholder')}
 								disabled={addWordMutation.isPending}
 								maxLength={500}
-								rows={2}
+								rows={3}
 								className={cn(
-									"text-base rounded-xl border-2 resize-none",
+									"text-lg sm:text-base rounded-xl border-2 resize-none",
 									isDark
-										? "bg-slate-800/60 border-violet-500/30 focus:border-emerald-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-emerald-500"
 										: "bg-white border-slate-200 focus:border-emerald-500",
 									errors.contextSentence && "border-red-500"
 								)}
@@ -347,14 +374,14 @@ const AddWordModal = ({ open, onClose }) => {
 							) : (
 								<p className={cn(
 									"text-sm mt-1",
-									isDark ? "text-slate-400" : "text-slate-500"
+									isDark ? "text-slate-500" : "text-slate-400"
 								)}>
 									{t('context_sentence_helper')}
 								</p>
 							)}
 						</div>
 
-						{/* Message d'information */}
+						{/* Info box */}
 						<div className={cn(
 							"p-4 rounded-xl border",
 							isDark
@@ -370,16 +397,16 @@ const AddWordModal = ({ open, onClose }) => {
 						</div>
 					</div>
 
-					<DialogFooter className="pt-4 gap-3">
+					<MobileModalFooter>
 						<Button
 							type="button"
 							variant="outline"
 							onClick={handleClose}
 							disabled={addWordMutation.isPending}
 							className={cn(
-								"flex-1 sm:flex-none min-w-[120px] rounded-xl border-2 font-semibold",
+								"w-full sm:w-auto font-semibold rounded-xl h-12 sm:h-10 border-2",
 								isDark
-									? "border-violet-500/30 text-slate-300 hover:bg-violet-500/10"
+									? "border-slate-700 text-slate-300 hover:bg-slate-800"
 									: "border-slate-200 hover:bg-slate-50"
 							)}
 						>
@@ -389,7 +416,7 @@ const AddWordModal = ({ open, onClose }) => {
 							type="submit"
 							disabled={addWordMutation.isPending}
 							className={cn(
-								"flex-1 sm:flex-none min-w-[140px] rounded-xl font-bold",
+								"w-full sm:w-auto px-8 rounded-xl font-bold h-14 sm:h-11 text-base sm:text-sm",
 								"bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700",
 								"shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50",
 								"transition-all hover:-translate-y-0.5"
@@ -401,13 +428,16 @@ const AddWordModal = ({ open, onClose }) => {
 									{t('add')}...
 								</>
 							) : (
-								t('add')
+								<>
+									<Plus className="w-5 h-5 mr-2" />
+									{t('add')}
+								</>
 							)}
 						</Button>
-					</DialogFooter>
+					</MobileModalFooter>
 				</form>
-			</DialogContent>
-		</Dialog>
+			</MobileModalContent>
+		</MobileModal>
 	)
 }
 

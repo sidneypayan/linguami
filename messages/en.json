@@ -1198,6 +1198,8 @@
     "cancel": "Cancel",
     "add": "Add",
     "add_word_btn": "Add a word manually",
+    "add_word_subtitle": "Add a word to your dictionary",
+    "session_config_subtitle": "Customize your session",
     "custom_translation": "Other translation",
     "no_translation_found": "No translation found",
     "translation": "Translation",
