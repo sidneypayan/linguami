@@ -13,7 +13,7 @@ const CultureBlock = ({ block }) => {
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden',
+			'relative rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-cyan-950/50 via-slate-900 to-teal-950/30 border-cyan-500/30'
 				: 'bg-gradient-to-br from-cyan-50 via-white to-teal-50 border-cyan-200'
@@ -26,12 +26,12 @@ const CultureBlock = ({ block }) => {
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-cyan-500/20' : 'border-cyan-200'
 			)}>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3 sm:gap-4">
 					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
+						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
 						'bg-gradient-to-br from-cyan-400 to-teal-500'
 					)}>
-						<Globe className="w-6 h-6 text-white" />
+						<Globe className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 					</div>
 
 					<h3 className={cn(

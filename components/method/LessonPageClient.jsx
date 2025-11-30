@@ -55,21 +55,21 @@ const LessonPageClient = ({
 	const levelConfig = {
 		beginner: {
 			icon: Sprout,
-			rank: '🌱 APPRENTI',
+			rank: `🌱 ${t('methode_rank_apprenti')}`,
 			gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
 			accentColor: 'emerald',
 			xpReward: 50,
 		},
 		intermediate: {
 			icon: Sword,
-			rank: '⚔️ GUERRIER',
+			rank: `⚔️ ${t('methode_rank_guerrier')}`,
 			gradient: 'from-amber-400 via-orange-500 to-red-500',
 			accentColor: 'amber',
 			xpReward: 75,
 		},
 		advanced: {
 			icon: Castle,
-			rank: '🏰 MAÎTRE',
+			rank: `🏰 ${t('methode_rank_maitre')}`,
 			gradient: 'from-violet-400 via-purple-500 to-fuchsia-600',
 			accentColor: 'violet',
 			xpReward: 100,
@@ -166,18 +166,17 @@ const LessonPageClient = ({
 			</div>
 
 			{/* Header */}
-			<header className="pt-24 md:pt-28 pb-6 relative z-10">
-				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+			<header className="pt-[72px] md:pt-28 pb-2 md:pb-6 relative z-10">
+				<div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
 					{/* Breadcrumbs */}
-					<nav className="flex items-center gap-2 text-sm mb-8 flex-wrap">
+					<nav className="flex items-center gap-2 text-sm mb-3 sm:mb-8 flex-wrap">
 						<Link
 							href="/method"
 							className={cn(
-								'flex items-center gap-1.5 hover:text-violet-500 transition-colors',
+								'hover:text-violet-500 transition-colors',
 								isDark ? 'text-slate-400' : 'text-slate-500'
 							)}
 						>
-							<Scroll className="w-4 h-4" />
 							{t('methode_title')}
 						</Link>
 						<ChevronRight className={cn(
@@ -207,8 +206,8 @@ const LessonPageClient = ({
 
 					{/* Quest Card Header */}
 					<div className={cn(
-						'relative rounded-3xl overflow-hidden p-6 sm:p-8',
-						'border-2',
+						'relative rounded-xl sm:rounded-3xl overflow-hidden p-3 sm:p-8',
+						'border sm:border-2',
 						isDark
 							? 'bg-slate-900/80 border-slate-700/50'
 							: 'bg-white/80 border-slate-200/50',
@@ -235,32 +234,17 @@ const LessonPageClient = ({
 									'text-white font-bold text-sm shadow-lg shadow-emerald-500/30'
 								)}>
 									<Trophy className="w-4 h-4" />
-									Quête accomplie !
+									{t('methode_quest_completed')}
 								</div>
 							</div>
 						)}
 
-						<div className="flex flex-col sm:flex-row sm:items-start gap-6">
-							{/* Quest icon with glow */}
-							<div className="relative flex-shrink-0">
-								<div className={cn(
-									'absolute inset-0 rounded-2xl blur-xl opacity-50',
-									`bg-gradient-to-br ${config.gradient}`
-								)} />
-								<div className={cn(
-									'relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center',
-									'bg-gradient-to-br shadow-2xl',
-									config.gradient
-								)}>
-									<LevelIcon className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
-								</div>
-							</div>
-
+						<div className="flex flex-col">
 							<div className="flex-1 min-w-0">
 								{/* Rank and XP badges */}
-								<div className="flex flex-wrap items-center gap-3 mb-3">
+								<div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
 									<div className={cn(
-										'inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold tracking-wider',
+										'inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider',
 										'border backdrop-blur-sm',
 										isDark
 											? 'bg-slate-800/80 border-slate-600 text-slate-200'
@@ -269,20 +253,20 @@ const LessonPageClient = ({
 										{config.rank}
 									</div>
 									<div className={cn(
-										'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold',
+										'flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold',
 										'bg-amber-500/20 text-amber-400'
 									)}>
-										<Zap className="w-3.5 h-3.5" />
+										<Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
 										+{config.xpReward} XP
 									</div>
 									{lesson?.estimated_minutes && (
 										<div className={cn(
-											'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs',
+											'flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs',
 											isDark
 												? 'bg-slate-800 text-slate-400'
 												: 'bg-slate-100 text-slate-500'
 										)}>
-											<Clock className="w-3.5 h-3.5" />
+											<Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
 											{lesson.estimated_minutes} min
 										</div>
 									)}
@@ -290,16 +274,16 @@ const LessonPageClient = ({
 
 								{/* Quest title */}
 								<h1 className={cn(
-									'text-2xl sm:text-3xl md:text-4xl font-black tracking-tight mb-4',
+									'text-xl sm:text-3xl md:text-4xl font-black tracking-tight mb-2 sm:mb-4',
 									isDark ? 'text-white' : 'text-slate-900'
 								)}>
 									{lesson?.[titleKey]}
 								</h1>
 
-								{/* Objectives as quest goals */}
+								{/* Objectives - hidden on mobile to save space, shown as compact on sm+ */}
 								{objectives && objectives.length > 0 && (
 									<div className={cn(
-										'p-4 rounded-xl',
+										'hidden sm:block p-4 rounded-xl',
 										isDark ? 'bg-slate-800/50' : 'bg-slate-50'
 									)}>
 										<div className="flex items-center gap-2 mb-3">
@@ -311,7 +295,7 @@ const LessonPageClient = ({
 												'text-sm font-bold uppercase tracking-wide',
 												isDark ? 'text-slate-300' : 'text-slate-700'
 											)}>
-												Objectifs de quête
+												{t('methode_quest_objectives')}
 											</span>
 										</div>
 										<div className="space-y-2">
@@ -352,7 +336,7 @@ const LessonPageClient = ({
 			</header>
 
 			{/* Content */}
-			<main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 relative z-10">
+			<main className="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8 py-2 md:py-10 relative z-10">
 				{/* Show paywall if user doesn't have access */}
 				{!userHasAccess ? (
 					<PaywallBlock isLoggedIn={isUserLoggedIn} />
@@ -360,13 +344,13 @@ const LessonPageClient = ({
 					<>
 						{/* Quest content section */}
 						<div className={cn(
-							'rounded-3xl overflow-hidden border-2 mb-8',
+							'rounded-xl sm:rounded-3xl overflow-hidden border sm:border-2 mb-4 sm:mb-8',
 							isDark
 								? 'bg-slate-900/60 border-slate-700/50'
 								: 'bg-white/60 border-slate-200/50',
 							'backdrop-blur-sm'
 						)}>
-							<div className="p-6 sm:p-8">
+							<div className="p-2 sm:p-8">
 								{/* Lesson Navigator - Mode guidé / Vue d'ensemble */}
 								<LessonNavigator
 									blocks={blocks}
@@ -377,9 +361,9 @@ const LessonPageClient = ({
 							</div>
 						</div>
 
-						{/* Navigation */}
+						{/* Navigation - hidden on mobile, handled by LessonNavigator */}
 						<div className={cn(
-							'flex flex-col sm:flex-row justify-between gap-4 pt-6',
+							'hidden sm:flex flex-col sm:flex-row justify-between gap-4 pt-6',
 							'border-t',
 							isDark ? 'border-slate-800' : 'border-slate-200'
 						)}>
@@ -394,7 +378,7 @@ const LessonPageClient = ({
 								)}
 							>
 								<ArrowLeft className="w-5 h-5" />
-								Retour aux quêtes
+								{t('methode_back_to_quests')}
 							</Button>
 
 							{/* Next quest button */}
@@ -407,15 +391,15 @@ const LessonPageClient = ({
 									'opacity-50 cursor-not-allowed'
 								)}
 							>
-								Prochaine quête
+								{t('methode_next_quest')}
 								<ArrowRight className="w-5 h-5" />
 							</Button>
 						</div>
 
-						{/* XP Reward reminder */}
+						{/* XP Reward reminder - hidden on mobile */}
 						{!lessonCompleted && (
 							<div className={cn(
-								'mt-8 p-4 rounded-2xl text-center',
+								'hidden sm:block mt-8 p-4 rounded-2xl text-center',
 								'border-2 border-dashed',
 								isDark
 									? 'bg-amber-500/5 border-amber-500/30'
@@ -430,7 +414,7 @@ const LessonPageClient = ({
 										'font-bold',
 										isDark ? 'text-amber-300' : 'text-amber-700'
 									)}>
-										Complète cette quête pour gagner {config.xpReward} XP !
+										{t('methode_complete_for_xp', { xp: config.xpReward })}
 									</span>
 									<Flame className={cn(
 										'w-5 h-5 animate-pulse',
@@ -446,30 +430,30 @@ const LessonPageClient = ({
 							</div>
 						)}
 
-						{/* Completed celebration */}
+						{/* Completed celebration - smaller on mobile */}
 						{lessonCompleted && (
 							<div className={cn(
-								'mt-8 p-6 rounded-2xl text-center',
+								'mt-4 sm:mt-8 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center',
 								'bg-gradient-to-r from-emerald-500/10 via-green-500/10 to-teal-500/10',
-								'border-2',
+								'border sm:border-2',
 								isDark ? 'border-emerald-500/30' : 'border-emerald-200'
 							)}>
-								<div className="flex items-center justify-center gap-3 mb-2">
-									<Sparkles className="w-6 h-6 text-emerald-400" />
-									<Trophy className="w-8 h-8 text-amber-400" />
-									<Sparkles className="w-6 h-6 text-emerald-400" />
+								<div className="flex items-center justify-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+									<Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-400" />
+									<Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-amber-400" />
+									<Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-400" />
 								</div>
 								<h3 className={cn(
-									'text-xl font-bold mb-1',
+									'text-base sm:text-xl font-bold mb-0.5 sm:mb-1',
 									isDark ? 'text-emerald-300' : 'text-emerald-700'
 								)}>
-									Quête accomplie !
+									{t('methode_quest_completed')}
 								</h3>
 								<p className={cn(
-									'text-sm',
+									'text-xs sm:text-sm',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									Tu as gagné <span className="font-bold text-amber-400">+{config.xpReward} XP</span>. Continue ton aventure !
+									{t('methode_xp_earned', { xp: config.xpReward })}
 								</p>
 							</div>
 						)}
