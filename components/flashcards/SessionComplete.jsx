@@ -15,7 +15,7 @@ export function SessionComplete({ reviewedCount, sessionDuration, onClose, isDar
 			<button
 				onClick={onClose}
 				className={cn(
-					"absolute top-4 right-4 p-2 rounded-lg transition-all duration-200",
+					"absolute top-4 right-4 z-50 p-2 rounded-lg transition-all duration-200",
 					isDark
 						? "text-violet-400 hover:bg-violet-500/20"
 						: "text-violet-600 hover:bg-violet-500/10",

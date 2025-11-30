@@ -11,6 +11,7 @@ import {
 	ThumbsUp,
 	Smile,
 	Frown,
+	Quote,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { BUTTON_TYPES, CARD_STATES } from '@/utils/spacedRepetition'
@@ -69,7 +70,7 @@ export function FlashcardReviewCard({
 			<button
 				onClick={onClose}
 				className={cn(
-					"absolute top-4 right-4 p-2 rounded-lg transition-all duration-200",
+					"absolute top-4 right-4 z-50 p-2 rounded-lg transition-all duration-200",
 					isDark
 						? "text-violet-400 hover:bg-violet-500/20"
 						: "text-violet-600 hover:bg-violet-500/10",
@@ -139,8 +140,23 @@ export function FlashcardReviewCard({
 
 						{/* Context sentence - shown between answer and buttons */}
 						{currentCard?.word_sentence && (
-							<div className={styles.contextSentence}>
-								{currentCard.word_sentence}
+							<div className={cn(
+								'pl-3 py-2 rounded-r-lg mb-6',
+								'border-l-2 border-violet-500/40',
+								isDark ? 'bg-violet-500/5' : 'bg-violet-50/50'
+							)}>
+								<div className="flex items-start gap-2">
+									<Quote className={cn(
+										'w-4 h-4 flex-shrink-0 mt-0.5',
+										isDark ? 'text-violet-400/60' : 'text-violet-400'
+									)} />
+									<p
+										className="text-sm"
+										style={{ color: isDark ? '#94a3b8' : '#64748b' }}
+									>
+										{currentCard.word_sentence}
+									</p>
+								</div>
 							</div>
 						)}
 

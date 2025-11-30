@@ -177,7 +177,7 @@ const Navbar = props => {
 										className={cn(
 											'relative overflow-hidden group',
 											'flex items-center gap-2.5 px-5 py-3 rounded-lg h-11',
-											'font-semibold text-white text-base',
+											'font-semibold text-white text-sm',
 											'transition-all duration-300',
 											isActive
 												? 'bg-white/20 backdrop-blur-sm'
@@ -205,7 +205,7 @@ const Navbar = props => {
 									className={cn(
 										'relative overflow-hidden group',
 										'flex items-center gap-2.5 px-5 py-3 rounded-lg h-11',
-										'font-semibold text-white text-base',
+										'font-semibold text-white text-sm',
 										'bg-amber-500/20 backdrop-blur-sm',
 										'transition-all duration-300',
 										'hover:bg-amber-500/30 hover:text-white hover:-translate-y-0.5'

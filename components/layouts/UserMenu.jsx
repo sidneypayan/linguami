@@ -257,10 +257,12 @@ const MenuItem = ({ href, icon: Icon, label, isDark, size = 'normal', onClick })
 		</div>
 	)
 
-	if (onClick) {
+	// Button only (no href) - used for logout
+	if (onClick && !href) {
 		return <button onClick={onClick} className="w-full text-left">{content}</button>
 	}
 
+	// Link with optional onClick (for closing sheet after navigation)
 	return <Link href={href} onClick={onClick}>{content}</Link>
 }
 
