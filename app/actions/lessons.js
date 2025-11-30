@@ -8,7 +8,7 @@ import { z } from 'zod'
 
 // Validation schemas
 const LessonIdSchema = z.number().int().positive('Lesson ID must be a positive integer')
-const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+const LanguageSchema = z.enum(['fr', 'ru', 'en', 'it'])
 
 /**
  * Mark a lesson as studied (or create entry if doesn't exist)

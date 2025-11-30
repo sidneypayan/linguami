@@ -66,7 +66,7 @@ export async function generateMetadata({ params }) {
 
 export default async function LevelPage({ params }) {
 	// TEMPORARY: Admin-only access until courses are finalized
-	const { isAuthenticated, isAdmin, user } = await checkAdminAuth()
+	const { isAuthenticated, isAdmin, user, supabase } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect('/login')
@@ -79,9 +79,18 @@ export default async function LevelPage({ params }) {
 	// Get params
 	const { locale, level: levelSlug } = await params
 
-	// Get learning language from user profile or default
-	// For now, default to 'fr' (will be replaced with user's learning language from context)
-	const learningLanguage = 'fr' // TODO: Get from user context
+	// Get learning language from user profile
+	let learningLanguage = 'fr' // default
+	if (user) {
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('learning_language')
+			.eq('id', user.id)
+			.single()
+		if (profile?.learning_language) {
+			learningLanguage = profile.learning_language
+		}
+	}
 
 	// Fetch levels to find current level
 	const levels = await getMethodLevels()

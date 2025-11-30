@@ -13,7 +13,7 @@ import { z } from 'zod'
  */
 
 // Validation schemas
-const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+const LanguageSchema = z.enum(['fr', 'ru', 'en', 'it'])
 const MaterialIdSchema = z.number().int().positive('Material ID must be a positive integer')
 const BookIdSchema = z.number().int().positive('Book ID must be a positive integer')
 const SectionSchema = z.string().min(1, 'Section must be a non-empty string')

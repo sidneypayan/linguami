@@ -276,6 +276,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								getTitleGradient(),
 								'transition-all duration-300',
 								'group-hover:drop-shadow-lg',
+								'line-clamp-2 min-h-[2.5rem]',
 								translatedTitle ? 'mb-0.5' : 'mb-1.5'
 							)}
 						>
@@ -288,6 +289,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 								className={cn(
 									'text-[0.7rem] sm:text-[0.75rem] font-medium',
 									'leading-tight mb-1',
+									'line-clamp-1 min-h-[1rem]',
 									isDark ? 'text-slate-400/60' : 'text-slate-500/70'
 								)}
 							>
@@ -302,7 +304,7 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}
 							>
-								{material.section}
+								{t(material.section) || material.section}
 							</span>
 							<span
 								className={cn(

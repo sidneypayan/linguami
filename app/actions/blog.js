@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 // Validation schemas
-const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+const LanguageSchema = z.enum(['fr', 'ru', 'en', 'it'])
 const BlogPostIdSchema = z.number().int().positive('Blog post ID must be a positive integer')
 
 const BlogPostSchema = z.object({

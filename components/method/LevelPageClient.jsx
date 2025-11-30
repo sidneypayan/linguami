@@ -47,21 +47,21 @@ const LevelPageClient = ({
 	const levelConfig = {
 		beginner: {
 			icon: Sprout,
-			rank: '🌱 APPRENTI',
+			rank: `🌱 ${t('methode_rank_apprenti')}`,
 			gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
 			accentColor: 'emerald',
 			xpPerQuest: 50,
 		},
 		intermediate: {
 			icon: Sword,
-			rank: '⚔️ GUERRIER',
+			rank: `⚔️ ${t('methode_rank_guerrier')}`,
 			gradient: 'from-amber-400 via-orange-500 to-red-500',
 			accentColor: 'amber',
 			xpPerQuest: 75,
 		},
 		advanced: {
 			icon: Castle,
-			rank: '🏰 MAÎTRE',
+			rank: `🏰 ${t('methode_rank_maitre')}`,
 			gradient: 'from-violet-400 via-purple-500 to-fuchsia-600',
 			accentColor: 'violet',
 			xpPerQuest: 100,
@@ -129,11 +129,10 @@ const LevelPageClient = ({
 						<Link
 							href="/method"
 							className={cn(
-								'flex items-center gap-1.5 hover:text-violet-500 transition-colors',
+								'hover:text-violet-500 transition-colors',
 								isDark ? 'text-slate-400' : 'text-slate-500'
 							)}
 						>
-							<Scroll className="w-4 h-4" />
 							{t('methode_title')}
 						</Link>
 						<ChevronRight className={cn(
@@ -172,18 +171,18 @@ const LevelPageClient = ({
 						<div className="flex flex-col md:flex-row md:items-start gap-6">
 							{/* Icon and title */}
 							<div className="flex items-start gap-4 flex-1">
-								{/* Icon with glow */}
-								<div className="relative">
+								{/* Icon with glow - hidden on mobile */}
+								<div className="relative hidden sm:block">
 									<div className={cn(
 										'absolute inset-0 rounded-2xl blur-xl opacity-50',
 										`bg-gradient-to-br ${config.gradient}`
 									)} />
 									<div className={cn(
-										'relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center',
+										'relative w-24 h-24 rounded-2xl flex items-center justify-center',
 										'bg-gradient-to-br shadow-2xl',
 										config.gradient
 									)}>
-										<LevelIcon className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
+										<LevelIcon className="w-12 h-12 text-white drop-shadow-lg" />
 									</div>
 								</div>
 
@@ -320,11 +319,7 @@ const LevelPageClient = ({
 			{/* Quest List */}
 			<main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 relative z-10">
 				{/* Section header */}
-				<div className="flex items-center gap-3 mb-8">
-					<Scroll className={cn(
-						'w-6 h-6',
-						isDark ? 'text-amber-400' : 'text-amber-600'
-					)} />
+				<div className="mb-8">
 					<h2 className={cn(
 						'text-2xl sm:text-3xl font-bold',
 						isDark ? 'text-white' : 'text-slate-900'
@@ -385,19 +380,20 @@ const LevelPageClient = ({
 										'hover:shadow-xl',
 										isDark ? 'hover:shadow-violet-500/10' : 'hover:shadow-violet-200/50'
 									)}>
-										<div className="p-5 sm:p-6">
-											<div className="flex items-start gap-4">
-												{/* Quest number / status */}
+										<div className="p-4 sm:p-6">
+											{/* Mobile: number inline with title */}
+											<div className="flex items-start gap-3 sm:gap-4">
+												{/* Quest number / status - smaller on mobile */}
 												<div className={cn(
-													'w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0',
-													'font-bold text-xl transition-all duration-300',
+													'w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0',
+													'font-bold text-base sm:text-xl transition-all duration-300',
 													isCompleted
 														? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30'
 														: `bg-gradient-to-br ${config.gradient} text-white shadow-lg`,
 													'group-hover:scale-110 group-hover:rotate-3'
 												)}>
 													{isCompleted ? (
-														<CheckCircle className="w-7 h-7" />
+														<CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" />
 													) : (
 														<span className="drop-shadow-lg">{index + 1}</span>
 													)}
@@ -406,17 +402,17 @@ const LevelPageClient = ({
 												{/* Content */}
 												<div className="flex-1 min-w-0">
 													{/* Title row */}
-													<div className="flex items-start justify-between gap-4 mb-2">
+													<div className="flex items-start justify-between gap-2 sm:gap-4 mb-2">
 														<h3 className={cn(
-															'text-lg sm:text-xl font-bold group-hover:text-violet-500 transition-colors',
+															'text-base sm:text-xl font-bold group-hover:text-violet-500 transition-colors leading-tight',
 															isDark ? 'text-white' : 'text-slate-900'
 														)}>
 															{lessonTitle}
 														</h3>
 
-														{/* XP badge */}
+														{/* XP badge - hidden on mobile, shown below */}
 														<div className={cn(
-															'flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold flex-shrink-0',
+															'hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold flex-shrink-0',
 															isCompleted
 																? 'bg-emerald-500/20 text-emerald-400'
 																: 'bg-amber-500/20 text-amber-400'
@@ -448,19 +444,29 @@ const LevelPageClient = ({
 
 													{/* Bottom row */}
 													<div className="flex items-center justify-between">
-														<div className="flex items-center gap-4">
+														<div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+															{/* XP badge - mobile only */}
+															<div className={cn(
+																'flex sm:hidden items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold',
+																isCompleted
+																	? 'bg-emerald-500/20 text-emerald-400'
+																	: 'bg-amber-500/20 text-amber-400'
+															)}>
+																<Zap className="w-3 h-3" />
+																{isCompleted ? `+${xpReward}` : xpReward} XP
+															</div>
 															{lesson.estimated_minutes && (
 																<div className={cn(
-																	'flex items-center gap-1.5 text-sm',
+																	'flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm',
 																	isDark ? 'text-slate-500' : 'text-slate-400'
 																)}>
-																	<Clock className="w-4 h-4" />
+																	<Clock className="w-3 h-3 sm:w-4 sm:h-4" />
 																	{lesson.estimated_minutes} min
 																</div>
 															)}
 															{isCompleted && (
-																<div className="flex items-center gap-1.5 text-sm text-emerald-500">
-																	<Sparkles className="w-4 h-4" />
+																<div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-emerald-500">
+																	<Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
 																	Complétée
 																</div>
 															)}
@@ -468,7 +474,7 @@ const LevelPageClient = ({
 
 														{/* Arrow */}
 														<ChevronRight className={cn(
-															'w-6 h-6 transition-transform group-hover:translate-x-2',
+															'w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-2 flex-shrink-0',
 															isDark ? 'text-slate-600' : 'text-slate-400'
 														)} />
 													</div>

@@ -144,6 +144,83 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 }
 
 // ============================================
+// DECORATIVE CORNER ORNAMENT
+// ============================================
+const CornerOrnament = ({ position, isDark }) => {
+	const positionClasses = {
+		'top-left': 'top-0 left-0 rotate-0',
+		'top-right': 'top-0 right-0 rotate-90',
+		'bottom-left': 'bottom-0 left-0 -rotate-90',
+		'bottom-right': 'bottom-0 right-0 rotate-180',
+	}
+
+	return (
+		<div className={cn(
+			'absolute w-8 h-8 pointer-events-none',
+			positionClasses[position]
+		)}>
+			<svg viewBox="0 0 32 32" className={cn('w-full h-full', isDark ? 'text-violet-500/30' : 'text-violet-600/20')}>
+				<path
+					d="M0 0 L12 0 L12 2 L2 2 L2 12 L0 12 Z"
+					fill="currentColor"
+				/>
+				<path
+					d="M6 0 L8 0 L8 6 L6 6 Z M0 6 L6 6 L6 8 L0 8 Z"
+					fill="currentColor"
+					opacity="0.5"
+				/>
+			</svg>
+		</div>
+	)
+}
+
+// ============================================
+// ORNATE FRAME
+// ============================================
+const OrnateFrame = ({ children, className, isDark }) => {
+	const hasOverflowVisible = className?.includes('overflow-visible')
+
+	return (
+		<div className={cn(
+			'relative rounded-2xl',
+			!hasOverflowVisible && 'overflow-hidden',
+			'border-2',
+			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
+			'shadow-lg',
+			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			className
+		)}>
+			{/* Inner glow border */}
+			<div className={cn(
+				'absolute inset-0 rounded-2xl pointer-events-none',
+				'border',
+				isDark ? 'border-violet-400/10' : 'border-violet-500/5'
+			)} style={{ margin: '2px' }} />
+
+			{/* Corner ornaments */}
+			<CornerOrnament position="top-left" isDark={isDark} />
+			<CornerOrnament position="top-right" isDark={isDark} />
+			<CornerOrnament position="bottom-left" isDark={isDark} />
+			<CornerOrnament position="bottom-right" isDark={isDark} />
+
+			{/* Top decorative bar */}
+			<div className={cn(
+				'absolute top-0 left-8 right-8 h-0.5',
+				'bg-gradient-to-r from-transparent via-violet-500/50 to-transparent'
+			)} />
+
+			{/* Bottom decorative bar */}
+			<div className={cn(
+				'absolute bottom-0 left-8 right-8 h-0.5',
+				'bg-gradient-to-r from-transparent via-violet-500/30 to-transparent'
+			)} />
+
+			{children}
+		</div>
+	)
+}
+
+// ============================================
 // PAGINATION
 // ============================================
 const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
@@ -174,97 +251,90 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 
 	return (
 		<div className="flex items-center justify-center gap-2 py-8 mt-6">
-			{/* Previous button */}
-			<Button
-				variant="outline"
-				size="icon"
+			<button
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage === 1}
 				className={cn(
-					'w-11 h-11 rounded-xl border-2',
+					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'transition-all duration-300',
+					'border-2 overflow-hidden',
 					currentPage === 1
 						? 'opacity-40 cursor-not-allowed'
 						: 'hover:scale-110 hover:-translate-x-0.5',
 					isDark
-						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
-						: 'border-violet-200 bg-white text-violet-600',
+						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
+						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== 1 && (isDark
 						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
 						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronLeft className="w-5 h-5" />
-			</Button>
+				<ChevronLeft className="w-5 h-5 relative z-10" />
+			</button>
 
-			{/* Page numbers */}
-			<div className={cn(
-				'flex items-center gap-1.5 px-3 py-1.5 rounded-xl',
-				isDark ? 'bg-slate-800/50' : 'bg-slate-100/80',
-				'border',
-				isDark ? 'border-violet-500/20' : 'border-violet-200/50'
-			)}>
-				{getVisiblePages().map((page, index) => (
-					page === '...' ? (
-						<span
-							key={`ellipsis-${index}`}
-							className={cn(
-								'w-8 text-center font-bold',
-								isDark ? 'text-slate-500' : 'text-slate-400'
-							)}
-						>
-							···
-						</span>
-					) : (
-						<Button
-							key={page}
-							variant="ghost"
-							size="sm"
-							onClick={() => onPageChange(page)}
-							className={cn(
-								'w-10 h-10 rounded-lg font-bold p-0',
-								page === currentPage
-									? [
-										'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
-										'shadow-lg shadow-violet-500/40',
-										'scale-110',
-										'hover:from-violet-500 hover:to-cyan-500'
-									]
-									: [
-										isDark ? 'text-slate-300' : 'text-slate-600',
-										'hover:scale-105',
-										isDark
-											? 'hover:bg-violet-500/20 hover:text-violet-300'
-											: 'hover:bg-violet-100 hover:text-violet-600'
-									]
-							)}
-						>
-							{page}
-						</Button>
-					)
-				))}
-			</div>
+			<OrnateFrame isDark={isDark} className="px-3 py-1.5">
+				<div className="flex items-center gap-1.5">
+					{getVisiblePages().map((page, index) => (
+						page === '...' ? (
+							<span
+								key={`ellipsis-${index}`}
+								className={cn(
+									'w-8 text-center font-bold',
+									isDark ? 'text-slate-500' : 'text-slate-400'
+								)}
+							>
+								···
+							</span>
+						) : (
+							<button
+								key={page}
+								onClick={() => onPageChange(page)}
+								className={cn(
+									'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
+									'overflow-hidden',
+									page === currentPage
+										? [
+											'bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-600 text-white',
+											'shadow-lg shadow-violet-500/40',
+											'scale-110 z-10',
+											'ring-2 ring-violet-300/30'
+										]
+										: [
+											isDark ? 'text-slate-300' : 'text-slate-600',
+											'hover:scale-105',
+											isDark
+												? 'hover:bg-violet-500/20 hover:text-violet-300'
+												: 'hover:bg-violet-100 hover:text-violet-600'
+										]
+								)}
+							>
+								<span className="relative z-10">{page}</span>
+							</button>
+						)
+					))}
+				</div>
+			</OrnateFrame>
 
-			{/* Next button */}
-			<Button
-				variant="outline"
-				size="icon"
+			<button
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
 				className={cn(
-					'w-11 h-11 rounded-xl border-2',
+					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'transition-all duration-300',
+					'border-2 overflow-hidden',
 					currentPage === totalPages
 						? 'opacity-40 cursor-not-allowed'
 						: 'hover:scale-110 hover:translate-x-0.5',
 					isDark
-						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
-						: 'border-violet-200 bg-white text-violet-600',
+						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
+						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== totalPages && (isDark
 						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
 						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronRight className="w-5 h-5" />
-			</Button>
+				<ChevronRight className="w-5 h-5 relative z-10" />
+			</button>
 		</div>
 	)
 }
@@ -557,13 +627,6 @@ const DictionaryClient = ({ translations }) => {
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
 				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
 		)}>
-			{/* Floating particles */}
-			<div className="fixed inset-0 pointer-events-none overflow-hidden">
-				<div className={cn('absolute top-32 left-10 w-2 h-2 rounded-full animate-pulse', isDark ? 'bg-violet-400/20' : 'bg-violet-300/40')} />
-				<div className={cn('absolute top-48 right-20 w-1.5 h-1.5 rounded-full animate-pulse', isDark ? 'bg-cyan-400/20' : 'bg-cyan-300/40')} />
-				<div className={cn('absolute bottom-48 left-1/4 w-1 h-1 rounded-full animate-pulse', isDark ? 'bg-amber-400/20' : 'bg-amber-300/40')} />
-			</div>
-
 			<div className="relative max-w-5xl mx-auto px-4">
 				{/* Header Section */}
 				<div className="flex items-center justify-center gap-5 mb-8">
