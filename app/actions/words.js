@@ -53,7 +53,29 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 		}
 
 		// Build Yandex Dictionary API request
-		const langPair = `${userLearningLanguage}-${locale}`
+		// Yandex Dictionary supported pairs
+		const yandexSupportedPairs = [
+			'ru-en', 'en-ru', 'ru-fr', 'fr-ru', 'ru-de', 'de-ru',
+			'en-fr', 'fr-en', 'en-de', 'de-en', 'en-es', 'es-en',
+			'en-it', 'it-en', 'en-pt', 'pt-en', 'en-pl', 'pl-en',
+			'en-tr', 'tr-en', 'en-uk', 'uk-en', 'ru-uk', 'uk-ru'
+		]
+
+		let langPair = `${userLearningLanguage}-${locale}`
+		let needsPivot = false
+		let pivotTranslations = null
+
+		// Check if direct pair is supported
+		if (!yandexSupportedPairs.includes(langPair)) {
+			// For Italian: use two-step translation via English
+			// Step 1: Italian -> English
+			// Step 2: English -> Target language (fr, ru, etc.)
+			if (yandexSupportedPairs.includes(`${userLearningLanguage}-en`)) {
+				needsPivot = true
+				langPair = `${userLearningLanguage}-en`
+			}
+		}
+
 		const apiUrl = new URL('https://dictionary.yandex.net/api/v1/dicservice.json/lookup')
 		apiUrl.searchParams.append('key', process.env.YANDEX_DICT_API_KEY)
 		apiUrl.searchParams.append('lang', langPair)
@@ -66,7 +88,35 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 			throw new Error(`Yandex API error: ${response.status} ${response.statusText}`)
 		}
 
-		const data = await response.json()
+		let data = await response.json()
+
+		// If we used a pivot (e.g., it-en), now translate English results to target language
+		if (needsPivot && data.def?.length > 0 && locale !== 'en') {
+			const secondPair = `en-${locale}`
+			if (yandexSupportedPairs.includes(secondPair)) {
+				// Get the first English translation
+				const englishWord = data.def[0]?.tr?.[0]?.text
+				if (englishWord) {
+					const pivotUrl = new URL('https://dictionary.yandex.net/api/v1/dicservice.json/lookup')
+					pivotUrl.searchParams.append('key', process.env.YANDEX_DICT_API_KEY)
+					pivotUrl.searchParams.append('lang', secondPair)
+					pivotUrl.searchParams.append('text', englishWord)
+					pivotUrl.searchParams.append('flags', '004')
+
+					const pivotResponse = await fetch(pivotUrl.toString())
+					if (pivotResponse.ok) {
+						const pivotData = await pivotResponse.json()
+						if (pivotData.def?.length > 0) {
+							// Merge pivot translations into main response
+							// Keep original structure but replace translations
+							data.def[0].tr = pivotData.def[0]?.tr || data.def[0].tr
+							data.pivotUsed = true
+							data.pivotWord = englishWord
+						}
+					}
+				}
+			}
+		}
 
 		// Log API response for debugging
 		if (data.def?.length === 0) {

@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
-import { materials_ru, materials_fr, materials_en } from '@/utils/constants'
+import { materials_ru, materials_fr, materials_en, materials_it } from '@/utils/constants'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useUserContext } from '@/context/user'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -146,80 +146,12 @@ const OrnateFrame = ({ children, className, isDark }) => {
 	)
 }
 
-// ============================================
-// MAGICAL PARTICLES BACKGROUND
-// ============================================
-const MagicalParticles = ({ isDark }) => (
-	<div className="fixed inset-0 pointer-events-none overflow-hidden">
-		{/* Floating orbs */}
-		<div className={cn(
-			'absolute top-20 left-[10%] w-3 h-3 rounded-full blur-sm animate-pulse',
-			isDark ? 'bg-violet-400/30' : 'bg-violet-400/20'
-		)} style={{ animationDuration: '3s' }} />
-		<div className={cn(
-			'absolute top-40 right-[15%] w-2 h-2 rounded-full blur-sm animate-pulse',
-			isDark ? 'bg-cyan-400/30' : 'bg-cyan-400/20'
-		)} style={{ animationDuration: '4s', animationDelay: '1s' }} />
-		<div className={cn(
-			'absolute top-60 left-[20%] w-1.5 h-1.5 rounded-full blur-sm animate-pulse',
-			isDark ? 'bg-amber-400/30' : 'bg-amber-400/20'
-		)} style={{ animationDuration: '5s', animationDelay: '2s' }} />
-		<div className={cn(
-			'absolute bottom-40 right-[25%] w-2.5 h-2.5 rounded-full blur-sm animate-pulse',
-			isDark ? 'bg-emerald-400/30' : 'bg-emerald-400/20'
-		)} style={{ animationDuration: '3.5s', animationDelay: '0.5s' }} />
-		<div className={cn(
-			'absolute bottom-60 left-[30%] w-2 h-2 rounded-full blur-sm animate-pulse',
-			isDark ? 'bg-rose-400/30' : 'bg-rose-400/20'
-		)} style={{ animationDuration: '4.5s', animationDelay: '1.5s' }} />
-
-		{/* Sparkle effects */}
-		<div className={cn(
-			'absolute top-32 right-[30%] w-1 h-1 rounded-full animate-ping',
-			isDark ? 'bg-white/20' : 'bg-amber-500/30'
-		)} style={{ animationDuration: '2s' }} />
-		<div className={cn(
-			'absolute top-52 left-[40%] w-1 h-1 rounded-full animate-ping',
-			isDark ? 'bg-white/20' : 'bg-amber-500/30'
-		)} style={{ animationDuration: '3s', animationDelay: '1s' }} />
-
-		{/* Ambient glow */}
-		<div className={cn(
-			'absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-violet-900/20' : 'bg-violet-200/30'
-		)} />
-		<div className={cn(
-			'absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl',
-			isDark ? 'bg-cyan-900/20' : 'bg-cyan-200/30'
-		)} />
-	</div>
-)
 
 // ============================================
 // EPIC HEADER
 // ============================================
 const EpicHeader = ({ isDark, t }) => (
 	<div className="text-center mb-8 md:mb-12 relative">
-		{/* Decorative crown/emblem above title */}
-		<div className="flex items-center justify-center gap-2 mb-4">
-			<div className={cn(
-				'w-16 h-0.5 bg-gradient-to-r',
-				isDark ? 'from-transparent to-amber-500/50' : 'from-transparent to-amber-600/30'
-			)} />
-			<div className={cn(
-				'w-14 h-14 rounded-full flex items-center justify-center',
-				'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600',
-				'shadow-lg shadow-amber-500/40',
-				'border-2 border-amber-400/50'
-			)}>
-				<ScrollText className="w-7 h-7 text-white drop-shadow-lg" />
-			</div>
-			<div className={cn(
-				'w-16 h-0.5 bg-gradient-to-l',
-				isDark ? 'from-transparent to-amber-500/50' : 'from-transparent to-amber-600/30'
-			)} />
-		</div>
-
 		{/* Main title */}
 		<h1 className={cn(
 			'text-4xl sm:text-5xl md:text-6xl font-black mb-3',
@@ -228,28 +160,46 @@ const EpicHeader = ({ isDark, t }) => (
 			{t('pagetitle')}
 		</h1>
 
-		{/* Subtitle with decorative elements */}
+		{/* Subtitle */}
 		<div className="flex items-center justify-center gap-3 mb-2">
-			<Sword className={cn('w-4 h-4 rotate-45', isDark ? 'text-amber-500/50' : 'text-amber-600/40')} />
 			<p className={cn(
 				'text-sm md:text-base max-w-xl',
 				isDark ? 'text-slate-400' : 'text-slate-600'
 			)}>
 				{t('description')}
 			</p>
-			<Sword className={cn('w-4 h-4 -rotate-45 scale-x-[-1]', isDark ? 'text-amber-500/50' : 'text-amber-600/40')} />
 		</div>
 
-		{/* Decorative line */}
-		<div className="flex items-center justify-center gap-2 mt-4">
+		{/* Fantasy divider */}
+		<div className="flex items-center justify-center gap-2 mt-6">
 			<div className={cn(
-				'w-20 h-px',
-				isDark ? 'bg-gradient-to-r from-transparent to-violet-500/50' : 'bg-gradient-to-r from-transparent to-violet-400/30'
+				'h-0.5 w-12 sm:w-20 rounded-full',
+				'bg-gradient-to-r from-transparent to-amber-500/60'
 			)} />
-			<Gem className={cn('w-4 h-4', isDark ? 'text-violet-400/50' : 'text-violet-500/40')} />
 			<div className={cn(
-				'w-20 h-px',
-				isDark ? 'bg-gradient-to-l from-transparent to-violet-500/50' : 'bg-gradient-to-l from-transparent to-violet-400/30'
+				'w-1.5 h-1.5 rotate-45 rounded-sm',
+				isDark ? 'bg-amber-400/60' : 'bg-amber-500/50'
+			)} />
+			<div className={cn(
+				'h-0.5 w-6 sm:w-10 rounded-full',
+				isDark ? 'bg-amber-500/40' : 'bg-amber-500/30'
+			)} />
+			<div className={cn(
+				'w-2 h-2 rotate-45 rounded-sm',
+				'bg-gradient-to-br from-amber-400 to-amber-600',
+				'shadow-sm shadow-amber-500/20'
+			)} />
+			<div className={cn(
+				'h-0.5 w-6 sm:w-10 rounded-full',
+				isDark ? 'bg-amber-500/40' : 'bg-amber-500/30'
+			)} />
+			<div className={cn(
+				'w-1.5 h-1.5 rotate-45 rounded-sm',
+				isDark ? 'bg-amber-400/60' : 'bg-amber-500/50'
+			)} />
+			<div className={cn(
+				'h-0.5 w-12 sm:w-20 rounded-full',
+				'bg-gradient-to-l from-transparent to-amber-500/60'
 			)} />
 		</div>
 	</div>
@@ -1125,6 +1075,7 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		if (userLearningLanguage === 'ru') selectedMaterials = materials_ru
 		else if (userLearningLanguage === 'fr') selectedMaterials = materials_fr
 		else if (userLearningLanguage === 'en') selectedMaterials = materials_en
+		else if (userLearningLanguage === 'it') selectedMaterials = materials_it
 		else selectedMaterials = materials_fr
 		setMaterials(selectedMaterials)
 	}, [userLearningLanguage])
@@ -1331,14 +1282,11 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 
 	return (
 		<div className={cn(
-			'min-h-screen pt-16 md:pt-24 pb-24',
+			'min-h-screen pt-20 md:pt-24 pb-24',
 			isDark
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
 				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50 via-violet-50/30 to-slate-50'
 		)}>
-			{/* Magical particles background */}
-			<MagicalParticles isDark={isDark} />
-
 			<div className="relative max-w-7xl mx-auto px-4">
 				{/* Epic Header - Hidden on mobile, shown on md+ */}
 				<div className="hidden md:block">

@@ -563,14 +563,6 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
 				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
 		)}>
-			{/* Magical particles background */}
-			<div className="fixed inset-0 pointer-events-none overflow-hidden">
-				<div className={cn('absolute top-20 left-10 w-2 h-2 rounded-full animate-float-slow', isDark ? 'bg-violet-400/30' : 'bg-violet-300/50')} />
-				<div className={cn('absolute top-40 right-20 w-1.5 h-1.5 rounded-full animate-float-medium', isDark ? 'bg-cyan-400/30' : 'bg-cyan-300/50')} />
-				<div className={cn('absolute bottom-40 left-1/4 w-1 h-1 rounded-full animate-float-fast', isDark ? 'bg-amber-400/30' : 'bg-amber-300/50')} />
-				<div className={cn('absolute top-1/3 right-1/3 w-2 h-2 rounded-full animate-float-slow', isDark ? 'bg-emerald-400/20' : 'bg-emerald-300/40')} />
-			</div>
-
 			<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
 				{/* ============================================ */}

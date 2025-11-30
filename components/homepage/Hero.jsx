@@ -13,7 +13,7 @@ const Hero = () => {
 
 	return (
 		<section
-			className="relative overflow-hidden py-10 pb-[calc(1.5rem+40px)] md:py-22 md:pb-[calc(4rem+80px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900"
+			className="relative overflow-hidden pt-24 pb-[calc(1.5rem+40px)] md:pt-28 md:pb-[calc(4rem+80px)] bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900"
 			style={{
 				clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%)',
 			}}

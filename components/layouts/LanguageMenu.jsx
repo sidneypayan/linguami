@@ -42,13 +42,14 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 			lang: 'ru',
 			name: t('russian'),
 		},
+		{
+			lang: 'it',
+			name: t('italian'),
+		},
 	]
 
-	// Filtrer selon la langue parlée
+	// Filtrer selon la langue parlée (on ne peut pas apprendre sa propre langue)
 	const languages = allLanguages.filter(language => {
-		if (spokenLanguage === 'fr') return language.lang === 'ru'
-		if (spokenLanguage === 'ru') return language.lang === 'fr'
-		if (spokenLanguage === 'en') return true
 		return language.lang !== spokenLanguage
 	})
 
@@ -90,8 +91,16 @@ const LanguageMenu = ({ variant = 'auto', onClose }) => {
 		</svg>
 	)
 
+	const FlagIT = () => (
+		<svg viewBox="0 0 3 3" style={flagStyle}>
+			<rect width="1" height="3" fill="#009246" />
+			<rect x="1" width="1" height="3" fill="#fff" />
+			<rect x="2" width="1" height="3" fill="#CE2B37" />
+		</svg>
+	)
+
 	const getFlag = (langCode) => {
-		const flags = { fr: FlagFR, ru: FlagRU, en: FlagGB }
+		const flags = { fr: FlagFR, ru: FlagRU, en: FlagGB, it: FlagIT }
 		const Flag = flags[langCode]
 		return Flag ? <Flag /> : null
 	}

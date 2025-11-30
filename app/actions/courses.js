@@ -13,7 +13,7 @@ const SlugSchema = z.string()
 	.min(1)
 	.max(100)
 
-const LanguageSchema = z.enum(['fr', 'ru', 'en'])
+const LanguageSchema = z.enum(['fr', 'ru', 'en', 'it'])
 
 const CourseSlugParamsSchema = z.object({
 	levelSlug: SlugSchema,

@@ -40,7 +40,7 @@ export default function PremiumClient({ translations, jsonLd }) {
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			)}
-			<div className="max-w-[800px] mx-auto mt-20 mb-20 px-4">
+			<div className="max-w-[800px] mx-auto pt-24 md:pt-28 mb-20 px-4">
 				<h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
 					Nos offres premium
 				</h1>

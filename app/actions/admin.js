@@ -33,7 +33,7 @@ const s3Client = new S3Client(R2_CONFIG)
 // ============================================================================
 
 const MaterialSchema = z.object({
-	lang: z.enum(['fr', 'ru', 'en']),
+	lang: z.enum(['fr', 'ru', 'en', 'it']),
 	section: z.string().min(1),
 	level: z.enum(['beginner', 'intermediate', 'advanced']),
 	title: z.string().min(1).max(200),

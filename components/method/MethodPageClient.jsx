@@ -10,9 +10,10 @@ import {
 	Star,
 	Sparkles,
 	ChevronRight,
-	Scroll,
-	Gem,
+	GraduationCap,
+	Gamepad2,
 	Trophy,
+	Crown,
 	// Progression icons
 	Sprout,      // Débutant - une pousse qui commence
 	Sword,       // Intermédiaire - une épée de guerrier
@@ -37,7 +38,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 	const levelConfig = {
 		beginner: {
 			icon: Sprout,        // 🌱 Pousse - Le début du voyage
-			rank: '🌱 APPRENTI',
+			rank: `🌱 ${t('methode_rank_apprenti')}`,
 			gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
 			glowColor: 'emerald',
 			bgPattern: 'radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)',
@@ -47,7 +48,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 		},
 		intermediate: {
 			icon: Sword,         // ⚔️ Épée - Le guerrier en formation
-			rank: '⚔️ GUERRIER',
+			rank: `⚔️ ${t('methode_rank_guerrier')}`,
 			gradient: 'from-amber-400 via-orange-500 to-red-500',
 			glowColor: 'amber',
 			bgPattern: 'radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 50%)',
@@ -57,7 +58,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 		},
 		advanced: {
 			icon: Castle,        // 🏰 Château - Le maître qui règne
-			rank: '🏰 MAÎTRE',
+			rank: `🏰 ${t('methode_rank_maitre')}`,
 			gradient: 'from-violet-400 via-purple-500 to-fuchsia-600',
 			glowColor: 'violet',
 			bgPattern: 'radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)',
@@ -94,43 +95,9 @@ const MethodPageClient = ({ levels, userAccess }) => {
 
 	return (
 		<div className={cn(
-			'min-h-screen relative overflow-hidden',
+			'min-h-screen relative overflow-hidden pt-20 md:pt-24',
 			isDark ? 'bg-slate-950' : 'bg-gradient-to-b from-slate-50 to-white'
 		)}>
-			{/* Animated background elements */}
-			<div className="absolute inset-0 overflow-hidden pointer-events-none">
-				{/* Floating particles */}
-				<div className={cn(
-					'absolute top-20 left-10 w-2 h-2 rounded-full animate-pulse',
-					isDark ? 'bg-violet-500/50' : 'bg-violet-400/30'
-				)} style={{ animationDelay: '0s', animationDuration: '3s' }} />
-				<div className={cn(
-					'absolute top-40 right-20 w-3 h-3 rounded-full animate-pulse',
-					isDark ? 'bg-cyan-500/50' : 'bg-cyan-400/30'
-				)} style={{ animationDelay: '1s', animationDuration: '4s' }} />
-				<div className={cn(
-					'absolute top-60 left-1/4 w-2 h-2 rounded-full animate-pulse',
-					isDark ? 'bg-amber-500/50' : 'bg-amber-400/30'
-				)} style={{ animationDelay: '2s', animationDuration: '3.5s' }} />
-				<div className={cn(
-					'absolute top-32 right-1/3 w-1.5 h-1.5 rounded-full animate-pulse',
-					isDark ? 'bg-emerald-500/50' : 'bg-emerald-400/30'
-				)} style={{ animationDelay: '0.5s', animationDuration: '2.5s' }} />
-
-				{/* Large gradient orbs */}
-				<div className={cn(
-					'absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl',
-					isDark ? 'bg-violet-600/20' : 'bg-violet-300/30'
-				)} />
-				<div className={cn(
-					'absolute top-1/2 -left-40 w-80 h-80 rounded-full blur-3xl',
-					isDark ? 'bg-cyan-600/15' : 'bg-cyan-300/20'
-				)} />
-				<div className={cn(
-					'absolute -bottom-20 right-1/4 w-72 h-72 rounded-full blur-3xl',
-					isDark ? 'bg-amber-600/10' : 'bg-amber-300/20'
-				)} />
-			</div>
 
 			{/* Hero Section */}
 			<section className="pt-24 md:pt-32 pb-8 md:pb-12 relative z-10">
@@ -251,20 +218,12 @@ const MethodPageClient = ({ levels, userAccess }) => {
 					{/* Section Title */}
 					<div className="text-center mb-12">
 						<div className="inline-flex items-center gap-3 mb-4">
-							<Scroll className={cn(
-								'w-6 h-6',
-								isDark ? 'text-amber-400' : 'text-amber-600'
-							)} />
 							<h2 className={cn(
 								'text-3xl sm:text-4xl font-bold',
 								isDark ? 'text-white' : 'text-slate-900'
 							)}>
 								{t('methode_cta')}
 							</h2>
-							<Scroll className={cn(
-								'w-6 h-6',
-								isDark ? 'text-amber-400' : 'text-amber-600'
-							)} />
 						</div>
 						<p className={cn(
 							'text-lg max-w-2xl mx-auto',
@@ -297,14 +256,22 @@ const MethodPageClient = ({ levels, userAccess }) => {
 
 									{/* Card */}
 									<div
-										onClick={() => handleLevelClick(level)}
+										onClick={() => level.slug === 'beginner' && handleLevelClick(level)}
 										className={cn(
-											'relative cursor-pointer rounded-2xl overflow-hidden',
+											'relative rounded-2xl overflow-hidden',
 											'border-2 transition-all duration-500',
-											'hover:scale-[1.02] hover:-translate-y-2',
+											level.slug === 'beginner'
+												? [
+													'cursor-pointer',
+													'hover:scale-[1.02] hover:-translate-y-2',
+													isDark
+														? 'hover:border-slate-600'
+														: 'hover:border-slate-300'
+												]
+												: 'cursor-default',
 											isDark
-												? 'bg-slate-900/90 border-slate-700/50 hover:border-slate-600'
-												: 'bg-white/90 border-slate-200 hover:border-slate-300',
+												? 'bg-slate-900/90 border-slate-700/50'
+												: 'bg-white/90 border-slate-200',
 											'backdrop-blur-sm'
 										)}
 										style={{ background: isDark ? config.bgPattern : undefined }}
@@ -352,7 +319,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 												'text-2xl sm:text-3xl font-bold mb-3',
 												isDark ? 'text-white' : 'text-slate-900'
 											)}>
-												{level[nameKey]}
+												{level[nameKey]?.replace(/^Niveau\s+/i, '').replace(/^Уровень\s+/i, '').replace(/^Level\s+/i, '')}
 											</h3>
 
 											{/* Description */}
@@ -426,18 +393,37 @@ const MethodPageClient = ({ levels, userAccess }) => {
 
 											{/* CTA Button */}
 											<Button
+												disabled={level.slug !== 'beginner'}
+												onClick={(e) => {
+													if (level.slug !== 'beginner') {
+														e.stopPropagation()
+													}
+												}}
 												className={cn(
 													'w-full py-6 text-base font-bold tracking-wide',
-													'bg-gradient-to-r shadow-lg',
-													'hover:shadow-2xl hover:scale-[1.02]',
 													'transition-all duration-300',
-													'group/btn',
-													config.gradient
+													level.slug === 'beginner'
+														? [
+															'bg-gradient-to-r shadow-lg',
+															'hover:shadow-2xl hover:scale-[1.02]',
+															'group/btn',
+															config.gradient
+														]
+														: [
+															'bg-slate-400 cursor-not-allowed opacity-70',
+															isDark ? 'text-slate-300' : 'text-slate-100'
+														]
 												)}
 											>
 												<span className="flex items-center gap-2">
-													Commencer la quête
-													<ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+													{level.slug === 'beginner' ? (
+														<>
+															Commencer la quête
+															<ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+														</>
+													) : (
+														'Bientôt disponible'
+													)}
 												</span>
 											</Button>
 										</div>
@@ -456,130 +442,221 @@ const MethodPageClient = ({ levels, userAccess }) => {
 				</div>
 			</section>
 
-			{/* Benefits Section - RPG Style */}
+			{/* Benefits Section - Achievement Badges Style */}
 			<section className={cn(
-				'py-16 md:py-24 relative z-10',
+				'py-16 md:py-24 relative z-10 overflow-hidden',
 				isDark ? 'bg-slate-900/30' : 'bg-slate-50/50'
 			)}>
-				<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-					{/* Section header */}
-					<div className="text-center mb-16">
-						<div className={cn(
-							'inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6',
-							'border backdrop-blur-sm',
-							isDark
-								? 'bg-amber-500/10 border-amber-500/30'
-								: 'bg-amber-100/80 border-amber-200'
-						)}>
-							<Trophy className={cn(
-								'w-5 h-5',
+				{/* Background magical glow */}
+				<div className={cn(
+					'absolute inset-0 opacity-30',
+					isDark ? 'bg-gradient-to-b from-violet-900/20 via-transparent to-amber-900/20' : 'bg-gradient-to-b from-violet-100/50 via-transparent to-amber-100/50'
+				)} />
+
+				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+					{/* Section header with fantasy styling */}
+					<div className="text-center mb-14">
+						<div className="flex items-center justify-center gap-4 mb-4">
+							<div className={cn(
+								'h-[2px] w-16 md:w-24',
+								'bg-gradient-to-r from-transparent',
+								isDark ? 'to-amber-500/60' : 'to-amber-600/40'
+							)} />
+							<Crown className={cn(
+								'w-8 h-8',
 								isDark ? 'text-amber-400' : 'text-amber-600'
 							)} />
-							<span className={cn(
-								'text-sm font-bold uppercase tracking-wide',
-								isDark ? 'text-amber-300' : 'text-amber-700'
-							)}>
-								Avantages
-							</span>
+							<div className={cn(
+								'h-[2px] w-16 md:w-24',
+								'bg-gradient-to-l from-transparent',
+								isDark ? 'to-amber-500/60' : 'to-amber-600/40'
+							)} />
 						</div>
 						<h2 className={cn(
-							'text-3xl sm:text-4xl md:text-5xl font-bold mb-4',
+							'text-3xl sm:text-4xl font-bold',
 							isDark ? 'text-white' : 'text-slate-900'
 						)}>
-							{t('methode_why_title')}
+							{t('methode_why_choose')}
 						</h2>
 					</div>
 
-					{/* Benefits grid */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-						{/* Benefit 1 - Proven Method */}
-						<div className="group text-center">
-							<div className="relative inline-block mb-6">
+					{/* Achievement Badges Grid */}
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+						{/* Badge 1 - Experts */}
+						<div className="group relative">
+							{/* Outer glow on hover */}
+							<div className={cn(
+								'absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl',
+								isDark ? 'bg-violet-500/30' : 'bg-violet-400/20'
+							)} />
+
+							{/* Badge container */}
+							<div className={cn(
+								'relative h-full rounded-2xl overflow-hidden',
+								'border-2 transition-all duration-300',
+								isDark
+									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-violet-500/30 hover:border-violet-400/60'
+									: 'bg-gradient-to-b from-white to-slate-50 border-violet-300/50 hover:border-violet-400/80',
+								'group-hover:shadow-2xl',
+								isDark ? 'group-hover:shadow-violet-500/20' : 'group-hover:shadow-violet-300/30'
+							)}>
+								{/* Top decorative banner */}
 								<div className={cn(
-									'absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity',
-									'bg-gradient-to-br from-violet-500 to-purple-600'
+									'h-2 w-full',
+									'bg-gradient-to-r from-violet-600 via-purple-500 to-violet-600'
 								)} />
-								<div className={cn(
-									'relative w-24 h-24 rounded-2xl flex items-center justify-center',
-									'bg-gradient-to-br from-violet-500 to-purple-600',
-									'shadow-2xl shadow-violet-500/30',
-									'transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'
-								)}>
-									<Scroll className="w-12 h-12 text-white" />
+
+								{/* Content */}
+								<div className="p-6 pt-8 text-center">
+									{/* Icon badge */}
+									<div className="inline-flex mb-6">
+										<div className={cn(
+											'w-20 h-20 flex items-center justify-center',
+											'bg-gradient-to-br from-violet-500 to-purple-600',
+											'rounded-xl rotate-45',
+											'shadow-lg',
+											isDark ? 'shadow-violet-500/40' : 'shadow-violet-400/30',
+											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
+										)}>
+											<GraduationCap className="w-9 h-9 text-white -rotate-45" />
+										</div>
+									</div>
+
+									{/* Title */}
+									<h3 className={cn(
+										'text-xl font-bold mb-3',
+										isDark ? 'text-white' : 'text-slate-900'
+									)}>
+										{t('methode_experts_title')}
+									</h3>
+
+									{/* Description */}
+									<p className={cn(
+										'text-sm leading-relaxed',
+										isDark ? 'text-slate-300/80' : 'text-slate-600'
+									)}>
+										{t('methode_experts_desc')}
+									</p>
 								</div>
 							</div>
-							<h3 className={cn(
-								'text-xl font-bold mb-3',
-								isDark ? 'text-white' : 'text-slate-900'
-							)}>
-								{t('methode_proven_method')}
-							</h3>
-							<p className={cn(
-								'leading-relaxed',
-								isDark ? 'text-slate-400' : 'text-slate-600'
-							)}>
-								{t('methode_proven_desc')}
-							</p>
 						</div>
 
-						{/* Benefit 2 - Interactive */}
-						<div className="group text-center">
-							<div className="relative inline-block mb-6">
+						{/* Badge 2 - Moderne et ludique */}
+						<div className="group relative">
+							{/* Outer glow on hover */}
+							<div className={cn(
+								'absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl',
+								isDark ? 'bg-cyan-500/30' : 'bg-cyan-400/20'
+							)} />
+
+							{/* Badge container */}
+							<div className={cn(
+								'relative h-full rounded-2xl overflow-hidden',
+								'border-2 transition-all duration-300',
+								isDark
+									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-cyan-500/30 hover:border-cyan-400/60'
+									: 'bg-gradient-to-b from-white to-slate-50 border-cyan-300/50 hover:border-cyan-400/80',
+								'group-hover:shadow-2xl',
+								isDark ? 'group-hover:shadow-cyan-500/20' : 'group-hover:shadow-cyan-300/30'
+							)}>
+								{/* Top decorative banner */}
 								<div className={cn(
-									'absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity',
-									'bg-gradient-to-br from-amber-500 to-orange-600'
+									'h-2 w-full',
+									'bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500'
 								)} />
-								<div className={cn(
-									'relative w-24 h-24 rounded-2xl flex items-center justify-center',
-									'bg-gradient-to-br from-amber-500 to-orange-600',
-									'shadow-2xl shadow-amber-500/30',
-									'transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'
-								)}>
-									<Sword className="w-12 h-12 text-white" />
+
+								{/* Content */}
+								<div className="p-6 pt-8 text-center">
+									{/* Icon badge */}
+									<div className="inline-flex mb-6">
+										<div className={cn(
+											'w-20 h-20 flex items-center justify-center',
+											'bg-gradient-to-br from-cyan-500 to-teal-500',
+											'rounded-xl rotate-45',
+											'shadow-lg',
+											isDark ? 'shadow-cyan-500/40' : 'shadow-cyan-400/30',
+											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
+										)}>
+											<Gamepad2 className="w-9 h-9 text-white -rotate-45" />
+										</div>
+									</div>
+
+									{/* Title */}
+									<h3 className={cn(
+										'text-xl font-bold mb-3',
+										isDark ? 'text-white' : 'text-slate-900'
+									)}>
+										{t('methode_modern_title')}
+									</h3>
+
+									{/* Description */}
+									<p className={cn(
+										'text-sm leading-relaxed',
+										isDark ? 'text-slate-300/80' : 'text-slate-600'
+									)}>
+										{t('methode_modern_desc')}
+									</p>
 								</div>
 							</div>
-							<h3 className={cn(
-								'text-xl font-bold mb-3',
-								isDark ? 'text-white' : 'text-slate-900'
-							)}>
-								{t('methode_interactive')}
-							</h3>
-							<p className={cn(
-								'leading-relaxed',
-								isDark ? 'text-slate-400' : 'text-slate-600'
-							)}>
-								{t('methode_interactive_desc')}
-							</p>
 						</div>
 
-						{/* Benefit 3 - Flexible */}
-						<div className="group text-center">
-							<div className="relative inline-block mb-6">
+						{/* Badge 3 - Progression */}
+						<div className="group relative">
+							{/* Outer glow on hover */}
+							<div className={cn(
+								'absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl',
+								isDark ? 'bg-amber-500/30' : 'bg-amber-400/20'
+							)} />
+
+							{/* Badge container */}
+							<div className={cn(
+								'relative h-full rounded-2xl overflow-hidden',
+								'border-2 transition-all duration-300',
+								isDark
+									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-amber-500/30 hover:border-amber-400/60'
+									: 'bg-gradient-to-b from-white to-slate-50 border-amber-300/50 hover:border-amber-400/80',
+								'group-hover:shadow-2xl',
+								isDark ? 'group-hover:shadow-amber-500/20' : 'group-hover:shadow-amber-300/30'
+							)}>
+								{/* Top decorative banner */}
 								<div className={cn(
-									'absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity',
-									'bg-gradient-to-br from-emerald-500 to-teal-600'
+									'h-2 w-full',
+									'bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500'
 								)} />
-								<div className={cn(
-									'relative w-24 h-24 rounded-2xl flex items-center justify-center',
-									'bg-gradient-to-br from-emerald-500 to-teal-600',
-									'shadow-2xl shadow-emerald-500/30',
-									'transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'
-								)}>
-									<Gem className="w-12 h-12 text-white" />
+
+								{/* Content */}
+								<div className="p-6 pt-8 text-center">
+									{/* Icon badge */}
+									<div className="inline-flex mb-6">
+										<div className={cn(
+											'w-20 h-20 flex items-center justify-center',
+											'bg-gradient-to-br from-amber-500 to-orange-500',
+											'rounded-xl rotate-45',
+											'shadow-lg',
+											isDark ? 'shadow-amber-500/40' : 'shadow-amber-400/30',
+											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
+										)}>
+											<Trophy className="w-9 h-9 text-white -rotate-45" />
+										</div>
+									</div>
+
+									{/* Title */}
+									<h3 className={cn(
+										'text-xl font-bold mb-3',
+										isDark ? 'text-white' : 'text-slate-900'
+									)}>
+										{t('methode_progress_title')}
+									</h3>
+
+									{/* Description */}
+									<p className={cn(
+										'text-sm leading-relaxed',
+										isDark ? 'text-slate-300/80' : 'text-slate-600'
+									)}>
+										{t('methode_progress_desc')}
+									</p>
 								</div>
 							</div>
-							<h3 className={cn(
-								'text-xl font-bold mb-3',
-								isDark ? 'text-white' : 'text-slate-900'
-							)}>
-								{t('methode_flexible')}
-							</h3>
-							<p className={cn(
-								'leading-relaxed',
-								isDark ? 'text-slate-400' : 'text-slate-600'
-							)}>
-								{t('methode_flexible_desc')}
-							</p>
 						</div>
 					</div>
 				</div>

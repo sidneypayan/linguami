@@ -535,6 +535,8 @@ const UserProvider = ({ children }) => {
 					const updated = Array.isArray(data) ? data[0] : data
 					const lang = updated?.learning_language || learningLanguage
 					setUserLearningLanguage(lang)
+					// Also update userProfile to keep in sync
+					setUserProfile(prev => prev ? { ...prev, learning_language: lang } : prev)
 					try {
 						localStorage.setItem('learning_language', lang)
 						// Also save to cookie for SSR
