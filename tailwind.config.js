@@ -17,6 +17,9 @@ module.exports = {
   			'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
   			'glow': 'glow 2s ease-in-out infinite alternate',
   			'shimmer': 'shimmer 2s infinite',
+  			'spin-gradient': 'spin-gradient 4s linear infinite',
+  			'line-glow': 'line-glow 3s ease-in-out infinite',
+  			'orb-float': 'orb-float 4s ease-in-out infinite',
   		},
   		keyframes: {
   			'float': {
@@ -47,6 +50,22 @@ module.exports = {
   			'shimmer': {
   				'0%': { transform: 'translateX(-100%)' },
   				'100%': { transform: 'translateX(100%)' },
+  			},
+  			'spin-gradient': {
+  				'0%': { transform: 'rotate(0deg)' },
+  				'100%': { transform: 'rotate(360deg)' },
+  			},
+  			'line-glow': {
+  				'0%, 100%': { opacity: '0.4', transform: 'scaleX(0.95)' },
+  				'50%': { opacity: '0.8', transform: 'scaleX(1)' },
+  			},
+  			'orb-float': {
+  				'0%, 100%': { transform: 'translateY(0) scale(1)', boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)' },
+  				'50%': { transform: 'translateY(-5px) scale(1.05)', boxShadow: '0 8px 30px rgba(139, 92, 246, 0.6), 0 0 20px rgba(6, 182, 212, 0.3)' },
+  			},
+  			'scalePulse': {
+  				'0%, 100%': { transform: 'scale(1)' },
+  				'50%': { transform: 'scale(1.1)' },
   			},
   		},
   		borderRadius: {

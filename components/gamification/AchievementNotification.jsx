@@ -111,6 +111,7 @@ const AchievementNotification = ({ achievement, open, onClose }) => {
 	return (
 		<Dialog open={isVisible} onOpenChange={handleClose}>
 			<DialogContent
+				hideCloseButton
 				className="sm:max-w-[400px] p-0 border-0 bg-transparent shadow-none"
 				onClick={handleClose}>
 				<div

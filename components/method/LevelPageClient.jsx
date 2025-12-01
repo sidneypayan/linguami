@@ -105,20 +105,23 @@ const LevelPageClient = ({
 	return (
 		<div className={cn(
 			'min-h-screen relative overflow-hidden',
-			isDark ? 'bg-slate-950' : 'bg-gradient-to-b from-slate-50 to-white'
+			isDark
+				? 'bg-gradient-to-br from-slate-950 via-indigo-950/50 to-slate-950'
+				: 'bg-gradient-to-b from-slate-50 to-white'
 		)}>
 			{/* Background elements */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				<div className={cn(
 					'absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl',
-					level?.slug === 'beginner' && (isDark ? 'bg-emerald-600/20' : 'bg-emerald-300/30'),
-					level?.slug === 'intermediate' && (isDark ? 'bg-amber-600/20' : 'bg-amber-300/30'),
-					level?.slug === 'advanced' && (isDark ? 'bg-violet-600/20' : 'bg-violet-300/30')
+					isDark ? 'bg-violet-600/20' : 'bg-violet-300/30'
 				)} />
 				<div className={cn(
 					'absolute top-1/2 -left-40 w-80 h-80 rounded-full blur-3xl',
-					isDark ? 'bg-cyan-600/10' : 'bg-cyan-300/15'
+					isDark ? 'bg-indigo-600/15' : 'bg-cyan-300/15'
 				)} />
+				{isDark && (
+					<div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl bg-purple-600/10" />
+				)}
 			</div>
 
 			{/* Header */}
@@ -364,36 +367,56 @@ const LevelPageClient = ({
 										)}
 									</div>
 
-									{/* Quest card */}
-									<div className={cn(
-										'relative cursor-pointer rounded-2xl overflow-hidden',
-										'border-2 transition-all duration-300',
-										'hover:scale-[1.01] hover:-translate-y-1',
-										isCompleted
-											? isDark
-												? 'bg-emerald-500/5 border-emerald-500/30 hover:border-emerald-500/50'
-												: 'bg-emerald-50/50 border-emerald-200 hover:border-emerald-300'
-											: isDark
-												? 'bg-slate-900/80 border-slate-700/50 hover:border-violet-500/50'
-												: 'bg-white/80 border-slate-200 hover:border-violet-300',
-										'backdrop-blur-sm',
-										'hover:shadow-xl',
-										isDark ? 'hover:shadow-violet-500/10' : 'hover:shadow-violet-200/50'
-									)}>
-										<div className="p-4 sm:p-6">
-											{/* Mobile: number inline with title */}
+									{/* Quest card wrapper for badge positioning */}
+									<div className="relative pt-4 sm:pt-0">
+										{/* Quest number badge - centered at top on mobile, overlapping card */}
+										<div className={cn(
+											'absolute top-0 left-1/2 -translate-x-1/2 sm:hidden z-20',
+											'w-11 h-11 rounded-full flex items-center justify-center',
+											'font-bold text-base',
+											'border-2',
+											isCompleted
+												? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white border-emerald-400 shadow-lg shadow-emerald-500/40'
+												: 'bg-gradient-to-br from-violet-500 to-indigo-600 text-white border-violet-400 shadow-lg shadow-violet-500/40'
+										)}>
+											{isCompleted ? (
+												<CheckCircle className="w-5 h-5" />
+											) : (
+												<span>{index + 1}</span>
+											)}
+										</div>
+
+										{/* Quest card */}
+										<div className={cn(
+											'relative cursor-pointer overflow-hidden',
+											'border-2 transition-all duration-300',
+											'hover:scale-[1.01] hover:-translate-y-1',
+											'mt-4 sm:mt-0',
+											'rounded-2xl',
+											isCompleted
+												? isDark
+													? 'bg-emerald-500/5 border-emerald-500/30 hover:border-emerald-500/50'
+													: 'bg-emerald-50/50 border-emerald-200 hover:border-emerald-300'
+												: isDark
+													? 'bg-slate-900/80 border-slate-700/50 hover:border-violet-500/50'
+													: 'bg-white/80 border-slate-200 hover:border-violet-300',
+											'backdrop-blur-sm',
+											'hover:shadow-xl',
+											isDark ? 'hover:shadow-violet-500/10' : 'hover:shadow-violet-200/50'
+										)}>
+										<div className="p-4 sm:p-6 pt-5 sm:pt-6">
 											<div className="flex items-start gap-3 sm:gap-4">
-												{/* Quest number / status - smaller on mobile */}
+												{/* Quest number / status - hidden on mobile, shown on desktop */}
 												<div className={cn(
-													'w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0',
-													'font-bold text-base sm:text-xl transition-all duration-300',
+													'hidden sm:flex w-14 h-14 rounded-xl items-center justify-center flex-shrink-0',
+													'font-bold text-xl transition-all duration-300',
 													isCompleted
 														? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30'
 														: `bg-gradient-to-br ${config.gradient} text-white shadow-lg`,
 													'group-hover:scale-110 group-hover:rotate-3'
 												)}>
 													{isCompleted ? (
-														<CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" />
+														<CheckCircle className="w-7 h-7" />
 													) : (
 														<span className="drop-shadow-lg">{index + 1}</span>
 													)}
@@ -486,6 +509,7 @@ const LevelPageClient = ({
 										{isCompleted && (
 											<div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
 										)}
+										</div>
 									</div>
 								</div>
 							)

@@ -115,13 +115,15 @@ const EditWordModal = ({ open, onClose, word }) => {
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className={cn(
-				"sm:max-w-md rounded-2xl border-2",
-				isDark
-					? "bg-slate-900 border-violet-500/30"
-					: "bg-white border-slate-200",
-				"shadow-2xl"
-			)}>
+			<DialogContent
+				isDark={isDark}
+				className={cn(
+					"sm:max-w-md rounded-2xl border-2",
+					isDark
+						? "bg-slate-900 border-violet-500/30"
+						: "bg-white border-slate-200",
+					"shadow-2xl"
+				)}>
 				<DialogHeader className="pb-4">
 					<DialogTitle className="flex items-center gap-3">
 						<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/30">

@@ -97,36 +97,30 @@ const SectionCard = ({ material, checkIfUserMaterialIsInMaterials }) => {
 
 	// Rarity-based shadow
 	const getRarityShadow = () => {
+		if (isDark) {
+			return 'shadow-[0_4px_16px_rgba(0,0,0,0.3)]'
+		}
 		if (rarity === 'legendary') {
-			return isDark
-				? 'shadow-[0_8px_36px_rgba(251,191,36,0.4),0_0_60px_rgba(251,191,36,0.2)]'
-				: 'shadow-[0_8px_30px_rgba(251,191,36,0.3),0_4px_15px_rgba(251,191,36,0.2)]'
+			return 'shadow-[0_8px_30px_rgba(251,191,36,0.3),0_4px_15px_rgba(251,191,36,0.2)]'
 		}
 		if (rarity === 'epic') {
-			return isDark
-				? 'shadow-[0_8px_32px_rgba(168,85,247,0.35),0_0_50px_rgba(168,85,247,0.15)]'
-				: 'shadow-[0_8px_28px_rgba(168,85,247,0.25),0_4px_12px_rgba(168,85,247,0.15)]'
+			return 'shadow-[0_8px_28px_rgba(168,85,247,0.25),0_4px_12px_rgba(168,85,247,0.15)]'
 		}
-		return isDark
-			? 'shadow-[0_8px_28px_rgba(16,185,129,0.25),0_0_40px_rgba(16,185,129,0.1)]'
-			: 'shadow-[0_8px_24px_rgba(16,185,129,0.2),0_4px_10px_rgba(16,185,129,0.1)]'
+		return 'shadow-[0_8px_24px_rgba(16,185,129,0.2),0_4px_10px_rgba(16,185,129,0.1)]'
 	}
 
 	// Rarity-based hover shadow
 	const getRarityHoverShadow = () => {
+		if (isDark) {
+			return 'hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]'
+		}
 		if (rarity === 'legendary') {
-			return isDark
-				? 'hover:shadow-[0_16px_48px_rgba(251,191,36,0.6),0_0_100px_rgba(251,191,36,0.3)]'
-				: 'hover:shadow-[0_16px_40px_rgba(251,191,36,0.45),0_8px_25px_rgba(251,191,36,0.3)]'
+			return 'hover:shadow-[0_16px_40px_rgba(251,191,36,0.45),0_8px_25px_rgba(251,191,36,0.3)]'
 		}
 		if (rarity === 'epic') {
-			return isDark
-				? 'hover:shadow-[0_14px_42px_rgba(168,85,247,0.5),0_0_80px_rgba(168,85,247,0.25)]'
-				: 'hover:shadow-[0_14px_36px_rgba(168,85,247,0.4),0_7px_20px_rgba(168,85,247,0.25)]'
+			return 'hover:shadow-[0_14px_36px_rgba(168,85,247,0.4),0_7px_20px_rgba(168,85,247,0.25)]'
 		}
-		return isDark
-			? 'hover:shadow-[0_12px_36px_rgba(16,185,129,0.4),0_0_60px_rgba(16,185,129,0.2)]'
-			: 'hover:shadow-[0_12px_30px_rgba(16,185,129,0.35),0_6px_15px_rgba(16,185,129,0.2)]'
+		return 'hover:shadow-[0_12px_30px_rgba(16,185,129,0.35),0_6px_15px_rgba(16,185,129,0.2)]'
 	}
 
 	// Rarity-based title gradient

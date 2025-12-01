@@ -166,7 +166,7 @@ const LessonPageClient = ({
 			</div>
 
 			{/* Header */}
-			<header className="pt-[72px] md:pt-28 pb-2 md:pb-6 relative z-10">
+			<header className="pt-24 md:pt-28 pb-2 md:pb-6 relative z-10">
 				<div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
 					{/* Breadcrumbs */}
 					<nav className="flex items-center gap-2 text-sm mb-3 sm:mb-8 flex-wrap">

@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl'
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Volume2, Shield, Scroll } from 'lucide-react'
+import { Volume2 } from 'lucide-react'
 
 /**
  * GrammarBlock - Grimoire de grammaire
@@ -55,28 +55,6 @@ const GrammarBlock = ({ block }) => {
 			<div className="absolute top-0 right-0 w-40 h-40 bg-violet-500/10 rounded-full blur-3xl" />
 			<div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl" />
 
-			{/* Header */}
-			<div className={cn(
-				'relative p-4 sm:p-5 border-b',
-				isDark ? 'border-violet-500/20' : 'border-violet-200'
-			)}>
-				<div className="flex items-center gap-3 sm:gap-4">
-					<div className={cn(
-						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-violet-400 to-purple-600'
-					)}>
-						<Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-					</div>
-
-					<h3 className={cn(
-						'text-lg sm:text-xl font-bold',
-						isDark ? 'text-violet-300' : 'text-violet-700'
-					)}>
-						{title}
-					</h3>
-				</div>
-			</div>
-
 			<div className="relative p-4 sm:p-5 space-y-5 sm:space-y-6">
 				{/* Explication */}
 				{explanation && (
@@ -94,32 +72,26 @@ const GrammarBlock = ({ block }) => {
 				{/* Exemples */}
 				{examples && examples.length > 0 && (
 					<div>
-						<div className="flex items-center gap-2 mb-3 sm:mb-4">
-							<Scroll className={cn(
-								'w-5 h-5',
-								isDark ? 'text-violet-400' : 'text-violet-600'
-							)} />
-							<h4 className={cn(
-								'font-bold text-base sm:text-lg',
-								isDark ? 'text-violet-300' : 'text-violet-700'
-							)}>
-								{t('methode_examples')}
-							</h4>
-						</div>
+						<h4 className={cn(
+							'font-bold text-base sm:text-lg mb-3 sm:mb-4',
+							isDark ? 'text-violet-300' : 'text-violet-700'
+						)}>
+							{t('methode_examples')}
+						</h4>
 
 						<div className="space-y-3">
 							{examples.map((ex, index) => (
 								<div
 									key={index}
 									className={cn(
-										'p-3 sm:p-4 rounded-lg sm:rounded-xl border-l-4 transition-all duration-300',
+										'p-3 sm:p-4 rounded-lg sm:rounded-xl border-l-4',
 										currentPlayingIndex === index
 											? isDark
 												? 'bg-violet-500/20 border-violet-400'
 												: 'bg-violet-100 border-violet-500'
 											: isDark
-												? 'bg-slate-800/50 border-violet-500/50 hover:bg-slate-800'
-												: 'bg-white border-violet-300 hover:bg-violet-50 shadow-sm'
+												? 'bg-slate-800/50 border-violet-500/50'
+												: 'bg-white border-violet-300 shadow-sm'
 									)}
 								>
 									<div className="flex items-start gap-3">

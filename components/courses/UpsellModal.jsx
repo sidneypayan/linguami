@@ -43,6 +43,7 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent
+				isDark={isDark}
 				className={cn(
 					'sm:max-w-md rounded-2xl border',
 					isDark
@@ -50,15 +51,6 @@ const UpsellModal = ({ open, onClose, levelName, isPremium = false, onPurchase }
 						: 'bg-gradient-to-br from-white to-slate-50 border-violet-500/20',
 					'shadow-[0_20px_60px_rgba(0,0,0,0.3)]'
 				)}>
-				{/* Close button */}
-				<button
-					onClick={onClose}
-					className={cn(
-						'absolute right-4 top-4 p-1 rounded-full transition-colors',
-						isDark ? 'hover:bg-white/10' : 'hover:bg-black/5'
-					)}>
-					<X className="h-5 w-5 text-muted-foreground" />
-				</button>
 
 				<DialogHeader className="pt-4 pb-2 text-center">
 					<div className="mb-4">

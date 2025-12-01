@@ -16,6 +16,7 @@ import {
 	ChevronDown,
 	Loader2,
 	Flame,
+	Route,
 	Shield,
 	Sparkles,
 	Star,
@@ -211,12 +212,10 @@ const LessonNavigator = ({ blocks = [], lessonId, onComplete, isCompleting = fal
 					<div className="relative z-10">
 						<div className="flex justify-between items-center mb-2 sm:mb-4">
 							<div className="flex items-center gap-2 sm:gap-3">
-								<div className={cn(
-									'w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center',
-									'bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/30'
-								)}>
-									<Flame className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-								</div>
+								<Route className={cn(
+									'w-6 h-6 sm:w-7 sm:h-7',
+									isDark ? 'text-violet-400' : 'text-violet-500'
+								)} />
 								<div>
 									<span className={cn(
 										'text-xs sm:text-sm font-bold uppercase tracking-wider block',
@@ -268,54 +267,130 @@ const LessonNavigator = ({ blocks = [], lessonId, onComplete, isCompleting = fal
 					</div>
 				</div>
 
-				{/* Carte de competence actuelle - more compact on mobile */}
-				<div className={cn(
-					'relative mb-3 sm:mb-6 p-3 sm:p-6 rounded-lg sm:rounded-2xl border sm:border-2 overflow-hidden',
-					isDark
-						? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700'
-						: 'bg-white border-slate-200 shadow-xl'
-				)}>
-					{/* Glow effect - hidden on mobile */}
+				{/* Header de l'étape - style skill tree node */}
+				<div className="relative mb-3 sm:mb-5">
+					{/* Carte skill node */}
 					<div className={cn(
-						'absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-20 hidden sm:block',
-						`bg-${config.bgGlow}-500`
-					)} />
+						'relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl',
+						'border-2 transition-all duration-300',
+						isDark
+							? 'bg-gradient-to-r from-slate-900/90 via-slate-800/50 to-slate-900/90'
+							: 'bg-gradient-to-r from-white via-slate-50 to-white',
+						// Default border
+						isDark ? 'border-violet-500/50 shadow-[0_0_20px_rgba(139,92,246,0.15)]' : 'border-violet-300 shadow-violet-100',
+						// Type-specific borders
+						currentBlock?.type === 'dialogue' && (isDark ? 'border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.15)]' : 'border-blue-300 shadow-blue-100'),
+						currentBlock?.type === 'grammar' && (isDark ? 'border-violet-500/50 shadow-[0_0_20px_rgba(139,92,246,0.15)]' : 'border-violet-300 shadow-violet-100'),
+						currentBlock?.type === 'vocabulary' && (isDark ? 'border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]' : 'border-emerald-300 shadow-emerald-100'),
+						currentBlock?.type === 'culture' && (isDark ? 'border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'border-cyan-300 shadow-cyan-100'),
+						currentBlock?.type === 'exercise' && (isDark ? 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]' : 'border-orange-300 shadow-orange-100'),
+						currentBlock?.type === 'exerciseInline' && (isDark ? 'border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.15)]' : 'border-purple-300 shadow-purple-100'),
+						currentBlock?.type === 'tip' && (isDark ? 'border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.15)]' : 'border-amber-300 shadow-amber-100'),
+						currentBlock?.type === 'summary' && (isDark ? 'border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]' : 'border-green-300 shadow-green-100'),
+						currentBlock?.type === 'conversation' && (isDark ? 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]' : 'border-orange-300 shadow-orange-100'),
+						currentBlock?.type === 'audio' && (isDark ? 'border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.15)]' : 'border-pink-300 shadow-pink-100'),
+						currentBlock?.type === 'pronunciation' && (isDark ? 'border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.15)]' : 'border-indigo-300 shadow-indigo-100'),
+						'shadow-lg'
+					)}>
+						{/* Icône hexagonale du skill */}
+						<div className="relative flex-shrink-0">
+							{/* Hexagon background with glow */}
+							<div className={cn(
+								'w-12 h-12 sm:w-14 sm:h-14 rounded-xl rotate-45 flex items-center justify-center',
+								'shadow-lg transition-all duration-300',
+								'bg-gradient-to-br from-violet-400 to-violet-600 shadow-violet-500/40', // default
+								currentBlock?.type === 'dialogue' && 'from-blue-400 to-blue-600 shadow-blue-500/40',
+								currentBlock?.type === 'grammar' && 'from-violet-400 to-violet-600 shadow-violet-500/40',
+								currentBlock?.type === 'vocabulary' && 'from-emerald-400 to-emerald-600 shadow-emerald-500/40',
+								currentBlock?.type === 'culture' && 'from-cyan-400 to-cyan-600 shadow-cyan-500/40',
+								currentBlock?.type === 'exercise' && 'from-orange-400 to-orange-600 shadow-orange-500/40',
+								currentBlock?.type === 'exerciseInline' && 'from-purple-400 to-pink-600 shadow-purple-500/40',
+								currentBlock?.type === 'tip' && 'from-amber-400 to-yellow-600 shadow-amber-500/40',
+								currentBlock?.type === 'summary' && 'from-green-400 to-emerald-600 shadow-green-500/40',
+								currentBlock?.type === 'conversation' && 'from-orange-400 to-red-600 shadow-orange-500/40',
+								currentBlock?.type === 'audio' && 'from-pink-400 to-rose-600 shadow-pink-500/40',
+								currentBlock?.type === 'pronunciation' && 'from-indigo-400 to-blue-600 shadow-indigo-500/40'
+							)}>
+								<span className="-rotate-45 text-white font-bold text-lg sm:text-xl">
+									{currentSection + 1}
+								</span>
+							</div>
 
-					<div className="relative z-10 flex items-center gap-3 sm:gap-4">
-						<div className={cn(
-							'w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg font-bold text-base sm:text-2xl text-white flex-shrink-0',
-							`bg-gradient-to-br ${config.gradient}`
-						)}>
-							{currentSection + 1}
+							{/* Completion indicator */}
+							{completedSections[currentSection] && (
+								<div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg">
+									<CheckCircle className="w-3 h-3 text-white" />
+								</div>
+							)}
 						</div>
+
+						{/* Contenu du skill */}
 						<div className="flex-1 min-w-0">
 							<h2 className={cn(
-								'text-base sm:text-2xl font-bold leading-tight line-clamp-2',
-								isDark ? 'text-white' : 'text-slate-900'
+								'text-base sm:text-lg font-bold leading-tight truncate',
+								isDark ? 'text-white' : 'text-slate-800'
 							)}>
 								{getBlockTitle(currentBlock, currentSection)}
 							</h2>
-							<div className="flex items-center gap-2 sm:gap-3 mt-1">
-								<div className="flex items-center gap-1">
-									<Clock className={cn(
-										'w-3.5 h-3.5 sm:w-4 sm:h-4',
-										isDark ? 'text-slate-500' : 'text-slate-400'
-									)} />
-									<span className={cn(
-										'text-xs sm:text-sm',
-										isDark ? 'text-slate-400' : 'text-slate-500'
-									)}>
-										{getBlockEstimatedTime(currentBlock)} min
-									</span>
-								</div>
-								{completedSections[currentSection] && (
-									<Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs px-2 py-0.5 sm:py-1">
-										<CheckCircle className="w-3 h-3 mr-1" />
-										<span className="hidden sm:inline">Complété</span>
-									</Badge>
-								)}
+							<div className="flex items-center gap-2 mt-1">
+								<span className={cn(
+									'text-xs font-semibold px-2 py-0.5 rounded-md uppercase tracking-wide',
+									// Default
+									isDark ? 'bg-violet-500/20 text-violet-400' : 'bg-violet-100 text-violet-600',
+									// Type-specific
+									currentBlock?.type === 'dialogue' && (isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'),
+									currentBlock?.type === 'grammar' && (isDark ? 'bg-violet-500/20 text-violet-400' : 'bg-violet-100 text-violet-600'),
+									currentBlock?.type === 'vocabulary' && (isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'),
+									currentBlock?.type === 'culture' && (isDark ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-100 text-cyan-600'),
+									currentBlock?.type === 'exercise' && (isDark ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600'),
+									currentBlock?.type === 'exerciseInline' && (isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'),
+									currentBlock?.type === 'tip' && (isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-600'),
+									currentBlock?.type === 'summary' && (isDark ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'),
+									currentBlock?.type === 'conversation' && (isDark ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600'),
+									currentBlock?.type === 'audio' && (isDark ? 'bg-pink-500/20 text-pink-400' : 'bg-pink-100 text-pink-600'),
+									currentBlock?.type === 'pronunciation' && (isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600')
+								)}>
+									{currentBlock?.type === 'dialogue' && 'Dialogue'}
+									{currentBlock?.type === 'grammar' && 'Grammaire'}
+									{currentBlock?.type === 'vocabulary' && 'Vocabulaire'}
+									{currentBlock?.type === 'culture' && 'Culture'}
+									{currentBlock?.type === 'exercise' && 'Exercice'}
+									{currentBlock?.type === 'exerciseInline' && 'Exercice'}
+									{currentBlock?.type === 'tip' && 'Conseil'}
+									{currentBlock?.type === 'summary' && 'Résumé'}
+									{currentBlock?.type === 'conversation' && 'Conversation'}
+									{currentBlock?.type === 'audio' && 'Audio'}
+									{currentBlock?.type === 'pronunciation' && 'Prononciation'}
+									{!['dialogue', 'grammar', 'vocabulary', 'culture', 'exercise', 'exerciseInline', 'tip', 'summary', 'conversation', 'audio', 'pronunciation'].includes(currentBlock?.type) && 'Leçon'}
+								</span>
+								<span className={cn(
+									'text-xs flex items-center gap-1',
+									isDark ? 'text-slate-500' : 'text-slate-400'
+								)}>
+									<Clock className="w-3 h-3" />
+									{getBlockEstimatedTime(currentBlock)} min
+								</span>
 							</div>
 						</div>
+
+						{/* Ligne de connexion vers le prochain skill (visible seulement s'il y a une suite) */}
+						{currentSection < blocks.length - 1 && (
+							<div className={cn(
+								'absolute -bottom-3 left-1/2 -translate-x-1/2 w-0.5 h-3',
+								'bg-violet-500/30', // default
+								currentBlock?.type === 'dialogue' && 'bg-blue-500/30',
+								currentBlock?.type === 'grammar' && 'bg-violet-500/30',
+								currentBlock?.type === 'vocabulary' && 'bg-emerald-500/30',
+								currentBlock?.type === 'culture' && 'bg-cyan-500/30',
+								currentBlock?.type === 'exercise' && 'bg-orange-500/30',
+								currentBlock?.type === 'exerciseInline' && 'bg-purple-500/30',
+								currentBlock?.type === 'tip' && 'bg-amber-500/30',
+								currentBlock?.type === 'summary' && 'bg-green-500/30',
+								currentBlock?.type === 'conversation' && 'bg-orange-500/30',
+								currentBlock?.type === 'audio' && 'bg-pink-500/30',
+								currentBlock?.type === 'pronunciation' && 'bg-indigo-500/30'
+							)} />
+						)}
 					</div>
 				</div>
 

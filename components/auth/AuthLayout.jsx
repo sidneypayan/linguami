@@ -1,11 +1,10 @@
 'use client'
 
-import { LogIn } from 'lucide-react'
 import { useThemeMode } from '@/context/ThemeContext'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-const AuthLayout = ({ children, icon }) => {
+const AuthLayout = ({ children }) => {
 	const { isDark } = useThemeMode()
 
 	return (
@@ -58,38 +57,14 @@ const AuthLayout = ({ children, icon }) => {
 							'rounded-none sm:rounded-3xl',
 							'border-0 sm:border',
 							isDark
-								? 'bg-slate-900 sm:border-violet-500/30 sm:shadow-[0_24px_60px_rgba(0,0,0,0.5)]'
+								? 'bg-slate-800/90 bg-gradient-to-br from-slate-800 to-indigo-950/80 sm:border-violet-500/30 sm:shadow-[0_24px_60px_rgba(0,0,0,0.5)]'
 								: 'bg-white sm:border-slate-200 sm:shadow-[0_24px_60px_rgba(0,0,0,0.12)]'
 						)}
 					>
-						{/* Header section */}
-						<div
-							className={cn(
-								'pt-6 sm:pt-8 pb-4 sm:pb-6',
-								'rounded-none sm:rounded-t-3xl',
-								isDark ? 'bg-slate-950' : 'bg-white'
-							)}
-						>
-							{/* Icon (not clickable) */}
-							<div className="hidden sm:flex items-center justify-center">
-								<div
-									className={cn(
-										'w-16 h-16 sm:w-20 sm:h-20 rounded-2xl',
-										'bg-gradient-to-br from-indigo-500 to-purple-600',
-										'flex items-center justify-center',
-										'shadow-[0_12px_32px_rgba(102,126,234,0.4)]',
-										'relative'
-									)}
-								>
-									{icon || <LogIn className="w-9 h-9 sm:w-10 sm:h-10 text-white" />}
-								</div>
-							</div>
-						</div>
-
 						{/* Main content */}
 						<div className={cn(
 							'p-6 sm:p-12 pb-10 sm:pb-14',
-							isDark ? 'bg-slate-900' : 'bg-white'
+							isDark ? 'bg-transparent' : 'bg-white'
 						)}>
 							{children}
 						</div>

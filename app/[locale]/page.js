@@ -130,6 +130,32 @@ export default async function Home({ params }) {
 		badgePremium: t('badgePremium'),
 		badgeEssential: t('badgeEssential'),
 		viewDemo: t('viewDemo'),
+		tryNow: t('tryNow'),
+		// How It Works section
+		how_it_works_title: t('how_it_works_title'),
+		how_it_works_subtitle: t('how_it_works_subtitle'),
+		step1_title: t('step1_title'),
+		step1_desc: t('step1_desc'),
+		step2_title: t('step2_title'),
+		step2_desc: t('step2_desc'),
+		step3_title: t('step3_title'),
+		step3_desc: t('step3_desc'),
+		// FAQ section
+		faq_title: t('faq_title'),
+		faq1_q: t('faq1_q'),
+		faq1_a: t('faq1_a'),
+		faq2_q: t('faq2_q'),
+		faq2_a: t('faq2_a'),
+		faq3_q: t('faq3_q'),
+		faq3_a: t('faq3_a'),
+		faq4_q: t('faq4_q'),
+		faq4_a: t('faq4_a'),
+		faq5_q: t('faq5_q'),
+		faq5_a: t('faq5_a'),
+		// Final CTA section
+		final_cta_title: t('final_cta_title'),
+		final_cta_subtitle: t('final_cta_subtitle'),
+		final_cta_button: t('final_cta_button'),
 	}
 
 	return <Homepage translations={translations} jsonLd={jsonLd} />

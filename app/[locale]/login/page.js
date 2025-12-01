@@ -11,7 +11,7 @@ import MagicLinkDialog from '@/components/auth/MagicLinkDialog'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
 import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
-import { LogIn, AtSign, KeyRound, Eye, EyeOff } from 'lucide-react'
+import { AtSign, KeyRound, Eye, EyeOff } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -72,7 +72,7 @@ const Login = () => {
 	}
 
 	return (
-		<AuthLayout icon={<LogIn className="h-8 w-8 sm:h-9 sm:w-9 text-white" />}>
+		<AuthLayout>
 			{/* Titre */}
 			<h1 className="text-center text-2xl sm:text-4xl font-extrabold mb-3 sm:mb-2 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
 				{t('signinTitle')}
@@ -200,7 +200,8 @@ const Login = () => {
 						'w-full h-12 sm:h-14 rounded-xl font-bold text-base sm:text-lg',
 						'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
 						'shadow-[0_8px_24px_rgba(102,126,234,0.4)] hover:shadow-[0_12px_32px_rgba(102,126,234,0.5)]',
-						'transition-all duration-300 hover:-translate-y-0.5'
+						'transition-all duration-300 hover:-translate-y-0.5',
+						'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
 					)}>
 					{t('signinBtn')}
 				</Button>

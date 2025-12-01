@@ -103,16 +103,16 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	const getRarityGradient = (rarity) => {
 		if (rarity === 'legendary') {
 			return isDark
-				? 'from-amber-500/20 via-yellow-500/10 to-amber-500/20'
+				? 'from-amber-950/90 via-yellow-950/80 to-amber-950/90'
 				: 'from-amber-100/80 via-yellow-50/60 to-amber-100/80'
 		}
 		if (rarity === 'epic') {
 			return isDark
-				? 'from-violet-500/20 via-purple-500/10 to-violet-500/20'
+				? 'from-violet-950/90 via-purple-950/80 to-violet-950/90'
 				: 'from-violet-100/80 via-purple-50/60 to-violet-100/80'
 		}
 		return isDark
-			? 'from-emerald-500/15 via-green-500/10 to-emerald-500/15'
+			? 'from-emerald-950/90 via-green-950/80 to-emerald-950/90'
 			: 'from-emerald-100/70 via-green-50/50 to-emerald-100/70'
 	}
 
@@ -123,19 +123,16 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 	}
 
 	const getRarityShadow = (rarity) => {
+		if (isDark) {
+			return 'shadow-[0_4px_16px_rgba(0,0,0,0.3)]'
+		}
 		if (rarity === 'legendary') {
-			return isDark
-				? 'shadow-[0_6px_24px_rgba(251,191,36,0.4),0_0_40px_rgba(251,191,36,0.15)]'
-				: 'shadow-[0_6px_20px_rgba(251,191,36,0.25),0_2px_10px_rgba(251,191,36,0.15)]'
+			return 'shadow-[0_6px_20px_rgba(251,191,36,0.25),0_2px_10px_rgba(251,191,36,0.15)]'
 		}
 		if (rarity === 'epic') {
-			return isDark
-				? 'shadow-[0_6px_24px_rgba(168,85,247,0.35),0_0_40px_rgba(168,85,247,0.12)]'
-				: 'shadow-[0_6px_20px_rgba(168,85,247,0.2),0_2px_10px_rgba(168,85,247,0.12)]'
+			return 'shadow-[0_6px_20px_rgba(168,85,247,0.2),0_2px_10px_rgba(168,85,247,0.12)]'
 		}
-		return isDark
-			? 'shadow-[0_6px_24px_rgba(16,185,129,0.2),0_0_40px_rgba(16,185,129,0.08)]'
-			: 'shadow-[0_6px_20px_rgba(16,185,129,0.15),0_2px_10px_rgba(16,185,129,0.08)]'
+		return 'shadow-[0_6px_20px_rgba(16,185,129,0.15),0_2px_10px_rgba(16,185,129,0.08)]'
 	}
 
 	const getTitleGradient = (rarity) => {
@@ -204,11 +201,11 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 								</div>
 							)}
 
-							<div className="flex gap-3 items-center p-3 relative z-[1]">
+							<div className="flex gap-3 items-center px-3 py-1.5 relative z-[1]">
 								{/* Image */}
 								<div
 									className={cn(
-										'w-[90px] h-[90px] flex-shrink-0 rounded-lg overflow-hidden',
+										'w-[70px] h-[70px] flex-shrink-0 rounded-lg overflow-hidden',
 										'border-2',
 										levelColors.border,
 										isDark
@@ -252,14 +249,14 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 									)}
 
 									<div>
-										<div className="flex items-center gap-2 justify-between mb-1">
+										<div className="flex items-center gap-2 justify-between">
 											<span
 												className={cn(
 													'text-[0.75rem] font-semibold capitalize',
 													isDark ? 'text-slate-400' : 'text-slate-500'
 												)}
 											>
-												{material.section}
+												{t(material.section) || material.section}
 											</span>
 											<span
 												className={cn(
@@ -278,51 +275,6 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 											</span>
 										</div>
 
-										{/* Decorative divider */}
-										<div className="flex items-center justify-center gap-1 opacity-80 mt-3 -mb-1">
-											<div
-												className={cn(
-													'flex-1 h-px',
-													'bg-gradient-to-r from-transparent',
-													rarity === 'legendary'
-														? 'to-amber-500/50'
-														: rarity === 'epic'
-														? 'to-violet-500/40'
-														: 'to-emerald-500/30'
-												)}
-											/>
-											<div
-												className={cn(
-													'w-[3px] h-[3px] rotate-45',
-													levelColors.bg
-												)}
-												style={{ boxShadow: `0 0 4px ${levelColors.color}` }}
-											/>
-											<div
-												className={cn(
-													'w-0.5 h-0.5 rounded-full opacity-60',
-													levelColors.bg
-												)}
-											/>
-											<div
-												className={cn(
-													'w-[3px] h-[3px] rotate-45',
-													levelColors.bg
-												)}
-												style={{ boxShadow: `0 0 4px ${levelColors.color}` }}
-											/>
-											<div
-												className={cn(
-													'flex-1 h-px',
-													'bg-gradient-to-l from-transparent',
-													rarity === 'legendary'
-														? 'to-amber-500/50'
-														: rarity === 'epic'
-														? 'to-violet-500/40'
-														: 'to-emerald-500/30'
-												)}
-											/>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -407,8 +359,8 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 											<h4
 												className={cn(
 													'text-base font-bold',
-													'bg-gradient-to-r from-indigo-950 via-violet-500 to-cyan-500',
-													'bg-clip-text text-transparent',
+													'bg-gradient-to-r bg-clip-text text-transparent',
+													getTitleGradient(getRarity(material.level)),
 													translatedTitle && translatedTitle !== material.title ? 'mb-0.5' : ''
 												)}
 											>
@@ -432,11 +384,11 @@ const MaterialsTable = ({ materials, checkIfUserMaterialIsInMaterials }) => {
 								<td className="py-3 px-4">
 									<span
 										className={cn(
-											'text-[0.9rem] font-semibold',
+											'text-[0.9rem] font-semibold capitalize',
 											isDark ? 'text-slate-400' : 'text-slate-500'
 										)}
 									>
-										{material.section}
+										{t(material.section) || material.section}
 									</span>
 								</td>
 

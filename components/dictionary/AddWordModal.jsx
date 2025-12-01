@@ -276,7 +276,7 @@ const AddWordModal = ({ open, onClose }) => {
 								className={cn(
 									"h-14 sm:h-12 text-lg sm:text-base rounded-xl border-2",
 									isDark
-										? "bg-slate-800/60 border-slate-700 focus:border-violet-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-violet-500 text-slate-100 placeholder:text-slate-500"
 										: "bg-white border-slate-200 focus:border-violet-500",
 									errors.learningLangWord && "border-red-500"
 								)}
@@ -317,7 +317,7 @@ const AddWordModal = ({ open, onClose }) => {
 								className={cn(
 									"h-14 sm:h-12 text-lg sm:text-base rounded-xl border-2",
 									isDark
-										? "bg-slate-800/60 border-slate-700 focus:border-pink-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-pink-500 text-slate-100 placeholder:text-slate-500"
 										: "bg-white border-slate-200 focus:border-pink-500",
 									errors.browserLangWord && "border-red-500"
 								)}
@@ -364,7 +364,7 @@ const AddWordModal = ({ open, onClose }) => {
 								className={cn(
 									"text-lg sm:text-base rounded-xl border-2 resize-none",
 									isDark
-										? "bg-slate-800/60 border-slate-700 focus:border-emerald-500"
+										? "bg-slate-800/60 border-slate-700 focus:border-emerald-500 text-slate-100 placeholder:text-slate-500"
 										: "bg-white border-slate-200 focus:border-emerald-500",
 									errors.contextSentence && "border-red-500"
 								)}

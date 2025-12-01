@@ -474,9 +474,12 @@ const DictionaryClient = ({ translations }) => {
 	const { openFlashcards } = useFlashcards()
 	const router = useRouter()
 	const { isDark } = useThemeMode()
-	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
+	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage, userProfile } = useUserContext()
 	const userId = user?.id
 	const queryClient = useQueryClient()
+
+	// Use spoken language (native language) for translations, fallback to locale
+	const spokenLanguage = userProfile?.spoken_language || locale
 
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [isEditWordModalOpen, setIsEditWordModalOpen] = useState(false)
@@ -541,12 +544,12 @@ const DictionaryClient = ({ translations }) => {
 	// Filter words
 	const filteredUserWords = useMemo(() => {
 		const wordsSource = isUserLoggedIn ? user_words : guestWords
-		if (!wordsSource || !userLearningLanguage || !locale) return []
-		if (userLearningLanguage === locale) return []
+		if (!wordsSource || !userLearningLanguage || !spokenLanguage) return []
+		if (userLearningLanguage === spokenLanguage) return []
 
 		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
-			const translation = word[`word_${locale}`]
+			const translation = word[`word_${spokenLanguage}`]
 			if (!sourceWord || !translation) return false
 
 			if (searchQuery.trim()) {
@@ -557,11 +560,11 @@ const DictionaryClient = ({ translations }) => {
 		})
 
 		return filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn, searchQuery])
+	}, [user_words, guestWords, userLearningLanguage, spokenLanguage, isUserLoggedIn, searchQuery])
 
 	const getWordDisplay = (word) => ({
 		sourceWord: word[`word_${userLearningLanguage}`],
-		translation: word[`word_${locale}`]
+		translation: word[`word_${spokenLanguage}`]
 	})
 
 	// Pagination
@@ -629,38 +632,20 @@ const DictionaryClient = ({ translations }) => {
 		)}>
 			<div className="relative max-w-5xl mx-auto px-4">
 				{/* Header Section */}
-				<div className="flex items-center justify-center gap-5 mb-8">
-					{/* Icon with magical glow */}
-					<div className="relative">
-						<div className={cn(
-							'absolute inset-0 rounded-2xl blur-xl opacity-60',
-							'bg-gradient-to-br from-violet-500 to-cyan-500'
-						)} />
-						<div className={cn(
-							'relative w-14 h-14 rounded-2xl flex items-center justify-center',
-							'bg-gradient-to-br from-violet-600 via-purple-600 to-cyan-600',
-							'shadow-lg shadow-violet-500/40',
-							'border border-white/20'
-						)}>
-							<Scroll className="w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-						</div>
-					</div>
-					{/* Title and subtitle */}
-					<div>
-						<h1 className={cn(
-							'text-2xl md:text-3xl font-black tracking-wide',
-							'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',
-							'drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]'
-						)}>
-							Grimoire
-						</h1>
-						<p className={cn(
-							'text-sm font-medium tracking-wide',
-							isDark ? 'text-violet-300/70' : 'text-violet-500/70'
-						)}>
-							Ta collection de mots magiques
-						</p>
-					</div>
+				<div className="flex flex-col items-center justify-center mb-8">
+					<h1 className={cn(
+						'text-2xl md:text-3xl font-black tracking-wide',
+						'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',
+						'drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]'
+					)}>
+						Grimoire
+					</h1>
+					<p className={cn(
+						'text-sm font-medium tracking-wide',
+						isDark ? 'text-violet-300/70' : 'text-violet-500/70'
+					)}>
+						Ta collection de mots magiques
+					</p>
 				</div>
 
 				{/* Action Buttons */}

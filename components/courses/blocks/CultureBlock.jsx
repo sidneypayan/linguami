@@ -21,28 +21,6 @@ const CultureBlock = ({ block }) => {
 			{/* Effet de brillance */}
 			<div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
 
-			{/* Header */}
-			<div className={cn(
-				'relative p-4 sm:p-5 border-b',
-				isDark ? 'border-cyan-500/20' : 'border-cyan-200'
-			)}>
-				<div className="flex items-center gap-3 sm:gap-4">
-					<div className={cn(
-						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-cyan-400 to-teal-500'
-					)}>
-						<Globe className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-					</div>
-
-					<h3 className={cn(
-						'text-lg sm:text-xl font-bold',
-						isDark ? 'text-cyan-300' : 'text-cyan-700'
-					)}>
-						{title}
-					</h3>
-				</div>
-			</div>
-
 			<div className="relative p-4 sm:p-5 space-y-5">
 				{/* Contenu */}
 				{content && (
