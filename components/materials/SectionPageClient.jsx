@@ -11,24 +11,16 @@ import { getMaterialsBySectionAction } from '@/app/actions/materials'
 import SectionCard from '@/components/materials/SectionCard'
 import BookCard from '@/components/materials/BookCard'
 import MaterialsTable from '@/components/materials/MaterialsTable'
+import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
 import { logger } from '@/utils/logger'
 import {
 	ArrowLeft,
-	Search,
 	ChevronLeft,
 	ChevronRight,
 	Star,
 	Sword,
 	Shield,
 	Gem,
-	// FilterBar icons (consistent with MaterialsFilterBar)
-	Signal,
-	Clock,
-	PlayCircle,
-	CheckCircle2,
-	LayoutGrid,
-	List,
-	RefreshCw,
 } from 'lucide-react'
 
 // ============================================
@@ -146,226 +138,6 @@ const SectionHeader = ({ isDark, section, t, onBack }) => {
 	)
 }
 
-// ============================================
-// FILTER BAR - Consistent with MaterialsFilterBar
-// ============================================
-const FilterBar = ({
-	searchValue,
-	onSearchChange,
-	selectedLevel,
-	onLevelChange,
-	selectedStatus,
-	onStatusChange,
-	viewMode,
-	onViewChange,
-	onClear,
-	isDark,
-	t,
-	showNotStudiedFilter = false,
-	showStudiedFilter = true,
-}) => {
-	const levels = [
-		{ label: t('beginner'), key: 'beginner', color: 'emerald', colorHex: '#10b981' },
-		{ label: t('intermediate'), key: 'intermediate', color: 'violet', colorHex: '#a855f7' },
-		{ label: t('advanced'), key: 'advanced', color: 'amber', colorHex: '#fbbf24' },
-	]
-
-	const statuses = [
-		...(showNotStudiedFilter ? [
-			{ label: t('not_studied'), key: 'not_studied', tooltipKey: 'notStudiedTooltip', color: 'violet', colorHex: '#8b5cf6', Icon: PlayCircle }
-		] : []),
-		{ label: t('being_studied'), key: 'is_being_studied', tooltipKey: 'beingStudiedTooltip', color: 'amber', colorHex: '#f59e0b', Icon: Clock },
-		...(showStudiedFilter ? [
-			{ label: t('studied'), key: 'is_studied', tooltipKey: 'studiedTooltip', color: 'emerald', colorHex: '#10b981', Icon: CheckCircle2 }
-		] : []),
-	]
-
-	return (
-		<div
-			className={cn(
-				'flex flex-col gap-3 mb-6 p-3 md:p-4',
-				'rounded-2xl',
-				'border',
-				isDark
-					? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30'
-					: 'bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20',
-				isDark
-					? 'shadow-[0_4px_20px_rgba(139,92,246,0.2)]'
-					: 'shadow-[0_4px_20px_rgba(139,92,246,0.1)]'
-			)}
-		>
-			{/* First row: Search bar and view toggle */}
-			<div className="flex gap-2 items-center justify-between">
-				<div className="relative flex-1">
-					<input
-						type="text"
-						placeholder={t('search')}
-						value={searchValue}
-						onChange={(e) => onSearchChange(e.target.value)}
-						className={cn(
-							'w-full px-4 py-2.5 pr-12 rounded-xl',
-							'border-2 transition-all duration-300',
-							'text-sm sm:text-base font-medium',
-							isDark
-								? 'bg-slate-800/80 text-slate-100 border-violet-500/20 placeholder:text-slate-500'
-								: 'bg-white text-slate-900 border-violet-500/20 placeholder:text-slate-400',
-							'focus:outline-none focus:border-violet-500',
-							'hover:border-violet-500/50'
-						)}
-					/>
-					<div
-						className={cn(
-							'absolute right-2 top-1/2 -translate-y-1/2',
-							'p-2 rounded-lg',
-							'text-violet-500'
-						)}
-					>
-						<Search className="w-5 h-5" />
-					</div>
-				</div>
-
-				{/* View toggle */}
-				<div
-					className={cn(
-						'flex gap-1 p-1 rounded-lg flex-shrink-0',
-						'border-2 border-violet-500/20',
-						isDark ? 'bg-slate-800/95' : 'bg-white/95',
-						'shadow-sm'
-					)}
-				>
-					<button
-						onClick={() => onViewChange('card')}
-						title="Vue en grille"
-						className={cn(
-							'p-2 rounded-md transition-all duration-300',
-							viewMode === 'card'
-								? 'bg-gradient-to-r from-violet-500 to-cyan-500 text-white'
-								: 'text-violet-500 hover:bg-violet-500/10'
-						)}
-					>
-						<LayoutGrid className="w-4 sm:w-5 h-4 sm:h-5" />
-					</button>
-					<button
-						onClick={() => onViewChange('list')}
-						title="Vue en liste"
-						className={cn(
-							'p-2 rounded-md transition-all duration-300',
-							viewMode === 'list'
-								? 'bg-gradient-to-r from-violet-500 to-cyan-500 text-white'
-								: 'text-violet-500 hover:bg-violet-500/10'
-						)}
-					>
-						<List className="w-4 sm:w-5 h-4 sm:h-5" />
-					</button>
-				</div>
-			</div>
-
-			{/* Second row: Filters */}
-			<div className="flex gap-2 items-center flex-wrap">
-				{/* Level filters */}
-				{levels.map(level => {
-					const isSelected = selectedLevel === level.key
-					return (
-						<button
-							key={level.key}
-							onClick={() => onLevelChange(selectedLevel === level.key ? null : level.key)}
-							title={t(`${level.key}Tooltip`) || level.label}
-							className={cn(
-								'flex items-center gap-1.5 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl',
-								'text-sm font-semibold',
-								'border-2 transition-all duration-300',
-								'min-w-[40px] sm:min-w-0',
-								isSelected
-									? [
-										level.color === 'emerald' && 'border-emerald-500 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-[0_6px_24px_rgba(16,185,129,0.4)]',
-										level.color === 'violet' && 'border-violet-500 bg-gradient-to-r from-violet-500 to-violet-600 text-white shadow-[0_6px_24px_rgba(168,85,247,0.4)]',
-										level.color === 'amber' && 'border-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-[0_6px_24px_rgba(251,191,36,0.4)]',
-									]
-									: [
-										isDark ? 'bg-slate-800/80' : 'bg-white/90',
-										isDark ? 'text-slate-300' : 'text-slate-600',
-										level.color === 'emerald' && 'border-emerald-500/50 hover:border-emerald-500 hover:bg-emerald-500/20',
-										level.color === 'violet' && 'border-violet-500/50 hover:border-violet-500 hover:bg-violet-500/20',
-										level.color === 'amber' && 'border-amber-500/50 hover:border-amber-500 hover:bg-amber-500/20',
-									],
-								'hover:-translate-y-0.5 hover:scale-105',
-								'active:scale-100'
-							)}
-						>
-							<Signal
-								className={cn(
-									'w-4 h-4',
-									isSelected ? 'text-white' : `text-${level.color}-500`
-								)}
-								style={{ color: isSelected ? 'white' : level.colorHex }}
-							/>
-							<span className="hidden sm:inline">{level.label}</span>
-						</button>
-					)
-				})}
-
-				{/* Status filters */}
-				{statuses.map((status, index) => {
-					const isSelected = selectedStatus === status.key
-					const StatusIcon = status.Icon
-					return (
-						<button
-							key={status.key}
-							onClick={() => onStatusChange(selectedStatus === status.key ? null : status.key)}
-							title={t(status.tooltipKey) || status.label}
-							className={cn(
-								'flex items-center gap-1.5 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl',
-								'text-sm font-semibold',
-								'border-2 transition-all duration-300',
-								'min-w-[40px] sm:min-w-0',
-								index === 0 && 'ml-2 sm:ml-0',
-								isSelected
-									? [
-										status.color === 'emerald' && 'border-emerald-500 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-[0_6px_24px_rgba(16,185,129,0.4)]',
-										status.color === 'violet' && 'border-violet-500 bg-gradient-to-r from-violet-500 to-violet-600 text-white shadow-[0_6px_24px_rgba(139,92,246,0.4)]',
-										status.color === 'amber' && 'border-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-[0_6px_24px_rgba(245,158,11,0.4)]',
-									]
-									: [
-										isDark ? 'bg-slate-800/80' : 'bg-white/90',
-										isDark ? 'text-slate-300' : 'text-slate-600',
-										status.color === 'emerald' && 'border-emerald-500/50 hover:border-emerald-500 hover:bg-emerald-500/20',
-										status.color === 'violet' && 'border-violet-500/50 hover:border-violet-500 hover:bg-violet-500/20',
-										status.color === 'amber' && 'border-amber-500/50 hover:border-amber-500 hover:bg-amber-500/20',
-									],
-								'hover:-translate-y-0.5 hover:scale-105',
-								'active:scale-100'
-							)}
-						>
-							<StatusIcon
-								className="w-4 h-4"
-								style={{ color: isSelected ? 'white' : status.colorHex }}
-							/>
-							<span className="hidden sm:inline">{status.label}</span>
-						</button>
-					)
-				})}
-
-				{/* Reset button */}
-				<button
-					onClick={onClear}
-					title={t('showall')}
-					className={cn(
-						'p-2.5 rounded-xl transition-all duration-300',
-						'border-2 border-violet-500/20',
-						isDark ? 'bg-slate-800/95' : 'bg-white/95',
-						'text-violet-500',
-						'hover:bg-gradient-to-r hover:from-violet-500 hover:to-cyan-500',
-						'hover:text-white hover:border-transparent',
-						'hover:rotate-180 hover:scale-110',
-						'hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)]'
-					)}
-				>
-					<RefreshCw className="w-4 sm:w-5 h-4 sm:h-5" />
-				</button>
-			</div>
-		</div>
-	)
-}
 
 // ============================================
 // PAGINATION - Gaming Style
@@ -424,58 +196,53 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 				<ChevronLeft className="w-5 h-5 relative z-10" />
 			</button>
 
-			{/* Page numbers in ornate frame */}
-			<OrnateFrame isDark={isDark} glowColor="violet" className={cn(
-				'px-3 py-1.5',
-				isDark ? 'bg-slate-800/50' : 'bg-slate-50/80'
-			)}>
-				<div className="flex items-center gap-1.5">
-					{getVisiblePages().map((page, index) => (
-						page === '...' ? (
-							<span
-								key={`ellipsis-${index}`}
-								className={cn(
-									'w-8 text-center font-bold',
-									isDark ? 'text-slate-500' : 'text-slate-400'
-								)}
-							>
-								···
-							</span>
-						) : (
-							<button
-								key={page}
-								onClick={() => onPageChange(page)}
-								className={cn(
-									'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
-									'overflow-hidden',
-									page === currentPage
-										? [
-											'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
-											'shadow-lg shadow-violet-500/40',
-											'scale-110 z-10',
-											'ring-2 ring-white/20'
-										]
-										: [
-											isDark ? 'text-slate-300' : 'text-slate-600',
-											'hover:scale-105',
-											isDark
-												? 'hover:bg-violet-500/20 hover:text-violet-300'
-												: 'hover:bg-violet-100 hover:text-violet-600'
-										]
-								)}
-							>
-								{page === currentPage && (
-									<>
-										<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-										<Star className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 fill-amber-300 animate-pulse" />
-									</>
-								)}
-								<span className="relative z-10">{page}</span>
-							</button>
-						)
-					))}
-				</div>
-			</OrnateFrame>
+			{/* Page numbers */}
+			<div className="flex items-center gap-1.5">
+				{getVisiblePages().map((page, index) => (
+					page === '...' ? (
+						<span
+							key={`ellipsis-${index}`}
+							className={cn(
+								'w-8 text-center font-bold',
+								isDark ? 'text-slate-500' : 'text-slate-400'
+							)}
+						>
+							···
+						</span>
+					) : (
+						<button
+							key={page}
+							onClick={() => onPageChange(page)}
+							className={cn(
+								'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
+								'overflow-hidden',
+								page === currentPage
+									? [
+										'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
+										'shadow-lg shadow-violet-500/40',
+										'scale-110 z-10',
+										'ring-2 ring-white/20'
+									]
+									: [
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										'hover:scale-105',
+										isDark
+											? 'hover:bg-violet-500/20 hover:text-violet-300'
+											: 'hover:bg-violet-100 hover:text-violet-600'
+									]
+							)}
+						>
+							{page === currentPage && (
+								<>
+									<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+									<Star className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 fill-amber-300 animate-pulse" />
+								</>
+							)}
+							<span className="relative z-10">{page}</span>
+						</button>
+					)
+				))}
+			</div>
 
 			{/* Next button */}
 			<button
@@ -764,20 +531,20 @@ export default function SectionPageClient({
 				/>
 
 				{/* Filter Bar */}
-				<FilterBar
+				<MaterialsFilterBar
 					searchValue={searchTerm}
 					onSearchChange={handleSearchChange}
 					selectedLevel={selectedLevel}
 					onLevelChange={handleLevelChange}
 					selectedStatus={selectedStatus}
 					onStatusChange={handleStatusChange}
-					viewMode={viewMode}
+					currentView={viewMode}
 					onViewChange={handleViewChange}
 					onClear={handleClear}
-					isDark={isDark}
-					t={t}
 					showNotStudiedFilter={true}
 					showStudiedFilter={isUserAdmin}
+					showSectionFilter={false}
+					translationNamespace="materials"
 				/>
 
 				{/* Content */}

@@ -1,7 +1,7 @@
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, Trophy, Sparkles } from 'lucide-react'
+import { Trophy, Sparkles } from 'lucide-react'
 
 /**
  * SummaryBlock - Coffre aux tresors des phrases cles
@@ -36,42 +36,32 @@ const SummaryBlock = ({ block }) => {
 									: 'bg-white border-green-400 hover:shadow-md shadow-sm'
 							)}
 						>
-							<div className="flex items-start gap-3">
-								{/* Indicateur de succes */}
-								<div className={cn(
-									'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-									'bg-gradient-to-br from-green-400 to-emerald-500 shadow-sm'
+							<div>
+								{/* Phrase en langue cible */}
+								<p className={cn(
+									'font-bold text-lg mb-1',
+									isDark ? 'text-white' : 'text-slate-900'
 								)}>
-									<CheckCircle className="w-4 h-4 text-white" />
-								</div>
+									{phrase.fr}
+								</p>
 
-								<div className="flex-1 min-w-0">
-									{/* Phrase en langue cible */}
+								{/* Traduction */}
+								<p className={cn(
+									'font-medium',
+									isDark ? 'text-green-400' : 'text-green-600'
+								)}>
+									{phrase.ru}
+								</p>
+
+								{/* Contexte */}
+								{phrase.context && (
 									<p className={cn(
-										'font-bold text-lg mb-1',
-										isDark ? 'text-white' : 'text-slate-900'
+										'text-sm sm:text-base italic mt-2',
+										isDark ? 'text-slate-500' : 'text-slate-400'
 									)}>
-										{phrase.fr}
+										{phrase.context}
 									</p>
-
-									{/* Traduction */}
-									<p className={cn(
-										'font-medium',
-										isDark ? 'text-green-400' : 'text-green-600'
-									)}>
-										{phrase.ru}
-									</p>
-
-									{/* Contexte */}
-									{phrase.context && (
-										<p className={cn(
-											'text-sm sm:text-base italic mt-2',
-											isDark ? 'text-slate-500' : 'text-slate-400'
-										)}>
-											{phrase.context}
-										</p>
-									)}
-								</div>
+								)}
 							</div>
 						</div>
 					))}

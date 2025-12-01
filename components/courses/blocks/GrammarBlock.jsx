@@ -91,7 +91,7 @@ const GrammarBlock = ({ block }) => {
 												: 'bg-violet-100 border-violet-500'
 											: isDark
 												? 'bg-slate-800/50 border-violet-500/50'
-												: 'bg-white border-violet-300 shadow-sm'
+												: 'bg-white border-violet-300'
 									)}
 								>
 									<div className="flex items-start gap-3">
@@ -181,14 +181,11 @@ const GrammarBlock = ({ block }) => {
 										<tr
 											key={rowIndex}
 											className={cn(
-												'transition-colors',
-												currentPlayingIndex === `table-${rowIndex}`
-													? isDark
+												currentPlayingIndex === `table-${rowIndex}` && (
+													isDark
 														? 'bg-violet-500/15'
 														: 'bg-violet-50'
-													: isDark
-														? 'hover:bg-slate-800/50'
-														: 'hover:bg-slate-50',
+												),
 												rowIndex !== table.rows.length - 1 && (
 													isDark
 														? 'border-b border-slate-800'

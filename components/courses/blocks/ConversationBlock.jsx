@@ -25,6 +25,7 @@ const ConversationBlock = ({ block }) => {
 	const t = useTranslations('common')
 	const { isDark } = useThemeMode()
 	const [revealedAnswers, setRevealedAnswers] = useState({})
+	const [revealedDialogueLines, setRevealedDialogueLines] = useState({})
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [currentLineIndex, setCurrentLineIndex] = useState(null)
 	const [playbackRate, setPlaybackRate] = useState(1)
@@ -33,6 +34,29 @@ const ConversationBlock = ({ block }) => {
 	const lineAudioRefs = useRef({})
 
 	const { title, context, dialogue, questions } = block
+
+	// Associer chaque ligne "..." avec sa question/réponse correspondante
+	const getAnswerForLineIndex = (lineIndex) => {
+		if (!dialogue || !questions) return null
+		// Compter combien de lignes "..." il y a avant cette ligne
+		let blankCount = 0
+		for (let i = 0; i <= lineIndex; i++) {
+			if (dialogue[i]?.text === '...') {
+				if (i === lineIndex) {
+					return questions[blankCount] || null
+				}
+				blankCount++
+			}
+		}
+		return null
+	}
+
+	const toggleDialogueLine = (index) => {
+		setRevealedDialogueLines((prev) => ({
+			...prev,
+			[index]: !prev[index],
+		}))
+	}
 
 	const toggleAnswer = (index) => {
 		setRevealedAnswers((prev) => ({
@@ -238,49 +262,96 @@ const ConversationBlock = ({ block }) => {
 				{/* Dialogue */}
 				{dialogue && dialogue.length > 0 && (
 					<div className="space-y-2">
-						{dialogue.map((line, index) => (
-							<div
-								key={index}
-								className={cn(
-									'p-3 rounded-xl transition-all duration-300',
-									currentLineIndex === index
-										? isDark
-											? 'bg-orange-500/20 ring-2 ring-orange-500/50'
-											: 'bg-orange-100 ring-2 ring-orange-300'
-										: isDark
-											? 'bg-slate-800/50 hover:bg-slate-800'
-											: 'bg-white hover:bg-slate-50 shadow-sm'
-								)}
-							>
-								<div className="flex items-center gap-2 mb-1">
-									<span className={cn(
-										'font-bold text-sm',
-										isDark ? 'text-orange-400' : 'text-orange-600'
-									)}>
-										{line.speaker}
-									</span>
-									{line.audioUrl && (
-										<button
-											onClick={() => handlePlayLine(index, line.audioUrl)}
-											className={cn(
-												'p-1 rounded-full transition-colors',
-												isDark
-													? 'hover:bg-orange-500/20 text-orange-400'
-													: 'hover:bg-orange-100 text-orange-600'
-											)}
-										>
-											<Volume2 className="w-4 h-4" />
-										</button>
+						{dialogue.map((line, index) => {
+							const isBlankLine = line.text === '...'
+							const answer = isBlankLine ? getAnswerForLineIndex(index) : null
+							const isRevealed = revealedDialogueLines[index]
+
+							return (
+								<div
+									key={index}
+									onClick={isBlankLine ? () => toggleDialogueLine(index) : undefined}
+									className={cn(
+										'p-3 rounded-xl transition-all duration-300',
+										isBlankLine && 'cursor-pointer',
+										currentLineIndex === index
+											? isDark
+												? 'bg-orange-500/20 ring-2 ring-orange-500/50'
+												: 'bg-orange-100 ring-2 ring-orange-300'
+											: isBlankLine
+												? isRevealed
+													? isDark
+														? 'bg-emerald-500/20 ring-2 ring-emerald-500/30'
+														: 'bg-emerald-50 ring-2 ring-emerald-200'
+													: isDark
+														? 'bg-orange-500/10 hover:bg-orange-500/20 border-2 border-dashed border-orange-500/30'
+														: 'bg-orange-50 hover:bg-orange-100 border-2 border-dashed border-orange-300'
+												: isDark
+													? 'bg-slate-800/50'
+													: 'bg-white shadow-sm'
+									)}
+								>
+									<div className="flex items-center gap-2 mb-1">
+										<span className={cn(
+											'font-bold text-sm',
+											isDark ? 'text-orange-400' : 'text-orange-600'
+										)}>
+											{line.speaker}
+										</span>
+										{line.audioUrl && (
+											<button
+												onClick={(e) => {
+													e.stopPropagation()
+													handlePlayLine(index, line.audioUrl)
+												}}
+												className={cn(
+													'p-1 rounded-full transition-colors',
+													isDark
+														? 'hover:bg-orange-500/20 text-orange-400'
+														: 'hover:bg-orange-100 text-orange-600'
+												)}
+											>
+												<Volume2 className="w-4 h-4" />
+											</button>
+										)}
+										{isBlankLine && (
+											<span className={cn(
+												'ml-auto text-xs flex items-center gap-1',
+												isDark ? 'text-orange-400' : 'text-orange-600'
+											)}>
+												{isRevealed ? (
+													<>
+														<EyeOff className="w-3 h-3" />
+														{t('methode_hide')}
+													</>
+												) : (
+													<>
+														<Eye className="w-3 h-3" />
+														{t('methode_reveal')}
+													</>
+												)}
+											</span>
+										)}
+									</div>
+									{isBlankLine && isRevealed && answer ? (
+										<p className={cn(
+											'text-sm font-medium',
+											isDark ? 'text-emerald-400' : 'text-emerald-600'
+										)}>
+											{answer.answer}
+										</p>
+									) : (
+										<p className={cn(
+											'text-sm',
+											isDark ? 'text-slate-300' : 'text-slate-700',
+											isBlankLine && 'italic'
+										)}>
+											{line.text}
+										</p>
 									)}
 								</div>
-								<p className={cn(
-									'text-sm',
-									isDark ? 'text-slate-300' : 'text-slate-700'
-								)}>
-									{line.text}
-								</p>
-							</div>
-						))}
+							)
+						})}
 					</div>
 				)}
 
@@ -329,12 +400,12 @@ const ConversationBlock = ({ block }) => {
 											{revealedAnswers[index] ? (
 												<>
 													<EyeOff className="w-4 h-4" />
-													Cacher
+													{t('methode_hide')}
 												</>
 											) : (
 												<>
 													<Eye className="w-4 h-4" />
-													Voir
+													{t('methode_see')}
 												</>
 											)}
 										</Button>

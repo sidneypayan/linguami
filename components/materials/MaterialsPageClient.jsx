@@ -873,48 +873,46 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 				<ChevronLeft className="w-4 h-4 relative z-10" />
 			</button>
 
-			<OrnateFrame isDark={isDark} className="px-2 py-1">
-				<div className="flex items-center gap-1">
-					{getVisiblePages().map((page, index) => (
-						page === '...' ? (
-							<span
-								key={`ellipsis-${index}`}
-								className={cn(
-									'w-6 text-center font-bold text-sm',
-									isDark ? 'text-slate-500' : 'text-slate-400'
-								)}
-							>
-								···
-							</span>
-						) : (
-							<button
-								key={page}
-								onClick={() => onPageChange(page)}
-								className={cn(
-									'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
-									'overflow-hidden',
-									page === currentPage
-										? [
-											'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 text-white',
-											'shadow-md shadow-amber-500/40',
-											'scale-105 z-10',
-											'ring-1 ring-amber-300/30'
-										]
-										: [
-											isDark ? 'text-slate-300' : 'text-slate-600',
-											'hover:scale-105',
-											isDark
-												? 'hover:bg-amber-500/20 hover:text-amber-300'
-												: 'hover:bg-amber-100 hover:text-amber-600'
-										]
-								)}
-							>
-								<span className="relative z-10">{page}</span>
-							</button>
-						)
-					))}
-				</div>
-			</OrnateFrame>
+			<div className="flex items-center gap-1">
+				{getVisiblePages().map((page, index) => (
+					page === '...' ? (
+						<span
+							key={`ellipsis-${index}`}
+							className={cn(
+								'w-6 text-center font-bold text-sm',
+								isDark ? 'text-slate-500' : 'text-slate-400'
+							)}
+						>
+							···
+						</span>
+					) : (
+						<button
+							key={page}
+							onClick={() => onPageChange(page)}
+							className={cn(
+								'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
+								'overflow-hidden',
+								page === currentPage
+									? [
+										'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 text-white',
+										'shadow-md shadow-amber-500/40',
+										'scale-105 z-10',
+										'ring-1 ring-amber-300/30'
+									]
+									: [
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										'hover:scale-105',
+										isDark
+											? 'hover:bg-amber-500/20 hover:text-amber-300'
+											: 'hover:bg-amber-100 hover:text-amber-600'
+									]
+							)}
+						>
+							<span className="relative z-10">{page}</span>
+						</button>
+					)
+				))}
+			</div>
 
 			<button
 				onClick={() => onPageChange(currentPage + 1)}

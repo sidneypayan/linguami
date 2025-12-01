@@ -351,7 +351,7 @@ const DialogueBlock = ({ block }) => {
 					<div
 						key={index}
 						className={cn(
-							'px-3 pt-3 pb-2 sm:px-4 sm:pt-4 sm:pb-2.5 rounded-lg sm:rounded-xl transition-all duration-300',
+							'rounded-lg sm:rounded-xl transition-all duration-300',
 							currentLineIndex === index
 								? isDark
 									? 'bg-blue-500/20 ring-2 ring-blue-500/50'
@@ -361,80 +361,67 @@ const DialogueBlock = ({ block }) => {
 									: 'bg-white hover:bg-slate-50 shadow-sm'
 						)}
 					>
-						{/* Nom du personnage */}
-						<div className="flex items-center gap-2 mb-1">
-							<span className={cn(
-								'font-bold text-sm',
-								line.speakerGender === 'male'
-									? 'text-blue-500'
-									: 'text-pink-500'
-							)}>
-								{line.speaker}
-							</span>
-							{line.audioUrl && (
-								<button
-									onClick={() => handlePlayLine(index, line.audioUrl)}
-									className={cn(
-										'p-1 rounded-full transition-colors',
-										isDark
-											? 'hover:bg-blue-500/20 text-blue-400'
-											: 'hover:bg-blue-100 text-blue-600'
+						{/* Desktop: Layout deux colonnes (dialogue + vocabulaire à droite) */}
+						<div className="hidden lg:grid lg:grid-cols-2 lg:gap-4">
+							{/* Colonne gauche: Dialogue */}
+							<div className="px-4 pt-4 pb-2.5">
+								{/* Nom du personnage */}
+								<div className="flex items-center gap-2 mb-1">
+									<span className={cn(
+										'font-bold text-sm',
+										line.speakerGender === 'male'
+											? 'text-blue-500'
+											: 'text-pink-500'
+									)}>
+										{line.speaker}
+									</span>
+									{line.audioUrl && (
+										<button
+											onClick={() => handlePlayLine(index, line.audioUrl)}
+											className={cn(
+												'p-1 rounded-full transition-colors',
+												isDark
+													? 'hover:bg-blue-500/20 text-blue-400'
+													: 'hover:bg-blue-100 text-blue-600'
+											)}
+										>
+											<Volume2 className="w-4 h-4" />
+										</button>
 									)}
-								>
-									<Volume2 className="w-4 h-4" />
-								</button>
-							)}
-						</div>
+								</div>
 
-						{/* Texte principal */}
-						<p className={cn(
-							'font-medium',
-							isDark ? 'text-white' : 'text-slate-900'
-						)}>
-							{line.text}
-						</p>
+								{/* Texte principal */}
+								<p className={cn(
+									'font-medium',
+									isDark ? 'text-white' : 'text-slate-900'
+								)}>
+									{line.text}
+								</p>
 
-						{/* Vocabulaire - Desktop: toujours visible */}
-						{line.vocab && line.vocab.length > 0 && (
-							<div className="hidden sm:flex sm:flex-wrap sm:gap-1.5 mt-2">
-								{line.vocab.map((item, idx) => (
-									<Badge
-										key={idx}
-										variant="outline"
-										className={cn(
-											'text-xs sm:text-sm py-1 px-2 whitespace-nowrap',
-											isDark
-												? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
-												: 'border-blue-200 bg-blue-50 text-blue-700'
-										)}
-									>
-										{item.word} = {item.translation}
-									</Badge>
-								))}
+								{/* Traduction simple (si présente et pas de vocab) */}
+								{line.translation && (!line.vocab || line.vocab.length === 0) && (
+									<p className={cn(
+										'text-base italic mt-1.5',
+										isDark ? 'text-slate-400' : 'text-slate-500'
+									)}>
+										{line.translation}
+									</p>
+								)}
 							</div>
-						)}
 
-						{/* Traduction simple si pas de vocab */}
-						{line.translation && (!line.vocab || line.vocab.length === 0) && (
-							<p className={cn(
-								'text-sm sm:text-base italic mt-1.5',
-								isDark ? 'text-slate-400' : 'text-slate-500'
-							)}>
-								{line.translation}
-							</p>
-						)}
-
-						{/* Vocabulaire - Mobile: toggle */}
-						{line.vocab && line.vocab.length > 0 && (
-							<div className="sm:hidden mt-2">
-								{showInlineVocab && (
+							{/* Colonne droite: Vocabulaire */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className={cn(
+									'px-4 pt-4 pb-2.5 flex items-center border-l',
+									isDark ? 'border-slate-700/50' : 'border-slate-200/50'
+								)}>
 									<div className="flex flex-wrap gap-1.5">
 										{line.vocab.map((item, idx) => (
 											<Badge
 												key={idx}
 												variant="outline"
 												className={cn(
-													'text-xs py-1 px-2',
+													'text-sm py-1 px-2 whitespace-nowrap',
 													isDark
 														? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
 														: 'border-blue-200 bg-blue-50 text-blue-700'
@@ -444,9 +431,99 @@ const DialogueBlock = ({ block }) => {
 											</Badge>
 										))}
 									</div>
+								</div>
+							)}
+						</div>
+
+						{/* Mobile/Tablet: Layout original (une colonne) */}
+						<div className="lg:hidden px-3 pt-3 pb-2 sm:px-4 sm:pt-4 sm:pb-2.5">
+							{/* Nom du personnage */}
+							<div className="flex items-center gap-2 mb-1">
+								<span className={cn(
+									'font-bold text-sm',
+									line.speakerGender === 'male'
+										? 'text-blue-500'
+										: 'text-pink-500'
+								)}>
+									{line.speaker}
+								</span>
+								{line.audioUrl && (
+									<button
+										onClick={() => handlePlayLine(index, line.audioUrl)}
+										className={cn(
+											'p-1 rounded-full transition-colors',
+											isDark
+												? 'hover:bg-blue-500/20 text-blue-400'
+												: 'hover:bg-blue-100 text-blue-600'
+										)}
+									>
+										<Volume2 className="w-4 h-4" />
+									</button>
 								)}
 							</div>
-						)}
+
+							{/* Texte principal */}
+							<p className={cn(
+								'font-medium',
+								isDark ? 'text-white' : 'text-slate-900'
+							)}>
+								{line.text}
+							</p>
+
+							{/* Vocabulaire - Tablet: toujours visible */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className="hidden sm:flex sm:flex-wrap sm:gap-1.5 mt-2">
+									{line.vocab.map((item, idx) => (
+										<Badge
+											key={idx}
+											variant="outline"
+											className={cn(
+												'text-xs sm:text-sm py-1 px-2 whitespace-nowrap',
+												isDark
+													? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+													: 'border-blue-200 bg-blue-50 text-blue-700'
+											)}
+										>
+											{item.word} = {item.translation}
+										</Badge>
+									))}
+								</div>
+							)}
+
+							{/* Traduction simple si pas de vocab */}
+							{line.translation && (!line.vocab || line.vocab.length === 0) && (
+								<p className={cn(
+									'text-sm sm:text-base italic mt-1.5',
+									isDark ? 'text-slate-400' : 'text-slate-500'
+								)}>
+									{line.translation}
+								</p>
+							)}
+
+							{/* Vocabulaire - Mobile: toggle */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className="sm:hidden mt-2">
+									{showInlineVocab && (
+										<div className="flex flex-wrap gap-1.5">
+											{line.vocab.map((item, idx) => (
+												<Badge
+													key={idx}
+													variant="outline"
+													className={cn(
+														'text-xs py-1 px-2',
+														isDark
+															? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+															: 'border-blue-200 bg-blue-50 text-blue-700'
+													)}
+												>
+													{item.word} = {item.translation}
+												</Badge>
+											))}
+										</div>
+									)}
+								</div>
+							)}
+						</div>
 					</div>
 				))}
 			</div>

@@ -250,36 +250,35 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 	}
 
 	return (
-		<div className="flex items-center justify-center gap-2 py-8 mt-6">
+		<div className="flex items-center justify-center gap-1.5 py-6 mt-4">
 			<button
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage === 1}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === 1
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:-translate-x-0.5',
+						: 'hover:scale-105 hover:-translate-x-0.5',
 					isDark
 						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
 						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== 1 && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+						? 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronLeft className="w-5 h-5 relative z-10" />
+				<ChevronLeft className="w-4 h-4 relative z-10" />
 			</button>
 
-			<OrnateFrame isDark={isDark} className="px-3 py-1.5">
-				<div className="flex items-center gap-1.5">
+			<div className="flex items-center gap-1">
 					{getVisiblePages().map((page, index) => (
 						page === '...' ? (
 							<span
 								key={`ellipsis-${index}`}
 								className={cn(
-									'w-8 text-center font-bold',
+									'w-6 text-center font-bold text-sm',
 									isDark ? 'text-slate-500' : 'text-slate-400'
 								)}
 							>
@@ -290,14 +289,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 								key={page}
 								onClick={() => onPageChange(page)}
 								className={cn(
-									'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
+									'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
 									'overflow-hidden',
 									page === currentPage
 										? [
 											'bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-600 text-white',
-											'shadow-lg shadow-violet-500/40',
-											'scale-110 z-10',
-											'ring-2 ring-violet-300/30'
+											'shadow-md shadow-violet-500/40',
+											'scale-105 z-10',
+											'ring-1 ring-violet-300/30'
 										]
 										: [
 											isDark ? 'text-slate-300' : 'text-slate-600',
@@ -312,28 +311,27 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 							</button>
 						)
 					))}
-				</div>
-			</OrnateFrame>
+			</div>
 
 			<button
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === totalPages
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:translate-x-0.5',
+						: 'hover:scale-105 hover:translate-x-0.5',
 					isDark
 						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
 						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== totalPages && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+						? 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronRight className="w-5 h-5 relative z-10" />
+				<ChevronRight className="w-4 h-4 relative z-10" />
 			</button>
 		</div>
 	)
