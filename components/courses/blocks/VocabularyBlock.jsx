@@ -32,48 +32,6 @@ const VocabularyBlock = ({ block }) => {
 			{/* Effet de brillance */}
 			<div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl" />
 
-			{/* Header */}
-			<div className={cn(
-				'relative p-4 sm:p-5 border-b',
-				isDark ? 'border-emerald-500/20' : 'border-emerald-200'
-			)}>
-				<div className="flex items-center gap-3 sm:gap-4">
-					<div className={cn(
-						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-emerald-400 to-green-500'
-					)}>
-						<Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-					</div>
-
-					<div className="flex-1">
-						<h3 className={cn(
-							'text-lg sm:text-xl font-bold',
-							isDark ? 'text-emerald-300' : 'text-emerald-700'
-						)}>
-							{title}
-						</h3>
-						{category && (
-							<Badge variant="outline" className={cn(
-								'mt-1',
-								isDark
-									? 'border-emerald-500/30 text-emerald-400'
-									: 'border-emerald-300 text-emerald-700'
-							)}>
-								{t('methode_category')} : {getTranslatedCategory(category)}
-							</Badge>
-						)}
-					</div>
-
-					<Badge className={cn(
-						'font-bold',
-						'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0'
-					)}>
-						<Sparkles className="w-3 h-3 mr-1" />
-						{words?.length || 0} {t('methode_words')}
-					</Badge>
-				</div>
-			</div>
-
 			{/* Liste des mots */}
 			<div className="relative p-4 sm:p-5">
 				<div className="grid gap-3 sm:grid-cols-2">
@@ -88,33 +46,25 @@ const VocabularyBlock = ({ block }) => {
 							)}
 						>
 							{/* Mot et traduction */}
-							<div className="flex items-start gap-2 mb-2">
-								<div className={cn(
-									'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold',
-									'bg-gradient-to-br from-emerald-400 to-green-500 text-white shadow-sm'
+							<div className="mb-2">
+								<p className={cn(
+									'font-bold text-lg',
+									isDark ? 'text-emerald-300' : 'text-emerald-700'
 								)}>
-									{index + 1}
-								</div>
-								<div className="flex-1 min-w-0">
-									<p className={cn(
-										'font-bold text-lg',
-										isDark ? 'text-emerald-300' : 'text-emerald-700'
-									)}>
-										{item.word}
-									</p>
-									<p className={cn(
-										'font-medium',
-										isDark ? 'text-slate-300' : 'text-slate-600'
-									)}>
-										→ {item.translation}
-									</p>
-								</div>
+									{item.word}
+								</p>
+								<p className={cn(
+									'font-medium',
+									isDark ? 'text-slate-300' : 'text-slate-600'
+								)}>
+									→ {item.translation}
+								</p>
 							</div>
 
 							{/* Prononciation */}
 							{item.pronunciation && (
 								<p className={cn(
-									'text-sm font-mono mb-2 pl-10',
+									'text-sm font-mono mb-2',
 									isDark ? 'text-slate-500' : 'text-slate-400'
 								)}>
 									[{item.pronunciation}]
@@ -124,7 +74,7 @@ const VocabularyBlock = ({ block }) => {
 							{/* Exemple */}
 							{item.example && (
 								<div className={cn(
-									'mt-3 pt-3 border-t pl-10',
+									'mt-3 pt-3 border-t',
 									isDark ? 'border-slate-700' : 'border-slate-100'
 								)}>
 									<p className={cn(

@@ -60,34 +60,15 @@ const TipBlock = ({ block }) => {
 			)} />
 
 			<div className="relative p-4 sm:p-5">
-				<div className="flex items-start gap-3 sm:gap-4">
-					{/* Icone */}
-					<div className={cn(
-						'w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg',
-						`bg-gradient-to-br ${config.gradient}`
-					)}>
-						<Icon className="w-5 h-5 text-white" />
-					</div>
-
-					{/* Contenu */}
-					<div className="flex-1 min-w-0">
-						<h4 className={cn(
-							'font-bold text-lg mb-2',
-							config.text
-						)}>
-							{title}
-						</h4>
-						<div
-							className={cn(
-								'prose prose-sm max-w-none',
-								isDark
-									? 'prose-invert text-slate-300'
-									: 'text-slate-600'
-							)}
-							dangerouslySetInnerHTML={{ __html: content }}
-						/>
-					</div>
-				</div>
+				<div
+					className={cn(
+						'prose prose-sm max-w-none',
+						isDark
+							? 'prose-invert text-slate-300'
+							: 'text-slate-600'
+					)}
+					dangerouslySetInnerHTML={{ __html: content }}
+				/>
 			</div>
 		</div>
 	)

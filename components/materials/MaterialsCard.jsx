@@ -99,7 +99,10 @@ const MaterialsCard = ({ material }) => {
 						className={cn(
 							'font-bold text-[0.95rem] sm:text-[1.05rem] leading-tight',
 							'line-clamp-2 flex-1',
-							'bg-gradient-to-r from-indigo-950 via-violet-500 to-cyan-500 bg-clip-text text-transparent'
+							'bg-clip-text text-transparent',
+							isDark
+								? 'bg-gradient-to-r from-violet-300 via-violet-400 to-cyan-400'
+								: 'bg-gradient-to-r from-indigo-950 via-violet-500 to-cyan-500'
 						)}
 					>
 						{getTranslatedTitle()}

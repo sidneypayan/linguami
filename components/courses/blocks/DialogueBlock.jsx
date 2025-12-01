@@ -11,9 +11,10 @@ import {
 	ChevronDown,
 	ChevronUp,
 	MessageSquare,
+	MessagesSquare,
 	Gauge,
 	Check,
-	Sparkles,
+	BookMarked,
 	Eye,
 	EyeOff,
 } from 'lucide-react'
@@ -160,59 +161,116 @@ const DialogueBlock = ({ block }) => {
 			{/* Effet de brillance */}
 			<div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl" />
 
-			{/* Header */}
+			{/* Header - contrôles audio uniquement */}
+			{(audioUrl || lines?.some((line) => line.audioUrl) || lines?.some((line) => line.vocab && line.vocab.length > 0)) && (
 			<div className={cn(
 				'relative p-4 sm:p-5 border-b',
 				isDark ? 'border-blue-500/20' : 'border-blue-200'
 			)}>
-				<div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-					<div className={cn(
-						'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-blue-400 to-cyan-500'
-					)}>
-						<MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-					</div>
+				{/* Mobile */}
+				<div className="flex items-center gap-2 flex-wrap sm:hidden">
+						{/* Toggle vocabulaire */}
+						{lines?.some((line) => line.vocab && line.vocab.length > 0) && (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setShowInlineVocab(!showInlineVocab)}
+								className={cn(
+									'gap-1.5 border-2 h-9 px-2.5',
+									isDark
+										? 'border-blue-500/30 text-blue-300 hover:bg-blue-500/10'
+										: 'border-blue-300 text-blue-700 hover:bg-blue-50'
+								)}
+							>
+								{showInlineVocab ? (
+									<EyeOff className="w-4 h-4" />
+								) : (
+									<Eye className="w-4 h-4" />
+								)}
+								<span className="text-xs">{t('methode_show_vocab')}</span>
+							</Button>
+						)}
 
-					<div className="flex-1 min-w-0">
-						<h3 className={cn(
-							'text-lg sm:text-xl font-bold truncate',
-							isDark ? 'text-blue-300' : 'text-blue-700'
-						)}>
-							{title || 'Dialogue'}
-						</h3>
-						<p className={cn(
-							'text-sm',
-							isDark ? 'text-slate-400' : 'text-slate-500'
-						)}>
-							{lines?.length || 0} {t('methode_lines')}
-						</p>
-					</div>
+						{/* Audio controls */}
+						{(audioUrl || lines?.some((line) => line.audioUrl)) && (
+							<>
+								{/* Speed menu */}
+								<div className="relative">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+										className={cn(
+											'gap-1 border-2 h-9 px-2.5',
+											isDark
+												? 'border-blue-500/30 text-blue-300 hover:bg-blue-500/10'
+												: 'border-blue-300 text-blue-700 hover:bg-blue-50'
+										)}
+									>
+										<Gauge className="w-4 h-4" />
+										<span className="text-xs">{playbackRate}x</span>
+									</Button>
 
-					{/* Toggle vocabulaire - Mobile only */}
-					{lines?.some((line) => line.vocab && line.vocab.length > 0) && (
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => setShowInlineVocab(!showInlineVocab)}
-							className={cn(
-								'sm:hidden gap-1.5 border-2',
-								isDark
-									? 'border-blue-500/30 text-blue-300 hover:bg-blue-500/10'
-									: 'border-blue-300 text-blue-700 hover:bg-blue-50'
-							)}
-						>
-							{showInlineVocab ? (
-								<EyeOff className="w-4 h-4" />
-							) : (
-								<Eye className="w-4 h-4" />
-							)}
-							{t('methode_show_vocab')}
-						</Button>
-					)}
+									{showSpeedMenu && (
+										<div className={cn(
+											'absolute left-0 top-full mt-1 py-1 rounded-lg border shadow-xl z-20 min-w-[100px]',
+											isDark
+												? 'bg-slate-800 border-slate-700'
+												: 'bg-white border-slate-200'
+										)}>
+											{speedOptions.map((option) => (
+												<button
+													key={option.value}
+													onClick={() => handleSpeedChange(option.value)}
+													className={cn(
+														'w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors',
+														playbackRate === option.value
+															? isDark
+																? 'bg-blue-500/20 text-blue-300'
+																: 'bg-blue-50 text-blue-700'
+															: isDark
+																? 'hover:bg-slate-700 text-slate-300'
+																: 'hover:bg-slate-50 text-slate-700'
+													)}
+												>
+													{playbackRate === option.value && (
+														<Check className="w-4 h-4" />
+													)}
+													<span className={playbackRate === option.value ? '' : 'ml-6'}>
+														{option.label}
+													</span>
+												</button>
+											))}
+										</div>
+									)}
+								</div>
 
-					{/* Controles audio */}
-					{(audioUrl || lines?.some((line) => line.audioUrl)) && (
-						<div className="flex items-center gap-2">
+								<Button
+									onClick={handlePlayDialogue}
+									size="sm"
+									className={cn(
+										'gap-1.5 font-semibold shadow-lg h-9 px-3',
+										'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
+									)}
+								>
+									{isPlaying ? (
+										<>
+											<Pause className="w-4 h-4" />
+											<span className="text-xs">{t('methode_pause')}</span>
+										</>
+									) : (
+										<>
+											<Play className="w-4 h-4" />
+											<span className="text-xs">{t('methode_play_all')}</span>
+										</>
+									)}
+								</Button>
+							</>
+						)}
+				</div>
+
+				{/* Desktop */}
+				<div className="hidden sm:flex items-center gap-2">
 							{/* Menu vitesse */}
 							<div className="relative">
 								<Button
@@ -264,29 +322,28 @@ const DialogueBlock = ({ block }) => {
 								)}
 							</div>
 
-							<Button
-								onClick={handlePlayDialogue}
-								className={cn(
-									'gap-2 font-semibold shadow-lg',
-									'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
-								)}
-							>
-								{isPlaying ? (
-									<>
-										<Pause className="w-4 h-4" />
-										{t('methode_pause')}
-									</>
-								) : (
-									<>
-										<Play className="w-4 h-4" />
-										{t('methode_play_all')}
-									</>
-								)}
-							</Button>
-						</div>
-					)}
+					<Button
+						onClick={handlePlayDialogue}
+						className={cn(
+							'gap-2 font-semibold shadow-lg',
+							'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
+						)}
+					>
+						{isPlaying ? (
+							<>
+								<Pause className="w-4 h-4" />
+								{t('methode_pause')}
+							</>
+						) : (
+							<>
+								<Play className="w-4 h-4" />
+								{t('methode_play_all')}
+							</>
+						)}
+					</Button>
 				</div>
 			</div>
+			)}
 
 			{/* Lignes du dialogue */}
 			<div className="p-3 sm:p-5 space-y-2 sm:space-y-3">
@@ -294,7 +351,7 @@ const DialogueBlock = ({ block }) => {
 					<div
 						key={index}
 						className={cn(
-							'p-3 sm:p-4 rounded-lg sm:rounded-xl transition-all duration-300',
+							'rounded-lg sm:rounded-xl transition-all duration-300',
 							currentLineIndex === index
 								? isDark
 									? 'bg-blue-500/20 ring-2 ring-blue-500/50'
@@ -304,44 +361,118 @@ const DialogueBlock = ({ block }) => {
 									: 'bg-white hover:bg-slate-50 shadow-sm'
 						)}
 					>
-						{/* Nom du personnage */}
-						<div className="flex items-center gap-2 mb-1">
-							<span className={cn(
-								'font-bold text-sm',
-								line.speakerGender === 'male'
-									? 'text-blue-500'
-									: 'text-pink-500'
-							)}>
-								{line.speaker}
-							</span>
-							{line.audioUrl && (
-								<button
-									onClick={() => handlePlayLine(index, line.audioUrl)}
-									className={cn(
-										'p-1 rounded-full transition-colors',
-										isDark
-											? 'hover:bg-blue-500/20 text-blue-400'
-											: 'hover:bg-blue-100 text-blue-600'
+						{/* Desktop: Layout deux colonnes (dialogue + vocabulaire à droite) */}
+						<div className="hidden lg:grid lg:grid-cols-2 lg:gap-4">
+							{/* Colonne gauche: Dialogue */}
+							<div className="px-4 pt-4 pb-2.5">
+								{/* Nom du personnage */}
+								<div className="flex items-center gap-2 mb-1">
+									<span className={cn(
+										'font-bold text-sm',
+										line.speakerGender === 'male'
+											? 'text-blue-500'
+											: 'text-pink-500'
+									)}>
+										{line.speaker}
+									</span>
+									{line.audioUrl && (
+										<button
+											onClick={() => handlePlayLine(index, line.audioUrl)}
+											className={cn(
+												'p-1 rounded-full transition-colors',
+												isDark
+													? 'hover:bg-blue-500/20 text-blue-400'
+													: 'hover:bg-blue-100 text-blue-600'
+											)}
+										>
+											<Volume2 className="w-4 h-4" />
+										</button>
 									)}
-								>
-									<Volume2 className="w-4 h-4" />
-								</button>
+								</div>
+
+								{/* Texte principal */}
+								<p className={cn(
+									'font-medium',
+									isDark ? 'text-white' : 'text-slate-900'
+								)}>
+									{line.text}
+								</p>
+
+								{/* Traduction simple (si présente et pas de vocab) */}
+								{line.translation && (!line.vocab || line.vocab.length === 0) && (
+									<p className={cn(
+										'text-base italic mt-1.5',
+										isDark ? 'text-slate-400' : 'text-slate-500'
+									)}>
+										{line.translation}
+									</p>
+								)}
+							</div>
+
+							{/* Colonne droite: Vocabulaire */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className={cn(
+									'px-4 pt-4 pb-2.5 flex items-center border-l',
+									isDark ? 'border-slate-700/50' : 'border-slate-200/50'
+								)}>
+									<div className="flex flex-wrap gap-1.5">
+										{line.vocab.map((item, idx) => (
+											<Badge
+												key={idx}
+												variant="outline"
+												className={cn(
+													'text-sm py-1 px-2 whitespace-nowrap',
+													isDark
+														? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+														: 'border-blue-200 bg-blue-50 text-blue-700'
+												)}
+											>
+												{item.word} = {item.translation}
+											</Badge>
+										))}
+									</div>
+								</div>
 							)}
 						</div>
 
-						{/* Texte et vocabulaire */}
-						<div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+						{/* Mobile/Tablet: Layout original (une colonne) */}
+						<div className="lg:hidden px-3 pt-3 pb-2 sm:px-4 sm:pt-4 sm:pb-2.5">
+							{/* Nom du personnage */}
+							<div className="flex items-center gap-2 mb-1">
+								<span className={cn(
+									'font-bold text-sm',
+									line.speakerGender === 'male'
+										? 'text-blue-500'
+										: 'text-pink-500'
+								)}>
+									{line.speaker}
+								</span>
+								{line.audioUrl && (
+									<button
+										onClick={() => handlePlayLine(index, line.audioUrl)}
+										className={cn(
+											'p-1 rounded-full transition-colors',
+											isDark
+												? 'hover:bg-blue-500/20 text-blue-400'
+												: 'hover:bg-blue-100 text-blue-600'
+										)}
+									>
+										<Volume2 className="w-4 h-4" />
+									</button>
+								)}
+							</div>
+
 							{/* Texte principal */}
 							<p className={cn(
-								'font-medium sm:flex-1 sm:min-w-0',
+								'font-medium',
 								isDark ? 'text-white' : 'text-slate-900'
 							)}>
 								{line.text}
 							</p>
 
-							{/* Vocabulaire - Desktop: toujours visible à droite */}
+							{/* Vocabulaire - Tablet: toujours visible */}
 							{line.vocab && line.vocab.length > 0 && (
-								<div className="hidden sm:flex sm:flex-wrap sm:gap-1.5 sm:flex-1 sm:justify-end">
+								<div className="hidden sm:flex sm:flex-wrap sm:gap-1.5 mt-2">
 									{line.vocab.map((item, idx) => (
 										<Badge
 											key={idx}
@@ -362,37 +493,37 @@ const DialogueBlock = ({ block }) => {
 							{/* Traduction simple si pas de vocab */}
 							{line.translation && (!line.vocab || line.vocab.length === 0) && (
 								<p className={cn(
-									'text-sm sm:text-base italic sm:text-right sm:flex-1',
+									'text-sm sm:text-base italic mt-1.5',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
 									{line.translation}
 								</p>
 							)}
-						</div>
 
-						{/* Vocabulaire - Mobile: toggle */}
-						{line.vocab && line.vocab.length > 0 && (
-							<div className="sm:hidden mt-2">
-								{showInlineVocab && (
-									<div className="flex flex-wrap gap-1.5">
-										{line.vocab.map((item, idx) => (
-											<Badge
-												key={idx}
-												variant="outline"
-												className={cn(
-													'text-xs py-1 px-2',
-													isDark
-														? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
-														: 'border-blue-200 bg-blue-50 text-blue-700'
-												)}
-											>
-												{item.word} = {item.translation}
-											</Badge>
-										))}
-									</div>
-								)}
-							</div>
-						)}
+							{/* Vocabulaire - Mobile: toggle */}
+							{line.vocab && line.vocab.length > 0 && (
+								<div className="sm:hidden mt-2">
+									{showInlineVocab && (
+										<div className="flex flex-wrap gap-1.5">
+											{line.vocab.map((item, idx) => (
+												<Badge
+													key={idx}
+													variant="outline"
+													className={cn(
+														'text-xs py-1 px-2',
+														isDark
+															? 'border-blue-500/30 bg-blue-500/10 text-blue-300'
+															: 'border-blue-200 bg-blue-50 text-blue-700'
+													)}
+												>
+													{item.word} = {item.translation}
+												</Badge>
+											))}
+										</div>
+									)}
+								</div>
+							)}
+						</div>
 					</div>
 				))}
 			</div>
@@ -413,7 +544,7 @@ const DialogueBlock = ({ block }) => {
 						)}
 					>
 						<div className="flex items-center gap-2">
-							<Sparkles className={cn(
+							<BookMarked className={cn(
 								'w-5 h-5',
 								isDark ? 'text-blue-400' : 'text-blue-600'
 							)} />

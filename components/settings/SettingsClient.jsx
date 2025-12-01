@@ -738,11 +738,13 @@ const SettingsClient = ({ translations }) => {
 
 			{/* Avatar Dialog */}
 			<Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
-				<DialogContent className={cn(
-					'max-w-2xl max-h-[90vh] overflow-auto rounded-2xl',
-					'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
-					'border-2 border-violet-500/30 shadow-2xl'
-				)}>
+				<DialogContent
+					isDark={true}
+					className={cn(
+						'max-w-2xl max-h-[90vh] overflow-auto rounded-2xl',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-violet-500/30 shadow-2xl'
+					)}>
 					<DialogHeader>
 						<DialogTitle className="text-xl font-bold text-center text-white flex items-center justify-center gap-2">
 							<Sparkles className="w-5 h-5 text-violet-400" />
@@ -793,11 +795,13 @@ const SettingsClient = ({ translations }) => {
 
 			{/* Change Password Dialog */}
 			<Dialog open={changePasswordDialogOpen} onOpenChange={setChangePasswordDialogOpen}>
-				<DialogContent className={cn(
-					'max-w-md rounded-2xl',
-					'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
-					'border-2 border-red-500/30 shadow-2xl'
-				)}>
+				<DialogContent
+					isDark={true}
+					className={cn(
+						'max-w-md rounded-2xl',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-red-500/30 shadow-2xl'
+					)}>
 					<DialogHeader>
 						<DialogTitle className="text-xl font-bold text-center text-red-300 flex items-center justify-center gap-2">
 							<Lock className="w-5 h-5" />
@@ -878,11 +882,13 @@ const SettingsClient = ({ translations }) => {
 
 			{/* Delete Account Dialog */}
 			<Dialog open={deleteAccountDialogOpen} onOpenChange={setDeleteAccountDialogOpen}>
-				<DialogContent className={cn(
-					'max-w-md rounded-2xl',
-					'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
-					'border-2 border-red-600/50 shadow-2xl'
-				)}>
+				<DialogContent
+					isDark={true}
+					className={cn(
+						'max-w-md rounded-2xl',
+						'bg-gradient-to-br from-violet-950 via-slate-900 to-purple-950',
+						'border-2 border-red-600/50 shadow-2xl'
+					)}>
 					<DialogHeader>
 						<DialogTitle className="text-xl font-bold text-center text-red-300 flex items-center justify-center gap-2">
 							<Trash2 className="w-5 h-5" />

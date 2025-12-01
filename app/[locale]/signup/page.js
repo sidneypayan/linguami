@@ -15,7 +15,6 @@ import { Link } from '@/i18n/navigation'
 import { logger } from '@/utils/logger'
 import { verifyTurnstile } from '@/app/actions/auth'
 import {
-	UserPlus,
 	AtSign,
 	KeyRound,
 	User,
@@ -54,7 +53,7 @@ const initialState = {
 	spokenLanguage: '',
 	learningLanguage: '',
 	languageLevel: '',
-	selectedAvatar: 'avatar1',
+	selectedAvatar: 'avatar12',
 }
 
 const Signup = () => {
@@ -277,7 +276,7 @@ const Signup = () => {
 	)
 
 	return (
-		<AuthLayout icon={<UserPlus className="w-8 h-8 sm:w-9 sm:h-9 text-white" />}>
+		<AuthLayout>
 			{/* Titre */}
 			<h1 className="text-center text-2xl sm:text-4xl font-extrabold mb-3 sm:mb-2 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
 				{t('signupTitle')}
@@ -427,29 +426,31 @@ const Signup = () => {
 					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
 						{t('spokenLanguage')}
 					</Label>
-					<Select value={values.spokenLanguage} onValueChange={(val) => handleSelectChange('spokenLanguage', val)}>
-						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
-							<MessageCircle className={cn(
-								'absolute left-3 h-5 w-5',
-								isDark ? 'text-slate-400' : 'text-slate-500'
-							)} />
-							<SelectValue placeholder={t('selectLanguage')} />
-						</SelectTrigger>
-						<SelectContent>
-							{[
-								{ value: 'english', label: t('english'), Flag: EnglishFlag },
-								{ value: 'french', label: t('french'), Flag: FrenchFlag },
-								{ value: 'russian', label: t('russian'), Flag: RussianFlag },
-							].map(({ value, label, Flag }) => (
-								<SelectItem key={value} value={value}>
-									<div className="flex items-center gap-2">
-										<Flag size={20} />
-										<span>{label}</span>
-									</div>
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="relative">
+						<MessageCircle className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 z-10 pointer-events-none',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Select value={values.spokenLanguage} onValueChange={(val) => handleSelectChange('spokenLanguage', val)}>
+							<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+								<SelectValue placeholder={t('selectLanguage')} />
+							</SelectTrigger>
+							<SelectContent>
+								{[
+									{ value: 'english', label: t('english'), Flag: EnglishFlag },
+									{ value: 'french', label: t('french'), Flag: FrenchFlag },
+									{ value: 'russian', label: t('russian'), Flag: RussianFlag },
+								].map(({ value, label, Flag }) => (
+									<SelectItem key={value} value={value}>
+										<div className="flex items-center gap-2">
+											<Flag size={20} />
+											<span>{label}</span>
+										</div>
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 
 				{/* Langue d'apprentissage */}
@@ -457,28 +458,30 @@ const Signup = () => {
 					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
 						{t('learningLanguage')}
 					</Label>
-					<Select
-						value={values.learningLanguage}
-						onValueChange={(val) => handleSelectChange('learningLanguage', val)}
-						disabled={!values.spokenLanguage}>
-						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
-							<GraduationCap className={cn(
-								'absolute left-3 h-5 w-5',
-								isDark ? 'text-slate-400' : 'text-slate-500'
-							)} />
-							<SelectValue placeholder={t('selectLanguage')} />
-						</SelectTrigger>
-						<SelectContent>
-							{availableLearningLanguages.map(({ value, label, flag: Flag }) => (
-								<SelectItem key={value} value={value}>
-									<div className="flex items-center gap-2">
-										<Flag size={20} />
-										<span>{label}</span>
-									</div>
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="relative">
+						<GraduationCap className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 z-10 pointer-events-none',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Select
+							value={values.learningLanguage}
+							onValueChange={(val) => handleSelectChange('learningLanguage', val)}
+							disabled={!values.spokenLanguage}>
+							<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+								<SelectValue placeholder={t('selectLanguage')} />
+							</SelectTrigger>
+							<SelectContent>
+								{availableLearningLanguages.map(({ value, label, flag: Flag }) => (
+									<SelectItem key={value} value={value}>
+										<div className="flex items-center gap-2">
+											<Flag size={20} />
+											<span>{label}</span>
+										</div>
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 
 				{/* Niveau de langue */}
@@ -486,29 +489,31 @@ const Signup = () => {
 					<Label className={isDark ? 'text-slate-300' : 'text-slate-700'}>
 						{t('languageLevel')}
 					</Label>
-					<Select value={values.languageLevel} onValueChange={(val) => handleSelectChange('languageLevel', val)}>
-						<SelectTrigger className={cn(inputClassName, 'pl-10')}>
-							<TrendingUp className={cn(
-								'absolute left-3 h-5 w-5',
-								isDark ? 'text-slate-400' : 'text-slate-500'
-							)} />
-							<SelectValue placeholder={t('selectLevel')} />
-						</SelectTrigger>
-						<SelectContent>
-							{[
-								{ value: 'beginner', icon: <SignalLow className="h-5 w-5 text-emerald-500" />, label: t('beginner') },
-								{ value: 'intermediate', icon: <SignalMedium className="h-5 w-5 text-purple-500" />, label: t('intermediate') },
-								{ value: 'advanced', icon: <SignalHigh className="h-5 w-5 text-amber-400" />, label: t('advanced') },
-							].map(({ value, icon, label }) => (
-								<SelectItem key={value} value={value}>
-									<div className="flex items-center gap-2">
-										{icon}
-										<span>{label}</span>
-									</div>
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="relative">
+						<TrendingUp className={cn(
+							'absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 z-10 pointer-events-none',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)} />
+						<Select value={values.languageLevel} onValueChange={(val) => handleSelectChange('languageLevel', val)}>
+							<SelectTrigger className={cn(inputClassName, 'pl-10')}>
+								<SelectValue placeholder={t('selectLevel')} />
+							</SelectTrigger>
+							<SelectContent>
+								{[
+									{ value: 'beginner', icon: <SignalLow className="h-5 w-5 text-emerald-500" />, label: t('beginner') },
+									{ value: 'intermediate', icon: <SignalMedium className="h-5 w-5 text-purple-500" />, label: t('intermediate') },
+									{ value: 'advanced', icon: <SignalHigh className="h-5 w-5 text-amber-400" />, label: t('advanced') },
+								].map(({ value, icon, label }) => (
+									<SelectItem key={value} value={value}>
+										<div className="flex items-center gap-2">
+											{icon}
+											<span>{label}</span>
+										</div>
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 
 				{/* Selection d'avatar */}
@@ -521,7 +526,7 @@ const Signup = () => {
 						type="button"
 						onClick={() => setShowAvatars(!showAvatars)}
 						className={cn(
-							'w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between',
+							'w-full px-3 py-1 rounded-xl border-2 transition-all flex items-center justify-between',
 							showAvatars
 								? 'border-indigo-500 bg-gradient-to-br from-indigo-500/10 to-purple-500/10'
 								: cn(
@@ -532,21 +537,16 @@ const Signup = () => {
 								)
 						)}>
 						<div className="flex items-center gap-3">
-							<Avatar className="h-14 w-14 border-[3px] border-indigo-500 shadow-lg">
+							<Avatar className="h-14 w-14 border-[3px] border-indigo-500 shadow-lg flex-shrink-0">
 								<AvatarImage
 									src={AVATARS.find(a => a.id === values.selectedAvatar)?.url}
 									alt={t('selectedAvatar')}
 								/>
 								<AvatarFallback>AV</AvatarFallback>
 							</Avatar>
-							<div className="text-left">
-								<p className={cn('font-semibold', isDark ? 'text-slate-100' : 'text-slate-800')}>
-									{t(AVATARS.find(a => a.id === values.selectedAvatar)?.nameKey)}
-								</p>
-								<p className={cn('text-sm', isDark ? 'text-slate-400' : 'text-slate-500')}>
-									{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
-								</p>
-							</div>
+							<span className={cn('text-sm leading-none', isDark ? 'text-slate-400' : 'text-slate-500')}>
+								{showAvatars ? t('hideAvatars') : t('clickToChangeAvatar')}
+							</span>
 						</div>
 						{showAvatars ? (
 							<ChevronUp className="h-6 w-6 text-indigo-500" />
@@ -624,7 +624,8 @@ const Signup = () => {
 						'w-full h-12 sm:h-14 rounded-xl font-bold text-base sm:text-lg mt-2',
 						'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-500',
 						'shadow-[0_8px_24px_rgba(102,126,234,0.4)] hover:shadow-[0_12px_32px_rgba(102,126,234,0.5)]',
-						'transition-all duration-300 hover:-translate-y-0.5'
+						'transition-all duration-300 hover:-translate-y-0.5',
+						'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
 					)}>
 					{t('signupBtn')}
 				</Button>

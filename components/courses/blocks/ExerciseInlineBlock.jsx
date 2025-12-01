@@ -82,49 +82,25 @@ const ExerciseInlineBlock = ({ block }) => {
 			{/* Effet de brillance */}
 			<div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
 
-			{/* Header */}
-			<div className={cn(
-				'relative p-4 sm:p-5 border-b',
-				isDark ? 'border-purple-500/20' : 'border-purple-200'
-			)}>
-				<div className="flex items-center gap-4">
-					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-purple-400 to-pink-500'
+			{/* Score badge quand soumis */}
+			{submitted && (
+				<div className={cn(
+					'relative p-3 sm:p-4 border-b flex justify-end',
+					isDark ? 'border-purple-500/20' : 'border-purple-200'
+				)}>
+					<Badge className={cn(
+						'font-bold px-3 py-1',
+						score === 100
+							? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0'
+							: score >= 50
+								? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0'
+								: 'bg-gradient-to-r from-red-500 to-rose-500 text-white border-0'
 					)}>
-						<Target className="w-6 h-6 text-white" />
-					</div>
-
-					<div className="flex-1">
-						<h3 className={cn(
-							'text-lg sm:text-xl font-bold',
-							isDark ? 'text-purple-300' : 'text-purple-700'
-						)}>
-							{title}
-						</h3>
-						<p className={cn(
-							'text-sm',
-							isDark ? 'text-slate-400' : 'text-slate-500'
-						)}>
-							{questions?.length || 0} {questions?.length > 1 ? 'questions' : 'question'}
-						</p>
-					</div>
-
-					{submitted && (
-						<Badge className={cn(
-							'font-bold px-3 py-1',
-							score === 100
-								? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0'
-								: score >= 50
-									? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0'
-									: 'bg-gradient-to-r from-red-500 to-rose-500 text-white border-0'
-						)}>
-							<Flame className="w-3 h-3 mr-1" />
-							{score}%
-						</Badge>
-					)}
+						<Flame className="w-3 h-3 mr-1" />
+						{score}%
+					</Badge>
 				</div>
-			</div>
+			)}
 
 			{/* Questions */}
 			<div className="relative p-4 sm:p-5 space-y-4">

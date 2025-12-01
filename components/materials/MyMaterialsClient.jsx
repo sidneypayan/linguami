@@ -10,7 +10,53 @@ import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
 import { getUserMaterialsByLanguageAction } from '@/app/actions/materials'
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Gem, Sword, Shield } from 'lucide-react'
+
+// ============================================
+// EMPTY STATE
+// ============================================
+const EmptyState = ({ isDark, t }) => (
+	<div className={cn(
+		'relative rounded-2xl overflow-hidden p-8 text-center',
+		'border-2',
+		isDark ? 'border-amber-500/30 bg-slate-900/80' : 'border-amber-300/50 bg-white/90',
+		'shadow-xl',
+		isDark ? 'shadow-amber-500/20' : 'shadow-amber-300/30'
+	)}>
+		{/* Rotating gem icon */}
+		<div className="relative w-20 h-20 mx-auto mb-4">
+			<div className={cn(
+				'absolute inset-0 rounded-2xl rotate-45',
+				'bg-gradient-to-br from-violet-500/20 to-cyan-500/20',
+				'animate-pulse'
+			)} />
+			<div className="absolute inset-2 rounded-xl rotate-45 bg-gradient-to-br from-violet-500/10 to-cyan-500/10" />
+			<div className="absolute inset-0 flex items-center justify-center">
+				<Gem className={cn('w-10 h-10', isDark ? 'text-violet-400' : 'text-violet-500')} />
+			</div>
+		</div>
+
+		<h3 className={cn(
+			'text-2xl font-black mb-2',
+			'bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent'
+		)}>
+			{t('noMaterialsFound')}
+		</h3>
+		<p className={cn(
+			'text-sm',
+			isDark ? 'text-slate-400' : 'text-slate-500'
+		)}>
+			{t('noMaterialsInCategory')}
+		</p>
+
+		{/* Decorative swords */}
+		<div className="flex items-center justify-center gap-4 mt-4">
+			<Sword className={cn('w-5 h-5 rotate-[-45deg]', isDark ? 'text-amber-500/30' : 'text-amber-400/40')} />
+			<Shield className={cn('w-6 h-6', isDark ? 'text-amber-500/30' : 'text-amber-400/40')} />
+			<Sword className={cn('w-5 h-5 rotate-45', isDark ? 'text-amber-500/30' : 'text-amber-400/40')} />
+		</div>
+	</div>
+)
 
 const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 	const t = useTranslations('materials')
@@ -102,18 +148,17 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 	}
 
 	return (
-		<>
-			{/* Header Section - Desktop only */}
-			<div
-				className={cn(
-					'hidden lg:block',
-					'pt-16 md:pt-24 pb-3 md:pb-4',
-					'border-b border-violet-500/15',
-					isDark ? 'bg-slate-900' : 'bg-white'
-				)}
-			>
-				<div className="max-w-6xl mx-auto px-4">
-					<div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-3">
+		<div className={cn(
+			'min-h-screen pt-16 md:pt-24 pb-24',
+			isDark
+				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
+				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50 via-violet-50/30 to-slate-50'
+		)}>
+			<div className="relative max-w-7xl mx-auto px-4">
+				{/* Header */}
+				<div className="relative mb-6 md:mb-8">
+					<div className="flex items-center gap-3 md:gap-4">
+						{/* Back button */}
 						<button
 							onClick={() => router.back()}
 							aria-label="back"
@@ -132,46 +177,26 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 						>
 							<ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
 						</button>
+
+						{/* Title */}
 						<div>
-							<h1
-								className={cn(
-									'text-2xl sm:text-3xl font-bold mb-1',
-									'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
-								)}
-							>
+							<h1 className={cn(
+								'text-2xl sm:text-3xl md:text-4xl font-bold',
+								'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
+							)}>
 								{t('myMaterialsTitle')}
 							</h1>
-							<p className="text-slate-500 text-sm sm:text-[0.9375rem]">
+							<p className={cn(
+								'text-sm',
+								isDark ? 'text-slate-400' : 'text-slate-500'
+							)}>
 								{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
 							</p>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div className="max-w-6xl mx-auto px-4 pt-16 lg:pt-4 pb-4 md:pb-8">
-				{/* Mobile Title - Hidden on desktop */}
-				<div
-					className={cn(
-						'flex lg:hidden items-center justify-between',
-						'mb-4 pb-3 border-b border-violet-500/15'
-					)}
-				>
-					<div>
-						<h1
-							className={cn(
-								'text-2xl font-bold mb-1',
-								'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
-							)}
-						>
-							{t('myMaterialsTitle')}
-						</h1>
-						<p className="text-slate-500 text-sm">
-							{filteredMaterials.length} {filteredMaterials.length <= 1 ? t('material') : t('materials')}
-						</p>
-					</div>
-				</div>
-
+				{/* Filter Bar */}
 				<MaterialsFilterBar
 					onSearchChange={handleSearchChange}
 					onSectionChange={handleSectionChange}
@@ -191,35 +216,20 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 
 				{/* Materials display */}
 				{filteredMaterials.length === 0 ? (
-					<div className="text-center py-12 px-4">
-						<h2
-							className={cn(
-								'text-xl font-semibold mb-3',
-								isDark ? 'text-slate-400' : 'text-slate-500'
-							)}
-						>
-							{t('noMaterialsFound')}
-						</h2>
-						<p className={cn(
-							'text-base',
-							isDark ? 'text-slate-500' : 'text-slate-400'
-						)}>
-							{t('noMaterialsInCategory')}
-						</p>
-					</div>
+					<EmptyState isDark={isDark} t={t} />
 				) : viewMode === 'card' ? (
-					<div
-						className={cn(
-							'grid gap-4 md:gap-6',
-							'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-						)}
-					>
-						{filteredMaterials.map(material => (
-							<SectionCard
+					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+						{filteredMaterials.map((material, index) => (
+							<div
 								key={material.id}
-								material={material}
-								checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
-							/>
+								className="animate-in fade-in slide-in-from-bottom-4"
+								style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
+							>
+								<SectionCard
+									material={material}
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
+								/>
+							</div>
 						))}
 					</div>
 				) : (
@@ -229,7 +239,7 @@ const UserMaterials = ({ initialMaterials = [], learningLanguage }) => {
 					/>
 				)}
 			</div>
-		</>
+		</div>
 	)
 }
 

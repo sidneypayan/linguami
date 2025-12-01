@@ -39,6 +39,7 @@ const MagicLinkDialog = ({ open, onClose, onSend }) => {
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent
+				isDark={isDark}
 				className={cn(
 					'sm:max-w-md rounded-xl',
 					isDark

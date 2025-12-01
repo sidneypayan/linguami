@@ -81,18 +81,14 @@ const CornerOrnament = ({ position, isDark }) => {
 
 	return (
 		<div className={cn(
-			'absolute w-8 h-8 pointer-events-none',
+			'absolute w-5 h-5 pointer-events-none',
 			positionClasses[position]
 		)}>
-			<svg viewBox="0 0 32 32" className={cn('w-full h-full', isDark ? 'text-amber-500/30' : 'text-amber-600/20')}>
+			<svg viewBox="0 0 20 20" className={cn('w-full h-full', isDark ? 'text-amber-500/40' : 'text-amber-600/25')}>
+				{/* Simple L-shape with rounded inner corner */}
 				<path
-					d="M0 0 L12 0 L12 2 L2 2 L2 12 L0 12 Z"
+					d="M0 0 L8 0 L8 3 L3 3 L3 8 L0 8 Z"
 					fill="currentColor"
-				/>
-				<path
-					d="M6 0 L8 0 L8 6 L6 6 Z M0 6 L6 6 L6 8 L0 8 Z"
-					fill="currentColor"
-					opacity="0.5"
 				/>
 			</svg>
 		</div>
@@ -102,7 +98,7 @@ const CornerOrnament = ({ position, isDark }) => {
 // ============================================
 // ORNATE FRAME
 // ============================================
-const OrnateFrame = ({ children, className, isDark }) => {
+const OrnateFrame = ({ children, className, isDark, hideCorners = false }) => {
 	// Check if className contains overflow-visible to override default overflow-hidden
 	const hasOverflowVisible = className?.includes('overflow-visible')
 
@@ -124,10 +120,14 @@ const OrnateFrame = ({ children, className, isDark }) => {
 			)} style={{ margin: '2px' }} />
 
 			{/* Corner ornaments */}
-			<CornerOrnament position="top-left" isDark={isDark} />
-			<CornerOrnament position="top-right" isDark={isDark} />
-			<CornerOrnament position="bottom-left" isDark={isDark} />
-			<CornerOrnament position="bottom-right" isDark={isDark} />
+			{!hideCorners && (
+				<>
+					<CornerOrnament position="top-left" isDark={isDark} />
+					<CornerOrnament position="top-right" isDark={isDark} />
+					<CornerOrnament position="bottom-left" isDark={isDark} />
+					<CornerOrnament position="bottom-right" isDark={isDark} />
+				</>
+			)}
 
 			{/* Top decorative bar */}
 			<div className={cn(
@@ -488,8 +488,8 @@ const SectionDropdown = ({ selectedSection, onSectionChange, isDark, t, sections
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				className={cn(
-					'flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm',
-					'border-2 transition-all cursor-pointer min-w-[180px]',
+					'flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-xl font-semibold text-sm',
+					'border-2 transition-all cursor-pointer',
 					'focus:outline-none focus:ring-2 focus:ring-violet-500/50',
 					selectedSection
 						? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white border-violet-400/50'
@@ -499,9 +499,9 @@ const SectionDropdown = ({ selectedSection, onSectionChange, isDark, t, sections
 				)}
 			>
 				<SelectedIcon className="w-4 h-4 flex-shrink-0" />
-				<span className="flex-1 text-left truncate">{selected.label}</span>
+				<span className="text-left">{selected.label}</span>
 				<ChevronDown className={cn(
-					'w-4 h-4 transition-transform flex-shrink-0',
+					'w-4 h-4 ml-1 transition-transform flex-shrink-0',
 					isOpen && 'rotate-180'
 				)} />
 			</button>
@@ -550,10 +550,12 @@ const SectionDropdown = ({ selectedSection, onSectionChange, isDark, t, sections
 							<div key={categoryKey}>
 								{/* Category Header */}
 								<div className={cn(
-									'flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider',
-									isDark ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
+									'flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider',
+									isDark
+										? 'text-violet-300 bg-gradient-to-r from-violet-500/20 to-transparent border-l-2 border-violet-500'
+										: 'text-violet-600 bg-gradient-to-r from-violet-100 to-transparent border-l-2 border-violet-500'
 								)}>
-									<CatIcon className="w-3.5 h-3.5" />
+									<CatIcon className={cn('w-4 h-4', isDark ? 'text-violet-400' : 'text-violet-500')} />
 									<span>{catInfo?.label || categoryKey}</span>
 								</div>
 
@@ -773,11 +775,6 @@ const FilterBar = ({
 						)
 					})}
 
-					{/* Divider */}
-					<div className={cn(
-						'w-px h-8 mx-1',
-						isDark ? 'bg-gradient-to-b from-transparent via-amber-500/30 to-transparent' : 'bg-gradient-to-b from-transparent via-amber-400/30 to-transparent'
-					)} />
 
 					{/* Status filters */}
 					{statuses.map((status) => {
@@ -854,90 +851,88 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 	}
 
 	return (
-		<div className="flex items-center justify-center gap-2 py-8 mt-6">
+		<div className="flex items-center justify-center gap-1.5 py-6 mt-4">
 			<button
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage === 1}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === 1
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:-translate-x-0.5',
+						: 'hover:scale-105 hover:-translate-x-0.5',
 					isDark
 						? 'border-amber-500/30 bg-slate-800/80 text-amber-400'
 						: 'border-amber-300 bg-white text-amber-600',
 					currentPage !== 1 && (isDark
-						? 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20'
-						: 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-300/30')
+						? 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-500/20'
+						: 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-300/30')
 				)}
 			>
-				<ChevronLeft className="w-5 h-5 relative z-10" />
+				<ChevronLeft className="w-4 h-4 relative z-10" />
 			</button>
 
-			<OrnateFrame isDark={isDark} className="px-3 py-1.5">
-				<div className="flex items-center gap-1.5">
-					{getVisiblePages().map((page, index) => (
-						page === '...' ? (
-							<span
-								key={`ellipsis-${index}`}
-								className={cn(
-									'w-8 text-center font-bold',
-									isDark ? 'text-slate-500' : 'text-slate-400'
-								)}
-							>
-								···
-							</span>
-						) : (
-							<button
-								key={page}
-								onClick={() => onPageChange(page)}
-								className={cn(
-									'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
-									'overflow-hidden',
-									page === currentPage
-										? [
-											'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 text-white',
-											'shadow-lg shadow-amber-500/40',
-											'scale-110 z-10',
-											'ring-2 ring-amber-300/30'
-										]
-										: [
-											isDark ? 'text-slate-300' : 'text-slate-600',
-											'hover:scale-105',
-											isDark
-												? 'hover:bg-amber-500/20 hover:text-amber-300'
-												: 'hover:bg-amber-100 hover:text-amber-600'
-										]
-								)}
-							>
-								<span className="relative z-10">{page}</span>
-							</button>
-						)
-					))}
-				</div>
-			</OrnateFrame>
+			<div className="flex items-center gap-1">
+				{getVisiblePages().map((page, index) => (
+					page === '...' ? (
+						<span
+							key={`ellipsis-${index}`}
+							className={cn(
+								'w-6 text-center font-bold text-sm',
+								isDark ? 'text-slate-500' : 'text-slate-400'
+							)}
+						>
+							···
+						</span>
+					) : (
+						<button
+							key={page}
+							onClick={() => onPageChange(page)}
+							className={cn(
+								'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
+								'overflow-hidden',
+								page === currentPage
+									? [
+										'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 text-white',
+										'shadow-md shadow-amber-500/40',
+										'scale-105 z-10',
+										'ring-1 ring-amber-300/30'
+									]
+									: [
+										isDark ? 'text-slate-300' : 'text-slate-600',
+										'hover:scale-105',
+										isDark
+											? 'hover:bg-amber-500/20 hover:text-amber-300'
+											: 'hover:bg-amber-100 hover:text-amber-600'
+									]
+							)}
+						>
+							<span className="relative z-10">{page}</span>
+						</button>
+					)
+				))}
+			</div>
 
 			<button
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === totalPages
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:translate-x-0.5',
+						: 'hover:scale-105 hover:translate-x-0.5',
 					isDark
 						? 'border-amber-500/30 bg-slate-800/80 text-amber-400'
 						: 'border-amber-300 bg-white text-amber-600',
 					currentPage !== totalPages && (isDark
-						? 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20'
-						: 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-300/30')
+						? 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-500/20'
+						: 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-300/30')
 				)}
 			>
-				<ChevronRight className="w-5 h-5 relative z-10" />
+				<ChevronRight className="w-4 h-4 relative z-10" />
 			</button>
 		</div>
 	)

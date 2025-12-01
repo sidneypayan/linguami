@@ -604,6 +604,125 @@ export async function deleteWordsAction(wordIds) {
 }
 
 // ==========================================
+// BULK Operations (Lesson Import)
+// ==========================================
+
+/**
+ * Import multiple words from a lesson to user's flashcards
+ * @param {Object} params
+ * @param {Array} params.words - Array of { word, translation } objects
+ * @param {string} params.userLearningLanguage - Language being learned (ru, fr, it)
+ * @param {string} params.locale - User's interface language (ru, fr, en)
+ * @param {string} params.lessonId - Lesson ID for reference
+ * @returns {Promise<Object>} Result with imported count
+ */
+export async function importLessonWordsAction({ words, userLearningLanguage, locale, lessonId }) {
+	const supabase = createServerClient(await cookies())
+
+	// ✅ Auth verification
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser()
+
+	if (authError || !user) {
+		return {
+			success: false,
+			error: 'unauthorized',
+		}
+	}
+
+	try {
+		let importedCount = 0
+		let skippedCount = 0
+		const errors = []
+
+		for (const wordPair of words) {
+			// Build word data structure
+			const wordData = {
+				word_ru: null,
+				word_fr: null,
+				word_en: null,
+			}
+
+			// Map original word to learning language column
+			const learningLangColumn = `word_${userLearningLanguage}`
+			wordData[learningLangColumn] = wordPair.word
+
+			// Map translated word to locale column
+			const localeColumn = `word_${locale}`
+			wordData[localeColumn] = wordPair.translation
+
+			const insertData = {
+				...wordData,
+				user_id: user.id,
+				material_id: null, // No material for lesson imports
+				word_sentence: wordPair.example || '',
+				word_lang: userLearningLanguage,
+				// Initialize SRS fields for new words
+				card_state: 'new',
+				ease_factor: 2.5,
+				interval: 0,
+				learning_step: null,
+				next_review_date: null,
+				last_review_date: null,
+				reviews_count: 0,
+				lapses: 0,
+				is_suspended: false,
+				created_at: new Date().toISOString(),
+				updated_at: new Date().toISOString(),
+			}
+
+			const { error } = await supabase
+				.from('user_words')
+				.insert([insertData])
+
+			if (error) {
+				// Check for duplicate
+				const isDuplicate =
+					error?.code === '23505' ||
+					(typeof error?.message === 'string' &&
+						error.message.toLowerCase().includes('duplicate key value'))
+
+				if (isDuplicate) {
+					skippedCount++
+				} else {
+					errors.push({ word: wordPair.word, error: error.message })
+				}
+			} else {
+				importedCount++
+			}
+		}
+
+		// Add XP for bulk import
+		if (importedCount > 0) {
+			try {
+				await addXPAction({
+					actionType: 'lesson_words_imported',
+					sourceId: lessonId?.toString() || '',
+					description: `Imported ${importedCount} words from lesson`,
+				})
+			} catch (xpError) {
+				logger.error('[importLessonWordsAction] Error adding XP:', xpError)
+			}
+		}
+
+		return {
+			success: true,
+			importedCount,
+			skippedCount,
+			errors: errors.length > 0 ? errors : null,
+		}
+	} catch (error) {
+		logger.error('[importLessonWordsAction] Unexpected error:', error)
+		return {
+			success: false,
+			error: error.message || 'Error importing words',
+		}
+	}
+}
+
+// ==========================================
 // READ Operations
 // ==========================================
 

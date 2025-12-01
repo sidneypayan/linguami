@@ -106,6 +106,11 @@ const Navbar = props => {
 		return isMaterialsPath && hasSection
 	}
 
+	const isOnMethodPage = () => {
+		if (!pathname) return false
+		return pathname.includes('/method')
+	}
+
 	return (
 		<Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
 			{/* Main Navbar */}
@@ -113,7 +118,7 @@ const Navbar = props => {
 				'fixed top-0 left-0 right-0 z-50',
 				'bg-gradient-to-r from-violet-900 via-purple-900 to-indigo-900',
 				'backdrop-blur-xl',
-				'shadow-[0_4px_30px_rgba(139,92,246,0.4)]',
+				'shadow-[0_4px_30px_rgba(139,92,246,0.4)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.4)]',
 				'border-b border-violet-500/30'
 			)}>
 				{/* Background effects */}
@@ -138,11 +143,11 @@ const Navbar = props => {
 								'bg-gradient-to-br from-violet-500/30 to-cyan-500/20',
 								'border border-violet-500/40',
 								'backdrop-blur-sm',
-								'shadow-lg shadow-violet-500/30',
+								'shadow-lg shadow-violet-500/30 dark:shadow-lg dark:shadow-black/30',
 								'transition-all duration-300',
 								'hover:from-violet-500/50 hover:to-cyan-500/30',
 								'hover:scale-110 hover:rotate-3',
-								'hover:shadow-xl hover:shadow-violet-500/50',
+								'hover:shadow-xl hover:shadow-violet-500/50 dark:hover:shadow-xl dark:hover:shadow-black/40',
 								'active:scale-95 hover:bg-transparent'
 							)}
 						>
@@ -157,7 +162,7 @@ const Navbar = props => {
 							'transition-all duration-300',
 							'group-hover:scale-105 group-hover:-translate-y-0.5',
 							'group-hover:bg-gradient-to-br group-hover:from-violet-500/30 group-hover:to-cyan-500/25',
-							'group-hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)]'
+							'group-hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)] dark:group-hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)]'
 						)}>
 							<span className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
 								Linguami
@@ -219,10 +224,12 @@ const Navbar = props => {
 							</Link>
 						)}
 
-						{/* Theme toggle and Language menus */}
-						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && !isOnMaterialSectionPage() && (
+						{/* Theme toggle - always visible */}
+						{isMounted && <ThemeToggle />}
+
+						{/* Language menus - hidden on lesson/material/method pages */}
+						{isMounted && !params?.material && !params?.slug && !isOnLessonPage() && !isOnMaterialSectionPage() && !isOnMethodPage() && (
 							<>
-								<ThemeToggle />
 								<InterfaceLanguageMenu />
 								<LanguageMenu />
 							</>
@@ -258,7 +265,7 @@ const Navbar = props => {
 					'w-[75%] max-w-[320px] p-0',
 					'bg-gradient-to-b from-violet-900 via-purple-900 to-indigo-950',
 					'border-r border-violet-500/40',
-					'shadow-[4px_0_30px_rgba(139,92,246,0.4)]',
+					'shadow-[4px_0_30px_rgba(139,92,246,0.4)] dark:shadow-[4px_0_30px_rgba(0,0,0,0.4)]',
 					'2xl:hidden'
 				)}
 			>
@@ -273,7 +280,7 @@ const Navbar = props => {
 
 				<div className="relative z-10 flex flex-col h-full overflow-y-auto">
 					{/* Navigation */}
-					<nav className="flex-1 px-4 pt-12 pb-4">
+					<nav className="flex-1 px-4 pt-16 pb-4">
 						<ul className="space-y-2">
 							{navigationLinks.map((link, index) => {
 								const isActive = isActivePath(link.href)
@@ -336,6 +343,11 @@ const Navbar = props => {
 								</li>
 							)}
 						</ul>
+
+						{/* Theme toggle for mobile */}
+						<div className="mt-4 px-4">
+							<ThemeToggle variant="full" />
+						</div>
 					</nav>
 
 					{/* Sign in/Sign up buttons for mobile */}

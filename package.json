@@ -7,6 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
+		"pre-push": "npm run lint && npm run build",
 		"test": "jest --watch",
 		"optimize-images": "node scripts/optimize-images.js",
 		"optimize-image": "node scripts/optimize-single-image.js",

@@ -250,36 +250,35 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 	}
 
 	return (
-		<div className="flex items-center justify-center gap-2 py-8 mt-6">
+		<div className="flex items-center justify-center gap-1.5 py-6 mt-4">
 			<button
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage === 1}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === 1
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:-translate-x-0.5',
+						: 'hover:scale-105 hover:-translate-x-0.5',
 					isDark
 						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
 						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== 1 && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+						? 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronLeft className="w-5 h-5 relative z-10" />
+				<ChevronLeft className="w-4 h-4 relative z-10" />
 			</button>
 
-			<OrnateFrame isDark={isDark} className="px-3 py-1.5">
-				<div className="flex items-center gap-1.5">
+			<div className="flex items-center gap-1">
 					{getVisiblePages().map((page, index) => (
 						page === '...' ? (
 							<span
 								key={`ellipsis-${index}`}
 								className={cn(
-									'w-8 text-center font-bold',
+									'w-6 text-center font-bold text-sm',
 									isDark ? 'text-slate-500' : 'text-slate-400'
 								)}
 							>
@@ -290,14 +289,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 								key={page}
 								onClick={() => onPageChange(page)}
 								className={cn(
-									'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
+									'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
 									'overflow-hidden',
 									page === currentPage
 										? [
 											'bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-600 text-white',
-											'shadow-lg shadow-violet-500/40',
-											'scale-110 z-10',
-											'ring-2 ring-violet-300/30'
+											'shadow-md shadow-violet-500/40',
+											'scale-105 z-10',
+											'ring-1 ring-violet-300/30'
 										]
 										: [
 											isDark ? 'text-slate-300' : 'text-slate-600',
@@ -312,28 +311,27 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
 							</button>
 						)
 					))}
-				</div>
-			</OrnateFrame>
+			</div>
 
 			<button
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage === totalPages}
 				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
+					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
 					'transition-all duration-300',
-					'border-2 overflow-hidden',
+					'border overflow-hidden',
 					currentPage === totalPages
 						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:translate-x-0.5',
+						: 'hover:scale-105 hover:translate-x-0.5',
 					isDark
 						? 'border-violet-500/30 bg-slate-800/80 text-violet-400'
 						: 'border-violet-300 bg-white text-violet-600',
 					currentPage !== totalPages && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
+						? 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-500/20'
+						: 'hover:border-violet-400 hover:shadow-md hover:shadow-violet-300/30')
 				)}
 			>
-				<ChevronRight className="w-5 h-5 relative z-10" />
+				<ChevronRight className="w-4 h-4 relative z-10" />
 			</button>
 		</div>
 	)
@@ -474,9 +472,12 @@ const DictionaryClient = ({ translations }) => {
 	const { openFlashcards } = useFlashcards()
 	const router = useRouter()
 	const { isDark } = useThemeMode()
-	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage } = useUserContext()
+	const { user, isUserLoggedIn, isBootstrapping, userLearningLanguage, userProfile } = useUserContext()
 	const userId = user?.id
 	const queryClient = useQueryClient()
+
+	// Use spoken language (native language) for translations, fallback to locale
+	const spokenLanguage = userProfile?.spoken_language || locale
 
 	const [isAddWordModalOpen, setIsAddWordModalOpen] = useState(false)
 	const [isEditWordModalOpen, setIsEditWordModalOpen] = useState(false)
@@ -541,12 +542,12 @@ const DictionaryClient = ({ translations }) => {
 	// Filter words
 	const filteredUserWords = useMemo(() => {
 		const wordsSource = isUserLoggedIn ? user_words : guestWords
-		if (!wordsSource || !userLearningLanguage || !locale) return []
-		if (userLearningLanguage === locale) return []
+		if (!wordsSource || !userLearningLanguage || !spokenLanguage) return []
+		if (userLearningLanguage === spokenLanguage) return []
 
 		const filtered = wordsSource.filter(word => {
 			const sourceWord = word[`word_${userLearningLanguage}`]
-			const translation = word[`word_${locale}`]
+			const translation = word[`word_${spokenLanguage}`]
 			if (!sourceWord || !translation) return false
 
 			if (searchQuery.trim()) {
@@ -557,11 +558,11 @@ const DictionaryClient = ({ translations }) => {
 		})
 
 		return filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-	}, [user_words, guestWords, userLearningLanguage, locale, isUserLoggedIn, searchQuery])
+	}, [user_words, guestWords, userLearningLanguage, spokenLanguage, isUserLoggedIn, searchQuery])
 
 	const getWordDisplay = (word) => ({
 		sourceWord: word[`word_${userLearningLanguage}`],
-		translation: word[`word_${locale}`]
+		translation: word[`word_${spokenLanguage}`]
 	})
 
 	// Pagination
@@ -629,38 +630,20 @@ const DictionaryClient = ({ translations }) => {
 		)}>
 			<div className="relative max-w-5xl mx-auto px-4">
 				{/* Header Section */}
-				<div className="flex items-center justify-center gap-5 mb-8">
-					{/* Icon with magical glow */}
-					<div className="relative">
-						<div className={cn(
-							'absolute inset-0 rounded-2xl blur-xl opacity-60',
-							'bg-gradient-to-br from-violet-500 to-cyan-500'
-						)} />
-						<div className={cn(
-							'relative w-14 h-14 rounded-2xl flex items-center justify-center',
-							'bg-gradient-to-br from-violet-600 via-purple-600 to-cyan-600',
-							'shadow-lg shadow-violet-500/40',
-							'border border-white/20'
-						)}>
-							<Scroll className="w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-						</div>
-					</div>
-					{/* Title and subtitle */}
-					<div>
-						<h1 className={cn(
-							'text-2xl md:text-3xl font-black tracking-wide',
-							'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',
-							'drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]'
-						)}>
-							Grimoire
-						</h1>
-						<p className={cn(
-							'text-sm font-medium tracking-wide',
-							isDark ? 'text-violet-300/70' : 'text-violet-500/70'
-						)}>
-							Ta collection de mots magiques
-						</p>
-					</div>
+				<div className="flex flex-col items-center justify-center mb-8">
+					<h1 className={cn(
+						'text-2xl md:text-3xl font-black tracking-wide',
+						'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',
+						'drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]'
+					)}>
+						Grimoire
+					</h1>
+					<p className={cn(
+						'text-sm font-medium tracking-wide',
+						isDark ? 'text-violet-300/70' : 'text-violet-500/70'
+					)}>
+						Ta collection de mots magiques
+					</p>
 				</div>
 
 				{/* Action Buttons */}
