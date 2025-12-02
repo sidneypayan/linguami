@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, supabaseServer } from '@/lib/supabase-server'
 import { logger } from '@/utils/logger'
 import { calculateNextReview } from '@/utils/spacedRepetition'
 import { addXPAction } from '@/actions/gamification/xp-actions'
@@ -12,7 +12,7 @@ import { validateWordPair } from '@/utils/validation'
 // ==========================================
 
 /**
- * Translate a word using Yandex Dictionary API
+ * Translate a word using cache or Yandex Dictionary API
  * Server Action replacement for /api/translations/translate
  * @param {Object} params - Parameters
  * @param {string} params.word - Word to translate
@@ -24,9 +24,48 @@ import { validateWordPair } from '@/utils/validation'
  */
 export async function translateWordAction({ word, sentence, userLearningLanguage, locale, isAuthenticated = false }) {
 	const cookieStore = await cookies()
-	
+
+	// Normalize the word for cache lookup (lowercase, trimmed)
+	const normalizedWord = word.toLowerCase().trim()
+
 	try {
-		// Check translation limit for guests (stored in HttpOnly cookie)
+		// ============================================
+		// STEP 1: Check cache first (using service role to bypass RLS)
+		// ============================================
+		const { data: cachedTranslation, error: cacheError } = await supabaseServer
+			.from('translations_cache')
+			.select('*')
+			.eq('searched_form', normalizedWord)
+			.eq('source_lang', userLearningLanguage)
+			.eq('target_lang', locale)
+			.single()
+
+		if (cachedTranslation && !cacheError) {
+			// Cache HIT - increment usage count (fire and forget)
+			supabaseServer
+				.from('translations_cache')
+				.update({
+					usage_count: cachedTranslation.usage_count + 1,
+					updated_at: new Date().toISOString()
+				})
+				.eq('id', cachedTranslation.id)
+				.then(() => {})
+				.catch(() => {})
+
+			logger.info(`[translateWordAction] Cache HIT for "${word}" (${userLearningLanguage}-${locale})`)
+
+			return {
+				success: true,
+				word,
+				data: cachedTranslation.full_response,
+				sentence,
+				fromCache: true,
+			}
+		}
+
+		// ============================================
+		// STEP 2: Cache MISS - Check guest limits
+		// ============================================
 		const translationCountCookie = cookieStore.get('translation_count')
 		const translationCount = translationCountCookie ? parseInt(translationCountCookie.value, 10) : 0
 
@@ -52,8 +91,9 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 			})
 		}
 
-		// Build Yandex Dictionary API request
-		// Yandex Dictionary supported pairs
+		// ============================================
+		// STEP 3: Call Yandex API
+		// ============================================
 		const yandexSupportedPairs = [
 			'ru-en', 'en-ru', 'ru-fr', 'fr-ru', 'ru-de', 'de-ru',
 			'en-fr', 'fr-en', 'en-de', 'de-en', 'en-es', 'es-en',
@@ -63,13 +103,10 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 
 		let langPair = `${userLearningLanguage}-${locale}`
 		let needsPivot = false
-		let pivotTranslations = null
 
 		// Check if direct pair is supported
 		if (!yandexSupportedPairs.includes(langPair)) {
 			// For Italian: use two-step translation via English
-			// Step 1: Italian -> English
-			// Step 2: English -> Target language (fr, ru, etc.)
 			if (yandexSupportedPairs.includes(`${userLearningLanguage}-en`)) {
 				needsPivot = true
 				langPair = `${userLearningLanguage}-en`
@@ -80,7 +117,7 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 		apiUrl.searchParams.append('key', process.env.YANDEX_DICT_API_KEY)
 		apiUrl.searchParams.append('lang', langPair)
 		apiUrl.searchParams.append('text', word)
-		apiUrl.searchParams.append('flags', '004') // Enable morphological search (declined/conjugated forms)
+		apiUrl.searchParams.append('flags', '004') // Enable morphological search
 
 		const response = await fetch(apiUrl.toString())
 
@@ -94,7 +131,6 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 		if (needsPivot && data.def?.length > 0 && locale !== 'en') {
 			const secondPair = `en-${locale}`
 			if (yandexSupportedPairs.includes(secondPair)) {
-				// Get the first English translation
 				const englishWord = data.def[0]?.tr?.[0]?.text
 				if (englishWord) {
 					const pivotUrl = new URL('https://dictionary.yandex.net/api/v1/dicservice.json/lookup')
@@ -107,8 +143,6 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 					if (pivotResponse.ok) {
 						const pivotData = await pivotResponse.json()
 						if (pivotData.def?.length > 0) {
-							// Merge pivot translations into main response
-							// Keep original structure but replace translations
 							data.def[0].tr = pivotData.def[0]?.tr || data.def[0].tr
 							data.pivotUsed = true
 							data.pivotWord = englishWord
@@ -123,15 +157,50 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 			logger.warn(`[translateWordAction] No translations found for "${word}" (${langPair})`)
 		}
 
+		// ============================================
+		// STEP 4: Save to cache (if we got results)
+		// ============================================
+		if (data.def?.length > 0) {
+			const lemma = data.def[0]?.text || normalizedWord
+			const partOfSpeech = data.def[0]?.pos || null
+			const translations = data.def[0]?.tr?.map(t => t.text) || []
+
+			// Insert into cache (fire and forget - don't block the response)
+			supabaseServer
+				.from('translations_cache')
+				.insert({
+					searched_form: normalizedWord,
+					lemma: lemma.toLowerCase(),
+					source_lang: userLearningLanguage,
+					target_lang: locale,
+					part_of_speech: partOfSpeech,
+					translations: translations,
+					full_response: data,
+					source: 'yandex',
+					usage_count: 1,
+				})
+				.then(({ error }) => {
+					if (error && !error.message?.includes('duplicate')) {
+						logger.error('[translateWordAction] Cache insert error:', error)
+					} else if (!error) {
+						logger.info(`[translateWordAction] Cached "${normalizedWord}" (${userLearningLanguage}-${locale})`)
+					}
+				})
+				.catch((err) => {
+					logger.error('[translateWordAction] Cache insert exception:', err)
+				})
+		}
+
 		return {
 			success: true,
 			word,
 			data,
 			sentence,
+			fromCache: false,
 		}
 	} catch (error) {
 		logger.error('[translateWordAction] Error:', error)
-		
+
 		// ✅ ROLLBACK: Decrement counter if API call failed
 		if (!isAuthenticated) {
 			try {
@@ -149,7 +218,7 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 				logger.error('[translateWordAction] Rollback error:', rollbackError)
 			}
 		}
-		
+
 		return {
 			success: false,
 			error: error.message || 'Erreur lors de la traduction',

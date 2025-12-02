@@ -2,7 +2,7 @@
 
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
-import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell } from 'lucide-react'
+import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell, Languages } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const AdminNavbar = ({ activePage = 'dashboard' }) => {
@@ -38,6 +38,12 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			label: t('materialReports'),
 			href: '/admin/reports',
 			icon: Flag,
+		},
+		{
+			id: 'translations',
+			label: t('translationsCache') || 'Traductions',
+			href: '/admin/translations-cache',
+			icon: Languages,
 		},
 		{
 			id: 'users',
