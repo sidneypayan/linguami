@@ -9,7 +9,23 @@ import { getTranslations } from 'next-intl/server'
 export async function generateMetadata({ params }) {
 	const { locale, level: levelSlug, lessonSlug } = await params
 
-	const learningLanguage = 'fr' // TODO: Get from user context
+	// Try to get learning language from user profile, fallback to trying both ru and fr
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+
+	let learningLanguage = 'ru' // Default to Russian since most lessons are Russian
+	const { data: { user } } = await supabase.auth.getUser()
+	if (user) {
+		const { data: profile } = await supabase
+			.from('users_profile')
+			.select('learning_language')
+			.eq('id', user.id)
+			.single()
+		if (profile?.learning_language) {
+			learningLanguage = profile.learning_language
+		}
+	}
+
 	const lessonData = await getLessonData(levelSlug, lessonSlug, learningLanguage)
 
 	if (!lessonData) {
@@ -85,24 +101,22 @@ export default async function LessonPage({ params }) {
 	// Get params
 	const { locale, level: levelSlug, lessonSlug } = await params
 
-	// Get learning language from user profile or default
-	// For now, default to 'fr' (will be replaced with user's learning language)
-	const learningLanguage = 'fr' // TODO: Get from user context
-
-	// Get spoken language from user profile
+	// Get spoken language and learning language from user profile
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
 	let spokenLanguage = locale // Default to interface language
+	let learningLanguage = 'ru' // Default to Russian
 
 	if (user) {
 		const { data: profile } = await supabase
 			.from('users_profile')
-			.select('spoken_language, is_premium')
+			.select('spoken_language, learning_language, is_premium')
 			.eq('id', user.id)
 			.single()
 
 		spokenLanguage = profile?.spoken_language || locale
+		learningLanguage = profile?.learning_language || 'ru'
 	}
 
 	// Fetch lesson data

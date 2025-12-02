@@ -103,8 +103,13 @@ export default async function LevelPage({ params }) {
 	// Fetch courses for this level
 	const courses = await getLevelCourses(currentLevel.id)
 
+	console.log('[LevelPage] learningLanguage:', learningLanguage)
+	console.log('[LevelPage] courses:', courses?.map(c => ({ id: c.id, target: c.target_language, lessons: c.course_lessons?.length })))
+
 	// Find the course for the learning language
 	const currentCourse = courses.find((c) => c.target_language === learningLanguage)
+
+	console.log('[LevelPage] currentCourse:', currentCourse ? { id: currentCourse.id, lessons: currentCourse.course_lessons?.length } : 'NOT FOUND')
 
 	if (!currentCourse) {
 		// No course found for this level and learning language

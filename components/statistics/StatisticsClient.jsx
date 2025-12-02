@@ -590,7 +590,7 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 						{/* Character Rank Banner */}
 						<div className="max-w-3xl mx-auto mb-10 shadow-xl rounded-2xl">
 							{/* Image */}
-							<div className="relative rounded-t-2xl overflow-hidden h-40 md:h-52">
+							<div className="relative rounded-t-2xl overflow-hidden h-48 md:h-64">
 								<div
 									className="absolute inset-0"
 									style={{
@@ -602,7 +602,7 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 							</div>
 							{/* Text below image */}
 							<div className={cn(
-								'relative rounded-b-2xl py-5 px-6 text-center overflow-hidden',
+								'relative rounded-b-2xl py-3 px-6 text-center overflow-hidden',
 								'border-x-2 border-b-2',
 								isDark
 									? 'bg-gradient-to-b from-slate-800 to-slate-900 border-violet-500/30'
