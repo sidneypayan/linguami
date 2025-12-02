@@ -1,13 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useTranslations, useLocale } from 'next-intl'
-import { useUserContext } from '@/context/user'
-import { Search, User, Shield, ArrowUp, ArrowDown, ChevronsUpDown, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { Search, User, Shield, ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react'
 import AdminNavbar from '@/components/admin/AdminNavbar'
-import { logger } from '@/utils/logger'
-import { getUsers } from '@/app/actions/admin'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -29,53 +25,13 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-const UsersPage = () => {
+const UsersPage = ({ initialUsers = [] }) => {
 	const t = useTranslations('admin')
-	const locale = useLocale()
-	const router = useRouter()
-	const { isUserLoggedIn, isUserAdmin } = useUserContext()
 
-	const [users, setUsers] = useState([])
-	const [loading, setLoading] = useState(true)
+	const [users] = useState(initialUsers)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [sortBy, setSortBy] = useState('created_at')
 	const [sortOrder, setSortOrder] = useState('desc')
-
-	// Authentication check
-	useEffect(() => {
-		if (!isUserLoggedIn) {
-			router.push('/login')
-			return
-		}
-
-		if (!isUserAdmin) {
-			router.push('/')
-			return
-		}
-	}, [isUserLoggedIn, isUserAdmin, router])
-
-	// Fetch users data
-	useEffect(() => {
-		if (!isUserAdmin) return
-
-		const fetchUsers = async () => {
-			setLoading(true)
-			try {
-				const result = await getUsers()
-				const data = result
-
-				if (data.success && data.users) {
-					setUsers(data.users)
-				}
-			} catch (error) {
-				logger.error('Error fetching users:', error)
-			} finally {
-				setLoading(false)
-			}
-		}
-
-		fetchUsers()
-	}, [isUserAdmin])
 
 	const handleSort = (column) => {
 		if (sortBy === column) {
@@ -209,20 +165,8 @@ const UsersPage = () => {
 		)
 	}
 
-	if (!isUserLoggedIn || !isUserAdmin) {
-		return null
-	}
-
-	if (loading) {
-		return (
-			<div className="flex items-center justify-center min-h-screen">
-				<Loader2 className="h-12 w-12 text-indigo-500 animate-spin" />
-			</div>
-		)
-	}
-
 	return (
-		<div className="min-h-screen bg-white">
+		<div className="min-h-screen bg-white pt-[70px] sm:pt-[80px]">
 			<AdminNavbar activePage="users" />
 
 			<div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">

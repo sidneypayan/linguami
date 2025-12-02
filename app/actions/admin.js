@@ -497,9 +497,17 @@ export async function getUsers() {
 			})
 		}
 
-		// 5. Combiner les données
+		// 5. Combiner les données et s'assurer que tout est sérialisable
 		const users = usersProfile.map(user => ({
-			...user,
+			id: user.id,
+			name: user.name,
+			email: user.email,
+			role: user.role,
+			is_premium: user.is_premium,
+			spoken_language: user.spoken_language,
+			language_level: user.language_level,
+			avatar_id: user.avatar_id,
+			created_at: user.created_at ? String(user.created_at) : null,
 			total_xp: xpMap[user.id]?.total_xp || 0,
 			current_level: xpMap[user.id]?.current_level || 1,
 		}))
