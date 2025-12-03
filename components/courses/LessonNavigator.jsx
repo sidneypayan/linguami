@@ -110,52 +110,42 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 	const filteredBlocks = blocks.filter(block => block.type !== 'summary')
 
 	const [viewMode, setViewMode] = useState('guided')
+	const [currentSection, setCurrentSection] = useState(0)
+	const [completedSections, setCompletedSections] = useState(() => new Array(filteredBlocks.length).fill(false))
+	const [openAccordions, setOpenAccordions] = useState([0])
+	const [isHydrated, setIsHydrated] = useState(false)
 
-	// Initialiser la progression depuis localStorage
-	const [currentSection, setCurrentSection] = useState(() => {
-		if (typeof window !== 'undefined' && lessonId) {
+	// Charger la progression depuis localStorage après l'hydratation
+	useEffect(() => {
+		if (lessonId) {
 			try {
 				const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`)
 				if (savedProgress) {
-					const { section } = JSON.parse(savedProgress)
-					return section || 0
-				}
-			} catch (e) {
-				// Ignore errors
-			}
-		}
-		return 0
-	})
-
-	const [completedSections, setCompletedSections] = useState(() => {
-		if (typeof window !== 'undefined' && lessonId) {
-			try {
-				const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`)
-				if (savedProgress) {
-					const { completed } = JSON.parse(savedProgress)
+					const { section, completed } = JSON.parse(savedProgress)
+					if (typeof section === 'number') {
+						setCurrentSection(section)
+					}
 					if (completed && completed.length === filteredBlocks.length) {
-						return completed
+						setCompletedSections(completed)
 					}
 				}
 			} catch (e) {
 				// Ignore errors
 			}
 		}
-		return new Array(filteredBlocks.length).fill(false)
-	})
-
-	const [openAccordions, setOpenAccordions] = useState([0])
+		setIsHydrated(true)
+	}, [lessonId, filteredBlocks.length])
 
 	// Sauvegarder la progression
 	useEffect(() => {
-		if (typeof window !== 'undefined' && lessonId) {
+		if (isHydrated && lessonId) {
 			const progress = {
 				section: currentSection,
 				completed: completedSections,
 			}
 			localStorage.setItem(`lesson_progress_${lessonId}`, JSON.stringify(progress))
 		}
-	}, [currentSection, completedSections, lessonId])
+	}, [currentSection, completedSections, lessonId, isHydrated])
 
 	const completedCount = completedSections.filter(Boolean).length
 	const totalSteps = filteredBlocks.length + 1 // +1 pour le step vocab import (remplace summary)
@@ -516,18 +506,18 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 									currentBlock?.type === 'pronunciation' && (isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600')
 								)}>
 									{isVocabImportStep && 'Flashcards'}
-									{currentBlock?.type === 'dialogue' && 'Dialogue'}
-									{currentBlock?.type === 'grammar' && 'Grammaire'}
-									{currentBlock?.type === 'vocabulary' && 'Vocabulaire'}
-									{currentBlock?.type === 'culture' && 'Culture'}
-									{currentBlock?.type === 'exercise' && 'Exercice'}
-									{currentBlock?.type === 'exerciseInline' && 'Exercice'}
-									{currentBlock?.type === 'tip' && 'Conseil'}
-									{currentBlock?.type === 'summary' && 'Résumé'}
-									{currentBlock?.type === 'conversation' && 'Conversation'}
-									{currentBlock?.type === 'audio' && 'Audio'}
-									{currentBlock?.type === 'pronunciation' && 'Prononciation'}
-									{!isVocabImportStep && !['dialogue', 'grammar', 'vocabulary', 'culture', 'exercise', 'exerciseInline', 'tip', 'summary', 'conversation', 'audio', 'pronunciation'].includes(currentBlock?.type) && 'Leçon'}
+									{currentBlock?.type === 'dialogue' && t('methode_block_dialogue')}
+									{currentBlock?.type === 'grammar' && t('methode_block_grammar')}
+									{currentBlock?.type === 'vocabulary' && t('methode_block_vocabulary')}
+									{currentBlock?.type === 'culture' && t('methode_block_culture')}
+									{currentBlock?.type === 'exercise' && t('methode_block_exercise')}
+									{currentBlock?.type === 'exerciseInline' && t('methode_block_exercise')}
+									{currentBlock?.type === 'tip' && t('methode_block_tip')}
+									{currentBlock?.type === 'summary' && t('methode_block_summary')}
+									{currentBlock?.type === 'conversation' && t('methode_block_conversation')}
+									{currentBlock?.type === 'audio' && t('methode_block_audio')}
+									{currentBlock?.type === 'pronunciation' && t('methode_block_pronunciation')}
+									{!isVocabImportStep && !['dialogue', 'grammar', 'vocabulary', 'culture', 'exercise', 'exerciseInline', 'tip', 'summary', 'conversation', 'audio', 'pronunciation'].includes(currentBlock?.type) && t('methode_lesson')}
 								</span>
 								{!isVocabImportStep && (
 									<span className={cn(
@@ -578,7 +568,7 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 				</div>
 
 				{/* Navigation bas - même style que le haut */}
-				<div className="flex flex-col items-center gap-4">
+				<div className="flex flex-col items-center gap-6">
 					{/* Bouton Terminer la leçon - affiché uniquement sur le dernier step */}
 					{isLastSection && (
 						<button

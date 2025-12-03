@@ -65,15 +65,10 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function LevelPage({ params }) {
-	// TEMPORARY: Admin-only access until courses are finalized
-	const { isAuthenticated, isAdmin, user, supabase } = await checkAdminAuth()
+	const { isAuthenticated, user, supabase } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect('/login')
-	}
-
-	if (!isAdmin) {
-		redirect('/')
 	}
 
 	// Get params

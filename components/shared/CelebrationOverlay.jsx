@@ -99,6 +99,7 @@ const CelebrationOverlay = () => {
 		switch (globalCelebrationState.data.type) {
 			case 'book': return t('celebration_book')
 			case 'page': return t('celebration_page')
+			case 'lesson': return t('celebration_lesson')
 			default: return t('celebration_material')
 		}
 	}

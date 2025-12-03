@@ -87,15 +87,10 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function LessonPage({ params }) {
-	// TEMPORARY: Admin-only access until courses are finalized
-	const { isAuthenticated, isAdmin, user } = await checkAdminAuth()
+	const { isAuthenticated, user } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect('/login')
-	}
-
-	if (!isAdmin) {
-		redirect('/')
 	}
 
 	// Get params

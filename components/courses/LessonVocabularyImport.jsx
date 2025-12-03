@@ -167,48 +167,13 @@ const LessonVocabularyImport = ({ lesson, blocks, lessonLanguage, spokenLanguage
 
 	return (
 		<div className={cn(
-			'relative rounded-2xl border-2 overflow-hidden mt-6',
+			'relative rounded-2xl border-2 overflow-hidden',
 			isDark
 				? 'bg-gradient-to-br from-emerald-950/50 via-slate-900 to-teal-950/30 border-emerald-500/30'
 				: 'bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-emerald-200'
 		)}>
 			{/* Effet de brillance */}
 			<div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl" />
-
-			{/* Header */}
-			<div className={cn(
-				'relative p-4 sm:p-5 border-b',
-				isDark ? 'border-emerald-500/20' : 'border-emerald-200'
-			)}>
-				<div className="flex items-center gap-3">
-					<div className={cn(
-						'w-12 h-12 rounded-xl flex items-center justify-center shadow-lg',
-						'bg-gradient-to-br from-emerald-400 to-teal-500'
-					)}>
-						<BookOpen className="w-6 h-6 text-white" />
-					</div>
-					<div className="flex-1">
-						<h3 className={cn(
-							'text-lg font-bold',
-							isDark ? 'text-emerald-300' : 'text-emerald-700'
-						)}>
-							{t('methode_import_vocabulary')}
-						</h3>
-						<p className={cn(
-							'text-sm',
-							isDark ? 'text-slate-400' : 'text-slate-600'
-						)}>
-							{t('methode_import_vocabulary_desc')}
-						</p>
-					</div>
-					<Badge className={cn(
-						'font-bold px-3 py-1',
-						'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0'
-					)}>
-						{selectedWords.size} / {allWords.length}
-					</Badge>
-				</div>
-			</div>
 
 			{/* Content */}
 			<div className="relative p-4 sm:p-5">
@@ -255,67 +220,85 @@ const LessonVocabularyImport = ({ lesson, blocks, lessonLanguage, spokenLanguage
 					</div>
 				) : (
 					<>
-						{/* Toggle all */}
-						<button
-							onClick={toggleAll}
-							className={cn(
-								'flex items-center gap-2 mb-4 text-sm font-medium transition-colors',
-								isDark ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'
-							)}
-						>
-							{selectedWords.size === allWords.length ? (
-								<>
-									<CheckSquare className="w-4 h-4" />
-									{t('methode_deselect_all')}
-								</>
-							) : (
-								<>
-									<Square className="w-4 h-4" />
-									{t('methode_select_all')}
-								</>
-							)}
-						</button>
+						{/* Toggle all + compteur */}
+						<div className="flex items-center justify-between mb-3">
+							<button
+								onClick={toggleAll}
+								className={cn(
+									'flex items-center gap-2 text-sm font-medium transition-colors',
+									isDark ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'
+								)}
+							>
+								{selectedWords.size === allWords.length ? (
+									<>
+										<CheckSquare className="w-4 h-4" />
+										{t('methode_deselect_all')}
+									</>
+								) : (
+									<>
+										<Square className="w-4 h-4" />
+										{t('methode_select_all')}
+									</>
+								)}
+							</button>
+							<Badge className={cn(
+								'font-bold px-2.5 py-0.5 text-xs',
+								'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0'
+							)}>
+								{selectedWords.size} / {allWords.length}
+							</Badge>
+						</div>
 
-						{/* Liste des mots */}
-						<div className="space-y-2">
+						{/* Liste des mots - design moderne en chips */}
+						<div className="flex flex-wrap gap-2">
 							{allWords.map((word, index) => (
 								<button
 									key={index}
 									onClick={() => toggleWord(index)}
 									className={cn(
-										'w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all',
+										'group relative flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full text-left transition-all duration-200',
+										'border',
 										selectedWords.has(index)
 											? isDark
-												? 'bg-emerald-500/20 ring-1 ring-emerald-500/30'
-												: 'bg-emerald-50 ring-1 ring-emerald-200'
+												? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+												: 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-300 shadow-sm'
 											: isDark
-												? 'bg-slate-800/50 hover:bg-slate-800'
-												: 'bg-white hover:bg-slate-50 shadow-sm'
+												? 'bg-slate-800/60 border-slate-700 hover:border-slate-600 hover:bg-slate-800'
+												: 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
 									)}
 								>
+									{/* Checkbox animée */}
 									<div className={cn(
-										'w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors',
+										'w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200',
 										selectedWords.has(index)
-											? 'bg-emerald-500 text-white'
+											? 'bg-gradient-to-br from-emerald-400 to-teal-500 scale-100'
 											: isDark
-												? 'bg-slate-700 text-slate-500'
-												: 'bg-slate-200 text-slate-400'
+												? 'bg-slate-700 group-hover:bg-slate-600'
+												: 'bg-slate-100 group-hover:bg-slate-200'
 									)}>
-										{selectedWords.has(index) && <Check className="w-3 h-3" />}
+										<Check className={cn(
+											'w-3 h-3 transition-all duration-200',
+											selectedWords.has(index)
+												? 'text-white scale-100 opacity-100'
+												: 'text-slate-400 scale-75 opacity-0'
+										)} />
 									</div>
-									<div className="flex-1 min-w-0">
-										<p className={cn(
-											'font-semibold truncate',
-											isDark ? 'text-white' : 'text-slate-900'
+									{/* Contenu */}
+									<div className="flex flex-col leading-tight">
+										<span className={cn(
+											'font-semibold text-sm',
+											selectedWords.has(index)
+												? isDark ? 'text-emerald-300' : 'text-emerald-700'
+												: isDark ? 'text-white' : 'text-slate-800'
 										)}>
 											{word.word}
-										</p>
-										<p className={cn(
-											'text-sm truncate',
-											isDark ? 'text-slate-400' : 'text-slate-500'
+										</span>
+										<span className={cn(
+											'text-xs',
+											isDark ? 'text-slate-500' : 'text-slate-400'
 										)}>
 											{word.translation}
-										</p>
+										</span>
 									</div>
 								</button>
 							))}

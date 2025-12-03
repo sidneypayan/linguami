@@ -15,6 +15,7 @@ import { useLessonProgress, useCompleteLesson } from '@/lib/courses-client'
 import { useAddXP } from '@/hooks/gamification/useAddXP'
 import toast from '@/utils/toast'
 import { logger } from '@/utils/logger'
+import CelebrationOverlay, { triggerCelebration } from '@/components/shared/CelebrationOverlay'
 import {
 	CheckCircle,
 	ArrowLeft,
@@ -97,12 +98,35 @@ const LessonPageClient = ({
 		// Optimistic update handled automatically by React Query
 		completeLesson(lesson.id, {
 			onSuccess: () => {
-				toast.success(t('methode_lesson_completed_toast'))
 				// Award XP for completing the lesson (only for logged in users)
 				if (isUserLoggedIn) {
 					addXP({
 						actionType: 'course_lesson_completed',
 						sourceId: `lesson-${lesson.id}`,
+					}, {
+						onSuccess: (data) => {
+							// Trigger celebration with XP and gold gained
+							triggerCelebration({
+								type: 'lesson',
+								xpGained: data?.xpGained || 10,
+								goldGained: data?.goldGained || 1,
+							})
+						},
+						onError: () => {
+							// Still show celebration even if XP fails
+							triggerCelebration({
+								type: 'lesson',
+								xpGained: 10,
+								goldGained: 1,
+							})
+						}
+					})
+				} else {
+					// Show celebration for guest users too
+					triggerCelebration({
+						type: 'lesson',
+						xpGained: 0,
+						goldGained: 0,
 					})
 				}
 
@@ -480,6 +504,9 @@ const LessonPageClient = ({
 					onPurchase={handlePurchase}
 				/>
 			)}
+
+			{/* Celebration overlay */}
+			<CelebrationOverlay />
 		</div>
 	)
 }
