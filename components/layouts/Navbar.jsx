@@ -59,7 +59,7 @@ const Navbar = props => {
 			name: t('methode'),
 			icon: GraduationCap,
 			href: '/method',
-			hideIf: !isUserAdmin,
+			hideIf: process.env.NODE_ENV === 'production' && !isUserAdmin,
 		},
 		{
 			name: t('teacher'),
@@ -70,7 +70,7 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
-			hideIf: !isUserAdmin,
+			hideIf: process.env.NODE_ENV === 'production' && !isUserAdmin,
 		},
 		{
 			name: t('blog'),
@@ -343,11 +343,6 @@ const Navbar = props => {
 								</li>
 							)}
 						</ul>
-
-						{/* Theme toggle for mobile */}
-						<div className="mt-4 px-4">
-							<ThemeToggle variant="full" />
-						</div>
 					</nav>
 
 					{/* Sign in/Sign up buttons for mobile */}

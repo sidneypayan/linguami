@@ -6,6 +6,12 @@ import { useParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
 import BlockRenderer from './blocks/BlockRenderer'
 import LessonVocabularyImport from './LessonVocabularyImport'
 import { logger } from '@/utils/logger'
@@ -25,6 +31,7 @@ import {
 	Star,
 	Scroll,
 	Zap,
+	Trophy,
 } from 'lucide-react'
 
 // Configuration des types de blocs avec icones et couleurs gaming
@@ -94,7 +101,7 @@ const blockConfig = {
 /**
  * LessonNavigator - Navigateur gaming avec barre d'XP et cartes de competence
  */
-const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleting = false, locale }) => {
+const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleting = false, isLessonCompleted = false, locale }) => {
 	const t = useTranslations('common')
 	const { isDark } = useThemeMode()
 	const { userLearningLanguage } = useUserContext()
@@ -103,27 +110,41 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 	const filteredBlocks = blocks.filter(block => block.type !== 'summary')
 
 	const [viewMode, setViewMode] = useState('guided')
-	const [currentSection, setCurrentSection] = useState(0)
-	const [completedSections, setCompletedSections] = useState(
-		() => new Array(filteredBlocks.length).fill(false)
-	)
-	const [openAccordions, setOpenAccordions] = useState([0])
 
-	// Charger la progression sauvegardee
-	useEffect(() => {
+	// Initialiser la progression depuis localStorage
+	const [currentSection, setCurrentSection] = useState(() => {
 		if (typeof window !== 'undefined' && lessonId) {
-			const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`)
-			if (savedProgress) {
-				try {
-					const { section, completed } = JSON.parse(savedProgress)
-					setCurrentSection(section || 0)
-					setCompletedSections(completed || new Array(filteredBlocks.length).fill(false))
-				} catch (e) {
-					logger.error('Erreur lors du chargement de la progression', e)
+			try {
+				const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`)
+				if (savedProgress) {
+					const { section } = JSON.parse(savedProgress)
+					return section || 0
 				}
+			} catch (e) {
+				// Ignore errors
 			}
 		}
-	}, [lessonId, filteredBlocks.length])
+		return 0
+	})
+
+	const [completedSections, setCompletedSections] = useState(() => {
+		if (typeof window !== 'undefined' && lessonId) {
+			try {
+				const savedProgress = localStorage.getItem(`lesson_progress_${lessonId}`)
+				if (savedProgress) {
+					const { completed } = JSON.parse(savedProgress)
+					if (completed && completed.length === filteredBlocks.length) {
+						return completed
+					}
+				}
+			} catch (e) {
+				// Ignore errors
+			}
+		}
+		return new Array(filteredBlocks.length).fill(false)
+	})
+
+	const [openAccordions, setOpenAccordions] = useState([0])
 
 	// Sauvegarder la progression
 	useEffect(() => {
@@ -164,22 +185,26 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 	}
 
 	const handleNext = () => {
-		const isVocabImportStep = currentSection === filteredBlocks.length
-
+		// Ne pas permettre de naviguer au-delà du dernier step
 		if (currentSection < totalSteps - 1) {
 			// Si on est sur un bloc normal, le marquer comme complété
-			if (!isVocabImportStep && currentSection < filteredBlocks.length) {
+			if (currentSection < filteredBlocks.length) {
 				const newCompleted = [...completedSections]
 				newCompleted[currentSection] = true
 				setCompletedSections(newCompleted)
 			}
 			setCurrentSection(currentSection + 1)
 			window.scrollTo({ top: 0, behavior: 'smooth' })
-		} else {
-			// Dernier step (vocab import) - appeler onComplete
-			if (onComplete) {
-				onComplete()
-			}
+		}
+	}
+
+	// Fonction séparée pour terminer la leçon (appelée uniquement sur le dernier step)
+	const handleCompleteLesson = () => {
+		// Ne rien faire si déjà complété ou en cours de completion
+		if (isLessonCompleted || isCompleting) return
+
+		if (onComplete) {
+			onComplete()
 		}
 	}
 
@@ -261,78 +286,114 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 
 							{/* Navigation rapide - Desktop */}
 							<div className="hidden sm:flex items-center gap-3">
-								<button
-									onClick={handlePrevious}
-									disabled={currentSection === 0}
-									className={cn(
-										'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
-										currentSection === 0
-											? 'opacity-30 cursor-not-allowed border-2 border-slate-400/30 text-slate-400'
-											: cn(
-												'border-2 border-violet-400/50 text-violet-400',
-												'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
-												'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
-												'active:scale-95'
-											)
-									)}
-								>
-									<ChevronLeft className="w-5 h-5" />
-								</button>
+								{/* Bouton Previous - masqué sur la première step */}
+								{currentSection > 0 && (
+									<button
+										onClick={handlePrevious}
+										className={cn(
+											'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
+											'border-2 border-violet-400/50 text-violet-400',
+											'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
+											'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
+											'active:scale-95'
+										)}
+									>
+										<ChevronLeft className="w-5 h-5" />
+									</button>
+								)}
 
 								{/* Indicateurs de steps */}
-								<div className="flex items-center gap-2">
-									{[...filteredBlocks, { type: 'vocabImport', title: t('methode_import_vocabulary') }].map((block, idx) => {
-										const isVocabStep = idx === filteredBlocks.length
-										const blockConf = isVocabStep ? vocabImportConfig : (blockConfig[block.type] || blockConfig.dialogue)
-										const isActive = idx === currentSection
-										const isCompleted = !isVocabStep && completedSections[idx]
+								<TooltipProvider delayDuration={0} skipDelayDuration={0}>
+									<div className="flex items-center gap-2">
+										{[...filteredBlocks, { type: 'vocabImport', title: t('methode_import_vocabulary') }].map((block, idx) => {
+											const isVocabStep = idx === filteredBlocks.length
+											const blockConf = isVocabStep ? vocabImportConfig : (blockConfig[block.type] || blockConfig.dialogue)
+											const isActive = idx === currentSection
+											const isCompleted = !isVocabStep && completedSections[idx]
+											const BlockIcon = blockConf.icon
 
-										return (
-											<button
-												key={idx}
-												onClick={() => {
-													setCurrentSection(idx)
-													window.scrollTo({ top: 0, behavior: 'smooth' })
-												}}
-												className={cn(
-													'relative rounded-full transition-all duration-300',
-													isActive
-														? `w-10 h-4 bg-gradient-to-r ${blockConf.gradient} shadow-lg`
-														: isCompleted
-															? 'w-4 h-4 bg-emerald-500 shadow-emerald-500/30 shadow-md hover:scale-125'
-															: cn(
-																'w-4 h-4 hover:scale-125',
-																isDark
-																	? 'bg-slate-600 hover:bg-slate-500'
-																	: 'bg-slate-300 hover:bg-slate-400'
-															)
-												)}
-												title={`${idx + 1}. ${block.title || blockConf.label}`}
-											>
-												{isActive && (
-													<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
-												)}
-												{isCompleted && !isActive && (
-													<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
-												)}
-											</button>
-										)
-									})}
-								</div>
+											return (
+												<Tooltip key={idx} disableHoverableContent>
+													<TooltipTrigger asChild>
+														<button
+															onClick={() => {
+																setCurrentSection(idx)
+																window.scrollTo({ top: 0, behavior: 'smooth' })
+															}}
+															className={cn(
+																'relative rounded-full transition-all duration-300',
+																isActive
+																	? `w-10 h-4 bg-gradient-to-r ${blockConf.gradient} shadow-lg`
+																	: isCompleted
+																		? 'w-4 h-4 bg-emerald-500 shadow-emerald-500/30 shadow-md hover:scale-125'
+																		: cn(
+																			'w-4 h-4 hover:scale-125',
+																			isDark
+																				? 'bg-slate-600 hover:bg-slate-500'
+																				: 'bg-slate-300 hover:bg-slate-400'
+																		)
+															)}
+														>
+															{isActive && (
+																<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
+															)}
+															{isCompleted && !isActive && (
+																<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
+															)}
+														</button>
+													</TooltipTrigger>
+													<TooltipContent
+														side="bottom"
+														className={cn(
+															'px-3 py-2 rounded-xl border-2',
+															'bg-gradient-to-br shadow-xl',
+															isDark
+																? 'from-slate-800 to-slate-900 border-violet-500/40 text-white'
+																: 'from-white to-slate-50 border-violet-200 text-slate-800',
+															'shadow-[0_4px_20px_rgba(139,92,246,0.2)]'
+														)}
+													>
+														<div className="flex items-center gap-2">
+															<div className={cn(
+																'w-6 h-6 rounded-lg flex items-center justify-center',
+																`bg-gradient-to-br ${blockConf.gradient}`
+															)}>
+																<BlockIcon className="w-3.5 h-3.5 text-white" />
+															</div>
+															<div>
+																<p className="font-bold text-xs">
+																	{idx + 1}. {block.title || blockConf.label}
+																</p>
+																{isCompleted && (
+																	<p className="text-xs text-emerald-500 font-medium flex items-center gap-1">
+																		<CheckCircle className="w-3 h-3" />
+																		{t('methode_completed') || 'Terminé'}
+																	</p>
+																)}
+															</div>
+														</div>
+													</TooltipContent>
+												</Tooltip>
+											)
+										})}
+									</div>
+								</TooltipProvider>
 
-								<button
-									onClick={handleNext}
-									disabled={isCompleting}
-									className={cn(
-										'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
-										'border-2 border-violet-400/50 text-violet-400',
-										'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
-										'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
-										'active:scale-95'
-									)}
-								>
-									<ChevronRight className="w-5 h-5" />
-								</button>
+								{/* Bouton Next - masqué sur le dernier step */}
+								{!isLastSection && (
+									<button
+										onClick={handleNext}
+										className={cn(
+											'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
+											'border-2 border-violet-400/50 text-violet-400',
+											'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
+											'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
+											'active:scale-95'
+										)}
+									>
+										<ChevronRight className="w-5 h-5" />
+									</button>
+								)}
 							</div>
 
 							<Badge className={cn(
@@ -517,7 +578,44 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 				</div>
 
 				{/* Navigation bas - même style que le haut */}
-				<div className="flex justify-center">
+				<div className="flex flex-col items-center gap-4">
+					{/* Bouton Terminer la leçon - affiché uniquement sur le dernier step */}
+					{isLastSection && (
+						<button
+							onClick={handleCompleteLesson}
+							disabled={isLessonCompleted || isCompleting}
+							className={cn(
+								'flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition-all duration-300',
+								isLessonCompleted
+									? 'bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500/30 cursor-default'
+									: cn(
+										'bg-gradient-to-r from-emerald-500 to-green-600 text-white',
+										'shadow-lg shadow-emerald-500/30',
+										'hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:scale-105',
+										'active:scale-95'
+									)
+							)}
+						>
+							{isCompleting ? (
+								<>
+									<Loader2 className="w-5 h-5 animate-spin" />
+									{t('methode_completing')}
+								</>
+							) : isLessonCompleted ? (
+								<>
+									<CheckCircle className="w-5 h-5" />
+									{t('methode_lesson_completed')}
+								</>
+							) : (
+								<>
+									<Trophy className="w-5 h-5" />
+									{t('methode_complete_lesson')}
+								</>
+							)}
+						</button>
+					)}
+
+					{/* Navigation normale */}
 					<div className={cn(
 						'relative p-2 sm:p-4 rounded-full border sm:border-2 overflow-hidden inline-flex',
 						isDark
@@ -530,129 +628,156 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 						<div className="relative z-10">
 							{/* Mobile */}
 							<div className="flex sm:hidden items-center justify-center gap-3">
-							<button
-								onClick={handlePrevious}
-								disabled={currentSection === 0}
-								className={cn(
-									'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200',
-									currentSection === 0
-										? 'opacity-30 cursor-not-allowed'
-										: 'hover:scale-110',
-									currentSection === 0
-										? isDark ? 'bg-slate-800' : 'bg-slate-200'
-										: 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30'
+								{/* Bouton Previous - masqué sur la première step */}
+								{currentSection > 0 && (
+									<button
+										onClick={handlePrevious}
+										className={cn(
+											'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200',
+											'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30 hover:scale-110'
+										)}
+									>
+										<ChevronLeft className="w-5 h-5" />
+									</button>
 								)}
-							>
-								<ChevronLeft className="w-5 h-5" />
-							</button>
 
-							{/* Compteur simple sur mobile */}
-							<div className={cn(
-								'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold',
-								isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'
-							)}>
-								<span>{currentSection + 1}</span>
-								<span className={isDark ? 'text-slate-500' : 'text-slate-400'}>/</span>
-								<span>{totalSteps}</span>
+								{/* Compteur simple sur mobile */}
+								<div className={cn(
+									'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold',
+									isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'
+								)}>
+									<span>{currentSection + 1}</span>
+									<span className={isDark ? 'text-slate-500' : 'text-slate-400'}>/</span>
+									<span>{totalSteps}</span>
+								</div>
+
+								{/* Bouton Next - masqué sur le dernier step */}
+								{!isLastSection && (
+									<button
+										onClick={handleNext}
+										className={cn(
+											'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200',
+											'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30 hover:scale-110'
+										)}
+									>
+										<ChevronRight className="w-5 h-5" />
+									</button>
+								)}
 							</div>
 
-							<button
-								onClick={handleNext}
-								disabled={isCompleting}
-								className={cn(
-									'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200',
-									'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30 hover:scale-110'
-								)}
-							>
-								{isCompleting ? (
-									<Loader2 className="w-5 h-5 animate-spin" />
-								) : (
-									<ChevronRight className="w-5 h-5" />
-								)}
-							</button>
-						</div>
-
-						{/* Desktop */}
-						<div className="hidden sm:flex items-center justify-center gap-3">
-							<button
-								onClick={handlePrevious}
-								disabled={currentSection === 0}
-								className={cn(
-									'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
-									currentSection === 0
-										? 'opacity-30 cursor-not-allowed border-2 border-slate-400/30 text-slate-400'
-										: cn(
+							{/* Desktop */}
+							<div className="hidden sm:flex items-center justify-center gap-3">
+								{/* Bouton Previous - masqué sur la première step */}
+								{currentSection > 0 && (
+									<button
+										onClick={handlePrevious}
+										className={cn(
+											'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
 											'border-2 border-violet-400/50 text-violet-400',
 											'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
 											'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
 											'active:scale-95'
-										)
+										)}
+									>
+										<ChevronLeft className="w-5 h-5" />
+									</button>
 								)}
-							>
-								<ChevronLeft className="w-5 h-5" />
-							</button>
 
-							{/* Indicateurs de steps */}
-							<div className="flex items-center gap-2">
-								{[...filteredBlocks, { type: 'vocabImport', title: t('methode_import_vocabulary') }].map((block, idx) => {
-									const isVocabStep = idx === filteredBlocks.length
-									const blockConf = isVocabStep ? vocabImportConfig : (blockConfig[block.type] || blockConfig.dialogue)
-									const isActive = idx === currentSection
-									const isCompleted = !isVocabStep && completedSections[idx]
+								{/* Indicateurs de steps */}
+								<TooltipProvider delayDuration={0} skipDelayDuration={0}>
+									<div className="flex items-center gap-2">
+										{[...filteredBlocks, { type: 'vocabImport', title: t('methode_import_vocabulary') }].map((block, idx) => {
+											const isVocabStep = idx === filteredBlocks.length
+											const blockConf = isVocabStep ? vocabImportConfig : (blockConfig[block.type] || blockConfig.dialogue)
+											const isActive = idx === currentSection
+											const isCompleted = !isVocabStep && completedSections[idx]
+											const BlockIcon = blockConf.icon
 
-									return (
-										<button
-											key={idx}
-											onClick={() => {
-												setCurrentSection(idx)
-												window.scrollTo({ top: 0, behavior: 'smooth' })
-											}}
-											className={cn(
-												'relative rounded-full transition-all duration-300',
-												isActive
-													? `w-10 h-4 bg-gradient-to-r ${blockConf.gradient} shadow-lg`
-													: isCompleted
-														? 'w-4 h-4 bg-emerald-500 shadow-emerald-500/30 shadow-md hover:scale-125'
-														: cn(
-															'w-4 h-4 hover:scale-125',
+											return (
+												<Tooltip key={idx} disableHoverableContent>
+													<TooltipTrigger asChild>
+														<button
+															onClick={() => {
+																setCurrentSection(idx)
+																window.scrollTo({ top: 0, behavior: 'smooth' })
+															}}
+															className={cn(
+																'relative rounded-full transition-all duration-300',
+																isActive
+																	? `w-10 h-4 bg-gradient-to-r ${blockConf.gradient} shadow-lg`
+																	: isCompleted
+																		? 'w-4 h-4 bg-emerald-500 shadow-emerald-500/30 shadow-md hover:scale-125'
+																		: cn(
+																			'w-4 h-4 hover:scale-125',
+																			isDark
+																				? 'bg-slate-600 hover:bg-slate-500'
+																				: 'bg-slate-300 hover:bg-slate-400'
+																		)
+															)}
+														>
+															{isActive && (
+																<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
+															)}
+															{isCompleted && !isActive && (
+																<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
+															)}
+														</button>
+													</TooltipTrigger>
+													<TooltipContent
+														side="bottom"
+														className={cn(
+															'px-3 py-2 rounded-xl border-2',
+															'bg-gradient-to-br shadow-xl',
 															isDark
-																? 'bg-slate-600 hover:bg-slate-500'
-																: 'bg-slate-300 hover:bg-slate-400'
-														)
-											)}
-											title={`${idx + 1}. ${block.title || blockConf.label}`}
-										>
-											{isActive && (
-												<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
-											)}
-											{isCompleted && !isActive && (
-												<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
-											)}
-										</button>
-									)
-								})}
-							</div>
+																? 'from-slate-800 to-slate-900 border-violet-500/40 text-white'
+																: 'from-white to-slate-50 border-violet-200 text-slate-800',
+															'shadow-[0_4px_20px_rgba(139,92,246,0.2)]'
+														)}
+													>
+														<div className="flex items-center gap-2">
+															<div className={cn(
+																'w-6 h-6 rounded-lg flex items-center justify-center',
+																`bg-gradient-to-br ${blockConf.gradient}`
+															)}>
+																<BlockIcon className="w-3.5 h-3.5 text-white" />
+															</div>
+															<div>
+																<p className="font-bold text-xs">
+																	{idx + 1}. {block.title || blockConf.label}
+																</p>
+																{isCompleted && (
+																	<p className="text-xs text-emerald-500 font-medium flex items-center gap-1">
+																		<CheckCircle className="w-3 h-3" />
+																		{t('methode_completed') || 'Terminé'}
+																	</p>
+																)}
+															</div>
+														</div>
+													</TooltipContent>
+												</Tooltip>
+											)
+										})}
+									</div>
+								</TooltipProvider>
 
-							<button
-								onClick={handleNext}
-								disabled={isCompleting}
-								className={cn(
-									'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
-									'border-2 border-violet-400/50 text-violet-400',
-									'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
-									'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
-									'active:scale-95'
+								{/* Bouton Next - masqué sur le dernier step */}
+								{!isLastSection && (
+									<button
+										onClick={handleNext}
+										className={cn(
+											'w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300',
+											'border-2 border-violet-400/50 text-violet-400',
+											'hover:border-violet-400 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600',
+											'hover:text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:scale-110',
+											'active:scale-95'
+										)}
+									>
+										<ChevronRight className="w-5 h-5" />
+									</button>
 								)}
-							>
-								{isCompleting ? (
-									<Loader2 className="w-5 h-5 animate-spin" />
-								) : (
-									<ChevronRight className="w-5 h-5" />
-								)}
-							</button>
+							</div>
 						</div>
 					</div>
-				</div>
 				</div>
 			</div>
 		)

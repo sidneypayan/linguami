@@ -123,35 +123,15 @@ const ExerciseInlineBlock = ({ block }) => {
 						)}
 					>
 						{/* Question */}
-						<div className="flex items-start gap-3 mb-3">
-							<div className={cn(
-								'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold',
-								submitted
-									? results[index]
-										? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white'
-										: 'bg-gradient-to-br from-red-400 to-rose-500 text-white'
-									: 'bg-gradient-to-br from-purple-400 to-pink-500 text-white'
-							)}>
-								{submitted ? (
-									results[index] ? (
-										<CheckCircle className="w-4 h-4" />
-									) : (
-										<XCircle className="w-4 h-4" />
-									)
-								) : (
-									index + 1
-								)}
-							</div>
-							<p className={cn(
-								'font-medium flex-1',
-								isDark ? 'text-white' : 'text-slate-900'
-							)}>
-								{q.question}
-							</p>
-						</div>
+						<p className={cn(
+							'font-medium mb-3',
+							isDark ? 'text-white' : 'text-slate-900'
+						)}>
+							{q.question}
+						</p>
 
 						{/* Input */}
-						<div className="ml-11">
+						<div>
 							<input
 								type="text"
 								value={answers[index] || ''}

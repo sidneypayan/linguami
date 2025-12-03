@@ -358,6 +358,7 @@ const LessonPageClient = ({
 									lessonId={lesson?.id}
 									onComplete={handleMarkComplete}
 									isCompleting={isCompleting}
+									isLessonCompleted={lessonCompleted}
 									locale={locale}
 								/>
 							</div>
@@ -369,33 +370,39 @@ const LessonPageClient = ({
 							'border-t',
 							isDark ? 'border-slate-800' : 'border-slate-200'
 						)}>
-							<Button
-								variant="outline"
+							{/* Back to quests button */}
+							<button
 								onClick={() => router.push(`/${locale}/method/${level?.slug}`)}
 								className={cn(
-									'gap-2 px-6 py-5',
+									'group relative flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all duration-300',
+									'border-2 overflow-hidden',
 									isDark
-										? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600'
-										: 'border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
+										? 'border-violet-500/40 text-violet-300 hover:border-violet-400 hover:text-white'
+										: 'border-violet-300 text-violet-600 hover:border-violet-400 hover:text-violet-700',
+									'hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:scale-105',
+									'active:scale-95'
 								)}
 							>
-								<ArrowLeft className="w-5 h-5" />
-								{t('methode_back_to_quests')}
-							</Button>
+								{/* Shine effect on hover */}
+								<span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+								<ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+								<span className="relative z-10">{t('methode_back_to_quests')}</span>
+							</button>
 
 							{/* Next quest button */}
-							<Button
+							<button
 								disabled
 								className={cn(
-									'gap-2 px-6 py-5 font-bold',
-									'bg-gradient-to-r shadow-lg',
-									config.gradient,
+									'group relative flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all duration-300',
+									'overflow-hidden',
+									'bg-gradient-to-r from-slate-600 to-slate-700 text-slate-400',
+									'border-2 border-slate-600',
 									'opacity-50 cursor-not-allowed'
 								)}
 							>
-								{t('methode_next_quest')}
+								<span className="relative z-10">{t('methode_next_quest')}</span>
 								<ArrowRight className="w-5 h-5" />
-							</Button>
+							</button>
 						</div>
 
 						{/* XP Reward reminder - hidden on mobile */}
