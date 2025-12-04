@@ -68,6 +68,76 @@ const CultureBlock = ({ block }) => {
 				{/* Comparaison */}
 				{comparison && (
 					<div className="grid gap-4 sm:grid-cols-2">
+						{/* Format formel/informel (Russie) */}
+						{(comparison.formal || comparison.informal) && (
+							<div className={cn(
+								'p-4 rounded-xl border-l-4 sm:col-span-2',
+								isDark
+									? 'bg-slate-800/50 border-red-500'
+									: 'bg-white border-red-400 shadow-sm'
+							)}>
+								<div className="flex items-center gap-2 mb-4">
+									<svg className="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-600" viewBox="0 0 100 100">
+										<clipPath id="flagClipRu">
+											<circle cx="50" cy="50" r="50"/>
+										</clipPath>
+										<g clipPath="url(#flagClipRu)">
+											<rect width="100" height="33.33" y="0" fill="#FFFFFF"/>
+											<rect width="100" height="33.34" y="33.33" fill="#0039A6"/>
+											<rect width="100" height="33.33" y="66.67" fill="#D52B1E"/>
+										</g>
+									</svg>
+									<h4 className={cn(
+										'font-bold',
+										isDark ? 'text-white' : 'text-slate-800'
+									)}>
+										En Russie
+									</h4>
+								</div>
+								<div className="grid gap-3 sm:grid-cols-2">
+									{comparison.formal && (
+										<div className={cn(
+											'p-3 rounded-lg',
+											isDark ? 'bg-blue-500/10' : 'bg-blue-50'
+										)}>
+											<h5 className={cn(
+												'font-semibold text-sm mb-1',
+												isDark ? 'text-blue-300' : 'text-blue-700'
+											)}>
+												Formel
+											</h5>
+											<p className={cn(
+												'text-sm',
+												isDark ? 'text-slate-300' : 'text-slate-600'
+											)}>
+												{comparison.formal}
+											</p>
+										</div>
+									)}
+									{comparison.informal && (
+										<div className={cn(
+											'p-3 rounded-lg',
+											isDark ? 'bg-red-500/10' : 'bg-red-50'
+										)}>
+											<h5 className={cn(
+												'font-semibold text-sm mb-1',
+												isDark ? 'text-red-300' : 'text-red-700'
+											)}>
+												Informel
+											</h5>
+											<p className={cn(
+												'text-sm',
+												isDark ? 'text-slate-300' : 'text-slate-600'
+											)}>
+												{comparison.informal}
+											</p>
+										</div>
+									)}
+								</div>
+							</div>
+						)}
+
+						{/* Format France/Russie (ancien) */}
 						{comparison.fr && (
 							<div className={cn(
 								'p-4 rounded-xl border-l-4',

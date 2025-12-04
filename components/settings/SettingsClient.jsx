@@ -351,7 +351,7 @@ const SettingsClient = ({ translations }) => {
 							{/* Avatar Section */}
 							<div className="relative flex-shrink-0">
 								<div
-									className="relative w-36 h-36 md:w-44 md:h-44 rounded-full p-1.5 bg-gradient-to-br from-violet-500 via-cyan-500 to-violet-500 shadow-2xl shadow-violet-500/40 cursor-pointer group animate-pulse-slow"
+									className="relative w-36 h-36 md:w-44 md:h-44 rounded-full p-1.5 bg-gradient-to-br from-violet-500 via-cyan-500 to-violet-500 shadow-2xl shadow-violet-500/40 cursor-pointer group"
 									onClick={() => setAvatarDialogOpen(true)}
 								>
 									<img

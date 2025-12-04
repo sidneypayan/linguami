@@ -4,15 +4,10 @@ import { getMethodLevels, getUserAccess } from '@/lib/method'
 import MethodPageClient from '@/components/method/MethodPageClient'
 
 export default async function MethodPage({ params }) {
-	// TEMPORARY: Admin-only access until courses are finalized
-	const { isAuthenticated, isAdmin } = await checkAdminAuth()
+	const { isAuthenticated } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect('/login')
-	}
-
-	if (!isAdmin) {
-		redirect('/')
 	}
 
 	// Get locale from params
