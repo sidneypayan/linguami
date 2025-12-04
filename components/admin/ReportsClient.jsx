@@ -101,27 +101,10 @@ const ReportsClient = ({ initialReports }) => {
 	]
 
 	return (
-		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-slate-50 pt-16">
 			<AdminNavbar activePage="reports" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				{/* Header */}
-				<div className="mb-6">
-					<div className="flex items-center gap-4 mb-2">
-						<div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-100 to-red-200 border-2 border-red-300/50 flex items-center justify-center">
-							<Flag className="w-7 h-7 text-red-600" />
-						</div>
-						<div>
-							<h1 className="text-2xl md:text-3xl font-bold text-slate-800">
-								{t('materialReports') || 'Material Reports'}
-							</h1>
-							<p className="text-slate-500">
-								{t('manageUserReports') || 'Manage user-reported issues with materials'}
-							</p>
-						</div>
-					</div>
-				</div>
-
 				{/* Status Tabs */}
 				<div className="bg-white rounded-xl border border-violet-200 mb-6 overflow-hidden">
 					<div className="flex overflow-x-auto border-b border-violet-200">

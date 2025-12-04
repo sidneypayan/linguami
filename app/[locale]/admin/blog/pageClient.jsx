@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Edit, Trash2, Plus, Eye } from 'lucide-react'
 import { toast } from 'sonner'
@@ -32,6 +32,7 @@ const Badge = ({ children, variant = 'default', size = 'sm' }) => {
 export default function BlogListClient() {
 	const router = useRouter()
 	const locale = useLocale()
+	const t = useTranslations('admin')
 	const [posts, setPosts] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [langFilter, setLangFilter] = useState('all')
@@ -83,14 +84,14 @@ export default function BlogListClient() {
 			<div className="max-w-6xl mx-auto px-4 pt-8 md:pt-16 pb-8">
 				{/* Header */}
 				<div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-					<h1 className="text-2xl font-bold text-slate-800">Blog Posts</h1>
+					<h1 className="text-2xl font-bold text-slate-800">{t('blogPosts')}</h1>
 					<div className="flex items-center gap-3">
 						<select
 							value={langFilter}
 							onChange={(e) => setLangFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">All languages</option>
+							<option value="all">{t('allLanguages')}</option>
 							<option value="fr">Français</option>
 							<option value="en">English</option>
 							<option value="ru">Русский</option>
@@ -100,7 +101,7 @@ export default function BlogListClient() {
 							className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
 						>
 							<Plus className="w-4 h-4" />
-							New Post
+							{t('newPost')}
 						</button>
 					</div>
 				</div>
@@ -111,12 +112,12 @@ export default function BlogListClient() {
 						<table className="w-full">
 							<thead>
 								<tr className="bg-slate-50 border-b border-slate-200">
-									<th className="px-4 py-3 text-left font-bold text-slate-700">Title</th>
-									<th className="px-4 py-3 text-left font-bold text-slate-700">Slug</th>
-									<th className="px-4 py-3 text-left font-bold text-slate-700">Lang</th>
-									<th className="px-4 py-3 text-left font-bold text-slate-700">Status</th>
-									<th className="px-4 py-3 text-left font-bold text-slate-700">Published</th>
-									<th className="px-4 py-3 text-right font-bold text-slate-700">Actions</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">{t('title')}</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">{t('slug')}</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">{t('language')}</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">{t('status')}</th>
+									<th className="px-4 py-3 text-left font-bold text-slate-700">{t('published')}</th>
+									<th className="px-4 py-3 text-right font-bold text-slate-700">{t('actions')}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -148,9 +149,9 @@ export default function BlogListClient() {
 											</td>
 											<td className="px-4 py-3">
 												{post.is_published ? (
-													<Badge variant="success">Published</Badge>
+													<Badge variant="success">{t('published')}</Badge>
 												) : (
-													<Badge>Draft</Badge>
+													<Badge>{t('draft')}</Badge>
 												)}
 											</td>
 											<td className="px-4 py-3 text-slate-600 text-sm">

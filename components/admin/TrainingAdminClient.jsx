@@ -30,6 +30,9 @@ import {
 	XCircle,
 	Eye,
 	RotateCcw,
+	SignalLow,
+	SignalMedium,
+	SignalHigh,
 } from 'lucide-react'
 import {
 	getTrainingThemesAction,
@@ -95,9 +98,9 @@ const defaultThemes = {
 }
 
 const levelConfig = {
-	beginner: { label: { fr: 'Debutant (A1)', en: 'Beginner (A1)' }, color: 'emerald' },
-	intermediate: { label: { fr: 'Intermediaire (B1)', en: 'Intermediate (B1)' }, color: 'amber' },
-	advanced: { label: { fr: 'Avance (C1)', en: 'Advanced (C1)' }, color: 'red' },
+	beginner: { label: { fr: 'Debutant', en: 'Beginner' }, color: 'emerald', icon: SignalLow },
+	intermediate: { label: { fr: 'Intermediaire', en: 'Intermediate' }, color: 'amber', icon: SignalMedium },
+	advanced: { label: { fr: 'Avance', en: 'Advanced' }, color: 'red', icon: SignalHigh },
 }
 
 const colorClasses = {
@@ -1014,10 +1017,10 @@ const TrainingAdminClient = () => {
 	const t = useTranslations('admin')
 	const locale = useLocale()
 	const [activeSection, setActiveSection] = useState('vocabulary')
-	const [expandedLevels, setExpandedLevels] = useState({ beginner: true })
 	const [selectedLang, setSelectedLang] = useState('ru')
+	const [selectedLevel, setSelectedLevel] = useState('beginner')
 	const [selectedTheme, setSelectedTheme] = useState(null)
-	const [selectedLevel, setSelectedLevel] = useState(null)
+	const [selectedThemeLevel, setSelectedThemeLevel] = useState(null)
 
 	// Fetch themes from DB
 	const { data: themesData, isLoading: themesLoading } = useQuery({
@@ -1044,16 +1047,9 @@ const TrainingAdminClient = () => {
 		questionCounts[stat.level][stat.key] = stat.question_count || 0
 	})
 
-	const toggleLevel = (level) => {
-		setExpandedLevels((prev) => ({
-			...prev,
-			[level]: !prev[level],
-		}))
-	}
-
 	const handleThemeClick = (theme, level) => {
 		setSelectedTheme(theme)
-		setSelectedLevel(level)
+		setSelectedThemeLevel(level)
 	}
 
 	// Calculate totals
@@ -1061,113 +1057,90 @@ const TrainingAdminClient = () => {
 	const totalQuestions = stats.reduce((sum, stat) => sum + (stat.question_count || 0), 0)
 
 	return (
-		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-slate-50 pt-16">
 			<AdminNavbar activePage="training" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				{/* Header */}
-				<div className="mb-6">
-					<div className="flex items-center gap-4 mb-2">
-						<div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-100 to-purple-200 border-2 border-violet-300/50 flex items-center justify-center">
-							<Dumbbell className="w-7 h-7 text-violet-600" />
-						</div>
-						<div>
-							<h1 className="text-2xl md:text-3xl font-bold text-slate-800">
-								{t('trainingExercises') || 'Training Exercises'}
-							</h1>
-							<p className="text-slate-500">
-								{t('manageTrainingContent') || 'Manage vocabulary training content'}
-							</p>
-						</div>
-					</div>
-				</div>
+				{/* Filters */}
+				<div className="space-y-3 mb-6">
+					{/* Category + Language Row */}
+					<div className="bg-white rounded-lg border border-slate-200 p-3">
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+							{/* Category Tabs */}
+							<div className="flex items-center gap-2">
+								{sectionTabs.map((tab) => {
+									const Icon = tab.icon
+									return (
+										<button
+											key={tab.key}
+											onClick={() => setActiveSection(tab.key)}
+											className={cn(
+												'flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all',
+												activeSection === tab.key
+													? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md'
+													: 'text-slate-500 hover:bg-slate-100'
+											)}
+										>
+											<Icon className="w-4 h-4" />
+											{tab.label[locale] || tab.label.en}
+										</button>
+									)
+								})}
+							</div>
 
-				{/* Stats Cards */}
-				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-					<div className="bg-white rounded-xl border border-slate-200 p-6">
-						<div className="flex items-center gap-4">
-							<div className="w-12 h-12 rounded-lg bg-violet-100 flex items-center justify-center">
-								<Languages className="w-6 h-6 text-violet-600" />
-							</div>
-							<div>
-								<p className="text-2xl font-bold text-slate-800">1</p>
-								<p className="text-sm text-slate-500">{t('languages') || 'Languages'}</p>
-							</div>
-						</div>
-					</div>
-					<div className="bg-white rounded-xl border border-slate-200 p-6">
-						<div className="flex items-center gap-4">
-							<div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
-								<BookOpen className="w-6 h-6 text-emerald-600" />
-							</div>
-							<div>
-								<p className="text-2xl font-bold text-slate-800">{totalThemes}</p>
-								<p className="text-sm text-slate-500">{t('themes') || 'Themes'}</p>
-							</div>
-						</div>
-					</div>
-					<div className="bg-white rounded-xl border border-slate-200 p-6">
-						<div className="flex items-center gap-4">
-							<div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-								<HelpCircle className="w-6 h-6 text-blue-600" />
-							</div>
-							<div>
-								<p className="text-2xl font-bold text-slate-800">{totalQuestions}</p>
-								<p className="text-sm text-slate-500">{t('questions') || 'Questions'}</p>
+							{/* Language Selector */}
+							<div className="flex items-center gap-2">
+								<span className="text-xs font-medium text-slate-500">
+									{t('language') || 'Language'}:
+								</span>
+								<button
+									onClick={() => setSelectedLang('ru')}
+									className={cn(
+										'px-3 py-1.5 rounded-lg font-medium text-sm transition-all',
+										selectedLang === 'ru'
+											? 'bg-red-100 text-red-700 border border-red-300'
+											: 'text-slate-500 hover:bg-slate-100'
+									)}
+								>
+									🇷🇺 Russe
+								</button>
+								<button
+									disabled
+									className="px-3 py-1.5 rounded-lg font-medium text-xs text-slate-300 cursor-not-allowed"
+								>
+									🇫🇷 Francais
+								</button>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				{/* Section Tabs + Language Selector */}
-				<div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-						{/* Section Tabs */}
-						<div className="flex items-center gap-2">
-							{sectionTabs.map((tab) => {
-								const Icon = tab.icon
-								return (
-									<button
-										key={tab.key}
-										onClick={() => setActiveSection(tab.key)}
-										className={cn(
-											'flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all',
-											activeSection === tab.key
-												? 'bg-indigo-100 text-indigo-700 border border-indigo-300'
-												: 'text-slate-500 hover:bg-slate-100'
-										)}
-									>
-										<Icon className="w-4 h-4" />
-										{tab.label[locale] || tab.label.en}
-									</button>
-								)
-							})}
+					{/* Level Filters */}
+					{activeSection === 'vocabulary' && (
+						<div className="bg-white rounded-lg border border-slate-200 p-3">
+							<div className="flex items-center gap-2">
+								{Object.entries(levelConfig).map(([levelKey, config]) => {
+									const colors = colorClasses[config.color]
+									const Icon = config.icon
+									return (
+										<button
+											key={levelKey}
+											onClick={() => setSelectedLevel(levelKey)}
+											className={cn(
+												'flex-1 px-4 py-2 rounded-lg font-semibold text-sm transition-all',
+												'border-2 flex items-center justify-center gap-2',
+												selectedLevel === levelKey
+													? ['bg-gradient-to-br text-white shadow-md', colors.bg, colors.border]
+													: [colors.text, colors.border, 'hover:bg-opacity-10']
+											)}
+										>
+											<Icon className="w-4 h-4" />
+											{getLocalizedText(config.label, locale)}
+										</button>
+									)
+								})}
+							</div>
 						</div>
-
-						{/* Language Selector */}
-						<div className="flex items-center gap-3">
-							<span className="text-sm font-semibold text-slate-600">
-								{t('language') || 'Language'}:
-							</span>
-							<button
-								onClick={() => setSelectedLang('ru')}
-								className={cn(
-									'px-4 py-2 rounded-lg font-semibold text-sm transition-all',
-									selectedLang === 'ru'
-										? 'bg-red-100 text-red-700 border border-red-300'
-										: 'text-slate-500 hover:bg-slate-100'
-								)}
-							>
-								🇷🇺 Russe
-							</button>
-							<button
-								disabled
-								className="px-4 py-2 rounded-lg font-semibold text-sm text-slate-300 cursor-not-allowed"
-							>
-								🇫🇷 Francais (soon)
-							</button>
-						</div>
-					</div>
+					)}
 				</div>
 
 				{/* Vocabulary Section */}
@@ -1178,123 +1151,116 @@ const TrainingAdminClient = () => {
 								<Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
 							</div>
 						) : (
-							<div className="space-y-4">
-								{Object.entries(themes).map(([level, levelThemes]) => {
-							const config = levelConfig[level]
-							const colors = colorClasses[config?.color || 'emerald']
-							const levelCounts = questionCounts[level] || {}
-							const themesWithQuestions = levelThemes.filter(
-								(theme) => (levelCounts[theme.key] || 0) > 0
-							)
-							const totalLevelQuestions = Object.values(levelCounts).reduce(
-								(sum, count) => sum + count,
-								0
-							)
+							<div className="bg-white rounded-lg border border-slate-200 p-4">
+								{(() => {
+									const levelThemes = themes[selectedLevel] || []
+									const levelCounts = questionCounts[selectedLevel] || {}
+									const config = levelConfig[selectedLevel]
+									const colors = colorClasses[config?.color || 'emerald']
 
-							return (
-								<div
-									key={level}
-									className="bg-white rounded-xl border border-slate-200 overflow-hidden"
-								>
-									{/* Level Header */}
-									<button
-										onClick={() => toggleLevel(level)}
-										className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
-									>
-										<div className="flex items-center gap-4">
-											<div
-												className={cn(
-													'w-10 h-10 rounded-lg flex items-center justify-center',
-													colors.bg
-												)}
-											>
-												<Target className={cn('w-5 h-5', colors.text)} />
+									return (
+										<>
+											{/* Level Header */}
+											<div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+												<div className="flex items-center gap-3">
+													<div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', colors.bg)}>
+														{(() => {
+															const Icon = config?.icon || Target
+															return <Icon className={cn('w-4 h-4', colors.text)} />
+														})()}
+													</div>
+													<div>
+														<h3 className="font-bold text-slate-800">
+															{getLocalizedText(config?.label, locale)}
+														</h3>
+														<p className="text-xs text-slate-500">
+															{levelThemes.length} thèmes
+														</p>
+													</div>
+												</div>
 											</div>
-											<div className="text-left">
-												<h3 className="font-bold text-slate-800">
-													{getLocalizedText(config?.label, locale)}
-												</h3>
-												<p className="text-sm text-slate-500">
-													{levelThemes.length} {t('themes') || 'themes'} &bull;{' '}
-													{totalLevelQuestions} questions
-												</p>
-											</div>
-										</div>
-										<div className="flex items-center gap-3">
-											<span
-												className={cn(
-													'px-3 py-1 rounded-full text-xs font-semibold border',
-													colors.bg,
-													colors.text,
-													colors.border
-												)}
-											>
-												{themesWithQuestions.length}/{levelThemes.length}{' '}
-												{t('ready') || 'ready'}
-											</span>
-											{expandedLevels[level] ? (
-												<ChevronDown className="w-5 h-5 text-slate-400" />
-											) : (
-												<ChevronRight className="w-5 h-5 text-slate-400" />
-											)}
-										</div>
-									</button>
 
-									{/* Themes Grid */}
-									{expandedLevels[level] && (
-										<div className="px-6 pb-6 border-t border-slate-100">
-											<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pt-4">
-												{levelThemes.map((theme) => {
-													const questionCount = levelCounts[theme.key] || 0
-													const hasQuestions = questionCount > 0
+											{/* Themes Grid */}
+											<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+												{levelThemes
+													.sort((a, b) => {
+														// Put verb themes at the end
+														const aIsVerb = a.key === 'verbs' ||
+															a.key.includes('verb') ||
+															a.label_fr?.toLowerCase().includes('verbe') ||
+															a.label_en?.toLowerCase().includes('verb')
+														const bIsVerb = b.key === 'verbs' ||
+															b.key.includes('verb') ||
+															b.label_fr?.toLowerCase().includes('verbe') ||
+															b.label_en?.toLowerCase().includes('verb')
+														if (aIsVerb && !bIsVerb) return 1
+														if (!aIsVerb && bIsVerb) return -1
+														return 0
+													})
+													.map((theme) => {
+														const questionCount = levelCounts[theme.key] || 0
+														const hasQuestions = questionCount > 0
+														const isVerbTheme = theme.key === 'verbs' ||
+															theme.key.includes('verb') ||
+															theme.label_fr?.toLowerCase().includes('verbe') ||
+															theme.label_en?.toLowerCase().includes('verb')
 
-													return (
-														<button
-															key={theme.key}
-															onClick={() => handleThemeClick(theme, level)}
-															className={cn(
-																'p-4 rounded-xl border transition-all text-left group',
-																hasQuestions
-																	? 'bg-white border-slate-200 hover:border-indigo-400 hover:shadow-md'
-																	: 'bg-slate-50 border-slate-100 hover:border-indigo-300 hover:bg-white'
-															)}
-														>
-															<div className="flex items-start justify-between mb-2">
-																<span className="text-2xl">{theme.icon}</span>
-																{hasQuestions ? (
-																	<CheckCircle2 className="w-5 h-5 text-emerald-500" />
-																) : (
-																	<Plus className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+														return (
+															<button
+																key={theme.key}
+																onClick={() => handleThemeClick(theme, selectedLevel)}
+																className={cn(
+																	'p-3 rounded-lg border-2 transition-all text-left group relative',
+																	isVerbTheme
+																		? hasQuestions
+																			? 'bg-amber-50 border-amber-300 hover:border-amber-500 hover:shadow-sm'
+																			: 'bg-amber-50/50 border-amber-200 hover:border-amber-400 hover:bg-amber-50'
+																		: hasQuestions
+																		? 'bg-white border-slate-200 hover:border-indigo-400 hover:shadow-sm'
+																		: 'bg-slate-50 border-slate-100 hover:border-indigo-300 hover:bg-white'
 																)}
-															</div>
-															<h4 className="font-semibold text-slate-800 mb-1">
-																{locale === 'fr'
-																	? theme.label_fr || theme.key
-																	: theme.label_en || theme.key}
-															</h4>
-															<p className="text-sm text-slate-500">
-																{questionCount} {t('questions') || 'questions'}
-															</p>
-															{hasQuestions && (
-																<div className="mt-2 flex gap-2">
-																	<span className="inline-flex items-center gap-1 text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
-																		<ListChecks className="w-3 h-3" />
-																		MCQ
-																	</span>
-																	<span className="inline-flex items-center gap-1 text-xs text-violet-600 bg-violet-50 px-2 py-1 rounded-full">
-																		Dropdown
-																	</span>
+															>
+																{isVerbTheme && (
+																	<div className="absolute top-1 right-1">
+																		<div className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white">
+																			V
+																		</div>
+																	</div>
+																)}
+																<div className="flex items-center gap-2 mb-1.5">
+																	<span className="text-xl">{theme.icon}</span>
+																	{hasQuestions ? (
+																		<CheckCircle2 className="w-4 h-4 text-emerald-500" />
+																	) : (
+																		<Plus className={cn(
+																			'w-4 h-4 transition-colors',
+																			isVerbTheme
+																				? 'text-amber-300 group-hover:text-amber-600'
+																				: 'text-slate-300 group-hover:text-indigo-500'
+																		)} />
+																	)}
 																</div>
-															)}
-														</button>
-													)
-												})}
+																<h4 className={cn(
+																	'font-medium text-sm mb-0.5 line-clamp-2',
+																	isVerbTheme ? 'text-amber-900' : 'text-slate-800'
+																)}>
+																	{locale === 'fr'
+																		? theme.label_fr || theme.key
+																		: theme.label_en || theme.key}
+																</h4>
+																<p className={cn(
+																	'text-xs',
+																	isVerbTheme ? 'text-amber-600' : 'text-slate-500'
+																)}>
+																	{questionCount} Q
+																</p>
+															</button>
+														)
+													})}
 											</div>
-										</div>
-									)}
-								</div>
-							)
-								})}
+										</>
+									)
+								})()}
 							</div>
 						)}
 					</>
@@ -1320,46 +1286,17 @@ const TrainingAdminClient = () => {
 						</span>
 					</div>
 				)}
-
-				{/* Summary */}
-				<div className="mt-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
-					<h3 className="font-bold text-slate-800 mb-4">{t('summary') || 'Summary'}</h3>
-					<div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-						<div>
-							<p className="text-3xl font-bold text-indigo-600">{totalThemes}</p>
-							<p className="text-sm text-slate-600">{t('totalThemes') || 'Total Themes'}</p>
-						</div>
-						<div>
-							<p className="text-3xl font-bold text-emerald-600">{totalQuestions}</p>
-							<p className="text-sm text-slate-600">
-								{t('totalQuestions') || 'Total Questions'}
-							</p>
-						</div>
-						<div>
-							<p className="text-3xl font-bold text-violet-600">
-								{themes.beginner?.length || 0}
-							</p>
-							<p className="text-sm text-slate-600">
-								{t('beginnerThemes') || 'Beginner Themes'}
-							</p>
-						</div>
-						<div>
-							<p className="text-3xl font-bold text-amber-600">2 XP</p>
-							<p className="text-sm text-slate-600">{locale === 'fr' ? 'par bonne reponse' : 'per correct answer'}</p>
-						</div>
-					</div>
-				</div>
 			</div>
 
 			{/* Theme Detail Panel */}
 			{selectedTheme && (
 				<ThemeDetailPanel
 					theme={selectedTheme}
-					level={selectedLevel}
+					level={selectedThemeLevel}
 					lang={selectedLang}
 					onClose={() => {
 						setSelectedTheme(null)
-						setSelectedLevel(null)
+						setSelectedThemeLevel(null)
 					}}
 					locale={locale}
 				/>

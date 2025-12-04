@@ -166,20 +166,10 @@ const UsersPage = ({ initialUsers = [] }) => {
 	}
 
 	return (
-		<div className="min-h-screen bg-white pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-white pt-16">
 			<AdminNavbar activePage="users" />
 
 			<div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
-				{/* Page Header */}
-				<div className="mb-6 md:mb-8">
-					<h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-1">
-						{t('usersManagement')}
-					</h1>
-					<p className="text-slate-500">
-						{users.length} {users.length > 1 ? t('registeredUsersPlural') : t('registeredUsers')}
-					</p>
-				</div>
-
 				{/* Search Bar */}
 				<Card className="mb-4 md:mb-6">
 					<CardContent className="p-4 md:p-6">
