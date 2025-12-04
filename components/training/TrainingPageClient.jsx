@@ -3189,12 +3189,25 @@ const TrainingPageClient = () => {
 					}
 				}
 			} else {
-				// Regular vocabulary themes are stored in trainingQuestions[lang][level].vocabulary[themeKey]
-				questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
-
-				// Fallback to Russian if no questions for this language
-				if (questionsPool.length === 0) {
-					questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
+				// Try to load vocabulary themes from database first
+				try {
+					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, selectedTheme)
+					if (result.success && result.data && result.data.length > 0) {
+						questionsPool = result.data
+					} else {
+						// Fallback to hardcoded data
+						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
+						if (questionsPool.length === 0) {
+							questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
+						}
+					}
+				} catch (error) {
+					console.error('Error loading vocabulary questions from DB:', error)
+					// Fallback to hardcoded data
+					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
+					if (questionsPool.length === 0) {
+						questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
+					}
 				}
 			}
 		} else if (selectedType === 'grammar') {
