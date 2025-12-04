@@ -6,7 +6,7 @@ import { useThemeMode } from '@/context/ThemeContext'
 import { useUserContext } from '@/context/user'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { completeTrainingSessionAction } from '@/app/actions/training'
+import { completeTrainingSessionAction, getTrainingQuestionsByThemeKeyAction } from '@/app/actions/training'
 import {
 	Dumbbell,
 	Brain,
@@ -26,7 +26,6 @@ import {
 	RotateCcw,
 	Coins,
 	Zap,
-	Languages,
 } from 'lucide-react'
 
 // Helper function to get localized text
@@ -47,10 +46,11 @@ const getLocalizedOptions = (options, locale) => {
 	return []
 }
 
-// Vocabulary themes by level
+// Vocabulary themes by level (includes grammar themes at the end with isGrammar flag)
 const vocabularyThemes = {
 	ru: {
 		beginner: [
+			// Vocabulary themes
 			{ key: 'greetings', icon: '👋', label: { fr: 'Salutations', en: 'Greetings' } },
 			{ key: 'numbers', icon: '🔢', label: { fr: 'Nombres', en: 'Numbers' } },
 			{ key: 'family', icon: '👨‍👩‍👧‍👦', label: { fr: 'Famille', en: 'Family' } },
@@ -73,6 +73,11 @@ const vocabularyThemes = {
 			{ key: 'school', icon: '📚', label: { fr: 'Ecole', en: 'School' } },
 			{ key: 'nature', icon: '🌳', label: { fr: 'Nature', en: 'Nature' } },
 			{ key: 'drinks', icon: '🥤', label: { fr: 'Boissons', en: 'Drinks' } },
+			// Grammar themes (imported from verbs category)
+			{ key: 'aspects', icon: '🔄', label: { fr: 'Aspects verbaux', en: 'Verbal aspects' }, isGrammar: true },
+			{ key: 'prefixes', icon: '🔗', label: { fr: 'Prefixes verbaux', en: 'Verb prefixes' }, isGrammar: true },
+			{ key: 'motion', icon: '🚶', label: { fr: 'Verbes de mouvement', en: 'Verbs of motion' }, isGrammar: true },
+			{ key: 'reflexive', icon: '🪞', label: { fr: 'Verbes reflechis (-ся)', en: 'Reflexive verbs (-ся)' }, isGrammar: true },
 		],
 		intermediate: [
 			{ key: 'travel', icon: '✈️', label: { fr: 'Voyages', en: 'Travel' } },
@@ -90,20 +95,6 @@ const vocabularyThemes = {
 			{ key: 'emotions', icon: '💭', label: { fr: 'Emotions', en: 'Emotions' } },
 			{ key: 'idioms', icon: '📚', label: { fr: 'Expressions', en: 'Idioms' } },
 		],
-	},
-}
-
-// Verbs themes by level (synced with training_themes DB)
-const verbsThemes = {
-	ru: {
-		beginner: [
-			{ key: 'aspects', icon: '🔄', label: { fr: 'Aspects verbaux', en: 'Verbal aspects' } },
-			{ key: 'prefixes', icon: '🔗', label: { fr: 'Prefixes verbaux', en: 'Verb prefixes' } },
-			{ key: 'motion', icon: '🚶', label: { fr: 'Verbes de mouvement', en: 'Verbs of motion' } },
-			{ key: 'reflexive', icon: '🪞', label: { fr: 'Verbes reflechis (-ся)', en: 'Reflexive verbs (-ся)' } },
-		],
-		intermediate: [],
-		advanced: [],
 	},
 }
 
@@ -2336,7 +2327,6 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 	const types = [
 		{ key: 'vocabulary', icon: BookOpen, color: 'emerald', label: t('vocabulary') },
 		{ key: 'grammar', icon: Brain, color: 'violet', label: t('grammar') },
-		{ key: 'verbs', icon: Languages, color: 'amber', label: t('verbs') },
 	]
 
 	return (
@@ -2348,7 +2338,7 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 				<Sparkles className="w-5 h-5" />
 				{t('selectType')}
 			</h3>
-			<div className="grid grid-cols-3 gap-3">
+			<div className="grid grid-cols-2 gap-3">
 				{types.map((type) => {
 					const Icon = type.icon
 					const isSelected = selectedType === type.key
@@ -2364,15 +2354,12 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 								isSelected
 									? type.color === 'emerald'
 										? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-400/50 shadow-lg scale-105'
-										: type.color === 'amber'
-											? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white border-amber-400/50 shadow-lg scale-105'
-											: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white border-violet-400/50 shadow-lg scale-105'
+										: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white border-violet-400/50 shadow-lg scale-105'
 									: isDark
 										? 'bg-slate-800/50 hover:scale-102'
 										: 'bg-white hover:scale-102',
 								!isSelected && type.color === 'emerald' && (isDark ? 'border-emerald-500/30 text-emerald-400' : 'border-emerald-200 text-emerald-600'),
-								!isSelected && type.color === 'violet' && (isDark ? 'border-violet-500/30 text-violet-400' : 'border-violet-200 text-violet-600'),
-								!isSelected && type.color === 'amber' && (isDark ? 'border-amber-500/30 text-amber-400' : 'border-amber-200 text-amber-600')
+								!isSelected && type.color === 'violet' && (isDark ? 'border-violet-500/30 text-violet-400' : 'border-violet-200 text-violet-600')
 							)}
 						>
 							<Icon className="w-8 h-8" />
@@ -2435,6 +2422,7 @@ const ThemeSelector = ({ themes, selectedTheme, onSelectTheme, isDark, t, locale
 				{themes.map((theme) => {
 					const isSelected = selectedTheme === theme.key
 					const label = getLocalizedText(theme.label, locale)
+					const isGrammar = theme.isGrammar
 
 					return (
 						<button
@@ -2445,10 +2433,16 @@ const ThemeSelector = ({ themes, selectedTheme, onSelectTheme, isDark, t, locale
 								'border-2 transition-all duration-300',
 								'flex flex-col items-center gap-2',
 								isSelected
-									? 'bg-gradient-to-br from-teal-500 to-emerald-600 text-white border-teal-400/50 shadow-lg scale-105'
-									: isDark
-										? 'bg-slate-800/50 border-teal-500/30 text-teal-400 hover:scale-102 hover:border-teal-400/50'
-										: 'bg-white border-teal-200 text-teal-600 hover:scale-102 hover:border-teal-300'
+									? isGrammar
+										? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white border-amber-400/50 shadow-lg scale-105'
+										: 'bg-gradient-to-br from-teal-500 to-emerald-600 text-white border-teal-400/50 shadow-lg scale-105'
+									: isGrammar
+										? isDark
+											? 'bg-slate-800/50 border-amber-500/30 text-amber-400 hover:scale-102 hover:border-amber-400/50'
+											: 'bg-white border-amber-200 text-amber-600 hover:scale-102 hover:border-amber-300'
+										: isDark
+											? 'bg-slate-800/50 border-teal-500/30 text-teal-400 hover:scale-102 hover:border-teal-400/50'
+											: 'bg-white border-teal-200 text-teal-600 hover:scale-102 hover:border-teal-300'
 							)}
 						>
 							<span className="text-2xl">{theme.icon}</span>
@@ -2558,6 +2552,11 @@ const MultiFillQuestion = ({ question, onAnswer, answered, selectedAnswer, isDar
 	const sentences = question.sentences || []
 	const questionText = getLocalizedText(question.question, locale)
 	const explanation = getLocalizedText(question.explanation, locale)
+
+	// Reset answers when question changes
+	useEffect(() => {
+		setAnswers({})
+	}, [question.id])
 
 	// Check if all answers are correct
 	const allCorrect = sentences.every((s, i) => answers[i] === s.correct)
@@ -3125,43 +3124,77 @@ const TrainingPageClient = () => {
 	// Get available themes based on selected type and level
 	const availableThemes = useMemo(() => {
 		const lang = userLearningLanguage || 'ru'
-		if (selectedType === 'verbs') {
-			return verbsThemes[lang]?.[selectedLevel] || verbsThemes.ru?.[selectedLevel] || []
-		}
 		return vocabularyThemes[lang]?.[selectedLevel] || vocabularyThemes.ru?.[selectedLevel] || []
-	}, [selectedLevel, selectedType, userLearningLanguage])
+	}, [selectedLevel, userLearningLanguage])
 
-	const startTraining = useCallback(() => {
+	const startTraining = useCallback(async () => {
 		const lang = userLearningLanguage || 'ru'
 		let questionsPool = []
 
-		if ((selectedType === 'vocabulary' || selectedType === 'verbs') && selectedTheme) {
-			const dataKey = selectedType === 'vocabulary' ? 'vocabulary' : 'verbs'
-			if (selectedTheme === 'all') {
-				// Get questions from ALL themes
-				const typeData = trainingQuestions[lang]?.[selectedLevel]?.[dataKey] || {}
-				const fallbackData = trainingQuestions.ru?.beginner?.[dataKey] || {}
+		if (selectedType === 'vocabulary' && selectedTheme) {
+			// Check if the selected theme is a grammar theme (aspects, prefixes, motion, reflexive)
+			const selectedThemeData = availableThemes.find(t => t.key === selectedTheme)
+			const isGrammarTheme = selectedThemeData?.isGrammar
 
-				// Collect questions from all themes
-				Object.keys(typeData).forEach(themeKey => {
-					const themeQuestions = typeData[themeKey] || []
+			if (selectedTheme === 'all') {
+				// Get questions from ALL vocabulary themes
+				const vocabData = trainingQuestions[lang]?.[selectedLevel]?.vocabulary || {}
+				const fallbackVocabData = trainingQuestions.ru?.beginner?.vocabulary || {}
+
+				// Collect questions from all vocabulary themes
+				Object.keys(vocabData).forEach(themeKey => {
+					const themeQuestions = vocabData[themeKey] || []
+					questionsPool = [...questionsPool, ...themeQuestions]
+				})
+
+				// Also include questions from verbs (grammar themes)
+				const verbsData = trainingQuestions[lang]?.[selectedLevel]?.verbs || {}
+				const fallbackVerbsData = trainingQuestions.ru?.beginner?.verbs || {}
+
+				Object.keys(verbsData).forEach(themeKey => {
+					const themeQuestions = verbsData[themeKey] || []
 					questionsPool = [...questionsPool, ...themeQuestions]
 				})
 
 				// Fallback to Russian if no questions
 				if (questionsPool.length === 0) {
-					Object.keys(fallbackData).forEach(themeKey => {
-						const themeQuestions = fallbackData[themeKey] || []
+					Object.keys(fallbackVocabData).forEach(themeKey => {
+						const themeQuestions = fallbackVocabData[themeKey] || []
+						questionsPool = [...questionsPool, ...themeQuestions]
+					})
+					Object.keys(fallbackVerbsData).forEach(themeKey => {
+						const themeQuestions = fallbackVerbsData[themeKey] || []
 						questionsPool = [...questionsPool, ...themeQuestions]
 					})
 				}
+			} else if (isGrammarTheme) {
+				// Try to load from database first
+				try {
+					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, selectedTheme)
+					if (result.success && result.data && result.data.length > 0) {
+						questionsPool = result.data
+					} else {
+						// Fallback to hardcoded data
+						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[selectedTheme] || []
+						if (questionsPool.length === 0) {
+							questionsPool = trainingQuestions.ru?.beginner?.verbs?.[selectedTheme] || []
+						}
+					}
+				} catch (error) {
+					console.error('Error loading questions from DB:', error)
+					// Fallback to hardcoded data
+					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[selectedTheme] || []
+					if (questionsPool.length === 0) {
+						questionsPool = trainingQuestions.ru?.beginner?.verbs?.[selectedTheme] || []
+					}
+				}
 			} else {
-				// Get questions for the selected theme
-				questionsPool = trainingQuestions[lang]?.[selectedLevel]?.[dataKey]?.[selectedTheme] || []
+				// Regular vocabulary themes are stored in trainingQuestions[lang][level].vocabulary[themeKey]
+				questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
 
 				// Fallback to Russian if no questions for this language
 				if (questionsPool.length === 0) {
-					questionsPool = trainingQuestions.ru?.beginner?.[dataKey]?.[selectedTheme] || []
+					questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
 				}
 			}
 		} else if (selectedType === 'grammar') {
@@ -3176,20 +3209,20 @@ const TrainingPageClient = () => {
 		const shuffled = [...questionsPool].sort(() => Math.random() - 0.5)
 		setQuestions(shuffled.slice(0, Math.min(questionCount, shuffled.length)))
 		setStep('training')
-	}, [selectedLevel, selectedType, selectedTheme, questionCount, userLearningLanguage])
+	}, [selectedLevel, selectedType, selectedTheme, questionCount, userLearningLanguage, availableThemes])
 
-	// Handle type selection - if vocabulary or verbs, go to theme selection
+	// Handle type selection - if vocabulary, go to theme selection
 	const handleTypeSelect = (type) => {
 		setSelectedType(type)
-		if (type === 'vocabulary' || type === 'verbs') {
-			// Reset theme when changing to vocabulary or verbs
+		if (type === 'vocabulary') {
+			// Reset theme when changing to vocabulary
 			setSelectedTheme(null)
 		}
 	}
 
 	// Proceed to next step after setup
 	const handleProceed = () => {
-		if (selectedType === 'vocabulary' || selectedType === 'verbs') {
+		if (selectedType === 'vocabulary') {
 			setStep('theme-select')
 		} else {
 			startTraining()
@@ -3320,7 +3353,7 @@ const TrainingPageClient = () => {
 									'flex items-center gap-3'
 								)}
 							>
-								{selectedType === 'vocabulary' || selectedType === 'verbs' ? (
+								{selectedType === 'vocabulary' ? (
 									<>
 										{t('chooseTheme')}
 										<ChevronLeft className="w-6 h-6 rotate-180" />
