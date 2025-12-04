@@ -99,7 +99,37 @@ export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey
 		return { success: false, error: error.message }
 	}
 
-	return { success: true, data: questions, themeId: theme.id }
+	// Transform questions to match frontend expected format
+	const transformedQuestions = questions.map((q) => {
+		const transformed = { ...q }
+
+		// Convert question_fr, question_en, question_ru to question object
+		if (q.question_fr || q.question_en || q.question_ru) {
+			transformed.question = {
+				fr: q.question_fr || '',
+				en: q.question_en || '',
+				ru: q.question_ru || '',
+			}
+		}
+
+		// Convert explanation_fr, explanation_en, explanation_ru to explanation object
+		if (q.explanation_fr || q.explanation_en || q.explanation_ru) {
+			transformed.explanation = {
+				fr: q.explanation_fr || '',
+				en: q.explanation_en || '',
+				ru: q.explanation_ru || '',
+			}
+		}
+
+		// Convert correct_answer to correctAnswer (camelCase)
+		if (q.correct_answer !== undefined) {
+			transformed.correctAnswer = q.correct_answer
+		}
+
+		return transformed
+	})
+
+	return { success: true, data: transformedQuestions, themeId: theme.id }
 }
 
 /**
