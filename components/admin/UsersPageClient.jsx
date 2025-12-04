@@ -189,14 +189,14 @@ const UsersPage = () => {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px] flex items-center justify-center">
+			<div className="min-h-screen bg-slate-50 pt-16 flex items-center justify-center">
 				<Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-slate-50 pt-16">
 			<AdminNavbar activePage="users" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

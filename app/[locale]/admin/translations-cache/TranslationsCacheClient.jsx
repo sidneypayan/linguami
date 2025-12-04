@@ -241,27 +241,10 @@ const TranslationsCacheClient = () => {
 	const getLangInfo = (code) => LANGUAGES.find(l => l.code === code) || { code, name: code, flag: '' }
 
 	return (
-		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-slate-50 pt-16">
 			<AdminNavbar activePage="translations" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				{/* Header */}
-				<div className="flex items-center justify-between mb-6">
-					<div>
-						<h1 className="text-2xl font-bold text-slate-800">Cache des traductions</h1>
-						<p className="text-sm text-slate-500 mt-1">
-							Gerez les traductions mises en cache depuis Yandex Dictionary
-						</p>
-					</div>
-					<button
-						onClick={openAddModal}
-						className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-					>
-						<Plus className="w-5 h-5" />
-						<span className="hidden sm:inline">Ajouter</span>
-					</button>
-				</div>
-
 				{/* Stats Cards */}
 				{!statsLoading && stats && (
 					<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -385,6 +368,15 @@ const TranslationsCacheClient = () => {
 								<X className="w-4 h-4" />
 							</button>
 						)}
+
+						{/* Add button */}
+						<button
+							onClick={openAddModal}
+							className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors ml-auto"
+						>
+							<Plus className="w-4 h-4" />
+							<span className="hidden sm:inline">Ajouter</span>
+						</button>
 					</div>
 
 					{/* Bulk actions */}

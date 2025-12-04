@@ -345,7 +345,7 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 	}
 
 	return (
-		<div className="min-h-screen bg-slate-50 pt-[70px] sm:pt-[80px]">
+		<div className="min-h-screen bg-slate-50 pt-16">
 			<AdminNavbar activePage="dashboard" />
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
