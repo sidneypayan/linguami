@@ -20,6 +20,13 @@ const AppRouterLayout = ({ children }) => {
 	// Check if we're on an admin page
 	const isAdminPage = pathname?.includes('/admin')
 
+	// Check if we're on an immersive page (hide footer on mobile for better UX)
+	const isImmersivePage =
+		pathname?.includes('/training') ||
+		pathname?.includes('/method/') && pathname?.split('/').length >= 5 || // /[locale]/method/[level]/[lesson]
+		pathname?.includes('/dictionary') ||
+		pathname?.includes('/materials/') && pathname?.split('/').length >= 5 // /[locale]/materials/[section]/[material]
+
 	return isFlashcardsOpen ? (
 		<FlashCards />
 	) : (
@@ -37,7 +44,9 @@ const AppRouterLayout = ({ children }) => {
 			<main className="flex-1 flex flex-col">
 				{children}
 			</main>
-			{!isAdminPage && <Footer />}
+			{!isAdminPage && (
+				<Footer className={isImmersivePage ? 'hidden md:block' : ''} />
+			)}
 			{!isAdminPage && <BottomNav />}
 		</div>
 	)

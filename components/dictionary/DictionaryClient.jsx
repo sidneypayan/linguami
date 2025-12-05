@@ -629,8 +629,8 @@ const DictionaryClient = ({ translations }) => {
 				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
 		)}>
 			<div className="relative max-w-5xl mx-auto px-4">
-				{/* Header Section */}
-				<div className="flex flex-col items-center justify-center mb-8">
+				{/* Header Section - Hidden on mobile */}
+				<div className="hidden md:flex flex-col items-center justify-center mb-8">
 					<h1 className={cn(
 						'text-2xl md:text-3xl font-black tracking-wide',
 						'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent',

@@ -409,6 +409,10 @@ const Material = ({
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 
+	// Floating buttons positioning
+	const finishButtonRef = useRef(null)
+	const [floatingButtonsBottom, setFloatingButtonsBottom] = useState(176) // Default: 44*4px = 176px (well above audio player at 96px)
+
 	// Check if this is a book chapter
 	const isBookChapter = initialMaterial?.book_id != null
 
@@ -487,6 +491,46 @@ const Material = ({
 
 		return () => clearTimeout(timeoutId)
 	}, [currentPage, isPaginated, isUserLoggedIn, currentMaterial?.id, savedPage])
+
+	// Dynamic positioning for floating buttons to avoid overlap with finish button
+	useEffect(() => {
+		const calculatePosition = () => {
+			if (!finishButtonRef.current) return
+
+			const finishButtonRect = finishButtonRef.current.getBoundingClientRect()
+			const windowHeight = window.innerHeight
+
+			// Default position: well above audio player (bottom-44 = 176px)
+			const defaultBottom = 176
+
+			// Calculate distance from BOTTOM of finish button to bottom of screen
+			const finishButtonFromBottom = windowHeight - finishButtonRect.bottom
+
+			// If finish button is in the lower zone (within 350px from bottom)
+			// This means it's getting close to where the floating buttons are
+			if (finishButtonFromBottom >= 0 && finishButtonFromBottom < 350) {
+				// Move buttons above the finish button
+				// Calculate: distance from TOP of finish button to bottom of screen + 20px gap
+				const newBottom = windowHeight - finishButtonRect.top + 20
+				setFloatingButtonsBottom(newBottom)
+			} else {
+				// Default position - finish button is not in the danger zone
+				setFloatingButtonsBottom(defaultBottom)
+			}
+		}
+
+		// Run on mount and when dependencies change
+		calculatePosition()
+
+		// Listen to scroll and resize events
+		window.addEventListener('scroll', calculatePosition, { passive: true })
+		window.addEventListener('resize', calculatePosition)
+
+		return () => {
+			window.removeEventListener('scroll', calculatePosition)
+			window.removeEventListener('resize', calculatePosition)
+		}
+	}, [currentPage, isPaginated])
 
 	// Get finish button text
 	const getFinishButtonText = () => {
@@ -857,7 +901,7 @@ const Material = ({
 								const isButtonDisabled = isCurrentPageCompleted || !canFinishChapter
 
 								return (
-									<div className="relative z-50 flex flex-col items-center justify-center mt-12 mb-8 gap-2">
+									<div ref={finishButtonRef} className="relative z-50 flex flex-col items-center justify-center mt-12 mb-8 gap-2">
 										{isLastPageOfChapter && !allPreviousPagesCompleted && !isCurrentPageCompleted && (
 											<p className={cn(
 												'text-sm text-center mb-2 px-4 py-2 rounded-lg',
@@ -941,11 +985,14 @@ const Material = ({
 			)}
 
 			{/* Words Container Button & Report Button - Mobile */}
-			<div className={cn(
-				'lg:hidden fixed z-50',
-				'bottom-44 right-4',
-				'flex flex-col items-center gap-3'
-			)}>
+			<div
+				className={cn(
+					'lg:hidden fixed z-50 right-4',
+					'flex flex-col items-center gap-3',
+					'transition-all duration-300 ease-out'
+				)}
+				style={{ bottom: `${floatingButtonsBottom}px` }}
+			>
 				<FloatingActionButton
 					onClick={() => setShowWordsContainer(true)}
 					icon={BookOpen}

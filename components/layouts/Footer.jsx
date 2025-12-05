@@ -14,7 +14,7 @@ import {
 	ExternalLink
 } from 'lucide-react'
 
-const Footer = () => {
+const Footer = ({ className }) => {
 	const t = useTranslations('common')
 	const { isDark } = useThemeMode()
 
@@ -28,7 +28,8 @@ const Footer = () => {
 		<footer className={cn(
 			'relative mt-auto overflow-hidden',
 			'pt-10 md:pt-14 pb-[calc(72px+2rem)] md:pb-14',
-			'bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900'
+			'bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900',
+			className
 		)}>
 			{/* Background effects */}
 			<div className="absolute inset-0 pointer-events-none">
