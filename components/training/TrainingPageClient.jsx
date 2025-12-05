@@ -3129,16 +3129,17 @@ const TrainingPageClient = () => {
 		return vocabularyThemes[lang]?.[selectedLevel] || vocabularyThemes.ru?.[selectedLevel] || []
 	}, [selectedLevel, userLearningLanguage])
 
-	const startTraining = useCallback(async () => {
+	const startTraining = useCallback(async (themeOverride = null) => {
 		const lang = userLearningLanguage || 'ru'
 		let questionsPool = []
+		const theme = themeOverride || selectedTheme // Use override if provided
 
-		if (selectedType === 'vocabulary' && selectedTheme) {
+		if (selectedType === 'vocabulary' && theme) {
 			// Check if the selected theme is a grammar theme (aspects, prefixes, motion, reflexive)
-			const selectedThemeData = availableThemes.find(t => t.key === selectedTheme)
+			const selectedThemeData = availableThemes.find(t => t.key === theme)
 			const isGrammarTheme = selectedThemeData?.isGrammar
 
-			if (selectedTheme === 'all') {
+			if (theme === 'all') {
 				// Get questions from ALL vocabulary themes
 				const vocabData = trainingQuestions[lang]?.[selectedLevel]?.vocabulary || {}
 				const fallbackVocabData = trainingQuestions.ru?.beginner?.vocabulary || {}
@@ -3172,43 +3173,43 @@ const TrainingPageClient = () => {
 			} else if (isGrammarTheme) {
 				// Try to load from database first
 				try {
-					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, selectedTheme)
+					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, theme)
 					if (result.success && result.data && result.data.length > 0) {
 						questionsPool = result.data
 					} else {
 						// Fallback to hardcoded data
-						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[selectedTheme] || []
+						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[theme] || []
 						if (questionsPool.length === 0) {
-							questionsPool = trainingQuestions.ru?.beginner?.verbs?.[selectedTheme] || []
+							questionsPool = trainingQuestions.ru?.beginner?.verbs?.[theme] || []
 						}
 					}
 				} catch (error) {
 					console.error('Error loading questions from DB:', error)
 					// Fallback to hardcoded data
-					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[selectedTheme] || []
+					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.verbs?.[theme] || []
 					if (questionsPool.length === 0) {
-						questionsPool = trainingQuestions.ru?.beginner?.verbs?.[selectedTheme] || []
+						questionsPool = trainingQuestions.ru?.beginner?.verbs?.[theme] || []
 					}
 				}
 			} else {
 				// Try to load vocabulary themes from database first
 				try {
-					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, selectedTheme)
+					const result = await getTrainingQuestionsByThemeKeyAction(lang, selectedLevel, theme)
 					if (result.success && result.data && result.data.length > 0) {
 						questionsPool = result.data
 					} else {
 						// Fallback to hardcoded data
-						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
+						questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[theme] || []
 						if (questionsPool.length === 0) {
-							questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
+							questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[theme] || []
 						}
 					}
 				} catch (error) {
 					console.error('Error loading vocabulary questions from DB:', error)
 					// Fallback to hardcoded data
-					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[selectedTheme] || []
+					questionsPool = trainingQuestions[lang]?.[selectedLevel]?.vocabulary?.[theme] || []
 					if (questionsPool.length === 0) {
-						questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[selectedTheme] || []
+						questionsPool = trainingQuestions.ru?.beginner?.vocabulary?.[theme] || []
 					}
 				}
 			}
@@ -3244,6 +3245,13 @@ const TrainingPageClient = () => {
 		} else {
 			startTraining()
 		}
+	}
+
+	// Handle theme selection - auto-start training when theme is selected
+	const handleThemeSelect = (themeKey) => {
+		setSelectedTheme(themeKey)
+		// Start training immediately, passing theme directly to avoid state delay
+		startTraining(themeKey)
 	}
 
 	// Admin-only access for now (beta feature) - early return AFTER all hooks
@@ -3406,32 +3414,11 @@ const TrainingPageClient = () => {
 						<ThemeSelector
 							themes={availableThemes}
 							selectedTheme={selectedTheme}
-							onSelectTheme={setSelectedTheme}
+							onSelectTheme={handleThemeSelect}
 							isDark={isDark}
 							t={t}
 							locale={locale}
 						/>
-
-						{/* Start button */}
-						<div className="flex justify-center pt-2 md:pt-4">
-							<button
-								onClick={startTraining}
-								disabled={!selectedTheme}
-								className={cn(
-									'px-6 py-2.5 md:px-8 md:py-4 rounded-lg md:rounded-xl font-bold text-sm md:text-lg',
-									'border-2 transition-all duration-300',
-									'flex items-center gap-2 md:gap-3',
-									selectedTheme
-										? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-400/50 shadow-lg shadow-emerald-500/30 hover:scale-105'
-										: isDark
-											? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
-											: 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
-								)}
-							>
-								<Play className="w-4 h-4 md:w-6 md:h-6" />
-								{t('startTraining')}
-							</button>
-						</div>
 					</OrnateFrame>
 				)}
 

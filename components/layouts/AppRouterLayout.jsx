@@ -47,7 +47,7 @@ const AppRouterLayout = ({ children }) => {
 			{!isAdminPage && (
 				<Footer className={isImmersivePage ? 'hidden md:block' : ''} />
 			)}
-			{!isAdminPage && <BottomNav />}
+			{!isAdminPage && !isImmersivePage && <BottomNav />}
 		</div>
 	)
 }
