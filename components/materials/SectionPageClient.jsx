@@ -100,39 +100,64 @@ const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 }
 
 // ============================================
-// SECTION HEADER
+// EPIC HEADER - Unified with material page
 // ============================================
-const SectionHeader = ({ isDark, section, t, onBack }) => {
+const EpicHeader = ({ isDark, title, onBack }) => {
 	return (
-		<div className="relative mb-6 md:mb-8">
-			<div className="flex items-center gap-3 md:gap-4">
-				{/* Back button */}
-				<button
-					onClick={onBack}
-					aria-label="back"
-					className={cn(
-						'p-2.5 md:p-3 rounded-xl transition-all duration-300',
-						'border',
-						isDark
-							? 'bg-gradient-to-br from-violet-500/10 to-cyan-500/10 border-violet-500/30'
-							: 'bg-gradient-to-br from-violet-500/5 to-cyan-500/5 border-violet-500/20',
-						'text-violet-500',
-						'hover:scale-105 hover:shadow-lg',
-						isDark
-							? 'hover:bg-gradient-to-br hover:from-violet-500/20 hover:to-cyan-500/20'
-							: 'hover:bg-gradient-to-br hover:from-violet-500/10 hover:to-cyan-500/10'
-					)}
-				>
-					<ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
-				</button>
+		<div className={cn(
+			'pt-20 md:pt-24 pb-4 md:pb-6',
+			'border-b',
+			isDark ? 'border-violet-500/20 bg-slate-950' : 'border-violet-200/50 bg-white'
+		)}>
+			<div className="max-w-6xl mx-auto px-4">
+				<div className="flex items-center gap-4 md:gap-6">
+					{/* Back button with shield style */}
+					<button
+						onClick={onBack}
+						className={cn(
+							'group relative w-12 h-12 md:w-14 md:h-14',
+							'flex items-center justify-center',
+							'transition-all duration-300',
+							'hover:scale-110'
+						)}
+					>
+						{/* Shield background */}
+						<div className={cn(
+							'absolute inset-0 rounded-xl rotate-45',
+							'bg-gradient-to-br',
+							isDark
+								? 'from-slate-700 to-slate-800 border-2 border-violet-500/30'
+								: 'from-white to-slate-100 border-2 border-violet-300/50',
+							'shadow-lg',
+							isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30',
+							'group-hover:border-violet-400 transition-colors'
+						)} />
+						<ArrowLeft className={cn(
+							'relative z-10 w-5 h-5 md:w-6 md:h-6',
+							isDark ? 'text-violet-400' : 'text-violet-600',
+							'group-hover:text-violet-500 transition-colors',
+							'group-hover:-translate-x-1 transition-transform'
+						)} />
+						{/* Glow on hover */}
+						<div className={cn(
+							'absolute inset-0 rounded-xl rotate-45',
+							'bg-gradient-to-br from-violet-500/0 to-cyan-500/0',
+							'group-hover:from-violet-500/20 group-hover:to-cyan-500/20',
+							'transition-all duration-300'
+						)} />
+					</button>
 
-				{/* Title */}
-				<h1 className={cn(
-					'text-2xl sm:text-3xl md:text-4xl font-bold',
-					'bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent'
-				)}>
-					{section && t(section)}
-				</h1>
+					{/* Title */}
+					<div className="flex-1">
+						<h1 className={cn(
+							'text-xl sm:text-2xl md:text-3xl font-black',
+							'bg-gradient-to-r from-violet-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent',
+							'[text-shadow:0_4px_12px_rgba(139,92,246,0.3)]'
+						)}>
+							{title}
+						</h1>
+					</div>
+				</div>
 			</div>
 		</div>
 	)
@@ -516,20 +541,19 @@ export default function SectionPageClient({
 
 	return (
 		<div className={cn(
-			'min-h-screen pt-16 md:pt-24 pb-24',
+			'min-h-screen pb-24',
 			isDark
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
 				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-100 via-amber-50/30 to-slate-50'
 		)}>
-			<div className="relative max-w-7xl mx-auto px-4">
-				{/* Section Header */}
-				<SectionHeader
-					isDark={isDark}
-					section={section}
-					t={t}
-					onBack={() => router.back()}
-				/>
+			{/* Epic Header */}
+			<EpicHeader
+				isDark={isDark}
+				title={section && t(section)}
+				onBack={() => router.back()}
+			/>
 
+			<div className="relative max-w-7xl mx-auto px-4 pt-6 md:pt-8">
 				{/* Filter Bar */}
 				<MaterialsFilterBar
 					searchValue={searchTerm}
