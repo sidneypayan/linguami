@@ -2148,14 +2148,14 @@ const trainingQuestions = {
 // ============================================
 // DECORATIVE COMPONENTS
 // ============================================
-const OrnateFrame = ({ children, className, isDark }) => {
+const OrnateFrame = ({ children, className, isDark, fullWidthMobile = false }) => {
 	return (
 		<div className={cn(
-			'relative rounded-2xl overflow-hidden',
-			'border-2',
+			'relative overflow-hidden',
+			fullWidthMobile ? 'rounded-none md:rounded-2xl border-b md:border-2' : 'rounded-2xl border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			'md:shadow-lg',
+			isDark ? 'md:shadow-black/20' : 'md:shadow-slate-200/50',
 			className
 		)}>
 			{children}
@@ -2189,15 +2189,15 @@ const LevelSelector = ({ selectedLevel, onSelectLevel, isDark, t }) => {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-3">
 			<h3 className={cn(
-				'text-lg font-bold flex items-center gap-2',
+				'text-base md:text-lg font-bold flex items-center gap-2',
 				isDark ? 'text-slate-200' : 'text-slate-700'
 			)}>
-				<Target className="w-5 h-5" />
+				<Target className="w-4 h-4 md:w-5 md:h-5" />
 				{t('selectLevel')}
 			</h3>
-			<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+			<div className="grid grid-cols-3 gap-2">
 				{levels.map((level) => {
 					const Icon = level.icon
 					const isSelected = selectedLevel === level.key
@@ -2208,16 +2208,16 @@ const LevelSelector = ({ selectedLevel, onSelectLevel, isDark, t }) => {
 							key={level.key}
 							onClick={() => onSelectLevel(level.key)}
 							className={cn(
-								'p-4 rounded-xl font-bold text-sm',
+								'p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all duration-300',
-								'flex flex-col items-center gap-2',
+								'flex flex-col items-center gap-1 md:gap-2',
 								isSelected
 									? ['bg-gradient-to-br text-white shadow-lg', colors.active, 'scale-105']
 									: [isDark ? 'bg-slate-800/50' : 'bg-white', colors.inactive, 'hover:scale-102']
 							)}
 						>
-							<Icon className="w-8 h-8" />
-							<span>{level.label}</span>
+							<Icon className="w-5 h-5 md:w-8 md:h-8" />
+							<span className="text-[10px] md:text-sm leading-tight">{level.label}</span>
 						</button>
 					)
 				})}
@@ -2234,57 +2234,59 @@ const ModeSelector = ({ mode, setMode, questionCount, setQuestionCount, duration
 	const durationOptions = [5, 10, 15, 20] // minutes
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-3">
 			<h3 className={cn(
-				'text-lg font-bold flex items-center gap-2',
+				'text-base md:text-lg font-bold flex items-center gap-2',
 				isDark ? 'text-slate-200' : 'text-slate-700'
 			)}>
-				<Clock className="w-5 h-5" />
+				<Clock className="w-4 h-4 md:w-5 md:h-5" />
 				{t('selectMode')}
 			</h3>
 
 			{/* Mode toggle */}
 			<div className={cn(
-				'flex gap-2 p-1 rounded-xl',
+				'flex gap-1 p-1 rounded-lg md:rounded-xl',
 				isDark ? 'bg-slate-800/50' : 'bg-slate-100'
 			)}>
 				<button
 					onClick={() => setMode('questions')}
 					className={cn(
-						'flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all',
-						'flex items-center justify-center gap-2',
+						'flex-1 py-1.5 px-2 md:py-2 md:px-4 rounded-md md:rounded-lg font-semibold text-xs md:text-sm transition-all',
+						'flex items-center justify-center gap-1 md:gap-2',
 						mode === 'questions'
 							? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg'
 							: isDark ? 'text-slate-400 hover:text-violet-400' : 'text-slate-500 hover:text-violet-600'
 					)}
 				>
-					<Hash className="w-4 h-4" />
-					{t('byQuestions')}
+					<Hash className="w-3 h-3 md:w-4 md:h-4" />
+					<span className="hidden sm:inline">{t('byQuestions')}</span>
+					<span className="sm:hidden">Questions</span>
 				</button>
 				<button
 					onClick={() => setMode('duration')}
 					className={cn(
-						'flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all',
-						'flex items-center justify-center gap-2',
+						'flex-1 py-1.5 px-2 md:py-2 md:px-4 rounded-md md:rounded-lg font-semibold text-xs md:text-sm transition-all',
+						'flex items-center justify-center gap-1 md:gap-2',
 						mode === 'duration'
 							? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg'
 							: isDark ? 'text-slate-400 hover:text-violet-400' : 'text-slate-500 hover:text-violet-600'
 					)}
 				>
-					<Clock className="w-4 h-4" />
-					{t('byDuration')}
+					<Clock className="w-3 h-3 md:w-4 md:h-4" />
+					<span className="hidden sm:inline">{t('byDuration')}</span>
+					<span className="sm:hidden">Durée</span>
 				</button>
 			</div>
 
 			{/* Options */}
-			<div className="flex flex-wrap gap-2 justify-center">
+			<div className="flex flex-wrap gap-1.5 md:gap-2 justify-center">
 				{mode === 'questions' ? (
 					questionOptions.map((count) => (
 						<button
 							key={count}
 							onClick={() => setQuestionCount(count)}
 							className={cn(
-								'px-4 py-2 rounded-xl font-bold text-sm',
+								'px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all',
 								questionCount === count
 									? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white border-cyan-400/50 shadow-lg'
@@ -2293,7 +2295,7 @@ const ModeSelector = ({ mode, setMode, questionCount, setQuestionCount, duration
 										: 'bg-white border-cyan-200 text-cyan-600 hover:bg-cyan-50'
 							)}
 						>
-							{count} {t('questions')}
+							{count} <span className="hidden sm:inline">{t('questions')}</span>
 						</button>
 					))
 				) : (
@@ -2302,7 +2304,7 @@ const ModeSelector = ({ mode, setMode, questionCount, setQuestionCount, duration
 							key={mins}
 							onClick={() => setDuration(mins)}
 							className={cn(
-								'px-4 py-2 rounded-xl font-bold text-sm',
+								'px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all',
 								duration === mins
 									? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white border-cyan-400/50 shadow-lg'
@@ -2330,15 +2332,15 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 	]
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-3">
 			<h3 className={cn(
-				'text-lg font-bold flex items-center gap-2',
+				'text-base md:text-lg font-bold flex items-center gap-2',
 				isDark ? 'text-slate-200' : 'text-slate-700'
 			)}>
-				<Sparkles className="w-5 h-5" />
+				<Sparkles className="w-4 h-4 md:w-5 md:h-5" />
 				{t('selectType')}
 			</h3>
-			<div className="grid grid-cols-2 gap-3">
+			<div className="grid grid-cols-2 gap-2">
 				{types.map((type) => {
 					const Icon = type.icon
 					const isSelected = selectedType === type.key
@@ -2348,9 +2350,9 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 							key={type.key}
 							onClick={() => onSelectType(type.key)}
 							className={cn(
-								'p-4 rounded-xl font-bold text-sm',
+								'p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all duration-300',
-								'flex flex-col items-center gap-2',
+								'flex flex-col items-center gap-1 md:gap-2',
 								isSelected
 									? type.color === 'emerald'
 										? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-400/50 shadow-lg scale-105'
@@ -2362,8 +2364,8 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 								!isSelected && type.color === 'violet' && (isDark ? 'border-violet-500/30 text-violet-400' : 'border-violet-200 text-violet-600')
 							)}
 						>
-							<Icon className="w-8 h-8" />
-							<span>{type.label}</span>
+							<Icon className="w-5 h-5 md:w-8 md:h-8" />
+							<span className="text-[10px] md:text-sm leading-tight">{type.label}</span>
 						</button>
 					)
 				})}
@@ -2864,9 +2866,9 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-3 md:space-y-6">
 			{/* Progress bar */}
-			<div className="space-y-2">
+			<div className="space-y-1.5 px-4 md:px-0">
 				<div className="flex justify-between text-sm">
 					<span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
 						{t('question')} {currentIndex + 1} / {questions.length}
@@ -2895,7 +2897,7 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 			</div>
 
 			{/* Question */}
-			<OrnateFrame isDark={isDark} className="p-6">
+			<OrnateFrame isDark={isDark} fullWidthMobile className="px-4 py-4 md:p-6">
 				{currentQuestion.type === 'mcq' ? (
 					<MCQQuestion
 						question={currentQuestion}
@@ -2931,7 +2933,7 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 
 			{/* Next button */}
 			{answered && (
-				<div className="flex justify-center">
+				<div className="flex justify-center px-4 md:px-0">
 					<button
 						onClick={handleNext}
 						className={cn(
@@ -3222,6 +3224,8 @@ const TrainingPageClient = () => {
 		const shuffled = [...questionsPool].sort(() => Math.random() - 0.5)
 		setQuestions(shuffled.slice(0, Math.min(questionCount, shuffled.length)))
 		setStep('training')
+		// Scroll to top when starting training
+		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}, [selectedLevel, selectedType, selectedTheme, questionCount, userLearningLanguage, availableThemes])
 
 	// Handle type selection - if vocabulary, go to theme selection
@@ -3294,14 +3298,15 @@ const TrainingPageClient = () => {
 
 	return (
 		<div className={cn(
-			'min-h-screen pt-16 md:pt-24 pb-24',
+			'min-h-screen md:pt-24 md:pb-24',
+			step === 'training' ? 'pt-20 pb-4' : 'pt-16 pb-16',
 			isDark
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-violet-950/30 to-slate-950'
 				: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-50 via-violet-50/30 to-slate-50'
 		)}>
-			<div className="relative max-w-4xl mx-auto px-4">
-				{/* Header */}
-				<div className="text-center mb-8">
+			<div className="relative max-w-4xl mx-auto px-0 md:px-4">
+				{/* Header - hidden on mobile */}
+				<div className="hidden md:block text-center mb-8">
 					<div className="flex items-center justify-center gap-3 mb-4">
 						<div className={cn(
 							'w-14 h-14 rounded-full flex items-center justify-center',
@@ -3318,7 +3323,7 @@ const TrainingPageClient = () => {
 						{t('pageTitle')}
 					</h1>
 					<p className={cn(
-						'text-sm md:text-base',
+						'text-base',
 						isDark ? 'text-slate-400' : 'text-slate-600'
 					)}>
 						{t('pageSubtitle')}
@@ -3327,7 +3332,7 @@ const TrainingPageClient = () => {
 
 				{/* Content */}
 				{step === 'setup' && (
-					<OrnateFrame isDark={isDark} className="p-6 space-y-8">
+					<OrnateFrame isDark={isDark} fullWidthMobile className="p-4 md:p-6 space-y-6 md:space-y-8">
 						<LevelSelector
 							selectedLevel={selectedLevel}
 							onSelectLevel={setSelectedLevel}
@@ -3354,26 +3359,26 @@ const TrainingPageClient = () => {
 						/>
 
 						{/* Next/Start button */}
-						<div className="flex justify-center pt-4">
+						<div className="flex justify-center pt-2 md:pt-4">
 							<button
 								onClick={handleProceed}
 								className={cn(
-									'px-8 py-4 rounded-xl font-bold text-lg',
+									'px-6 py-2.5 md:px-8 md:py-4 rounded-lg md:rounded-xl font-bold text-sm md:text-lg',
 									'bg-gradient-to-br from-emerald-500 to-teal-600 text-white',
 									'border-2 border-emerald-400/50',
 									'shadow-lg shadow-emerald-500/30',
 									'hover:scale-105 transition-all duration-300',
-									'flex items-center gap-3'
+									'flex items-center gap-2 md:gap-3'
 								)}
 							>
 								{selectedType === 'vocabulary' ? (
 									<>
 										{t('chooseTheme')}
-										<ChevronLeft className="w-6 h-6 rotate-180" />
+										<ChevronLeft className="w-4 h-4 md:w-6 md:h-6 rotate-180" />
 									</>
 								) : (
 									<>
-										<Play className="w-6 h-6" />
+										<Play className="w-4 h-4 md:w-6 md:h-6" />
 										{t('startTraining')}
 									</>
 								)}
@@ -3384,7 +3389,7 @@ const TrainingPageClient = () => {
 
 				{/* Theme Selection Step */}
 				{step === 'theme-select' && (
-					<OrnateFrame isDark={isDark} className="p-6 space-y-8">
+					<OrnateFrame isDark={isDark} fullWidthMobile className="p-4 md:p-6 space-y-6 md:space-y-8">
 						{/* Back button */}
 						<button
 							onClick={() => setStep('setup')}
@@ -3408,14 +3413,14 @@ const TrainingPageClient = () => {
 						/>
 
 						{/* Start button */}
-						<div className="flex justify-center pt-4">
+						<div className="flex justify-center pt-2 md:pt-4">
 							<button
 								onClick={startTraining}
 								disabled={!selectedTheme}
 								className={cn(
-									'px-8 py-4 rounded-xl font-bold text-lg',
+									'px-6 py-2.5 md:px-8 md:py-4 rounded-lg md:rounded-xl font-bold text-sm md:text-lg',
 									'border-2 transition-all duration-300',
-									'flex items-center gap-3',
+									'flex items-center gap-2 md:gap-3',
 									selectedTheme
 										? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-emerald-400/50 shadow-lg shadow-emerald-500/30 hover:scale-105'
 										: isDark
@@ -3423,7 +3428,7 @@ const TrainingPageClient = () => {
 											: 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
 								)}
 							>
-								<Play className="w-6 h-6" />
+								<Play className="w-4 h-4 md:w-6 md:h-6" />
 								{t('startTraining')}
 							</button>
 						</div>
