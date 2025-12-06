@@ -8,7 +8,8 @@ export const metadata = {
 	description: 'Create and manage blog posts',
 }
 
-export default async function BlogAdminPage() {
+export default async function BlogAdminPage({ params }) {
+	const { locale } = await params
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
@@ -18,7 +19,7 @@ export default async function BlogAdminPage() {
 	} = await supabase.auth.getUser()
 
 	if (!user) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	// Check admin role
@@ -29,7 +30,7 @@ export default async function BlogAdminPage() {
 		.single()
 
 	if (!profile || profile.role !== 'admin') {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	return <BlogListClient />

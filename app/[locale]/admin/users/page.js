@@ -3,15 +3,16 @@ import { redirect } from 'next/navigation'
 import { getUsers } from '@/app/actions/admin'
 import UsersPageClient from './UsersPageClient'
 
-export default async function UsersPage() {
+export default async function UsersPage({ params }) {
+	const { locale } = await params
 	const { isAuthenticated, isAdmin } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	if (!isAdmin) {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	// Fetch users server-side

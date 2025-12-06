@@ -9,7 +9,7 @@ export const metadata = {
 }
 
 export default async function EditBlogPage({ params }) {
-	const { id } = await params
+	const { locale, id } = await params
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
@@ -19,7 +19,7 @@ export default async function EditBlogPage({ params }) {
 	} = await supabase.auth.getUser()
 
 	if (!user) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	// Check admin role
@@ -30,7 +30,7 @@ export default async function EditBlogPage({ params }) {
 		.single()
 
 	if (!profile || profile.role !== 'admin') {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	return <BlogEditClient postId={parseInt(id)} />

@@ -3,14 +3,16 @@ import { redirect } from 'next/navigation'
 import PreviewExerciseClient from './pageClient'
 
 export default async function PreviewExercisePage(props) {
+	const { params } = props
+	const { locale } = await params
 	const { isAuthenticated, isAdmin } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	if (!isAdmin) {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	return <PreviewExerciseClient {...props} />

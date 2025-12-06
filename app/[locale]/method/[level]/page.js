@@ -65,14 +65,14 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function LevelPage({ params }) {
+	// Get params first
+	const { locale, level: levelSlug } = await params
+
 	const { isAuthenticated, user, supabase } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
-
-	// Get params
-	const { locale, level: levelSlug } = await params
 
 	// Get learning language from user profile
 	let learningLanguage = 'fr' // default

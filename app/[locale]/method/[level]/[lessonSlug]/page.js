@@ -87,14 +87,14 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function LessonPage({ params }) {
+	// Get params first
+	const { locale, level: levelSlug, lessonSlug } = await params
+
 	const { isAuthenticated, user } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
-
-	// Get params
-	const { locale, level: levelSlug, lessonSlug } = await params
 
 	// Get spoken language and learning language from user profile
 	const cookieStore = await cookies()

@@ -4,14 +4,15 @@ import { getMethodLevels, getUserAccess } from '@/lib/method'
 import MethodPageClient from '@/components/method/MethodPageClient'
 
 export default async function MethodPage({ params }) {
+	// Get locale from params first
+	const { locale } = await params
+
 	const { isAuthenticated } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		// Preserve locale when redirecting to login
+		redirect(`/${locale}/login`)
 	}
-
-	// Get locale from params
-	const { locale } = await params
 
 	// Fetch levels
 	const levels = await getMethodLevels()

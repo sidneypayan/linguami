@@ -121,7 +121,7 @@ const Hero = () => {
 					</div>
 
 					{/* Hero Image - Desktop only */}
-					<div className="hidden lg:flex relative w-80 h-80 items-center justify-center animate-float">
+					<div className="hidden lg:flex relative lg:w-64 lg:h-64 lg:min-w-64 lg:min-h-64 xl:w-80 xl:h-80 xl:min-w-80 xl:min-h-80 flex-shrink-0 items-center justify-center animate-float">
 						{/* Animated glow background */}
 						<div
 							className="absolute w-[120%] h-[120%] rounded-full blur-[60px] animate-pulse-slow"

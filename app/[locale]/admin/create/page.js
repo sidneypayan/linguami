@@ -2,15 +2,16 @@ import { checkAdminAuth } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import CreatePageClient from './pageClient'
 
-export default async function CreatePage() {
+export default async function CreatePage({ params }) {
+	const { locale } = await params
 	const { isAuthenticated, isAdmin } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	if (!isAdmin) {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	return <CreatePageClient />

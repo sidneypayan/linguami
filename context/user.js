@@ -110,7 +110,7 @@ const UserProvider = ({ children }) => {
 				setUserProfile(null)
 				setIsUserAdmin(false)
 				setIsUserPremium(false)
-				return
+				return null
 			}
 			const signedUser = session.user
 			setUser(signedUser)
@@ -185,12 +185,17 @@ const UserProvider = ({ children }) => {
 						logger.error('Failed to migrate local progress:', migrationError)
 						// Don't block login if migration fails
 					}
+
+					// Return the profile for use in login redirect
+					return profile
 				} else {
 					// Pas de ligne dans users_profile : on garde le user "Auth"
 					setUserProfile(signedUser)
+					return signedUser
 				}
 			} catch (err) {
 				safeToastError(err, toastMessages.profileLoadError())
+				return null
 			}
 		},
 		[fetchUserProfile, router]
@@ -437,8 +442,9 @@ const UserProvider = ({ children }) => {
 			}
 			// 🔑 CRITICAL: Hydrate session BEFORE redirect to load language settings from DB
 			// This prevents race condition where page renders with stale localStorage values
+			let profile = null
 			if (data?.session) {
-				await hydrateFromSession(data.session)
+				profile = await hydrateFromSession(data.session)
 			}
 
 			// 👉 Afficher le toast seulement si pas déjà affiché
@@ -448,9 +454,13 @@ const UserProvider = ({ children }) => {
 				// Reset le flag après 2 secondes
 				setTimeout(() => setHasShownLoginToast(false), 2000)
 			}
-			router.push('/')
+
+			// 🔧 FIX: Redirect to the user's spoken language locale instead of default
+			// This prevents the URL from changing to a different locale after login
+			const spokenLang = profile?.spoken_language || 'fr'
+			router.push(`/${spokenLang}`)
 		},
-		[router, hasShownLoginToast, hydrateFromSession]
+		[router, hasShownLoginToast, hydrateFromSession, toastMessages]
 	)
 
 	const loginWithThirdPartyOAuth = useCallback(async provider => {

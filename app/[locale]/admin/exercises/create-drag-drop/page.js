@@ -2,15 +2,16 @@ import { checkAdminAuth } from '@/lib/admin'
 import { redirect } from 'next/navigation'
 import CreateDragDropClient from './pageClient'
 
-export default async function CreateDragDropPage() {
+export default async function CreateDragDropPage({ params }) {
+	const { locale } = await params
 	const { isAuthenticated, isAdmin } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
-		redirect('/login')
+		redirect(`/${locale}/login`)
 	}
 
 	if (!isAdmin) {
-		redirect('/')
+		redirect(`/${locale}`)
 	}
 
 	return <CreateDragDropClient />
