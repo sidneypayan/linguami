@@ -238,7 +238,7 @@ const LevelPageClient = ({
 										'text-xs font-medium uppercase tracking-wide',
 										isDark ? 'text-slate-500' : 'text-slate-400'
 									)}>
-										Quêtes
+										{t('methode_quests')}
 									</div>
 								</div>
 
@@ -257,7 +257,7 @@ const LevelPageClient = ({
 										'text-xs font-medium uppercase tracking-wide',
 										isDark ? 'text-slate-500' : 'text-slate-400'
 									)}>
-										XP Total
+										{t('methode_xp_total')}
 									</div>
 								</div>
 							</div>
@@ -279,7 +279,7 @@ const LevelPageClient = ({
 											'font-semibold',
 											isDark ? 'text-white' : 'text-slate-900'
 										)}>
-											Progression
+											{t('methode_progression')}
 										</span>
 									</div>
 									<div className="flex items-center gap-4">
@@ -287,7 +287,7 @@ const LevelPageClient = ({
 											'text-sm',
 											isDark ? 'text-slate-400' : 'text-slate-500'
 										)}>
-											{completedLessons} / {totalLessons} quêtes
+											{completedLessons} / {totalLessons} {t('methode_quests').toLowerCase()}
 										</span>
 										<span className="text-sm font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
 											{totalXpEarned} XP
@@ -327,7 +327,7 @@ const LevelPageClient = ({
 						'text-2xl sm:text-3xl font-bold',
 						isDark ? 'text-white' : 'text-slate-900'
 					)}>
-						Quêtes disponibles
+						{t('methode_available_quests')}
 					</h2>
 				</div>
 
@@ -490,7 +490,7 @@ const LevelPageClient = ({
 															{isCompleted && (
 																<div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-emerald-500">
 																	<Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-																	Complétée
+																	{t('methode_quest_completed_short')}
 																</div>
 															)}
 														</div>
@@ -531,13 +531,13 @@ const LevelPageClient = ({
 							'text-xl font-semibold mb-2',
 							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}>
-							Aucune quête disponible
+							{t('methode_no_quests')}
 						</p>
 						<p className={cn(
 							'text-sm',
 							isDark ? 'text-slate-600' : 'text-slate-400'
 						)}>
-							De nouvelles aventures arrivent bientôt...
+							{t('methode_new_quests_soon')}
 						</p>
 					</div>
 				)}
@@ -555,7 +555,7 @@ const LevelPageClient = ({
 						)}
 					>
 						<ArrowLeft className="w-5 h-5" />
-						Retour aux royaumes
+						{t('methode_back_to_realms')}
 					</Button>
 				</div>
 			</main>

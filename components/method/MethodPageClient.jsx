@@ -168,7 +168,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 									'text-xs sm:text-sm font-medium uppercase tracking-wide',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									Royaumes
+									{t('methode_realms')}
 								</div>
 							</div>
 							<div className={cn(
@@ -186,7 +186,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 									'text-xs sm:text-sm font-medium uppercase tracking-wide',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									Quêtes
+									{t('methode_quests')}
 								</div>
 							</div>
 							<div className={cn(
@@ -204,7 +204,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 									'text-xs sm:text-sm font-medium uppercase tracking-wide',
 									isDark ? 'text-slate-400' : 'text-slate-500'
 								)}>
-									XP Total
+									{t('methode_xp_total')}
 								</div>
 							</div>
 						</div>
@@ -341,7 +341,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 														'text-xs font-medium uppercase tracking-wide',
 														isDark ? 'text-slate-500' : 'text-slate-400'
 													)}>
-														Difficulté
+														{t('methode_difficulty')}
 													</span>
 													{renderDifficulty(config.difficulty)}
 												</div>
@@ -358,7 +358,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 														'text-xs font-medium uppercase tracking-wide',
 														isDark ? 'text-slate-500' : 'text-slate-400'
 													)}>
-														Quêtes
+														{t('methode_quests')}
 													</span>
 													<span className={cn(
 														'text-lg font-bold',
@@ -380,7 +380,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 														'text-xs font-medium uppercase tracking-wide',
 														isDark ? 'text-slate-500' : 'text-slate-400'
 													)}>
-														Récompense
+														{t('methode_reward')}
 													</span>
 													<span className={cn(
 														'text-lg font-bold',
@@ -418,11 +418,11 @@ const MethodPageClient = ({ levels, userAccess }) => {
 												<span className="flex items-center gap-2">
 													{level.slug === 'beginner' ? (
 														<>
-															Commencer la quête
+															{t('methode_start_quest')}
 															<ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
 														</>
 													) : (
-														'Bientôt disponible'
+														t('methode_coming_soon')
 													)}
 												</span>
 											</Button>
