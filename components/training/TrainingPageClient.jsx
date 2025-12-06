@@ -96,6 +96,34 @@ const vocabularyThemes = {
 			{ key: 'idioms', icon: '📚', label: { fr: 'Expressions', en: 'Idioms' } },
 		],
 	},
+	fr: {
+		beginner: [
+			// Vocabulary themes (excluding Russian-specific verb grammar)
+			{ key: 'greetings', icon: '👋', label: { fr: 'Salutations', en: 'Greetings', ru: 'Приветствия' } },
+			{ key: 'numbers', icon: '🔢', label: { fr: 'Nombres', en: 'Numbers', ru: 'Числа' } },
+			{ key: 'family', icon: '👨‍👩‍👧‍👦', label: { fr: 'Famille', en: 'Family', ru: 'Семья' } },
+			{ key: 'food', icon: '🍎', label: { fr: 'Nourriture', en: 'Food', ru: 'Еда' } },
+			{ key: 'colors', icon: '🎨', label: { fr: 'Couleurs', en: 'Colors', ru: 'Цвета' } },
+			{ key: 'animals', icon: '🐾', label: { fr: 'Animaux', en: 'Animals', ru: 'Животные' } },
+			{ key: 'body', icon: '🫀', label: { fr: 'Corps humain', en: 'Body parts', ru: 'Части тела' } },
+			{ key: 'clothes', icon: '👕', label: { fr: 'Vêtements', en: 'Clothes', ru: 'Одежда' } },
+			{ key: 'time', icon: '🕐', label: { fr: 'Temps', en: 'Time', ru: 'Время' } },
+			{ key: 'days', icon: '📅', label: { fr: 'Jours et mois', en: 'Days & months', ru: 'Дни и месяцы' } },
+			{ key: 'places', icon: '🏪', label: { fr: 'Lieux', en: 'Places', ru: 'Места' } },
+			{ key: 'professions', icon: '👨‍⚕️', label: { fr: 'Métiers', en: 'Professions', ru: 'Профессии' } },
+			{ key: 'house', icon: '🏠', label: { fr: 'Maison', en: 'House', ru: 'Дом' } },
+			{ key: 'transport', icon: '🚗', label: { fr: 'Transports', en: 'Transport', ru: 'Транспорт' } },
+			{ key: 'adjectives', icon: '✨', label: { fr: 'Adjectifs', en: 'Adjectives', ru: 'Прилагательные' } },
+			{ key: 'weather', icon: '🌤️', label: { fr: 'Météo', en: 'Weather', ru: 'Погода' } },
+			{ key: 'emotions', icon: '💭', label: { fr: 'Émotions', en: 'Emotions', ru: 'Эмоции' } },
+			{ key: 'hobbies', icon: '🎮', label: { fr: 'Loisirs', en: 'Hobbies', ru: 'Хобби' } },
+			{ key: 'school', icon: '📚', label: { fr: 'École', en: 'School', ru: 'Школа' } },
+			{ key: 'nature', icon: '🌳', label: { fr: 'Nature', en: 'Nature', ru: 'Природа' } },
+			{ key: 'drinks', icon: '☕', label: { fr: 'Boissons', en: 'Drinks', ru: 'Напитки' } },
+		],
+		intermediate: [],
+		advanced: [],
+	},
 }
 
 // Training questions data organized by theme
@@ -2168,9 +2196,9 @@ const OrnateFrame = ({ children, className, isDark, fullWidthMobile = false }) =
 // ============================================
 const LevelSelector = ({ selectedLevel, onSelectLevel, isDark, t }) => {
 	const levels = [
-		{ key: 'beginner', icon: SignalLow, color: 'emerald', label: t('beginner') },
-		{ key: 'intermediate', icon: SignalMedium, color: 'violet', label: t('intermediate') },
-		{ key: 'advanced', icon: SignalHigh, color: 'amber', label: t('advanced') },
+		{ key: 'beginner', icon: SignalLow, color: 'emerald', label: t('beginner'), disabled: false },
+		{ key: 'intermediate', icon: SignalMedium, color: 'violet', label: t('intermediate'), disabled: true },
+		{ key: 'advanced', icon: SignalHigh, color: 'amber', label: t('advanced'), disabled: true },
 	]
 
 	const colorClasses = {
@@ -2197,27 +2225,36 @@ const LevelSelector = ({ selectedLevel, onSelectLevel, isDark, t }) => {
 				<Target className="w-4 h-4 md:w-5 md:h-5" />
 				{t('selectLevel')}
 			</h3>
-			<div className="grid grid-cols-3 gap-2">
+			<div className="grid grid-cols-3 gap-3 md:gap-4">
 				{levels.map((level) => {
 					const Icon = level.icon
 					const isSelected = selectedLevel === level.key
 					const colors = colorClasses[level.color]
+					const isDisabled = level.disabled
 
 					return (
 						<button
 							key={level.key}
-							onClick={() => onSelectLevel(level.key)}
+							onClick={() => !isDisabled && onSelectLevel(level.key)}
+							disabled={isDisabled}
 							className={cn(
-								'p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
+								'p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all duration-300',
-								'flex flex-col items-center gap-1 md:gap-2',
-								isSelected
-									? ['bg-gradient-to-br text-white shadow-lg', colors.active, 'scale-105']
-									: [isDark ? 'bg-slate-800/50' : 'bg-white', colors.inactive, 'hover:scale-102']
+								'flex flex-col items-center gap-1 md:gap-2 relative',
+								isDisabled
+									? 'opacity-40 cursor-not-allowed bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-400'
+									: isSelected
+										? ['bg-gradient-to-br text-white shadow-lg', colors.active, 'scale-105']
+										: [isDark ? 'bg-slate-800/50' : 'bg-white', colors.inactive, 'hover:scale-102']
 							)}
 						>
 							<Icon className="w-5 h-5 md:w-8 md:h-8" />
 							<span className="text-[10px] md:text-sm leading-tight">{level.label}</span>
+							{isDisabled && (
+								<span className="text-[8px] md:text-xs font-medium opacity-60 mt-0.5">
+									{t('comingSoon') || 'Bientôt'}
+								</span>
+							)}
 						</button>
 					)
 				})}
@@ -2340,7 +2377,7 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 				<Sparkles className="w-4 h-4 md:w-5 md:h-5" />
 				{t('selectType')}
 			</h3>
-			<div className="grid grid-cols-2 gap-2">
+			<div className="grid grid-cols-2 gap-3 md:gap-4">
 				{types.map((type) => {
 					const Icon = type.icon
 					const isSelected = selectedType === type.key
@@ -2350,7 +2387,7 @@ const TypeSelector = ({ selectedType, onSelectType, isDark, t }) => {
 							key={type.key}
 							onClick={() => onSelectType(type.key)}
 							className={cn(
-								'p-2 md:p-4 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
+								'p-1.5 md:p-2 rounded-lg md:rounded-xl font-bold text-xs md:text-sm',
 								'border-2 transition-all duration-300',
 								'flex flex-col items-center gap-1 md:gap-2',
 								isSelected
@@ -3110,7 +3147,10 @@ const TrainingPageClient = () => {
 	const tCommon = useTranslations('common')
 	const locale = useLocale()
 	const { isDark } = useThemeMode()
-	const { userLearningLanguage, isUserLoggedIn, isUserAdmin } = useUserContext()
+	const { userLearningLanguage, isUserLoggedIn, isUserAdmin, userProfile } = useUserContext()
+
+	// Determine the language for displaying questions (user's spoken language)
+	const spokenLanguage = userProfile?.spoken_language || locale
 
 	// All hooks must be called before any early returns
 	const [step, setStep] = useState('setup') // setup, theme-select, training, results
@@ -3428,7 +3468,7 @@ const TrainingPageClient = () => {
 						onFinish={handleFinish}
 						isDark={isDark}
 						t={t}
-						locale={locale}
+						locale={spokenLanguage}
 						isLoggedIn={isUserLoggedIn}
 					/>
 				)}
