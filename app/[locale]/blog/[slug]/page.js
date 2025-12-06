@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
-import { getBlogPostBySlugAction, getPublishedBlogPostsAction, getPublishedBlogPostsForBuildAction } from '@/app/actions/blog'
+import { getBlogPostBySlugForBuildAction, getPublishedBlogPostsForBuildAction } from '@/app/actions/blog'
 import BlogPostClient from '@/components/blog/BlogPostClient'
 
 // Generate static params for all published blog posts (ISR)
@@ -24,7 +24,7 @@ export async function generateStaticParams() {
 // Metadata for SEO
 export async function generateMetadata({ params }) {
 	const { slug, locale } = await params
-	const post = await getBlogPostBySlugAction({ slug, lang: locale })
+	const post = await getBlogPostBySlugForBuildAction({ slug, lang: locale })
 
 	if (!post) {
 		return {
@@ -49,14 +49,14 @@ export default async function BlogPostPage({ params }) {
 	const { slug, locale } = await params
 
 	// Fetch post from Supabase
-	const post = await getBlogPostBySlugAction({ slug, lang: locale })
+	const post = await getBlogPostBySlugForBuildAction({ slug, lang: locale })
 
 	if (!post) {
 		notFound()
 	}
 
 	// Fetch all published posts for related articles
-	const allPosts = await getPublishedBlogPostsAction(locale)
+	const allPosts = await getPublishedBlogPostsForBuildAction(locale)
 
 	// Get translations server-side
 	const t = await getTranslations({ locale, namespace: 'blog' })

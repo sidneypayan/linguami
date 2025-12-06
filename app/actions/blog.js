@@ -126,7 +126,39 @@ export async function getPublishedBlogPostsAction(lang) {
 }
 
 /**
- * Get a single blog post by slug
+ * Get a single blog post by slug (for build time - generateStaticParams)
+ * Uses service role key, no cookies required
+ * @param {Object} params
+ * @param {string} params.slug - Post slug
+ * @param {string} params.lang - Language
+ * @returns {Promise<Object|null>} Blog post or null
+ */
+export async function getBlogPostBySlugForBuildAction({ slug, lang }) {
+	try {
+		const validLang = LanguageSchema.parse(lang)
+
+		const { data, error } = await supabaseServer
+			.from('blog_posts')
+			.select('*')
+			.eq('slug', slug)
+			.eq('lang', validLang)
+			.eq('is_published', true)
+			.single()
+
+		if (error) {
+			if (error.code === 'PGRST116') return null // Not found
+			throw error
+		}
+
+		return data
+	} catch (error) {
+		logger.error('Error fetching blog post by slug for build:', error)
+		return null
+	}
+}
+
+/**
+ * Get a single blog post by slug (runtime with auth)
  * @param {Object} params
  * @param {string} params.slug - Post slug
  * @param {string} params.lang - Language
