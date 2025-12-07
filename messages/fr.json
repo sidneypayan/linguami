@@ -348,7 +348,7 @@
     "achievement_desc": "Félicitations pour votre progrès !",
     "tap_to_close": "Touchez pour fermer",
     "methode_title": "La Méthode Linguami",
-    "methode_subtitle": "Apprenez les langues avec notre méthode interactive",
+    "methode_subtitle": "Étudiez les langues avec notre méthode interactive",
     "methode_description": "Apprenez le russe et l'anglais avec notre méthode complète inspirée de Harrap's. Progression structurée de A1 à C2.",
     "methode_cta": "Choisissez votre niveau et commencez à apprendre",
     "methode_free": "GRATUIT",
@@ -521,7 +521,8 @@
     "guest_leaderboard_description": "Créez un compte pour gagner de l'XP et de l'or, débloquer des récompenses, grimper dans le classement et défier d'autres apprenants !",
     "create_account": "Créer un compte",
     "training": "Entraînement",
-    "completeAllSectionsHint": "Parcours toutes les sections et clique sur \"Terminer\" pour valider"
+    "completeAllSectionsHint": "Parcours toutes les sections et clique sur \"Terminer\" pour valider",
+    "min_short": "min"
   },
   "exercises": {
     "title": "Gestion des exercices",

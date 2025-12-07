@@ -2,8 +2,10 @@
 
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
+import { createMethodServerClient } from '@/lib/supabase-method-server'
 import { logger } from '@/utils/logger'
 import { z } from 'zod'
+import { getStaticMethodLevels, getStaticLevelBySlug, getStaticLevelById } from '@/lib/method-levels'
 
 // Validation schemas
 const LevelIdSchema = z.number().int().positive('Level ID must be a positive integer')
@@ -36,17 +38,12 @@ const TimeSpentSchema = z.object({
 
 /**
  * Get all course levels (Beginner, Intermediate, Advanced)
- * @returns {Promise<Array>} Array of course levels
+ * Now returns static data instead of fetching from DB
+ * @returns {Promise<Object>} Course levels data
  */
 export async function getCourseLevels() {
 	try {
-		const supabase = createServerClient(await cookies())
-		const { data, error } = await supabase
-			.from('course_levels')
-			.select('*')
-			.order('order_index', { ascending: true })
-
-		if (error) throw error
+		const data = getStaticMethodLevels()
 		return { data, error: null }
 	} catch (error) {
 		logger.error('Error fetching course levels:', error)
@@ -64,7 +61,7 @@ export async function getCoursesByLevel(levelId) {
 		// Validate levelId
 		const validLevelId = LevelIdSchema.parse(levelId)
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createMethodServerClient(await cookies())
 		const { data, error} = await supabase
 			.from('courses')
 			.select(
@@ -122,21 +119,20 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 		// Validate input parameters
 		const validParams = CourseSlugParamsSchema.parse({ levelSlug, courseSlug, lang })
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createMethodServerClient(await cookies())
 
-		// Optimized: Single query with joins
+		// Get level from static data
+		const level = getStaticLevelBySlug(validParams.levelSlug)
+		if (!level) {
+			throw new Error(`Level not found: ${validParams.levelSlug}`)
+		}
+
+		// Query course without level join
 		const { data, error } = await supabase
 			.from('courses')
 			.select(
 				`
 				*,
-				course_levels!inner (
-					id,
-					slug,
-					name_fr,
-					name_ru,
-					name_en
-				),
 				course_lessons (
 					id,
 					slug,
@@ -154,7 +150,7 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 				)
 			`
 			)
-			.eq('course_levels.slug', validParams.levelSlug)
+			.eq('level_id', level.id)
 			.eq('slug', validParams.courseSlug)
 			.eq('lang', validParams.lang)
 			.eq('is_published', true)
@@ -162,12 +158,24 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 
 		if (error) throw error
 
-		// Sort lessons
-		if (data?.course_lessons) {
-			data.course_lessons.sort((a, b) => a.order_index - b.order_index)
+		// Map level data manually
+		const courseWithLevel = {
+			...data,
+			course_levels: {
+				id: level.id,
+				slug: level.slug,
+				name_fr: level.name_fr,
+				name_ru: level.name_ru,
+				name_en: level.name_en,
+			},
 		}
 
-		return { data, error: null }
+		// Sort lessons
+		if (courseWithLevel.course_lessons) {
+			courseWithLevel.course_lessons.sort((a, b) => a.order_index - b.order_index)
+		}
+
+		return { data: courseWithLevel, error: null }
 	} catch (error) {
 		logger.error('Error fetching course by slug:', error)
 		return { data: null, error: error.message }
@@ -188,9 +196,9 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 		// Validate input parameters
 		const validParams = LessonSlugParamsSchema.parse({ courseSlug, lessonSlug, lang })
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createMethodServerClient(await cookies())
 
-		// Optimized: Single query with nested joins
+		// Query lesson with course (no level join)
 		const { data, error } = await supabase
 			.from('course_lessons')
 			.select(
@@ -203,15 +211,7 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 					title_ru,
 					title_en,
 					level_id,
-					lang,
-					course_levels (
-						id,
-						slug,
-						name_fr,
-						name_ru,
-						name_en,
-						is_free
-					)
+					lang
 				)
 			`
 			)
@@ -222,6 +222,22 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 			.single()
 
 		if (error) throw error
+
+		// Map level data from static levels
+		if (data?.courses) {
+			const level = getStaticLevelById(data.courses.level_id)
+			data.courses.course_levels = level
+				? {
+						id: level.id,
+						slug: level.slug,
+						name_fr: level.name_fr,
+						name_ru: level.name_ru,
+						name_en: level.name_en,
+						is_free: level.is_free,
+				  }
+				: null
+		}
+
 		return { data, error: null }
 	} catch (error) {
 		logger.error('Error fetching lesson by slug:', error)
@@ -246,23 +262,30 @@ export async function getUserCourseAccess(lang) {
 
 		const { data, error } = await supabase
 			.from('user_course_access')
-			.select(
-				`
-				*,
-				course_levels (
-					id,
-					slug,
-					name_fr,
-					name_ru,
-					name_en
-				)
-			`
-			)
+			.select('*')
 			.eq('user_id', user.id)
 			.eq('lang', lang)
 
 		if (error) throw error
-		return { data: data || [], error: null }
+
+		// Map level data from static levels
+		const mappedData = (data || []).map((access) => {
+			const level = getStaticLevelById(access.level_id)
+			return {
+				...access,
+				course_levels: level
+					? {
+							id: level.id,
+							slug: level.slug,
+							name_fr: level.name_fr,
+							name_ru: level.name_ru,
+							name_en: level.name_en,
+					  }
+					: null,
+			}
+		})
+
+		return { data: mappedData, error: null }
 	} catch (error) {
 		logger.error('Error fetching user course access:', error)
 		return { data: [], error: error.message }

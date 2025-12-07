@@ -137,6 +137,7 @@ const Navbar = props => {
 						<Button
 							variant="ghost"
 							size="icon"
+							suppressHydrationWarning
 							className={cn(
 								'2xl:hidden',
 								'w-11 h-11 sm:w-12 sm:h-12 rounded-xl',

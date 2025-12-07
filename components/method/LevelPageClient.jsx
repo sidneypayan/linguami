@@ -484,7 +484,7 @@ const LevelPageClient = ({
 																	isDark ? 'text-slate-500' : 'text-slate-400'
 																)}>
 																	<Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-																	{lesson.estimated_minutes} min
+																	{lesson.estimated_minutes} {t('min_short')}
 																</div>
 															)}
 															{isCompleted && (

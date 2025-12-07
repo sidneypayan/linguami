@@ -17,20 +17,11 @@ import { GraduationCap, ChevronDown, CheckCircle } from 'lucide-react'
 const LanguageMenu = ({ variant = 'auto', onClose }) => {
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const { userLearningLanguage, changeLearningLanguage, userProfile } = useUserContext()
+	const { userLearningLanguage, changeLearningLanguage, userSpokenLanguage } = useUserContext()
 	const { isDark } = useThemeMode()
 
-	// Get spoken language from userProfile (DB) or localStorage
-	const spokenLanguage = useMemo(() => {
-		if (userProfile?.spoken_language) {
-			return userProfile.spoken_language
-		}
-		if (typeof window !== 'undefined') {
-			const storedSpokenLang = localStorage.getItem('spoken_language')
-			if (storedSpokenLang) return storedSpokenLang
-		}
-		return locale // Fallback to interface locale
-	}, [userProfile?.spoken_language, locale])
+	// Use the spoken language from context (single source of truth)
+	const spokenLanguage = userSpokenLanguage || locale
 
 	// Langues disponibles pour l'apprentissage
 	const allLanguages = [

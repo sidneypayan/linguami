@@ -1,13 +1,13 @@
 import { redirect, notFound } from 'next/navigation'
 import { checkAdminAuth } from '@/lib/admin'
-import { getMethodLevels, getLevelCourses, getUserCourseProgress } from '@/lib/method'
+import { getLevelCourses, getUserCourseProgress } from '@/lib/method'
+import { getStaticMethodLevels, getStaticLevelBySlug } from '@/lib/method-levels'
 import LevelPageClient from '@/components/method/LevelPageClient'
 
 export async function generateMetadata({ params }) {
 	const { locale, level: levelSlug } = await params
 
-	const levels = await getMethodLevels()
-	const currentLevel = levels.find((l) => l.slug === levelSlug)
+	const currentLevel = getStaticLevelBySlug(levelSlug)
 
 	if (!currentLevel) {
 		return {
@@ -87,9 +87,8 @@ export default async function LevelPage({ params }) {
 		}
 	}
 
-	// Fetch levels to find current level
-	const levels = await getMethodLevels()
-	const currentLevel = levels.find((l) => l.slug === levelSlug)
+	// Get current level from static data
+	const currentLevel = getStaticLevelBySlug(levelSlug)
 
 	if (!currentLevel) {
 		notFound()

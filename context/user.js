@@ -720,6 +720,25 @@ const UserProvider = ({ children }) => {
 	}, [user, fetchUserProfile])
 
 	// --------------------------------------------------------
+	// Hook pour obtenir la langue parlée réelle (source de vérité unique)
+	// --------------------------------------------------------
+	const getSpokenLanguage = useCallback(() => {
+		// PRIORITÉ 1: DB (pour utilisateurs connectés)
+		if (userProfile?.spoken_language) {
+			return userProfile.spoken_language
+		}
+		// PRIORITÉ 2: localStorage
+		if (typeof window !== 'undefined') {
+			const storedSpokenLang = localStorage.getItem('spoken_language')
+			if (storedSpokenLang) return storedSpokenLang
+		}
+		// PRIORITÉ 3: locale de l'URL (fallback)
+		return router?.locale || 'fr'
+	}, [userProfile?.spoken_language, router?.locale])
+
+	const userSpokenLanguage = useMemo(() => getSpokenLanguage(), [getSpokenLanguage])
+
+	// --------------------------------------------------------
 	// Valeur exposée
 	// --------------------------------------------------------
 	const value = useMemo(
@@ -731,6 +750,7 @@ const UserProvider = ({ children }) => {
 			isUserLoggedIn: !!user,
 			isBootstrapping,
 			userLearningLanguage,
+			userSpokenLanguage,
 			isEmailVerified: isEmailVerified(userProfile, user),
 
 			register,
@@ -752,6 +772,7 @@ const UserProvider = ({ children }) => {
 			isUserPremium,
 			isBootstrapping,
 			userLearningLanguage,
+			userSpokenLanguage,
 			register,
 			login,
 			loginWithThirdPartyOAuth,

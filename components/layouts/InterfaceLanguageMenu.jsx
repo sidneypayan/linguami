@@ -21,8 +21,11 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const router = useNextRouter()
 	const pathname = usePathname()
 	const params = useParams()
-	const { changeSpokenLanguage } = useUserContext()
+	const { changeSpokenLanguage, userSpokenLanguage } = useUserContext()
 	const { isDark } = useThemeMode()
+
+	// Use the actual spoken language from context instead of URL locale
+	const displayLanguage = userSpokenLanguage || locale
 
 	const languages = [
 		{
@@ -125,9 +128,9 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 						<div className="flex items-center gap-2 relative z-10">
 							<Languages className="w-5 h-5 transition-transform duration-300 relative z-10 group-hover:scale-110" />
 							<span className="relative z-10">{t('speak')}</span>
-							{locale && (
+							{displayLanguage && (
 								<div className="w-6 h-6 relative z-0 rounded-full overflow-hidden ring-2 ring-white/30">
-									{getFlag(locale)}
+									{getFlag(displayLanguage)}
 								</div>
 							)}
 						</div>
@@ -144,7 +147,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 					)}
 				>
 					{languages.map(language => {
-						const isSelected = locale === language.lang
+						const isSelected = displayLanguage === language.lang
 						return (
 							<DropdownMenuItem
 								key={language.lang}
@@ -195,9 +198,9 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 							'relative items-center justify-center'
 						)}
 					>
-						{locale && (
+						{displayLanguage && (
 							<div className="w-6 h-6 relative rounded-full overflow-hidden ring-2 ring-white/30">
-								{getFlag(locale)}
+								{getFlag(displayLanguage)}
 							</div>
 						)}
 						<Languages className={cn(
@@ -219,7 +222,7 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 					)}
 				>
 					{languages.map(language => {
-						const isSelected = locale === language.lang
+						const isSelected = displayLanguage === language.lang
 						return (
 							<DropdownMenuItem
 								key={language.lang}

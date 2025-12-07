@@ -347,7 +347,7 @@
     "achievement_desc": "Congratulations on your progress!",
     "tap_to_close": "Tap to close",
     "methode_title": "The Linguami Method",
-    "methode_subtitle": "Learn French and Russian with our comprehensive method",
+    "methode_subtitle": "Study languages with our interactive method",
     "methode_description": "Learn French and Russian with our comprehensive method inspired by Harrap's. Structured progression from A1 to C2.",
     "methode_cta": "Choose your level and start learning",
     "methode_free": "FREE",
@@ -520,7 +520,8 @@
     "guest_leaderboard_description": "Create an account to earn XP and gold, unlock rewards, climb the leaderboard, and challenge other learners!",
     "create_account": "Create Account",
     "training": "Training",
-    "completeAllSectionsHint": "Go through all sections and click \"Finish\" to validate"
+    "completeAllSectionsHint": "Go through all sections and click \"Finish\" to validate",
+    "min_short": "min"
   },
   "exercises": {
     "title": "Exercise Management",
