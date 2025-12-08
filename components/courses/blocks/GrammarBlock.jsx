@@ -6,6 +6,14 @@ import { Badge } from '@/components/ui/badge'
 import { Volume2 } from 'lucide-react'
 
 /**
+ * Convertit le markdown bold (**text**) en HTML <strong>
+ */
+const renderMarkdownBold = (text) => {
+	if (typeof text !== 'string') return String(text || '')
+	return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+}
+
+/**
  * GrammarBlock - Grimoire de grammaire
  * Style gaming/fantasy avec effet de livre magique
  */
@@ -217,10 +225,10 @@ const GrammarBlock = ({ block }) => {
 																>
 																	<Volume2 className="w-3 h-3" />
 																</button>
-																<span>{cell}</span>
+																<span dangerouslySetInnerHTML={{ __html: renderMarkdownBold(cell) }} />
 															</div>
 														) : (
-															cell
+															<span dangerouslySetInnerHTML={{ __html: renderMarkdownBold(cell) }} />
 														)}
 													</td>
 												)

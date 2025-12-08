@@ -609,6 +609,14 @@ const DialogueBlock = ({ block }) => {
 															→ {item.translation}
 														</span>
 													</div>
+													{item.note && (
+														<p className={cn(
+															'text-xs sm:text-sm mt-1',
+															isDark ? 'text-amber-400' : 'text-amber-600'
+														)}>
+															💡 {item.note}
+														</p>
+													)}
 													{item.example && (
 														<p className={cn(
 															'text-xs sm:text-sm mt-1 italic',

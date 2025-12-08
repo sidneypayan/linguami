@@ -2497,11 +2497,11 @@ const ThemeSelector = ({ themes, selectedTheme, onSelectTheme, isDark, t, locale
 // ============================================
 // MCQ QUESTION COMPONENT
 // ============================================
-const MCQQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, locale }) => {
+const MCQQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, spokenLanguage }) => {
 	const isCorrect = selectedAnswer === question.correctAnswer
-	const questionText = getLocalizedText(question.question, locale)
-	const options = getLocalizedOptions(question.options, locale)
-	const explanation = getLocalizedText(question.explanation, locale)
+	const questionText = getLocalizedText(question.question, spokenLanguage)
+	const options = getLocalizedOptions(question.options, spokenLanguage)
+	const explanation = getLocalizedText(question.explanation, spokenLanguage)
 
 	return (
 		<div className="space-y-6">
@@ -2585,12 +2585,12 @@ const MCQQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, 
 // ============================================
 // MULTI-FILL QUESTION COMPONENT
 // ============================================
-const MultiFillQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, locale }) => {
+const MultiFillQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, spokenLanguage }) => {
 	const [answers, setAnswers] = useState({})
 	const options = question.options || []
 	const sentences = question.sentences || []
-	const questionText = getLocalizedText(question.question, locale)
-	const explanation = getLocalizedText(question.explanation, locale)
+	const questionText = getLocalizedText(question.question, spokenLanguage)
+	const explanation = getLocalizedText(question.explanation, spokenLanguage)
 
 	// Reset answers when question changes
 	useEffect(() => {
@@ -2735,11 +2735,11 @@ const MultiFillQuestion = ({ question, onAnswer, answered, selectedAnswer, isDar
 // ============================================
 // DROPDOWN QUESTION COMPONENT
 // ============================================
-const DropdownQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, locale }) => {
+const DropdownQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark, t, spokenLanguage }) => {
 	const isCorrect = selectedAnswer === question.correctAnswer
 	const parts = question.sentence.split('___')
-	const options = getLocalizedOptions(question.options, locale)
-	const explanation = getLocalizedText(question.explanation, locale)
+	const options = getLocalizedOptions(question.options, spokenLanguage)
+	const explanation = getLocalizedText(question.explanation, spokenLanguage)
 
 	return (
 		<div className="space-y-6">
@@ -2826,7 +2826,7 @@ const DropdownQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark
 // ============================================
 // TRAINING SESSION
 // ============================================
-const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn }) => {
+const TrainingSession = ({ questions, onFinish, isDark, t, spokenLanguage, isLoggedIn }) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [answered, setAnswered] = useState(false)
 	const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -2943,7 +2943,7 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 						selectedAnswer={selectedAnswer}
 						isDark={isDark}
 						t={t}
-						locale={locale}
+						spokenLanguage={spokenLanguage}
 					/>
 				) : currentQuestion.type === 'multi_fill' ? (
 					<MultiFillQuestion
@@ -2953,7 +2953,7 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 						selectedAnswer={selectedAnswer}
 						isDark={isDark}
 						t={t}
-						locale={locale}
+						spokenLanguage={spokenLanguage}
 					/>
 				) : (
 					<DropdownQuestion
@@ -2963,7 +2963,7 @@ const TrainingSession = ({ questions, onFinish, isDark, t, locale, isLoggedIn })
 						selectedAnswer={selectedAnswer}
 						isDark={isDark}
 						t={t}
-						locale={locale}
+						spokenLanguage={spokenLanguage}
 					/>
 				)}
 			</OrnateFrame>
@@ -3468,7 +3468,7 @@ const TrainingPageClient = () => {
 						onFinish={handleFinish}
 						isDark={isDark}
 						t={t}
-						locale={spokenLanguage}
+						spokenLanguage={spokenLanguage}
 						isLoggedIn={isUserLoggedIn}
 					/>
 				)}

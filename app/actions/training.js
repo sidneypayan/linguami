@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
+import { createMethodServerClient } from '@/lib/supabase-method-server'
 import { addXP } from '@/lib/xp-service'
 
 // ============================================
@@ -13,7 +14,7 @@ import { addXP } from '@/lib/xp-service'
  */
 export async function getTrainingThemesAction(lang = 'ru') {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	const { data, error } = await supabase
 		.from('training_themes')
@@ -49,7 +50,7 @@ export async function getTrainingThemesAction(lang = 'ru') {
  */
 export async function getTrainingQuestionsAction(themeId) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	const { data, error } = await supabase
 		.from('training_questions')
@@ -71,7 +72,7 @@ export async function getTrainingQuestionsAction(themeId) {
  */
 export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// First get the theme
 	const { data: theme, error: themeError } = await supabase
@@ -137,7 +138,7 @@ export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey
  */
 export async function getTrainingStatsAction(lang = 'ru') {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	const { data, error } = await supabase
 		.from('training_stats')
@@ -259,7 +260,7 @@ export async function completeTrainingSessionAction(correctAnswers, totalQuestio
  */
 export async function createTrainingThemeAction(themeData) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// Verify admin
 	const {
@@ -296,7 +297,7 @@ export async function createTrainingThemeAction(themeData) {
  */
 export async function createTrainingQuestionsAction(questions) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// Verify admin
 	const {
@@ -329,7 +330,7 @@ export async function createTrainingQuestionsAction(questions) {
  */
 export async function updateTrainingQuestionAction(questionId, updates) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// Verify admin
 	const {
@@ -367,7 +368,7 @@ export async function updateTrainingQuestionAction(questionId, updates) {
  */
 export async function deleteTrainingQuestionAction(questionId) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// Verify admin
 	const {
@@ -404,7 +405,7 @@ export async function deleteTrainingQuestionAction(questionId) {
  */
 export async function getAdminTrainingQuestionsAction(themeId) {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createMethodServerClient(cookieStore)
 
 	// Verify admin
 	const {

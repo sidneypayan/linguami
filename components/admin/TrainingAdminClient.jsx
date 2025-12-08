@@ -1105,10 +1105,15 @@ const TrainingAdminClient = () => {
 									🇷🇺 Russe
 								</button>
 								<button
-									disabled
-									className="px-3 py-1.5 rounded-lg font-medium text-xs text-slate-300 cursor-not-allowed"
+									onClick={() => setSelectedLang('fr')}
+									className={cn(
+										'px-3 py-1.5 rounded-lg font-medium text-sm transition-all',
+										selectedLang === 'fr'
+											? 'bg-blue-100 text-blue-700 border border-blue-300'
+											: 'text-slate-500 hover:bg-slate-100'
+									)}
 								>
-									🇫🇷 Francais
+									🇫🇷 Français
 								</button>
 							</div>
 						</div>
