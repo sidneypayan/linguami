@@ -294,14 +294,14 @@ const DragAndDrop = ({ exercise, onComplete }) => {
                     </p>
                     {result.correctPairs
                       .filter((pair) => result.matches[pair.id] !== pair.id)
-                      .map((pair) => {
+                      .map((pair, pairIdx) => {
                         const userMatchedId = result.matches[pair.id];
                         const userMatchedPair = result.correctPairs.find(
                           (p) => p.id === userMatchedId,
                         );
 
                         return (
-                          <div key={pair.id} className="mb-3">
+                          <div key={`correction-${idx}-${pair.id || pairIdx}`} className="mb-3">
                             <p className="font-semibold mb-1">
                               {pair.left}
                             </p>
@@ -402,13 +402,13 @@ const DragAndDrop = ({ exercise, onComplete }) => {
           <p className="text-sm font-semibold text-violet-500 mb-4">
             {t("leftColumn")}
           </p>
-          {currentQuestion.pairs.map((pair) => {
+          {currentQuestion.pairs.map((pair, index) => {
             const matchedRight = getMatchedRightItem(pair.id);
             const isCorrectMatch = isChecked && matches[pair.id] === pair.id;
 
             return (
               <div
-                key={pair.id}
+                key={`left-${pair.id || index}`}
                 onDragOver={!isChecked ? handleDragOver : undefined}
                 onDrop={
                   !isChecked ? (e) => handleDropOnLeft(e, pair) : undefined
@@ -484,13 +484,13 @@ const DragAndDrop = ({ exercise, onComplete }) => {
           <p className="text-sm font-semibold text-cyan-500 mb-4">
             {t("rightColumn")}
           </p>
-          {rightItems.map((pair) => {
+          {rightItems.map((pair, index) => {
             const isUsed = isRightItemUsed(pair.id);
             const isDragging = draggedItem?.id === pair.id;
 
             return (
               <div
-                key={pair.id}
+                key={`right-${pair.id || index}`}
                 draggable={!isChecked && !isUsed}
                 onDragStart={(e) => !isUsed && handleDragStart(e, pair)}
                 onDragEnd={handleDragEnd}

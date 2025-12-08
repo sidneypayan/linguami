@@ -16,6 +16,7 @@ import {
 	MapPin,
 	HelpCircle,
 } from 'lucide-react'
+import MatchingExercise from './MatchingExercise'
 
 /**
  * ConversationBlock - Scene de conversation interactive
@@ -33,7 +34,7 @@ const ConversationBlock = ({ block }) => {
 
 	const lineAudioRefs = useRef({})
 
-	const { title, context, dialogue, questions } = block
+	const { title, context, dialogue, questions, questionType, matchingPairs, matchingDialogue } = block
 
 	// Associer chaque ligne "..." avec sa question/réponse correspondante
 	const getAnswerForLineIndex = (lineIndex) => {
@@ -355,8 +356,10 @@ const ConversationBlock = ({ block }) => {
 					</div>
 				)}
 
-				{/* Questions */}
-				{questions && questions.length > 0 && (
+				{/* Exercice de matching OU Questions normales */}
+				{questionType === 'matching' && matchingPairs && matchingPairs.length > 0 ? (
+					<MatchingExercise pairs={matchingPairs} dialogue={matchingDialogue} />
+				) : questions && questions.length > 0 ? (
 					<div className={cn(
 						'p-4 rounded-xl border-l-4',
 						isDark
@@ -422,7 +425,7 @@ const ConversationBlock = ({ block }) => {
 							))}
 						</div>
 					</div>
-				)}
+				) : null}
 			</div>
 		</div>
 	)
