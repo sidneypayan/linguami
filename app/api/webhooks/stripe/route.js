@@ -9,6 +9,7 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(request) {
+	console.log('🔔 Webhook received')
 	const body = await request.text()
 	const signature = request.headers.get('stripe-signature')
 
@@ -20,14 +21,16 @@ export async function POST(request) {
 			signature,
 			process.env.STRIPE_WEBHOOK_SECRET
 		)
+		console.log('✅ Signature verified, event type:', event.type)
 	} catch (err) {
-		console.error('Webhook signature verification failed:', err.message)
+		console.error('❌ Webhook signature verification failed:', err.message)
 		return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
 	}
 
 	try {
 		switch (event.type) {
 			case 'checkout.session.completed': {
+				console.log('💳 Processing checkout.session.completed')
 				const session = event.data.object
 				await handleCheckoutCompleted(session)
 				break
@@ -72,19 +75,25 @@ export async function POST(request) {
  * Handle successful checkout - activate subscription
  */
 async function handleCheckoutCompleted(session) {
+	console.log('📝 handleCheckoutCompleted called with session:', session.id)
 	const userId = session.metadata?.supabase_user_id
 	const priceType = session.metadata?.price_type
+	console.log('👤 User ID from metadata:', userId)
+	console.log('💰 Price type:', priceType)
 
 	if (!userId) {
-		console.error('No user ID in session metadata')
+		console.error('❌ No user ID in session metadata')
 		return
 	}
 
 	// Get subscription details
+	console.log('📦 Retrieving subscription:', session.subscription)
 	const subscription = await stripe.subscriptions.retrieve(session.subscription)
+	console.log('✅ Subscription retrieved:', subscription.id)
 
 	const expiresAt = new Date(subscription.current_period_end * 1000).toISOString()
 
+	console.log('💾 Updating user profile in Supabase...')
 	const { error } = await supabaseAdmin
 		.from('users_profile')
 		.update({
@@ -97,11 +106,11 @@ async function handleCheckoutCompleted(session) {
 		.eq('id', userId)
 
 	if (error) {
-		console.error('Error updating user subscription:', error)
+		console.error('❌ Error updating user subscription:', error)
 		throw error
 	}
 
-	console.log(`Subscription activated for user ${userId}`)
+	console.log(`✅ Subscription activated for user ${userId}`)
 }
 
 /**
