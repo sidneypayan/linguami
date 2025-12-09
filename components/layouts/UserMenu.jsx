@@ -34,12 +34,13 @@ import {
 	Dumbbell,
 	Sparkles,
 	X,
+	Crown,
 } from 'lucide-react'
 
 // ============================================
 // AVATAR TRIGGER BUTTON
 // ============================================
-const AvatarTrigger = ({ avatarUrl, username, isDark }) => (
+const AvatarTrigger = ({ avatarUrl, username, isDark, isPremium }) => (
 	<div className={cn(
 		'relative',
 		'w-11 h-11 sm:w-12 sm:h-12 lg:w-14 lg:h-14',
@@ -57,6 +58,20 @@ const AvatarTrigger = ({ avatarUrl, username, isDark }) => (
 				<User className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
 			</AvatarFallback>
 		</Avatar>
+		{/* Crown for premium users */}
+		{isPremium && (
+			<div className={cn(
+				'absolute -top-1 -right-1',
+				'w-5 h-5 sm:w-6 sm:h-6',
+				'rounded-full',
+				'bg-gradient-to-br from-amber-400 to-yellow-500',
+				'border-2 border-slate-900',
+				'flex items-center justify-center',
+				'shadow-lg shadow-amber-500/50'
+			)}>
+				<Crown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white fill-white" />
+			</div>
+		)}
 	</div>
 )
 
@@ -90,11 +105,11 @@ const UserProfileHeader = ({ username, avatarUrl, userProfile, isDark, size = 'n
 				</h3>
 				{userProfile?.is_premium && (
 					<span className={cn(
-						'inline-flex items-center gap-1 mt-2 px-3 py-1',
+						'inline-flex items-center gap-1.5 mt-2 px-3 py-1',
 						'text-xs font-semibold text-amber-300',
 						'bg-amber-500/20 border border-amber-500/30 rounded-full'
 					)}>
-						<Sparkles className="w-3 h-3" />
+						<Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
 						Premium
 					</span>
 				)}
@@ -124,14 +139,15 @@ const UserProfileHeader = ({ username, avatarUrl, userProfile, isDark, size = 'n
 						<div className={cn(
 							'absolute bottom-0 right-0',
 							'rounded-full',
-							'bg-amber-400 border-2 border-slate-900',
+							'bg-gradient-to-br from-amber-400 to-yellow-500',
+							'border-2 border-slate-900',
 							'flex items-center justify-center',
-							'shadow-lg',
-							size === 'large' ? 'w-6 h-6' : 'w-5 h-5'
+							'shadow-lg shadow-amber-500/50',
+							size === 'large' ? 'w-7 h-7' : 'w-6 h-6'
 						)}>
-							<BadgeCheck className={cn(
-								'text-white',
-								size === 'large' ? 'w-4 h-4' : 'w-3 h-3'
+							<Crown className={cn(
+								'text-white fill-white',
+								size === 'large' ? 'w-4 h-4' : 'w-3.5 h-3.5'
 							)} />
 						</div>
 					)}
@@ -304,7 +320,7 @@ const UserMenu = () => {
 							'hover:scale-105 hover:bg-transparent'
 						)}
 					>
-						<AvatarTrigger avatarUrl={avatarUrl} username={username} isDark={isDark} />
+						<AvatarTrigger avatarUrl={avatarUrl} username={username} isDark={isDark} isPremium={userProfile?.is_premium} />
 					</Button>
 				</SheetTrigger>
 
@@ -406,7 +422,7 @@ const UserMenu = () => {
 							'hover:scale-105 hover:bg-transparent'
 						)}
 					>
-						<AvatarTrigger avatarUrl={avatarUrl} username={username} isDark={isDark} />
+						<AvatarTrigger avatarUrl={avatarUrl} username={username} isDark={isDark} isPremium={userProfile?.is_premium} />
 					</Button>
 				</DropdownMenuTrigger>
 
