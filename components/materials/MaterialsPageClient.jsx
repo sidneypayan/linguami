@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { materials_ru, materials_fr, materials_en, materials_it } from '@/utils/constants'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useUserContext } from '@/context/user'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { logger } from '@/utils/logger'
@@ -67,6 +68,7 @@ import MaterialsCard from './MaterialsCard'
 import SectionCard from './SectionCard'
 import BookCard from './BookCard'
 import MaterialsTable from './MaterialsTable'
+import OnboardingModal from '@/components/onboarding/OnboardingModal'
 
 // ============================================
 // DECORATIVE CORNER ORNAMENT
@@ -1028,6 +1030,7 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 	const [selectedSection, setSelectedSection] = useState(null)
 	const [viewMode, setViewMode] = useState('card')
 	const [isMounted, setIsMounted] = useState(false)
+	const [showOnboardingModal, setShowOnboardingModal] = useState(false)
 
 	const currentPage = parseInt(searchParams.get('page') || '1', 10)
 	const materialsPerPage = 10
@@ -1054,6 +1057,12 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 			setDisplayMode(saved)
 		}
 		setIsDisplayModeLoaded(true)
+
+		// Check for first visit to show onboarding modal
+		const hasSeenOnboarding = localStorage.getItem('materials_onboarding_completed')
+		if (!hasSeenOnboarding) {
+			setShowOnboardingModal(true)
+		}
 	}, [])
 
 	// Save display mode preference
@@ -1270,6 +1279,22 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		return user_materials_status.find(m => m.material_id === id)
 	}
 
+	// Onboarding modal handlers
+	const handleOnboardingClose = () => {
+		localStorage.setItem('materials_onboarding_completed', 'true')
+		setShowOnboardingModal(false)
+	}
+
+	const handleChooseBeginner = () => {
+		localStorage.setItem('materials_onboarding_completed', 'true')
+		router.push('/method/beginner')
+	}
+
+	const handleChooseExplore = () => {
+		localStorage.setItem('materials_onboarding_completed', 'true')
+		setShowOnboardingModal(false)
+	}
+
 	// Loading state
 	if (!isMounted || materialsLoading) {
 		return <LoadingSpinner />
@@ -1410,6 +1435,14 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 					</>
 				)}
 			</div>
+
+			{/* Onboarding Modal - shown on first visit */}
+			<OnboardingModal
+				open={showOnboardingModal}
+				onClose={handleOnboardingClose}
+				onChooseBeginner={handleChooseBeginner}
+				onChooseExplore={handleChooseExplore}
+			/>
 		</div>
 	)
 }

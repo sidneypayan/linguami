@@ -419,8 +419,8 @@ const UserProvider = ({ children }) => {
 				}
 			}
 
-			// Redirection douce, optionnelle
-			setTimeout(() => router.push('/'), 1200)
+			// Redirection avec onboarding modal
+			setTimeout(() => router.push('/?onboarding=true'), 1200)
 		},
 		[router, userLearningLanguage, setUserLearningLanguage, toastMessages]
 	)

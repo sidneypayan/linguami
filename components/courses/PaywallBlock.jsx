@@ -16,10 +16,10 @@ const PaywallBlock = ({ isLoggedIn }) => {
 	const t = useTranslations('common')
 
 	const benefits = [
-		t('paywall_benefit_1', 'Acces a toutes les lecons A1 → C2'),
-		t('paywall_benefit_2', 'Exercices interactifs avec corrections'),
-		t('paywall_benefit_3', 'Audio professionnel pour chaque dialogue'),
-		t('paywall_benefit_4', 'Suivi de progression personnalise'),
+		t('paywall_benefit_1'),
+		t('paywall_benefit_2'),
+		t('paywall_benefit_3'),
+		t('paywall_benefit_4'),
 	]
 
 	return (
@@ -38,8 +38,8 @@ const PaywallBlock = ({ isLoggedIn }) => {
 			{/* Title */}
 			<h2 className="text-2xl sm:text-3xl font-extrabold mb-4 bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
 				{isLoggedIn
-					? t('paywall_title_logged_in', 'Debloquez toutes les lecons')
-					: t('paywall_title_guest', 'Vous aimez notre methode ?')}
+					? t('paywall_title_logged_in')
+					: t('paywall_title_guest')}
 			</h2>
 
 			{/* Subtitle */}
@@ -48,8 +48,8 @@ const PaywallBlock = ({ isLoggedIn }) => {
 				isDark ? 'text-slate-300' : 'text-slate-600'
 			)}>
 				{isLoggedIn
-					? t('paywall_subtitle_logged_in', 'Achetez la methode complete pour continuer votre apprentissage')
-					: t('paywall_subtitle_guest', 'Creez un compte gratuit et debloquez toutes les lecons !')}
+					? t('paywall_subtitle_logged_in')
+					: t('paywall_subtitle_guest')}
 			</p>
 
 			{/* Benefits */}
@@ -75,7 +75,7 @@ const PaywallBlock = ({ isLoggedIn }) => {
 							size="lg"
 							className="px-8 py-6 text-lg font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white">
 							<Star className="h-5 w-5 mr-2" />
-							{t('paywall_cta_register', 'Creer un compte gratuit')}
+							{t('paywall_cta_register')}
 						</Button>
 					</Link>
 				)}
@@ -86,7 +86,7 @@ const PaywallBlock = ({ isLoggedIn }) => {
 							size="lg"
 							className="px-8 py-6 text-lg font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white">
 							<Star className="h-5 w-5 mr-2" />
-							{t('paywall_cta_purchase', 'Acheter la methode')}
+							{t('paywall_cta_purchase')}
 						</Button>
 					</Link>
 				)}
@@ -97,7 +97,7 @@ const PaywallBlock = ({ isLoggedIn }) => {
 							variant="outline"
 							size="lg"
 							className="px-8 py-6 text-lg font-semibold border-amber-500 text-amber-500 hover:bg-amber-500/10 hover:border-amber-600">
-							{t('paywall_cta_login', 'Se connecter')}
+							{t('paywall_cta_login')}
 						</Button>
 					</Link>
 				)}
@@ -109,8 +109,8 @@ const PaywallBlock = ({ isLoggedIn }) => {
 				isDark ? 'text-slate-400' : 'text-slate-500'
 			)}>
 				{isLoggedIn
-					? t('paywall_note_logged_in', 'Paiement securise - Garantie satisfait ou rembourse')
-					: t('paywall_note_guest', 'Inscription gratuite - Sans engagement - Annulation possible a tout moment')}
+					? t('paywall_note_logged_in')
+					: t('paywall_note_guest')}
 			</p>
 		</Card>
 	)

@@ -2,7 +2,6 @@
 
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
-import { createMethodServerClient } from '@/lib/supabase-method-server'
 import { logger } from '@/utils/logger'
 import { z } from 'zod'
 import { getStaticMethodLevels, getStaticLevelBySlug, getStaticLevelById } from '@/lib/method-levels'
@@ -61,7 +60,7 @@ export async function getCoursesByLevel(levelId) {
 		// Validate levelId
 		const validLevelId = LevelIdSchema.parse(levelId)
 
-		const supabase = createMethodServerClient(await cookies())
+		const supabase = createServerClient(await cookies())
 		const { data, error} = await supabase
 			.from('courses')
 			.select(
@@ -119,7 +118,7 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 		// Validate input parameters
 		const validParams = CourseSlugParamsSchema.parse({ levelSlug, courseSlug, lang })
 
-		const supabase = createMethodServerClient(await cookies())
+		const supabase = createServerClient(await cookies())
 
 		// Get level from static data
 		const level = getStaticLevelBySlug(validParams.levelSlug)
@@ -196,7 +195,7 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 		// Validate input parameters
 		const validParams = LessonSlugParamsSchema.parse({ courseSlug, lessonSlug, lang })
 
-		const supabase = createMethodServerClient(await cookies())
+		const supabase = createServerClient(await cookies())
 
 		// Query lesson with course (no level join)
 		const { data, error } = await supabase
@@ -359,7 +358,8 @@ export async function getLessonProgress(lessonId) {
 
 /**
  * Mark a lesson as completed
- * Uses PostgreSQL RPC function for atomic operation
+ * Uses direct upsert instead of RPC to avoid foreign key issues
+ * (course_lessons data is in PROD DB while user_course_progress is in main DB)
  * @param {number} lessonId - Lesson ID
  * @returns {Promise<Object>} Success/error response
  */
@@ -377,11 +377,21 @@ export async function completeLesson(lessonId) {
 			return { success: false, error: 'User not authenticated' }
 		}
 
-		// Use PostgreSQL RPC function for atomic operation
-		const { error } = await supabase.rpc('complete_course_lesson', {
-			p_user_id: user.id,
-			p_lesson_id: validLessonId,
-		})
+		// Use direct upsert instead of RPC to avoid foreign key constraint issues
+		// The lesson exists in PROD DB but user_course_progress is in main DB
+		const { error } = await supabase
+			.from('user_course_progress')
+			.upsert(
+				{
+					user_id: user.id,
+					lesson_id: validLessonId,
+					is_completed: true,
+					completed_at: new Date().toISOString(),
+				},
+				{
+					onConflict: 'user_id,lesson_id',
+				}
+			)
 
 		if (error) throw error
 

@@ -128,21 +128,32 @@ export default async function LessonPage({ params }) {
 		? await getUserCourseProgress(course.id)
 		: []
 
-	// Check if user has access to this lesson
-	const isFreeLesson = lesson.is_free === true
-	const userHasAccess = isFreeLesson || isAuthenticated // TODO: Add proper premium check
-
-	// Get user's premium status
+	// Get user's premium and purchase status
 	let isPremium = false
+	let hasPurchasedMethod = false
+	let hasActiveSubscription = false
+
 	if (user) {
 		const { data: profile } = await supabase
 			.from('users_profile')
-			.select('is_premium')
+			.select('is_premium, has_purchased_method, subscription_status, subscription_expires_at')
 			.eq('id', user.id)
 			.single()
 
 		isPremium = profile?.is_premium || false
+		hasPurchasedMethod = profile?.has_purchased_method || false
+
+		// Check if subscription is active (status = 'active' and not expired)
+		if (profile?.subscription_status === 'active') {
+			const expiresAt = profile?.subscription_expires_at
+			hasActiveSubscription = !expiresAt || new Date(expiresAt) > new Date()
+		}
 	}
+
+	// Check if user has access to this lesson
+	// Access granted if: lesson is free OR user has purchased method OR user has active subscription
+	const isFreeLesson = lesson.is_free === true
+	const userHasAccess = isFreeLesson || hasPurchasedMethod || hasActiveSubscription
 
 	return (
 		<LessonPageClient
@@ -152,6 +163,9 @@ export default async function LessonPage({ params }) {
 			spokenLanguage={spokenLanguage}
 			userHasAccess={userHasAccess}
 			isPremium={isPremium}
+			hasActiveSubscription={hasActiveSubscription}
+			hasPurchasedMethod={hasPurchasedMethod}
+			isFreeLesson={isFreeLesson}
 			isUserLoggedIn={isAuthenticated}
 			initialProgress={userProgress}
 		/>

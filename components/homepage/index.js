@@ -1,18 +1,21 @@
 'use client'
 
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Hero from './Hero'
 import MultimediaCard from './MultimediaCard'
 import BentoGrid from './BentoGrid'
 import HowItWorks from './HowItWorks'
 import FAQ from './FAQ'
 import FinalCTA from './FinalCTA'
-import { Link } from '@/i18n/navigation'
+import OnboardingModal from '@/components/onboarding/OnboardingModal'
+import { Link, useRouter } from '@/i18n/navigation'
 import { getUIImageUrl } from '@/utils/mediaUrls'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useThemeMode } from '@/context/ThemeContext'
+import { useUserContext } from '@/context/user'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 
@@ -341,11 +344,37 @@ const SectionSeparator = () => {
 
 const Homepage = ({ translations, jsonLd }) => {
 	const { isDark } = useThemeMode()
+	const { isUserLoggedIn } = useUserContext()
+	const router = useRouter()
+	const searchParams = useSearchParams()
 	const [isMounted, setIsMounted] = useState(false)
+	const [showOnboardingModal, setShowOnboardingModal] = useState(false)
 
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
+
+	// Check for onboarding param after signup
+	useEffect(() => {
+		if (searchParams.get('onboarding') === 'true' && isUserLoggedIn) {
+			setShowOnboardingModal(true)
+			// Clean up URL without triggering navigation
+			window.history.replaceState({}, '', window.location.pathname)
+		}
+	}, [searchParams, isUserLoggedIn])
+
+	const handleOnboardingClose = () => {
+		setShowOnboardingModal(false)
+	}
+
+	const handleChooseBeginner = () => {
+		router.push('/method/beginner')
+	}
+
+	const handleChooseExplore = () => {
+		// Just close the modal, user stays on homepage
+		setShowOnboardingModal(false)
+	}
 
 	const multimedia = useMemo(() => [
 		{
@@ -547,6 +576,14 @@ const Homepage = ({ translations, jsonLd }) => {
 					<FinalCTA translations={translations} />
 				</div>
 			</div>
+
+			{/* Onboarding Modal - shown after signup */}
+			<OnboardingModal
+				open={showOnboardingModal}
+				onClose={handleOnboardingClose}
+				onChooseBeginner={handleChooseBeginner}
+				onChooseExplore={handleChooseExplore}
+			/>
 		</>
 	)
 }

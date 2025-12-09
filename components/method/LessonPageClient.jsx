@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Link } from '@/i18n/navigation'
 import LessonNavigator from '@/components/courses/LessonNavigator'
 import PaywallBlock from '@/components/courses/PaywallBlock'
-import UpsellModal from '@/components/courses/UpsellModal'
+import PremiumChoiceModal from '@/components/courses/PremiumChoiceModal'
 import { useLessonProgress, useCompleteLesson } from '@/lib/courses-client'
 import { useAddXP } from '@/hooks/gamification/useAddXP'
 import toast from '@/utils/toast'
@@ -42,6 +42,9 @@ const LessonPageClient = ({
 	spokenLanguage,
 	userHasAccess,
 	isPremium,
+	hasActiveSubscription,
+	hasPurchasedMethod,
+	isFreeLesson,
 	isUserLoggedIn,
 }) => {
 	const router = useRouterCompat()
@@ -50,7 +53,7 @@ const LessonPageClient = ({
 	const { isDark } = useThemeMode()
 
 	// Local state
-	const [showUpsellModal, setShowUpsellModal] = useState(false)
+	const [showPremiumModal, setShowPremiumModal] = useState(false)
 
 	// Level config for theming
 	const levelConfig = {
@@ -130,13 +133,10 @@ const LessonPageClient = ({
 					})
 				}
 
-				// Check if we should show upsell modal
-				const isFirstLesson = course?.course_lessons?.[0]?.id === lesson.id
-				const levelIsFree = level?.is_free === true
-
-				// Show upsell modal if: 1st lesson + level not free + user doesn't have access
-				if (isFirstLesson && !levelIsFree && !userHasAccess) {
-					setShowUpsellModal(true)
+				// Show premium choice modal after completing a free lesson
+				// if user doesn't have full access (no subscription and hasn't purchased method)
+				if (isFreeLesson && !hasActiveSubscription && !hasPurchasedMethod) {
+					setShowPremiumModal(true)
 				}
 			},
 			onError: () => {
@@ -145,11 +145,18 @@ const LessonPageClient = ({
 		})
 	}
 
-	const handlePurchase = () => {
-		// TODO: Implement purchase flow
-		logger.log('Purchase clicked')
-		toast.info('Fonctionnalité de paiement à venir !')
-		setShowUpsellModal(false)
+	const handleChooseSubscription = () => {
+		// TODO: Redirect to subscription checkout page
+		logger.log('Subscription chosen')
+		router.push('/premium?plan=subscription')
+		setShowPremiumModal(false)
+	}
+
+	const handleChooseMethodOnly = () => {
+		// TODO: Redirect to method purchase checkout page
+		logger.log('Method only chosen')
+		router.push('/premium?plan=method')
+		setShowPremiumModal(false)
 	}
 
 	const titleKey = `title_${locale}`
@@ -494,14 +501,13 @@ const LessonPageClient = ({
 				)}
 			</main>
 
-			{/* Upsell Modal */}
-			{showUpsellModal && level && (
-				<UpsellModal
-					open={showUpsellModal}
-					onClose={() => setShowUpsellModal(false)}
-					levelName={level[`name_${locale}`] || level.slug}
-					isPremium={isPremium}
-					onPurchase={handlePurchase}
+			{/* Premium Choice Modal */}
+			{showPremiumModal && (
+				<PremiumChoiceModal
+					open={showPremiumModal}
+					onClose={() => setShowPremiumModal(false)}
+					onChooseSubscription={handleChooseSubscription}
+					onChooseMethodOnly={handleChooseMethodOnly}
 				/>
 			)}
 

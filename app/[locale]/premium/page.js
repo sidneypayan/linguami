@@ -5,11 +5,10 @@ export async function generateMetadata({ params }) {
 	const { locale } = await params
 	const t = await getTranslations({ locale, namespace: 'premium' })
 
-	// Mots-clés SEO par langue
 	const keywordsByLang = {
-		fr: 'premium linguami, abonnement linguami, dictionnaire illimité, flashcards, traduction russe, apprendre russe premium',
-		ru: 'премиум linguami, подписка linguami, неограниченный словарь, флэш-карты, перевод французский',
-		en: 'linguami premium, premium subscription, unlimited dictionary, flashcards, language learning premium, russian french premium'
+		fr: 'premium linguami, abonnement linguami, methode russe, apprendre russe, cours de russe premium',
+		ru: 'премиум linguami, подписка linguami, метод французский, учить французский, курсы французского',
+		en: 'linguami premium, premium subscription, russian method, learn russian, premium russian course',
 	}
 
 	const baseUrl = 'https://www.linguami.com'
@@ -61,14 +60,7 @@ export default async function Premium({ params }) {
 	const { locale } = await params
 	const t = await getTranslations({ locale, namespace: 'premium' })
 
-	// Mots-clés SEO par langue
-	const keywordsByLang = {
-		fr: 'premium linguami, abonnement linguami, dictionnaire illimité, flashcards, traduction russe, apprendre russe premium',
-		ru: 'премиум linguami, подписка linguami, неограниченный словарь, флэш-карты, перевод французский',
-		en: 'linguami premium, premium subscription, unlimited dictionary, flashcards, language learning premium, russian french premium'
-	}
-
-	// JSON-LD pour Product/Offer
+	// JSON-LD for Product/Offers
 	const jsonLd = {
 		'@context': 'https://schema.org',
 		'@type': 'Product',
@@ -76,40 +68,38 @@ export default async function Premium({ params }) {
 		description: t('description'),
 		brand: {
 			'@type': 'Brand',
-			name: 'Linguami'
+			name: 'Linguami',
 		},
 		offers: [
 			{
 				'@type': 'Offer',
-				name: '1 Month Premium',
-				price: '6.00',
+				name: 'Monthly Subscription',
+				price: '8.00',
 				priceCurrency: 'EUR',
 				availability: 'https://schema.org/InStock',
 				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
-				priceValidUntil: '2026-12-31'
+				priceValidUntil: '2026-12-31',
 			},
 			{
 				'@type': 'Offer',
-				name: '3 Months Premium',
-				price: '15.00',
+				name: 'Yearly Subscription',
+				price: '59.00',
 				priceCurrency: 'EUR',
 				availability: 'https://schema.org/InStock',
 				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
-				priceValidUntil: '2026-12-31'
-			}
-		]
+				priceValidUntil: '2026-12-31',
+			},
+			{
+				'@type': 'Offer',
+				name: 'Method Course (per level)',
+				price: '29.00',
+				priceCurrency: 'EUR',
+				availability: 'https://schema.org/InStock',
+				url: `https://www.linguami.com${locale === 'fr' ? '' : `/${locale}`}/premium`,
+				priceValidUntil: '2026-12-31',
+			},
+		],
 	}
 
-	// Get all translations as plain values (not functions)
-	const translations = {
-		feature_unlimited_translation: t('feature_unlimited_translation'),
-		feature_unlimited_dictionary: t('feature_unlimited_dictionary'),
-		feature_flashcards: t('feature_flashcards'),
-		support_content_creation: t('support_content_creation'),
-		support_interactive_activities: t('support_interactive_activities'),
-		support_hosting_costs: t('support_hosting_costs'),
-		support_appreciation: t('support_appreciation'),
-	}
-
-	return <PremiumClient translations={translations} jsonLd={jsonLd} />
+	return <PremiumClient jsonLd={jsonLd} />
 }
