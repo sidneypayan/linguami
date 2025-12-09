@@ -121,55 +121,35 @@ export default function PremiumClient({ jsonLd }) {
 			{/* Hero Section */}
 			<section
 				className={cn(
-					'relative overflow-hidden pt-24 pb-16 md:pt-28 md:pb-20',
-					'bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900'
+					'relative pt-24 pb-16 md:pt-28 md:pb-20',
+					isDark ? 'bg-background' : 'bg-background'
 				)}>
-				{/* Background effects */}
-				<div className="absolute inset-0 overflow-hidden pointer-events-none">
-					<div
-						className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full opacity-40 blur-[80px] animate-pulse-slow"
-						style={{
-							background:
-								'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)',
-						}}
-					/>
-					<div
-						className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] rounded-full opacity-30 blur-[60px] animate-pulse-slow"
-						style={{
-							background:
-								'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
-							animationDelay: '2s',
-						}}
-					/>
-					<div
-						className="absolute inset-0 opacity-[0.03]"
-						style={{
-							backgroundImage:
-								'linear-gradient(rgba(139, 92, 246, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.5) 1px, transparent 1px)',
-							backgroundSize: '50px 50px',
-						}}
-					/>
-				</div>
 
 				<div className="relative z-10 max-w-[1200px] mx-auto px-5 text-center">
 					<Badge
 						variant="outline"
 						className={cn(
 							'mb-6 px-4 py-1.5',
-							'bg-amber-500/20 border-amber-500/30 backdrop-blur-sm',
-							'text-white/95 font-semibold text-sm rounded-full'
+							'bg-amber-500/20 border-amber-500/30',
+							isDark ? 'text-amber-300' : 'text-amber-700',
+							'font-semibold text-sm rounded-full'
 						)}>
-						<Crown className="w-4 h-4 mr-2 text-amber-400" />
+						<Crown className="w-4 h-4 mr-2 text-amber-500" />
 						{t('badge_unlock_potential')}
 					</Badge>
 
 					<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-						<span className="bg-gradient-to-r from-white via-violet-300 to-cyan-300 bg-clip-text text-transparent">
+						<span className={cn(
+							'bg-gradient-to-r bg-clip-text text-transparent',
+							isDark
+								? 'from-violet-400 via-purple-400 to-cyan-400'
+								: 'from-violet-600 via-purple-600 to-cyan-600'
+						)}>
 							{t('hero_title')}
 						</span>
 					</h1>
 
-					<p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto">
+					<p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
 						{t('hero_subtitle')}
 					</p>
 				</div>
@@ -178,8 +158,8 @@ export default function PremiumClient({ jsonLd }) {
 			{/* Pricing Cards */}
 			<section
 				className={cn(
-					'relative -mt-8 pb-20 px-5',
-					isDark ? 'bg-slate-950' : 'bg-slate-50'
+					'relative pb-20 px-5',
+					isDark ? 'bg-background' : 'bg-background'
 				)}>
 				<div className="max-w-[1200px] mx-auto">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-3xl mx-auto">
