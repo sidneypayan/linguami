@@ -994,6 +994,7 @@
     "feature_unlimited_translations": "Unlimited translations",
     "feature_unlimited_dictionary": "Unlimited dictionary",
     "feature_exclusive_training": "Exclusive training exercises",
+    "feature_method_discount": "Discount on method courses",
     "feature_courses_full_price": "Method courses at {price}€",
     "feature_courses_discount": "Method courses at {price}€ instead of {regular}€",
     "feature_priority_support": "Priority support",

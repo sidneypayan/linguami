@@ -990,6 +990,7 @@
     "feature_unlimited_translations": "Traductions illimitées",
     "feature_unlimited_dictionary": "Dictionnaire illimité",
     "feature_exclusive_training": "Entraînements exclusifs",
+    "feature_method_discount": "Réduction sur les cours de la méthode",
     "feature_courses_full_price": "Cours de la méthode à {price}€",
     "feature_courses_discount": "Cours de la méthode à {price}€ au lieu de {regular}€",
     "feature_priority_support": "Support prioritaire",

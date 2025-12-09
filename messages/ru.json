@@ -994,6 +994,7 @@
     "feature_unlimited_translations": "Неограниченные переводы",
     "feature_unlimited_dictionary": "Неограниченный словарь",
     "feature_exclusive_training": "Эксклюзивные тренировки",
+    "feature_method_discount": "Скидка на курсы метода",
     "feature_courses_full_price": "Курсы метода за {price}€",
     "feature_courses_discount": "Курсы метода за {price}€ вместо {regular}€",
     "feature_priority_support": "Приоритетная поддержка",

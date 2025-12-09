@@ -130,6 +130,7 @@ export default function PremiumSuccessClient({ sessionId }) {
 							t('feature_unlimited_translations'),
 							t('feature_unlimited_dictionary'),
 							t('feature_exclusive_training'),
+							t('feature_method_discount'),
 						].map((feature, index) => (
 							<li key={index} className="flex items-center gap-3 text-white/90">
 								<CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />

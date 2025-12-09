@@ -91,7 +91,9 @@ async function handleCheckoutCompleted(session) {
 	const subscription = await stripe.subscriptions.retrieve(session.subscription)
 	console.log('✅ Subscription retrieved:', subscription.id)
 
-	const expiresAt = new Date(subscription.current_period_end * 1000).toISOString()
+	// current_period_end is on the subscription_item, not the subscription itself
+	const currentPeriodEnd = subscription.items.data[0].current_period_end
+	const expiresAt = new Date(currentPeriodEnd * 1000).toISOString()
 
 	console.log('💾 Updating user profile in Supabase...')
 	const { error } = await supabaseAdmin
@@ -225,7 +227,9 @@ async function updateUserSubscription(userId, subscription) {
 		subscription.status === 'past_due' ? 'past_due' :
 		subscription.status === 'canceled' ? 'cancelled' : subscription.status
 
-	const expiresAt = new Date(subscription.current_period_end * 1000).toISOString()
+	// current_period_end is on the subscription_item, not the subscription itself
+	const currentPeriodEnd = subscription.items.data[0].current_period_end
+	const expiresAt = new Date(currentPeriodEnd * 1000).toISOString()
 	const priceType = subscription.items.data[0].plan.interval === 'year' ? 'yearly' : 'monthly'
 
 	const { error } = await supabaseAdmin
