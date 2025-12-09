@@ -9,10 +9,33 @@ import TableOfContents from '@/components/blog/TableOfContents'
 import SocialShareButtons from '@/components/blog/SocialShareButtons'
 import StickySignupWidget from '@/components/blog/StickySignupWidget'
 import RelatedArticles from '@/components/blog/RelatedArticles'
+import ArticleCTA from '@/components/blog/ArticleCTA'
 import { calculateReadingTime, formatReadingTime } from '@/utils/readingTime'
 import { slugify } from '@/utils/slugify'
 import { formatBlogDate } from '@/utils/blogHelpers'
 import { cn } from '@/lib/utils'
+
+/**
+ * Divise le contenu markdown en deux parties pour injecter un CTA
+ * Coupe apres le premier ~30% du contenu (apres le 2eme H2)
+ */
+function splitContentForCTA(content) {
+	// Trouver tous les H2 dans le contenu
+	const h2Regex = /^## .+$/gm
+	const matches = [...content.matchAll(h2Regex)]
+
+	// Si moins de 3 H2, pas de split (article trop court)
+	if (matches.length < 3) {
+		return { before: content, after: null }
+	}
+
+	// Couper apres le 2eme H2 (environ 30% du contenu)
+	const splitIndex = matches[2].index
+	const before = content.substring(0, splitIndex).trim()
+	const after = content.substring(splitIndex).trim()
+
+	return { before, after }
+}
 
 export default function BlogPostClient({ frontmatter, content, slug, allPosts, locale, translations }) {
 	const { isDark } = useThemeMode()
@@ -22,6 +45,9 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 	// Calculer le temps de lecture
 	const readingTime = calculateReadingTime(content)
 	const readingTimeText = formatReadingTime(readingTime, locale)
+
+	// Diviser le contenu pour injecter un CTA
+	const { before: contentBefore, after: contentAfter } = splitContentForCTA(content)
 
 	// Configurer marked pour ajouter des IDs aux titres H2
 	marked.use({
@@ -115,6 +141,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 
 					{/* Main Content */}
 					<main className="lg:col-span-9">
+						{/* Premiere partie du contenu */}
 						<article
 							className={cn(
 								'prose prose-lg max-w-none',
@@ -158,8 +185,62 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 								isDark ? 'prose-th:bg-violet-500/20' : 'prose-th:bg-violet-500/10',
 								isDark ? 'prose-td:border-violet-500/20' : 'prose-td:border-violet-600/10',
 							)}
-							dangerouslySetInnerHTML={{ __html: marked(content) }}
+							dangerouslySetInnerHTML={{ __html: marked(contentBefore) }}
 						/>
+
+						{/* CTA precoce - apres le premier tiers de l'article */}
+						{contentAfter && (
+							<ArticleCTA type="start-learning" className="my-12" />
+						)}
+
+						{/* Deuxieme partie du contenu (si existante) */}
+						{contentAfter && (
+							<article
+								className={cn(
+									'prose prose-lg max-w-none',
+									isDark ? 'prose-invert' : '',
+									// Paragraphs
+									'prose-p:leading-relaxed',
+									isDark ? 'prose-p:text-slate-300' : 'prose-p:text-slate-600',
+									// Headings
+									'prose-headings:font-bold prose-headings:tracking-tight',
+									isDark ? 'prose-headings:text-slate-100' : 'prose-headings:text-slate-800',
+									'prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6',
+									'prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4',
+									// Links
+									'prose-a:text-violet-500 prose-a:font-semibold prose-a:no-underline',
+									'prose-a:border-b-2 prose-a:border-violet-500/30',
+									'hover:prose-a:border-violet-500 hover:prose-a:text-cyan-500',
+									// Lists
+									'prose-li:marker:text-violet-500',
+									isDark ? 'prose-li:text-slate-300' : 'prose-li:text-slate-600',
+									// Code
+									'prose-code:text-violet-500 prose-code:font-medium',
+									isDark ? 'prose-code:bg-violet-500/20' : 'prose-code:bg-violet-500/10',
+									'prose-code:px-2 prose-code:py-0.5 prose-code:rounded',
+									'prose-code:before:content-none prose-code:after:content-none',
+									// Pre/Code blocks
+									isDark ? 'prose-pre:bg-slate-950' : 'prose-pre:bg-slate-900',
+									'prose-pre:border-2',
+									isDark ? 'prose-pre:border-violet-500/20' : 'prose-pre:border-violet-600/10',
+									'prose-pre:shadow-lg',
+									// Blockquotes
+									'prose-blockquote:border-l-4 prose-blockquote:border-violet-500',
+									isDark ? 'prose-blockquote:bg-violet-500/10' : 'prose-blockquote:bg-violet-500/5',
+									'prose-blockquote:rounded-r-xl prose-blockquote:py-1',
+									isDark ? 'prose-blockquote:text-slate-300' : 'prose-blockquote:text-slate-600',
+									// Images
+									'prose-img:rounded-2xl prose-img:shadow-xl',
+									// HR
+									isDark ? 'prose-hr:border-violet-500/20' : 'prose-hr:border-violet-600/10',
+									// Tables
+									'prose-th:text-violet-500',
+									isDark ? 'prose-th:bg-violet-500/20' : 'prose-th:bg-violet-500/10',
+									isDark ? 'prose-td:border-violet-500/20' : 'prose-td:border-violet-600/10',
+								)}
+								dangerouslySetInnerHTML={{ __html: marked(contentAfter) }}
+							/>
+						)}
 
 						{/* Social Share Buttons */}
 						<SocialShareButtons

@@ -19,31 +19,31 @@ import * as gtm from '@/lib/gtm'
  */
 export default function ArticleCTA({ type = 'start-learning', className = '' }) {
 	const { isDark } = useThemeMode()
-	const t = useTranslations('common')
+	const t = useTranslations('blog')
 	const params = useParams()
 
 	const ctaConfig = {
 		'start-learning': {
 			icon: Rocket,
-			title: "Pret a commencer votre apprentissage ?",
-			subtitle: "Rejoignez Linguami et accedez a des centaines de ressources pour apprendre le russe ou le francais efficacement.",
-			buttonText: "Commencer gratuitement",
+			title: t('cta_start_title'),
+			subtitle: t('cta_start_subtitle'),
+			buttonText: t('cta_start_button'),
 			href: "/signup",
 			color: 'violet'
 		},
 		'materials': {
 			icon: BookOpen,
-			title: "Decouvrez nos materiaux d'apprentissage",
-			subtitle: "Livres, videos, podcasts, musique... Apprenez avec du contenu authentique et captivant.",
-			buttonText: "Explorer les materiaux",
+			title: t('cta_materials_title'),
+			subtitle: t('cta_materials_subtitle'),
+			buttonText: t('cta_materials_button'),
 			href: "/materials",
 			color: 'cyan'
 		},
 		'premium': {
 			icon: Headphones,
-			title: "Accelerez votre progression",
-			subtitle: "Debloquez toutes les fonctionnalites premium : lecons illimitees, exercices avances, suivi personnalise.",
-			buttonText: "Decouvrir Premium",
+			title: t('cta_premium_title'),
+			subtitle: t('cta_premium_subtitle'),
+			buttonText: t('cta_premium_button'),
 			href: "/premium",
 			color: 'rose'
 		}

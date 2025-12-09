@@ -243,7 +243,17 @@
     "signup_widget_button": "Sign up for free",
     "readingTime": "Reading time",
     "shareArticle": "Share article",
-    "relatedArticles": "Related articles"
+    "relatedArticles": "Related articles",
+    "linkCopied": "Link copied to clipboard!",
+    "cta_start_title": "Ready to start learning?",
+    "cta_start_subtitle": "Join Linguami and access hundreds of resources to learn Russian or French effectively.",
+    "cta_start_button": "Start for free",
+    "cta_materials_title": "Discover our learning materials",
+    "cta_materials_subtitle": "Books, videos, podcasts, music... Learn with authentic and engaging content.",
+    "cta_materials_button": "Explore materials",
+    "cta_premium_title": "Accelerate your progress",
+    "cta_premium_subtitle": "Unlock all premium features: unlimited lessons, advanced exercises, personalized tracking.",
+    "cta_premium_button": "Discover Premium"
   },
   "common": {
     "learn": "I'm learning",

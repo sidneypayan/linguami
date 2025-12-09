@@ -244,7 +244,17 @@
     "signup_widget_button": "Inscription gratuite",
     "readingTime": "Temps de lecture",
     "shareArticle": "Partager l'article",
-    "relatedArticles": "Articles connexes"
+    "relatedArticles": "Articles connexes",
+    "linkCopied": "Lien copie dans le presse-papier !",
+    "cta_start_title": "Pret a commencer votre apprentissage ?",
+    "cta_start_subtitle": "Rejoignez Linguami et accedez a des centaines de ressources pour apprendre le russe ou le francais efficacement.",
+    "cta_start_button": "Commencer gratuitement",
+    "cta_materials_title": "Decouvrez nos materiaux d'apprentissage",
+    "cta_materials_subtitle": "Livres, videos, podcasts, musique... Apprenez avec du contenu authentique et captivant.",
+    "cta_materials_button": "Explorer les materiaux",
+    "cta_premium_title": "Accelerez votre progression",
+    "cta_premium_subtitle": "Debloquez toutes les fonctionnalites premium : lecons illimitees, exercices avances, suivi personnalise.",
+    "cta_premium_button": "Decouvrir Premium"
   },
   "common": {
     "learn": "J'apprends",
