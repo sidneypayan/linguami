@@ -155,9 +155,9 @@ export default async function LessonPage({ params }) {
 	}
 
 	// Check if user has access to this lesson
-	// Access granted if: lesson is free OR user has purchased method OR user has active subscription
+	// Access granted if: admin OR lesson is free OR user has purchased method OR user has active subscription
 	const isFreeLesson = lesson.is_free === true
-	const userHasAccess = isFreeLesson || hasPurchasedMethod || hasActiveSubscription
+	const userHasAccess = isAdmin || isFreeLesson || hasPurchasedMethod || hasActiveSubscription
 
 	return (
 		<LessonPageClient

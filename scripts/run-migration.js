@@ -21,7 +21,7 @@ if (!supabaseUrl || !supabaseKey) {
 	process.exit(1)
 }
 
-const migrationFile = '20251204_add_multi_fill_type.sql'
+const migrationFile = '20251211_remove_lesson_content_columns.sql'
 const migrationPath = path.resolve(__dirname, '../supabase/migrations', migrationFile)
 
 async function main() {

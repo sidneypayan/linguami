@@ -1,0 +1,1653 @@
+{
+  "id": 12,
+  "slug": "privet-saluer-prendre-conge",
+  "title_fr": "Привет ! - Saluer et prendre congé",
+  "title_en": "Привет! - Greetings and farewells",
+  "title_ru": "Привет! - Приветствия и прощания",
+  "objectives_fr": [
+    "Dire bonjour et au revoir en russe",
+    "Utiliser le registre formel et informel",
+    "Se présenter avec \"Меня зовут\"",
+    "Souhaiter une bonne journée/soirée"
+  ],
+  "objectives_en": [
+    "Say hello and goodbye in Russian",
+    "Use formal and informal registers",
+    "Introduce yourself with \"Меня зовут\"",
+    "Wish someone a nice day/evening"
+  ],
+  "objectives_ru": [
+    "Здороваться и прощаться по-русски",
+    "Использовать формальный и неформальный регистры",
+    "Представляться с помощью \"Меня зовут\"",
+    "Желать хорошего дня/вечера"
+  ],
+  "blocks_fr": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "text": "Здравствуйте!",
+          "vocab": [
+            {
+              "word": "Здравствуйте",
+              "translation": "Bonjour (formel)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Здравствуйте! Как вы поживаете?",
+          "vocab": [
+            {
+              "word": "Как вы поживаете?",
+              "translation": "Comment allez-vous ? (formel)"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Хорошо, спасибо. А вы?",
+          "vocab": [
+            {
+              "word": "Хорошо",
+              "translation": "Bien"
+            },
+            {
+              "word": "спасибо",
+              "translation": "merci"
+            },
+            {
+              "word": "А вы?",
+              "translation": "Et vous ? (formel)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень хорошо, спасибо! Меня зовут Иван.",
+          "vocab": [
+            {
+              "word": "Очень хорошо",
+              "translation": "Très bien"
+            },
+            {
+              "word": "Меня зовут",
+              "translation": "Je m'appelle (litt. : on m'appelle)"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Очень приятно, Иван! Меня зовут Анна.",
+          "vocab": [
+            {
+              "word": "Очень приятно",
+              "translation": "Enchanté(e) / Très agréable"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень приятно, Анна! Хорошего дня!",
+          "vocab": [
+            {
+              "word": "Хорошего дня",
+              "translation": "Bonne journée"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Спасибо, вам тоже! До свидания!",
+          "vocab": [
+            {
+              "word": "вам тоже",
+              "translation": "à vous aussi (formel)"
+            },
+            {
+              "word": "До свидания",
+              "translation": "Au revoir"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        }
+      ],
+      "title": "Première rencontre au café",
+      "vocabulary": [
+        {
+          "word": "Здравствуйте",
+          "category": "expressions",
+          "translation": "Bonjour (formel)"
+        },
+        {
+          "word": "До свидания",
+          "category": "expressions",
+          "translation": "Au revoir"
+        },
+        {
+          "word": "Спасибо",
+          "category": "expressions",
+          "translation": "Merci"
+        }
+      ]
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Les salutations",
+      "words": [
+        {
+          "word": "Здравствуйте",
+          "example": "Здравствуйте, как дела?",
+          "translation": "Bonjour (formel, à toute heure)",
+          "exampleTranslation": "Bonjour, comment allez-vous ?"
+        },
+        {
+          "word": "Привет",
+          "example": "Привет! Как дела?",
+          "translation": "Salut (informel, entre amis)",
+          "exampleTranslation": "Salut ! Comment ça va ?"
+        },
+        {
+          "word": "Доброе утро",
+          "example": "Доброе утро, мама!",
+          "translation": "Bonjour / Bon matin (le matin)",
+          "exampleTranslation": "Bonjour maman ! (le matin)"
+        },
+        {
+          "word": "Добрый день",
+          "example": "Добрый день, коллеги!",
+          "translation": "Bonjour (l'après-midi)",
+          "exampleTranslation": "Bonjour, collègues !"
+        },
+        {
+          "word": "Добрый вечер",
+          "example": "Добрый вечер!",
+          "translation": "Bonsoir (le soir)",
+          "exampleTranslation": "Bonsoir !"
+        }
+      ],
+      "category": "salutations"
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Saluer",
+            "Здравствуйте",
+            "Привет"
+          ],
+          [
+            "Demander des nouvelles",
+            "Как вы поживаете?",
+            "Как дела? / Как ты?"
+          ],
+          [
+            "Répondre",
+            "Хорошо, спасибо",
+            "Нормально / Отлично"
+          ],
+          [
+            "Prendre congé",
+            "До свидания",
+            "Пока / Давай"
+          ]
+        ],
+        "title": "Formel vs Informel",
+        "headers": [
+          "Situation",
+          "Formel (вы)",
+          "Informel (ты)"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Formel vs Informel",
+      "examples": [
+        {
+          "note": "Utilisez \"вы\" avec des inconnus, des supérieurs",
+          "audioUrl": null,
+          "sentence": "Как вы поживаете?",
+          "translation": "Comment allez-vous ? (formel)"
+        },
+        {
+          "note": "Utilisez \"ты\" avec des amis, la famille",
+          "audioUrl": null,
+          "sentence": "Как ты поживаешь?",
+          "translation": "Comment vas-tu ? (informel)"
+        },
+        {
+          "note": "Version courte, très courante",
+          "audioUrl": null,
+          "sentence": "Как дела?",
+          "translation": "Comment ça va ? (neutre/informel)"
+        }
+      ],
+      "explanation": "En russe, comme en français, il existe deux registres : formel (вы - vous) et informel (ты - tu). Le choix dépend de la relation avec l'interlocuteur. On utilise \"вы\" avec les inconnus, les supérieurs et les personnes âgées. On utilise \"ты\" avec les amis, la famille et les enfants."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Formel ou informel ?",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "Contexte formel (professeur)",
+          "answer": "Здравствуйте",
+          "question": "À votre professeur : ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Здравствуйте",
+            "здравствуйте"
+          ]
+        },
+        {
+          "hint": "Contexte informel (ami)",
+          "answer": "Привет",
+          "question": "À votre ami(e) : ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Привет",
+            "привет"
+          ]
+        },
+        {
+          "hint": "Vouvoiement pour un inconnu",
+          "answer": "поживаете",
+          "question": "Как вы ____? (поживаете/поживаешь) - à un inconnu",
+          "acceptableAnswers": [
+            "поживаете"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "icon": "globe",
+      "type": "culture",
+      "title": "Les salutations en Russie",
+      "content": "En Russie, les hommes se serrent généralement la main lors d'une rencontre formelle. Entre amis proches et en famille, on peut s'embrasser (souvent trois fois sur les joues). Le contact visuel est important lors des salutations. \"Здравствуйте\" vient du mot \"здоровье\" (santé) - vous souhaitez littéralement la bonne santé à votre interlocuteur !",
+      "keyPoints": [
+        "Les hommes se serrent la main en contexte formel",
+        "Entre proches, on peut s'embrasser (3 fois)",
+        "Le contact visuel est important",
+        "\"Здравствуйте\" signifie littéralement \"portez-vous bien\"",
+        "On enlève ses gants pour serrer la main"
+      ],
+      "comparison": {
+        "fr": "France : bise entre proches, poignée de main en contexte formel",
+        "other": "Russie : poignée de main plus fréquente, étreinte entre proches"
+      }
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Prendre congé",
+      "words": [
+        {
+          "word": "До свидания",
+          "example": "До свидания! До встречи!",
+          "translation": "Au revoir (formel)",
+          "exampleTranslation": "Au revoir ! À bientôt !"
+        },
+        {
+          "word": "Пока",
+          "example": "Пока! Увидимся!",
+          "translation": "Salut / Au revoir (informel)",
+          "exampleTranslation": "Salut ! On se voit !"
+        },
+        {
+          "word": "До встречи",
+          "example": "До встречи завтра!",
+          "translation": "À bientôt (litt. : jusqu'à la rencontre)",
+          "exampleTranslation": "À demain ! (litt. : À la rencontre demain)"
+        },
+        {
+          "word": "До завтра",
+          "example": "До завтра на работе!",
+          "translation": "À demain",
+          "exampleTranslation": "À demain au travail !"
+        },
+        {
+          "word": "Хорошего дня",
+          "example": "Хорошего дня!",
+          "translation": "Bonne journée",
+          "exampleTranslation": "Bonne journée !"
+        },
+        {
+          "word": "Спокойной ночи",
+          "example": "Спокойной ночи, сладких снов!",
+          "translation": "Bonne nuit",
+          "exampleTranslation": "Bonne nuit, fais de beaux rêves !"
+        }
+      ],
+      "category": "farewells"
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "info",
+      "title": "Astuce de prononciation",
+      "content": "Le mot \"Здравствуйте\" est difficile à prononcer ! Le groupe \"вств\" se simplifie souvent à l'oral en \"ств\" . Commencez par dire \"здрасте\" (version très raccourcie, familière) puis ajoutez progressivement les sons. L'accent tonique est sur la première syllabe : ЗДРАВ-ствуй-те."
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Меня зовут...",
+            "Je m'appelle...",
+            "1ère personne"
+          ],
+          [
+            "Тебя зовут...",
+            "Tu t'appelles...",
+            "2ème pers. informel"
+          ],
+          [
+            "Вас зовут...",
+            "Vous vous appelez...",
+            "2ème pers. formel"
+          ],
+          [
+            "Его зовут...",
+            "Il s'appelle...",
+            "3ème pers. masc."
+          ],
+          [
+            "Её зовут...",
+            "Elle s'appelle...",
+            "3ème pers. fém."
+          ],
+          [
+            "Их зовут...",
+            "Ils/Elles s'appellent...",
+            "3ème pers. pluriel"
+          ]
+        ],
+        "title": "La construction \"Меня зовут\"",
+        "headers": [
+          "Russe",
+          "Français",
+          "Usage"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Se présenter : Меня зовут",
+      "examples": [
+        {
+          "note": "Forme standard et polie",
+          "audioUrl": null,
+          "sentence": "Меня зовут Анна.",
+          "translation": "Je m'appelle Anna."
+        },
+        {
+          "note": "Plus direct, informel",
+          "audioUrl": null,
+          "sentence": "Я Пётр.",
+          "translation": "Je suis Piotr."
+        },
+        {
+          "note": "Question formelle",
+          "audioUrl": null,
+          "sentence": "Как вас зовут?",
+          "translation": "Comment vous appelez-vous ?"
+        }
+      ],
+      "explanation": "Pour dire son nom en russe, on utilise \"Меня зовут\" + prénom. Littéralement, cela signifie \"On m'appelle\". C'est une construction impersonnelle très courante. Une alternative informelle est \"Я\" + prénom (Je suis + prénom)."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Complétez les présentations",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "Première personne du singulier",
+          "answer": "Меня",
+          "question": "____ зовут Мария. (Меня/Тебя)",
+          "acceptableAnswers": [
+            "Меня",
+            "меня"
+          ]
+        },
+        {
+          "hint": "Deuxième personne informelle",
+          "answer": "тебя",
+          "question": "Как ____ зовут? (тебя/меня) - à un ami",
+          "acceptableAnswers": [
+            "тебя"
+          ]
+        },
+        {
+          "hint": "Deuxième personne formelle",
+          "answer": "вас",
+          "question": "Как ____ зовут? (вас/тебя) - à un inconnu",
+          "acceptableAnswers": [
+            "вас",
+            "Вас"
+          ]
+        },
+        {
+          "hint": "Troisième personne masculin",
+          "answer": "Его",
+          "question": "____ зовут Иван. (Его/Её) - un homme",
+          "acceptableAnswers": [
+            "Его",
+            "его"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "type": "conversation",
+      "title": "À une soirée",
+      "context": "Vous êtes à une fête et vous rencontrez quelqu'un pour la première fois.",
+      "dialogue": [
+        {
+          "text": "Добрый вечер!",
+          "speaker": "Inconnu(e)"
+        },
+        {
+          "text": "...",
+          "speaker": "Vous"
+        },
+        {
+          "text": "Меня зовут Наташа. А вас?",
+          "speaker": "Inconnu(e)"
+        },
+        {
+          "text": "...",
+          "speaker": "Vous"
+        },
+        {
+          "text": "Очень приятно! Вы знаете хозяина?",
+          "speaker": "Inconnu(e)"
+        },
+        {
+          "text": "...",
+          "speaker": "Vous"
+        }
+      ],
+      "questions": [
+        {
+          "answer": "Добрый вечер!",
+          "question": "Comment répondre à \"Добрый вечер!\" ?"
+        },
+        {
+          "answer": "Меня зовут [votre prénom]. / Я [votre prénom].",
+          "question": "Comment vous présenter après \"А вас?\" ?"
+        },
+        {
+          "answer": "Да, это мой друг. / Нет, не очень. / Да, это мой коллега.",
+          "question": "Comment répondre à \"Вы знаете хозяина?\" ?"
+        }
+      ]
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "warning",
+      "title": "Erreurs courantes à éviter",
+      "content": "Attention ! \"До свидания\" s'utilise en partant (comme \"au revoir\"), pas en arrivant. Ne confondez pas \"Добрый день\" (bonjour, en arrivant) et \"Хорошего дня\" (bonne journée, en partant). \"Пока\" est très informel - évitez-le avec votre patron !"
+    },
+    {
+      "icon": "check",
+      "type": "summary",
+      "title": "Expressions à retenir",
+      "keyPhrases": [
+        {
+          "ru": "Здравствуйте!",
+          "context": "Bonjour (formel)"
+        },
+        {
+          "ru": "Привет!",
+          "context": "Salut (informel)"
+        },
+        {
+          "ru": "Добрый день!",
+          "context": "Bonjour (l'après-midi)"
+        },
+        {
+          "ru": "Добрый вечер!",
+          "context": "Bonsoir"
+        },
+        {
+          "ru": "Как вы поживаете?",
+          "context": "Comment allez-vous ? (formel)"
+        },
+        {
+          "ru": "Как дела?",
+          "context": "Comment ça va ? (informel)"
+        },
+        {
+          "ru": "Меня зовут...",
+          "context": "Je m'appelle..."
+        },
+        {
+          "ru": "Очень приятно!",
+          "context": "Enchanté(e) !"
+        },
+        {
+          "ru": "До свидания!",
+          "context": "Au revoir (formel)"
+        },
+        {
+          "ru": "Пока!",
+          "context": "Salut / Au revoir (informel)"
+        },
+        {
+          "ru": "Хорошего дня!",
+          "context": "Bonne journée !"
+        },
+        {
+          "fr": "Приятно познакомиться !",
+          "context": "Ответ на представление"
+        }
+      ]
+    }
+  ],
+  "blocks_en": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "text": "Здравствуйте!",
+          "vocab": [
+            {
+              "word": "Здравствуйте",
+              "translation": "Hello (formal)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Здравствуйте! Как вы поживаете?",
+          "vocab": [
+            {
+              "word": "Как вы поживаете?",
+              "translation": "How are you? (formal)"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Хорошо, спасибо. А вы?",
+          "vocab": [
+            {
+              "word": "Хорошо",
+              "translation": "Good / Well"
+            },
+            {
+              "word": "спасибо",
+              "translation": "thank you"
+            },
+            {
+              "word": "А вы?",
+              "translation": "And you? (formal)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень хорошо, спасибо! Меня зовут Иван.",
+          "vocab": [
+            {
+              "word": "Очень хорошо",
+              "translation": "Very good"
+            },
+            {
+              "word": "Меня зовут",
+              "translation": "My name is (lit.: they call me)"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Очень приятно, Иван! Меня зовут Анна.",
+          "vocab": [
+            {
+              "word": "Очень приятно",
+              "translation": "Nice to meet you (lit.: very pleasant)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень приятно, Анна! Хорошего дня!",
+          "vocab": [
+            {
+              "word": "Хорошего дня",
+              "translation": "Have a nice day"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Спасибо, вам тоже! До свидания!",
+          "vocab": [
+            {
+              "word": "вам тоже",
+              "translation": "you too (formal)"
+            },
+            {
+              "word": "До свидания",
+              "translation": "Goodbye"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        }
+      ],
+      "title": "First meeting at a café",
+      "vocabulary": [
+        {
+          "word": "Здравствуйте",
+          "category": "expressions",
+          "translation": "Hello (formal)"
+        },
+        {
+          "word": "До свидания",
+          "category": "expressions",
+          "translation": "Goodbye"
+        },
+        {
+          "word": "Спасибо",
+          "category": "expressions",
+          "translation": "Thank you"
+        }
+      ]
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Greetings",
+      "words": [
+        {
+          "word": "Здравствуйте",
+          "example": "Здравствуйте, как дела?",
+          "translation": "Hello (formal, any time of day)",
+          "exampleTranslation": "Hello, how are you?"
+        },
+        {
+          "word": "Привет",
+          "example": "Привет! Как дела?",
+          "translation": "Hi (informal, among friends)",
+          "exampleTranslation": "Hi! How are you?"
+        },
+        {
+          "word": "Доброе утро",
+          "example": "Доброе утро, мама!",
+          "translation": "Good morning",
+          "exampleTranslation": "Good morning, mom!"
+        },
+        {
+          "word": "Добрый день",
+          "example": "Добрый день, коллеги!",
+          "translation": "Good afternoon",
+          "exampleTranslation": "Good afternoon, colleagues!"
+        },
+        {
+          "word": "Добрый вечер",
+          "example": "Добрый вечер!",
+          "translation": "Good evening",
+          "exampleTranslation": "Good evening!"
+        }
+      ],
+      "category": "salutations"
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Greeting",
+            "Здравствуйте",
+            "Привет"
+          ],
+          [
+            "Asking how someone is",
+            "Как вы поживаете?",
+            "Как дела? / Как ты?"
+          ],
+          [
+            "Responding",
+            "Хорошо, спасибо",
+            "Нормально / Отлично"
+          ],
+          [
+            "Saying goodbye",
+            "До свидания",
+            "Пока / Давай"
+          ]
+        ],
+        "title": "Formal vs Informal",
+        "headers": [
+          "Situation",
+          "Formal (вы)",
+          "Informal (ты)"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Formal vs Informal",
+      "examples": [
+        {
+          "note": "Use \"вы\" with strangers, superiors",
+          "audioUrl": null,
+          "sentence": "Как вы поживаете?",
+          "translation": "How are you? (formal)"
+        },
+        {
+          "note": "Use \"ты\" with friends, family",
+          "audioUrl": null,
+          "sentence": "Как ты поживаешь?",
+          "translation": "How are you? (informal)"
+        },
+        {
+          "note": "Short version, very common",
+          "audioUrl": null,
+          "sentence": "Как дела?",
+          "translation": "How are things? (neutral/informal)"
+        }
+      ],
+      "explanation": "In Russian, like in French, there are two registers: formal (вы - you) and informal (ты - you). The choice depends on your relationship with the person. Use \"вы\" with strangers, superiors, and elderly people. Use \"ты\" with friends, family, and children."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Formal or informal?",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "Formal context (teacher)",
+          "answer": "Здравствуйте",
+          "question": "To your teacher: ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Здравствуйте",
+            "здравствуйте"
+          ]
+        },
+        {
+          "hint": "Informal context (friend)",
+          "answer": "Привет",
+          "question": "To your friend: ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Привет",
+            "привет"
+          ]
+        },
+        {
+          "hint": "Formal \"you\" for a stranger",
+          "answer": "поживаете",
+          "question": "Как вы ____? (поживаете/поживаешь) - to a stranger",
+          "acceptableAnswers": [
+            "поживаете"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "icon": "globe",
+      "type": "culture",
+      "title": "Greetings in Russia",
+      "content": "In Russia, men typically shake hands during formal meetings. Among close friends and family, people may embrace (often with three kisses on the cheeks). Eye contact is important during greetings. \"Здравствуйте\" comes from \"здоровье\" (health) - you are literally wishing good health to your interlocutor!",
+      "keyPoints": [
+        "Men shake hands in formal contexts",
+        "Among close ones, embracing (3 times) is common",
+        "Eye contact is important",
+        "\"Здравствуйте\" literally means \"be healthy\"",
+        "You should remove gloves before shaking hands"
+      ],
+      "comparison": {
+        "fr": "France: cheek kisses among acquaintances, handshake in formal contexts",
+        "other": "Russia: handshake more frequent, embrace among close ones"
+      }
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Farewells",
+      "words": [
+        {
+          "word": "До свидания",
+          "example": "До свидания! До встречи!",
+          "translation": "Goodbye (formal)",
+          "exampleTranslation": "Goodbye! See you soon!"
+        },
+        {
+          "word": "Пока",
+          "example": "Пока! Увидимся!",
+          "translation": "Bye (informal)",
+          "exampleTranslation": "Bye! See you!"
+        },
+        {
+          "word": "До встречи",
+          "example": "До встречи завтра!",
+          "translation": "See you soon (lit.: until the meeting)",
+          "exampleTranslation": "See you tomorrow!"
+        },
+        {
+          "word": "До завтра",
+          "example": "До завтра на работе!",
+          "translation": "See you tomorrow",
+          "exampleTranslation": "See you tomorrow at work!"
+        },
+        {
+          "word": "Хорошего дня",
+          "example": "Хорошего дня!",
+          "translation": "Have a nice day",
+          "exampleTranslation": "Have a nice day!"
+        },
+        {
+          "word": "Спокойной ночи",
+          "example": "Спокойной ночи, сладких снов!",
+          "translation": "Good night",
+          "exampleTranslation": "Good night, sweet dreams!"
+        }
+      ],
+      "category": "farewells"
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "info",
+      "title": "Pronunciation tip",
+      "content": "The word \"Здравствуйте\" is difficult to pronounce! The cluster \"вств\" is often simplified to \"ств\" in speech. Start by saying \"здрасте\" (very shortened, colloquial version) then gradually add the sounds. The stress is on the first syllable: ЗДРАВ-ствуй-те."
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Меня зовут...",
+            "My name is...",
+            "1st person"
+          ],
+          [
+            "Тебя зовут...",
+            "Your name is...",
+            "2nd person informal"
+          ],
+          [
+            "Вас зовут...",
+            "Your name is...",
+            "2nd person formal"
+          ],
+          [
+            "Его зовут...",
+            "His name is...",
+            "3rd person masc."
+          ],
+          [
+            "Её зовут...",
+            "Her name is...",
+            "3rd person fem."
+          ],
+          [
+            "Их зовут...",
+            "Their names are...",
+            "3rd person plural"
+          ]
+        ],
+        "title": "The \"Меня зовут\" construction",
+        "headers": [
+          "Russian",
+          "English",
+          "Usage"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Introducing yourself: Меня зовут",
+      "examples": [
+        {
+          "note": "Standard and polite form",
+          "audioUrl": null,
+          "sentence": "Меня зовут Анна.",
+          "translation": "My name is Anna."
+        },
+        {
+          "note": "More direct, informal",
+          "audioUrl": null,
+          "sentence": "Я Пётр.",
+          "translation": "I'm Pyotr."
+        },
+        {
+          "note": "Formal question",
+          "audioUrl": null,
+          "sentence": "Как вас зовут?",
+          "translation": "What is your name? (formal)"
+        }
+      ],
+      "explanation": "To say your name in Russian, use \"Меня зовут\" + first name. Literally, this means \"They call me\". It's a very common impersonal construction. An informal alternative is \"Я\" + name (I am + name)."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Complete the introductions",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "First person singular",
+          "answer": "Меня",
+          "question": "____ зовут Мария. (Меня/Тебя)",
+          "acceptableAnswers": [
+            "Меня",
+            "меня"
+          ]
+        },
+        {
+          "hint": "Second person informal",
+          "answer": "тебя",
+          "question": "Как ____ зовут? (тебя/меня) - to a friend",
+          "acceptableAnswers": [
+            "тебя"
+          ]
+        },
+        {
+          "hint": "Second person formal",
+          "answer": "вас",
+          "question": "Как ____ зовут? (вас/тебя) - to a stranger",
+          "acceptableAnswers": [
+            "вас",
+            "Вас"
+          ]
+        },
+        {
+          "hint": "Third person masculine",
+          "answer": "Его",
+          "question": "____ зовут Иван. (Его/Её) - a man",
+          "acceptableAnswers": [
+            "Его",
+            "его"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "type": "conversation",
+      "title": "At a party",
+      "context": "You are at a party and meet someone for the first time.",
+      "dialogue": [
+        {
+          "text": "Добрый вечер!",
+          "speaker": "Stranger"
+        },
+        {
+          "text": "...",
+          "speaker": "You"
+        },
+        {
+          "text": "Меня зовут Наташа. А вас?",
+          "speaker": "Stranger"
+        },
+        {
+          "text": "...",
+          "speaker": "You"
+        },
+        {
+          "text": "Очень приятно! Вы знаете хозяина?",
+          "speaker": "Stranger"
+        },
+        {
+          "text": "...",
+          "speaker": "You"
+        }
+      ],
+      "questions": [
+        {
+          "answer": "Добрый вечер!",
+          "question": "How to respond to \"Добрый вечер!\"?"
+        },
+        {
+          "answer": "Меня зовут [your name]. / Я [your name].",
+          "question": "How to introduce yourself after \"А вас?\"?"
+        },
+        {
+          "answer": "Да, это мой друг. / Нет, не очень. / Да, это мой коллега.",
+          "question": "How to answer \"Вы знаете хозяина?\"?"
+        }
+      ]
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "warning",
+      "title": "Common mistakes to avoid",
+      "content": "Be careful! \"До свидания\" is used when leaving (like \"goodbye\"), not when arriving. Don't confuse \"Добрый день\" (hello, when arriving) and \"Хорошего дня\" (have a nice day, when leaving). \"Пока\" is very informal - avoid it with your boss!"
+    },
+    {
+      "icon": "check",
+      "type": "summary",
+      "title": "Key phrases to remember",
+      "keyPhrases": [
+        {
+          "ru": "Здравствуйте!",
+          "context": "Hello (formal)"
+        },
+        {
+          "ru": "Привет!",
+          "context": "Hi (informal)"
+        },
+        {
+          "ru": "Добрый день!",
+          "context": "Good afternoon"
+        },
+        {
+          "ru": "Добрый вечер!",
+          "context": "Good evening"
+        },
+        {
+          "ru": "Как вы поживаете?",
+          "context": "How are you? (formal)"
+        },
+        {
+          "ru": "Как дела?",
+          "context": "How are things? (informal)"
+        },
+        {
+          "ru": "Меня зовут...",
+          "context": "My name is..."
+        },
+        {
+          "ru": "Очень приятно!",
+          "context": "Nice to meet you!"
+        },
+        {
+          "ru": "До свидания!",
+          "context": "Goodbye (formal)"
+        },
+        {
+          "ru": "Пока!",
+          "context": "Bye (informal)"
+        },
+        {
+          "ru": "Хорошего дня!",
+          "context": "Have a nice day!"
+        },
+        {
+          "fr": "Приятно познакомиться !",
+          "context": "Ответ на представление"
+        }
+      ]
+    }
+  ],
+  "blocks_ru": [
+    {
+      "type": "dialogue",
+      "lines": [
+        {
+          "text": "Здравствуйте!",
+          "vocab": [
+            {
+              "word": "Здравствуйте",
+              "translation": "Формальное приветствие"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Здравствуйте! Как вы поживаете?",
+          "vocab": [
+            {
+              "word": "Как вы поживаете?",
+              "translation": "Формальный вопрос о самочувствии"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Хорошо, спасибо. А вы?",
+          "vocab": [
+            {
+              "word": "Хорошо",
+              "translation": "Положительный ответ"
+            },
+            {
+              "word": "спасибо",
+              "translation": "Выражение благодарности"
+            },
+            {
+              "word": "А вы?",
+              "translation": "Вопрос в ответ (формальный)"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень хорошо, спасибо! Меня зовут Иван.",
+          "vocab": [
+            {
+              "word": "Очень хорошо",
+              "translation": "Очень положительный ответ"
+            },
+            {
+              "word": "Меня зовут",
+              "translation": "Способ представиться"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Очень приятно, Иван! Меня зовут Анна.",
+          "vocab": [
+            {
+              "word": "Очень приятно",
+              "translation": "Выражение при знакомстве"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        },
+        {
+          "text": "Очень приятно, Анна! Хорошего дня!",
+          "vocab": [
+            {
+              "word": "Хорошего дня",
+              "translation": "Пожелание при прощании"
+            }
+          ],
+          "speaker": "Иван",
+          "audioUrl": null,
+          "speakerGender": "male"
+        },
+        {
+          "text": "Спасибо, вам тоже! До свидания!",
+          "vocab": [
+            {
+              "word": "вам тоже",
+              "translation": "Ответное пожелание (формальное)"
+            },
+            {
+              "word": "До свидания",
+              "translation": "Формальное прощание"
+            }
+          ],
+          "speaker": "Анна",
+          "audioUrl": null,
+          "speakerGender": "female"
+        }
+      ],
+      "title": "Первая встреча в кафе",
+      "vocabulary": [
+        {
+          "word": "Здравствуйте",
+          "category": "expressions",
+          "translation": "Формальное приветствие"
+        },
+        {
+          "word": "До свидания",
+          "category": "expressions",
+          "translation": "Формальное прощание"
+        },
+        {
+          "word": "Спасибо",
+          "category": "expressions",
+          "translation": "Благодарность"
+        }
+      ]
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Приветствия",
+      "words": [
+        {
+          "word": "Здравствуйте",
+          "example": "Здравствуйте, как дела?",
+          "translation": "Формальное приветствие (в любое время дня)",
+          "exampleTranslation": "Формальное приветствие с вопросом"
+        },
+        {
+          "word": "Привет",
+          "example": "Привет! Как дела?",
+          "translation": "Неформальное приветствие (среди друзей)",
+          "exampleTranslation": "Дружеское приветствие"
+        },
+        {
+          "word": "Доброе утро",
+          "example": "Доброе утро, мама!",
+          "translation": "Приветствие утром",
+          "exampleTranslation": "Утреннее приветствие"
+        },
+        {
+          "word": "Добрый день",
+          "example": "Добрый день, коллеги!",
+          "translation": "Приветствие днём",
+          "exampleTranslation": "Дневное приветствие"
+        },
+        {
+          "word": "Добрый вечер",
+          "example": "Добрый вечер!",
+          "translation": "Приветствие вечером",
+          "exampleTranslation": "Вечернее приветствие"
+        }
+      ],
+      "category": "salutations"
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Приветствие",
+            "Здравствуйте",
+            "Привет"
+          ],
+          [
+            "Вопрос о делах",
+            "Как вы поживаете?",
+            "Как дела? / Как ты?"
+          ],
+          [
+            "Ответ",
+            "Хорошо, спасибо",
+            "Нормально / Отлично"
+          ],
+          [
+            "Прощание",
+            "До свидания",
+            "Пока / Давай"
+          ]
+        ],
+        "title": "Формальное vs Неформальное",
+        "headers": [
+          "Ситуация",
+          "Формально (вы)",
+          "Неформально (ты)"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Формальное и неформальное общение",
+      "examples": [
+        {
+          "note": "Используйте \"вы\" с незнакомыми, начальством",
+          "audioUrl": null,
+          "sentence": "Как вы поживаете?",
+          "translation": "Формальный вопрос о самочувствии"
+        },
+        {
+          "note": "Используйте \"ты\" с друзьями, семьёй",
+          "audioUrl": null,
+          "sentence": "Как ты поживаешь?",
+          "translation": "Неформальный вопрос о самочувствии"
+        },
+        {
+          "note": "Короткая версия, очень распространена",
+          "audioUrl": null,
+          "sentence": "Как дела?",
+          "translation": "Нейтральный/неформальный вопрос"
+        }
+      ],
+      "explanation": "В русском языке, как и во многих других, есть два регистра: формальный (вы) и неформальный (ты). Выбор зависит от отношений с собеседником. \"Вы\" используется с незнакомыми людьми, начальством и пожилыми людьми. \"Ты\" используется с друзьями, семьёй и детьми."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Формально или неформально?",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "Формальный контекст",
+          "answer": "Здравствуйте",
+          "question": "Преподавателю: ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Здравствуйте",
+            "здравствуйте"
+          ]
+        },
+        {
+          "hint": "Неформальный контекст",
+          "answer": "Привет",
+          "question": "Другу: ____. (Привет/Здравствуйте)",
+          "acceptableAnswers": [
+            "Привет",
+            "привет"
+          ]
+        },
+        {
+          "hint": "Формальное \"вы\"",
+          "answer": "поживаете",
+          "question": "Как вы ____? (поживаете/поживаешь) - незнакомцу",
+          "acceptableAnswers": [
+            "поживаете"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "icon": "globe",
+      "type": "culture",
+      "title": "Приветствия в России",
+      "content": "В России мужчины обычно пожимают руки при формальной встрече. Среди близких друзей и в семье люди могут обниматься (часто три раза). Зрительный контакт важен при приветствии. \"Здравствуйте\" происходит от слова \"здоровье\" - вы буквально желаете здоровья собеседнику!",
+      "keyPoints": [
+        "Мужчины пожимают руки формально",
+        "Среди близких обнимаются (3 раза)",
+        "Зрительный контакт важен",
+        "\"Здравствуйте\" означает \"будьте здоровы\"",
+        "Перед рукопожатием снимают перчатки"
+      ],
+      "comparison": {
+        "fr": "Франция: поцелуи в щёку, рукопожатие формально",
+        "other": "Россия: рукопожатие чаще, объятия среди близких"
+      }
+    },
+    {
+      "icon": "book",
+      "type": "vocabulary",
+      "title": "Прощание",
+      "words": [
+        {
+          "word": "До свидания",
+          "example": "До свидания! До встречи!",
+          "translation": "Формальное прощание",
+          "exampleTranslation": "Прощание"
+        },
+        {
+          "word": "Пока",
+          "example": "Пока! Увидимся!",
+          "translation": "Неформальное прощание",
+          "exampleTranslation": "Дружеское прощание"
+        },
+        {
+          "word": "До встречи",
+          "example": "До встречи завтра!",
+          "translation": "До скорой встречи",
+          "exampleTranslation": "Прощание с указанием времени"
+        },
+        {
+          "word": "До завтра",
+          "example": "До завтра на работе!",
+          "translation": "Увидимся завтра",
+          "exampleTranslation": "Прощание до следующего дня"
+        },
+        {
+          "word": "Хорошего дня",
+          "example": "Хорошего дня!",
+          "translation": "Пожелание хорошего дня",
+          "exampleTranslation": "Пожелание"
+        },
+        {
+          "word": "Спокойной ночи",
+          "example": "Спокойной ночи, сладких снов!",
+          "translation": "Пожелание перед сном",
+          "exampleTranslation": "Вечернее пожелание"
+        }
+      ],
+      "category": "farewells"
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "info",
+      "title": "Совет по произношению",
+      "content": "Слово \"Здравствуйте\" сложно произносить! Группа \"вств\" часто упрощается в речи до \"ств\". Начните с \"здрасте\" (очень сокращённая версия), затем добавляйте звуки. Ударение: ЗДРАВ-ствуй-те."
+    },
+    {
+      "icon": "book",
+      "type": "grammar",
+      "table": {
+        "rows": [
+          [
+            "Меня зовут...",
+            "Меня называют...",
+            "1-е лицо"
+          ],
+          [
+            "Тебя зовут...",
+            "Тебя называют...",
+            "2-е лицо неформ."
+          ],
+          [
+            "Вас зовут...",
+            "Вас называют...",
+            "2-е лицо форм."
+          ],
+          [
+            "Его зовут...",
+            "Его называют...",
+            "3-е лицо муж."
+          ],
+          [
+            "Её зовут...",
+            "Её называют...",
+            "3-е лицо жен."
+          ],
+          [
+            "Их зовут...",
+            "Их называют...",
+            "3-е лицо мн.ч."
+          ]
+        ],
+        "title": "Конструкция \"Меня зовут\"",
+        "headers": [
+          "Русский",
+          "Перевод",
+          "Употребление"
+        ],
+        "rowsAudio": []
+      },
+      "title": "Представление: Меня зовут",
+      "examples": [
+        {
+          "note": "Стандартная и вежливая форма",
+          "audioUrl": null,
+          "sentence": "Меня зовут Анна.",
+          "translation": "Стандартная форма"
+        },
+        {
+          "note": "Более прямая, неформальная",
+          "audioUrl": null,
+          "sentence": "Я Пётр.",
+          "translation": "Прямая форма"
+        },
+        {
+          "note": "Формальный вопрос",
+          "audioUrl": null,
+          "sentence": "Как вас зовут?",
+          "translation": "Формальный вопрос"
+        }
+      ],
+      "explanation": "Чтобы назвать своё имя, используйте \"Меня зовут\" + имя. Буквально это означает \"Меня называют\". Неформальная альтернатива - \"Я\" + имя."
+    },
+    {
+      "icon": "edit",
+      "type": "exerciseInline",
+      "title": "Дополните представления",
+      "xpReward": 10,
+      "questions": [
+        {
+          "hint": "1-е лицо",
+          "answer": "Меня",
+          "question": "____ зовут Мария. (Меня/Тебя)",
+          "acceptableAnswers": [
+            "Меня",
+            "меня"
+          ]
+        },
+        {
+          "hint": "2-е лицо неформ.",
+          "answer": "тебя",
+          "question": "Как ____ зовут? (тебя/меня) - другу",
+          "acceptableAnswers": [
+            "тебя"
+          ]
+        },
+        {
+          "hint": "2-е лицо форм.",
+          "answer": "вас",
+          "question": "Как ____ зовут? (вас/тебя) - незнакомцу",
+          "acceptableAnswers": [
+            "вас",
+            "Вас"
+          ]
+        },
+        {
+          "hint": "3-е лицо муж.",
+          "answer": "Его",
+          "question": "____ зовут Иван. (Его/Её) - мужчина",
+          "acceptableAnswers": [
+            "Его",
+            "его"
+          ]
+        }
+      ],
+      "exerciseType": "fillInBlank"
+    },
+    {
+      "type": "conversation",
+      "title": "На вечеринке",
+      "context": "Вы на вечеринке и встречаете кого-то в первый раз.",
+      "dialogue": [
+        {
+          "text": "Добрый вечер!",
+          "speaker": "Незнакомец"
+        },
+        {
+          "text": "...",
+          "speaker": "Вы"
+        },
+        {
+          "text": "Меня зовут Наташа. А вас?",
+          "speaker": "Незнакомец"
+        },
+        {
+          "text": "...",
+          "speaker": "Вы"
+        },
+        {
+          "text": "Очень приятно! Вы знаете хозяина?",
+          "speaker": "Незнакомец"
+        },
+        {
+          "text": "...",
+          "speaker": "Вы"
+        }
+      ],
+      "questions": [
+        {
+          "answer": "Добрый вечер!",
+          "question": "Как ответить на \"Добрый вечер!\"?"
+        },
+        {
+          "answer": "Меня зовут [ваше имя]. / Я [ваше имя].",
+          "question": "Как представиться после \"А вас?\"?"
+        },
+        {
+          "answer": "Да, это мой друг. / Нет, не очень.",
+          "question": "Как ответить на \"Вы знаете хозяина?\"?"
+        }
+      ]
+    },
+    {
+      "icon": "lightbulb",
+      "type": "tip",
+      "color": "warning",
+      "title": "Частые ошибки",
+      "content": "Внимание! \"До свидания\" используется при уходе, а не при приходе. Не путайте \"Добрый день\" (приветствие) и \"Хорошего дня\" (пожелание при уходе). \"Пока\" очень неформальное - избегайте с начальником!"
+    },
+    {
+      "icon": "check",
+      "type": "summary",
+      "title": "Выражения для запоминания",
+      "keyPhrases": [
+        {
+          "ru": "Здравствуйте!",
+          "context": "Формальное приветствие"
+        },
+        {
+          "ru": "Привет!",
+          "context": "Неформальное приветствие"
+        },
+        {
+          "ru": "Добрый день!",
+          "context": "Приветствие днём"
+        },
+        {
+          "ru": "Добрый вечер!",
+          "context": "Приветствие вечером"
+        },
+        {
+          "ru": "Как вы поживаете?",
+          "context": "Формальный вопрос о делах"
+        },
+        {
+          "ru": "Как дела?",
+          "context": "Неформальный вопрос о делах"
+        },
+        {
+          "ru": "Меня зовут...",
+          "context": "Представление"
+        },
+        {
+          "ru": "Очень приятно!",
+          "context": "При знакомстве"
+        },
+        {
+          "ru": "До свидания!",
+          "context": "Формальное прощание"
+        },
+        {
+          "ru": "Пока!",
+          "context": "Неформальное прощание"
+        },
+        {
+          "ru": "Хорошего дня!",
+          "context": "Пожелание хорошего дня"
+        },
+        {
+          "fr": "Приятно познакомиться !",
+          "context": "Ответ на представление"
+        }
+      ]
+    }
+  ],
+  "order_index": 0,
+  "level_slug": "beginner",
+  "level_id": 1,
+  "target_language": "ru",
+  "course_id": 2
+}
