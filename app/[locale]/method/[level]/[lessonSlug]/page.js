@@ -90,10 +90,14 @@ export default async function LessonPage({ params }) {
 	// Get params first
 	const { locale, level: levelSlug, lessonSlug } = await params
 
-	const { isAuthenticated, user } = await checkAdminAuth()
+	const { isAuthenticated, isAdmin, user } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect(`/${locale}/login`)
+	}
+
+	if (!isAdmin) {
+		redirect(`/${locale}?error=admin_only`)
 	}
 
 	// Get spoken language and learning language from user profile

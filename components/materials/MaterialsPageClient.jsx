@@ -1058,11 +1058,12 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		}
 		setIsDisplayModeLoaded(true)
 
+		// TEMPORAIRE: Onboarding désactivé car leçons de la méthode pas encore publiées
 		// Check for first visit to show onboarding modal
-		const hasSeenOnboarding = localStorage.getItem('materials_onboarding_completed')
-		if (!hasSeenOnboarding) {
-			setShowOnboardingModal(true)
-		}
+		// const hasSeenOnboarding = localStorage.getItem('materials_onboarding_completed')
+		// if (!hasSeenOnboarding) {
+		// 	setShowOnboardingModal(true)
+		// }
 	}, [])
 
 	// Save display mode preference

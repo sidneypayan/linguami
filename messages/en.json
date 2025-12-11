@@ -84,11 +84,9 @@
     "materialConfiguration": "Material configuration",
     "materialConfigDesc": "Set the basic parameters of your educational material",
     "languageSettings": "Language settings",
-    "language": "Language",
     "difficultyLevel": "Difficulty level",
     "category": "Category",
     "materialContentDesc": "Add the title and text of your material",
-    "title": "Title",
     "materialTitle": "Material title",
     "materialTitlePlaceholder": "Ex: Short story for beginners",
     "materialText": "Material text",
@@ -807,7 +805,9 @@
     "faq5_a": "Earn XP as you learn, level up, unlock badges and climb the leaderboard. Our gamification system turns your learning into a motivating adventure.",
     "final_cta_title": "Ready to start the adventure?",
     "final_cta_subtitle": "Join Linguami and start learning now.",
-    "final_cta_button": "Start the adventure"
+    "final_cta_button": "Start the adventure",
+    "admin_only_error": "This section is reserved for administrators only.",
+    "vip_only_error": "This section is reserved for VIP members and administrators."
   },
   "lessons": {
     "pagetitle": "Interactive Language Lessons",
@@ -962,11 +962,9 @@
   "premium": {
     "pagetitle": "Our Premium Plans",
     "description": "Unlock the full potential of Linguami with our premium plans. Monthly or yearly subscription, or purchase the complete method.",
-
     "badge_unlock_potential": "Unlock your potential",
     "hero_title": "Choose your adventure",
     "hero_subtitle": "Whether you want full access or just the method, we have a plan for you",
-
     "billing_monthly": "Monthly",
     "billing_yearly": "Yearly",
     "per_month": "month",
@@ -975,7 +973,6 @@
     "equivalent_to": "that is",
     "save_percent": "Save {percent}%",
     "most_popular": "Most popular",
-
     "plan_free": "Free",
     "plan_free_desc": "To discover Linguami",
     "plan_subscription": "Premium Subscription",
@@ -986,7 +983,6 @@
     "plan_monthly_desc": "Maximum flexibility",
     "plan_yearly": "Yearly",
     "plan_yearly_desc": "Best value for money",
-
     "feature_free_lesson": "First lessons free",
     "feature_limited_translations": "{count} translations/day",
     "feature_limited_dictionary": "{count} words in dictionary",
@@ -999,10 +995,8 @@
     "feature_courses_discount": "Method courses at {price}€ instead of {regular}€",
     "feature_priority_support": "Priority support",
     "feature_early_access": "Early access to new features",
-
     "cta_current": "Current plan",
     "cta_subscribe": "Choose this subscription",
-
     "courses_section_title": "3 courses to master the language",
     "courses_section_subtitle": "Each course can be purchased separately. Subscribers get a 10€ discount per course.",
     "course_beginner": "Beginner Course",
@@ -1016,7 +1010,6 @@
     "course_price_monthly_sub": "{price}€ with monthly sub",
     "course_price_yearly_sub": "{price}€ with yearly sub",
     "course_cta": "Discover",
-
     "trust_title": "Why trust us?",
     "trust_secure": "Secure payment",
     "trust_secure_desc": "Your data is protected by bank-level encryption",
@@ -1024,14 +1017,12 @@
     "trust_instant_desc": "Start learning immediately after your purchase",
     "trust_cancel": "Easy cancellation",
     "trust_cancel_desc": "Cancel your subscription anytime, no commitment",
-
     "support_title": "Support Linguami",
     "support_subtitle": "Your support helps us continue improving the platform",
     "support_content": "Create more quality educational content",
     "support_activities": "Develop new interactive activities",
     "support_hosting": "Finance hosting and technical services",
     "support_thanks": "Know that our work is useful to you",
-
     "success_title": "Welcome to the Premium adventure!",
     "success_subtitle": "Your payment has been confirmed. You now have access to all premium features.",
     "success_now_premium": "You are now Premium",

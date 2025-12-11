@@ -16,6 +16,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useThemeMode } from '@/context/ThemeContext'
 import { useUserContext } from '@/context/user'
+import toast from '@/utils/toast'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 
@@ -362,6 +363,20 @@ const Homepage = ({ translations, jsonLd }) => {
 			window.history.replaceState({}, '', window.location.pathname)
 		}
 	}, [searchParams, isUserLoggedIn])
+
+	// Check for access error params
+	useEffect(() => {
+		const error = searchParams.get('error')
+		if (error === 'admin_only') {
+			toast.error(translations.admin_only_error || 'Cette section est réservée aux administrateurs.')
+			// Clean up URL
+			window.history.replaceState({}, '', window.location.pathname)
+		} else if (error === 'vip_only') {
+			toast.error(translations.vip_only_error || 'Cette section est réservée aux membres VIP et administrateurs.')
+			// Clean up URL
+			window.history.replaceState({}, '', window.location.pathname)
+		}
+	}, [searchParams, translations])
 
 	const handleOnboardingClose = () => {
 		setShowOnboardingModal(false)

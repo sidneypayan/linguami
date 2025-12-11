@@ -59,7 +59,7 @@ const Navbar = props => {
 			name: t('methode'),
 			icon: GraduationCap,
 			href: '/method',
-			hideIf: process.env.NODE_ENV === 'production' && !isUserAdmin,
+			hideIf: !isUserAdmin,
 		},
 		{
 			name: t('teacher'),

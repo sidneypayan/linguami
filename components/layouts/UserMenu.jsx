@@ -287,7 +287,7 @@ const MenuItem = ({ href, icon: Icon, label, isDark, size = 'normal', onClick })
 // ============================================
 const UserMenu = () => {
 	const t = useTranslations('common')
-	const { user, userProfile, logout } = useUserContext()
+	const { user, userProfile, logout, isUserAdmin } = useUserContext()
 	const { isDark } = useThemeMode()
 	const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -298,14 +298,23 @@ const UserMenu = () => {
 
 	const username = userProfile?.name || user?.email?.split('@')[0] || 'User'
 
-	const menuItems = [
+	const allMenuItems = [
 		{ href: '/dictionary', icon: SpellCheck, label: t('mydictionary') },
 		{ href: '/my-materials', icon: Bookmark, label: t('mymaterials') },
 		{ href: '/statistics', icon: BarChart3, label: t('statistics') },
 		{ href: '/leaderboard', icon: Trophy, label: t('leaderboard') },
-		{ href: '/training', icon: Dumbbell, label: t('training') },
+		{ href: '/training', icon: Dumbbell, label: t('training'), requiresVipOrAdmin: true },
 		{ href: '/settings', icon: Settings, label: t('settings') },
 	]
+
+	// Filter menu items based on user role
+	const menuItems = allMenuItems.filter(item => {
+		if (item.requiresVipOrAdmin) {
+			const isVip = userProfile?.role === 'vip'
+			return isUserAdmin || isVip
+		}
+		return true
+	})
 
 	return (
 		<div className="relative flex items-center ml-1 sm:ml-2 lg:ml-4">

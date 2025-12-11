@@ -84,11 +84,9 @@
     "materialConfiguration": "Настройка материала",
     "materialConfigDesc": "Определите основные параметры вашего учебного материала",
     "languageSettings": "Языковые настройки",
-    "language": "Язык",
     "difficultyLevel": "Уровень сложности",
     "category": "Категория",
     "materialContentDesc": "Добавьте заголовок и текст вашего материала",
-    "title": "Заголовок",
     "materialTitle": "Название материала",
     "materialTitlePlaceholder": "Например: Короткий рассказ для начинающих",
     "materialText": "Текст материала",
@@ -807,7 +805,9 @@
     "faq5_a": "Зарабатывайте XP во время обучения, повышайте уровень, открывайте значки и поднимайтесь в рейтинге. Наша система геймификации превращает обучение в увлекательное приключение.",
     "final_cta_title": "Готовы начать приключение?",
     "final_cta_subtitle": "Присоединяйтесь к Linguami и начните учиться прямо сейчас.",
-    "final_cta_button": "Начать приключение"
+    "final_cta_button": "Начать приключение",
+    "admin_only_error": "Этот раздел доступен только администраторам.",
+    "vip_only_error": "Этот раздел доступен только VIP-членам и администраторам."
   },
   "lessons": {
     "pagetitle": "Уроки",
@@ -962,11 +962,9 @@
   "premium": {
     "pagetitle": "Наши премиум-планы",
     "description": "Раскройте весь потенциал Linguami с нашими премиум-планами. Месячная или годовая подписка, или купите полный метод.",
-
     "badge_unlock_potential": "Раскройте свой потенциал",
     "hero_title": "Выберите своё приключение",
     "hero_subtitle": "Хотите ли вы полный доступ или только метод — у нас есть план для вас",
-
     "billing_monthly": "Ежемесячно",
     "billing_yearly": "Ежегодно",
     "per_month": "месяц",
@@ -975,7 +973,6 @@
     "equivalent_to": "то есть",
     "save_percent": "Экономия {percent}%",
     "most_popular": "Самый популярный",
-
     "plan_free": "Бесплатно",
     "plan_free_desc": "Чтобы познакомиться с Linguami",
     "plan_subscription": "Премиум-подписка",
@@ -986,7 +983,6 @@
     "plan_monthly_desc": "Максимальная гибкость",
     "plan_yearly": "Ежегодно",
     "plan_yearly_desc": "Лучшее соотношение цены и качества",
-
     "feature_free_lesson": "Первые уроки бесплатно",
     "feature_limited_translations": "{count} переводов в день",
     "feature_limited_dictionary": "{count} слов в словаре",
@@ -999,10 +995,8 @@
     "feature_courses_discount": "Курсы метода за {price}€ вместо {regular}€",
     "feature_priority_support": "Приоритетная поддержка",
     "feature_early_access": "Ранний доступ к новым функциям",
-
     "cta_current": "Текущий план",
     "cta_subscribe": "Выбрать подписку",
-
     "courses_section_title": "3 курса для овладения языком",
     "courses_section_subtitle": "Каждый курс можно приобрести отдельно. Подписчики получают скидку 10€ на каждый курс.",
     "course_beginner": "Курс для начинающих",
@@ -1016,7 +1010,6 @@
     "course_price_monthly_sub": "{price}€ с месячной подпиской",
     "course_price_yearly_sub": "{price}€ с годовой подпиской",
     "course_cta": "Узнать больше",
-
     "trust_title": "Почему нам доверяют?",
     "trust_secure": "Безопасная оплата",
     "trust_secure_desc": "Ваши данные защищены банковским шифрованием",
@@ -1024,14 +1017,12 @@
     "trust_instant_desc": "Начните учиться сразу после покупки",
     "trust_cancel": "Лёгкая отмена",
     "trust_cancel_desc": "Отмените подписку в любое время, без обязательств",
-
     "support_title": "Поддержите Linguami",
     "support_subtitle": "Ваша поддержка помогает нам улучшать платформу",
     "support_content": "Создавать больше качественного учебного контента",
     "support_activities": "Разрабатывать новые интерактивные занятия",
     "support_hosting": "Финансировать хостинг и технические сервисы",
     "support_thanks": "Знать, что наша работа полезна для вас",
-
     "success_title": "Добро пожаловать в Premium!",
     "success_subtitle": "Ваш платёж подтверждён. Теперь у вас есть доступ ко всем премиум-функциям.",
     "success_now_premium": "Теперь вы Premium",

@@ -68,10 +68,14 @@ export default async function LevelPage({ params }) {
 	// Get params first
 	const { locale, level: levelSlug } = await params
 
-	const { isAuthenticated, user, supabase } = await checkAdminAuth()
+	const { isAuthenticated, isAdmin, user, supabase } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		redirect(`/${locale}/login`)
+	}
+
+	if (!isAdmin) {
+		redirect(`/${locale}?error=admin_only`)
 	}
 
 	// Get learning language from user profile

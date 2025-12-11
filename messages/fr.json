@@ -84,11 +84,9 @@
     "materialConfiguration": "Configuration du matériel",
     "materialConfigDesc": "Définissez les paramètres de base de votre matériel pédagogique",
     "languageSettings": "Paramètres linguistiques",
-    "language": "Langue",
     "difficultyLevel": "Niveau de difficulté",
     "category": "Catégorie",
     "materialContentDesc": "Ajoutez le titre et le texte de votre matériel",
-    "title": "Titre",
     "materialTitle": "Titre du matériel",
     "materialTitlePlaceholder": "Ex: Histoire courte pour débutants",
     "materialText": "Texte du matériel",
@@ -809,7 +807,9 @@
     "faq5_a": "Gagnez de l'XP en apprenant, montez de niveau, débloquez des badges et grimpez dans le classement. Notre système de gamification transforme votre apprentissage en une aventure motivante.",
     "final_cta_title": "Prêt à commencer l'aventure ?",
     "final_cta_subtitle": "Rejoignez Linguami et commencez votre apprentissage dès maintenant.",
-    "final_cta_button": "Commencer l'aventure"
+    "final_cta_button": "Commencer l'aventure",
+    "admin_only_error": "Cette section est réservée aux administrateurs uniquement.",
+    "vip_only_error": "Cette section est réservée aux membres VIP et administrateurs."
   },
   "lessons": {
     "pagetitle": "Leçons",
@@ -964,11 +964,9 @@
   "premium": {
     "pagetitle": "Nos offres Premium",
     "description": "Débloquez tout le potentiel de Linguami avec nos offres premium. Abonnement mensuel ou annuel, ou achetez la méthode complète.",
-
     "badge_unlock_potential": "Débloquez votre potentiel",
     "hero_title": "Choisissez votre aventure",
     "hero_subtitle": "Que vous souhaitiez un accès complet ou juste la méthode, nous avons une offre pour vous",
-
     "billing_monthly": "Mensuel",
     "billing_yearly": "Annuel",
     "per_month": "mois",
@@ -977,12 +975,10 @@
     "equivalent_to": "soit",
     "save_percent": "Économisez {percent}%",
     "most_popular": "Le plus populaire",
-
     "plan_monthly": "Mensuel",
     "plan_monthly_desc": "Flexibilité maximale",
     "plan_yearly": "Annuel",
     "plan_yearly_desc": "Le meilleur rapport qualité-prix",
-
     "feature_free_lesson": "Premières leçons gratuites",
     "feature_limited_translations": "{count} traductions/jour",
     "feature_limited_dictionary": "{count} mots dans le dictionnaire",
@@ -995,10 +991,8 @@
     "feature_courses_discount": "Cours de la méthode à {price}€ au lieu de {regular}€",
     "feature_priority_support": "Support prioritaire",
     "feature_early_access": "Accès anticipé aux nouveautés",
-
     "cta_current": "Plan actuel",
     "cta_subscribe": "Choisir cet abonnement",
-
     "courses_section_title": "3 cours pour maîtriser la langue",
     "courses_section_subtitle": "Chaque cours peut être acheté séparément. Les abonnés bénéficient d'une réduction de 10€ par cours.",
     "course_beginner": "Cours Débutant",
@@ -1012,7 +1006,6 @@
     "course_price_monthly_sub": "{price}€ avec abo mensuel",
     "course_price_yearly_sub": "{price}€ avec abo annuel",
     "course_cta": "Découvrir",
-
     "trust_title": "Pourquoi nous faire confiance ?",
     "trust_secure": "Paiement sécurisé",
     "trust_secure_desc": "Vos données sont protégées par un chiffrement de niveau bancaire",
@@ -1020,14 +1013,12 @@
     "trust_instant_desc": "Commencez à apprendre immédiatement après votre achat",
     "trust_cancel": "Annulation facile",
     "trust_cancel_desc": "Annulez votre abonnement à tout moment, sans engagement",
-
     "support_title": "Soutenez Linguami",
     "support_subtitle": "Votre soutien nous permet de continuer à améliorer la plateforme",
     "support_content": "Créer plus de contenus pédagogiques de qualité",
     "support_activities": "Développer de nouvelles activités interactives",
     "support_hosting": "Financer l'hébergement et les services techniques",
     "support_thanks": "Savoir que notre travail vous est utile",
-
     "success_title": "Bienvenue dans l'aventure Premium !",
     "success_subtitle": "Votre paiement a été confirmé. Vous avez maintenant accès à toutes les fonctionnalités premium.",
     "success_now_premium": "Vous êtes maintenant Premium",
