@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+import { checkAdminAuth } from '@/lib/admin'
 import { getLessons } from '@/lib/lessons'
 import LessonsPageClient from '@/components/lessons/LessonsPageClient'
 import { getTranslations } from 'next-intl/server'
@@ -21,7 +23,8 @@ export async function generateMetadata({ params, searchParams }) {
 
 	// If a specific lesson is selected, generate metadata for that lesson
 	if (slug) {
-		const lessons = await getLessons(locale)
+		const targetLanguage = 'fr' // Hardcoded for now (teaching French)
+		const lessons = await getLessons(targetLanguage, locale)
 		const lesson = lessons.find((l) => l.slug === slug)
 
 		if (lesson) {
@@ -124,8 +127,27 @@ export default async function LessonsPage({ params }) {
 	// Get locale from params
 	const { locale } = await params
 
+	// Check if user is authenticated and is admin
+	const { isAuthenticated, isAdmin } = await checkAdminAuth()
+
+	if (!isAuthenticated) {
+		// Not logged in - redirect to login
+		redirect(`/${locale}/login`)
+	}
+
+	if (!isAdmin) {
+		// Logged in but not admin - redirect to home with error
+		redirect(`/${locale}?error=admin_only`)
+	}
+
+	// Determine target language and spoken language
+	// For now, hardcode: teaching French to Russian/English speakers
+	// TODO: Get userLearningLanguage from user context
+	const targetLanguage = 'fr' // Teaching French
+	const spokenLanguage = locale // Use interface language as spoken language
+
 	// Fetch lessons from server
-	const lessons = await getLessons(locale)
+	const lessons = await getLessons(targetLanguage, spokenLanguage)
 
 	return <LessonsPageClient initialLessons={lessons} />
 }

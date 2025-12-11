@@ -2,7 +2,8 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { useRouter, useParams, usePathname, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname } from '@/i18n/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
 import { useThemeMode } from '@/context/ThemeContext'
@@ -13,6 +14,7 @@ import BookCard from '@/components/materials/BookCard'
 import MaterialsTable from '@/components/materials/MaterialsTable'
 import MaterialsFilterBar from '@/components/materials/MaterialsFilterBar'
 import { logger } from '@/utils/logger'
+import { getMaterialsFilters, saveMaterialsFilters } from '@/utils/materialsFilters'
 import {
 	ArrowLeft,
 	ChevronLeft,
@@ -445,7 +447,9 @@ export default function SectionPageClient({
 		const params = new URLSearchParams(searchParams.toString())
 		if (page === 1) params.delete('page')
 		else params.set('page', page.toString())
-		const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+		// Remove locale from pathname to avoid duplication when using i18n router
+		const pathnameWithoutLocale = pathname.replace(`/${locale}`, '')
+		const newUrl = params.toString() ? `${pathnameWithoutLocale}?${params.toString()}` : pathnameWithoutLocale
 		router.push(newUrl, { scroll: false })
 	}
 
@@ -469,7 +473,7 @@ export default function SectionPageClient({
 		updatePage(1)
 	}
 
-	// Restore filters from localStorage
+	// Restore filters from localStorage (global filters)
 	useEffect(() => {
 		if (!section || section === 'books') return
 
@@ -483,38 +487,33 @@ export default function SectionPageClient({
 		const shouldRestore = !hasAppliedDefaultFilter || isReturningFromMaterial
 
 		if (shouldRestore) {
-			const storageKey = `materials_section_${section}_filters`
-			const savedFilters = localStorage.getItem(storageKey)
-
-			if (savedFilters) {
-				try {
-					const { level, status, search } = JSON.parse(savedFilters)
-					setSelectedLevel(level ?? null)
-					setSelectedStatus(status ?? null)
-					setSearchTerm(search ?? '')
+			try {
+				const filters = getMaterialsFilters()
+				if (filters) {
+					setSelectedLevel(filters.level ?? null)
+					setSelectedStatus(filters.status ?? null)
+					setSearchTerm(filters.search ?? '')
 					setHasAppliedDefaultFilter(true)
-				} catch (error) {
-					logger.error('Error restoring filters:', error)
+				} else if (!hasAppliedDefaultFilter) {
+					setHasAppliedDefaultFilter(true)
 				}
-			} else if (!hasAppliedDefaultFilter) {
-				setHasAppliedDefaultFilter(true)
+			} catch (error) {
+				logger.error('Error restoring filters:', error)
 			}
 		}
 
 		prevPathnameRef.current = pathname
 	}, [section, pathname, hasAppliedDefaultFilter])
 
-	// Save filters to localStorage
+	// Save filters to localStorage (global filters)
 	useEffect(() => {
 		if (!section || section === 'books' || !hasAppliedDefaultFilter) return
 
-		const storageKey = `materials_section_${section}_filters`
-		const filtersToSave = {
+		saveMaterialsFilters({
 			level: selectedLevel,
 			status: selectedStatus,
 			search: searchTerm,
-		}
-		localStorage.setItem(storageKey, JSON.stringify(filtersToSave))
+		})
 	}, [section, selectedLevel, selectedStatus, searchTerm, hasAppliedDefaultFilter])
 
 	// Apply default filters for authenticated users
@@ -525,10 +524,10 @@ export default function SectionPageClient({
 			section !== 'books' &&
 			!hasAppliedDefaultFilter
 		) {
-			const storageKey = `materials_section_${section}_filters`
-			const savedFilters = localStorage.getItem(storageKey)
+			const filters = getMaterialsFilters()
 
-			if (!savedFilters) {
+			// Only apply defaults if no filters are saved yet
+			if (!filters.level && !filters.status) {
 				const userLevel = userProfile.language_level
 				setSelectedLevel(userLevel)
 				setSelectedStatus('not_studied')

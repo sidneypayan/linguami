@@ -70,7 +70,7 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
-			hideIf: process.env.NODE_ENV === 'production' && !isUserAdmin,
+			hideIf: !isUserAdmin,
 		},
 		{
 			name: t('blog'),

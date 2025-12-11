@@ -1,0 +1,440 @@
+{
+  "id": 3,
+  "slug": "le-genre-et-le-nombre-des-noms",
+  "target_language": "fr",
+  "order": 3,
+  "level": "A1",
+  "title_fr": "Le genre et le nombre des noms",
+  "title_ru": "Род и число существительных",
+  "title_en": "Gender and Number of Nouns",
+  "estimatedReadTime": 11,
+  "difficulty": "beginner",
+  "keywords": ["gender", "masculin", "féminin", "pluriel", "род", "число"],
+  "relatedMethodLessons": [],
+
+  "blocks_ru": [
+    {
+      "type": "mainTitle",
+      "text": "Род и число существительных"
+    },
+    {
+      "type": "subtitle",
+      "text": "Как определить род и образовать множественное число"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Ключевые правила",
+      "keyForms": [
+        {
+          "form": "2 рода",
+          "translation": "Masculin (мужской) и Féminin (женский)"
+        },
+        {
+          "form": "Окончания-подсказки",
+          "translation": "-tion, -té, -ette → féminin | -eau, -age → masculin"
+        },
+        {
+          "form": "Pluriel = +s",
+          "translation": "Большинство существительных: chat → chats"
+        },
+        {
+          "form": "Исключения",
+          "translation": "-al → -aux, -eau → -eaux, -s/-x/-z → без изменений"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Мужской и женский род: как определить?"
+    },
+    {
+      "type": "paragraph",
+      "text": "Во французском языке каждое существительное имеет род: мужской (masculin) или женский (féminin). В отличие от русского, род часто не связан с биологическим полом объекта. Например, 'table' (стол) — женского рода, а 'livre' (книга) — мужского."
+    },
+    {
+      "type": "usageList",
+      "title": "Окончания, указывающие на женский род",
+      "items": [
+        {
+          "usage": "-tion, -sion",
+          "examples": [
+            "la nation (нация)",
+            "la passion (страсть)",
+            "la solution (решение)",
+            "ИСКЛЮЧЕНИЕ: le bastion (бастион)"
+          ]
+        },
+        {
+          "usage": "-té, -tié",
+          "examples": [
+            "la liberté (свобода)",
+            "la beauté (красота)",
+            "la moitié (половина)",
+            "ИСКЛЮЧЕНИЯ: le côté (сторона), le comité (комитет), le pâté (паштет)"
+          ]
+        },
+        {
+          "usage": "-ette",
+          "examples": [
+            "la baguette (багет)",
+            "la cigarette (сигарета)",
+            "la serviette (салфетка, полотенце)"
+          ]
+        },
+        {
+          "usage": "-ence, -ance",
+          "examples": [
+            "la différence (разница)",
+            "la France (Франция)",
+            "la présence (присутствие)"
+          ]
+        },
+        {
+          "usage": "-ure",
+          "examples": [
+            "la voiture (машина)",
+            "la culture (культура)",
+            "la nature (природа)"
+          ]
+        },
+        {
+          "usage": "-ée",
+          "examples": [
+            "la journée (день)",
+            "la soirée (вечер)",
+            "ИСКЛЮЧЕНИЯ: le musée (музей), le lycée (лицей)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Окончания, указывающие на мужской род",
+      "items": [
+        {
+          "usage": "-eau",
+          "examples": [
+            "le chapeau (шляпа)",
+            "le bureau (офис, бюро)",
+            "le château (замок)",
+            "ИСКЛЮЧЕНИЕ: l'eau (вода) — женский род!"
+          ]
+        },
+        {
+          "usage": "-age",
+          "examples": [
+            "le fromage (сыр)",
+            "le garage (гараж)",
+            "le message (сообщение)",
+            "ИСКЛЮЧЕНИЯ: la page (страница), la plage (пляж), la rage (бешенство), la cage (клетка), l'image (изображение)"
+          ]
+        },
+        {
+          "usage": "-ment",
+          "examples": [
+            "le gouvernement (правительство)",
+            "le moment (момент)",
+            "le document (документ)"
+          ]
+        },
+        {
+          "usage": "-phone",
+          "examples": [
+            "le téléphone (телефон)",
+            "le microphone (микрофон)",
+            "le saxophone (саксофон)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Род по категориям",
+      "rows": [
+        {
+          "pronoun": "Языки",
+          "form": "MASCULIN",
+          "pronunciation": "",
+          "translation": "le français, le russe, l'anglais"
+        },
+        {
+          "pronoun": "Деревья",
+          "form": "MASCULIN",
+          "pronunciation": "",
+          "translation": "le chêne (дуб), le pin (сосна)"
+        },
+        {
+          "pronoun": "Металлы",
+          "form": "MASCULIN",
+          "pronunciation": "",
+          "translation": "le fer (железо), l'or (золото)"
+        },
+        {
+          "pronoun": "Дни недели",
+          "form": "MASCULIN",
+          "pronunciation": "",
+          "translation": "le lundi, le mardi"
+        },
+        {
+          "pronoun": "Месяцы",
+          "form": "MASCULIN",
+          "pronunciation": "",
+          "translation": "janvier, février"
+        },
+        {
+          "pronoun": "Науки в -ie",
+          "form": "FÉMININ",
+          "pronunciation": "",
+          "translation": "la chimie, la biologie, la géographie"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Слова-ловушки (род не очевиден)",
+      "rows": [
+        {
+          "wrong": "Le page (страница)",
+          "correct": "LA page",
+          "explanation": "Исключение из правила -age"
+        },
+        {
+          "wrong": "La musée",
+          "correct": "LE musée",
+          "explanation": "Исключение из правила -ée"
+        },
+        {
+          "wrong": "Le eau",
+          "correct": "L'eau (féminin)",
+          "explanation": "Исключение из правила -eau"
+        },
+        {
+          "wrong": "La groupe",
+          "correct": "LE groupe",
+          "explanation": "-e не всегда означает женский род"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Образование множественного числа"
+    },
+    {
+      "type": "paragraph",
+      "text": "В большинстве случаев множественное число образуется добавлением -s к форме единственного числа. Однако есть важные исключения."
+    },
+    {
+      "type": "usageList",
+      "title": "Правила образования множественного числа",
+      "items": [
+        {
+          "usage": "Общее правило: + s",
+          "examples": [
+            "le chat → les chats (коты)",
+            "la table → les tables (столы)",
+            "l'ami → les amis (друзья)",
+            "⚠️ Произношение НЕ меняется! [ша] и [ша]"
+          ],
+          "commonMistake": {
+            "wrong": "Произносить конечное -s",
+            "correct": "chat [ша] = chats [ша], буква s немая"
+          }
+        },
+        {
+          "usage": "Слова на -s, -x, -z → без изменений",
+          "examples": [
+            "le bras → les bras (руки)",
+            "la voix → les voix (голоса)",
+            "le nez → les nez (носы)",
+            "le fils → les fils (сыновья)"
+          ]
+        },
+        {
+          "usage": "Слова на -eau, -eu → + x",
+          "examples": [
+            "le chapeau → les chapeaux (шляпы)",
+            "le bureau → les bureaux (офисы)",
+            "le cheveu → les cheveux (волосы)",
+            "ИСКЛЮЧЕНИЯ: le pneu → les pneus (шины), le bleu → les bleus (синяки)"
+          ]
+        },
+        {
+          "usage": "Слова на -al → -aux",
+          "examples": [
+            "le cheval → les chevaux (лошади)",
+            "l'animal → les animaux (животные)",
+            "le journal → les journaux (газеты)",
+            "ИСКЛЮЧЕНИЯ: le festival → les festivals, le bal → les bals"
+          ]
+        },
+        {
+          "usage": "Слова на -ou → обычно +s",
+          "examples": [
+            "le trou → les trous (дыры)",
+            "НО 7 исключений с -x:",
+            "bijou → bijoux (украшения)",
+            "caillou → cailloux (камешки)",
+            "chou → choux (капуста)",
+            "genou → genoux (колени)",
+            "hibou → hiboux (совы)",
+            "joujou → joujoux (игрушки)",
+            "pou → poux (вши)"
+          ]
+        },
+        {
+          "usage": "Слова на -ail → обычно +s",
+          "examples": [
+            "le détail → les détails (детали)",
+            "НО некоторые → -aux:",
+            "le travail → les travaux (работы)",
+            "le vitrail → les vitraux (витражи)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Особые множественные числа",
+      "rows": [
+        {
+          "pronoun": "œil",
+          "form": "yeux",
+          "pronunciation": "[jø]",
+          "translation": "глаз → глаза",
+          "mnemonic": "Полностью меняется!"
+        },
+        {
+          "pronoun": "monsieur",
+          "form": "messieurs",
+          "pronunciation": "[mesjø]",
+          "translation": "господин → господа"
+        },
+        {
+          "pronoun": "madame",
+          "form": "mesdames",
+          "pronunciation": "[medam]",
+          "translation": "госпожа → госпожи"
+        },
+        {
+          "pronoun": "mademoiselle",
+          "form": "mesdemoiselles",
+          "pronunciation": "[medmwazɛl]",
+          "translation": "мисс → мисс (мн.ч.)"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Частые ошибки с множественным числом",
+      "rows": [
+        {
+          "wrong": "les chevals",
+          "correct": "les chevaux",
+          "explanation": "-al → -aux (не просто +s)"
+        },
+        {
+          "wrong": "les chapeaus",
+          "correct": "les chapeaux",
+          "explanation": "-eau → -eaux (не +s)"
+        },
+        {
+          "wrong": "les travails",
+          "correct": "les travaux",
+          "explanation": "Исключение: travail → travaux"
+        },
+        {
+          "wrong": "les œils",
+          "correct": "les yeux",
+          "explanation": "Супплетивная форма"
+        },
+        {
+          "wrong": "Произносить les chatS [шатс]",
+          "correct": "les chats [ша]",
+          "explanation": "Конечное -s немое, как и в единственном числе"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "Определить род и число",
+      "lines": [
+        {
+          "speaker": "Étudiant",
+          "text": "Comment je sais si 'voiture' est masculin ou féminin ?"
+        },
+        {
+          "speaker": "Professeur",
+          "text": "L'indice est l'article : LA voiture. Donc c'est féminin. Et la terminaison -ure indique souvent le féminin."
+        },
+        {
+          "speaker": "Étudiant",
+          "text": "Et le pluriel de 'journal' ?"
+        },
+        {
+          "speaker": "Professeur",
+          "text": "Les journaux, avec -aux. Tous les mots en -al font -aux au pluriel, sauf quelques exceptions comme 'festival'."
+        }
+      ],
+      "translation": "Студент: Как узнать, 'voiture' мужского или женского рода? | Учитель: Подсказка — артикль: LA voiture. Значит, женский род. И окончание -ure часто указывает на женский род. | Студент: А множественное число от 'journal'? | Учитель: Les journaux, с -aux. Все слова на -al образуют множественное число на -aux, кроме нескольких исключений вроде 'festival'."
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Leçon 2 : Les articles",
+          "url": "/lessons?slug=les-articles"
+        },
+        {
+          "title": "Leçon 13 : Les adjectifs qualificatifs",
+          "url": "/lessons?slug=les-adjectifs-qualificatifs"
+        }
+      ]
+    }
+  ],
+
+  "blocks_en": [
+    {
+      "type": "mainTitle",
+      "text": "Gender and Number of Nouns"
+    },
+    {
+      "type": "subtitle",
+      "text": "How to Determine Gender and Form Plurals"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Key Rules",
+      "keyForms": [
+        {
+          "form": "2 genders",
+          "translation": "Masculine and Feminine"
+        },
+        {
+          "form": "Ending clues",
+          "translation": "-tion, -té → feminine | -eau, -age → masculine"
+        },
+        {
+          "form": "Plural = +s",
+          "translation": "Most nouns: chat → chats"
+        },
+        {
+          "form": "Exceptions",
+          "translation": "-al → -aux, -eau → -eaux, -s/-x/-z → unchanged"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "Unlike English, every French noun has a grammatical gender (masculine or feminine). This affects articles, adjectives, and pronouns used with the noun."
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Lesson 2: Articles",
+          "url": "/lessons?slug=les-articles"
+        }
+      ]
+    }
+  ]
+}

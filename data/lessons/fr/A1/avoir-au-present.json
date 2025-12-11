@@ -1,0 +1,1120 @@
+{
+  "id": 5,
+  "slug": "avoir-au-present",
+  "target_language": "fr",
+  "order": 5,
+  "level": "A1",
+  "title_fr": "AVOIR au présent",
+  "title_ru": "Глагол AVOIR в настоящем времени",
+  "title_en": "AVOIR in Present Tense",
+  "estimatedReadTime": 11,
+  "difficulty": "beginner",
+  "keywords": ["avoir", "possession", "age", "expressions", "иметь", "возраст"],
+  "relatedMethodLessons": [],
+
+  "blocks_ru": [
+    {
+      "type": "mainTitle",
+      "text": "Глагол AVOIR в настоящем времени"
+    },
+    {
+      "type": "subtitle",
+      "text": "Владение, возраст и 50+ выражений с AVOIR"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Ключевые понятия",
+      "keyForms": [
+        {
+          "form": "AVOIR = иметь",
+          "translation": "Второй по важности глагол французского языка"
+        },
+        {
+          "form": "Возраст = AVOIR",
+          "translation": "J'ai 20 ans (Мне 20 лет) — НЕ je suis!"
+        },
+        {
+          "form": "Ощущения = AVOIR",
+          "translation": "J'ai faim, j'ai froid, j'ai peur"
+        },
+        {
+          "form": "50+ устойчивых выражений",
+          "translation": "avoir raison, avoir besoin, avoir envie..."
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Спряжение глагола AVOIR"
+    },
+    {
+      "type": "paragraph",
+      "text": "AVOIR (иметь) — второй по важности глагол после ÊTRE. Он тоже полностью нерегулярный, и его нужно выучить наизусть. AVOIR используется для выражения владения, возраста, физических ощущений и в десятках устойчивых выражений."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "AVOIR — полное спряжение",
+      "rows": [
+        {
+          "pronoun": "j'",
+          "form": "ai",
+          "pronunciation": "[ʒe]",
+          "translation": "я имею / у меня есть",
+          "mnemonic": "J'ai un chat (У меня есть кот) — элизия обязательна"
+        },
+        {
+          "pronoun": "tu",
+          "form": "as",
+          "pronunciation": "[a]",
+          "translation": "ты имеешь / у тебя есть",
+          "mnemonic": "Tu as faim ? (Ты голоден?) — конечное -s немое"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "a",
+          "pronunciation": "[a]",
+          "translation": "он/она имеет / у него/неё есть",
+          "mnemonic": "Elle a 25 ans (Ей 25 лет)"
+        },
+        {
+          "pronoun": "nous",
+          "form": "avons",
+          "pronunciation": "[avɔ̃]",
+          "translation": "мы имеем / у нас есть",
+          "mnemonic": "Nous avons une maison (У нас есть дом)"
+        },
+        {
+          "pronoun": "vous",
+          "form": "avez",
+          "pronunciation": "[ave]",
+          "translation": "вы имеете / у вас есть",
+          "mnemonic": "Vous avez raison (Вы правы) — [vuz‿ave]"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "ont",
+          "pronunciation": "[ɔ̃]",
+          "translation": "они имеют / у них есть",
+          "mnemonic": "Ils ont des enfants (У них есть дети) — liaison [ilz‿ɔ̃]"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "⚠️ ВАЖНО: Формы 'as' и 'a' звучат ОДИНАКОВО [a], различие только по контексту. 'Ai' тоже звучит [e], как буква 'é'."
+    },
+    {
+      "type": "usageList",
+      "title": "Основные функции глагола AVOIR",
+      "items": [
+        {
+          "usage": "1. Владение и обладание",
+          "examples": [
+            "J'ai un ordinateur. (У меня есть компьютер)",
+            "Tu as une voiture ? (У тебя есть машина?)",
+            "Elle a deux frères. (У неё два брата)",
+            "Nous avons un appartement. (У нас есть квартира)",
+            "Ils ont beaucoup d'argent. (У них много денег)"
+          ],
+          "commonMistake": {
+            "wrong": "Je possède un chat (слишком формально для разговорной речи)",
+            "correct": "J'ai un chat (естественно и разговорно)"
+          }
+        },
+        {
+          "usage": "2. Возраст (КРИТИЧЕСКИ ВАЖНО!)",
+          "examples": [
+            "J'ai 20 ans. (Мне 20 лет)",
+            "Tu as quel âge ? (Сколько тебе лет?)",
+            "Il a 5 ans. (Ему 5 лет)",
+            "Nous avons 30 ans. (Нам 30 лет)",
+            "Elle a 18 ans. (Ей 18 лет)",
+            "⚠️ ВСЕГДА используется AVOIR, НИКОГДА ÊTRE!"
+          ],
+          "commonMistake": {
+            "wrong": "Je suis 20 ans ❌",
+            "correct": "J'ai 20 ans ✅ (буквально: 'У меня 20 лет')"
+          }
+        },
+        {
+          "usage": "3. Физические ощущения и состояния",
+          "examples": [
+            "J'ai faim. (Я голоден — буквально 'у меня голод')",
+            "Tu as soif ? (Ты хочешь пить?)",
+            "Il a chaud. (Ему жарко)",
+            "Elle a froid. (Ей холодно)",
+            "Nous avons sommeil. (Мы хотим спать)",
+            "Vous avez mal ? (Вам больно?)",
+            "Ils ont peur. (Они боятся)"
+          ],
+          "commonMistake": {
+            "wrong": "Je suis chaud ❌ (это значит 'я горячий' как объект)",
+            "correct": "J'ai chaud ✅ (мне жарко — ощущение)"
+          }
+        },
+        {
+          "usage": "4. Устойчивые выражения (50+ идиом)",
+          "examples": [
+            "avoir raison (быть правым) — Tu as raison.",
+            "avoir tort (быть неправым) — Il a tort.",
+            "avoir besoin de (нуждаться в) — J'ai besoin d'aide.",
+            "avoir envie de (хотеть) — J'ai envie de café.",
+            "avoir l'air (выглядеть) — Elle a l'air fatiguée.",
+            "avoir de la chance (повезло) — Tu as de la chance !",
+            "avoir honte (стыдиться) — J'ai honte.",
+            "avoir peur de (бояться) — Il a peur des araignées."
+          ]
+        },
+        {
+          "usage": "5. Вспомогательный глагол (Passé Composé)",
+          "examples": [
+            "J'ai mangé. (Я поел — вспомогательный глагол)",
+            "Tu as parlé ? (Ты говорил?)",
+            "Nous avons fini. (Мы закончили)",
+            "⚠️ Этот случай для будущих уроков (Passé Composé)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "50 важнейших выражений с AVOIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Топ-20 выражений для начинающих",
+      "rows": [
+        {
+          "pronoun": "avoir faim",
+          "form": "быть голодным",
+          "pronunciation": "[avwaʁ fɛ̃]",
+          "translation": "J'ai faim. (Я голоден)",
+          "mnemonic": "Буквально: 'иметь голод'"
+        },
+        {
+          "pronoun": "avoir soif",
+          "form": "хотеть пить",
+          "pronunciation": "[avwaʁ swaf]",
+          "translation": "J'ai soif. (Я хочу пить)",
+          "mnemonic": "Буквально: 'иметь жажду'"
+        },
+        {
+          "pronoun": "avoir chaud",
+          "form": "быть жарко",
+          "pronunciation": "[avwaʁ ʃo]",
+          "translation": "J'ai chaud. (Мне жарко)",
+          "mnemonic": "НЕ être chaud!"
+        },
+        {
+          "pronoun": "avoir froid",
+          "form": "быть холодно",
+          "pronunciation": "[avwaʁ fʁwa]",
+          "translation": "J'ai froid. (Мне холодно)"
+        },
+        {
+          "pronoun": "avoir sommeil",
+          "form": "хотеть спать",
+          "pronunciation": "[avwaʁ sɔmɛj]",
+          "translation": "J'ai sommeil. (Я хочу спать)"
+        },
+        {
+          "pronoun": "avoir peur (de)",
+          "form": "бояться",
+          "pronunciation": "[avwaʁ pœʁ]",
+          "translation": "J'ai peur des chiens. (Я боюсь собак)"
+        },
+        {
+          "pronoun": "avoir raison",
+          "form": "быть правым",
+          "pronunciation": "[avwaʁ ʁɛzɔ̃]",
+          "translation": "Tu as raison. (Ты прав)"
+        },
+        {
+          "pronoun": "avoir tort",
+          "form": "быть неправым",
+          "pronunciation": "[avwaʁ tɔʁ]",
+          "translation": "Il a tort. (Он не прав)"
+        },
+        {
+          "pronoun": "avoir besoin (de)",
+          "form": "нуждаться в",
+          "pronunciation": "[avwaʁ bəzwɛ̃]",
+          "translation": "J'ai besoin d'aide. (Мне нужна помощь)"
+        },
+        {
+          "pronoun": "avoir envie (de)",
+          "form": "хотеть",
+          "pronunciation": "[avwaʁ ɑ̃vi]",
+          "translation": "J'ai envie de danser. (Мне хочется танцевать)"
+        },
+        {
+          "pronoun": "avoir l'air",
+          "form": "выглядеть (казаться)",
+          "pronunciation": "[avwaʁ lɛʁ]",
+          "translation": "Tu as l'air fatigué. (Ты выглядишь уставшим)"
+        },
+        {
+          "pronoun": "avoir de la chance",
+          "form": "повезло",
+          "pronunciation": "[avwaʁ də la ʃɑ̃s]",
+          "translation": "Tu as de la chance ! (Тебе повезло!)"
+        },
+        {
+          "pronoun": "avoir honte",
+          "form": "стыдиться",
+          "pronunciation": "[avwaʁ ɔ̃t]",
+          "translation": "J'ai honte. (Мне стыдно)"
+        },
+        {
+          "pronoun": "avoir mal (à)",
+          "form": "болеть (что-то)",
+          "pronunciation": "[avwaʁ mal]",
+          "translation": "J'ai mal à la tête. (У меня болит голова)"
+        },
+        {
+          "pronoun": "avoir le temps",
+          "form": "иметь время",
+          "pronunciation": "[avwaʁ lə tɑ̃]",
+          "translation": "Tu as le temps ? (У тебя есть время?)"
+        },
+        {
+          "pronoun": "avoir l'habitude (de)",
+          "form": "иметь привычку",
+          "pronunciation": "[avwaʁ labityd]",
+          "translation": "J'ai l'habitude. (Я привык)"
+        },
+        {
+          "pronoun": "avoir lieu",
+          "form": "проходить (о событии)",
+          "pronunciation": "[avwaʁ ljø]",
+          "translation": "Le concert a lieu demain. (Концерт завтра)"
+        },
+        {
+          "pronoun": "avoir confiance",
+          "form": "доверять",
+          "pronunciation": "[avwaʁ kɔ̃fjɑ̃s]",
+          "translation": "J'ai confiance en toi. (Я тебе доверяю)"
+        },
+        {
+          "pronoun": "avoir du mal (à)",
+          "form": "испытывать трудности",
+          "pronunciation": "[avwaʁ dy mal]",
+          "translation": "J'ai du mal à comprendre. (Мне трудно понять)"
+        },
+        {
+          "pronoun": "avoir l'intention (de)",
+          "form": "намереваться",
+          "pronunciation": "[avwaʁ lɛ̃tɑ̃sjɔ̃]",
+          "translation": "J'ai l'intention de partir. (Я намерен уйти)"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "AVOIR vs. ÊTRE: как выбрать?"
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Критические различия",
+      "rows": [
+        {
+          "wrong": "Je suis 20 ans",
+          "correct": "J'ai 20 ans",
+          "explanation": "Возраст = AVOIR (буквально 'у меня 20 лет')"
+        },
+        {
+          "wrong": "Je suis faim",
+          "correct": "J'ai faim",
+          "explanation": "Голод = AVOIR (физическое ощущение)"
+        },
+        {
+          "wrong": "Je suis chaud",
+          "correct": "J'ai chaud",
+          "explanation": "ÊTRE chaud = 'быть горячим' (объект), AVOIR chaud = 'мне жарко' (ощущение)"
+        },
+        {
+          "wrong": "Elle a belle",
+          "correct": "Elle est belle",
+          "explanation": "Прилагательное БЕЗ существительного = ÊTRE"
+        },
+        {
+          "wrong": "J'ai fatigué",
+          "correct": "Je suis fatigué",
+          "explanation": "Усталость как СОСТОЯНИЕ = ÊTRE (но J'ai sommeil = 'хочу спать' — это AVOIR!)"
+        },
+        {
+          "wrong": "Il a grand",
+          "correct": "Il est grand",
+          "explanation": "Физическое описание (высокий) = ÊTRE"
+        },
+        {
+          "wrong": "Nous sommes raison",
+          "correct": "Nous avons raison",
+          "explanation": "Устойчивое выражение 'быть правым' = AVOIR"
+        },
+        {
+          "wrong": "Tu es besoin d'aide ?",
+          "correct": "Tu as besoin d'aide ?",
+          "explanation": "Нуждаться = AVOIR besoin"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Правило выбора: AVOIR или ÊTRE?",
+      "items": [
+        {
+          "usage": "Используйте AVOIR для:",
+          "examples": [
+            "✅ Возраст: J'ai 25 ans",
+            "✅ Владение: J'ai une voiture",
+            "✅ Физические ощущения: J'ai faim, froid, chaud, soif",
+            "✅ Устойчивые выражения: avoir raison, avoir peur, avoir envie",
+            "✅ Части тела в негативном смысле: J'ai mal à la tête"
+          ]
+        },
+        {
+          "usage": "Используйте ÊTRE для:",
+          "examples": [
+            "✅ Идентификация: Je suis Marie",
+            "✅ Профессия: Je suis médecin",
+            "✅ Национальность: Je suis français",
+            "✅ Прилагательные (описание): Je suis grand, belle, intelligent",
+            "✅ Состояния: Je suis fatigué, content, triste",
+            "✅ Местоположение: Je suis à Paris"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Liaison с глаголом AVOIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Обязательные liaisons с AVOIR",
+      "rows": [
+        {
+          "pronoun": "vous avez",
+          "form": "[vuz‿ave]",
+          "pronunciation": "вуз-АВЕ",
+          "translation": "Связка -s произносится как [z]",
+          "mnemonic": "Vous avez un chat → [вуз‿аве œ̃ ша]"
+        },
+        {
+          "pronoun": "ils ont",
+          "form": "[ilz‿ɔ̃]",
+          "pronunciation": "ильз-ОН",
+          "translation": "Связка -s между ils и ont",
+          "mnemonic": "Ils ont une maison → [ильз‿он ын мэзон]"
+        },
+        {
+          "pronoun": "elles ont",
+          "form": "[ɛlz‿ɔ̃]",
+          "pronunciation": "эльз-ОН",
+          "translation": "Связка -s между elles и ont",
+          "mnemonic": "Elles ont faim → [эльз‿он фэ̃]"
+        },
+        {
+          "pronoun": "nous avons",
+          "form": "[nuz‿avɔ̃]",
+          "pronunciation": "нуз-АВОН",
+          "translation": "Связка -s между nous и avons",
+          "mnemonic": "Nous avons un problème → [нуз‿авон œ̃ проблем]"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "В ресторане",
+      "lines": [
+        {
+          "speaker": "Serveur",
+          "text": "Bonjour ! Vous avez une réservation ?"
+        },
+        {
+          "speaker": "Client",
+          "text": "Non, nous n'avons pas de réservation. Vous avez une table pour deux ?"
+        },
+        {
+          "speaker": "Serveur",
+          "text": "Oui, j'ai une table près de la fenêtre. Vous avez faim ?"
+        },
+        {
+          "speaker": "Client",
+          "text": "Oui, nous avons très faim ! Et nous avons soif aussi."
+        },
+        {
+          "speaker": "Serveur",
+          "text": "Parfait. Vous avez envie de vin rouge ou blanc ?"
+        },
+        {
+          "speaker": "Client",
+          "text": "Rouge, s'il vous plaît. Et nous avons besoin du menu."
+        }
+      ],
+      "translation": "Официант: Здравствуйте! У вас есть бронь? | Клиент: Нет, у нас нет брони. У вас есть столик на двоих? | Официант: Да, у меня есть столик у окна. Вы голодны? | Клиент: Да, мы очень голодны! И мы хотим пить тоже. | Официант: Отлично. Вам хочется красного или белого вина? | Клиент: Красное, пожалуйста. И нам нужно меню."
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Обратите внимание: В диалоге использовано 7 разных форм AVOIR: avez (vous), n'avons pas (nous), ai (j'), avez (vous), avons (nous), avez envie (vous), avons besoin (nous)."
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Топ-10 ошибок с AVOIR",
+      "rows": [
+        {
+          "wrong": "Je suis 25 ans",
+          "correct": "J'ai 25 ans",
+          "explanation": "САМАЯ ЧАСТАЯ ОШИБКА! Возраст = AVOIR"
+        },
+        {
+          "wrong": "J'ai fatigué",
+          "correct": "Je suis fatigué",
+          "explanation": "Усталость как состояние = ÊTRE (прилагательное)"
+        },
+        {
+          "wrong": "Il a grand",
+          "correct": "Il est grand",
+          "explanation": "Физическое описание = ÊTRE + прилагательное"
+        },
+        {
+          "wrong": "Nous avons contents",
+          "correct": "Nous sommes contents",
+          "explanation": "Эмоциональное состояние = ÊTRE"
+        },
+        {
+          "wrong": "J'avoir un chat",
+          "correct": "J'ai un chat",
+          "explanation": "НЕ использовать инфинитив! Спряжение обязательно"
+        },
+        {
+          "wrong": "Tu a faim ? (без -s)",
+          "correct": "Tu as faim ?",
+          "explanation": "Tu → as (с -s, хотя -s не произносится)"
+        },
+        {
+          "wrong": "Il as (с -s)",
+          "correct": "Il a (без -s)",
+          "explanation": "Il/elle/on → a (БЕЗ -s)"
+        },
+        {
+          "wrong": "Vous [vu] avez (без liaison)",
+          "correct": "Vous avez [vuz‿ave]",
+          "explanation": "Обязательная liaison -s → [z]"
+        },
+        {
+          "wrong": "J'ai chaud temps (путаница)",
+          "correct": "J'ai chaud (жарко) ≠ J'ai le temps (время)",
+          "explanation": "Разные выражения, не путать!"
+        },
+        {
+          "wrong": "Elle a l'air fatigué (без согласования)",
+          "correct": "Elle a l'air fatiguée",
+          "explanation": "Прилагательное согласуется с подлежащим"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Мнемотехники для запоминания",
+      "items": [
+        {
+          "usage": "Возраст = AVOIR (думайте буквально)",
+          "examples": [
+            "Français: J'ai 20 ans (У меня 20 лет) → буквально 'я имею 20 лет'",
+            "English тоже так: 'I'm 20' vs 'I have 20 years' (French way)",
+            "Запомните: В французском возраст — это то, ЧТО У ВАС ЕСТЬ, а не КЕМ ВЫ ЯВЛЯЕТЕСЬ"
+          ]
+        },
+        {
+          "usage": "Физические ощущения = AVOIR (у вас внутри)",
+          "examples": [
+            "J'ai faim → У меня внутри голод",
+            "J'ai froid → У меня внутри холод",
+            "J'ai peur → У меня внутри страх",
+            "⚠️ НО: Je suis fatigué (усталость как СОСТОЯНИЕ, а не ощущение)"
+          ]
+        },
+        {
+          "usage": "Avoir = 'to have' (почти всегда совпадает с английским)",
+          "examples": [
+            "I have a car → J'ai une voiture ✅",
+            "I have 20 years → J'ai 20 ans ✅",
+            "I'm hungry → J'ai faim (буквально: 'I have hunger') ✅"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Leçon 4 : Les pronoms sujets et ÊTRE",
+          "url": "/lessons?slug=les-pronoms-sujets-et-etre"
+        },
+        {
+          "title": "Leçon 6 : Verbes en -ER (partie 1)",
+          "url": "/lessons?slug=verbes-er-partie-1"
+        },
+        {
+          "title": "Leçon 11 : La négation simple (ne...pas)",
+          "url": "/lessons?slug=la-negation-simple"
+        }
+      ]
+    }
+  ],
+
+  "blocks_en": [
+    {
+      "type": "mainTitle",
+      "text": "The Verb AVOIR in Present Tense"
+    },
+    {
+      "type": "subtitle",
+      "text": "Possession, Age, and 50+ Expressions with AVOIR"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Key Concepts",
+      "keyForms": [
+        {
+          "form": "AVOIR = to have",
+          "translation": "The second most important French verb"
+        },
+        {
+          "form": "Age = AVOIR",
+          "translation": "J'ai 20 ans (I'm 20) — NOT je suis!"
+        },
+        {
+          "form": "Physical sensations = AVOIR",
+          "translation": "J'ai faim, j'ai froid, j'ai peur"
+        },
+        {
+          "form": "50+ idiomatic expressions",
+          "translation": "avoir raison, avoir besoin, avoir envie..."
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Conjugation of AVOIR"
+    },
+    {
+      "type": "paragraph",
+      "text": "AVOIR (to have) is the second most important verb after ÊTRE. It's also completely irregular and must be memorized. AVOIR is used to express possession, age, physical sensations, and in dozens of idiomatic expressions."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "AVOIR — Full Conjugation",
+      "rows": [
+        {
+          "pronoun": "j'",
+          "form": "ai",
+          "pronunciation": "[ʒe]",
+          "translation": "I have",
+          "mnemonic": "J'ai un chat (I have a cat) — elision mandatory"
+        },
+        {
+          "pronoun": "tu",
+          "form": "as",
+          "pronunciation": "[a]",
+          "translation": "you have (informal)",
+          "mnemonic": "Tu as faim ? (Are you hungry?) — final -s is silent"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "a",
+          "pronunciation": "[a]",
+          "translation": "he/she/one has",
+          "mnemonic": "Elle a 25 ans (She is 25 years old)"
+        },
+        {
+          "pronoun": "nous",
+          "form": "avons",
+          "pronunciation": "[avɔ̃]",
+          "translation": "we have",
+          "mnemonic": "Nous avons une maison (We have a house)"
+        },
+        {
+          "pronoun": "vous",
+          "form": "avez",
+          "pronunciation": "[ave]",
+          "translation": "you have (formal/plural)",
+          "mnemonic": "Vous avez raison (You're right) — [vuz‿ave]"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "ont",
+          "pronunciation": "[ɔ̃]",
+          "translation": "they have",
+          "mnemonic": "Ils ont des enfants (They have children) — liaison [ilz‿ɔ̃]"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "⚠️ IMPORTANT: The forms 'as' and 'a' sound IDENTICAL [a], the difference is only context. 'Ai' sounds like [e], like the letter 'é'."
+    },
+    {
+      "type": "usageList",
+      "title": "Main Functions of AVOIR",
+      "items": [
+        {
+          "usage": "1. Possession and Ownership",
+          "examples": [
+            "J'ai un ordinateur. (I have a computer)",
+            "Tu as une voiture ? (Do you have a car?)",
+            "Elle a deux frères. (She has two brothers)",
+            "Nous avons un appartement. (We have an apartment)",
+            "Ils ont beaucoup d'argent. (They have a lot of money)"
+          ],
+          "commonMistake": {
+            "wrong": "Je possède un chat (too formal for conversation)",
+            "correct": "J'ai un chat (natural and conversational)"
+          }
+        },
+        {
+          "usage": "2. Age (CRITICALLY IMPORTANT!)",
+          "examples": [
+            "J'ai 20 ans. (I'm 20 years old — literally 'I have 20 years')",
+            "Tu as quel âge ? (How old are you?)",
+            "Il a 5 ans. (He is 5 years old)",
+            "Nous avons 30 ans. (We are 30 years old)",
+            "Elle a 18 ans. (She is 18 years old)",
+            "⚠️ ALWAYS use AVOIR, NEVER ÊTRE!"
+          ],
+          "commonMistake": {
+            "wrong": "Je suis 20 ans ❌",
+            "correct": "J'ai 20 ans ✅ (literally: 'I have 20 years')"
+          }
+        },
+        {
+          "usage": "3. Physical Sensations and States",
+          "examples": [
+            "J'ai faim. (I'm hungry — literally 'I have hunger')",
+            "Tu as soif ? (Are you thirsty?)",
+            "Il a chaud. (He's hot)",
+            "Elle a froid. (She's cold)",
+            "Nous avons sommeil. (We're sleepy)",
+            "Vous avez mal ? (Are you in pain?)",
+            "Ils ont peur. (They're afraid)"
+          ],
+          "commonMistake": {
+            "wrong": "Je suis chaud ❌ (this means 'I am hot' as an object)",
+            "correct": "J'ai chaud ✅ (I feel hot — sensation)"
+          }
+        },
+        {
+          "usage": "4. Idiomatic Expressions (50+ idioms)",
+          "examples": [
+            "avoir raison (to be right) — Tu as raison.",
+            "avoir tort (to be wrong) — Il a tort.",
+            "avoir besoin de (to need) — J'ai besoin d'aide.",
+            "avoir envie de (to want/feel like) — J'ai envie de café.",
+            "avoir l'air (to look/seem) — Elle a l'air fatiguée.",
+            "avoir de la chance (to be lucky) — Tu as de la chance !",
+            "avoir honte (to be ashamed) — J'ai honte.",
+            "avoir peur de (to be afraid of) — Il a peur des araignées."
+          ]
+        },
+        {
+          "usage": "5. Auxiliary Verb (Passé Composé)",
+          "examples": [
+            "J'ai mangé. (I ate — auxiliary verb)",
+            "Tu as parlé ? (Did you speak?)",
+            "Nous avons fini. (We finished)",
+            "⚠️ This use is for future lessons (Passé Composé)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "50 Essential Expressions with AVOIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Top 20 Expressions for Beginners",
+      "rows": [
+        {
+          "pronoun": "avoir faim",
+          "form": "to be hungry",
+          "pronunciation": "[avwaʁ fɛ̃]",
+          "translation": "J'ai faim. (I'm hungry)",
+          "mnemonic": "Literally: 'to have hunger'"
+        },
+        {
+          "pronoun": "avoir soif",
+          "form": "to be thirsty",
+          "pronunciation": "[avwaʁ swaf]",
+          "translation": "J'ai soif. (I'm thirsty)",
+          "mnemonic": "Literally: 'to have thirst'"
+        },
+        {
+          "pronoun": "avoir chaud",
+          "form": "to be hot (person)",
+          "pronunciation": "[avwaʁ ʃo]",
+          "translation": "J'ai chaud. (I'm hot)",
+          "mnemonic": "NOT être chaud!"
+        },
+        {
+          "pronoun": "avoir froid",
+          "form": "to be cold (person)",
+          "pronunciation": "[avwaʁ fʁwa]",
+          "translation": "J'ai froid. (I'm cold)"
+        },
+        {
+          "pronoun": "avoir sommeil",
+          "form": "to be sleepy",
+          "pronunciation": "[avwaʁ sɔmɛj]",
+          "translation": "J'ai sommeil. (I'm sleepy)"
+        },
+        {
+          "pronoun": "avoir peur (de)",
+          "form": "to be afraid (of)",
+          "pronunciation": "[avwaʁ pœʁ]",
+          "translation": "J'ai peur des chiens. (I'm afraid of dogs)"
+        },
+        {
+          "pronoun": "avoir raison",
+          "form": "to be right",
+          "pronunciation": "[avwaʁ ʁɛzɔ̃]",
+          "translation": "Tu as raison. (You're right)"
+        },
+        {
+          "pronoun": "avoir tort",
+          "form": "to be wrong",
+          "pronunciation": "[avwaʁ tɔʁ]",
+          "translation": "Il a tort. (He's wrong)"
+        },
+        {
+          "pronoun": "avoir besoin (de)",
+          "form": "to need",
+          "pronunciation": "[avwaʁ bəzwɛ̃]",
+          "translation": "J'ai besoin d'aide. (I need help)"
+        },
+        {
+          "pronoun": "avoir envie (de)",
+          "form": "to want/feel like",
+          "pronunciation": "[avwaʁ ɑ̃vi]",
+          "translation": "J'ai envie de danser. (I feel like dancing)"
+        },
+        {
+          "pronoun": "avoir l'air",
+          "form": "to look/seem",
+          "pronunciation": "[avwaʁ lɛʁ]",
+          "translation": "Tu as l'air fatigué. (You look tired)"
+        },
+        {
+          "pronoun": "avoir de la chance",
+          "form": "to be lucky",
+          "pronunciation": "[avwaʁ də la ʃɑ̃s]",
+          "translation": "Tu as de la chance ! (You're lucky!)"
+        },
+        {
+          "pronoun": "avoir honte",
+          "form": "to be ashamed",
+          "pronunciation": "[avwaʁ ɔ̃t]",
+          "translation": "J'ai honte. (I'm ashamed)"
+        },
+        {
+          "pronoun": "avoir mal (à)",
+          "form": "to have pain/hurt",
+          "pronunciation": "[avwaʁ mal]",
+          "translation": "J'ai mal à la tête. (I have a headache)"
+        },
+        {
+          "pronoun": "avoir le temps",
+          "form": "to have time",
+          "pronunciation": "[avwaʁ lə tɑ̃]",
+          "translation": "Tu as le temps ? (Do you have time?)"
+        },
+        {
+          "pronoun": "avoir l'habitude (de)",
+          "form": "to be used to",
+          "pronunciation": "[avwaʁ labityd]",
+          "translation": "J'ai l'habitude. (I'm used to it)"
+        },
+        {
+          "pronoun": "avoir lieu",
+          "form": "to take place",
+          "pronunciation": "[avwaʁ ljø]",
+          "translation": "Le concert a lieu demain. (The concert is tomorrow)"
+        },
+        {
+          "pronoun": "avoir confiance",
+          "form": "to trust",
+          "pronunciation": "[avwaʁ kɔ̃fjɑ̃s]",
+          "translation": "J'ai confiance en toi. (I trust you)"
+        },
+        {
+          "pronoun": "avoir du mal (à)",
+          "form": "to have difficulty",
+          "pronunciation": "[avwaʁ dy mal]",
+          "translation": "J'ai du mal à comprendre. (I have trouble understanding)"
+        },
+        {
+          "pronoun": "avoir l'intention (de)",
+          "form": "to intend to",
+          "pronunciation": "[avwaʁ lɛ̃tɑ̃sjɔ̃]",
+          "translation": "J'ai l'intention de partir. (I intend to leave)"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "AVOIR vs. ÊTRE: How to Choose?"
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Critical Differences",
+      "rows": [
+        {
+          "wrong": "Je suis 20 ans",
+          "correct": "J'ai 20 ans",
+          "explanation": "Age = AVOIR (literally 'I have 20 years')"
+        },
+        {
+          "wrong": "Je suis faim",
+          "correct": "J'ai faim",
+          "explanation": "Hunger = AVOIR (physical sensation)"
+        },
+        {
+          "wrong": "Je suis chaud",
+          "correct": "J'ai chaud",
+          "explanation": "ÊTRE chaud = 'to be hot' (object), AVOIR chaud = 'to feel hot' (person)"
+        },
+        {
+          "wrong": "Elle a belle",
+          "correct": "Elle est belle",
+          "explanation": "Adjective WITHOUT noun = ÊTRE"
+        },
+        {
+          "wrong": "J'ai fatigué",
+          "correct": "Je suis fatigué",
+          "explanation": "Fatigue as STATE = ÊTRE (but J'ai sommeil = 'I'm sleepy' — this is AVOIR!)"
+        },
+        {
+          "wrong": "Il a grand",
+          "correct": "Il est grand",
+          "explanation": "Physical description (tall) = ÊTRE"
+        },
+        {
+          "wrong": "Nous sommes raison",
+          "correct": "Nous avons raison",
+          "explanation": "Idiomatic expression 'to be right' = AVOIR"
+        },
+        {
+          "wrong": "Tu es besoin d'aide ?",
+          "correct": "Tu as besoin d'aide ?",
+          "explanation": "To need = AVOIR besoin"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Rule of Thumb: AVOIR or ÊTRE?",
+      "items": [
+        {
+          "usage": "Use AVOIR for:",
+          "examples": [
+            "✅ Age: J'ai 25 ans",
+            "✅ Possession: J'ai une voiture",
+            "✅ Physical sensations: J'ai faim, froid, chaud, soif",
+            "✅ Idiomatic expressions: avoir raison, avoir peur, avoir envie",
+            "✅ Body parts in negative sense: J'ai mal à la tête"
+          ]
+        },
+        {
+          "usage": "Use ÊTRE for:",
+          "examples": [
+            "✅ Identification: Je suis Marie",
+            "✅ Profession: Je suis médecin",
+            "✅ Nationality: Je suis français",
+            "✅ Adjectives (description): Je suis grand, belle, intelligent",
+            "✅ States: Je suis fatigué, content, triste",
+            "✅ Location: Je suis à Paris"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Liaison with AVOIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Mandatory Liaisons with AVOIR",
+      "rows": [
+        {
+          "pronoun": "vous avez",
+          "form": "[vuz‿ave]",
+          "pronunciation": "vooz-AH-vay",
+          "translation": "Link -s pronounced as [z]",
+          "mnemonic": "Vous avez un chat → [vooz‿ah-vay uh shah]"
+        },
+        {
+          "pronoun": "ils ont",
+          "form": "[ilz‿ɔ̃]",
+          "pronunciation": "eelz-OHN",
+          "translation": "Link -s between ils and ont",
+          "mnemonic": "Ils ont une maison → [eelz‿ohn oon meh-zohn]"
+        },
+        {
+          "pronoun": "elles ont",
+          "form": "[ɛlz‿ɔ̃]",
+          "pronunciation": "elz-OHN",
+          "translation": "Link -s between elles and ont",
+          "mnemonic": "Elles ont faim → [elz‿ohn fah]"
+        },
+        {
+          "pronoun": "nous avons",
+          "form": "[nuz‿avɔ̃]",
+          "pronunciation": "nooz-ah-VOHN",
+          "translation": "Link -s between nous and avons",
+          "mnemonic": "Nous avons un problème → [nooz‿ah-vohn uh pro-blem]"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "At the Restaurant",
+      "lines": [
+        {
+          "speaker": "Waiter",
+          "text": "Bonjour ! Vous avez une réservation ?"
+        },
+        {
+          "speaker": "Customer",
+          "text": "Non, nous n'avons pas de réservation. Vous avez une table pour deux ?"
+        },
+        {
+          "speaker": "Waiter",
+          "text": "Oui, j'ai une table près de la fenêtre. Vous avez faim ?"
+        },
+        {
+          "speaker": "Customer",
+          "text": "Oui, nous avons très faim ! Et nous avons soif aussi."
+        },
+        {
+          "speaker": "Waiter",
+          "text": "Parfait. Vous avez envie de vin rouge ou blanc ?"
+        },
+        {
+          "speaker": "Customer",
+          "text": "Rouge, s'il vous plaît. Et nous avons besoin du menu."
+        }
+      ],
+      "translation": "Waiter: Hello! Do you have a reservation? | Customer: No, we don't have a reservation. Do you have a table for two? | Waiter: Yes, I have a table by the window. Are you hungry? | Customer: Yes, we're very hungry! And we're thirsty too. | Waiter: Perfect. Do you feel like red or white wine? | Customer: Red, please. And we need the menu."
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Notice: The dialogue uses 7 different forms of AVOIR: avez (vous), n'avons pas (nous), ai (j'), avez (vous), avons (nous), avez envie (vous), avons besoin (nous)."
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Top 10 Mistakes with AVOIR",
+      "rows": [
+        {
+          "wrong": "Je suis 25 ans",
+          "correct": "J'ai 25 ans",
+          "explanation": "MOST COMMON MISTAKE! Age = AVOIR"
+        },
+        {
+          "wrong": "J'ai fatigué",
+          "correct": "Je suis fatigué",
+          "explanation": "Fatigue as state = ÊTRE (adjective)"
+        },
+        {
+          "wrong": "Il a grand",
+          "correct": "Il est grand",
+          "explanation": "Physical description = ÊTRE + adjective"
+        },
+        {
+          "wrong": "Nous avons contents",
+          "correct": "Nous sommes contents",
+          "explanation": "Emotional state = ÊTRE"
+        },
+        {
+          "wrong": "J'avoir un chat",
+          "correct": "J'ai un chat",
+          "explanation": "Don't use infinitive! Must conjugate"
+        },
+        {
+          "wrong": "Tu a faim ? (no -s)",
+          "correct": "Tu as faim ?",
+          "explanation": "Tu → as (with -s, even though -s is silent)"
+        },
+        {
+          "wrong": "Il as (with -s)",
+          "correct": "Il a (no -s)",
+          "explanation": "Il/elle/on → a (WITHOUT -s)"
+        },
+        {
+          "wrong": "Vous [vu] avez (no liaison)",
+          "correct": "Vous avez [vuz‿ave]",
+          "explanation": "Mandatory liaison -s → [z]"
+        },
+        {
+          "wrong": "J'ai chaud temps (confusion)",
+          "correct": "J'ai chaud (hot) ≠ J'ai le temps (time)",
+          "explanation": "Different expressions, don't confuse!"
+        },
+        {
+          "wrong": "Elle a l'air fatigué (no agreement)",
+          "correct": "Elle a l'air fatiguée",
+          "explanation": "Adjective agrees with subject"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Mnemonics for Memorization",
+      "items": [
+        {
+          "usage": "Age = AVOIR (think literally)",
+          "examples": [
+            "French: J'ai 20 ans (I have 20 years) → literally 'I have 20 years'",
+            "English says 'I'm 20' but French says 'I have 20 years'",
+            "Remember: In French, age is something YOU HAVE, not WHAT YOU ARE"
+          ]
+        },
+        {
+          "usage": "Physical sensations = AVOIR (inside you)",
+          "examples": [
+            "J'ai faim → I have hunger inside me",
+            "J'ai froid → I have cold inside me",
+            "J'ai peur → I have fear inside me",
+            "⚠️ BUT: Je suis fatigué (fatigue as STATE, not sensation)"
+          ]
+        },
+        {
+          "usage": "Avoir = 'to have' (almost always matches English)",
+          "examples": [
+            "I have a car → J'ai une voiture ✅",
+            "I have 20 years → J'ai 20 ans ✅",
+            "I'm hungry → J'ai faim (literally: 'I have hunger') ✅"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Lesson 4: Subject Pronouns and ÊTRE",
+          "url": "/lessons?slug=les-pronoms-sujets-et-etre"
+        },
+        {
+          "title": "Lesson 6: Verbs in -ER (part 1)",
+          "url": "/lessons?slug=verbes-er-partie-1"
+        },
+        {
+          "title": "Lesson 11: Simple Negation (ne...pas)",
+          "url": "/lessons?slug=la-negation-simple"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1252 @@
+{
+  "id": 8,
+  "slug": "aller-et-venir",
+  "target_language": "fr",
+  "order": 8,
+  "level": "A1",
+  "title_fr": "ALLER et VENIR au présent",
+  "title_ru": "Глаголы ALLER и VENIR в настоящем времени",
+  "title_en": "ALLER and VENIR in Present Tense",
+  "estimatedReadTime": 13,
+  "difficulty": "beginner",
+  "keywords": ["aller", "venir", "movement", "futur proche", "passé récent", "движение"],
+  "relatedMethodLessons": [],
+
+  "blocks_ru": [
+    {
+      "type": "mainTitle",
+      "text": "Глаголы ALLER и VENIR: движение и время"
+    },
+    {
+      "type": "subtitle",
+      "text": "Два самых важных глагола движения + конструкции для будущего и прошлого"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Ключевые понятия",
+      "keyForms": [
+        {
+          "form": "ALLER = идти, ехать",
+          "translation": "Je vais à Paris (Я еду в Париж)"
+        },
+        {
+          "form": "VENIR = приходить, приезжать",
+          "translation": "Je viens de Moscou (Я из Москвы)"
+        },
+        {
+          "form": "Futur proche: ALLER + infinitif",
+          "translation": "Je vais manger (Я сейчас поем)"
+        },
+        {
+          "form": "Passé récent: VENIR DE + infinitif",
+          "translation": "Je viens de manger (Я только что поел)"
+        },
+        {
+          "form": "Оба глагола ОЧЕНЬ нерегулярные",
+          "translation": "Нужно выучить наизусть"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Спряжение глагола ALLER (идти, ехать)"
+    },
+    {
+      "type": "paragraph",
+      "text": "ALLER — один из самых нерегулярных глаголов французского языка. Он не следует никакой логической схеме. Основа полностью меняется: va-, all-, v-."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "ALLER — полное спряжение",
+      "rows": [
+        {
+          "pronoun": "je",
+          "form": "vais",
+          "pronunciation": "[vɛ]",
+          "translation": "я иду/еду",
+          "mnemonic": "Основа va- + окончание -is"
+        },
+        {
+          "pronoun": "tu",
+          "form": "vas",
+          "pronunciation": "[va]",
+          "translation": "ты идёшь/едешь",
+          "mnemonic": "Основа va- + окончание -s"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "va",
+          "pronunciation": "[va]",
+          "translation": "он/она идёт/едет",
+          "mnemonic": "Основа va- (без окончания)"
+        },
+        {
+          "pronoun": "nous",
+          "form": "allons",
+          "pronunciation": "[alɔ̃]",
+          "translation": "мы идём/едем",
+          "mnemonic": "⚠️ Совершенно другая основа: all-"
+        },
+        {
+          "pronoun": "vous",
+          "form": "allez",
+          "pronunciation": "[ale]",
+          "translation": "вы идёте/едете",
+          "mnemonic": "Основа all- + окончание -ez"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "vont",
+          "pronunciation": "[vɔ̃]",
+          "translation": "они идут/едут",
+          "mnemonic": "⚠️ Третья основа: v- + носовой звук"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Мнемоника: 3 разных основы = 3 группы форм → [va] (je/tu/il), [al] (nous/vous), [vɔ̃] (ils/elles)"
+    },
+    {
+      "type": "usageList",
+      "title": "Основные значения ALLER",
+      "items": [
+        {
+          "usage": "1. Физическое движение (идти, ехать)",
+          "examples": [
+            "Je vais à Paris. (Я еду в Париж)",
+            "Tu vas au cinéma ? (Ты идёшь в кино?)",
+            "Nous allons à l'école. (Мы идём в школу)",
+            "Ils vont en France. (Они едут во Францию)",
+            "⚠️ À + место конкретное / EN + страна женского рода или транспорт"
+          ]
+        },
+        {
+          "usage": "2. Состояние здоровья (Comment allez-vous ?)",
+          "examples": [
+            "Comment vas-tu ? (Как дела? — неформально)",
+            "Comment allez-vous ? (Как дела? — формально)",
+            "Je vais bien, merci. (У меня всё хорошо, спасибо)",
+            "Ça va ? — Ça va ! (Как дела? — Нормально!)",
+            "Ça ne va pas. (Не очень / Плохо)"
+          ],
+          "commonMistake": {
+            "wrong": "Comment êtes-vous ? (использовать ÊTRE)",
+            "correct": "Comment allez-vous ? (использовать ALLER для состояния)"
+          }
+        },
+        {
+          "usage": "3. Подходить (о вещах, цветах)",
+          "examples": [
+            "Cette robe te va bien. (Это платье тебе идёт)",
+            "Le rouge me va. (Красный мне идёт)",
+            "Ces chaussures vous vont ? (Эти туфли вам подходят?)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Futur proche: ALLER + infinitif"
+    },
+    {
+      "type": "paragraph",
+      "text": "ALLER + инфинитив = конструкция для выражения ближайшего будущего (то, что вот-вот случится или запланировано). Эквивалент английского 'going to'."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Примеры Futur Proche",
+      "rows": [
+        {
+          "pronoun": "Je vais manger.",
+          "form": "Я сейчас поем.",
+          "pronunciation": "[ʒə vɛ mɑ̃ʒe]",
+          "translation": "Ближайшее будущее",
+          "mnemonic": "ALLER (спрягается) + MANGER (инфинитив)"
+        },
+        {
+          "pronoun": "Tu vas partir ?",
+          "form": "Ты сейчас уходишь?",
+          "pronunciation": "[ty va paʁtiʁ]",
+          "translation": "Вопрос о ближайшем будущем"
+        },
+        {
+          "pronoun": "Il va arriver.",
+          "form": "Он вот-вот приедет.",
+          "pronunciation": "[il va aʁive]",
+          "translation": "Скоро случится"
+        },
+        {
+          "pronoun": "Nous allons étudier.",
+          "form": "Мы сейчас будем заниматься.",
+          "pronunciation": "[nuz‿alɔ̃ etydje]",
+          "translation": "Запланированное действие"
+        },
+        {
+          "pronoun": "Vous allez travailler ?",
+          "form": "Вы собираетесь работать?",
+          "pronunciation": "[vuz‿ale tʁavaje]",
+          "translation": "Намерение"
+        },
+        {
+          "pronoun": "Ils vont voyager.",
+          "form": "Они собираются путешествовать.",
+          "pronunciation": "[il vɔ̃ vwajaʒe]",
+          "translation": "План на будущее"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Когда использовать Futur Proche",
+      "items": [
+        {
+          "usage": "Ближайшее будущее (через минуту, сегодня)",
+          "examples": [
+            "Je vais manger maintenant. (Я сейчас поем — прямо сейчас)",
+            "Il va pleuvoir. (Сейчас пойдёт дождь — небо серое)",
+            "Nous allons partir dans 5 minutes. (Мы уходим через 5 минут)"
+          ]
+        },
+        {
+          "usage": "Планы и намерения",
+          "examples": [
+            "Je vais étudier ce soir. (Я буду заниматься вечером — план)",
+            "Tu vas regarder le film ? (Ты будешь смотреть фильм? — намерение)",
+            "Nous allons acheter une maison. (Мы собираемся купить дом)"
+          ]
+        },
+        {
+          "usage": "Предсказания (основанные на фактах)",
+          "examples": [
+            "Attention, tu vas tomber ! (Осторожно, ты упадёшь! — видно)",
+            "Il va être en retard. (Он опоздает — очевидно)",
+            "Ça va être difficile. (Это будет сложно)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Спряжение глагола VENIR (приходить, приезжать)"
+    },
+    {
+      "type": "paragraph",
+      "text": "VENIR тоже нерегулярный глагол, но более предсказуемый чем ALLER. Две основы: vien- (единственное число) и ven- (множественное число)."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "VENIR — полное спряжение",
+      "rows": [
+        {
+          "pronoun": "je",
+          "form": "viens",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "я прихожу/приезжаю",
+          "mnemonic": "Основа vien- + окончание -s"
+        },
+        {
+          "pronoun": "tu",
+          "form": "viens",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "ты приходишь/приезжаешь",
+          "mnemonic": "Основа vien- + окончание -s"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "vient",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "он/она приходит/приезжает",
+          "mnemonic": "Основа vien- + окончание -t"
+        },
+        {
+          "pronoun": "nous",
+          "form": "venons",
+          "pronunciation": "[vənɔ̃]",
+          "translation": "мы приходим/приезжаем",
+          "mnemonic": "⚠️ Другая основа: ven- + окончание -ons"
+        },
+        {
+          "pronoun": "vous",
+          "form": "venez",
+          "pronunciation": "[vəne]",
+          "translation": "вы приходите/приезжаете",
+          "mnemonic": "Основа ven- + окончание -ez"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "viennent",
+          "pronunciation": "[vjɛn]",
+          "translation": "они приходят/приезжают",
+          "mnemonic": "Основа vien- + окончание -nent"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Мнемоника: 2 основы → [vjɛ̃] (je/tu/il/ils с носовым звуком), [vən] (nous/vous без носового)"
+    },
+    {
+      "type": "usageList",
+      "title": "Основные значения VENIR",
+      "items": [
+        {
+          "usage": "1. Физическое прибытие (приходить, приезжать)",
+          "examples": [
+            "Je viens à la fête. (Я приду на вечеринку)",
+            "Tu viens avec nous ? (Ты идёшь с нами?)",
+            "Il vient de Paris. (Он приезжает из Парижа)",
+            "Nous venons demain. (Мы приедем завтра)",
+            "⚠️ VENIR DE + город/страна = откуда (происхождение)"
+          ]
+        },
+        {
+          "usage": "2. Происхождение (быть родом из)",
+          "examples": [
+            "Je viens de Russie. (Я из России — родился там)",
+            "D'où viens-tu ? (Откуда ты?)",
+            "Elle vient d'une famille riche. (Она из богатой семьи)",
+            "Ce vin vient de France. (Это вино из Франции)"
+          ]
+        },
+        {
+          "usage": "3. Приглашение (Viens ! = Иди сюда!)",
+          "examples": [
+            "Viens ici ! (Иди сюда!)",
+            "Venez dîner ce soir ! (Приходите ужинать сегодня вечером!)",
+            "Tu viens ? (Ты идёшь? — приглашение)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Passé récent: VENIR DE + infinitif"
+    },
+    {
+      "type": "paragraph",
+      "text": "VENIR DE + инфинитив = конструкция для выражения недавнего прошлого (то, что только что случилось). Эквивалент английского 'just + past tense'."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Примеры Passé Récent",
+      "rows": [
+        {
+          "pronoun": "Je viens de manger.",
+          "form": "Я только что поел.",
+          "pronunciation": "[ʒə vjɛ̃ də mɑ̃ʒe]",
+          "translation": "Недавнее прошлое",
+          "mnemonic": "VENIR (спрягается) + DE + MANGER (инфинитив)"
+        },
+        {
+          "pronoun": "Tu viens de partir ?",
+          "form": "Ты только что ушёл?",
+          "pronunciation": "[ty vjɛ̃ də paʁtiʁ]",
+          "translation": "Вопрос о недавнем прошлом"
+        },
+        {
+          "pronoun": "Il vient d'arriver.",
+          "form": "Он только что приехал.",
+          "pronunciation": "[il vjɛ̃ daʁive]",
+          "translation": "Буквально только что"
+        },
+        {
+          "pronoun": "Nous venons d'étudier.",
+          "form": "Мы только что занимались.",
+          "pronunciation": "[nu vənɔ̃ detydje]",
+          "translation": "Закончили недавно"
+        },
+        {
+          "pronoun": "Vous venez de travailler ?",
+          "form": "Вы только что работали?",
+          "pronunciation": "[vu vəne də tʁavaje]",
+          "translation": "Только что закончили?"
+        },
+        {
+          "pronoun": "Ils viennent de voyager.",
+          "form": "Они только что путешествовали.",
+          "pronunciation": "[il vjɛn də vwajaʒe]",
+          "translation": "Недавно вернулись"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Когда использовать Passé Récent",
+      "items": [
+        {
+          "usage": "Только что случилось (секунды/минуты назад)",
+          "examples": [
+            "Je viens de finir. (Я только что закончил — буквально сейчас)",
+            "Il vient de téléphoner. (Он только что позвонил — минуту назад)",
+            "Elle vient de sortir. (Она только что вышла)"
+          ]
+        },
+        {
+          "usage": "Объяснение текущей ситуации",
+          "examples": [
+            "Je suis fatigué, je viens de courir. (Я устал, я только что бегал)",
+            "Il est content, il vient de réussir. (Он доволен, он только что сдал)",
+            "Nous ne pouvons pas, nous venons de manger. (Мы не можем, мы только что поели)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "ALLER vs. VENIR: сравнение"
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Ключевые различия",
+      "rows": [
+        {
+          "wrong": "Je viens à Paris (для 'Я еду в Париж')",
+          "correct": "Je vais à Paris",
+          "explanation": "ALLER = движение К месту, VENIR = движение ОТ места"
+        },
+        {
+          "wrong": "Je vais de Russie (для 'Я из России')",
+          "correct": "Je viens de Russie",
+          "explanation": "VENIR DE = происхождение, ALLER À = направление"
+        },
+        {
+          "wrong": "Comment venez-vous ? (для 'Как дела?')",
+          "correct": "Comment allez-vous ?",
+          "explanation": "Только ALLER используется для вопроса о здоровье"
+        },
+        {
+          "wrong": "Ça vient ? (для 'Как дела?')",
+          "correct": "Ça va ?",
+          "explanation": "Только ALLER в разговорном 'Ça va'"
+        },
+        {
+          "wrong": "Je vais manger (для 'Я только что поел')",
+          "correct": "Je viens de manger",
+          "explanation": "ALLER + inf = будущее, VENIR DE + inf = прошлое"
+        },
+        {
+          "wrong": "Je viens manger (для 'Я сейчас поем')",
+          "correct": "Je vais manger",
+          "explanation": "Futur proche = ALLER + infinitif (НЕ VENIR!)"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Предлоги с ALLER и VENIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Правила предлогов",
+      "rows": [
+        {
+          "pronoun": "ALLER À + город/место",
+          "form": "Je vais à Paris",
+          "pronunciation": "",
+          "translation": "Я еду в Париж",
+          "mnemonic": "À = направление К конкретному месту"
+        },
+        {
+          "pronoun": "ALLER EN + страна жен.рода",
+          "form": "Je vais en France",
+          "pronunciation": "",
+          "translation": "Я еду во Францию",
+          "mnemonic": "EN = страны на -e (France, Russie, Italie)"
+        },
+        {
+          "pronoun": "ALLER AU + страна муж.рода",
+          "form": "Je vais au Japon",
+          "pronunciation": "",
+          "translation": "Я еду в Японию",
+          "mnemonic": "AU = à + le (страны муж.рода)"
+        },
+        {
+          "pronoun": "ALLER EN + транспорт",
+          "form": "Je vais en train",
+          "pronunciation": "",
+          "translation": "Я еду на поезде",
+          "mnemonic": "EN = транспорт БЕЗ артикля"
+        },
+        {
+          "pronoun": "VENIR DE + город/страна",
+          "form": "Je viens de Moscou",
+          "pronunciation": "",
+          "translation": "Я из Москвы",
+          "mnemonic": "DE = происхождение, откуда"
+        },
+        {
+          "pronoun": "VENIR AVEC + человек",
+          "form": "Je viens avec Marie",
+          "pronunciation": "",
+          "translation": "Я иду с Мари",
+          "mnemonic": "AVEC = вместе с кем-то"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Топ-10 ошибок с ALLER и VENIR",
+      "rows": [
+        {
+          "wrong": "Je vas (копировать окончание от 'tu vas')",
+          "correct": "Je vais",
+          "explanation": "Je → vais (НЕ vas!)"
+        },
+        {
+          "wrong": "Nous allent (окончание от ils/elles)",
+          "correct": "Nous allons",
+          "explanation": "Nous → allons (уникальное окончание)"
+        },
+        {
+          "wrong": "Je vais au France",
+          "correct": "Je vais en France",
+          "explanation": "Страны на -e = EN (НЕ AU)"
+        },
+        {
+          "wrong": "Je vais dans Paris",
+          "correct": "Je vais à Paris",
+          "explanation": "Города = À (НЕ dans!)"
+        },
+        {
+          "wrong": "Je vais manger (для прошлого)",
+          "correct": "Je viens de manger (только что)",
+          "explanation": "ALLER + inf = будущее, VENIR DE + inf = прошлое"
+        },
+        {
+          "wrong": "Je viens manger (для будущего)",
+          "correct": "Je vais manger",
+          "explanation": "Futur proche = ALLER + infinitif"
+        },
+        {
+          "wrong": "Comment êtes-vous ? (для 'Как дела?')",
+          "correct": "Comment allez-vous ?",
+          "explanation": "Здоровье/состояние = ALLER (НЕ ÊTRE)"
+        },
+        {
+          "wrong": "Tu vien (без -s)",
+          "correct": "Tu viens",
+          "explanation": "Tu → viens (с -s, хотя она немая)"
+        },
+        {
+          "wrong": "Ils vient (единственное число)",
+          "correct": "Ils viennent",
+          "explanation": "Ils/elles → viennent (множественное число)"
+        },
+        {
+          "wrong": "Je vais de Moscou (для происхождения)",
+          "correct": "Je viens de Moscou",
+          "explanation": "Происхождение = VENIR DE (НЕ ALLER DE)"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "Планы на выходные",
+      "lines": [
+        {
+          "speaker": "Luc",
+          "text": "Salut Marie ! Ça va ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Ça va bien ! Tu vas où ce week-end ?"
+        },
+        {
+          "speaker": "Luc",
+          "text": "Je vais en Italie. Je vais visiter Rome. Et toi ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Moi, je viens de rentrer de vacances. Je viens de Grèce."
+        },
+        {
+          "speaker": "Luc",
+          "text": "Super ! Tu viens avec nous samedi ? Nous allons au cinéma."
+        },
+        {
+          "speaker": "Marie",
+          "text": "D'accord ! Je viens ! À quelle heure ?"
+        },
+        {
+          "speaker": "Luc",
+          "text": "Le film va commencer à 20h. Tu vas venir en métro ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Non, je vais venir à pied. J'habite près du cinéma."
+        }
+      ],
+      "translation": "Люк: Привет Мари! Как дела? | Мари: Хорошо! Куда ты едешь на выходных? | Люк: Я еду в Италию. Я посещу Рим. А ты? | Мари: А я только что вернулась из отпуска. Я приехала из Греции. | Люк: Супер! Ты идёшь с нами в субботу? Мы идём в кино. | Мари: Ладно! Я иду! Во сколько? | Люк: Фильм начнётся в 20:00. Ты приедешь на метро? | Мари: Нет, я приду пешком. Я живу рядом с кинотеатром."
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Обратите внимание: В диалоге использовано 10 форм ALLER и VENIR: Ça va, vas, vais (x2), viens (x3), allons, venir (x2) + конструкции futur proche (va commencer) и passé récent (viens de rentrer)."
+    },
+    {
+      "type": "usageList",
+      "title": "Мнемотехники для запоминания",
+      "items": [
+        {
+          "usage": "ALLER = 3 основы (визуализация направлений)",
+          "examples": [
+            "VA → вперёд (je vais, tu vas, il va)",
+            "ALL → все вместе (nous allons, vous allez)",
+            "V-ONT → они летят (ils vont — самые быстрые)"
+          ]
+        },
+        {
+          "usage": "VENIR = 2 основы (разделение на группы)",
+          "examples": [
+            "VIEN → я/ты/он/они (носовой звук [vjɛ̃])",
+            "VEN → мы/вы (без носового [vən])"
+          ]
+        },
+        {
+          "usage": "Временные конструкции (стрелка времени)",
+          "examples": [
+            "← VENIR DE (прошлое) | СЕЙЧАС | ALLER → (будущее)",
+            "Je viens de manger ← | | → Je vais manger",
+            "Только что поел ← | СЕЙЧАС | → Сейчас поем"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Leçon 9 : FAIRE et PRENDRE",
+          "url": "/lessons?slug=faire-et-prendre"
+        },
+        {
+          "title": "Leçon 4 : Les pronoms sujets",
+          "url": "/lessons?slug=les-pronoms-sujets-et-etre"
+        },
+        {
+          "title": "Leçon 14 : Les prépositions de lieu",
+          "url": "/lessons?slug=les-prepositions-de-lieu"
+        }
+      ]
+    }
+  ],
+
+  "blocks_en": [
+    {
+      "type": "mainTitle",
+      "text": "Verbs ALLER and VENIR: Movement and Time"
+    },
+    {
+      "type": "subtitle",
+      "text": "Two Essential Movement Verbs + Constructions for Future and Past"
+    },
+    {
+      "type": "quickSummary",
+      "title": "Key Concepts",
+      "keyForms": [
+        {
+          "form": "ALLER = to go",
+          "translation": "Je vais à Paris (I'm going to Paris)"
+        },
+        {
+          "form": "VENIR = to come",
+          "translation": "Je viens de Moscou (I'm from Moscow)"
+        },
+        {
+          "form": "Near future: ALLER + infinitive",
+          "translation": "Je vais manger (I'm going to eat)"
+        },
+        {
+          "form": "Recent past: VENIR DE + infinitive",
+          "translation": "Je viens de manger (I just ate)"
+        },
+        {
+          "form": "Both verbs are VERY irregular",
+          "translation": "Must memorize conjugations"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Conjugation of ALLER (to go)"
+    },
+    {
+      "type": "paragraph",
+      "text": "ALLER is one of the most irregular French verbs. It follows no logical pattern. The stem changes completely: va-, all-, v-."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "ALLER — Full Conjugation",
+      "rows": [
+        {
+          "pronoun": "je",
+          "form": "vais",
+          "pronunciation": "[vɛ]",
+          "translation": "I go",
+          "mnemonic": "Stem va- + ending -is"
+        },
+        {
+          "pronoun": "tu",
+          "form": "vas",
+          "pronunciation": "[va]",
+          "translation": "you go",
+          "mnemonic": "Stem va- + ending -s"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "va",
+          "pronunciation": "[va]",
+          "translation": "he/she/one goes",
+          "mnemonic": "Stem va- (no ending)"
+        },
+        {
+          "pronoun": "nous",
+          "form": "allons",
+          "pronunciation": "[alɔ̃]",
+          "translation": "we go",
+          "mnemonic": "⚠️ Completely different stem: all-"
+        },
+        {
+          "pronoun": "vous",
+          "form": "allez",
+          "pronunciation": "[ale]",
+          "translation": "you go",
+          "mnemonic": "Stem all- + ending -ez"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "vont",
+          "pronunciation": "[vɔ̃]",
+          "translation": "they go",
+          "mnemonic": "⚠️ Third stem: v- + nasal sound"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Mnemonic: 3 different stems = 3 groups → [va] (je/tu/il), [al] (nous/vous), [vɔ̃] (ils/elles)"
+    },
+    {
+      "type": "usageList",
+      "title": "Main Meanings of ALLER",
+      "items": [
+        {
+          "usage": "1. Physical movement (to go)",
+          "examples": [
+            "Je vais à Paris. (I'm going to Paris)",
+            "Tu vas au cinéma ? (Are you going to the cinema?)",
+            "Nous allons à l'école. (We're going to school)",
+            "Ils vont en France. (They're going to France)",
+            "⚠️ À + specific place / EN + feminine country or transport"
+          ]
+        },
+        {
+          "usage": "2. Health/state (Comment allez-vous ?)",
+          "examples": [
+            "Comment vas-tu ? (How are you? — informal)",
+            "Comment allez-vous ? (How are you? — formal)",
+            "Je vais bien, merci. (I'm fine, thanks)",
+            "Ça va ? — Ça va ! (How's it going? — Fine!)",
+            "Ça ne va pas. (Not so good / Bad)"
+          ],
+          "commonMistake": {
+            "wrong": "Comment êtes-vous ? (using ÊTRE)",
+            "correct": "Comment allez-vous ? (use ALLER for state)"
+          }
+        },
+        {
+          "usage": "3. To suit (clothes, colors)",
+          "examples": [
+            "Cette robe te va bien. (This dress suits you)",
+            "Le rouge me va. (Red suits me)",
+            "Ces chaussures vous vont ? (Do these shoes fit you?)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Near Future: ALLER + infinitive"
+    },
+    {
+      "type": "paragraph",
+      "text": "ALLER + infinitive = construction to express near future (something about to happen or planned). Equivalent to English 'going to'."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Examples of Near Future",
+      "rows": [
+        {
+          "pronoun": "Je vais manger.",
+          "form": "I'm going to eat.",
+          "pronunciation": "[ʒə vɛ mɑ̃ʒe]",
+          "translation": "Near future",
+          "mnemonic": "ALLER (conjugated) + MANGER (infinitive)"
+        },
+        {
+          "pronoun": "Tu vas partir ?",
+          "form": "Are you going to leave?",
+          "pronunciation": "[ty va paʁtiʁ]",
+          "translation": "Question about near future"
+        },
+        {
+          "pronoun": "Il va arriver.",
+          "form": "He's going to arrive.",
+          "pronunciation": "[il va aʁive]",
+          "translation": "About to happen"
+        },
+        {
+          "pronoun": "Nous allons étudier.",
+          "form": "We're going to study.",
+          "pronunciation": "[nuz‿alɔ̃ etydje]",
+          "translation": "Planned action"
+        },
+        {
+          "pronoun": "Vous allez travailler ?",
+          "form": "Are you going to work?",
+          "pronunciation": "[vuz‿ale tʁavaje]",
+          "translation": "Intention"
+        },
+        {
+          "pronoun": "Ils vont voyager.",
+          "form": "They're going to travel.",
+          "pronunciation": "[il vɔ̃ vwajaʒe]",
+          "translation": "Future plan"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "When to Use Near Future",
+      "items": [
+        {
+          "usage": "Immediate future (in a minute, today)",
+          "examples": [
+            "Je vais manger maintenant. (I'm going to eat now — right now)",
+            "Il va pleuvoir. (It's going to rain — sky is grey)",
+            "Nous allons partir dans 5 minutes. (We're leaving in 5 minutes)"
+          ]
+        },
+        {
+          "usage": "Plans and intentions",
+          "examples": [
+            "Je vais étudier ce soir. (I'm going to study tonight — plan)",
+            "Tu vas regarder le film ? (Are you going to watch the movie?)",
+            "Nous allons acheter une maison. (We're going to buy a house)"
+          ]
+        },
+        {
+          "usage": "Predictions (based on facts)",
+          "examples": [
+            "Attention, tu vas tomber ! (Watch out, you're going to fall! — visible)",
+            "Il va être en retard. (He's going to be late — obvious)",
+            "Ça va être difficile. (It's going to be difficult)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Conjugation of VENIR (to come)"
+    },
+    {
+      "type": "paragraph",
+      "text": "VENIR is also irregular but more predictable than ALLER. Two stems: vien- (singular) and ven- (plural)."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "VENIR — Full Conjugation",
+      "rows": [
+        {
+          "pronoun": "je",
+          "form": "viens",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "I come",
+          "mnemonic": "Stem vien- + ending -s"
+        },
+        {
+          "pronoun": "tu",
+          "form": "viens",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "you come",
+          "mnemonic": "Stem vien- + ending -s"
+        },
+        {
+          "pronoun": "il/elle/on",
+          "form": "vient",
+          "pronunciation": "[vjɛ̃]",
+          "translation": "he/she/one comes",
+          "mnemonic": "Stem vien- + ending -t"
+        },
+        {
+          "pronoun": "nous",
+          "form": "venons",
+          "pronunciation": "[vənɔ̃]",
+          "translation": "we come",
+          "mnemonic": "⚠️ Different stem: ven- + ending -ons"
+        },
+        {
+          "pronoun": "vous",
+          "form": "venez",
+          "pronunciation": "[vəne]",
+          "translation": "you come",
+          "mnemonic": "Stem ven- + ending -ez"
+        },
+        {
+          "pronoun": "ils/elles",
+          "form": "viennent",
+          "pronunciation": "[vjɛn]",
+          "translation": "they come",
+          "mnemonic": "Stem vien- + ending -nent"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Mnemonic: 2 stems → [vjɛ̃] (je/tu/il/ils with nasal sound), [vən] (nous/vous without nasal)"
+    },
+    {
+      "type": "usageList",
+      "title": "Main Meanings of VENIR",
+      "items": [
+        {
+          "usage": "1. Physical arrival (to come)",
+          "examples": [
+            "Je viens à la fête. (I'm coming to the party)",
+            "Tu viens avec nous ? (Are you coming with us?)",
+            "Il vient de Paris. (He's coming from Paris)",
+            "Nous venons demain. (We're coming tomorrow)",
+            "⚠️ VENIR DE + city/country = from where (origin)"
+          ]
+        },
+        {
+          "usage": "2. Origin (to be from)",
+          "examples": [
+            "Je viens de Russie. (I'm from Russia — born there)",
+            "D'où viens-tu ? (Where are you from?)",
+            "Elle vient d'une famille riche. (She comes from a rich family)",
+            "Ce vin vient de France. (This wine is from France)"
+          ]
+        },
+        {
+          "usage": "3. Invitation (Viens ! = Come here!)",
+          "examples": [
+            "Viens ici ! (Come here!)",
+            "Venez dîner ce soir ! (Come have dinner tonight!)",
+            "Tu viens ? (Are you coming? — invitation)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Recent Past: VENIR DE + infinitive"
+    },
+    {
+      "type": "paragraph",
+      "text": "VENIR DE + infinitive = construction to express recent past (something that just happened). Equivalent to English 'just + past tense'."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Examples of Recent Past",
+      "rows": [
+        {
+          "pronoun": "Je viens de manger.",
+          "form": "I just ate.",
+          "pronunciation": "[ʒə vjɛ̃ də mɑ̃ʒe]",
+          "translation": "Recent past",
+          "mnemonic": "VENIR (conjugated) + DE + MANGER (infinitive)"
+        },
+        {
+          "pronoun": "Tu viens de partir ?",
+          "form": "Did you just leave?",
+          "pronunciation": "[ty vjɛ̃ də paʁtiʁ]",
+          "translation": "Question about recent past"
+        },
+        {
+          "pronoun": "Il vient d'arriver.",
+          "form": "He just arrived.",
+          "pronunciation": "[il vjɛ̃ daʁive]",
+          "translation": "Literally just now"
+        },
+        {
+          "pronoun": "Nous venons d'étudier.",
+          "form": "We just studied.",
+          "pronunciation": "[nu vənɔ̃ detydje]",
+          "translation": "Finished recently"
+        },
+        {
+          "pronoun": "Vous venez de travailler ?",
+          "form": "Did you just work?",
+          "pronunciation": "[vu vəne də tʁavaje]",
+          "translation": "Just finished?"
+        },
+        {
+          "pronoun": "Ils viennent de voyager.",
+          "form": "They just traveled.",
+          "pronunciation": "[il vjɛn də vwajaʒe]",
+          "translation": "Recently returned"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "When to Use Recent Past",
+      "items": [
+        {
+          "usage": "Just happened (seconds/minutes ago)",
+          "examples": [
+            "Je viens de finir. (I just finished — literally now)",
+            "Il vient de téléphoner. (He just called — a minute ago)",
+            "Elle vient de sortir. (She just left)"
+          ]
+        },
+        {
+          "usage": "Explaining current situation",
+          "examples": [
+            "Je suis fatigué, je viens de courir. (I'm tired, I just ran)",
+            "Il est content, il viens de réussir. (He's happy, he just passed)",
+            "Nous ne pouvons pas, nous venons de manger. (We can't, we just ate)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "ALLER vs. VENIR: Comparison"
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Key Differences",
+      "rows": [
+        {
+          "wrong": "Je viens à Paris (for 'I'm going to Paris')",
+          "correct": "Je vais à Paris",
+          "explanation": "ALLER = movement TO place, VENIR = movement FROM place"
+        },
+        {
+          "wrong": "Je vais de Russie (for 'I'm from Russia')",
+          "correct": "Je viens de Russie",
+          "explanation": "VENIR DE = origin, ALLER À = direction"
+        },
+        {
+          "wrong": "Comment venez-vous ? (for 'How are you?')",
+          "correct": "Comment allez-vous ?",
+          "explanation": "Only ALLER is used for health question"
+        },
+        {
+          "wrong": "Ça vient ? (for 'How's it going?')",
+          "correct": "Ça va ?",
+          "explanation": "Only ALLER in colloquial 'Ça va'"
+        },
+        {
+          "wrong": "Je vais manger (for 'I just ate')",
+          "correct": "Je viens de manger",
+          "explanation": "ALLER + inf = future, VENIR DE + inf = past"
+        },
+        {
+          "wrong": "Je viens manger (for 'I'm going to eat')",
+          "correct": "Je vais manger",
+          "explanation": "Near future = ALLER + infinitive (NOT VENIR!)"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Prepositions with ALLER and VENIR"
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Preposition Rules",
+      "rows": [
+        {
+          "pronoun": "ALLER À + city/place",
+          "form": "Je vais à Paris",
+          "pronunciation": "",
+          "translation": "I'm going to Paris",
+          "mnemonic": "À = direction TO specific place"
+        },
+        {
+          "pronoun": "ALLER EN + feminine country",
+          "form": "Je vais en France",
+          "pronunciation": "",
+          "translation": "I'm going to France",
+          "mnemonic": "EN = countries ending in -e (France, Russie, Italie)"
+        },
+        {
+          "pronoun": "ALLER AU + masculine country",
+          "form": "Je vais au Japon",
+          "pronunciation": "",
+          "translation": "I'm going to Japan",
+          "mnemonic": "AU = à + le (masculine countries)"
+        },
+        {
+          "pronoun": "ALLER EN + transport",
+          "form": "Je vais en train",
+          "pronunciation": "",
+          "translation": "I'm going by train",
+          "mnemonic": "EN = transport WITHOUT article"
+        },
+        {
+          "pronoun": "VENIR DE + city/country",
+          "form": "Je viens de Moscou",
+          "pronunciation": "",
+          "translation": "I'm from Moscow",
+          "mnemonic": "DE = origin, from where"
+        },
+        {
+          "pronoun": "VENIR AVEC + person",
+          "form": "Je viens avec Marie",
+          "pronunciation": "",
+          "translation": "I'm coming with Marie",
+          "mnemonic": "AVEC = together with someone"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Top 10 Mistakes with ALLER and VENIR",
+      "rows": [
+        {
+          "wrong": "Je vas (copying ending from 'tu vas')",
+          "correct": "Je vais",
+          "explanation": "Je → vais (NOT vas!)"
+        },
+        {
+          "wrong": "Nous allent (ending from ils/elles)",
+          "correct": "Nous allons",
+          "explanation": "Nous → allons (unique ending)"
+        },
+        {
+          "wrong": "Je vais au France",
+          "correct": "Je vais en France",
+          "explanation": "Countries ending in -e = EN (NOT AU)"
+        },
+        {
+          "wrong": "Je vais dans Paris",
+          "correct": "Je vais à Paris",
+          "explanation": "Cities = À (NOT dans!)"
+        },
+        {
+          "wrong": "Je vais manger (for past)",
+          "correct": "Je viens de manger (just ate)",
+          "explanation": "ALLER + inf = future, VENIR DE + inf = past"
+        },
+        {
+          "wrong": "Je viens manger (for future)",
+          "correct": "Je vais manger",
+          "explanation": "Near future = ALLER + infinitive"
+        },
+        {
+          "wrong": "Comment êtes-vous ? (for 'How are you?')",
+          "correct": "Comment allez-vous ?",
+          "explanation": "Health/state = ALLER (NOT ÊTRE)"
+        },
+        {
+          "wrong": "Tu vien (without -s)",
+          "correct": "Tu viens",
+          "explanation": "Tu → viens (with -s, even if silent)"
+        },
+        {
+          "wrong": "Ils vient (singular)",
+          "correct": "Ils viennent",
+          "explanation": "Ils/elles → viennent (plural)"
+        },
+        {
+          "wrong": "Je vais de Moscou (for origin)",
+          "correct": "Je viens de Moscou",
+          "explanation": "Origin = VENIR DE (NOT ALLER DE)"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "Weekend Plans",
+      "lines": [
+        {
+          "speaker": "Luc",
+          "text": "Salut Marie ! Ça va ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Ça va bien ! Tu vas où ce week-end ?"
+        },
+        {
+          "speaker": "Luc",
+          "text": "Je vais en Italie. Je vais visiter Rome. Et toi ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Moi, je viens de rentrer de vacances. Je viens de Grèce."
+        },
+        {
+          "speaker": "Luc",
+          "text": "Super ! Tu viens avec nous samedi ? Nous allons au cinéma."
+        },
+        {
+          "speaker": "Marie",
+          "text": "D'accord ! Je viens ! À quelle heure ?"
+        },
+        {
+          "speaker": "Luc",
+          "text": "Le film va commencer à 20h. Tu vas venir en métro ?"
+        },
+        {
+          "speaker": "Marie",
+          "text": "Non, je vais venir à pied. J'habite près du cinéma."
+        }
+      ],
+      "translation": "Luc: Hi Marie! How are you? | Marie: I'm good! Where are you going this weekend? | Luc: I'm going to Italy. I'm going to visit Rome. And you? | Marie: Me, I just came back from vacation. I'm from Greece. | Luc: Great! Are you coming with us Saturday? We're going to the cinema. | Marie: Okay! I'm coming! What time? | Luc: The movie's going to start at 8pm. Are you going to come by metro? | Marie: No, I'm going to walk. I live near the cinema."
+    },
+    {
+      "type": "paragraph",
+      "text": "💡 Notice: The dialogue uses 10 forms of ALLER and VENIR: Ça va, vas, vais (x2), viens (x3), allons, venir (x2) + near future (va commencer) and recent past (viens de rentrer) constructions."
+    },
+    {
+      "type": "usageList",
+      "title": "Mnemonics for Memorization",
+      "items": [
+        {
+          "usage": "ALLER = 3 stems (visualize directions)",
+          "examples": [
+            "VA → forward (je vais, tu vas, il va)",
+            "ALL → all together (nous allons, vous allez)",
+            "V-ONT → they fly (ils vont — fastest)"
+          ]
+        },
+        {
+          "usage": "VENIR = 2 stems (split into groups)",
+          "examples": [
+            "VIEN → I/you/he/they (nasal sound [vjɛ̃])",
+            "VEN → we/you (without nasal [vən])"
+          ]
+        },
+        {
+          "usage": "Time constructions (time arrow)",
+          "examples": [
+            "← VENIR DE (past) | NOW | ALLER → (future)",
+            "Je viens de manger ← | | → Je vais manger",
+            "I just ate ← | NOW | → I'm going to eat"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "relatedTopics",
+      "links": [
+        {
+          "title": "Lesson 9: FAIRE and PRENDRE",
+          "url": "/lessons?slug=faire-et-prendre"
+        },
+        {
+          "title": "Lesson 4: Subject Pronouns",
+          "url": "/lessons?slug=les-pronoms-sujets-et-etre"
+        },
+        {
+          "title": "Lesson 14: Prepositions of Place",
+          "url": "/lessons?slug=les-prepositions-de-lieu"
+        }
+      ]
+    }
+  ]
+}

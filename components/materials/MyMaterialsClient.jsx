@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useQuery } from '@tanstack/react-query'
 import SectionCard from '@/components/materials/SectionCard'
 import MaterialsTable from '@/components/materials/MaterialsTable'

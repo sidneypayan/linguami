@@ -18,7 +18,7 @@ const BottomNav = () => {
 	const locale = useLocale()
 	const t = useTranslations('common')
 	const { isDark } = useThemeMode()
-	const { isUserLoggedIn, userLearningLanguage, isBootstrapping, user } = useUserContext()
+	const { isUserLoggedIn, userLearningLanguage, isBootstrapping, user, isUserAdmin } = useUserContext()
 	const userId = user?.id
 
 	// React Query: Fetch user words (only for logged-in users)
@@ -44,8 +44,8 @@ const BottomNav = () => {
 	// Total words count (user or guest)
 	const wordsCount = isUserLoggedIn ? user_words.length : guestWordsCount
 
-	// Check if lessons are available
-	const hasLessons = userLearningLanguage === 'fr'
+	// Check if lessons are available (admin only for now)
+	const hasLessons = userLearningLanguage === 'fr' && isUserAdmin
 
 	// Determine active value based on pathname
 	const getActiveValue = () => {

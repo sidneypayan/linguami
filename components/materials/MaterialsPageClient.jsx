@@ -13,6 +13,7 @@ import { logger } from '@/utils/logger'
 import { getMaterialsByLanguageAction, getBooksByLanguageAction } from '@/app/actions/materials'
 import { Link } from '@/i18n/navigation'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
+import { getMaterialsFilters, saveMaterialsFilters, migrateLegacyFilters } from '@/utils/materialsFilters'
 import {
 	Search,
 	GraduationCap,
@@ -1049,12 +1050,17 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		prevLearningLanguageRef.current = userLearningLanguage
 	}, [userLearningLanguage, displayMode])
 
-	// Load display mode preference
+	// Load display mode preference and migrate legacy filters
 	useEffect(() => {
 		setIsMounted(true)
-		const saved = localStorage.getItem('materialsDisplayMode')
-		if (saved && (saved === 'category' || saved === 'list')) {
-			setDisplayMode(saved)
+
+		// Migrate old filter structure to new unified structure
+		migrateLegacyFilters()
+
+		// Load filters from unified structure
+		const filters = getMaterialsFilters()
+		if (filters.viewMode && (filters.viewMode === 'category' || filters.viewMode === 'list')) {
+			setDisplayMode(filters.viewMode)
 		}
 		setIsDisplayModeLoaded(true)
 
@@ -1069,7 +1075,7 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 	// Save display mode preference
 	useEffect(() => {
 		if (isDisplayModeLoaded) {
-			localStorage.setItem('materialsDisplayMode', displayMode)
+			saveMaterialsFilters({ viewMode: displayMode })
 		}
 	}, [displayMode, isDisplayModeLoaded])
 
@@ -1100,13 +1106,12 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 
 		if (shouldRestore) {
 			try {
-				const savedFilters = localStorage.getItem('materials_list_filters')
-				if (savedFilters) {
-					const filters = JSON.parse(savedFilters)
-					if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm)
-					if (filters.selectedLevel !== undefined) setSelectedLevel(filters.selectedLevel)
-					if (filters.selectedStatus !== undefined) setSelectedStatus(filters.selectedStatus)
-					if (filters.selectedSection !== undefined) setSelectedSection(filters.selectedSection)
+				const filters = getMaterialsFilters()
+				if (filters) {
+					if (filters.search !== undefined) setSearchTerm(filters.search)
+					if (filters.level !== undefined) setSelectedLevel(filters.level)
+					if (filters.status !== undefined) setSelectedStatus(filters.status)
+					if (filters.section !== undefined) setSelectedSection(filters.section)
 					if (filters.viewMode !== undefined) setViewMode(filters.viewMode)
 				} else if (!hasAppliedDefaultFilter) {
 					const isSameLevel = userLevel === selectedLevel
@@ -1116,7 +1121,7 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 					}
 				}
 			} catch (error) {
-				logger.error('Error parsing filters from localStorage:', error)
+				logger.error('Error loading filters from localStorage:', error)
 			}
 			setHasAppliedDefaultFilter(true)
 		}
@@ -1128,9 +1133,14 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		if (displayMode !== 'list') return
 		if (!hasAppliedDefaultFilter) return
 
-		const filters = { searchTerm, selectedLevel, selectedStatus, selectedSection, viewMode }
 		try {
-			localStorage.setItem('materials_list_filters', JSON.stringify(filters))
+			saveMaterialsFilters({
+				search: searchTerm,
+				level: selectedLevel,
+				status: selectedStatus,
+				section: selectedSection,
+				viewMode: viewMode,
+			})
 		} catch (error) {
 			logger.error('Error saving filters to localStorage:', error)
 		}
@@ -1239,7 +1249,9 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		const params = new URLSearchParams(searchParams.toString())
 		if (page === 1) params.delete('page')
 		else params.set('page', page.toString())
-		const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+		// Remove locale from pathname to avoid duplication when using i18n router
+		const pathnameWithoutLocale = pathname.replace(`/${locale}`, '')
+		const newUrl = params.toString() ? `${pathnameWithoutLocale}?${params.toString()}` : pathnameWithoutLocale
 		router.push(newUrl, { scroll: false })
 	}
 

@@ -118,6 +118,170 @@ const Lesson = ({ lesson }) => {
 										))}
 									</div>
 								)
+							case 'quickSummary':
+								return (
+									<div
+										key={index}
+										className="mb-8 p-6 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200">
+										<h4 className="text-lg font-bold text-emerald-800 mb-4 flex items-center gap-2">
+											<span className="text-2xl">⚡</span>
+											{block.title || 'En un coup d\'œil'}
+										</h4>
+										<div className="grid gap-3">
+											{block.keyForms?.map((form, i) => (
+												<div key={i} className="flex items-center gap-3 text-slate-700">
+													<span className="font-bold text-indigo-600 min-w-[80px]">{form.form}</span>
+													<span className="text-slate-400">→</span>
+													<span>{form.translation}</span>
+												</div>
+											))}
+										</div>
+									</div>
+								)
+							case 'conjugationTable':
+								return (
+									<div key={index} className="mb-8">
+										<h3 className="text-xl font-bold text-slate-800 mb-4">{block.title || 'Conjugaison'}</h3>
+										<div className="overflow-x-auto">
+											<table className="w-full border-collapse">
+												<thead>
+													<tr className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+														<th className="p-3 text-left">Pronom</th>
+														<th className="p-3 text-left">Forme</th>
+														<th className="p-3 text-left">Prononciation</th>
+														<th className="p-3 text-left">Traduction</th>
+													</tr>
+												</thead>
+												<tbody>
+													{block.rows?.map((row, i) => (
+														<tr key={i} className={i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}>
+															<td className="p-3 font-semibold text-indigo-600">{row.pronoun}</td>
+															<td className="p-3 font-bold text-slate-800">{row.form}</td>
+															<td className="p-3 text-slate-600 italic">{row.pronunciation}</td>
+															<td className="p-3 text-slate-600">{row.translation}</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+										{block.rows?.some(r => r.mnemonic) && (
+											<div className="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded">
+												<p className="text-sm font-semibold text-amber-800 mb-2">💡 Mnémotechniques</p>
+												{block.rows
+													.filter(r => r.mnemonic)
+													.map((row, i) => (
+														<p key={i} className="text-sm text-slate-600 mb-1">
+															<strong>{row.pronoun} {row.form}</strong> : {row.mnemonic}
+														</p>
+													))}
+											</div>
+										)}
+									</div>
+								)
+							case 'usageList':
+								return (
+									<div key={index} className="mb-8">
+										<h3 className="text-xl font-bold text-slate-800 mb-4">{block.title || 'Utilisations'}</h3>
+										{block.items?.map((item, i) => (
+											<div key={i} className="mb-6 p-5 rounded-xl border-2 border-slate-200 bg-white hover:border-indigo-300 transition-colors">
+												<h4 className="font-bold text-indigo-600 mb-3">{item.usage}</h4>
+												<div className="space-y-2 mb-3">
+													{item.examples?.map((ex, j) => (
+														<p key={j} className="text-slate-600 pl-4 border-l-2 border-indigo-200">
+															{ex}
+														</p>
+													))}
+												</div>
+												{item.commonMistake && (
+													<div className="mt-3 p-3 bg-red-50 border-l-4 border-red-400 rounded">
+														<p className="text-sm font-semibold text-red-800 mb-1">⚠️ Erreur fréquente</p>
+														<p className="text-sm text-slate-600">
+															<span className="line-through text-red-600">{item.commonMistake.wrong}</span>
+															{' → '}
+															<span className="text-green-600 font-semibold">{item.commonMistake.correct}</span>
+														</p>
+													</div>
+												)}
+											</div>
+										))}
+									</div>
+								)
+							case 'mistakesTable':
+								return (
+									<div key={index} className="mb-8">
+										<h3 className="text-xl font-bold text-slate-800 mb-4">{block.title || 'Erreurs courantes'}</h3>
+										<div className="space-y-3">
+											{block.rows?.map((row, i) => (
+												<div key={i} className="p-4 rounded-lg border-2 border-red-200 bg-red-50">
+													<div className="flex items-start gap-3 mb-2">
+														<span className="text-2xl">❌</span>
+														<span className="flex-1 text-slate-700 line-through">{row.wrong}</span>
+													</div>
+													<div className="flex items-start gap-3 mb-2">
+														<span className="text-2xl">✅</span>
+														<span className="flex-1 font-semibold text-green-700">{row.correct}</span>
+													</div>
+													<p className="text-sm text-slate-600 pl-10">{row.explanation}</p>
+												</div>
+											))}
+										</div>
+									</div>
+								)
+							case 'miniDialogue':
+								return (
+									<div key={index} className="mb-8 p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+										<h4 className="text-lg font-bold text-blue-800 mb-4">{block.title || 'Exemple en contexte'}</h4>
+										<div className="space-y-3">
+											{block.lines?.map((line, i) => (
+												<div key={i} className="flex gap-3">
+													<span className="font-bold text-indigo-600 min-w-[80px]">{line.speaker}</span>
+													<span className="text-slate-700">{line.text}</span>
+												</div>
+											))}
+										</div>
+										{block.translation && (
+											<p className="mt-4 pt-4 border-t border-blue-300 text-sm text-slate-600 italic">
+												{block.translation}
+											</p>
+										)}
+									</div>
+								)
+							case 'relatedTopics':
+								return (
+									<div key={index} className="mb-8 p-5 rounded-xl bg-slate-50 border-2 border-slate-200">
+										<h4 className="text-lg font-bold text-slate-800 mb-3">🔗 Sujets connexes</h4>
+										<ul className="space-y-2">
+											{block.links?.map((link, i) => (
+												<li key={i}>
+													<a
+														href={link.url}
+														className="text-indigo-600 hover:text-indigo-800 hover:underline font-medium">
+														→ {link.title}
+													</a>
+												</li>
+											))}
+										</ul>
+									</div>
+								)
+							case 'practiceLinks':
+								return (
+									<div key={index} className="mb-8 p-5 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
+										<h4 className="text-lg font-bold text-purple-800 mb-3">🎯 Entraînez-vous</h4>
+										<p className="text-slate-600 mb-3">{block.description}</p>
+										<ul className="space-y-2">
+											{block.links?.map((link, i) => (
+												<li key={i}>
+													<a
+														href={link.url}
+														className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium">
+														<span>{link.title}</span>
+														<span>→</span>
+													</a>
+												</li>
+											))}
+										</ul>
+									</div>
+								)
 							default:
 								return null
 						}
