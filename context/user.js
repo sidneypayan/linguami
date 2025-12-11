@@ -610,6 +610,13 @@ const UserProvider = ({ children }) => {
 					const updated = Array.isArray(data) ? data[0] : data
 					if (updated) {
 						setUserProfile(prev => ({ ...prev, ...updated }))
+						// Set spoken_language cookie for middleware
+						try {
+							localStorage.setItem('spoken_language', spokenLanguage)
+							if (typeof document !== 'undefined') {
+								document.cookie = `spoken_language=${spokenLanguage}; path=/; max-age=31536000; SameSite=Lax`
+							}
+						} catch {}
 
 						if (newLearningLang) {
 							setUserLearningLanguage(newLearningLang)
@@ -625,6 +632,9 @@ const UserProvider = ({ children }) => {
 					// Invité
 					try {
 						localStorage.setItem('spoken_language', spokenLanguage)
+					if (typeof document !== 'undefined') {
+							document.cookie = `spoken_language=${spokenLanguage}; path=/; max-age=31536000; SameSite=Lax`
+						}
 						if (newLearningLang) {
 							setUserLearningLanguage(newLearningLang)
 							localStorage.setItem('learning_language', newLearningLang)
