@@ -175,7 +175,7 @@ export function FlashcardReviewCard({
 								<span className={cn(
 									'absolute -top-2 left-3 text-2xl font-serif',
 									isDark ? 'text-violet-500/30' : 'text-violet-400/40'
-								)}>"</span>
+								)}>&ldquo;</span>
 								<p className={cn(
 									'text-sm sm:text-base text-center italic',
 									isDark ? 'text-slate-400' : 'text-slate-500'
@@ -185,7 +185,7 @@ export function FlashcardReviewCard({
 								<span className={cn(
 									'absolute -bottom-3 right-3 text-2xl font-serif',
 									isDark ? 'text-violet-500/30' : 'text-violet-400/40'
-								)}>"</span>
+								)}>&rdquo;</span>
 							</div>
 						)}
 
