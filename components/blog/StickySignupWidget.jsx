@@ -74,8 +74,7 @@ export default function StickySignupWidget() {
 			isDark
 				? 'bg-slate-900/95 border-violet-500/30'
 				: 'bg-white/95 border-violet-600/20',
-			'shadow-2xl',
-			isDark ? 'shadow-violet-500/20' : 'shadow-violet-400/30',
+			!isDark && 'shadow-2xl shadow-violet-400/30',
 			'z-50',
 			'animate-in slide-in-from-bottom-10 duration-500'
 		)}>

@@ -284,8 +284,7 @@ const MaterialsFilterBar = ({
 			'relative rounded-2xl p-4 mb-8 overflow-visible',
 			'border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-200/50 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
+			!isDark && 'shadow-lg shadow-slate-200/50'
 		)}>
 			<div className="space-y-4">
 				{/* Search + View Toggle */}

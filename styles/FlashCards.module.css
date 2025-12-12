@@ -46,7 +46,7 @@
 /* Center info - Cards counter */
 .centerInfo {
 	text-align: center;
-	margin-top: 5rem;
+	margin-top: 6rem;
 	margin-bottom: 1rem;
 }
 
@@ -140,9 +140,9 @@
 .reverseBtn,
 .settingsBtn {
 	padding: 0.6rem 1.2rem;
-	background: transparent;
-	border: 1px solid #ddd;
-	border-radius: 25px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
 	color: #667eea;
 	font-weight: 600;
 	font-size: 0.95rem;
@@ -151,12 +151,16 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .reverseBtn:hover,
 .settingsBtn:hover {
-	background: #f5f5f5;
+	background: #667eea;
 	border-color: #667eea;
+	color: white;
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	transform: translateY(-1px);
 }
 
 /* Settings Panel */
@@ -243,7 +247,7 @@
 .translatedWord {
 	text-align: center;
 	font-weight: 800;
-	margin-bottom: 1.5rem;
+	margin-bottom: 0.75rem;
 	line-height: 1.2;
 }
 
@@ -367,20 +371,23 @@
 	justify-content: center;
 	margin: 1.5rem auto 0;
 	padding: 0.6rem 1.2rem;
-	background: transparent;
-	border: 1px solid #ddd;
-	border-radius: 20px;
-	color: #6b7280;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	border-radius: 12px;
+	color: #ef4444;
 	font-size: 0.9rem;
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .suspendBtn:hover {
-	background: #ff6b6b;
-	border-color: #ff6b6b;
+	background: #ef4444;
+	border-color: #ef4444;
 	color: white;
+	box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+	transform: translateY(-1px);
 }
 
 /* Practice & Close Buttons */
@@ -507,12 +514,12 @@
 
 	/* Center info on mobile */
 	.centerInfo {
-		margin-top: 4rem;
+		margin-top: 6rem;
 		margin-bottom: 0.5rem;
 	}
 
 	.wordsContainer {
-		margin-top: 2vh;
+		margin-top: 0.5vh;
 		padding: 1.5rem 1rem 6rem 1rem;
 		width: 100%;
 		border-radius: 0;
@@ -661,8 +668,8 @@
 }
 
 .containerDark .wordsContainer {
-	background: #1e293b;
-	border-color: #334155;
+	background: transparent;
+	border-color: transparent;
 }
 
 .containerDark .wordsContainer p {
@@ -715,15 +722,18 @@
 
 .containerDark .reverseBtn,
 .containerDark .settingsBtn {
-	background: transparent;
+	background: #1e293b;
 	border-color: #475569;
 	color: #a78bfa;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .containerDark .reverseBtn:hover,
 .containerDark .settingsBtn:hover {
-	background: #334155;
+	background: #8b5cf6;
 	border-color: #8b5cf6;
+	color: white;
+	box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .containerDark .closeBtn {
@@ -745,15 +755,17 @@
 }
 
 .containerDark .suspendBtn {
-	background: transparent;
+	background: #1e293b;
 	border-color: #475569;
-	color: #94a3b8;
+	color: #f87171;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .containerDark .suspendBtn:hover {
-	background: #ff6b6b;
-	border-color: #ff6b6b;
+	background: #ef4444;
+	border-color: #ef4444;
 	color: white;
+	box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .containerDark .flashcardsTitle {

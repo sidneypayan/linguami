@@ -49,7 +49,7 @@ const Footer = ({ className }) => {
 						<div className="flex items-center justify-center md:justify-start gap-2 mb-3">
 							<Sparkles className="w-5 h-5 text-amber-400" />
 							<h2 className={cn(
-								'text-3xl md:text-4xl font-black',
+								'text-3xl md:text-4xl font-black pb-1',
 								'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400',
 								'bg-clip-text text-transparent',
 								'drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]'

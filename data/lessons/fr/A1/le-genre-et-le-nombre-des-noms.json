@@ -411,7 +411,7 @@
         },
         {
           "form": "Ending clues",
-          "translation": "-tion, -té → feminine | -eau, -age → masculine"
+          "translation": "-tion, -té, -ette → feminine | -eau, -age → masculine"
         },
         {
           "form": "Plural = +s",
@@ -424,8 +424,328 @@
       ]
     },
     {
+      "type": "title",
+      "text": "Masculine and Feminine: How to Tell?"
+    },
+    {
       "type": "paragraph",
-      "text": "Unlike English, every French noun has a grammatical gender (masculine or feminine). This affects articles, adjectives, and pronouns used with the noun."
+      "text": "In French, every noun has a gender: masculine (masculin) or feminine (féminin). Unlike in some languages, gender is often not related to biological sex. For example, 'table' (table) is feminine, while 'livre' (book) is masculine."
+    },
+    {
+      "type": "usageList",
+      "title": "Endings that Indicate Feminine Gender",
+      "items": [
+        {
+          "usage": "-tion, -sion",
+          "examples": [
+            "la nation (nation)",
+            "la passion (passion)",
+            "la solution (solution)",
+            "EXCEPTION: le bastion (bastion)"
+          ]
+        },
+        {
+          "usage": "-té, -tié",
+          "examples": [
+            "la liberté (freedom)",
+            "la beauté (beauty)",
+            "la moitié (half)",
+            "EXCEPTIONS: le côté (side), le comité (committee), le pâté (pâté)"
+          ]
+        },
+        {
+          "usage": "-ette",
+          "examples": [
+            "la baguette (baguette)",
+            "la cigarette (cigarette)",
+            "la serviette (napkin, towel)"
+          ]
+        },
+        {
+          "usage": "-ence, -ance",
+          "examples": [
+            "la différence (difference)",
+            "la France (France)",
+            "la présence (presence)"
+          ]
+        },
+        {
+          "usage": "-ure",
+          "examples": [
+            "la voiture (car)",
+            "la culture (culture)",
+            "la nature (nature)"
+          ]
+        },
+        {
+          "usage": "-ée",
+          "examples": [
+            "la journée (day)",
+            "la soirée (evening)",
+            "EXCEPTIONS: le musée (museum), le lycée (high school)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "Endings that Indicate Masculine Gender",
+      "items": [
+        {
+          "usage": "-eau",
+          "examples": [
+            "le chapeau (hat)",
+            "le bureau (office, desk)",
+            "le château (castle)",
+            "EXCEPTION: l'eau (water) — feminine!"
+          ]
+        },
+        {
+          "usage": "-age",
+          "examples": [
+            "le fromage (cheese)",
+            "le garage (garage)",
+            "le message (message)",
+            "EXCEPTIONS: la page (page), la plage (beach), la rage (rabies), la cage (cage), l'image (image)"
+          ]
+        },
+        {
+          "usage": "-ment",
+          "examples": [
+            "le gouvernement (government)",
+            "le moment (moment)",
+            "le document (document)"
+          ]
+        },
+        {
+          "usage": "-phone",
+          "examples": [
+            "le téléphone (telephone)",
+            "le microphone (microphone)",
+            "le saxophone (saxophone)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Gender by Category",
+      "rows": [
+        {
+          "pronoun": "Languages",
+          "form": "MASCULINE",
+          "translation": "le français, le russe, l'anglais"
+        },
+        {
+          "pronoun": "Trees",
+          "form": "MASCULINE",
+          "translation": "le chêne (oak), le pin (pine)"
+        },
+        {
+          "pronoun": "Metals",
+          "form": "MASCULINE",
+          "translation": "le fer (iron), l'or (gold)"
+        },
+        {
+          "pronoun": "Days of week",
+          "form": "MASCULINE",
+          "translation": "le lundi, le mardi"
+        },
+        {
+          "pronoun": "Months",
+          "form": "MASCULINE",
+          "translation": "janvier, février"
+        },
+        {
+          "pronoun": "Sciences in -ie",
+          "form": "FEMININE",
+          "translation": "la chimie, la biologie, la géographie"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Tricky Words (non-obvious gender)",
+      "rows": [
+        {
+          "wrong": "Le page (page)",
+          "correct": "LA page",
+          "explanation": "Exception to the -age rule"
+        },
+        {
+          "wrong": "La musée",
+          "correct": "LE musée",
+          "explanation": "Exception to the -ée rule"
+        },
+        {
+          "wrong": "Le eau",
+          "correct": "L'eau (feminine)",
+          "explanation": "Exception to the -eau rule"
+        },
+        {
+          "wrong": "La groupe",
+          "correct": "LE groupe",
+          "explanation": "-e doesn't always mean feminine"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Forming the Plural"
+    },
+    {
+      "type": "paragraph",
+      "text": "In most cases, the plural is formed by adding -s to the singular form. However, there are important exceptions to remember."
+    },
+    {
+      "type": "usageList",
+      "title": "Plural Formation Rules",
+      "items": [
+        {
+          "usage": "General rule: + s",
+          "examples": [
+            "le chat → les chats (cats)",
+            "la table → les tables (tables)",
+            "l'ami → les amis (friends)",
+            "⚠️ Pronunciation does NOT change! [sha] and [sha]"
+          ],
+          "commonMistake": {
+            "wrong": "Pronouncing the final -s",
+            "correct": "chat [sha] = chats [sha], the letter s is silent"
+          }
+        },
+        {
+          "usage": "Words ending in -s, -x, -z → no change",
+          "examples": [
+            "le bras → les bras (arms)",
+            "la voix → les voix (voices)",
+            "le nez → les nez (noses)",
+            "le fils → les fils (sons)"
+          ]
+        },
+        {
+          "usage": "Words ending in -eau, -eu → + x",
+          "examples": [
+            "le chapeau → les chapeaux (hats)",
+            "le bureau → les bureaux (offices)",
+            "le cheveu → les cheveux (hair)",
+            "EXCEPTIONS: le pneu → les pneus (tires), le bleu → les bleus (bruises)"
+          ]
+        },
+        {
+          "usage": "Words ending in -al → -aux",
+          "examples": [
+            "le cheval → les chevaux (horses)",
+            "l'animal → les animaux (animals)",
+            "le journal → les journaux (newspapers)",
+            "EXCEPTIONS: le festival → les festivals, le bal → les bals"
+          ]
+        },
+        {
+          "usage": "Words ending in -ou → usually +s",
+          "examples": [
+            "le trou → les trous (holes)",
+            "BUT 7 exceptions take -x:",
+            "bijou → bijoux (jewels)",
+            "caillou → cailloux (pebbles)",
+            "chou → choux (cabbage)",
+            "genou → genoux (knees)",
+            "hibou → hiboux (owls)",
+            "joujou → joujoux (toys)",
+            "pou → poux (lice)"
+          ]
+        },
+        {
+          "usage": "Words ending in -ail → usually +s",
+          "examples": [
+            "le détail → les détails (details)",
+            "BUT some → -aux:",
+            "le travail → les travaux (works)",
+            "le vitrail → les vitraux (stained glass windows)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Special Plural Forms",
+      "rows": [
+        {
+          "pronoun": "œil",
+          "form": "yeux",
+          "translation": "eye → eyes",
+          "mnemonic": "Completely changes!"
+        },
+        {
+          "pronoun": "monsieur",
+          "form": "messieurs",
+          "translation": "sir/mister → sirs/gentlemen"
+        },
+        {
+          "pronoun": "madame",
+          "form": "mesdames",
+          "translation": "madam → madams/ladies"
+        },
+        {
+          "pronoun": "mademoiselle",
+          "form": "mesdemoiselles",
+          "translation": "miss → misses"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Common Plural Mistakes",
+      "rows": [
+        {
+          "wrong": "les chevals",
+          "correct": "les chevaux",
+          "explanation": "-al → -aux (not just +s)"
+        },
+        {
+          "wrong": "les chapeaus",
+          "correct": "les chapeaux",
+          "explanation": "-eau → -eaux (not +s)"
+        },
+        {
+          "wrong": "les travails",
+          "correct": "les travaux",
+          "explanation": "Exception: travail → travaux"
+        },
+        {
+          "wrong": "les œils",
+          "correct": "les yeux",
+          "explanation": "Suppletive form (completely different word)"
+        },
+        {
+          "wrong": "Pronouncing les chatS [shats]",
+          "correct": "les chats [sha]",
+          "explanation": "Final -s is silent, just like in the singular"
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "Determining Gender and Number",
+      "lines": [
+        {
+          "speaker": "Student",
+          "text": "Comment je sais si 'voiture' est masculin ou féminin ?"
+        },
+        {
+          "speaker": "Teacher",
+          "text": "L'indice est l'article : LA voiture. Donc c'est féminin. Et la terminaison -ure indique souvent le féminin."
+        },
+        {
+          "speaker": "Student",
+          "text": "Et le pluriel de 'journal' ?"
+        },
+        {
+          "speaker": "Teacher",
+          "text": "Les journaux, avec -aux. Tous les mots en -al font -aux au pluriel, sauf quelques exceptions comme 'festival'."
+        }
+      ],
+      "translation": "Student: How do I know if 'voiture' is masculine or feminine? | Teacher: The clue is the article: LA voiture. So it's feminine. And the ending -ure often indicates feminine. | Student: And the plural of 'journal'? | Teacher: Les journaux, with -aux. All words ending in -al form their plural with -aux, except a few exceptions like 'festival'."
     },
     {
       "type": "relatedTopics",
@@ -433,6 +753,10 @@
         {
           "title": "Lesson 2: Articles",
           "url": "/lessons?slug=les-articles"
+        },
+        {
+          "title": "Lesson 13: Qualifying Adjectives",
+          "url": "/lessons?slug=les-adjectifs-qualificatifs"
         }
       ]
     }

@@ -18,9 +18,9 @@ const MultimediaCard = ({
 				"group relative overflow-hidden h-full",
 				"bg-gradient-to-br from-white/[0.98] to-violet-50/95 dark:from-slate-800/[0.98] dark:to-slate-900/95",
 				"border-2 border-transparent",
-				// Shadow: colored in light mode, neutral in dark mode
-				"shadow-[0_4px_20px_rgba(139,92,246,0.3)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]",
-				"hover:shadow-[0_12px_40px_rgba(139,92,246,0.45),0_0_20px_rgba(6,182,212,0.25)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]",
+				// Shadow: colored in light mode, none in dark mode
+				"shadow-[0_4px_20px_rgba(139,92,246,0.3)] dark:shadow-none",
+				"hover:shadow-[0_12px_40px_rgba(139,92,246,0.45),0_0_20px_rgba(6,182,212,0.25)] dark:hover:shadow-none",
 				"lg:hover:-translate-y-0 lg:hover:scale-100",
 				"hover:-translate-y-3 hover:scale-105",
 				"transition-all duration-300 cursor-pointer rounded-2xl",
@@ -54,7 +54,7 @@ const MultimediaCard = ({
 								"[border:3px_solid_rgba(255,255,255,0.2)]",
 								"backdrop-blur-[10px]",
 								"shadow-[0_0_30px_rgba(139,92,246,0.5),inset_0_0_30px_rgba(6,182,212,0.2),0_6px_24px_rgba(0,0,0,0.2)]",
-								"dark:shadow-[0_0_20px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.05),0_6px_24px_rgba(0,0,0,0.3)]"
+								"dark:shadow-none"
 							)}
 						>
 							{/* Gradient border */}

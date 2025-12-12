@@ -2182,8 +2182,7 @@ const OrnateFrame = ({ children, className, isDark, fullWidthMobile = false }) =
 			'relative overflow-hidden',
 			fullWidthMobile ? 'rounded-none md:rounded-2xl border-b md:border-2' : 'rounded-2xl border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
-			'md:shadow-lg',
-			isDark ? 'md:shadow-black/20' : 'md:shadow-slate-200/50',
+			!isDark && 'md:shadow-lg md:shadow-slate-200/50',
 			className
 		)}>
 			{children}

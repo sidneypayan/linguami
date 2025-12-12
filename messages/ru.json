@@ -816,7 +816,13 @@
     "subtitle": "Выбирайте урок в меню слева, чтобы начать",
     "level": "Уровень",
     "exercices": "Упражнения",
-    "lessonlearnt": "Урок изучен"
+    "lessonlearnt": "Урок изучен",
+    "mnemonics": "Мнемоника",
+    "table_pronoun": "Местоимение",
+    "table_form": "Форма",
+    "table_translation": "Перевод",
+    "show_menu": "Меню",
+    "lessons_available": "уроков доступно"
   },
   "materials": {
     "pagetitle": "Материалы для Изучения Языков | Видео, Аудио, Аутентичные Тексты",

@@ -480,8 +480,369 @@
       ]
     },
     {
+      "type": "title",
+      "text": "Definite Articles (Articles définis)"
+    },
+    {
       "type": "paragraph",
-      "text": "French uses articles much more systematically than English or Russian. Every noun must have an article (with rare exceptions)."
+      "text": "Definite articles are used when referring to a specific, known object. They are equivalent to 'the' in English."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Definite Article Forms",
+      "rows": [
+        {
+          "pronoun": "Masculine",
+          "form": "le",
+          "translation": "le chat (the cat)",
+          "mnemonic": "le before consonants"
+        },
+        {
+          "pronoun": "Feminine",
+          "form": "la",
+          "translation": "la table (the table)",
+          "mnemonic": "la before consonants"
+        },
+        {
+          "pronoun": "Vowel/h muet",
+          "form": "l'",
+          "translation": "l'ami, l'heure",
+          "mnemonic": "Elision before vowels"
+        },
+        {
+          "pronoun": "Plural",
+          "form": "les",
+          "translation": "les chats, les tables",
+          "mnemonic": "For all genders"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "When to Use Definite Articles",
+      "items": [
+        {
+          "usage": "Specific known object",
+          "examples": [
+            "Le chat de Marie est noir. (Marie's cat is black — that specific cat)",
+            "La tour Eiffel est à Paris. (The Eiffel Tower is in Paris)",
+            "Les enfants jouent dans le jardin. (The children are playing in the garden — those children)"
+          ]
+        },
+        {
+          "usage": "Generalizations (entire category)",
+          "examples": [
+            "J'aime le chocolat. (I like chocolate in general)",
+            "Les chats sont indépendants. (Cats are independent — all cats)",
+            "La vie est belle. (Life is beautiful)"
+          ],
+          "commonMistake": {
+            "wrong": "J'aime chocolat",
+            "correct": "J'aime LE chocolat"
+          }
+        },
+        {
+          "usage": "Body parts and clothing",
+          "examples": [
+            "J'ai mal à la tête. (I have a headache)",
+            "Elle a les yeux bleus. (She has blue eyes)",
+            "Il porte le chapeau. (He wears the hat)"
+          ]
+        },
+        {
+          "usage": "Days of the week (regular action)",
+          "examples": [
+            "Le lundi, je travaille. (On Mondays, I work)",
+            "Les samedis, nous sortons. (On Saturdays, we go out)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Indefinite Articles (Articles indéfinis)"
+    },
+    {
+      "type": "paragraph",
+      "text": "Indefinite articles are used when an object is mentioned for the first time or is not specified. They are equivalent to 'a/an' in English."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Indefinite Article Forms",
+      "rows": [
+        {
+          "pronoun": "Masculine",
+          "form": "un",
+          "translation": "un chat (a cat)",
+          "mnemonic": "Nasal sound [œ̃]"
+        },
+        {
+          "pronoun": "Feminine",
+          "form": "une",
+          "translation": "une table (a table)",
+          "mnemonic": "Sound [y] as in 'tu'"
+        },
+        {
+          "pronoun": "Plural",
+          "form": "des",
+          "translation": "des chats (some cats)",
+          "mnemonic": "Plural form"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "When to Use Indefinite Articles",
+      "items": [
+        {
+          "usage": "First mention of an object",
+          "examples": [
+            "J'ai un chat. (I have a cat — first time mentioning it)",
+            "Il y a une pomme sur la table. (There is an apple on the table)",
+            "Elle achète des livres. (She buys some books)"
+          ]
+        },
+        {
+          "usage": "Profession (after être with adjective)",
+          "examples": [
+            "C'est un bon étudiant. (He is a good student)",
+            "Elle est une excellente professeure. (She is an excellent teacher)"
+          ],
+          "commonMistake": {
+            "wrong": "Je suis un professeur (without adjective)",
+            "correct": "Je suis professeur (profession without article)"
+          }
+        },
+        {
+          "usage": "Countable objects",
+          "examples": [
+            "Je veux un café. (I want a coffee)",
+            "Nous avons une maison. (We have a house)",
+            "Il a des amis. (He has friends)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Partitive Articles (Articles partitifs)"
+    },
+    {
+      "type": "paragraph",
+      "text": "Partitive articles are used with uncountable nouns (liquids, materials, abstract concepts) when referring to an unspecified amount. There is no direct equivalent in English — we often use 'some' or nothing at all."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Partitive Article Forms",
+      "rows": [
+        {
+          "pronoun": "Masculine",
+          "form": "du",
+          "translation": "du pain (some bread)",
+          "mnemonic": "de + le = du"
+        },
+        {
+          "pronoun": "Feminine",
+          "form": "de la",
+          "translation": "de la viande (some meat)",
+          "mnemonic": "de + la"
+        },
+        {
+          "pronoun": "Vowel/h muet",
+          "form": "de l'",
+          "translation": "de l'eau (some water)",
+          "mnemonic": "Elision before vowels"
+        }
+      ]
+    },
+    {
+      "type": "usageList",
+      "title": "When to Use Partitive Articles",
+      "items": [
+        {
+          "usage": "Uncountable nouns (food, drinks)",
+          "examples": [
+            "Je mange du pain. (I eat bread — some amount)",
+            "Elle boit de l'eau. (She drinks water)",
+            "Nous achetons de la viande. (We buy meat)",
+            "Il prend du café. (He has coffee)"
+          ],
+          "commonMistake": {
+            "wrong": "Je mange pain (no article)",
+            "correct": "Je mange DU pain"
+          }
+        },
+        {
+          "usage": "Abstract concepts",
+          "examples": [
+            "Il a du courage. (He has courage)",
+            "Elle fait de la musique. (She makes music)",
+            "Nous avons de la chance. (We are lucky)"
+          ]
+        },
+        {
+          "usage": "Unspecified quantity",
+          "examples": [
+            "Je veux du chocolat. (I want some chocolate)",
+            "Tu as de l'argent ? (Do you have money?)",
+            "Il faut de la patience. (Patience is needed)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "Contractions"
+    },
+    {
+      "type": "paragraph",
+      "text": "When prepositions à or de meet definite articles le or les, they merge into one word. This is mandatory in French."
+    },
+    {
+      "type": "conjugationTable",
+      "title": "Contraction Table",
+      "rows": [
+        {
+          "pronoun": "à + le",
+          "form": "au",
+          "translation": "au restaurant (to the restaurant)",
+          "mnemonic": "Mandatory contraction"
+        },
+        {
+          "pronoun": "à + les",
+          "form": "aux",
+          "translation": "aux enfants (to the children)",
+          "mnemonic": "Mandatory contraction"
+        },
+        {
+          "pronoun": "de + le",
+          "form": "du",
+          "translation": "du restaurant (from the restaurant)",
+          "mnemonic": "⚠️ Don't confuse with partitive!"
+        },
+        {
+          "pronoun": "de + les",
+          "form": "des",
+          "translation": "des enfants (of the children)",
+          "mnemonic": "⚠️ Don't confuse with indefinite!"
+        }
+      ]
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Common Contraction Mistakes",
+      "rows": [
+        {
+          "wrong": "Je vais à le cinéma",
+          "correct": "Je vais AU cinéma",
+          "explanation": "à + le = au (mandatory contraction)"
+        },
+        {
+          "wrong": "Le livre de le professeur",
+          "correct": "Le livre DU professeur",
+          "explanation": "de + le = du (contraction, NOT partitive)"
+        },
+        {
+          "wrong": "Je parle à la Marc",
+          "correct": "Je parle À Marc (no article)",
+          "explanation": "No article with proper nouns"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "text": "When NOT to Use Articles"
+    },
+    {
+      "type": "usageList",
+      "title": "Cases Without Articles",
+      "items": [
+        {
+          "usage": "Profession after être (without adjective)",
+          "examples": [
+            "Je suis professeur. (I am a teacher)",
+            "Elle est médecin. (She is a doctor)",
+            "BUT: Elle est UNE bonne médecin. (She is a good doctor — with adjective needs article)"
+          ]
+        },
+        {
+          "usage": "After en (preposition)",
+          "examples": [
+            "en France (in France)",
+            "en avion (by plane)",
+            "en hiver (in winter)"
+          ]
+        },
+        {
+          "usage": "After de in quantities",
+          "examples": [
+            "J'ai besoin de patience. (I need patience)",
+            "Pas de problème ! (No problem!)",
+            "beaucoup de livres (many books)"
+          ]
+        },
+        {
+          "usage": "After sans (without)",
+          "examples": [
+            "sans argent (without money)",
+            "sans problème (without problem)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "miniDialogue",
+      "title": "At the Café",
+      "lines": [
+        {
+          "speaker": "Serveur",
+          "text": "Bonjour ! Que désirez-vous ?"
+        },
+        {
+          "speaker": "Client",
+          "text": "Je voudrais un café et DU pain, s'il vous plaît."
+        },
+        {
+          "speaker": "Serveur",
+          "text": "Avec DE LA confiture ou DU beurre ?"
+        },
+        {
+          "speaker": "Client",
+          "text": "DE LA confiture, merci. Et L'addition, s'il vous plaît."
+        }
+      ],
+      "translation": "Waiter: Hello! What would you like? | Customer: I would like a coffee and some bread, please. | Waiter: With jam or butter? | Customer: Jam, thank you. And the bill, please."
+    },
+    {
+      "type": "mistakesTable",
+      "title": "Top 5 Article Mistakes",
+      "rows": [
+        {
+          "wrong": "J'aime chocolat",
+          "correct": "J'aime LE chocolat",
+          "explanation": "Generalizations require definite article"
+        },
+        {
+          "wrong": "Je mange pain",
+          "correct": "Je mange DU pain",
+          "explanation": "Uncountable nouns need partitive article"
+        },
+        {
+          "wrong": "Je vais à le restaurant",
+          "correct": "Je vais AU restaurant",
+          "explanation": "à + le = au"
+        },
+        {
+          "wrong": "Je suis UN professeur (without adjective)",
+          "correct": "Je suis professeur",
+          "explanation": "Profession without article after être"
+        },
+        {
+          "wrong": "Le livre de le professeur",
+          "correct": "Le livre DU professeur",
+          "explanation": "de + le = du"
+        }
+      ]
     },
     {
       "type": "relatedTopics",
@@ -489,6 +850,20 @@
         {
           "title": "Lesson 3: Gender and Number of Nouns",
           "url": "/lessons?slug=le-genre-et-le-nombre-des-noms"
+        },
+        {
+          "title": "Lesson 14: Prepositions of Place",
+          "url": "/lessons?slug=les-prepositions-de-lieu"
+        }
+      ]
+    },
+    {
+      "type": "practiceLinks",
+      "description": "Practice articles in a real context",
+      "links": [
+        {
+          "title": "Method: At the Bakery",
+          "url": "/method/beginner/a-la-boulangerie"
         }
       ]
     }

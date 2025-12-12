@@ -106,8 +106,8 @@ const FinalCTA = ({ translations }) => {
 								"bg-gradient-to-r from-violet-600 to-cyan-500",
 								"hover:from-violet-500 hover:to-cyan-400",
 								"border border-violet-400/50 hover:border-violet-300/70",
-								"shadow-[0_8px_30px_rgba(139,92,246,0.4)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]",
-								"hover:shadow-[0_12px_40px_rgba(139,92,246,0.6)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]",
+								"shadow-[0_8px_30px_rgba(139,92,246,0.4)] dark:shadow-none",
+								"hover:shadow-[0_12px_40px_rgba(139,92,246,0.6)] dark:hover:shadow-none",
 								"hover:-translate-y-1 hover:scale-[1.02]",
 								"transition-all duration-300 ease-out",
 								"rounded-xl"

@@ -111,8 +111,7 @@ const OrnateFrame = ({ children, className, isDark, hideCorners = false }) => {
 			!hasOverflowVisible && 'overflow-hidden',
 			'border-2',
 			isDark ? 'border-amber-500/20 bg-slate-900/80' : 'border-amber-600/10 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			!isDark && 'shadow-lg shadow-slate-200/50',
 			className
 		)}>
 			{/* Inner glow border */}
@@ -309,8 +308,7 @@ const CategoryFilter = ({ selectedCategory, onCategoryChange, isDark, t }) => {
 			'relative rounded-2xl p-4 mb-8',
 			'border-2',
 			isDark ? 'border-amber-500/20 bg-slate-900/80' : 'border-amber-600/10 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
+			!isDark && 'shadow-lg shadow-slate-200/50'
 		)}>
 			<div className="hidden sm:flex items-center gap-2 mb-4">
 				<SlidersHorizontal className={cn('w-5 h-5', isDark ? 'text-amber-400' : 'text-amber-600')} />
@@ -681,8 +679,7 @@ const FilterBar = ({
 			'relative rounded-2xl p-4 mb-8 overflow-visible',
 			'border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-200/50 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50'
+			!isDark && 'shadow-lg shadow-slate-200/50'
 		)}>
 			<div className="space-y-4">
 				{/* Search + View Toggle */}

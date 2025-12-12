@@ -12,6 +12,7 @@ import {
 	Smile,
 	Frown,
 	Quote,
+	Swords,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { BUTTON_TYPES, CARD_STATES } from '@/utils/spacedRepetition'
@@ -90,14 +91,17 @@ export function FlashcardReviewCard({
 			<button
 				onClick={onClose}
 				className={cn(
-					"absolute top-4 right-4 z-50 p-2 rounded-lg transition-all duration-200",
+					"absolute top-3 sm:top-4 right-3 sm:right-4 z-50 px-3.5 py-2 sm:p-2.5 rounded-xl transition-all duration-300",
+					"bg-gradient-to-br from-violet-500/10 to-cyan-500/5",
+					"border border-violet-500/30",
+					!isDark && "shadow-[0_0_10px_rgba(139,92,246,0.1)]",
 					isDark
-						? "text-violet-400 hover:bg-violet-500/20"
-						: "text-violet-600 hover:bg-violet-500/10",
-					"hover:rotate-90 hover:scale-110"
+						? "text-violet-400 hover:from-violet-500/30 hover:to-cyan-500/20"
+						: "text-violet-600 hover:from-violet-500/20 hover:to-cyan-500/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)]",
+					"hover:scale-110 hover:border-violet-500/50"
 				)}
 			>
-				<X className="w-8 h-8" />
+				<X className="w-6 h-6" />
 			</button>
 
 			{/* Time up banner */}
@@ -117,10 +121,29 @@ export function FlashcardReviewCard({
 				)}
 				{/* Show cards remaining only for card-based sessions (not time-based) */}
 				{!timeLimit && (
-					<span className={styles.cardsRemaining}>
-						{sessionCards.length}{' '}
-						{sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
-					</span>
+					<div className={cn(
+						'inline-flex items-center gap-2 px-4 py-2 rounded-full',
+						'bg-gradient-to-r from-violet-500/15 to-cyan-500/10',
+						'border border-violet-500/30',
+						!isDark && 'shadow-[0_0_15px_rgba(139,92,246,0.15)]'
+					)}>
+						<Swords className={cn(
+							'w-5 h-5',
+							isDark ? 'text-violet-400' : 'text-violet-500'
+						)} />
+						<span className={cn(
+							'text-lg font-bold',
+							isDark ? 'text-violet-300' : 'text-violet-600'
+						)}>
+							{sessionCards.length}
+						</span>
+						<span className={cn(
+							'text-sm font-medium',
+							isDark ? 'text-slate-400' : 'text-slate-500'
+						)}>
+							{sessionCards.length > 1 ? t('cards_remaining_plural') : t('cards_remaining')}
+						</span>
+					</div>
 				)}
 				{/* Show "last card" message when time is up */}
 				{isTimeUp && (
@@ -143,22 +166,26 @@ export function FlashcardReviewCard({
 						{/* Context sentence - shown between answer and buttons */}
 						{currentCard?.word_sentence && (
 							<div className={cn(
-								'pl-3 py-2 rounded-r-lg mb-6',
-								'border-l-2 border-violet-500/40',
-								isDark ? 'bg-violet-500/5' : 'bg-violet-50/50'
+								'relative px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl mb-6',
+								'bg-gradient-to-r from-violet-500/10 to-cyan-500/5',
+								'border border-violet-500/20',
+								!isDark && 'shadow-[0_0_15px_rgba(139,92,246,0.08)]'
 							)}>
-								<div className="flex items-start gap-2">
-									<Quote className={cn(
-										'w-4 h-4 flex-shrink-0 mt-0.5',
-										isDark ? 'text-violet-400/60' : 'text-violet-400'
-									)} />
-									<p
-										className="text-sm"
-										style={{ color: isDark ? '#94a3b8' : '#64748b' }}
-									>
-										{currentCard.word_sentence}
-									</p>
-								</div>
+								{/* Decorative quote marks */}
+								<span className={cn(
+									'absolute -top-2 left-3 text-2xl font-serif',
+									isDark ? 'text-violet-500/30' : 'text-violet-400/40'
+								)}>"</span>
+								<p className={cn(
+									'text-sm sm:text-base text-center italic',
+									isDark ? 'text-slate-400' : 'text-slate-500'
+								)}>
+									{currentCard.word_sentence}
+								</p>
+								<span className={cn(
+									'absolute -bottom-3 right-3 text-2xl font-serif',
+									isDark ? 'text-violet-500/30' : 'text-violet-400/40'
+								)}>"</span>
 							</div>
 						)}
 

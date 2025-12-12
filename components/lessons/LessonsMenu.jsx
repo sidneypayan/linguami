@@ -1,103 +1,89 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useState, useEffect } from 'react'
 import { useUserContext } from '@/context/user'
+import { useThemeMode } from '@/context/ThemeContext'
 import { useAllLessonStatuses } from '@/lib/lessons-client'
-import { ChevronDown, ChevronUp, CheckCircle, Inbox, Sprout, TreeDeciduous, GraduationCap } from 'lucide-react'
+import { ChevronRight, CheckCircle, Lock, Star, Flame, Crown, Zap, Shield, Swords } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const getLevelIcon = (level) => {
-	const iconClass = "h-5 w-5"
-	switch (level) {
-		case 'A1':
-			return <Sprout className={iconClass} />
-		case 'A2':
-			return <Sprout className={cn(iconClass, "scale-110")} />
-		case 'B1':
-			return <TreeDeciduous className={iconClass} />
-		case 'B2':
-			return <TreeDeciduous className={cn(iconClass, "scale-110")} />
-		case 'C1':
-			return <GraduationCap className={iconClass} />
-		case 'C2':
-			return <GraduationCap className={cn(iconClass, "scale-110")} />
-		default:
-			return <Inbox className={iconClass} />
-	}
-}
-
-const getLevelColors = (level) => {
-	switch (level) {
-		case 'A1':
-			return {
-				bg: 'bg-green-500/10',
-				bgHover: 'hover:bg-green-500/20',
-				text: 'text-green-600',
-				border: 'border-green-400',
-				shadow: 'shadow-green-400/20',
-				gradient: 'from-green-500/20 to-green-500/10'
-			}
-		case 'A2':
-			return {
-				bg: 'bg-cyan-500/10',
-				bgHover: 'hover:bg-cyan-500/20',
-				text: 'text-cyan-600',
-				border: 'border-cyan-400',
-				shadow: 'shadow-cyan-400/20',
-				gradient: 'from-cyan-500/20 to-cyan-500/10'
-			}
-		case 'B1':
-			return {
-				bg: 'bg-amber-500/10',
-				bgHover: 'hover:bg-amber-500/20',
-				text: 'text-amber-600',
-				border: 'border-amber-400',
-				shadow: 'shadow-amber-400/20',
-				gradient: 'from-amber-500/20 to-amber-500/10'
-			}
-		case 'B2':
-			return {
-				bg: 'bg-orange-500/10',
-				bgHover: 'hover:bg-orange-500/20',
-				text: 'text-orange-600',
-				border: 'border-orange-400',
-				shadow: 'shadow-orange-400/20',
-				gradient: 'from-orange-500/20 to-orange-500/10'
-			}
-		case 'C1':
-			return {
-				bg: 'bg-fuchsia-500/10',
-				bgHover: 'hover:bg-fuchsia-500/20',
-				text: 'text-fuchsia-600',
-				border: 'border-fuchsia-400',
-				shadow: 'shadow-fuchsia-400/20',
-				gradient: 'from-fuchsia-500/20 to-fuchsia-500/10'
-			}
-		case 'C2':
-			return {
-				bg: 'bg-violet-500/10',
-				bgHover: 'hover:bg-violet-500/20',
-				text: 'text-violet-600',
-				border: 'border-violet-400',
-				shadow: 'shadow-violet-400/20',
-				gradient: 'from-violet-500/20 to-violet-500/10'
-			}
-		default:
-			return {
-				bg: 'bg-indigo-500/10',
-				bgHover: 'hover:bg-indigo-500/20',
-				text: 'text-indigo-600',
-				border: 'border-indigo-400',
-				shadow: 'shadow-indigo-400/20',
-				gradient: 'from-indigo-500/20 to-indigo-500/10'
-			}
-	}
+// Level configuration with gaming theme
+const LEVEL_CONFIG = {
+	A1: {
+		icon: Zap,
+		label: 'Novice',
+		gradient: 'from-emerald-400 to-green-500',
+		bgGradient: 'from-emerald-500/10 to-green-500/5',
+		text: 'text-emerald-500',
+		textDark: 'text-emerald-400',
+		border: 'border-emerald-500/30',
+		glow: 'shadow-emerald-500/20',
+	},
+	A2: {
+		icon: Shield,
+		label: 'Apprentice',
+		gradient: 'from-cyan-400 to-teal-500',
+		bgGradient: 'from-cyan-500/10 to-teal-500/5',
+		text: 'text-cyan-500',
+		textDark: 'text-cyan-400',
+		border: 'border-cyan-500/30',
+		glow: 'shadow-cyan-500/20',
+	},
+	B1: {
+		icon: Flame,
+		label: 'Adventurer',
+		gradient: 'from-amber-400 to-orange-500',
+		bgGradient: 'from-amber-500/10 to-orange-500/5',
+		text: 'text-amber-500',
+		textDark: 'text-amber-400',
+		border: 'border-amber-500/30',
+		glow: 'shadow-amber-500/20',
+	},
+	B2: {
+		icon: Swords,
+		label: 'Warrior',
+		gradient: 'from-orange-400 to-red-500',
+		bgGradient: 'from-orange-500/10 to-red-500/5',
+		text: 'text-orange-500',
+		textDark: 'text-orange-400',
+		border: 'border-orange-500/30',
+		glow: 'shadow-orange-500/20',
+	},
+	C1: {
+		icon: Star,
+		label: 'Master',
+		gradient: 'from-purple-400 to-fuchsia-500',
+		bgGradient: 'from-purple-500/10 to-fuchsia-500/5',
+		text: 'text-purple-500',
+		textDark: 'text-purple-400',
+		border: 'border-purple-500/30',
+		glow: 'shadow-purple-500/20',
+	},
+	C2: {
+		icon: Crown,
+		label: 'Legend',
+		gradient: 'from-yellow-400 to-amber-500',
+		bgGradient: 'from-yellow-500/10 to-amber-500/5',
+		text: 'text-yellow-500',
+		textDark: 'text-yellow-400',
+		border: 'border-yellow-500/30',
+		glow: 'shadow-yellow-500/20',
+	},
 }
 
 const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const t = useTranslations('lessons')
+	const locale = useLocale()
+	const { isDark } = useThemeMode()
 	const [openLevels, setOpenLevels] = useState({})
+
+	// Get lesson title based on interface language
+	const getLessonTitle = (lesson) => {
+		if (locale === 'fr') return lesson.titleFr || lesson.titleEn || lesson.titleRu
+		if (locale === 'en') return lesson.titleEn || lesson.titleFr || lesson.titleRu
+		return lesson.titleRu || lesson.titleEn || lesson.titleFr
+	}
 
 	// Get user authentication state
 	const { isUserLoggedIn } = useUserContext()
@@ -109,7 +95,7 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 	const [isSmallScreen, setIsSmallScreen] = useState(false)
 
 	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 768px)')
+		const mediaQuery = window.matchMedia('(max-width: 1280px)')
 		setIsSmallScreen(mediaQuery.matches)
 
 		const handler = (e) => setIsSmallScreen(e.matches)
@@ -135,140 +121,227 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 		return acc
 	}, {})
 
-	// Filtrer les niveaux qui ont au moins une leçon
+	// Filter levels that have at least one lesson
 	const levelsWithLessons = CECR_LEVELS.filter(
 		(level) => lessonsByLevel[level].length > 0
 	)
 
+	// Calculate progress for each level
+	const getLevelProgress = (level) => {
+		const lessons = lessonsByLevel[level]
+		if (lessons.length === 0) return 0
+		const completed = lessons.filter(l => checkIfUserLessonIsStudied(l.id)).length
+		return Math.round((completed / lessons.length) * 100)
+	}
+
 	return (
 		<nav
 			className={cn(
-				'w-full md:w-4/5 md:max-w-[400px] bg-white md:rounded-2xl overflow-hidden',
-				'md:sticky md:top-[100px] p-0 mb-6 md:mb-0',
-				'md:shadow-[0_8px_32px_rgba(102,126,234,0.15)] md:border md:border-indigo-500/10'
+				'w-full xl:w-[380px] xl:min-w-[380px] xl:rounded-2xl overflow-hidden',
+				'xl:sticky xl:top-[100px] mb-6 xl:mb-0',
+				'min-h-[calc(100vh-120px)] xl:min-h-0',
+				isDark
+					? 'bg-slate-900 xl:bg-gradient-to-b xl:from-slate-800 xl:to-slate-900 xl:border xl:border-slate-700/50'
+					: 'bg-white xl:bg-gradient-to-b xl:from-white xl:to-slate-50 xl:shadow-[0_8px_32px_rgba(102,126,234,0.15)] xl:border xl:border-indigo-100'
 			)}
 			aria-labelledby="lessons-menu">
-			{levelsWithLessons.map((level, index) => {
-				const colors = getLevelColors(level)
-				return (
-					<div key={level}>
-						{/* Level Header */}
-						<button
-							onClick={() => toggleLevel(level)}
-							className={cn(
-								'w-full flex items-center py-4 px-4 transition-all duration-300',
-								'border-l-[5px]',
-								colors.border,
-								openLevels[level]
-									? `bg-gradient-to-r ${colors.gradient}`
-									: colors.bg,
-								colors.bgHover,
-								'hover:translate-x-1 hover:shadow-lg',
-								colors.shadow,
-								'relative',
-								openLevels[level] && 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gradient-to-r after:from-current after:to-transparent'
-							)}>
-							{/* Icon container */}
-							<div
+
+			{/* Header */}
+			<div className={cn(
+				'p-5 border-b',
+				isDark ? 'border-slate-700/50' : 'border-slate-200'
+			)}>
+				<h2 className={cn(
+					'text-lg font-bold',
+					isDark ? 'text-slate-100' : 'text-slate-800'
+				)}>
+					{t('pagetitle')}
+				</h2>
+				<p className={cn(
+					'text-sm mt-1',
+					isDark ? 'text-slate-400' : 'text-slate-500'
+				)}>
+					{lessonsInfos.length} {t('lessons_available') || 'lessons'}
+				</p>
+			</div>
+
+			{/* Levels */}
+			<div className="p-3 space-y-2">
+				{levelsWithLessons.map((level) => {
+					const config = LEVEL_CONFIG[level]
+					const LevelIcon = config.icon
+					const isOpen = openLevels[level]
+					const progress = getLevelProgress(level)
+					const completedCount = lessonsByLevel[level].filter(l => checkIfUserLessonIsStudied(l.id)).length
+					const totalCount = lessonsByLevel[level].length
+
+					return (
+						<div key={level} className="relative">
+							{/* Level Card */}
+							<button
+								onClick={() => toggleLevel(level)}
 								className={cn(
-									'w-11 h-11 rounded-xl flex items-center justify-center mr-3',
-									'bg-gradient-to-br',
-									colors.gradient,
-									'border-2',
-									colors.border,
-									'border-opacity-30',
-									'shadow-sm',
-									colors.text
+									'w-full p-4 rounded-xl transition-all duration-300',
+									'flex items-center gap-4',
+									'group',
+									isOpen
+										? cn('bg-gradient-to-r', config.bgGradient, config.border, 'border')
+										: cn(
+											isDark
+												? 'bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50'
+												: 'bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300'
+										),
+									!isDark && !isOpen && 'hover:shadow-md',
 								)}>
-								{getLevelIcon(level)}
-							</div>
 
-							{/* Text */}
-							<div className="flex-1 text-left">
-								<p className={cn('font-extrabold text-lg tracking-tight', colors.text)}>
-									{t('level')} {level}
-								</p>
-								<p className={cn('text-sm font-semibold opacity-70', colors.text)}>
-									{lessonsByLevel[level].length} {lessonsByLevel[level].length > 1 ? 'leçons' : 'leçon'}
-								</p>
-							</div>
+								{/* Level Icon */}
+								<div className={cn(
+									'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0',
+									'bg-gradient-to-br',
+									config.gradient,
+									'shadow-lg',
+									config.glow
+								)}>
+									<LevelIcon className="w-6 h-6 text-white" />
+								</div>
 
-							{/* Chevron */}
-							{openLevels[level] ? (
-								<ChevronUp className={cn('h-6 w-6 transition-transform', colors.text)} />
-							) : (
-								<ChevronDown className={cn('h-6 w-6 transition-transform', colors.text)} />
-							)}
-						</button>
+								{/* Level Info */}
+								<div className="flex-1 text-left min-w-0">
+									<div className="flex items-center gap-2">
+										<span className={cn(
+											'font-bold text-lg',
+											isDark ? 'text-white' : 'text-slate-800'
+										)}>
+											{level}
+										</span>
+										<span className={cn(
+											'text-sm font-medium px-2 py-0.5 rounded-full',
+											'bg-gradient-to-r',
+											config.gradient,
+											'text-white'
+										)}>
+											{config.label}
+										</span>
+									</div>
 
-						{/* Lessons List */}
-						<div
-							className={cn(
-								'overflow-hidden transition-all duration-300',
-								openLevels[level] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-							)}>
-							<div className={cn('py-2 bg-gradient-to-b', colors.gradient.replace('20', '05'), 'to-white')}>
-								{lessonsByLevel[level].map((lesson, lessonIndex) => {
-									const isSelected = lessonSlug === lesson.slug
-									return (
-										<button
-											key={lesson.slug}
-											onClick={() => {
-												onSelectLesson(lesson.slug)
-												if (isSmallScreen) {
-													setOpenLevels({})
-												}
-											}}
-											className={cn(
-												'w-[calc(100%-16px)] flex items-center pl-6 pr-4 py-3 mx-2 mb-1 rounded-lg',
-												'transition-all duration-300 text-left',
-												'border-l-4',
-												isSelected
-													? cn(colors.bg.replace('10', '30'), colors.border, 'border shadow', colors.shadow)
-													: 'border-transparent hover:border-current',
-												!isSelected && colors.bgHover,
-												'hover:translate-x-1'
-											)}>
-											{/* Lesson number */}
+									{/* Progress bar */}
+									<div className="mt-2 flex items-center gap-2">
+										<div className={cn(
+											'flex-1 h-1.5 rounded-full overflow-hidden',
+											isDark ? 'bg-slate-700' : 'bg-slate-200'
+										)}>
 											<div
+												className={cn('h-full rounded-full bg-gradient-to-r', config.gradient)}
+												style={{ width: `${progress}%` }}
+											/>
+										</div>
+										<span className={cn(
+											'text-xs font-semibold whitespace-nowrap',
+											isDark ? config.textDark : config.text
+										)}>
+											{completedCount}/{totalCount}
+										</span>
+									</div>
+								</div>
+
+								{/* Chevron */}
+								<ChevronRight className={cn(
+									'w-5 h-5 transition-transform duration-300 flex-shrink-0',
+									isDark ? 'text-slate-400' : 'text-slate-500',
+									isOpen && 'rotate-90'
+								)} />
+							</button>
+
+							{/* Lessons List */}
+							<div className={cn(
+								'overflow-hidden transition-all duration-300',
+								isOpen ? 'max-h-[2000px] opacity-100 mt-2' : 'max-h-0 opacity-0'
+							)}>
+								<div className={cn(
+									'space-y-1 pl-2',
+								)}>
+									{lessonsByLevel[level].map((lesson, lessonIndex) => {
+										const isSelected = lessonSlug === lesson.slug
+										const isStudied = !isLoading && checkIfUserLessonIsStudied(lesson.id)
+
+										return (
+											<button
+												key={lesson.slug}
+												onClick={() => {
+													onSelectLesson(lesson.slug)
+													if (isSmallScreen) {
+														setOpenLevels({})
+													}
+												}}
 												className={cn(
-													'w-7 h-7 rounded-md flex items-center justify-center mr-3 flex-shrink-0',
-													'text-xs font-extrabold',
+													'w-full flex items-center gap-3 p-3 rounded-lg',
+													'transition-all duration-200 text-left',
+													'group/lesson',
 													isSelected
-														? cn('bg-gradient-to-br', colors.text.replace('text', 'from'), colors.border.replace('border', 'to'), 'text-white')
-														: cn(colors.bg.replace('10', '25'), colors.text)
+														? cn(
+															'bg-gradient-to-r',
+															config.gradient,
+															'shadow-lg',
+															config.glow
+														)
+														: cn(
+															isDark
+																? 'hover:bg-slate-800/80'
+																: 'hover:bg-slate-100'
+														)
 												)}>
-												{lessonIndex + 1}
-											</div>
 
-											{/* Lesson title */}
-											<span
-												className={cn(
-													'flex-1 text-[0.9375rem] tracking-tight',
-													isSelected ? cn('font-bold', colors.text) : 'font-semibold text-slate-600'
+												{/* Lesson number / status */}
+												<div className={cn(
+													'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+													'text-sm font-bold transition-all',
+													isSelected
+														? 'bg-white/20 text-white'
+														: isStudied
+															? cn('bg-gradient-to-br', config.gradient, 'text-white')
+															: cn(
+																isDark
+																	? 'bg-slate-700 text-slate-400 group-hover/lesson:bg-slate-600'
+																	: 'bg-slate-200 text-slate-500 group-hover/lesson:bg-slate-300'
+															)
 												)}>
-												{lesson.titleRu}
-											</span>
+													{isStudied && !isSelected ? (
+														<CheckCircle className="w-4 h-4" />
+													) : (
+														lessonIndex + 1
+													)}
+												</div>
 
-											{/* Check icon if studied */}
-											{!isLoading && checkIfUserLessonIsStudied(lesson.id) && (
-												<CheckCircle
-													className="h-5 w-5 text-green-500 ml-2 flex-shrink-0 drop-shadow-[0_2px_4px_rgba(34,197,94,0.3)]"
-												/>
-											)}
-										</button>
-									)
-								})}
+												{/* Lesson title */}
+												<span className={cn(
+													'flex-1 text-sm font-medium truncate',
+													isSelected
+														? 'text-white'
+														: isDark
+															? 'text-slate-300 group-hover/lesson:text-white'
+															: 'text-slate-600 group-hover/lesson:text-slate-900'
+												)}>
+													{getLessonTitle(lesson)}
+												</span>
+
+												{/* Completed badge */}
+												{isStudied && !isSelected && (
+													<span className={cn(
+														'text-xs font-semibold',
+														isDark ? config.textDark : config.text
+													)}>
+														✓
+													</span>
+												)}
+											</button>
+										)
+									})}
+								</div>
 							</div>
 						</div>
-
-						{/* Divider */}
-						{index < levelsWithLessons.length - 1 && (
-							<div className="border-b border-gray-200" />
-						)}
-					</div>
-				)
-			})}
+					)
+				})}
+			</div>
 		</nav>
 	)
 }

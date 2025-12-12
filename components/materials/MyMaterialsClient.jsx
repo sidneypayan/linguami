@@ -20,8 +20,7 @@ const EmptyState = ({ isDark, t }) => (
 		'relative rounded-2xl overflow-hidden p-8 text-center',
 		'border-2',
 		isDark ? 'border-amber-500/30 bg-slate-900/80' : 'border-amber-300/50 bg-white/90',
-		'shadow-xl',
-		isDark ? 'shadow-amber-500/20' : 'shadow-amber-300/30'
+		!isDark && 'shadow-xl shadow-amber-300/30'
 	)}>
 		{/* Rotating gem icon */}
 		<div className="relative w-20 h-20 mx-auto mb-4">

@@ -563,7 +563,7 @@ const StatisticsClient = ({ stats, xpProfile, goals, translations }) => {
 				? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-950 via-slate-950 to-slate-950'
 				: 'bg-gradient-to-b from-violet-50 via-white to-slate-50'
 		)}>
-			<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div className="relative max-w-7xl mx-auto px-0 sm:px-6 lg:px-8">
 
 				{/* ============================================ */}
 				{/* HERO - Character Card */}

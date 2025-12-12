@@ -32,8 +32,7 @@ const OrnateFrame = ({ children, className, isDark, allowOverflow = false }) => 
 			allowOverflow ? 'overflow-visible' : 'overflow-hidden',
 			'border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			!isDark && 'shadow-lg shadow-slate-200/50',
 			className
 		)}>
 			{/* Corner decorations */}
@@ -128,7 +127,7 @@ const ReviewCard = ({ name, text, isDark }) => {
 			className={cn(
 				'h-full transition-all duration-300',
 				'hover:transform hover:-translate-y-2',
-				isDark ? 'hover:shadow-violet-500/20' : 'hover:shadow-violet-400/30'
+				!isDark && 'hover:shadow-violet-400/30'
 			)}
 		>
 			{/* Quote icon */}
@@ -311,8 +310,7 @@ export default function TeacherClient() {
 							'relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden',
 							'border-4',
 							isDark ? 'border-violet-400/50' : 'border-white',
-							'shadow-2xl',
-							isDark ? 'shadow-violet-500/30' : 'shadow-violet-400/40'
+							!isDark && 'shadow-2xl shadow-violet-400/40'
 						)}>
 							<img
 								src={img}

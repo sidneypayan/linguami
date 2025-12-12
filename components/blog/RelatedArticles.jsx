@@ -77,14 +77,10 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 							'h-full rounded-2xl overflow-hidden',
 							'border-2 transition-all duration-300',
 							isDark
-								? 'bg-slate-900/80 border-violet-500/20'
-								: 'bg-white/90 border-violet-600/10',
-							'shadow-lg',
-							isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
-							'hover:-translate-y-2 hover:shadow-xl',
-							isDark
-								? 'hover:border-violet-400/50 hover:shadow-violet-500/20'
-								: 'hover:border-violet-500/30 hover:shadow-violet-400/30'
+								? 'bg-slate-900/80 border-violet-500/20 hover:border-violet-400/50'
+								: 'bg-white/90 border-violet-600/10 hover:border-violet-500/30',
+							!isDark && 'shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-violet-400/30',
+							'hover:-translate-y-2'
 						)}>
 							{/* Image */}
 							<div className="relative h-44 overflow-hidden">

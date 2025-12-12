@@ -62,16 +62,16 @@ const BottomNav = () => {
 	const handleNavigation = (value) => {
 		switch (value) {
 			case 'home':
-				router.push('/')
+				router.push(`/${locale}`)
 				break
 			case 'materials':
-				router.push('/materials')
+				router.push(`/${locale}/materials`)
 				break
 			case 'dictionary':
-				router.push('/dictionary')
+				router.push(`/${locale}/dictionary`)
 				break
 			case 'lessons':
-				router.push('/lessons')
+				router.push(`/${locale}/lessons`)
 				break
 			default:
 				break

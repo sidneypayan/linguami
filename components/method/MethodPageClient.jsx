@@ -497,8 +497,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 								isDark
 									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-violet-500/30 hover:border-violet-400/60'
 									: 'bg-gradient-to-b from-white to-slate-50 border-violet-300/50 hover:border-violet-400/80',
-								'group-hover:shadow-2xl',
-								isDark ? 'group-hover:shadow-violet-500/20' : 'group-hover:shadow-violet-300/30'
+								!isDark && 'group-hover:shadow-2xl group-hover:shadow-violet-300/30'
 							)}>
 								{/* Top decorative banner */}
 								<div className={cn(
@@ -514,8 +513,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 											'w-20 h-20 flex items-center justify-center',
 											'bg-gradient-to-br from-violet-500 to-purple-600',
 											'rounded-xl rotate-45',
-											'shadow-lg',
-											isDark ? 'shadow-violet-500/40' : 'shadow-violet-400/30',
+											!isDark && 'shadow-lg shadow-violet-400/30',
 											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
 										)}>
 											<GraduationCap className="w-9 h-9 text-white -rotate-45" />
@@ -556,8 +554,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 								isDark
 									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-cyan-500/30 hover:border-cyan-400/60'
 									: 'bg-gradient-to-b from-white to-slate-50 border-cyan-300/50 hover:border-cyan-400/80',
-								'group-hover:shadow-2xl',
-								isDark ? 'group-hover:shadow-cyan-500/20' : 'group-hover:shadow-cyan-300/30'
+								!isDark && 'group-hover:shadow-2xl group-hover:shadow-cyan-300/30'
 							)}>
 								{/* Top decorative banner */}
 								<div className={cn(
@@ -573,8 +570,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 											'w-20 h-20 flex items-center justify-center',
 											'bg-gradient-to-br from-cyan-500 to-teal-500',
 											'rounded-xl rotate-45',
-											'shadow-lg',
-											isDark ? 'shadow-cyan-500/40' : 'shadow-cyan-400/30',
+											!isDark && 'shadow-lg shadow-cyan-400/30',
 											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
 										)}>
 											<Gamepad2 className="w-9 h-9 text-white -rotate-45" />
@@ -615,8 +611,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 								isDark
 									? 'bg-gradient-to-b from-slate-800/90 to-slate-900/90 border-amber-500/30 hover:border-amber-400/60'
 									: 'bg-gradient-to-b from-white to-slate-50 border-amber-300/50 hover:border-amber-400/80',
-								'group-hover:shadow-2xl',
-								isDark ? 'group-hover:shadow-amber-500/20' : 'group-hover:shadow-amber-300/30'
+								!isDark && 'group-hover:shadow-2xl group-hover:shadow-amber-300/30'
 							)}>
 								{/* Top decorative banner */}
 								<div className={cn(
@@ -632,8 +627,7 @@ const MethodPageClient = ({ levels, userAccess }) => {
 											'w-20 h-20 flex items-center justify-center',
 											'bg-gradient-to-br from-amber-500 to-orange-500',
 											'rounded-xl rotate-45',
-											'shadow-lg',
-											isDark ? 'shadow-amber-500/40' : 'shadow-amber-400/30',
+											!isDark && 'shadow-lg shadow-amber-400/30',
 											'group-hover:scale-110 group-hover:rotate-[50deg] transition-all duration-500'
 										)}>
 											<Trophy className="w-9 h-9 text-white -rotate-45" />

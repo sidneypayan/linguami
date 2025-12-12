@@ -83,10 +83,10 @@ const CornerOrnament = ({ position, isDark }) => {
 // ============================================
 const OrnateFrame = ({ children, className, isDark, glowColor = 'violet' }) => {
 	const glowColors = {
-		violet: isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30',
-		amber: isDark ? 'shadow-amber-500/20' : 'shadow-amber-300/30',
-		cyan: isDark ? 'shadow-cyan-500/20' : 'shadow-cyan-300/30',
-		emerald: isDark ? 'shadow-emerald-500/20' : 'shadow-emerald-300/30',
+		violet: isDark ? '' : 'shadow-violet-300/30',
+		amber: isDark ? '' : 'shadow-amber-300/30',
+		cyan: isDark ? '' : 'shadow-cyan-300/30',
+		emerald: isDark ? '' : 'shadow-emerald-300/30',
 	}
 
 	const borderColors = {
@@ -162,8 +162,7 @@ const EpicHeader = ({ isDark, title, onBack }) => {
 							isDark
 								? 'from-slate-700 to-slate-800 border-2 border-violet-500/30'
 								: 'from-white to-slate-100 border-2 border-violet-300/50',
-							'shadow-lg',
-							isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30',
+							!isDark && 'shadow-lg shadow-violet-300/30',
 							'group-hover:border-violet-400 transition-colors'
 						)} />
 						<ArrowLeft className={cn(

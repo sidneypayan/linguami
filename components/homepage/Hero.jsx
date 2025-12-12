@@ -102,8 +102,8 @@ const Hero = () => {
 										"bg-gradient-to-r from-violet-600 to-cyan-500",
 										"hover:from-violet-500 hover:to-cyan-400",
 										"border border-violet-400/50 hover:border-violet-300/70",
-										"shadow-[0_8px_30px_rgba(139,92,246,0.4),0_0_20px_rgba(6,182,212,0.3)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]",
-										"hover:shadow-[0_12px_40px_rgba(139,92,246,0.6),0_0_30px_rgba(6,182,212,0.4)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)]",
+										"shadow-[0_8px_30px_rgba(139,92,246,0.4),0_0_20px_rgba(6,182,212,0.3)] dark:shadow-none",
+										"hover:shadow-[0_12px_40px_rgba(139,92,246,0.6),0_0_30px_rgba(6,182,212,0.4)] dark:hover:shadow-none",
 										"hover:-translate-y-1 hover:scale-[1.02]",
 										"transition-all duration-300 ease-out",
 										"rounded-xl mx-auto lg:mx-0"

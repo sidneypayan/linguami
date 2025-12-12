@@ -52,8 +52,8 @@ const WordCard = ({ word, sourceWord, translation, onEdit, onDelete, isDark }) =
 			isDark
 				? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/20'
 				: 'bg-gradient-to-br from-white to-slate-50 border-violet-200/50',
-			'shadow-lg hover:shadow-xl',
-			isDark ? 'hover:shadow-violet-500/20' : 'hover:shadow-violet-300/30',
+			!isDark && 'shadow-lg hover:shadow-xl',
+			!isDark && 'hover:shadow-violet-300/30',
 			'hover:border-violet-500/40'
 		)}>
 			{/* Left accent bar */}
@@ -186,8 +186,7 @@ const OrnateFrame = ({ children, className, isDark }) => {
 			!hasOverflowVisible && 'overflow-hidden',
 			'border-2',
 			isDark ? 'border-violet-500/20 bg-slate-900/80' : 'border-violet-600/10 bg-white/90',
-			'shadow-lg',
-			isDark ? 'shadow-black/20' : 'shadow-slate-200/50',
+			!isDark && 'shadow-lg shadow-slate-200/50',
 			className
 		)}>
 			{/* Inner glow border */}
@@ -362,8 +361,7 @@ const EmptyState = ({ translations, t, isDark, onAddWord }) => {
 					isDark
 						? 'bg-gradient-to-br from-slate-900/95 via-violet-950/30 to-slate-900/95 border-violet-500/30'
 						: 'bg-gradient-to-br from-white via-violet-50/30 to-white border-violet-200',
-					'shadow-2xl',
-					isDark ? 'shadow-violet-500/20' : 'shadow-violet-300/30'
+					!isDark && 'shadow-2xl shadow-violet-300/30'
 				)}>
 					<CardContent className="p-8 md:p-10">
 						{/* Decorative corners */}
@@ -696,8 +694,7 @@ const DictionaryClient = ({ translations }) => {
 					isDark
 						? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/20'
 						: 'bg-white border-violet-200/50',
-					'shadow-xl',
-					isDark ? 'shadow-violet-500/10' : 'shadow-violet-200/30'
+					!isDark && 'shadow-xl shadow-violet-200/30'
 				)}>
 					{/* Top accent */}
 					<div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 via-cyan-500 to-violet-500" />

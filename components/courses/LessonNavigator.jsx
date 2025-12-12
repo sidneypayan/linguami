@@ -431,19 +431,19 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 							? 'bg-gradient-to-r from-slate-900/90 via-slate-800/50 to-slate-900/90'
 							: 'bg-gradient-to-r from-white via-slate-50 to-white',
 						// Default border
-						isDark ? 'border-violet-500/50 shadow-[0_0_20px_rgba(139,92,246,0.15)]' : 'border-violet-300 shadow-violet-100',
+						isDark ? 'border-violet-500/50' : 'border-violet-300 shadow-violet-100',
 						// Type-specific borders
-						currentBlock?.type === 'dialogue' && (isDark ? 'border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.15)]' : 'border-blue-300 shadow-blue-100'),
-						currentBlock?.type === 'grammar' && (isDark ? 'border-violet-500/50 shadow-[0_0_20px_rgba(139,92,246,0.15)]' : 'border-violet-300 shadow-violet-100'),
-						currentBlock?.type === 'vocabulary' && (isDark ? 'border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]' : 'border-emerald-300 shadow-emerald-100'),
-						currentBlock?.type === 'culture' && (isDark ? 'border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'border-cyan-300 shadow-cyan-100'),
-						currentBlock?.type === 'exercise' && (isDark ? 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]' : 'border-orange-300 shadow-orange-100'),
-						currentBlock?.type === 'exerciseInline' && (isDark ? 'border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.15)]' : 'border-purple-300 shadow-purple-100'),
-						currentBlock?.type === 'tip' && (isDark ? 'border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.15)]' : 'border-amber-300 shadow-amber-100'),
-						currentBlock?.type === 'summary' && (isDark ? 'border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]' : 'border-green-300 shadow-green-100'),
-						currentBlock?.type === 'conversation' && (isDark ? 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]' : 'border-orange-300 shadow-orange-100'),
-						currentBlock?.type === 'audio' && (isDark ? 'border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.15)]' : 'border-pink-300 shadow-pink-100'),
-						currentBlock?.type === 'pronunciation' && (isDark ? 'border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.15)]' : 'border-indigo-300 shadow-indigo-100'),
+						currentBlock?.type === 'dialogue' && (isDark ? 'border-blue-500/50' : 'border-blue-300 shadow-blue-100'),
+						currentBlock?.type === 'grammar' && (isDark ? 'border-violet-500/50' : 'border-violet-300 shadow-violet-100'),
+						currentBlock?.type === 'vocabulary' && (isDark ? 'border-emerald-500/50' : 'border-emerald-300 shadow-emerald-100'),
+						currentBlock?.type === 'culture' && (isDark ? 'border-cyan-500/50' : 'border-cyan-300 shadow-cyan-100'),
+						currentBlock?.type === 'exercise' && (isDark ? 'border-orange-500/50' : 'border-orange-300 shadow-orange-100'),
+						currentBlock?.type === 'exerciseInline' && (isDark ? 'border-purple-500/50' : 'border-purple-300 shadow-purple-100'),
+						currentBlock?.type === 'tip' && (isDark ? 'border-amber-500/50' : 'border-amber-300 shadow-amber-100'),
+						currentBlock?.type === 'summary' && (isDark ? 'border-green-500/50' : 'border-green-300 shadow-green-100'),
+						currentBlock?.type === 'conversation' && (isDark ? 'border-orange-500/50' : 'border-orange-300 shadow-orange-100'),
+						currentBlock?.type === 'audio' && (isDark ? 'border-pink-500/50' : 'border-pink-300 shadow-pink-100'),
+						currentBlock?.type === 'pronunciation' && (isDark ? 'border-indigo-500/50' : 'border-indigo-300 shadow-indigo-100'),
 						'shadow-lg'
 					)}>
 						{/* Icône hexagonale du skill */}
@@ -866,7 +866,7 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 										isDark
 											? 'bg-slate-900/80 border-slate-700'
 											: 'bg-white border-slate-200',
-										isOpen && (isDark ? 'shadow-lg shadow-violet-500/10 border-violet-500/30' : 'shadow-xl border-violet-300'),
+										isOpen && (isDark ? 'border-violet-500/30' : 'shadow-xl border-violet-300'),
 										isCompleted && !isOpen && (isDark ? 'border-emerald-500/30' : 'border-emerald-300')
 									)}>
 										{/* Header cliquable */}

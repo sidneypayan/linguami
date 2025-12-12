@@ -818,7 +818,13 @@
     "subtitle": "Sélectionnez une leçon dans le menu à gauche pour commencer",
     "level": "Niveau",
     "exercices": "Exercices",
-    "lessonlearnt": "J'ai terminé cette leçon"
+    "lessonlearnt": "J'ai terminé cette leçon",
+    "mnemonics": "Mnémotechniques",
+    "table_pronoun": "Pronom",
+    "table_form": "Forme",
+    "table_translation": "Traduction",
+    "show_menu": "Menu",
+    "lessons_available": "leçons disponibles"
   },
   "materials": {
     "pagetitle": "Matériels d'Apprentissage | Vidéos, Audio, Textes Authentiques",

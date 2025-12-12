@@ -114,7 +114,7 @@ const HowItWorks = ({ translations }) => {
 										"shadow-lg transition-transform duration-500 group-hover:scale-110"
 									)}
 									style={{
-										boxShadow: isDark ? '0 8px 24px rgba(0, 0, 0, 0.4)' : `0 8px 24px ${step.glowColor}`,
+										boxShadow: isDark ? 'none' : `0 8px 24px ${step.glowColor}`,
 									}}
 								>
 									<Icon className="w-8 h-8 text-white" />

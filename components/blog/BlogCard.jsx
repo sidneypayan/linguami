@@ -22,8 +22,7 @@ const BlogCard = ({ post }) => {
 				isDark
 					? 'bg-slate-900/80 border-violet-500/20 hover:border-violet-400/50'
 					: 'bg-white/90 border-violet-600/10 hover:border-violet-500/30',
-				'shadow-lg hover:shadow-xl',
-				isDark ? 'shadow-black/20 hover:shadow-violet-500/20' : 'shadow-slate-200/50 hover:shadow-violet-400/30',
+				!isDark && 'shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-violet-400/30',
 				'hover:-translate-y-1'
 			)}>
 				{/* Image Section */}

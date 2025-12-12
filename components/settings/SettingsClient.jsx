@@ -314,21 +314,12 @@ const SettingsClient = ({ translations }) => {
 				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-500/3 rounded-full blur-3xl" />
 			</div>
 
-			<div className="relative max-w-6xl mx-auto px-4">
+			<div className="relative max-w-6xl mx-auto px-2 sm:px-4">
 				{/* Page Header */}
 				<div className="text-center mb-8">
-					<div className="inline-flex items-center gap-3 mb-2">
-						<div className={cn(
-							'w-12 h-12 rounded-xl flex items-center justify-center',
-							'bg-gradient-to-br from-violet-500 to-purple-600',
-							'shadow-lg shadow-violet-500/30'
-						)}>
-							<Scroll className="w-6 h-6 text-white" />
-						</div>
-						<h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
-							{translations.settingsTitle || 'Grimoire du Heros'}
-						</h1>
-					</div>
+					<h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent mb-2">
+						{translations.settingsTitle || 'Grimoire du Heros'}
+					</h1>
 					<p className={cn('text-base', isDark ? 'text-slate-500' : 'text-slate-400')}>
 						{translations.settingsSubtitle || 'Personnalisez votre aventure'}
 					</p>
@@ -346,7 +337,7 @@ const SettingsClient = ({ translations }) => {
 					<div className="absolute -top-32 -right-32 w-64 h-64 bg-violet-500/20 rounded-full blur-3xl" />
 					<div className="absolute -bottom-32 -left-32 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl" />
 
-					<CardContent className="p-6 md:p-8">
+					<CardContent className="p-3 sm:p-6 md:p-8">
 						<div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
 							{/* Avatar Section */}
 							<div className="relative flex-shrink-0">
@@ -373,7 +364,7 @@ const SettingsClient = ({ translations }) => {
 							</div>
 
 							{/* Character Info */}
-							<div className="flex-1 text-center md:text-left">
+							<div className="flex-1 w-full text-center md:text-left">
 								<h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-violet-300 via-cyan-300 to-violet-300 bg-clip-text text-transparent mb-2">
 									{userProfile?.name || 'Aventurier'}
 								</h2>
@@ -397,39 +388,39 @@ const SettingsClient = ({ translations }) => {
 								</div>
 
 								{/* Stats Grid */}
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-3 gap-3 sm:gap-4">
 									<div className={cn(
-										'p-3 rounded-xl text-center',
+										'p-2 sm:p-3 rounded-xl text-center',
 										'bg-gradient-to-br from-cyan-500/20 to-cyan-500/5',
 										'border border-cyan-500/30'
 									)}>
-										<Zap className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
-										<p className="text-2xl font-black bg-gradient-to-b from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
+										<Zap className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 mx-auto mb-1" />
+										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
 											{userProfile?.xp || 0}
 										</p>
-										<p className="text-[10px] text-cyan-400/70 uppercase tracking-wider font-bold">XP Total</p>
+										<p className="text-[9px] sm:text-[10px] text-cyan-400/70 uppercase tracking-wider font-bold">XP Total</p>
 									</div>
 									<div className={cn(
-										'p-3 rounded-xl text-center',
+										'p-2 sm:p-3 rounded-xl text-center',
 										'bg-gradient-to-br from-violet-500/20 to-violet-500/5',
 										'border border-violet-500/30'
 									)}>
-										<Flame className="w-5 h-5 text-orange-400 mx-auto mb-1" />
-										<p className="text-2xl font-black bg-gradient-to-b from-orange-300 to-orange-500 bg-clip-text text-transparent">
+										<Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-400 mx-auto mb-1" />
+										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-orange-300 to-orange-500 bg-clip-text text-transparent">
 											{userProfile?.streak || 0}
 										</p>
-										<p className="text-[10px] text-orange-400/70 uppercase tracking-wider font-bold">Streak</p>
+										<p className="text-[9px] sm:text-[10px] text-orange-400/70 uppercase tracking-wider font-bold">Streak</p>
 									</div>
 									<div className={cn(
-										'p-3 rounded-xl text-center',
+										'p-2 sm:p-3 rounded-xl text-center',
 										'bg-gradient-to-br from-amber-500/20 to-amber-500/5',
 										'border border-amber-500/30'
 									)}>
-										<Coins className="w-5 h-5 text-amber-400 mx-auto mb-1" />
-										<p className="text-2xl font-black bg-gradient-to-b from-amber-300 to-amber-500 bg-clip-text text-transparent">
+										<Coins className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 mx-auto mb-1" />
+										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-amber-300 to-amber-500 bg-clip-text text-transparent">
 											{userProfile?.gold || 0}
 										</p>
-										<p className="text-[10px] text-amber-400/70 uppercase tracking-wider font-bold">Or</p>
+										<p className="text-[9px] sm:text-[10px] text-amber-400/70 uppercase tracking-wider font-bold">Or</p>
 									</div>
 								</div>
 							</div>

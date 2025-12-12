@@ -401,8 +401,7 @@ const LevelPageClient = ({
 													? 'bg-slate-900/80 border-slate-700/50 hover:border-violet-500/50'
 													: 'bg-white/80 border-slate-200 hover:border-violet-300',
 											'backdrop-blur-sm',
-											'hover:shadow-xl',
-											isDark ? 'hover:shadow-violet-500/10' : 'hover:shadow-violet-200/50'
+											!isDark && 'hover:shadow-xl hover:shadow-violet-200/50'
 										)}>
 										<div className="p-4 sm:p-6 pt-5 sm:pt-6">
 											<div className="flex items-start gap-3 sm:gap-4">

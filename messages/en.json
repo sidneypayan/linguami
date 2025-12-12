@@ -816,7 +816,13 @@
     "subtitle": "Select a lesson from the left menu to start",
     "level": "Level",
     "exercices": "Exercises",
-    "lessonlearnt": "I finished this lesson"
+    "lessonlearnt": "I finished this lesson",
+    "mnemonics": "Mnemonics",
+    "table_pronoun": "Pronoun",
+    "table_form": "Form",
+    "table_translation": "Translation",
+    "show_menu": "Menu",
+    "lessons_available": "lessons available"
   },
   "materials": {
     "pagetitle": "Learning Materials | Authentic Videos, Audio & Texts",
