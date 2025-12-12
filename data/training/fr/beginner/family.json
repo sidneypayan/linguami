@@ -1,0 +1,102 @@
+[
+  {
+    "id": 574,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"mother\" en français ?",
+    "question_en": "How do you say \"mother\" in French?",
+    "question_ru": "Как сказать \"мать\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "avion",
+      "mère",
+      "magasin",
+      "vert"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "mère = mother",
+    "explanation_en": "mère = mother",
+    "explanation_ru": "mère = мать",
+    "difficulty": 1
+  },
+  {
+    "id": 575,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"father\" en français ?",
+    "question_en": "How do you say \"father\" in French?",
+    "question_ru": "Как сказать \"отец\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "table",
+      "fleur",
+      "stylo",
+      "père"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "père = father",
+    "explanation_en": "père = father",
+    "explanation_ru": "père = отец",
+    "difficulty": 1
+  },
+  {
+    "id": 576,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"brother\" en français ?",
+    "question_en": "How do you say \"brother\" in French?",
+    "question_ru": "Как сказать \"брат\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "frère",
+      "neige",
+      "cuisine",
+      "fenêtre"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "frère = brother",
+    "explanation_en": "frère = brother",
+    "explanation_ru": "frère = брат",
+    "difficulty": 1
+  },
+  {
+    "id": 577,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"sister\" en français ?",
+    "question_en": "How do you say \"sister\" in French?",
+    "question_ru": "Как сказать \"сестра\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "sœur",
+      "dimanche",
+      "bonjour",
+      "rouge"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "sœur = sister",
+    "explanation_en": "sœur = sister",
+    "explanation_ru": "sœur = сестра",
+    "difficulty": 1
+  },
+  {
+    "id": 578,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"child\" en français ?",
+    "question_en": "How do you say \"child\" in French?",
+    "question_ru": "Как сказать \"ребёнок\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "enfant",
+      "vin",
+      "hôpital",
+      "au revoir"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "enfant = child",
+    "explanation_en": "enfant = child",
+    "explanation_ru": "enfant = ребёнок",
+    "difficulty": 1
+  }
+]

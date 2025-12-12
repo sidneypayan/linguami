@@ -1,0 +1,102 @@
+[
+  {
+    "id": 614,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"house\" en français ?",
+    "question_en": "How do you say \"house\" in French?",
+    "question_ru": "Как сказать \"дом\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "maison",
+      "montagne",
+      "livre",
+      "mère"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "maison = house",
+    "explanation_en": "maison = house",
+    "explanation_ru": "maison = дом",
+    "difficulty": 1
+  },
+  {
+    "id": 615,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"school\" en français ?",
+    "question_en": "How do you say \"school\" in French?",
+    "question_ru": "Как сказать \"школа\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "fromage",
+      "en colère",
+      "mère",
+      "école"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "école = school",
+    "explanation_en": "école = school",
+    "explanation_ru": "école = школа",
+    "difficulty": 1
+  },
+  {
+    "id": 616,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"restaurant\" en français ?",
+    "question_en": "How do you say \"restaurant\" in French?",
+    "question_ru": "Как сказать \"ресторан\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "musique",
+      "jus",
+      "hôpital",
+      "restaurant"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "restaurant = restaurant",
+    "explanation_en": "restaurant = restaurant",
+    "explanation_ru": "restaurant = ресторан",
+    "difficulty": 1
+  },
+  {
+    "id": 617,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"hospital\" en français ?",
+    "question_en": "How do you say \"hospital\" in French?",
+    "question_ru": "Как сказать \"больница\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "beau",
+      "grand",
+      "hôpital",
+      "restaurant"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "hôpital = hospital",
+    "explanation_en": "hôpital = hospital",
+    "explanation_ru": "hôpital = больница",
+    "difficulty": 1
+  },
+  {
+    "id": 618,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"store\" en français ?",
+    "question_en": "How do you say \"store\" in French?",
+    "question_ru": "Как сказать \"магазин\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "lundi",
+      "sport",
+      "magasin",
+      "bonjour"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "magasin = store",
+    "explanation_en": "magasin = store",
+    "explanation_ru": "magasin = магазин",
+    "difficulty": 1
+  }
+]

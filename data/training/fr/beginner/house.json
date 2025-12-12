@@ -1,0 +1,102 @@
+[
+  {
+    "id": 624,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"kitchen\" en français ?",
+    "question_en": "How do you say \"kitchen\" in French?",
+    "question_ru": "Как сказать \"кухня\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "cuisine",
+      "enfant",
+      "chat",
+      "jeu"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "cuisine = kitchen",
+    "explanation_en": "cuisine = kitchen",
+    "explanation_ru": "cuisine = кухня",
+    "difficulty": 1
+  },
+  {
+    "id": 625,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"bedroom\" en français ?",
+    "question_en": "How do you say \"bedroom\" in French?",
+    "question_ru": "Как сказать \"спальня\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "grand",
+      "œil",
+      "stylo",
+      "chambre"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "chambre = bedroom",
+    "explanation_en": "chambre = bedroom",
+    "explanation_ru": "chambre = спальня",
+    "difficulty": 1
+  },
+  {
+    "id": 626,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"window\" en français ?",
+    "question_en": "How do you say \"window\" in French?",
+    "question_ru": "Как сказать \"окно\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "fenêtre",
+      "frère",
+      "sœur",
+      "danse"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "fenêtre = window",
+    "explanation_en": "fenêtre = window",
+    "explanation_ru": "fenêtre = окно",
+    "difficulty": 1
+  },
+  {
+    "id": 627,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"door\" en français ?",
+    "question_en": "How do you say \"door\" in French?",
+    "question_ru": "Как сказать \"дверь\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "mer",
+      "pluie",
+      "artiste",
+      "porte"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "porte = door",
+    "explanation_en": "porte = door",
+    "explanation_ru": "porte = дверь",
+    "difficulty": 1
+  },
+  {
+    "id": 628,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"table\" en français ?",
+    "question_en": "How do you say \"table\" in French?",
+    "question_ru": "Как сказать \"стол\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "table",
+      "médecin",
+      "pain",
+      "lecture"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "table = table",
+    "explanation_en": "table = table",
+    "explanation_ru": "table = стол",
+    "difficulty": 1
+  }
+]

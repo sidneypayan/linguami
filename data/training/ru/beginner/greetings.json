@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"bonjour\" en russe ?",
+    "question_en": "How do you say \"hello\" in Russian?",
+    "question_ru": null,
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "привет",
+      "пока",
+      "спасибо",
+      "пожалуйста"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Привет (Privet) signifie \"Salut\" ou \"Bonjour\" de maniere informelle.",
+    "explanation_en": "Привет (Privet) means \"Hi\" or \"Hello\" in an informal way.",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 2,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Спасибо\" ?",
+    "question_en": "What does \"Спасибо\" mean?",
+    "question_ru": null,
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "en": [
+        "goodbye",
+        "hello",
+        "thank you",
+        "sorry"
+      ],
+      "fr": [
+        "au revoir",
+        "bonjour",
+        "merci",
+        "pardon"
+      ]
+    },
+    "correct_answer": 2,
+    "explanation_fr": "Спасибо (Spasibo) signifie \"Merci\".",
+    "explanation_en": "Спасибо (Spasibo) means \"Thank you\".",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 3,
+    "type": "dropdown",
+    "question_fr": null,
+    "question_en": null,
+    "question_ru": null,
+    "sentence": "Меня ___ Анна.",
+    "blank": "зовут",
+    "options": [
+      "зовут",
+      "есть",
+      "люблю",
+      "хочу"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Меня зовут = Je m'appelle. \"Зовут\" est le verbe utilise pour dire son prenom.",
+    "explanation_en": "Меня зовут = My name is. \"Зовут\" is the verb used to say your name.",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 4,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"oui\" en russe ?",
+    "question_en": "How do you say \"yes\" in Russian?",
+    "question_ru": null,
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "нет",
+      "да",
+      "может",
+      "хорошо"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Да signifie \"oui\" en russe.",
+    "explanation_en": "Да means \"yes\" in Russian.",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 5,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"au revoir\" en russe ?",
+    "question_en": "How do you say \"goodbye\" in Russian?",
+    "question_ru": null,
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "привет",
+      "пока",
+      "спасибо",
+      "здравствуйте"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Пока (Poka) signifie \"Au revoir\" de maniere informelle.",
+    "explanation_en": "Пока (Poka) means \"Bye\" in an informal way.",
+    "explanation_ru": null,
+    "difficulty": 1
+  }
+]

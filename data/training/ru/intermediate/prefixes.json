@@ -1,0 +1,2937 @@
+[
+  {
+    "id": 6,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-казать)",
+    "question_en": "Fill in with the correct verb (-казать)",
+    "question_ru": "Заполните правильным глаголом (-казать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-казать",
+      "tense": "passé masculin singulier",
+      "verbs": [
+        "показал",
+        "наказал",
+        "заказал",
+        "рассказал"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "Ivan showed us a new collection of paintings.",
+            "fr": "Ivan nous a montré une nouvelle collection de tableaux.",
+            "ru": "Иван ___ нам новую коллекцию картин."
+          },
+          "answer": "показал",
+          "meaning": {
+            "en": "to show",
+            "fr": "montrer"
+          },
+          "verb_infinitive": "показать"
+        },
+        {
+          "text": {
+            "en": "The teacher punished the student for rude behavior.",
+            "fr": "Le professeur a puni l'élève pour son comportement grossier.",
+            "ru": "Учитель ___ ученика за грубое поведение."
+          },
+          "answer": "наказал",
+          "meaning": {
+            "en": "to punish",
+            "fr": "punir"
+          },
+          "verb_infinitive": "наказать"
+        },
+        {
+          "text": {
+            "en": "Dmitry ordered lunch at the nearest café.",
+            "fr": "Dmitri a commandé le déjeuner au café le plus proche.",
+            "ru": "Дмитрий ___ обед в ближайшем кафе."
+          },
+          "answer": "заказал",
+          "meaning": {
+            "en": "to order",
+            "fr": "commander"
+          },
+          "verb_infinitive": "заказать"
+        },
+        {
+          "text": {
+            "en": "Grandfather told a story that surprised everyone.",
+            "fr": "Grand-père a raconté une histoire qui a surpris tout le monde.",
+            "ru": "Дедушка ___ историю, которая всех удивила."
+          },
+          "answer": "рассказал",
+          "meaning": {
+            "en": "to tell",
+            "fr": "raconter"
+          },
+          "verb_infinitive": "рассказать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-казать\"",
+    "explanation_en": "Exercise on verbs with the root \"-казать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-казать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 7,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-писать)",
+    "question_en": "Fill in with the correct verb (-писать)",
+    "question_ru": "Заполните правильным глаголом (-писать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-писать",
+      "tense": "futur 3ème personne singulier",
+      "verbs": [
+        "подпишет",
+        "выпишет",
+        "запишет",
+        "перепишет",
+        "напишет"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "The director will sign the documents after lunch.",
+            "fr": "Le directeur signera les documents après le déjeuner.",
+            "ru": "Директор ___ документы после обеда."
+          },
+          "answer": "подпишет",
+          "meaning": {
+            "en": "to sign",
+            "fr": "signer"
+          },
+          "verb_infinitive": "подписать"
+        },
+        {
+          "text": {
+            "en": "Tomorrow the doctor will write me a new prescription.",
+            "fr": "Demain le médecin me prescrira une nouvelle ordonnance.",
+            "ru": "Завтра врач ___ мне новый рецепт."
+          },
+          "answer": "выпишет",
+          "meaning": {
+            "en": "to prescribe",
+            "fr": "prescrire"
+          },
+          "verb_infinitive": "выписать"
+        },
+        {
+          "text": {
+            "en": "Maxim will write down your address in his notebook.",
+            "fr": "Maxim notera votre adresse dans son carnet.",
+            "ru": "Максим ___ ваш адрес в блокнот."
+          },
+          "answer": "запишет",
+          "meaning": {
+            "en": "to write down",
+            "fr": "noter"
+          },
+          "verb_infinitive": "записать"
+        },
+        {
+          "text": {
+            "en": "If the student rewrites the text without errors, he will get a good grade.",
+            "fr": "Si l'élève recopie le texte sans erreurs, il aura une bonne note.",
+            "ru": "Если ученик ___ текст без ошибок, он получит хорошую оценку."
+          },
+          "answer": "перепишет",
+          "meaning": {
+            "en": "to rewrite",
+            "fr": "recopier"
+          },
+          "verb_infinitive": "переписать"
+        },
+        {
+          "text": {
+            "en": "Anna will write a letter to her grandmother next week.",
+            "fr": "Anna écrira une lettre à sa grand-mère la semaine prochaine.",
+            "ru": "Анна ___ письмо бабушке на следующей неделе."
+          },
+          "answer": "напишет",
+          "meaning": {
+            "en": "to write",
+            "fr": "écrire"
+          },
+          "verb_infinitive": "написать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-писать\"",
+    "explanation_en": "Exercise on verbs with the root \"-писать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-писать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 8,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-ходить)",
+    "question_en": "Fill in with the correct verb (-ходить)",
+    "question_ru": "Заполните правильным глаголом (-ходить)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-ходить",
+      "tense": "présent 1ère personne singulier",
+      "verbs": [
+        "выхожу",
+        "вхожу",
+        "ухожу",
+        "прихожу",
+        "захожу"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "Every morning I leave the house at eight o'clock.",
+            "fr": "Chaque matin je sors de la maison à huit heures.",
+            "ru": "Каждое утро я ___ из дома в восемь часов."
+          },
+          "answer": "выхожу",
+          "meaning": {
+            "en": "to go out",
+            "fr": "sortir"
+          },
+          "verb_infinitive": "выходить"
+        },
+        {
+          "text": {
+            "en": "When I enter the classroom, everyone is already seated.",
+            "fr": "Quand j'entre dans la classe, tout le monde est déjà assis.",
+            "ru": "Когда я ___ в класс, все уже сидят на местах."
+          },
+          "answer": "вхожу",
+          "meaning": {
+            "en": "to enter",
+            "fr": "entrer"
+          },
+          "verb_infinitive": "входить"
+        },
+        {
+          "text": {
+            "en": "Usually I leave work at six in the evening.",
+            "fr": "D'habitude je quitte le travail à six heures du soir.",
+            "ru": "Обычно я ___ с работы в шесть вечера."
+          },
+          "answer": "ухожу",
+          "meaning": {
+            "en": "to leave",
+            "fr": "partir"
+          },
+          "verb_infinitive": "уходить"
+        },
+        {
+          "text": {
+            "en": "I always come home tired after work.",
+            "fr": "Je rentre toujours à la maison fatigué après le travail.",
+            "ru": "Я всегда ___ домой уставшим после работы."
+          },
+          "answer": "прихожу",
+          "meaning": {
+            "en": "to come, to arrive",
+            "fr": "arriver, rentrer"
+          },
+          "verb_infinitive": "приходить"
+        },
+        {
+          "text": {
+            "en": "On my way home I often stop by the store for groceries.",
+            "fr": "En rentrant, je passe souvent au magasin pour faire des courses.",
+            "ru": "По дороге домой я часто ___ в магазин за продуктами."
+          },
+          "answer": "захожу",
+          "meaning": {
+            "en": "to stop by",
+            "fr": "passer (quelque part)"
+          },
+          "verb_infinitive": "заходить"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-ходить\"",
+    "explanation_en": "Exercise on verbs with the root \"-ходить\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-ходить\"",
+    "difficulty": 2
+  },
+  {
+    "id": 9,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-читать)",
+    "question_en": "Fill in with the correct verb (-читать)",
+    "question_ru": "Заполните правильным глаголом (-читать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-читать",
+      "tense": "passé féminin singulier",
+      "verbs": [
+        "прочитала",
+        "вычитала",
+        "зачитала",
+        "перечитала"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "Maria read this book in three days.",
+            "fr": "Maria a lu ce livre en trois jours.",
+            "ru": "Мария ___ эту книгу за три дня."
+          },
+          "answer": "прочитала",
+          "meaning": {
+            "en": "to read (completely)",
+            "fr": "lire (jusqu'au bout)"
+          },
+          "verb_infinitive": "прочитать"
+        },
+        {
+          "text": {
+            "en": "She found an interesting fact in a scientific journal.",
+            "fr": "Elle a trouvé un fait intéressant dans une revue scientifique.",
+            "ru": "Она ___ интересный факт в научном журнале."
+          },
+          "answer": "вычитала",
+          "meaning": {
+            "en": "to find by reading",
+            "fr": "trouver en lisant"
+          },
+          "verb_infinitive": "вычитать"
+        },
+        {
+          "text": {
+            "en": "The secretary read aloud the list of participants.",
+            "fr": "La secrétaire a lu à haute voix la liste des participants.",
+            "ru": "Секретарь ___ список участников вслух."
+          },
+          "answer": "зачитала",
+          "meaning": {
+            "en": "to read aloud",
+            "fr": "lire à haute voix"
+          },
+          "verb_infinitive": "зачитать"
+        },
+        {
+          "text": {
+            "en": "Grandmother reread this letter many times.",
+            "fr": "Grand-mère a relu cette lettre plusieurs fois.",
+            "ru": "Бабушка ___ это письмо много раз."
+          },
+          "answer": "перечитала",
+          "meaning": {
+            "en": "to reread",
+            "fr": "relire"
+          },
+          "verb_infinitive": "перечитать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-читать\"",
+    "explanation_en": "Exercise on verbs with the root \"-читать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-читать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 10,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-нести)",
+    "question_en": "Fill in with the correct verb (-нести)",
+    "question_ru": "Заполните правильным глаголом (-нести)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-нести",
+      "tense": "futur 1ère personne singulier",
+      "verbs": [
+        "принесу",
+        "унесу",
+        "вынесу",
+        "занесу",
+        "отнесу"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "I will bring you the book tomorrow.",
+            "fr": "Je t'apporterai le livre demain.",
+            "ru": "Я ___ тебе книгу завтра."
+          },
+          "answer": "принесу",
+          "meaning": {
+            "en": "to bring",
+            "fr": "apporter"
+          },
+          "verb_infinitive": "принести"
+        },
+        {
+          "text": {
+            "en": "I will take the old furniture to the dacha.",
+            "fr": "J'emporterai les vieux meubles à la datcha.",
+            "ru": "Я ___ старую мебель на дачу."
+          },
+          "answer": "унесу",
+          "meaning": {
+            "en": "to carry away",
+            "fr": "emporter"
+          },
+          "verb_infinitive": "унести"
+        },
+        {
+          "text": {
+            "en": "I will take the trash outside.",
+            "fr": "Je sortirai les poubelles.",
+            "ru": "Я ___ мусор на улицу."
+          },
+          "answer": "вынесу",
+          "meaning": {
+            "en": "to take out",
+            "fr": "sortir (qqch)"
+          },
+          "verb_infinitive": "вынести"
+        },
+        {
+          "text": {
+            "en": "I will drop off the package at the neighbors' on my way home.",
+            "fr": "Je déposerai le colis chez les voisins en rentrant.",
+            "ru": "Я ___ посылку соседям, когда пойду домой."
+          },
+          "answer": "занесу",
+          "meaning": {
+            "en": "to drop off",
+            "fr": "déposer en passant"
+          },
+          "verb_infinitive": "занести"
+        },
+        {
+          "text": {
+            "en": "I will take the documents to the office after lunch.",
+            "fr": "J'apporterai les documents au bureau après le déjeuner.",
+            "ru": "Я ___ документы в офис после обеда."
+          },
+          "answer": "отнесу",
+          "meaning": {
+            "en": "to take (somewhere)",
+            "fr": "apporter (là-bas)"
+          },
+          "verb_infinitive": "отнести"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-нести\"",
+    "explanation_en": "Exercise on verbs with the root \"-нести\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-нести\"",
+    "difficulty": 2
+  },
+  {
+    "id": 11,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-ехать)",
+    "question_en": "Fill in with the correct verb (-ехать)",
+    "question_ru": "Заполните правильным глаголом (-ехать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-ехать",
+      "tense": "passé masculin singulier",
+      "verbs": [
+        "приехал",
+        "уехал",
+        "выехал",
+        "заехал",
+        "переехал"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "My brother arrived from Moscow yesterday evening.",
+            "fr": "Mon frère est arrivé de Moscou hier soir.",
+            "ru": "Мой брат ___ из Москвы вчера вечером."
+          },
+          "answer": "приехал",
+          "meaning": {
+            "en": "to arrive (by vehicle)",
+            "fr": "arriver (en véhicule)"
+          },
+          "verb_infinitive": "приехать"
+        },
+        {
+          "text": {
+            "en": "Father left on a business trip for two weeks.",
+            "fr": "Père est parti en voyage d'affaires pour deux semaines.",
+            "ru": "Отец ___ в командировку на две недели."
+          },
+          "answer": "уехал",
+          "meaning": {
+            "en": "to leave (by vehicle)",
+            "fr": "partir (en véhicule)"
+          },
+          "verb_infinitive": "уехать"
+        },
+        {
+          "text": {
+            "en": "The bus left the depot at six in the morning.",
+            "fr": "Le bus est sorti du dépôt à six heures du matin.",
+            "ru": "Автобус ___ из депо в шесть утра."
+          },
+          "answer": "выехал",
+          "meaning": {
+            "en": "to drive out",
+            "fr": "sortir (en véhicule)"
+          },
+          "verb_infinitive": "выехать"
+        },
+        {
+          "text": {
+            "en": "On his way to work, Oleg stopped at the gas station.",
+            "fr": "En allant au travail, Oleg s'est arrêté à la station-service.",
+            "ru": "По дороге на работу Олег ___ на заправку."
+          },
+          "answer": "заехал",
+          "meaning": {
+            "en": "to stop by (by vehicle)",
+            "fr": "s'arrêter en passant"
+          },
+          "verb_infinitive": "заехать"
+        },
+        {
+          "text": {
+            "en": "Last year Anton moved to a new apartment.",
+            "fr": "L'année dernière, Anton a déménagé dans un nouvel appartement.",
+            "ru": "В прошлом году Антон ___ в новую квартиру."
+          },
+          "answer": "переехал",
+          "meaning": {
+            "en": "to move (residence)",
+            "fr": "déménager"
+          },
+          "verb_infinitive": "переехать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-ехать\"",
+    "explanation_en": "Exercise on verbs with the root \"-ехать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-ехать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 12,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-дать)",
+    "question_en": "Fill in with the correct verb (-дать)",
+    "question_ru": "Заполните правильным глаголом (-дать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-дать",
+      "tense": "futur 2ème personne singulier",
+      "verbs": [
+        "передашь",
+        "отдашь",
+        "продашь",
+        "выдашь",
+        "задашь"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "Will you pass on my regards to him?",
+            "fr": "Tu lui passeras le bonjour de ma part ?",
+            "ru": "Ты ___ ему привет от меня?"
+          },
+          "answer": "передашь",
+          "meaning": {
+            "en": "to pass on",
+            "fr": "transmettre"
+          },
+          "verb_infinitive": "передать"
+        },
+        {
+          "text": {
+            "en": "When will you give me back my money?",
+            "fr": "Quand est-ce que tu me rendras mon argent ?",
+            "ru": "Когда ты ___ мне мои деньги?"
+          },
+          "answer": "отдашь",
+          "meaning": {
+            "en": "to give back",
+            "fr": "rendre"
+          },
+          "verb_infinitive": "отдать"
+        },
+        {
+          "text": {
+            "en": "Will you sell your old car or keep it?",
+            "fr": "Tu vendras ta vieille voiture ou tu la garderas ?",
+            "ru": "Ты ___ свою старую машину или оставишь?"
+          },
+          "answer": "продашь",
+          "meaning": {
+            "en": "to sell",
+            "fr": "vendre"
+          },
+          "verb_infinitive": "продать"
+        },
+        {
+          "text": {
+            "en": "You won't reveal my secret?",
+            "fr": "Tu ne révéleras pas mon secret ?",
+            "ru": "Ты не ___ мой секрет?"
+          },
+          "answer": "выдашь",
+          "meaning": {
+            "en": "to reveal, to betray",
+            "fr": "révéler, trahir"
+          },
+          "verb_infinitive": "выдать"
+        },
+        {
+          "text": {
+            "en": "What question will you ask at the exam?",
+            "fr": "Quelle question poseras-tu à l'examen ?",
+            "ru": "Какой вопрос ты ___ на экзамене?"
+          },
+          "answer": "задашь",
+          "meaning": {
+            "en": "to ask (a question)",
+            "fr": "poser (une question)"
+          },
+          "verb_infinitive": "задать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-дать\"",
+    "explanation_en": "Exercise on verbs with the root \"-дать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-дать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 13,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-крыть)",
+    "question_en": "Fill in with the correct verb (-крыть)",
+    "question_ru": "Заполните правильным глаголом (-крыть)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-крыть",
+      "tense": "impératif 2ème personne singulier",
+      "verbs": [
+        "открой",
+        "закрой",
+        "прикрой",
+        "накрой"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "Open the window, please, it's stuffy here.",
+            "fr": "Ouvre la fenêtre, s'il te plaît, il fait étouffant ici.",
+            "ru": "___ окно, пожалуйста, здесь душно."
+          },
+          "answer": "Открой",
+          "meaning": {
+            "en": "to open",
+            "fr": "ouvrir"
+          },
+          "verb_infinitive": "открыть"
+        },
+        {
+          "text": {
+            "en": "Close the door, it's cold outside!",
+            "fr": "Ferme la porte, il fait froid dehors !",
+            "ru": "___ дверь, на улице холодно!"
+          },
+          "answer": "Закрой",
+          "meaning": {
+            "en": "to close",
+            "fr": "fermer"
+          },
+          "verb_infinitive": "закрыть"
+        },
+        {
+          "text": {
+            "en": "Close the door partially, but don't close it completely.",
+            "fr": "Ferme la porte à moitié, mais ne la ferme pas complètement.",
+            "ru": "___ дверь, но не закрывай полностью."
+          },
+          "answer": "Прикрой",
+          "meaning": {
+            "en": "to close partially",
+            "fr": "fermer à moitié"
+          },
+          "verb_infinitive": "прикрыть"
+        },
+        {
+          "text": {
+            "en": "Cover the table with a tablecloth before the guests arrive.",
+            "fr": "Couvre la table avec une nappe avant l'arrivée des invités.",
+            "ru": "___ стол скатертью перед приходом гостей."
+          },
+          "answer": "Накрой",
+          "meaning": {
+            "en": "to cover",
+            "fr": "couvrir"
+          },
+          "verb_infinitive": "накрыть"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-крыть\"",
+    "explanation_en": "Exercise on verbs with the root \"-крыть\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-крыть\"",
+    "difficulty": 2
+  },
+  {
+    "id": 14,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-брать)",
+    "question_en": "Fill in with the correct verb (-брать)",
+    "question_ru": "Заполните правильным глаголом (-брать)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-брать",
+      "tense": "passé pluriel",
+      "verbs": [
+        "выбрали",
+        "собрали",
+        "забрали",
+        "разобрали",
+        "набрали"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "We chose the most beautiful cake in the store.",
+            "fr": "Nous avons choisi le plus beau gâteau du magasin.",
+            "ru": "Мы ___ самый красивый торт в магазине."
+          },
+          "answer": "выбрали",
+          "meaning": {
+            "en": "to choose",
+            "fr": "choisir"
+          },
+          "verb_infinitive": "выбрать"
+        },
+        {
+          "text": {
+            "en": "The children collected all the toys into the box.",
+            "fr": "Les enfants ont rangé tous les jouets dans la boîte.",
+            "ru": "Дети ___ все игрушки в коробку."
+          },
+          "answer": "собрали",
+          "meaning": {
+            "en": "to collect, to gather",
+            "fr": "rassembler, ranger"
+          },
+          "verb_infinitive": "собрать"
+        },
+        {
+          "text": {
+            "en": "The parents picked up the children from kindergarten.",
+            "fr": "Les parents ont récupéré les enfants à la maternelle.",
+            "ru": "Родители ___ детей из детского сада."
+          },
+          "answer": "забрали",
+          "meaning": {
+            "en": "to pick up, to take",
+            "fr": "récupérer, prendre"
+          },
+          "verb_infinitive": "забрать"
+        },
+        {
+          "text": {
+            "en": "The students analyzed a complex topic at the seminar.",
+            "fr": "Les étudiants ont analysé un sujet complexe au séminaire.",
+            "ru": "Студенты ___ сложную тему на семинаре."
+          },
+          "answer": "разобрали",
+          "meaning": {
+            "en": "to analyze, to disassemble",
+            "fr": "analyser, démonter"
+          },
+          "verb_infinitive": "разобрать"
+        },
+        {
+          "text": {
+            "en": "We drew water from the well.",
+            "fr": "Nous avons puisé de l'eau du puits.",
+            "ru": "Мы ___ воду из колодца."
+          },
+          "answer": "набрали",
+          "meaning": {
+            "en": "to draw, to collect",
+            "fr": "puiser, collecter"
+          },
+          "verb_infinitive": "набрать"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-брать\"",
+    "explanation_en": "Exercise on verbs with the root \"-брать\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-брать\"",
+    "difficulty": 2
+  },
+  {
+    "id": 15,
+    "type": "dropdown_multiple",
+    "question_fr": "Complétez avec le bon verbe (-ставить)",
+    "question_en": "Fill in with the correct verb (-ставить)",
+    "question_ru": "Заполните правильным глаголом (-ставить)",
+    "sentence": null,
+    "blank": null,
+    "options": {
+      "root": "-ставить",
+      "tense": "futur 1ère personne pluriel",
+      "verbs": [
+        "поставим",
+        "оставим",
+        "выставим",
+        "переставим",
+        "доставим"
+      ],
+      "sentences": [
+        {
+          "text": {
+            "en": "We will put the Christmas tree in the corner of the room.",
+            "fr": "Nous mettrons le sapin dans le coin de la pièce.",
+            "ru": "Мы ___ ёлку в углу комнаты."
+          },
+          "answer": "поставим",
+          "meaning": {
+            "en": "to put, to place",
+            "fr": "mettre, poser"
+          },
+          "verb_infinitive": "поставить"
+        },
+        {
+          "text": {
+            "en": "We will leave the keys under the doormat.",
+            "fr": "Nous laisserons les clés sous le paillasson.",
+            "ru": "Мы ___ ключи под ковриком."
+          },
+          "answer": "оставим",
+          "meaning": {
+            "en": "to leave",
+            "fr": "laisser"
+          },
+          "verb_infinitive": "оставить"
+        },
+        {
+          "text": {
+            "en": "We will exhibit the paintings in the gallery next week.",
+            "fr": "Nous exposerons les tableaux à la galerie la semaine prochaine.",
+            "ru": "Мы ___ картины в галерее на следующей неделе."
+          },
+          "answer": "выставим",
+          "meaning": {
+            "en": "to exhibit",
+            "fr": "exposer"
+          },
+          "verb_infinitive": "выставить"
+        },
+        {
+          "text": {
+            "en": "We will rearrange the furniture to have more space.",
+            "fr": "Nous déplacerons les meubles pour avoir plus de place.",
+            "ru": "Мы ___ мебель, чтобы было больше места."
+          },
+          "answer": "переставим",
+          "meaning": {
+            "en": "to rearrange",
+            "fr": "déplacer"
+          },
+          "verb_infinitive": "переставить"
+        },
+        {
+          "text": {
+            "en": "We will deliver the order to this address.",
+            "fr": "Nous livrerons la commande à cette adresse.",
+            "ru": "Мы ___ заказ по этому адресу."
+          },
+          "answer": "доставим",
+          "meaning": {
+            "en": "to deliver",
+            "fr": "livrer"
+          },
+          "verb_infinitive": "доставить"
+        }
+      ]
+    },
+    "correct_answer": 0,
+    "explanation_fr": "Exercice sur les verbes avec la racine \"-ставить\"",
+    "explanation_en": "Exercise on verbs with the root \"-ставить\"",
+    "explanation_ru": "Упражнение на глаголы с корнем \"-ставить\"",
+    "difficulty": 2
+  },
+  {
+    "id": 17,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "написал",
+      "записал",
+      "подписал",
+      "переписал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Chaque préfixe change le sens du verbe: на- (écrire/composer), за- (noter), под- (signer), пере- (réécrire).",
+    "explanation_en": "Each prefix changes the verb meaning: на- (to write/compose), за- (to write down), под- (to sign), пере- (to rewrite).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 18,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "прочитаю",
+      "перечитаю",
+      "дочитаю"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "про- (lire complètement), пере- (relire), до- (finir de lire).",
+    "explanation_en": "про- (to read completely), пере- (to reread), до- (to finish reading).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 19,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "входит",
+      "выходит",
+      "проходит",
+      "переходит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "в- (entrer), вы- (sortir), про- (passer à travers), пере- (traverser).",
+    "explanation_en": "в- (to enter), вы- (to exit), про- (to pass through), пере- (to cross).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 20,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "принесли",
+      "унесли",
+      "вынесли",
+      "перенесли"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "при- (apporter), у- (emporter), вы- (sortir en portant), пере- (reporter/déplacer).",
+    "explanation_en": "при- (to bring), у- (to carry away), вы- (to carry out), пере- (to postpone/move).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 21,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "приедем",
+      "уедем",
+      "переедем",
+      "подъедем"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "при- (arriver), у- (partir), пере- (déménager), под- (s'approcher en véhicule).",
+    "explanation_en": "при- (to arrive), у- (to leave), пере- (to move/relocate), под- (to drive up to).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 22,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "отдал",
+      "передал",
+      "продал",
+      "выдал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "от- (rendre), пере- (transmettre), про- (vendre), вы- (délivrer).",
+    "explanation_en": "от- (to give back), пере- (to hand over), про- (to sell), вы- (to issue).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 23,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "убегает",
+      "прибегает",
+      "перебегает",
+      "выбегает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "у- (s'enfuir), при- (accourir), пере- (traverser en courant), вы- (sortir en courant).",
+    "explanation_en": "у- (to run away), при- (to run up to), пере- (to run across), вы- (to run out).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 24,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "позвоню",
+      "перезвоню",
+      "дозвонюсь"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (appeler), пере- (rappeler), до- (réussir à joindre).",
+    "explanation_en": "по- (to call), пере- (to call back), до- (to manage to reach).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 25,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "приготовила",
+      "подготовила",
+      "заготовила"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "при- (cuisiner), под- (préparer), за- (faire des réserves).",
+    "explanation_en": "при- (to cook), под- (to prepare), за- (to stock up).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 26,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "смотрите",
+      "просматриваете",
+      "осматриваете",
+      "пересматриваете"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (regarder), про- (parcourir), о- (examiner), пере- (revoir).",
+    "explanation_en": "Ø (to watch), про- (to look through), о- (to examine), пере- (to review).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 27,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "принёс",
+      "унёс",
+      "перенёс",
+      "донёс"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "при- (apporter), у- (emporter), пере- (déplacer/transférer), до- (rapporter/dénoncer).",
+    "explanation_en": "при- (to bring), у- (to carry away), пере- (to move/transfer), до- (to report/inform on).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 28,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "пойдёт",
+      "выйдет",
+      "зайдёт",
+      "перейдёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (aller/partir), вы- (sortir), за- (passer voir/entrer), пере- (traverser).",
+    "explanation_en": "по- (to go/leave), вы- (to exit), за- (to drop by/enter), пере- (to cross).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 29,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "поставил",
+      "выставил",
+      "переставил",
+      "заставил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (poser/mettre), вы- (exposer), пере- (déplacer), за- (forcer/obliger).",
+    "explanation_en": "по- (to put/place), вы- (to display/exhibit), пере- (to move/rearrange), за- (to force/make).",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 30,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "говорит",
+      "разговаривает",
+      "уговаривает",
+      "договаривается"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (parler), раз- (converser), у- (persuader), до- (convenir de)",
+    "explanation_en": "Ø (to speak), раз- (to converse), у- (to persuade), до- (to agree on)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 31,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "сыграет",
+      "проиграет",
+      "выиграет",
+      "переиграет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "с- (jouer une fois), про- (perdre), вы- (gagner), пере- (rejouer)",
+    "explanation_en": "с- (to play once), про- (to lose), вы- (to win), пере- (to replay)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 32,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "выучил",
+      "научил",
+      "изучил",
+      "разучил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "вы- (apprendre par cœur), на- (enseigner), из- (étudier), раз- (apprendre par répétition)",
+    "explanation_en": "вы- (to learn by heart), на- (to teach), из- (to study), раз- (to learn by repetition)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 33,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "сделала",
+      "переделала",
+      "доделала",
+      "выделала"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "с- (faire/accomplir), пере- (refaire), до- (finir de faire), вы- (tanner/préparer)",
+    "explanation_en": "с- (to do/complete), пере- (to redo), до- (to finish doing), вы- (to tan/prepare)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 34,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "взял",
+      "собрал",
+      "подобрал",
+      "отобрал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "в- (prendre), со- (rassembler), под- (ramasser), от- (confisquer)",
+    "explanation_en": "в- (to take), со- (to collect), под- (to pick up), от- (to confiscate)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 35,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "положил",
+      "выложил",
+      "переложил",
+      "доложил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (poser), вы- (disposer), пере- (déplacer), до- (rapporter)",
+    "explanation_en": "по- (to put), вы- (to lay out), пере- (to move), до- (to report)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 36,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "налила",
+      "вылила",
+      "пролила",
+      "перелила"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "на- (verser dans), вы- (vider), про- (renverser), пере- (transvaser)",
+    "explanation_en": "на- (to pour into), вы- (to pour out), про- (to spill), пере- (to pour over)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 37,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "упал",
+      "попал",
+      "выпал",
+      "пропал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "у- (tomber), по- (atteindre), вы- (tomber de), про- (disparaître)",
+    "explanation_en": "у- (to fall), по- (to hit/reach), вы- (to fall out), про- (to disappear)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 38,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "построят",
+      "перестроят",
+      "выстроят",
+      "достроят"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (construire), пере- (reconstruire), вы- (aligner), до- (finir de construire)",
+    "explanation_en": "по- (to build), пере- (to rebuild), вы- (to line up), до- (to finish building)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 39,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "выпью",
+      "попью",
+      "допью",
+      "перепью"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "вы- (boire entièrement), по- (boire un peu), до- (finir de boire), пере- (boire trop)",
+    "explanation_en": "вы- (to drink all), по- (to drink a bit), до- (to finish drinking), пере- (to drink too much)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 40,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "работает",
+      "зарабатывает",
+      "дорабатывает",
+      "отрабатывает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (travailler), за- (gagner), до- (finaliser), от- (perfectionner)",
+    "explanation_en": "Ø (to work), за- (to earn), до- (to finalize), от- (to perfect)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 41,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "жил",
+      "прожил",
+      "пережил",
+      "дожил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (vivre), про- (vivre pendant), пере- (survivre à), до- (vivre jusqu'à)",
+    "explanation_en": "Ø (to live), про- (to live through), пере- (to survive), до- (to live up to)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 42,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "любит",
+      "полюбит",
+      "разлюбит",
+      "влюбится"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (aimer), по- (se mettre à aimer), раз- (cesser d'aimer), в- (tomber amoureux)",
+    "explanation_en": "Ø (to love), по- (to come to love), раз- (to stop loving), в- (to fall in love)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 43,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "открыла",
+      "раскрыла",
+      "прикрыла",
+      "закрыла"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "от- (ouvrir), рас- (découvrir/résoudre), при- (entrouvrir), за- (fermer)",
+    "explanation_en": "от- (to open), рас- (to uncover/solve), при- (to half-close), за- (to close)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 44,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "покрыл",
+      "накрыл",
+      "прикрыл",
+      "раскрыл"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (couvrir), на- (mettre une nappe), при- (couvrir légèrement), рас- (révéler)",
+    "explanation_en": "по- (to cover), на- (to set a table), при- (to cover slightly), рас- (to reveal)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 45,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "порезал",
+      "нарезал",
+      "вырезал",
+      "отрезал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (se couper), на- (couper en morceaux), вы- (découper), от- (couper un morceau)",
+    "explanation_en": "по- (to cut oneself), на- (to slice), вы- (to cut out), от- (to cut off)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 46,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "помыла",
+      "вымыла",
+      "перемыла",
+      "отмыла"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (se laver vite), вы- (laver soigneusement), пере- (tout laver), от- (enlever en lavant)",
+    "explanation_en": "по- (to wash quickly), вы- (to wash thoroughly), пере- (to wash all), от- (to wash off)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 47,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "сварит",
+      "доварит",
+      "переварит",
+      "проварит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "s- (cuire/faire cuire), до- (finir de cuire), пере- (trop cuire), про- (cuire pendant)",
+    "explanation_en": "s- (to cook), до- (to finish cooking), пере- (to overcook), про- (to boil for)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 48,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "пожарил",
+      "дожарил",
+      "пережарил",
+      "прожарил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (faire frire), до- (finir de frire), пере- (trop frire), про- (bien frire)",
+    "explanation_en": "по- (to fry), до- (to finish frying), пере- (to overfry), про- (to fry well)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 49,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "испекла",
+      "выпекла",
+      "допекла",
+      "перепекла"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "ис- (faire cuire au four), вы- (cuire/sortir du four), до- (finir de cuire), пере- (trop cuire)",
+    "explanation_en": "ис- (to bake), вы- (to bake/take out), до- (to finish baking), пере- (to overbake)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 50,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "посолил",
+      "досолил",
+      "пересолил",
+      "засолил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (saler), до- (ajouter du sel), пере- (trop saler), за- (saler pour conserver)",
+    "explanation_en": "по- (to salt), до- (to add salt), пере- (to oversalt), за- (to pickle)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 51,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "разрежет",
+      "разрезал",
+      "прорежет",
+      "надрежет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "раз- (couper en parties), раз- (couper), про- (faire une ouverture), над- (inciser)",
+    "explanation_en": "раз- (to cut into parts), раз- (to cut), про- (to cut through), над- (to make an incision)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 52,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "тает",
+      "растает",
+      "стает",
+      "подтает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (fondre), рас- (fondre complètement), с- (fondre partout), под- (fondre légèrement)",
+    "explanation_en": "Ø (to melt), рас- (to melt completely), с- (to melt everywhere), под- (to melt slightly)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 53,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "мёрзну",
+      "замёрзну",
+      "промёрзну",
+      "отмёрзну"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (avoir froid), за- (geler), про- (geler complètement), от- (dégeler)",
+    "explanation_en": "Ø (to be cold), за- (to freeze), про- (to freeze through), от- (to thaw)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 54,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "греет",
+      "согреет",
+      "разогреет",
+      "подогреет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (chauffer), со- (réchauffer), раз- (réchauffer), под- (faire tiédir)",
+    "explanation_en": "Ø (to heat), со- (to warm up), раз- (to heat up), под- (to warm slightly)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 55,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "поджёг",
+      "сжёг",
+      "выжег",
+      "обжёг"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "под- (allumer), с- (brûler entièrement), вы- (graver), об- (se brûler)",
+    "explanation_en": "под- (to set fire), с- (to burn down), вы- (to burn in), об- (to burn oneself)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 56,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "потушил",
+      "затушил",
+      "дотушил",
+      "протушил"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (éteindre vite), за- (éteindre complètement), до- (finir de mijoter), про- (mijoter pendant)",
+    "explanation_en": "по- (to put out quickly), за- (to extinguish), до- (to finish stewing), про- (to stew for)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 57,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "курит",
+      "покурит",
+      "докурит",
+      "выкурит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (fumer régulièrement), по- (fumer un peu), до- (finir de fumer), вы- (fumer tout)",
+    "explanation_en": "Ø (to smoke regularly), по- (to have a smoke), до- (to finish smoking), вы- (to smoke all)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 58,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "копает",
+      "выкопает",
+      "вскопает",
+      "перекопает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (creuser), вы- (déterrer), вс- (retourner la terre), пере- (tout bêcher)",
+    "explanation_en": "Ø (to dig), вы- (to dig up), вс- (to dig over), пере- (to dig all)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 59,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "посадила",
+      "высадила",
+      "рассадила",
+      "пересадила"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (planter), вы- (repiquer), рас- (disposer), пере- (transplanter)",
+    "explanation_en": "по- (to plant), вы- (to transplant out), рас- (to seat), пере- (to replant)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 60,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "растёт",
+      "вырастет",
+      "подрастёт",
+      "зарастёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (grandir), вы- (pousser complètement), под- (grandir un peu), за- (envahir)",
+    "explanation_en": "Ø (to grow), вы- (to grow fully), под- (to grow a bit), за- (to overgrow)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 61,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "цветёт",
+      "зацветёт",
+      "отцветёт",
+      "процветёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (fleurir), за- (commencer à fleurir), от- (finir de fleurir), про- (prospérer)",
+    "explanation_en": "Ø (to bloom), за- (to start blooming), от- (to finish blooming), про- (to flourish)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 62,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "вянет",
+      "завянет",
+      "увянет",
+      "подвянет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (se faner), за- (commencer à se faner), у- (se faner complètement), под- (se faner un peu)",
+    "explanation_en": "Ø (to wilt), за- (to start wilting), у- (to wilt completely), под- (to wilt slightly)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 63,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "поливает",
+      "поливает",
+      "доливает",
+      "заливает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (arroser), по- (arroser), до- (ajouter de l'eau), за- (noyer)",
+    "explanation_en": "по- (to water), по- (to water), до- (to add water), за- (to overwater)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 64,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "собрала",
+      "насобирала",
+      "разобрала",
+      "отобрала"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "со- (rassembler), на- (ramasser beaucoup), раз- (démonter), от- (sélectionner)",
+    "explanation_en": "со- (to gather), на- (to collect a lot), раз- (to disassemble), от- (to select)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 65,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "выбирает",
+      "перебирает",
+      "подбирает",
+      "прибирает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "вы- (choisir), пере- (trier), под- (assortir), при- (ranger)",
+    "explanation_en": "вы- (to choose), пере- (to sort through), под- (to match), при- (to tidy up)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 66,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "кидает",
+      "бросает",
+      "выкидывает",
+      "закидывает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (jeter), Ø (lancer), вы- (jeter à la poubelle), за- (lancer loin)",
+    "explanation_en": "Ø (to throw), Ø (to throw), вы- (to throw away), за- (to cast far)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 67,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ловит",
+      "поймает",
+      "выловит",
+      "переловит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (attraper), по- (attraper une fois), вы- (tout attraper), пере- (attraper tous)",
+    "explanation_en": "Ø (to catch), по- (to catch once), вы- (to catch all out), пере- (to catch all)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 68,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "держит",
+      "придержит",
+      "задержит",
+      "поддержит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (tenir), при- (retenir), за- (détenir), под- (soutenir)",
+    "explanation_en": "Ø (to hold), при- (to hold for a moment), за- (to detain), под- (to support)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 69,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "жмёт",
+      "нажмёт",
+      "сожмёт",
+      "разожмёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (serrer), на- (appuyer), со- (serrer), раз- (desserrer)",
+    "explanation_en": "Ø (to squeeze), на- (to press), со- (to clench), раз- (to unclench)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 70,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "тянет",
+      "вытянет",
+      "протянет",
+      "растянет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (tirer), вы- (tirer dehors), про- (tendre), рас- (étirer)",
+    "explanation_en": "Ø (to pull), вы- (to pull out), про- (to extend), рас- (to stretch)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 71,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "толкает",
+      "вытолкает",
+      "оттолкнёт",
+      "подтолкнёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (pousser), вы- (expulser), от- (repousser), под- (encourager)",
+    "explanation_en": "Ø (to push), вы- (to push out), от- (to push away), под- (to nudge)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 72,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "двигает",
+      "передвигает",
+      "продвигает",
+      "сдвигает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (bouger), пере- (déplacer), про- (promouvoir), с- (pousser de côté)",
+    "explanation_en": "Ø (to move), пере- (to move over), про- (to promote), с- (to shift)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 73,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "бросит",
+      "выбросит",
+      "забросит",
+      "перебросит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (arrêter), вы- (jeter), за- (lancer dans), пере- (lancer à)",
+    "explanation_en": "Ø (to quit), вы- (to throw away), за- (to throw into), пере- (to throw across)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 74,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "вешает",
+      "повесит",
+      "развешает",
+      "навешает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (pendre), по- (accrocher), раз- (étendre partout), на- (accrocher beaucoup)",
+    "explanation_en": "Ø (to hang), по- (to hang up), раз- (to hang around), на- (to hang many)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 75,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "снимает",
+      "снял",
+      "переснял",
+      "отснял"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (enlever), Ø (photographier), пере- (refaire), от- (filmer tout)",
+    "explanation_en": "Ø (to take off), Ø (to photograph), пере- (to reshoot), от- (to shoot all)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 76,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "надевает",
+      "поднадевает",
+      "переоденется",
+      "оденется"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "на- (mettre), под- (ajouter un vêtement), пере- (se changer), о- (s'habiller)",
+    "explanation_en": "на- (to put on), под- (to put on more), пере- (to change clothes), о- (to dress)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 77,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "рвёт",
+      "порвёт",
+      "разорвёт",
+      "оторвёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (déchirer), по- (déchirer accidentellement), раз- (déchirer en morceaux), от- (arracher)",
+    "explanation_en": "Ø (to tear), по- (to tear accidentally), раз- (to tear apart), от- (to tear off)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 78,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "шьёт",
+      "сшила",
+      "зашила",
+      "дошила"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (coudre), с- (confectionner), за- (recoudre), до- (finir de coudre)",
+    "explanation_en": "Ø (to sew), с- (to sew up), за- (to sew up a hole), до- (to finish sewing)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 79,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "чешет",
+      "почешет",
+      "расчешет",
+      "причешет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (gratter), по- (gratter un peu), рас- (peigner), при- (coiffer)",
+    "explanation_en": "Ø (to scratch), по- (to scratch a bit), рас- (to comb out), при- (to do hair)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 80,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "красит",
+      "покрасит",
+      "выкрасит",
+      "перекрасит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (peindre), по- (peindre une fois), вы- (teindre), пере- (repeindre)",
+    "explanation_en": "Ø (to paint), по- (to paint once), вы- (to dye), пере- (to repaint)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 81,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "рисует",
+      "нарисует",
+      "дорисует",
+      "перерисует"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (dessiner), на- (dessiner complètement), до- (finir de dessiner), пере- (redessiner)",
+    "explanation_en": "Ø (to draw), на- (to draw completely), до- (to finish drawing), пере- (to redraw)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 82,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "видит",
+      "увидит",
+      "завидует",
+      "предвидит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (voir), у- (apercevoir), за- (envier), пред- (prévoir)",
+    "explanation_en": "Ø (to see), у- (to catch sight of), за- (to envy), пред- (to foresee)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 83,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "слышит",
+      "услышит",
+      "дослышит",
+      "прослышит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (entendre), у- (entendre une fois), до- (entendre jusqu'au bout), про- (apprendre par ouï-dire)",
+    "explanation_en": "Ø (to hear), у- (to hear once), до- (to hear to the end), про- (to hear about)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 84,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "посмотрел",
+      "осмотрел",
+      "рассмотрел",
+      "досмотрел"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (regarder), о- (examiner), рас- (examiner attentivement), до- (regarder jusqu'au bout)",
+    "explanation_en": "по- (to watch), о- (to examine), рас- (to examine closely), до- (to watch to the end)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 85,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "думает",
+      "подумает",
+      "придумает",
+      "додумает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (réfléchir), по- (réfléchir un peu), при- (inventer), до- (finir de penser)",
+    "explanation_en": "Ø (to think), по- (to think for a while), при- (to invent), до- (to finish thinking)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 86,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "знает",
+      "узнает",
+      "признает",
+      "опознает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (savoir), у- (apprendre), при- (reconnaître/avouer), о- (identifier)",
+    "explanation_en": "Ø (to know), у- (to find out), при- (to admit), о- (to identify)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 87,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "помнит",
+      "вспомнит",
+      "запомнит",
+      "припомнит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (se souvenir), вс- (se rappeler), за- (mémoriser), при- (se remémorer)",
+    "explanation_en": "Ø (to remember), вс- (to recall), за- (to memorize), при- (to recollect)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 88,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "забывает",
+      "забудет",
+      "позабудет",
+      "подзабудет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "за- (oublier régulièrement), за- (oublier), по- (oublier avec le temps), под- (oublier partiellement)",
+    "explanation_en": "за- (to forget regularly), за- (to forget), по- (to forget over time), под- (to partially forget)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 89,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "теряет",
+      "потеряет",
+      "утеряет",
+      "растеряет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (perdre régulièrement), по- (perdre), у- (égarer), рас- (perdre tout)",
+    "explanation_en": "Ø (to lose regularly), по- (to lose), у- (to misplace), рас- (to lose everything)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 90,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "находит",
+      "найдёт",
+      "подходит",
+      "доходит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (trouver), Ø (trouver), под- (convenir), до- (arriver jusqu'à)",
+    "explanation_en": "Ø (to find), Ø (to find), под- (to suit), до- (to reach)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 91,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ищет",
+      "поищет",
+      "отыщет",
+      "разыщет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (chercher), по- (chercher un peu), от- (trouver après recherche), раз- (retrouver)",
+    "explanation_en": "Ø (to search), по- (to search for a bit), от- (to find), раз- (to track down)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 92,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ждёт",
+      "подождёт",
+      "дождётся",
+      "прождёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (attendre), по- (attendre un peu), до- (attendre jusqu'à), про- (attendre longtemps)",
+    "explanation_en": "Ø (to wait), по- (to wait a bit), до- (to wait until), про- (to wait for long)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 93,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "встречает",
+      "встретит",
+      "повстречает",
+      "перевстречает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (rencontrer régulièrement), Ø (rencontrer), по- (rencontrer par hasard), пере- (rencontrer tous)",
+    "explanation_en": "Ø (to meet regularly), Ø (to meet), по- (to encounter), пере- (to meet all)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 94,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "провожает",
+      "проводит",
+      "отпровожает",
+      "допроводит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "про- (accompagner régulièrement), про- (accompagner), от- (accompagner pour un départ), до- (accompagner jusqu'à)",
+    "explanation_en": "про- (to see off regularly), про- (to see off), от- (to see off for departure), до- (to accompany to)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 95,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "приходит",
+      "придёт",
+      "приходил",
+      "прийдёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "при- (venir régulièrement), при- (venir), при- (est venu), при- (viendra)",
+    "explanation_en": "при- (to come regularly), при- (to come), при- (came), при- (will come)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 96,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "уходит",
+      "уйдёт",
+      "заходит",
+      "отходит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "у- (partir), у- (partir), за- (passer), от- (s'éloigner)",
+    "explanation_en": "у- (to leave), у- (to leave), за- (to drop by), от- (to depart)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 97,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "садится",
+      "сядет",
+      "пересядет",
+      "подсядет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (s'asseoir), Ø (s'asseoir), пере- (changer de place), под- (s'asseoir près)",
+    "explanation_en": "Ø (to sit down), Ø (to sit down), пере- (to change seats), под- (to sit nearby)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 98,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "встаёт",
+      "встанет",
+      "подстанет",
+      "привстанет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "вс- (se lever), вс- (se lever), под- (prendre position), при- (se lever à demi)",
+    "explanation_en": "вс- (to get up), вс- (to get up), под- (to take position), при- (to half rise)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 99,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ложится",
+      "ляжет",
+      "приляжет",
+      "переляжет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (se coucher), Ø (se coucher), при- (s'allonger un peu), пере- (se retourner)",
+    "explanation_en": "Ø (to lie down), Ø (to lie down), при- (to lie down briefly), пере- (to turn over)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 100,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "будит",
+      "разбудит",
+      "пробудит",
+      "подбудит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (réveiller), раз- (réveiller complètement), про- (éveiller), под- (réveiller doucement)",
+    "explanation_en": "Ø (to wake), раз- (to wake up completely), про- (to awaken), под- (to wake gently)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 101,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "спит",
+      "поспит",
+      "выспится",
+      "проспит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (dormir), по- (dormir un peu), вы- (bien dormir), про- (dormir trop longtemps)",
+    "explanation_en": "Ø (to sleep), по- (to sleep a bit), вы- (to get enough sleep), про- (to oversleep)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 102,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ест",
+      "съест",
+      "доест",
+      "переест"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (manger), с- (manger tout), до- (finir de manger), пере- (trop manger)",
+    "explanation_en": "Ø (to eat), с- (to eat all), до- (to finish eating), пере- (to overeat)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 103,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "кормит",
+      "покормит",
+      "докормит",
+      "перекормит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (nourrir), по- (nourrir une fois), до- (finir de nourrir), пере- (trop nourrir)",
+    "explanation_en": "Ø (to feed), по- (to feed once), до- (to finish feeding), пере- (to overfeed)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 104,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "покупает",
+      "купит",
+      "закупит",
+      "подкупит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "по- (acheter régulièrement), Ø (acheter), за- (faire des stocks), под- (corrompre)",
+    "explanation_en": "по- (to buy regularly), Ø (to buy), за- (to stock up), под- (to bribe)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 105,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "продаёт",
+      "продал",
+      "распродал",
+      "допродал"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "про- (vendre), про- (a vendu), рас- (tout vendre), до- (vendre le reste)",
+    "explanation_en": "про- (to sell), про- (sold), рас- (to sell out), до- (to sell remaining)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 106,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "платит",
+      "заплатит",
+      "доплатит",
+      "переплатит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (payer), за- (payer pour), до- (payer le complément), пере- (surpayer)",
+    "explanation_en": "Ø (to pay), за- (to pay for), до- (to pay extra), пере- (to overpay)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 107,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "считает",
+      "посчитает",
+      "пересчитает",
+      "досчитает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (considérer), по- (compter), пере- (recompter), до- (compter jusqu'à)",
+    "explanation_en": "Ø (to consider), по- (to count), пере- (to recount), до- (to count up to)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 108,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "меняет",
+      "поменяет",
+      "обменяет",
+      "разменяет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (changer), по- (changer), об- (échanger), раз- (donner la monnaie)",
+    "explanation_en": "Ø (to change), по- (to change), об- (to exchange), раз- (to break money)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 109,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "чинит",
+      "починит",
+      "подчинит",
+      "причинит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (réparer), по- (réparer), под- (soumettre), при- (causer)",
+    "explanation_en": "Ø (to repair), по- (to fix), под- (to subordinate), при- (to cause harm)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 110,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ломает",
+      "сломает",
+      "взломает",
+      "подломится"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (casser), с- (casser), вз- (pirater), под- (céder)",
+    "explanation_en": "Ø (to break), с- (to break), вз- (to hack), под- (to give way)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 111,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "может",
+      "сможет",
+      "поможет",
+      "подможет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (pouvoir), с- (pouvoir/réussir), по- (aider), под- (aider à)",
+    "explanation_en": "Ø (can), с- (will be able), по- (to help), под- (to help cause)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 112,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "хочет",
+      "захочет",
+      "расхочет",
+      "похочет"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (vouloir), за- (avoir envie), рас- (ne plus vouloir), по- (avoir envie)",
+    "explanation_en": "Ø (to want), за- (to want to), рас- (to stop wanting), по- (to want a bit)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 113,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "нуждается",
+      "принуждает",
+      "вынуждает",
+      "понуждает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (avoir besoin), при- (contraindre), вы- (forcer), по- (inciter)",
+    "explanation_en": "Ø (to need), при- (to coerce), вы- (to force), по- (to urge)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 114,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "даёт",
+      "отдаёт",
+      "раздаёт",
+      "поддаёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (donner), от- (rendre), раз- (distribuer), под- (ajouter)",
+    "explanation_en": "Ø (to give), от- (to give back), раз- (to distribute), под- (to add more)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 115,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "просит",
+      "попросит",
+      "спросит",
+      "допросит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (demander), по- (demander), с- (poser une question), до- (interroger)",
+    "explanation_en": "Ø (to ask for), по- (to ask), с- (to ask question), до- (to interrogate)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 116,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "отвечает",
+      "ответит",
+      "подотвечает",
+      "доотвечает"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "от- (répondre), от- (répondre), под- (répondre rapidement), до- (finir de répondre)",
+    "explanation_en": "от- (to answer), от- (to answer), под- (to respond quickly), до- (to finish answering)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 117,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "зовут",
+      "позовёт",
+      "призовёт",
+      "назовёт"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (s'appeler), по- (appeler), при- (appeler à), на- (nommer)",
+    "explanation_en": "Ø (to be called), по- (to call), при- (to call upon), на- (to name)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 118,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "кричит",
+      "закричит",
+      "вскрикнет",
+      "прокричит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (crier), за- (se mettre à crier), вс- (pousser un cri), про- (crier longtemps)",
+    "explanation_en": "Ø (to shout), за- (to start shouting), вс- (to cry out), про- (to shout for long)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 119,
+    "type": "multi_fill",
+    "question_fr": "Choisissez le verbe avec le bon préfixe",
+    "question_en": "Choose the verb with the correct prefix",
+    "question_ru": "Выберите глагол с правильной приставкой",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "молчит",
+      "помолчит",
+      "замолчит",
+      "промолчит"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Ø (se taire), по- (se taire un moment), за- (se taire soudainement), про- (garder le silence)",
+    "explanation_en": "Ø (to be silent), по- (to be silent briefly), за- (to fall silent), про- (to keep silent)",
+    "explanation_ru": null,
+    "difficulty": 1
+  }
+]

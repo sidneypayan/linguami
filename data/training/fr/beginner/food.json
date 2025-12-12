@@ -1,0 +1,102 @@
+[
+  {
+    "id": 579,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"bread\" en français ?",
+    "question_en": "How do you say \"bread\" in French?",
+    "question_ru": "Как сказать \"хлеб\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "avion",
+      "bleu",
+      "pain",
+      "fromage"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "pain = bread",
+    "explanation_en": "pain = bread",
+    "explanation_ru": "pain = хлеб",
+    "difficulty": 1
+  },
+  {
+    "id": 580,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"water\" en français ?",
+    "question_en": "How do you say \"water\" in French?",
+    "question_ru": "Как сказать \"вода\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "eau",
+      "chat",
+      "dimanche",
+      "mer"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "eau = water",
+    "explanation_en": "eau = water",
+    "explanation_ru": "eau = вода",
+    "difficulty": 1
+  },
+  {
+    "id": 581,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"cheese\" en français ?",
+    "question_en": "How do you say \"cheese\" in French?",
+    "question_ru": "Как сказать \"сыр\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "fromage",
+      "grand",
+      "sport",
+      "porte"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "fromage = cheese",
+    "explanation_en": "fromage = cheese",
+    "explanation_ru": "fromage = сыр",
+    "difficulty": 1
+  },
+  {
+    "id": 582,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"apple\" en français ?",
+    "question_en": "How do you say \"apple\" in French?",
+    "question_ru": "Как сказать \"яблоко\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "artiste",
+      "nouveau",
+      "jeu",
+      "pomme"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "pomme = apple",
+    "explanation_en": "pomme = apple",
+    "explanation_ru": "pomme = яблоко",
+    "difficulty": 1
+  },
+  {
+    "id": 583,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"meat\" en français ?",
+    "question_en": "How do you say \"meat\" in French?",
+    "question_ru": "Как сказать \"мясо\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "viande",
+      "professeur",
+      "juillet",
+      "vélo"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "viande = meat",
+    "explanation_en": "viande = meat",
+    "explanation_ru": "viande = мясо",
+    "difficulty": 1
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": 629,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"car\" en français ?",
+    "question_en": "How do you say \"car\" in French?",
+    "question_ru": "Как сказать \"машина\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "beau",
+      "pluie",
+      "voiture",
+      "froid"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "voiture = car",
+    "explanation_en": "voiture = car",
+    "explanation_ru": "voiture = машина",
+    "difficulty": 1
+  },
+  {
+    "id": 630,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"train\" en français ?",
+    "question_en": "How do you say \"train\" in French?",
+    "question_ru": "Как сказать \"поезд\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "médecin",
+      "train",
+      "fleur",
+      "jaune"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "train = train",
+    "explanation_en": "train = train",
+    "explanation_ru": "train = поезд",
+    "difficulty": 1
+  },
+  {
+    "id": 631,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"bicycle\" en français ?",
+    "question_en": "How do you say \"bicycle\" in French?",
+    "question_ru": "Как сказать \"велосипед\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "table",
+      "restaurant",
+      "heure",
+      "vélo"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "vélo = bicycle",
+    "explanation_en": "vélo = bicycle",
+    "explanation_ru": "vélo = велосипед",
+    "difficulty": 1
+  },
+  {
+    "id": 632,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"plane\" en français ?",
+    "question_en": "How do you say \"plane\" in French?",
+    "question_ru": "Как сказать \"самолёт\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "étudiant",
+      "fenêtre",
+      "sport",
+      "avion"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "avion = plane",
+    "explanation_en": "avion = plane",
+    "explanation_ru": "avion = самолёт",
+    "difficulty": 1
+  },
+  {
+    "id": 633,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"boat\" en français ?",
+    "question_en": "How do you say \"boat\" in French?",
+    "question_ru": "Как сказать \"лодка\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "restaurant",
+      "pain",
+      "médecin",
+      "bateau"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "bateau = boat",
+    "explanation_en": "bateau = boat",
+    "explanation_ru": "bateau = лодка",
+    "difficulty": 1
+  }
+]

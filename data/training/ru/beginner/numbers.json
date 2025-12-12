@@ -1,0 +1,502 @@
+[
+  {
+    "id": 120,
+    "type": "mcq",
+    "question_fr": "7 + 3 = ?",
+    "question_en": "7 + 3 = ?",
+    "question_ru": "7 + 3 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "два",
+      "пять",
+      "десять",
+      "четыре"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "7 + 3 = 10 (dix)",
+    "explanation_en": "7 + 3 = 10 (ten)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 121,
+    "type": "mcq",
+    "question_fr": "15 - 8 = ?",
+    "question_en": "15 - 8 = ?",
+    "question_ru": "15 - 8 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "шесть",
+      "семь",
+      "восемь",
+      "девять"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "15 - 8 = 7 (sept)",
+    "explanation_en": "15 - 8 = 7 (seven)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 122,
+    "type": "mcq",
+    "question_fr": "12 + 5 = ?",
+    "question_en": "12 + 5 = ?",
+    "question_ru": "12 + 5 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "пятнадцать",
+      "шестнадцать",
+      "семнадцать",
+      "восемнадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "12 + 5 = 17 (dix-sept)",
+    "explanation_en": "12 + 5 = 17 (seventeen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 123,
+    "type": "mcq",
+    "question_fr": "20 - 4 = ?",
+    "question_en": "20 - 4 = ?",
+    "question_ru": "20 - 4 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "четырнадцать",
+      "пятнадцать",
+      "шестнадцать",
+      "семнадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "20 - 4 = 16 (seize)",
+    "explanation_en": "20 - 4 = 16 (sixteen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 124,
+    "type": "mcq",
+    "question_fr": "6 + 9 = ?",
+    "question_en": "6 + 9 = ?",
+    "question_ru": "6 + 9 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "тринадцать",
+      "четырнадцать",
+      "пятнадцать",
+      "шестнадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "6 + 9 = 15 (quinze)",
+    "explanation_en": "6 + 9 = 15 (fifteen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 125,
+    "type": "mcq",
+    "question_fr": "25 - 10 = ?",
+    "question_en": "25 - 10 = ?",
+    "question_ru": "25 - 10 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "двенадцать",
+      "тринадцать",
+      "четырнадцать",
+      "пятнадцать"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "25 - 10 = 15 (quinze)",
+    "explanation_en": "25 - 10 = 15 (fifteen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 126,
+    "type": "mcq",
+    "question_fr": "8 + 8 = ?",
+    "question_en": "8 + 8 = ?",
+    "question_ru": "8 + 8 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "четырнадцать",
+      "пятнадцать",
+      "шестнадцать",
+      "семнадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "8 + 8 = 16 (seize)",
+    "explanation_en": "8 + 8 = 16 (sixteen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 127,
+    "type": "mcq",
+    "question_fr": "30 - 12 = ?",
+    "question_en": "30 - 12 = ?",
+    "question_ru": "30 - 12 = ?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "шестнадцать",
+      "семнадцать",
+      "восемнадцать",
+      "девятнадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "30 - 12 = 18 (dix-huit)",
+    "explanation_en": "30 - 12 = 18 (eighteen)",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 128,
+    "type": "mcq",
+    "question_fr": "Combien de jours dans une semaine ?",
+    "question_en": "How many days in a week?",
+    "question_ru": "Сколько дней в неделе?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "пять",
+      "шесть",
+      "семь",
+      "восемь"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 7 jours dans une semaine",
+    "explanation_en": "There are 7 days in a week",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 129,
+    "type": "mcq",
+    "question_fr": "Combien de doigts sur une main ?",
+    "question_en": "How many fingers on one hand?",
+    "question_ru": "Сколько пальцев на одной руке?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "три",
+      "четыре",
+      "пять",
+      "шесть"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 5 doigts sur une main",
+    "explanation_en": "There are 5 fingers on one hand",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 130,
+    "type": "mcq",
+    "question_fr": "Combien de mois dans une année ?",
+    "question_en": "How many months in a year?",
+    "question_ru": "Сколько месяцев в году?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "десять",
+      "одиннадцать",
+      "двенадцать",
+      "тринадцать"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 12 mois dans une année",
+    "explanation_en": "There are 12 months in a year",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 131,
+    "type": "mcq",
+    "question_fr": "Combien de saisons dans une année ?",
+    "question_en": "How many seasons in a year?",
+    "question_ru": "Сколько времён года?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "два",
+      "три",
+      "четыре",
+      "пять"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 4 saisons dans une année",
+    "explanation_en": "There are 4 seasons in a year",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 132,
+    "type": "mcq",
+    "question_fr": "Combien de roues a une voiture ?",
+    "question_en": "How many wheels does a car have?",
+    "question_ru": "Сколько колёс у машины?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "два",
+      "три",
+      "четыре",
+      "пять"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Une voiture a 4 roues",
+    "explanation_en": "A car has 4 wheels",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 133,
+    "type": "mcq",
+    "question_fr": "Combien de pattes a un chat ?",
+    "question_en": "How many legs does a cat have?",
+    "question_ru": "Сколько лап у кошки?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "два",
+      "три",
+      "четыре",
+      "пять"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Un chat a 4 pattes",
+    "explanation_en": "A cat has 4 legs",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 134,
+    "type": "mcq",
+    "question_fr": "Combien de minutes dans une heure ?",
+    "question_en": "How many minutes in an hour?",
+    "question_ru": "Сколько минут в часе?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "сорок",
+      "пятьдесят",
+      "шестьдесят",
+      "семьдесят"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 60 minutes dans une heure",
+    "explanation_en": "There are 60 minutes in an hour",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 135,
+    "type": "mcq",
+    "question_fr": "Combien de secondes dans une minute ?",
+    "question_en": "How many seconds in a minute?",
+    "question_ru": "Сколько секунд в минуте?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "сорок",
+      "пятьдесят",
+      "шестьдесят",
+      "семьдесят"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Il y a 60 secondes dans une minute",
+    "explanation_en": "There are 60 seconds in a minute",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 136,
+    "type": "mcq",
+    "question_fr": "Двести тридцать пять",
+    "question_en": "Двести тридцать пять",
+    "question_ru": "Двести тридцать пять",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "235",
+      "253",
+      "325",
+      "352"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Двести тридцать пять = 235",
+    "explanation_en": "Двести тридцать пять = 235",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 137,
+    "type": "mcq",
+    "question_fr": "Сто сорок восемь",
+    "question_en": "Сто сорок восемь",
+    "question_ru": "Сто сорок восемь",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "148",
+      "184",
+      "418",
+      "481"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Сто сорок восемь = 148",
+    "explanation_en": "Сто сорок восемь = 148",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 138,
+    "type": "mcq",
+    "question_fr": "Триста шестьдесят два",
+    "question_en": "Триста шестьдесят два",
+    "question_ru": "Триста шестьдесят два",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "362",
+      "326",
+      "632",
+      "623"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Триста шестьдесят два = 362",
+    "explanation_en": "Триста шестьдесят два = 362",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 139,
+    "type": "mcq",
+    "question_fr": "Четыреста семьдесят девять",
+    "question_en": "Четыреста семьдесят девять",
+    "question_ru": "Четыреста семьдесят девять",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "479",
+      "497",
+      "749",
+      "794"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Четыреста семьдесят девять = 479",
+    "explanation_en": "Четыреста семьдесят девять = 479",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 140,
+    "type": "mcq",
+    "question_fr": "Пятьсот двадцать один",
+    "question_en": "Пятьсот двадцать один",
+    "question_ru": "Пятьсот двадцать один",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "521",
+      "512",
+      "215",
+      "251"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Пятьсот двадцать один = 521",
+    "explanation_en": "Пятьсот двадцать один = 521",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 141,
+    "type": "mcq",
+    "question_fr": "Шестьсот девяносто три",
+    "question_en": "Шестьсот девяносто три",
+    "question_ru": "Шестьсот девяносто три",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "693",
+      "639",
+      "936",
+      "963"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Шестьсот девяносто три = 693",
+    "explanation_en": "Шестьсот девяносто три = 693",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 142,
+    "type": "mcq",
+    "question_fr": "Семьсот пятьдесят шесть",
+    "question_en": "Семьсот пятьдесят шесть",
+    "question_ru": "Семьсот пятьдесят шесть",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "756",
+      "765",
+      "576",
+      "567"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Семьсот пятьдесят шесть = 756",
+    "explanation_en": "Семьсот пятьдесят шесть = 756",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 143,
+    "type": "mcq",
+    "question_fr": "Восемьсот тридцать четыре",
+    "question_en": "Восемьсот тридцать четыре",
+    "question_ru": "Восемьсот тридцать четыре",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "834",
+      "843",
+      "384",
+      "348"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Восемьсот тридцать четыре = 834",
+    "explanation_en": "Восемьсот тридцать четыре = 834",
+    "explanation_ru": null,
+    "difficulty": 1
+  },
+  {
+    "id": 144,
+    "type": "mcq",
+    "question_fr": "Девятьсот двенадцать",
+    "question_en": "Девятьсот двенадцать",
+    "question_ru": "Девятьсот двенадцать",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "912",
+      "921",
+      "192",
+      "219"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Девятьсот двенадцать = 912",
+    "explanation_en": "Девятьсот двенадцать = 912",
+    "explanation_ru": null,
+    "difficulty": 1
+  }
+]

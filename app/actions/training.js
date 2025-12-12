@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { addXP } from '@/lib/xp-service'
+import { loadTrainingQuestions, transformQuestionsForFrontend } from '@/lib/training-data'
 
 // ============================================
 // READ ACTIONS (Public)
@@ -45,35 +46,40 @@ export async function getTrainingThemesAction(lang = 'ru') {
 }
 
 /**
- * Get questions for a specific theme
+ * Get questions for a specific theme by ID
+ * Now loads from JSON files instead of database
  */
 export async function getTrainingQuestionsAction(themeId) {
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
-	const { data, error } = await supabase
-		.from('training_questions')
-		.select('*')
-		.eq('theme_id', themeId)
-		.eq('is_active', true)
-		.order('id')
+	// First get theme info to know which JSON file to load
+	const { data: theme, error: themeError } = await supabase
+		.from('training_themes')
+		.select('lang, level, key')
+		.eq('id', themeId)
+		.single()
 
-	if (error) {
-		console.error('Error fetching training questions:', error)
-		return { success: false, error: error.message }
+	if (themeError || !theme) {
+		console.error('Error fetching theme:', themeError)
+		return { success: false, error: 'Theme not found' }
 	}
 
-	return { success: true, data }
+	// Load questions from JSON file
+	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+
+	return { success: true, data: questions }
 }
 
 /**
  * Get questions for a theme by key (used in training page)
+ * Now loads from JSON files instead of database
  */
 export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey) {
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
-	// First get the theme
+	// Get theme ID from database (needed for progress tracking)
 	const { data: theme, error: themeError } = await supabase
 		.from('training_themes')
 		.select('id')
@@ -86,48 +92,15 @@ export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey
 		return { success: false, error: 'Theme not found' }
 	}
 
-	// Then get questions
-	const { data: questions, error } = await supabase
-		.from('training_questions')
-		.select('*')
-		.eq('theme_id', theme.id)
-		.eq('is_active', true)
-		.order('id')
+	// Load questions from JSON file
+	const questions = loadTrainingQuestions(lang, level, themeKey)
 
-	if (error) {
-		console.error('Error fetching questions:', error)
-		return { success: false, error: error.message }
+	if (!questions || questions.length === 0) {
+		return { success: false, error: 'No questions found for this theme' }
 	}
 
 	// Transform questions to match frontend expected format
-	const transformedQuestions = questions.map((q) => {
-		const transformed = { ...q }
-
-		// Convert question_fr, question_en, question_ru to question object
-		if (q.question_fr || q.question_en || q.question_ru) {
-			transformed.question = {
-				fr: q.question_fr || '',
-				en: q.question_en || '',
-				ru: q.question_ru || '',
-			}
-		}
-
-		// Convert explanation_fr, explanation_en, explanation_ru to explanation object
-		if (q.explanation_fr || q.explanation_en || q.explanation_ru) {
-			transformed.explanation = {
-				fr: q.explanation_fr || '',
-				en: q.explanation_en || '',
-				ru: q.explanation_ru || '',
-			}
-		}
-
-		// Convert correct_answer to correctAnswer (camelCase)
-		if (q.correct_answer !== undefined) {
-			transformed.correctAnswer = q.correct_answer
-		}
-
-		return transformed
-	})
+	const transformedQuestions = transformQuestionsForFrontend(questions, theme.id)
 
 	return { success: true, data: transformedQuestions, themeId: theme.id }
 }
@@ -154,6 +127,7 @@ export async function getTrainingStatsAction(lang = 'ru') {
 
 /**
  * Get user's training progress for a theme
+ * Now uses question IDs from JSON files
  */
 export async function getUserTrainingProgressAction(themeId) {
 	const cookieStore = await cookies()
@@ -167,11 +141,19 @@ export async function getUserTrainingProgressAction(themeId) {
 		return { success: true, data: [] } // Return empty for non-logged users
 	}
 
-	// Get all questions for this theme
-	const { data: questions } = await supabase
-		.from('training_questions')
-		.select('id')
-		.eq('theme_id', themeId)
+	// Get theme info to load questions from JSON
+	const { data: theme, error: themeError } = await supabase
+		.from('training_themes')
+		.select('lang, level, key')
+		.eq('id', themeId)
+		.single()
+
+	if (themeError || !theme) {
+		return { success: true, data: [] }
+	}
+
+	// Load questions from JSON to get their IDs
+	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
 
 	if (!questions || questions.length === 0) {
 		return { success: true, data: [] }
@@ -400,7 +382,8 @@ export async function deleteTrainingQuestionAction(questionId) {
 }
 
 /**
- * Get all questions for admin (including inactive)
+ * Get all questions for admin
+ * Now loads from JSON files instead of database
  */
 export async function getAdminTrainingQuestionsAction(themeId) {
 	const cookieStore = await cookies()
@@ -422,16 +405,19 @@ export async function getAdminTrainingQuestionsAction(themeId) {
 		return { success: false, error: 'Not authorized' }
 	}
 
-	const { data, error } = await supabase
-		.from('training_questions')
-		.select('*')
-		.eq('theme_id', themeId)
-		.order('created_at', { ascending: false })
+	// Get theme info to load questions from JSON
+	const { data: theme, error: themeError } = await supabase
+		.from('training_themes')
+		.select('lang, level, key')
+		.eq('id', themeId)
+		.single()
 
-	if (error) {
-		console.error('Error fetching questions:', error)
-		return { success: false, error: error.message }
+	if (themeError || !theme) {
+		return { success: false, error: 'Theme not found' }
 	}
 
-	return { success: true, data }
+	// Load questions from JSON
+	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+
+	return { success: true, data: questions }
 }

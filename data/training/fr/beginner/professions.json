@@ -1,0 +1,102 @@
+[
+  {
+    "id": 619,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"doctor\" en français ?",
+    "question_en": "How do you say \"doctor\" in French?",
+    "question_ru": "Как сказать \"врач\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "médecin",
+      "mer",
+      "dimanche",
+      "pluie"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "médecin = doctor",
+    "explanation_en": "médecin = doctor",
+    "explanation_ru": "médecin = врач",
+    "difficulty": 1
+  },
+  {
+    "id": 620,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"teacher\" en français ?",
+    "question_en": "How do you say \"teacher\" in French?",
+    "question_ru": "Как сказать \"учитель\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "professeur",
+      "table",
+      "chambre",
+      "fleur"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "professeur = teacher",
+    "explanation_en": "professeur = teacher",
+    "explanation_ru": "professeur = учитель",
+    "difficulty": 1
+  },
+  {
+    "id": 621,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"engineer\" en français ?",
+    "question_en": "How do you say \"engineer\" in French?",
+    "question_ru": "Как сказать \"инженер\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "table",
+      "trois",
+      "ingénieur",
+      "restaurant"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "ingénieur = engineer",
+    "explanation_en": "ingénieur = engineer",
+    "explanation_ru": "ingénieur = инженер",
+    "difficulty": 1
+  },
+  {
+    "id": 622,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"cook\" en français ?",
+    "question_en": "How do you say \"cook\" in French?",
+    "question_ru": "Как сказать \"повар\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "jeu",
+      "lundi",
+      "cuisinier",
+      "père"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "cuisinier = cook",
+    "explanation_en": "cuisinier = cook",
+    "explanation_ru": "cuisinier = повар",
+    "difficulty": 1
+  },
+  {
+    "id": 623,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"artist\" en français ?",
+    "question_en": "How do you say \"artist\" in French?",
+    "question_ru": "Как сказать \"художник\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "ingénieur",
+      "manteau",
+      "robe",
+      "artiste"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "artiste = artist",
+    "explanation_en": "artiste = artist",
+    "explanation_ru": "artiste = художник",
+    "difficulty": 1
+  }
+]

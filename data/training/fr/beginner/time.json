@@ -1,0 +1,102 @@
+[
+  {
+    "id": 604,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"hour\" en français ?",
+    "question_en": "How do you say \"hour\" in French?",
+    "question_ru": "Как сказать \"час\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "vert",
+      "heure",
+      "poisson",
+      "fatigué"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "heure = hour",
+    "explanation_en": "heure = hour",
+    "explanation_ru": "heure = час",
+    "difficulty": 1
+  },
+  {
+    "id": 605,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"today\" en français ?",
+    "question_en": "How do you say \"today\" in French?",
+    "question_ru": "Как сказать \"сегодня\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "maintenant",
+      "soleil",
+      "aujourd'hui",
+      "père"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "aujourd'hui = today",
+    "explanation_en": "aujourd'hui = today",
+    "explanation_ru": "aujourd'hui = сегодня",
+    "difficulty": 1
+  },
+  {
+    "id": 606,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"tomorrow\" en français ?",
+    "question_en": "How do you say \"tomorrow\" in French?",
+    "question_ru": "Как сказать \"завтра\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "demain",
+      "enfant",
+      "lundi",
+      "thé"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "demain = tomorrow",
+    "explanation_en": "demain = tomorrow",
+    "explanation_ru": "demain = завтра",
+    "difficulty": 1
+  },
+  {
+    "id": 607,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"yesterday\" en français ?",
+    "question_en": "How do you say \"yesterday\" in French?",
+    "question_ru": "Как сказать \"вчера\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "hier",
+      "trois",
+      "heure",
+      "bonjour"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "hier = yesterday",
+    "explanation_en": "hier = yesterday",
+    "explanation_ru": "hier = вчера",
+    "difficulty": 1
+  },
+  {
+    "id": 608,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"now\" en français ?",
+    "question_en": "How do you say \"now\" in French?",
+    "question_ru": "Как сказать \"сейчас\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "fatigué",
+      "magasin",
+      "vent",
+      "maintenant"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "maintenant = now",
+    "explanation_en": "maintenant = now",
+    "explanation_ru": "maintenant = сейчас",
+    "difficulty": 1
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": 654,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"book\" en français ?",
+    "question_en": "How do you say \"book\" in French?",
+    "question_ru": "Как сказать \"книга\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "livre",
+      "beau",
+      "artiste",
+      "vert"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "livre = book",
+    "explanation_en": "livre = book",
+    "explanation_ru": "livre = книга",
+    "difficulty": 1
+  },
+  {
+    "id": 655,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"pen\" en français ?",
+    "question_en": "How do you say \"pen\" in French?",
+    "question_ru": "Как сказать \"ручка\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "stylo",
+      "magasin",
+      "devoir",
+      "pain"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "stylo = pen",
+    "explanation_en": "stylo = pen",
+    "explanation_ru": "stylo = ручка",
+    "difficulty": 1
+  },
+  {
+    "id": 656,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"student\" en français ?",
+    "question_en": "How do you say \"student\" in French?",
+    "question_ru": "Как сказать \"студент\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "étudiant",
+      "oiseau",
+      "musique",
+      "eau"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "étudiant = student",
+    "explanation_en": "étudiant = student",
+    "explanation_ru": "étudiant = студент",
+    "difficulty": 1
+  },
+  {
+    "id": 657,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"exam\" en français ?",
+    "question_en": "How do you say \"exam\" in French?",
+    "question_ru": "Как сказать \"экзамен\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "jaune",
+      "sœur",
+      "père",
+      "examen"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "examen = exam",
+    "explanation_en": "examen = exam",
+    "explanation_ru": "examen = экзамен",
+    "difficulty": 1
+  },
+  {
+    "id": 658,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"homework\" en français ?",
+    "question_en": "How do you say \"homework\" in French?",
+    "question_ru": "Как сказать \"домашнее задание\" по-французски?",
+    "sentence": null,
+    "blank": null,
+    "options": [
+      "devoir",
+      "heure",
+      "maintenant",
+      "merci"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "devoir = homework",
+    "explanation_en": "devoir = homework",
+    "explanation_ru": "devoir = домашнее задание",
+    "difficulty": 1
+  }
+]
