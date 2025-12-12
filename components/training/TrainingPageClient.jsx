@@ -2866,14 +2866,14 @@ const TrainingSession = ({ questions, onFinish, isDark, t, spokenLanguage, isLog
 			// Session complete - calculate results
 			const duration = Math.round((Date.now() - startTime) / 1000)
 
-			// For multi_fill, count partial scores
+			// For multi_fill, count as 1 correct if all answers are correct
 			const isCurrentMultiFill = currentQuestion.type === 'multi_fill'
-			const currentScore = isCurrentMultiFill
-				? selectedAnswer
+			const currentCorrect = isCurrentMultiFill
+				? (selectedAnswer === currentQuestion.sentences?.length ? 1 : 0)
 				: (selectedAnswer === currentQuestion.correctAnswer ? 1 : 0)
 
-			// Sum up all correct answers (including partial for multi_fill)
-			const correctCount = results.reduce((sum, r) => sum + (r.partialScore || (r.correct ? 1 : 0)), 0) + currentScore
+			// Count correct answers (1 per question, regardless of type)
+			const correctCount = results.filter(r => r.correct).length + currentCorrect
 
 			// Award XP at end of session if logged in
 			let xpEarned = 0
@@ -3262,7 +3262,32 @@ const TrainingPageClient = () => {
 		}
 
 		const shuffled = [...questionsPool].sort(() => Math.random() - 0.5)
-		setQuestions(shuffled.slice(0, Math.min(questionCount, shuffled.length)))
+
+		// Shuffle options within each question and update correctAnswer index
+		const questionsWithShuffledOptions = shuffled.slice(0, Math.min(questionCount, shuffled.length)).map(question => {
+			if (!question.options || question.options.length === 0) return question
+
+			// Get the correct answer value before shuffling
+			const correctAnswerValue = question.options[question.correctAnswer ?? question.correct_answer ?? 0]
+
+			// Create array of options with original indices
+			const optionsWithIndices = question.options.map((opt, idx) => ({ value: opt, originalIndex: idx }))
+
+			// Shuffle the options
+			const shuffledOptions = [...optionsWithIndices].sort(() => Math.random() - 0.5)
+
+			// Find the new index of the correct answer
+			const newCorrectIndex = shuffledOptions.findIndex(opt => opt.value === correctAnswerValue)
+
+			return {
+				...question,
+				options: shuffledOptions.map(opt => opt.value),
+				correctAnswer: newCorrectIndex,
+				correct_answer: newCorrectIndex,
+			}
+		})
+
+		setQuestions(questionsWithShuffledOptions)
 		setStep('training')
 		// Scroll to top when starting training
 		window.scrollTo({ top: 0, behavior: 'smooth' })

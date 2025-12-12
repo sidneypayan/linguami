@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations, useLocale } from 'next-intl'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useThemeMode } from '@/context/ThemeContext'
 import { useRouter as useNextRouter, usePathname, useParams } from 'next/navigation'
 import { useUserContext } from '@/context/user'
@@ -24,8 +24,15 @@ const InterfaceLanguageMenu = ({ variant = 'auto', onClose }) => {
 	const { changeSpokenLanguage, userSpokenLanguage } = useUserContext()
 	const { isDark } = useThemeMode()
 
+	// Prevent hydration mismatch by using locale on first render
+	const [mounted, setMounted] = useState(false)
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
 	// Use the actual spoken language from context instead of URL locale
-	const displayLanguage = userSpokenLanguage || locale
+	// But only after mount to prevent hydration mismatch
+	const displayLanguage = mounted ? (userSpokenLanguage || locale) : locale
 
 	const languages = [
 		{

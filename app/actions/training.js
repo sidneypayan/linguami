@@ -107,12 +107,14 @@ export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey
 
 /**
  * Get training stats (for admin)
+ * Now counts questions from JSON files instead of DB
  */
 export async function getTrainingStatsAction(lang = 'ru') {
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
-	const { data, error } = await supabase
+	// Get themes from DB
+	const { data: themes, error } = await supabase
 		.from('training_stats')
 		.select('*')
 		.eq('lang', lang)
@@ -122,7 +124,16 @@ export async function getTrainingStatsAction(lang = 'ru') {
 		return { success: false, error: error.message }
 	}
 
-	return { success: true, data }
+	// Count questions from JSON files for each theme
+	const statsWithCounts = themes.map((theme) => {
+		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+		return {
+			...theme,
+			question_count: questions.length,
+		}
+	})
+
+	return { success: true, data: statsWithCounts }
 }
 
 /**
