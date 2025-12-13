@@ -128,7 +128,7 @@ export default async function LessonsPage({ params }) {
 	const { locale } = await params
 
 	// Check if user is authenticated and is admin
-	const { isAuthenticated, isAdmin } = await checkAdminAuth()
+	const { isAuthenticated, isAdmin, spokenLanguage: userSpokenLanguage } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		// Not logged in - redirect to login
@@ -144,7 +144,7 @@ export default async function LessonsPage({ params }) {
 	// For now, hardcode: teaching French to Russian/English speakers
 	// TODO: Get userLearningLanguage from user context
 	const targetLanguage = 'fr' // Teaching French
-	const spokenLanguage = locale // Use interface language as spoken language
+	const spokenLanguage = userSpokenLanguage || locale // Use user's spoken language, fallback to interface language
 
 	// Fetch lessons from server
 	const lessons = await getLessons(targetLanguage, spokenLanguage)
