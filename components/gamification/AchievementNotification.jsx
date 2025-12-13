@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import {
 	Dialog,
 	DialogContent,
+	DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
@@ -164,7 +165,7 @@ const AchievementNotification = ({ achievement, open, onClose }) => {
 					</div>
 
 					{/* Title */}
-					<h2
+					<DialogTitle
 						className={cn(
 							'text-2xl sm:text-3xl font-extrabold mb-3 bg-clip-text text-transparent relative z-10',
 							`bg-gradient-to-r ${config.gradient}`
@@ -173,7 +174,7 @@ const AchievementNotification = ({ achievement, open, onClose }) => {
 							textShadow: `0 0 30px ${config.color}50`,
 						}}>
 						{config.title}
-					</h2>
+					</DialogTitle>
 
 					{/* Description */}
 					<p className="text-slate-300 font-semibold text-lg relative z-10">
