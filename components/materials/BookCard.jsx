@@ -151,8 +151,8 @@ const BookCard = ({ book, checkIfUserMaterialIsInMaterials }) => {
 					getRarityGradient(),
 					getRarityShadow(),
 					getRarityHoverShadow(),
-					'hover:-translate-y-2 hover:scale-[1.02]',
-					'active:scale-[0.97]'
+					'hover:-translate-y-2',
+					'active:-translate-y-1'
 				)}
 			>
 				{/* Holographic effect overlay */}
@@ -237,15 +237,13 @@ const BookCard = ({ book, checkIfUserMaterialIsInMaterials }) => {
 								: 'bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.2)_100%)]'
 						)}
 					/>
-					<img
-						src={getMaterialImageUrl(book)}
-						alt={book.title}
-						className={cn(
-							'w-full h-full object-cover',
-							'transition-transform duration-500 ease-out',
-							'group-hover:scale-[1.15]'
-						)}
-					/>
+					<div className="relative w-full h-full transition-transform duration-500 group-hover:scale-[1.08]">
+						<img
+							src={getMaterialImageUrl(book)}
+							alt={book.title}
+							className="w-full h-full object-cover"
+						/>
+					</div>
 				</div>
 
 				{/* Card content */}

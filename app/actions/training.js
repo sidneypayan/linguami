@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { addXP } from '@/lib/xp-service'
-import { loadTrainingQuestions, transformQuestionsForFrontend } from '@/lib/training-data'
+import { loadTrainingQuestions, transformQuestionsForFrontend, updateQuestionInFile, deleteQuestionInFile } from '@/lib/training-data'
 
 // ============================================
 // READ ACTIONS (Public)
@@ -318,7 +318,7 @@ export async function createTrainingQuestionsAction(questions) {
 }
 
 /**
- * Update a training question
+ * Update a training question in JSON file
  */
 export async function updateTrainingQuestionAction(questionId, updates) {
 	const cookieStore = await cookies()
@@ -340,23 +340,52 @@ export async function updateTrainingQuestionAction(questionId, updates) {
 		return { success: false, error: 'Not authorized' }
 	}
 
-	const { data, error } = await supabase
-		.from('training_questions')
-		.update(updates)
-		.eq('id', questionId)
-		.select()
-		.single()
+	// Get question info to find its JSON file
+	// We need to search through all themes to find which file contains this question ID
+	const { data: themes, error: themesError } = await supabase
+		.from('training_themes')
+		.select('lang, level, key')
 
-	if (error) {
-		console.error('Error updating question:', error)
-		return { success: false, error: error.message }
+	if (themesError || !themes) {
+		return { success: false, error: 'Failed to load themes' }
 	}
 
-	return { success: true, data }
+	// Search for the question in all theme files
+	let found = false
+	let targetTheme = null
+
+	for (const theme of themes) {
+		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+		const questionExists = questions.some((q) => q.id === questionId)
+		if (questionExists) {
+			targetTheme = theme
+			found = true
+			break
+		}
+	}
+
+	if (!found || !targetTheme) {
+		return { success: false, error: 'Question not found in any theme' }
+	}
+
+	// Update the question in the JSON file
+	const success = updateQuestionInFile(
+		targetTheme.lang,
+		targetTheme.level,
+		targetTheme.key,
+		questionId,
+		updates
+	)
+
+	if (!success) {
+		return { success: false, error: 'Failed to update question in file' }
+	}
+
+	return { success: true, data: { id: questionId, ...updates } }
 }
 
 /**
- * Delete a training question (soft delete)
+ * Delete a training question (soft delete by setting is_active to false in JSON file)
  */
 export async function deleteTrainingQuestionAction(questionId) {
 	const cookieStore = await cookies()
@@ -378,15 +407,43 @@ export async function deleteTrainingQuestionAction(questionId) {
 		return { success: false, error: 'Not authorized' }
 	}
 
-	// Soft delete
-	const { error } = await supabase
-		.from('training_questions')
-		.update({ is_active: false })
-		.eq('id', questionId)
+	// Get question info to find its JSON file
+	const { data: themes, error: themesError } = await supabase
+		.from('training_themes')
+		.select('lang, level, key')
 
-	if (error) {
-		console.error('Error deleting question:', error)
-		return { success: false, error: error.message }
+	if (themesError || !themes) {
+		return { success: false, error: 'Failed to load themes' }
+	}
+
+	// Search for the question in all theme files
+	let found = false
+	let targetTheme = null
+
+	for (const theme of themes) {
+		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+		const questionExists = questions.some((q) => q.id === questionId)
+		if (questionExists) {
+			targetTheme = theme
+			found = true
+			break
+		}
+	}
+
+	if (!found || !targetTheme) {
+		return { success: false, error: 'Question not found in any theme' }
+	}
+
+	// Soft delete in the JSON file
+	const success = deleteQuestionInFile(
+		targetTheme.lang,
+		targetTheme.level,
+		targetTheme.key,
+		questionId
+	)
+
+	if (!success) {
+		return { success: false, error: 'Failed to delete question in file' }
 	}
 
 	return { success: true }

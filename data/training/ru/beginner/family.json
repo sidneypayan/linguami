@@ -1506,7 +1506,7 @@
   {
     "id": 290,
     "type": "mcq",
-    "question_fr": "\"Мама\" et \"папа\" sont les...",
+    "question_fr": "\"Мама\" et \"папа\" sont...",
     "question_en": "\"Мама\" and \"папа\" are the...",
     "question_ru": "\"Мама\" и \"папа\" — это...",
     "sentence": null,
@@ -1521,27 +1521,29 @@
     "explanation_fr": "Maman et papa sont les parents (родители)",
     "explanation_en": "Mom and dad are the parents (родители)",
     "explanation_ru": "Мама и папа — это родители",
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   },
   {
     "id": 291,
     "type": "mcq",
-    "question_fr": "\"Дедушка\" et \"бабушка\" sont les...",
-    "question_en": "\"Дедушка\" and \"бабушка\" are the...",
-    "question_ru": "\"Дедушка\" и \"бабушка\" — это...",
+    "question_fr": "Les parents de mes parents sont...",
+    "question_en": "My parents' parents are...",
+    "question_ru": "Родители моих родителей - это...",
     "sentence": null,
     "blank": null,
     "options": [
-      "родители",
-      "прародители",
+      "папа и мама ",
+      "дедушка и бабушка",
       "дядя и тётя",
-      "муж и жена"
+      "брат и сестра"
     ],
     "correct_answer": 1,
-    "explanation_fr": "Grand-père et grand-mère sont les grands-parents (прародители)",
-    "explanation_en": "Grandfather and grandmother are the grandparents (прародители)",
+    "explanation_fr": "Grand-père et grand-mère sont les grands-parents",
+    "explanation_en": "Grandfather and grandmother are the grandparents",
     "explanation_ru": "Дедушка и бабушка — это прародители",
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   },
   {
     "id": 292,
@@ -1770,8 +1772,8 @@
   {
     "id": 300,
     "type": "mcq",
-    "question_fr": "La mère du mari de ma femme est ma...",
-    "question_en": "My wife's husband's mother is my...",
+    "question_fr": "Pour nos enfants, ma femme est...",
+    "question_en": "For our children, my wife is...",
     "question_ru": "Мать мужа моей жены — это моя...",
     "sentence": null,
     "blank": null,
@@ -1782,10 +1784,11 @@
       "бабушка"
     ],
     "correct_answer": 2,
-    "explanation_fr": "C'est ta propre mère !",
-    "explanation_en": "That's your own mother!",
+    "explanation_fr": "C'est leur maman",
+    "explanation_en": "That's their mother!",
     "explanation_ru": "Это твоя собственная мама!",
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   },
   {
     "id": 301,
@@ -2175,25 +2178,18 @@
     "question_ru": "Мужчина говорит \"Я разведён\". Это значит, что он...",
     "sentence": null,
     "blank": null,
-    "options": {
-      "en": [
-        "is married",
-        "is single",
-        "is divorced",
-        "is widowed"
-      ],
-      "fr": [
-        "est marié(e)",
-        "est célibataire",
-        "est divorcé(e)",
-        "est veuf/veuve"
-      ]
-    },
+    "options": [
+      "est marié",
+      "est célibataire",
+      "est divorcé",
+      "est veuf"
+    ],
     "correct_answer": 2,
     "explanation_fr": "Я разведён = Je suis divorcé",
     "explanation_en": "Я разведён = I am divorced",
     "explanation_ru": "Я разведён = I am divorced",
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   },
   {
     "id": 319,
@@ -2203,24 +2199,17 @@
     "question_ru": "Женщина говорит \"Я разведена\". Это значит, что она...",
     "sentence": null,
     "blank": null,
-    "options": {
-      "en": [
-        "is married",
-        "is single",
-        "is divorced",
-        "is widowed"
-      ],
-      "fr": [
-        "est marié(e)",
-        "est célibataire",
-        "est divorcé(e)",
-        "est veuf/veuve"
-      ]
-    },
+    "options": [
+      "est mariée",
+      "est célibataire",
+      "est divorcée",
+      "est veuve"
+    ],
     "correct_answer": 2,
     "explanation_fr": "Я разведена = Je suis divorcée",
     "explanation_en": "Я разведена = I am divorced",
     "explanation_ru": "Я разведена = I am divorced",
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   }
 ]

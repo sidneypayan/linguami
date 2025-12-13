@@ -47,10 +47,10 @@ const MaterialsCard = ({ material }) => {
 							? 'bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/20'
 							: 'bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20',
 						'shadow-[0_4px_20px_rgba(139,92,246,0.15)]',
-						'hover:-translate-y-2 hover:scale-[1.02]',
+						'hover:-translate-y-2',
 						'hover:shadow-[0_12px_40px_rgba(139,92,246,0.3)]',
 						'hover:border-violet-500/40',
-						'active:-translate-y-1 active:scale-100'
+						'active:-translate-y-1'
 					)}
 				>
 					{/* Gradient overlay on hover */}
@@ -63,7 +63,7 @@ const MaterialsCard = ({ material }) => {
 					/>
 
 					{/* Image */}
-					<div className="relative w-full h-full transition-transform duration-400 group-hover:scale-110">
+					<div className="relative w-full h-full transition-transform duration-500 group-hover:scale-[1.08]">
 						<img
 							src={getMaterialImageUrl(material)}
 							alt={material.title}

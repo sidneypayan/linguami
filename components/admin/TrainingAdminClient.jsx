@@ -55,52 +55,52 @@ const getLocalizedText = (text, locale) => {
 const defaultThemes = {
 	ru: {
 		beginner: [
-			{ key: 'greetings', icon: '👋', label_fr: 'Salutations', label_en: 'Greetings' },
-			{ key: 'numbers', icon: '🔢', label_fr: 'Nombres', label_en: 'Numbers' },
-			{ key: 'family', icon: '👨‍👩‍👧‍👦', label_fr: 'Famille', label_en: 'Family' },
-			{ key: 'food', icon: '🍎', label_fr: 'Nourriture', label_en: 'Food' },
-			{ key: 'colors', icon: '🎨', label_fr: 'Couleurs', label_en: 'Colors' },
-			{ key: 'animals', icon: '🐾', label_fr: 'Animaux', label_en: 'Animals' },
-			{ key: 'body', icon: '🫀', label_fr: 'Corps humain', label_en: 'Body parts' },
-			{ key: 'clothes', icon: '👕', label_fr: 'Vetements', label_en: 'Clothes' },
-			{ key: 'time', icon: '🕐', label_fr: 'Temps', label_en: 'Time' },
-			{ key: 'days', icon: '📅', label_fr: 'Jours et mois', label_en: 'Days & months' },
-			{ key: 'places', icon: '🏪', label_fr: 'Lieux', label_en: 'Places' },
-			{ key: 'professions', icon: '👨‍⚕️', label_fr: 'Metiers', label_en: 'Professions' },
-			{ key: 'house', icon: '🛋️', label_fr: 'Maison', label_en: 'House' },
-			{ key: 'transport', icon: '🚌', label_fr: 'Transports', label_en: 'Transport' },
-			{ key: 'verbs', icon: '🏃', label_fr: 'Verbes courants', label_en: 'Common verbs' },
-			{ key: 'adjectives', icon: '✨', label_fr: 'Adjectifs', label_en: 'Adjectives' },
-			{ key: 'weather', icon: '☀️', label_fr: 'Meteo', label_en: 'Weather' },
-			{ key: 'emotions', icon: '😊', label_fr: 'Emotions', label_en: 'Emotions' },
-			{ key: 'hobbies', icon: '⚽', label_fr: 'Loisirs', label_en: 'Hobbies' },
-			{ key: 'school', icon: '📚', label_fr: 'Ecole', label_en: 'School' },
-			{ key: 'nature', icon: '🌳', label_fr: 'Nature', label_en: 'Nature' },
-			{ key: 'drinks', icon: '🥤', label_fr: 'Boissons', label_en: 'Drinks' },
+			{ key: 'greetings', icon: '👋', label_fr: 'Salutations', label_en: 'Greetings', label_ru: 'Приветствия' },
+			{ key: 'numbers', icon: '🔢', label_fr: 'Nombres', label_en: 'Numbers', label_ru: 'Числа' },
+			{ key: 'family', icon: '👨‍👩‍👧‍👦', label_fr: 'Famille', label_en: 'Family', label_ru: 'Семья' },
+			{ key: 'food', icon: '🍎', label_fr: 'Nourriture', label_en: 'Food', label_ru: 'Еда' },
+			{ key: 'colors', icon: '🎨', label_fr: 'Couleurs', label_en: 'Colors', label_ru: 'Цвета' },
+			{ key: 'animals', icon: '🐾', label_fr: 'Animaux', label_en: 'Animals', label_ru: 'Животные' },
+			{ key: 'body', icon: '🫀', label_fr: 'Corps humain', label_en: 'Body parts', label_ru: 'Части тела' },
+			{ key: 'clothes', icon: '👕', label_fr: 'Vetements', label_en: 'Clothes', label_ru: 'Одежда' },
+			{ key: 'time', icon: '🕐', label_fr: 'Temps', label_en: 'Time', label_ru: 'Время' },
+			{ key: 'days', icon: '📅', label_fr: 'Jours et mois', label_en: 'Days & months', label_ru: 'Дни и месяцы' },
+			{ key: 'places', icon: '🏪', label_fr: 'Lieux', label_en: 'Places', label_ru: 'Места' },
+			{ key: 'professions', icon: '👨‍⚕️', label_fr: 'Metiers', label_en: 'Professions', label_ru: 'Профессии' },
+			{ key: 'house', icon: '🛋️', label_fr: 'Maison', label_en: 'House', label_ru: 'Дом' },
+			{ key: 'transport', icon: '🚌', label_fr: 'Transports', label_en: 'Transport', label_ru: 'Транспорт' },
+			{ key: 'verbs', icon: '🏃', label_fr: 'Verbes courants', label_en: 'Common verbs', label_ru: 'Общие глаголы' },
+			{ key: 'adjectives', icon: '✨', label_fr: 'Adjectifs', label_en: 'Adjectives', label_ru: 'Прилагательные' },
+			{ key: 'weather', icon: '☀️', label_fr: 'Meteo', label_en: 'Weather', label_ru: 'Погода' },
+			{ key: 'emotions', icon: '😊', label_fr: 'Emotions', label_en: 'Emotions', label_ru: 'Эмоции' },
+			{ key: 'hobbies', icon: '⚽', label_fr: 'Loisirs', label_en: 'Hobbies', label_ru: 'Хобби' },
+			{ key: 'school', icon: '📚', label_fr: 'Ecole', label_en: 'School', label_ru: 'Школа' },
+			{ key: 'nature', icon: '🌳', label_fr: 'Nature', label_en: 'Nature', label_ru: 'Природа' },
+			{ key: 'drinks', icon: '🥤', label_fr: 'Boissons', label_en: 'Drinks', label_ru: 'Напитки' },
 		],
 		intermediate: [
-			{ key: 'travel', icon: '✈️', label_fr: 'Voyages', label_en: 'Travel' },
-			{ key: 'work', icon: '💼', label_fr: 'Travail', label_en: 'Work' },
-			{ key: 'health', icon: '🏥', label_fr: 'Sante', label_en: 'Health' },
-			{ key: 'hobbies', icon: '🎸', label_fr: 'Loisirs', label_en: 'Hobbies' },
-			{ key: 'home', icon: '🏠', label_fr: 'Maison', label_en: 'Home' },
-			{ key: 'weather', icon: '🌤️', label_fr: 'Meteo', label_en: 'Weather' },
+			{ key: 'travel', icon: '✈️', label_fr: 'Voyages', label_en: 'Travel', label_ru: 'Путешествия' },
+			{ key: 'work', icon: '💼', label_fr: 'Travail', label_en: 'Work', label_ru: 'Работа' },
+			{ key: 'health', icon: '🏥', label_fr: 'Sante', label_en: 'Health', label_ru: 'Здоровье' },
+			{ key: 'hobbies', icon: '🎸', label_fr: 'Loisirs', label_en: 'Hobbies', label_ru: 'Хобби' },
+			{ key: 'home', icon: '🏠', label_fr: 'Maison', label_en: 'Home', label_ru: 'Дом' },
+			{ key: 'weather', icon: '🌤️', label_fr: 'Meteo', label_en: 'Weather', label_ru: 'Погода' },
 		],
 		advanced: [
-			{ key: 'politics', icon: '🏛️', label_fr: 'Politique', label_en: 'Politics' },
-			{ key: 'business', icon: '📊', label_fr: 'Affaires', label_en: 'Business' },
-			{ key: 'science', icon: '🔬', label_fr: 'Sciences', label_en: 'Science' },
-			{ key: 'culture', icon: '🎭', label_fr: 'Culture', label_en: 'Culture' },
-			{ key: 'emotions', icon: '💭', label_fr: 'Emotions', label_en: 'Emotions' },
-			{ key: 'idioms', icon: '📚', label_fr: 'Expressions', label_en: 'Idioms' },
+			{ key: 'politics', icon: '🏛️', label_fr: 'Politique', label_en: 'Politics', label_ru: 'Политика' },
+			{ key: 'business', icon: '📊', label_fr: 'Affaires', label_en: 'Business', label_ru: 'Бизнес' },
+			{ key: 'science', icon: '🔬', label_fr: 'Sciences', label_en: 'Science', label_ru: 'Наука' },
+			{ key: 'culture', icon: '🎭', label_fr: 'Culture', label_en: 'Culture', label_ru: 'Культура' },
+			{ key: 'emotions', icon: '💭', label_fr: 'Emotions', label_en: 'Emotions', label_ru: 'Эмоции' },
+			{ key: 'idioms', icon: '📚', label_fr: 'Expressions', label_en: 'Idioms', label_ru: 'Идиомы' },
 		],
 	},
 }
 
 const levelConfig = {
-	beginner: { label: { fr: 'Debutant', en: 'Beginner' }, color: 'emerald', icon: SignalLow },
-	intermediate: { label: { fr: 'Intermediaire', en: 'Intermediate' }, color: 'amber', icon: SignalMedium },
-	advanced: { label: { fr: 'Avance', en: 'Advanced' }, color: 'red', icon: SignalHigh },
+	beginner: { label: { fr: 'Debutant', en: 'Beginner', ru: 'Начальный' }, color: 'emerald', icon: SignalLow },
+	intermediate: { label: { fr: 'Intermediaire', en: 'Intermediate', ru: 'Средний' }, color: 'amber', icon: SignalMedium },
+	advanced: { label: { fr: 'Avance', en: 'Advanced', ru: 'Продвинутый' }, color: 'red', icon: SignalHigh },
 }
 
 const colorClasses = {
@@ -110,7 +110,7 @@ const colorClasses = {
 }
 
 // Question Edit Form Component
-const QuestionEditForm = ({ question, onSave, onCancel, saving }) => {
+const QuestionEditForm = ({ question, onSave, onCancel, saving, learningLang }) => {
 	const isMultiFill = question.type === 'multi_fill'
 
 	const [formData, setFormData] = useState({
@@ -198,15 +198,19 @@ const QuestionEditForm = ({ question, onSave, onCancel, saving }) => {
 			</div>
 
 			<div className="grid grid-cols-1 gap-3">
-				<div>
-					<label className="block text-xs font-medium text-slate-600 mb-1">Question (FR)</label>
-					<input
-						type="text"
-						value={formData.question_fr}
-						onChange={(e) => setFormData({ ...formData, question_fr: e.target.value })}
-						className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
-					/>
-				</div>
+				{/* Question FR - Hide if learning French */}
+				{learningLang !== 'fr' && (
+					<div>
+						<label className="block text-xs font-medium text-slate-600 mb-1">Question (FR)</label>
+						<input
+							type="text"
+							value={formData.question_fr}
+							onChange={(e) => setFormData({ ...formData, question_fr: e.target.value })}
+							className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+						/>
+					</div>
+				)}
+				{/* Question EN - Always show (fallback language) */}
 				<div>
 					<label className="block text-xs font-medium text-slate-600 mb-1">Question (EN)</label>
 					<input
@@ -216,15 +220,18 @@ const QuestionEditForm = ({ question, onSave, onCancel, saving }) => {
 						className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
 					/>
 				</div>
-				<div>
-					<label className="block text-xs font-medium text-slate-600 mb-1">Question (RU)</label>
-					<input
-						type="text"
-						value={formData.question_ru}
-						onChange={(e) => setFormData({ ...formData, question_ru: e.target.value })}
-						className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
-					/>
-				</div>
+				{/* Question RU - Hide if learning Russian */}
+				{learningLang !== 'ru' && (
+					<div>
+						<label className="block text-xs font-medium text-slate-600 mb-1">Question (RU)</label>
+						<input
+							type="text"
+							value={formData.question_ru}
+							onChange={(e) => setFormData({ ...formData, question_ru: e.target.value })}
+							className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+						/>
+					</div>
+				)}
 			</div>
 
 			{/* Options */}
@@ -393,12 +400,12 @@ const MCQQuestionPreview = ({ question, onAnswer, answered, selectedAnswer, loca
 	const isCorrect = selectedAnswer === question.correct_answer
 
 	return (
-		<div className="space-y-6">
-			<h3 className="text-xl font-bold text-center text-slate-800">
+		<div className="space-y-8">
+			<h3 className="text-2xl font-bold text-center text-slate-900 leading-relaxed">
 				{questionText}
 			</h3>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 				{options.map((option, index) => {
 					const isSelected = selectedAnswer === index
 					const isCorrectOption = index === question.correct_answer
@@ -409,7 +416,7 @@ const MCQQuestionPreview = ({ question, onAnswer, answered, selectedAnswer, loca
 							onClick={() => !answered && onAnswer(index)}
 							disabled={answered}
 							className={cn(
-								'p-4 rounded-xl border-2 text-left transition-all font-medium',
+								'p-5 rounded-xl border-2 text-left transition-all font-semibold',
 								answered
 									? isCorrectOption
 										? 'bg-emerald-500/20 border-emerald-500 text-emerald-700'
@@ -421,9 +428,9 @@ const MCQQuestionPreview = ({ question, onAnswer, answered, selectedAnswer, loca
 									: 'bg-white border-slate-200 text-slate-700 hover:border-violet-300 hover:bg-violet-50'
 							)}
 						>
-							<div className="flex items-center gap-3">
+							<div className="flex items-center gap-4">
 								<span className={cn(
-									'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2',
+									'w-10 h-10 rounded-full flex items-center justify-center text-base font-bold border-2 flex-shrink-0',
 									answered
 										? isCorrectOption
 											? 'bg-emerald-500 border-emerald-600 text-white'
@@ -436,7 +443,7 @@ const MCQQuestionPreview = ({ question, onAnswer, answered, selectedAnswer, loca
 								)}>
 									{String.fromCharCode(65 + index)}
 								</span>
-								<span>{option}</span>
+								<span className="text-base leading-relaxed">{option}</span>
 							</div>
 						</button>
 					)
@@ -493,17 +500,17 @@ const MultiFillQuestionPreview = ({ question, onAnswer, answered, locale }) => {
 	}
 
 	return (
-		<div className="space-y-6">
-			<h3 className="text-xl font-bold text-center text-slate-800">
+		<div className="space-y-8">
+			<h3 className="text-2xl font-bold text-center text-slate-900 leading-relaxed">
 				{questionText}
 			</h3>
 
 			{/* Options display */}
-			<div className="flex flex-wrap justify-center gap-2 pb-4 border-b border-slate-200">
+			<div className="flex flex-wrap justify-center gap-3 pb-6 border-b border-slate-200">
 				{options.map((opt, i) => (
 					<span
 						key={i}
-						className="px-3 py-1.5 rounded-lg font-medium text-sm bg-slate-100 text-slate-700"
+						className="px-4 py-2 rounded-lg font-semibold text-base bg-slate-100 text-slate-700"
 					>
 						{opt}
 					</span>
@@ -511,7 +518,7 @@ const MultiFillQuestionPreview = ({ question, onAnswer, answered, locale }) => {
 			</div>
 
 			{/* Sentences */}
-			<div className="space-y-4">
+			<div className="space-y-5">
 				{sentences.map((sentence, sIndex) => {
 					const parts = sentence.text.split('___')
 					const selectedOpt = answers[sIndex]
@@ -522,7 +529,7 @@ const MultiFillQuestionPreview = ({ question, onAnswer, answered, locale }) => {
 						<div
 							key={sIndex}
 							className={cn(
-								'p-4 rounded-xl border-2 transition-all',
+								'p-5 rounded-xl border-2 transition-all',
 								answered
 									? isCorrectAnswer
 										? 'bg-emerald-500/10 border-emerald-500'
@@ -532,14 +539,14 @@ const MultiFillQuestionPreview = ({ question, onAnswer, answered, locale }) => {
 									: 'bg-white border-slate-200'
 							)}
 						>
-							<div className="flex items-center flex-wrap gap-2">
-								<span className="text-lg text-slate-800">{parts[0]}</span>
+							<div className="flex items-center flex-wrap gap-3">
+								<span className="text-lg font-medium text-slate-900 leading-relaxed">{parts[0]}</span>
 								<select
 									value={selectedOpt ?? ''}
 									onChange={(e) => handleSelectAnswer(sIndex, parseInt(e.target.value))}
 									disabled={answered}
 									className={cn(
-										'px-3 py-2 rounded-lg font-semibold text-center min-w-[120px]',
+										'px-4 py-2.5 rounded-lg font-bold text-base text-center min-w-[140px]',
 										'border-2 transition-all cursor-pointer',
 										answered
 											? isCorrectAnswer
@@ -557,9 +564,9 @@ const MultiFillQuestionPreview = ({ question, onAnswer, answered, locale }) => {
 										<option key={oIndex} value={oIndex}>{opt}</option>
 									))}
 								</select>
-								<span className="text-lg text-slate-800">{parts[1] || ''}</span>
+								<span className="text-lg font-medium text-slate-900 leading-relaxed">{parts[1] || ''}</span>
 								{answered && isWrongAnswer && (
-									<span className="ml-2 text-sm text-emerald-500 font-medium">
+									<span className="ml-2 text-base text-emerald-600 font-bold">
 										→ {options[sentence.correct]}
 									</span>
 								)}
@@ -592,19 +599,19 @@ const DropdownQuestionPreview = ({ question, onAnswer, answered, selectedAnswer,
 	const isCorrect = selectedAnswer === question.correct_answer
 
 	return (
-		<div className="space-y-6">
-			<h3 className="text-lg font-medium text-center text-slate-500 mb-2">
+		<div className="space-y-8">
+			<h3 className="text-xl font-semibold text-center text-slate-600 mb-2">
 				Completez la phrase
 			</h3>
 
-			<div className="text-2xl font-bold text-center flex items-center justify-center gap-2 flex-wrap text-slate-800">
+			<div className="text-2xl font-bold text-center flex items-center justify-center gap-3 flex-wrap text-slate-900 leading-relaxed">
 				<span>{parts[0]}</span>
 				<select
 					value={selectedAnswer !== null ? selectedAnswer : ''}
 					onChange={(e) => !answered && onAnswer(parseInt(e.target.value))}
 					disabled={answered}
 					className={cn(
-						'px-4 py-2 rounded-xl font-bold text-lg',
+						'px-5 py-3 rounded-xl font-bold text-xl',
 						'border-2 transition-all cursor-pointer',
 						answered
 							? isCorrect
@@ -692,7 +699,7 @@ const SingleQuestionPreview = ({ question, onClose, locale }) => {
 				</button>
 			</div>
 
-			<div className="bg-white rounded-xl border border-slate-200 p-6 mb-4">
+			<div className="bg-white rounded-xl border border-slate-200 p-8 mb-4">
 				{question.type === 'mcq' ? (
 					<MCQQuestionPreview
 						question={question}
@@ -743,6 +750,7 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 	const queryClient = useQueryClient()
 	const [editingId, setEditingId] = useState(null)
 	const [previewingQuestionId, setPreviewingQuestionId] = useState(null)
+	const [mouseDownTarget, setMouseDownTarget] = useState(null)
 
 	// Fetch questions for this theme
 	const { data: questionsData, isLoading, error } = useQuery({
@@ -793,14 +801,32 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 	}
 
 	const getThemeLabel = () => {
-		if (locale === 'fr') return theme.label_fr || theme.key
-		return theme.label_en || theme.key
+		// Show label in interface language
+		if (locale === 'fr' && theme.label_fr) return theme.label_fr
+		if (locale === 'ru' && theme.label_ru) return theme.label_ru
+		if (locale === 'en' && theme.label_en) return theme.label_en
+		// Fallback to available labels
+		return theme.label_fr || theme.label_en || theme.label_ru || theme.key
+	}
+
+	const handleBackdropMouseDown = (e) => {
+		if (e.target === e.currentTarget) {
+			setMouseDownTarget(e.target)
+		}
+	}
+
+	const handleBackdropClick = (e) => {
+		if (e.target === e.currentTarget && mouseDownTarget === e.currentTarget) {
+			onClose()
+		}
+		setMouseDownTarget(null)
 	}
 
 	return (
 		<div
 			className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-8 overflow-y-auto"
-			onClick={onClose}
+			onMouseDown={handleBackdropMouseDown}
+			onClick={handleBackdropClick}
 		>
 			<div
 				className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 mb-8"
@@ -881,6 +907,7 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 											onSave={handleSaveQuestion}
 											onCancel={() => setEditingId(null)}
 											saving={updateMutation.isPending}
+											learningLang={lang}
 										/>
 									) : (
 										<div
@@ -1249,9 +1276,14 @@ const TrainingAdminClient = () => {
 																	'font-medium text-sm mb-0.5 line-clamp-2',
 																	isVerbTheme ? 'text-amber-900' : 'text-slate-800'
 																)}>
-																	{locale === 'fr'
-																		? theme.label_fr || theme.key
-																		: theme.label_en || theme.key}
+																	{(() => {
+																		// Show label in interface language
+																		if (locale === 'fr' && theme.label_fr) return theme.label_fr
+																		if (locale === 'ru' && theme.label_ru) return theme.label_ru
+																		if (locale === 'en' && theme.label_en) return theme.label_en
+																		// Fallback to available labels
+																		return theme.label_fr || theme.label_en || theme.label_ru || theme.key
+																	})()}
 																</h4>
 																<p className={cn(
 																	'text-xs',

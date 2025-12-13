@@ -577,29 +577,19 @@ export default function SectionPageClient({
 						{displayedMaterials.map((material, index) => {
 							if (section === 'books') {
 								return (
-									<div
+									<BookCard
 										key={material.id}
-										className="animate-in fade-in slide-in-from-bottom-4"
-										style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
-									>
-										<BookCard
-											book={material}
-											checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
-										/>
-									</div>
+										book={material}
+										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
+									/>
 								)
 							}
 							return (
-								<div
+								<SectionCard
 									key={material.id}
-									className="animate-in fade-in slide-in-from-bottom-4"
-									style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
-								>
-									<SectionCard
-										material={material}
-										checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
-									/>
-								</div>
+									material={material}
+									checkIfUserMaterialIsInMaterials={checkIfUserMaterialIsInMaterials(material.id)}
+								/>
 							)
 						})}
 					</div>

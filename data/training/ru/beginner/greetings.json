@@ -106,5 +106,1809 @@
     "explanation_en": "Пока (Poka) means \"Bye\" in an informal way.",
     "explanation_ru": null,
     "difficulty": 1
+  },
+  {
+    "id": 6,
+    "type": "mcq",
+    "question_fr": "Quelle est la salutation formelle pour dire bonjour ?",
+    "question_en": "What is the formal greeting for hello?",
+    "options": [
+      "привет",
+      "здравствуйте",
+      "пока",
+      "добрый"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Здравствуйте est la forme formelle et polie pour dire bonjour.",
+    "explanation_en": "Здравствуйте is the formal and polite way to say hello.",
+    "difficulty": 1
+  },
+  {
+    "id": 7,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"s'il vous plaît\" / \"de rien\" ?",
+    "question_en": "How do you say \"please\" / \"you're welcome\"?",
+    "options": [
+      "спасибо",
+      "пожалуйста",
+      "извините",
+      "простите"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Пожалуйста signifie à la fois \"s'il vous plaît\" et \"de rien\" selon le contexte.",
+    "explanation_en": "Пожалуйста means both \"please\" and \"you're welcome\" depending on context.",
+    "difficulty": 1
+  },
+  {
+    "id": 8,
+    "type": "mcq",
+    "question_fr": "Que signifie \"До свидания\" ?",
+    "question_en": "What does \"До свидания\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "au revoir (formel)",
+        "à bientôt",
+        "bonne nuit"
+      ],
+      "en": [
+        "hello",
+        "goodbye (formal)",
+        "see you soon",
+        "good night"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "До свидания est la façon formelle de dire au revoir en russe.",
+    "explanation_en": "До свидания is the formal way to say goodbye in Russian.",
+    "difficulty": 1
+  },
+  {
+    "id": 9,
+    "type": "dropdown",
+    "sentence": "___ утро!",
+    "options": [
+      "Доброе",
+      "Добрый",
+      "Добрая",
+      "Хорошее"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Доброе утро signifie \"Bon matin\" ou \"Bonjour\" le matin. On utilise \"доброе\" (neutre) car \"утро\" est neutre.",
+    "explanation_en": "Доброе утро means \"Good morning\". We use \"доброе\" (neuter) because \"утро\" is neuter.",
+    "difficulty": 1
+  },
+  {
+    "id": 10,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"excusez-moi\" / \"pardon\" ?",
+    "question_en": "How do you say \"excuse me\" / \"sorry\"?",
+    "options": [
+      "пожалуйста",
+      "спасибо",
+      "извините",
+      "здравствуйте"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Извините est utilisé pour s'excuser ou attirer l'attention poliment.",
+    "explanation_en": "Извините is used to apologize or get someone's attention politely.",
+    "difficulty": 1
+  },
+  {
+    "id": 11,
+    "type": "mcq",
+    "question_fr": "Que répondez-vous à \"Спасибо\" ?",
+    "question_en": "What do you answer to \"Спасибо\" (thank you)?",
+    "options": {
+      "fr": [
+        "привет",
+        "пожалуйста",
+        "извините",
+        "пока"
+      ],
+      "en": [
+        "hello",
+        "you're welcome",
+        "excuse me",
+        "bye"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Пожалуйста signifie \"de rien\" en réponse à un remerciement.",
+    "explanation_en": "Пожалуйста means \"you're welcome\" in response to a thank you.",
+    "difficulty": 1
+  },
+  {
+    "id": 12,
+    "type": "dropdown",
+    "sentence": "Добрый ___!",
+    "options": [
+      "день",
+      "утро",
+      "ночь",
+      "вечер"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Добрый день signifie \"Bon après-midi\" ou \"Bonjour\" (dans la journée).",
+    "explanation_en": "Добрый день means \"Good afternoon\" or \"Hello\" (during the day).",
+    "difficulty": 1
+  },
+  {
+    "id": 13,
+    "type": "mcq",
+    "question_fr": "Comment demander \"Comment allez-vous ?\" formellement ?",
+    "question_en": "How to ask \"How are you?\" formally?",
+    "options": [
+      "Как дела?",
+      "Как поживаете?",
+      "Что нового?",
+      "Как жизнь?"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Как поживаете? est la forme formelle pour demander comment va quelqu'un.",
+    "explanation_en": "Как поживаете? is the formal way to ask how someone is doing.",
+    "difficulty": 2
+  },
+  {
+    "id": 14,
+    "type": "mcq",
+    "question_fr": "Quelle expression signifie \"Enchanté(e)\" ?",
+    "question_en": "Which expression means \"Nice to meet you\"?",
+    "options": [
+      "До встречи",
+      "Очень приятно",
+      "Всего доброго",
+      "Приветствую"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Очень приятно signifie littéralement \"très agréable\" et s'utilise pour dire \"Enchanté(e)\".",
+    "explanation_en": "Очень приятно literally means \"very pleasant\" and is used to say \"Nice to meet you\".",
+    "difficulty": 2
+  },
+  {
+    "id": 15,
+    "type": "dropdown",
+    "sentence": "Добрый ___!",
+    "options": [
+      "вечер",
+      "день",
+      "утро",
+      "ночь"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Добрый вечер signifie \"Bonsoir\".",
+    "explanation_en": "Добрый вечер means \"Good evening\".",
+    "difficulty": 1
+  },
+  {
+    "id": 16,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"À bientôt\" ?",
+    "question_en": "How do you say \"See you soon\"?",
+    "options": [
+      "До скорого",
+      "До свидания",
+      "Пока",
+      "Прощай"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "До скорого signifie \"À bientôt\" littéralement \"jusqu'à bientôt\".",
+    "explanation_en": "До скорого means \"See you soon\" literally \"until soon\".",
+    "difficulty": 2
+  },
+  {
+    "id": 17,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Простите\" ?",
+    "question_en": "What does \"Простите\" mean?",
+    "options": {
+      "fr": [
+        "merci",
+        "pardonnez-moi",
+        "bonjour",
+        "au revoir"
+      ],
+      "en": [
+        "thank you",
+        "forgive me / I'm sorry",
+        "hello",
+        "goodbye"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Простите est une forme plus forte d'excuse que извините, signifiant \"pardonnez-moi\".",
+    "explanation_en": "Простите is a stronger form of apology than извините, meaning \"forgive me\".",
+    "difficulty": 2
+  },
+  {
+    "id": 18,
+    "type": "dropdown",
+    "sentence": "Как ___ зовут?",
+    "options": [
+      "вас",
+      "тебя",
+      "меня",
+      "его"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Как вас зовут? est la forme formelle pour demander \"Comment vous appelez-vous?\"",
+    "explanation_en": "Как вас зовут? is the formal way to ask \"What is your name?\"",
+    "difficulty": 1
+  },
+  {
+    "id": 19,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"Bonne nuit\" ?",
+    "question_en": "How do you say \"Good night\"?",
+    "options": [
+      "Доброе утро",
+      "Добрый вечер",
+      "Спокойной ночи",
+      "До завтра"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Спокойной ночи signifie \"Bonne nuit\" (littéralement \"nuit paisible\").",
+    "explanation_en": "Спокойной ночи means \"Good night\" (literally \"peaceful night\").",
+    "difficulty": 1
+  },
+  {
+    "id": 20,
+    "type": "mcq",
+    "question_fr": "Quelle réponse à \"Как дела?\" signifie \"Très bien\" ?",
+    "question_en": "Which answer to \"Как дела?\" means \"Very well\"?",
+    "options": [
+      "Плохо",
+      "Нормально",
+      "Отлично",
+      "Так себе"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Отлично signifie \"Excellent\" ou \"Très bien\".",
+    "explanation_en": "Отлично means \"Excellent\" or \"Very well\".",
+    "difficulty": 1
+  },
+  {
+    "id": 21,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces salutations",
+    "question_en": "Complete these greetings",
+    "options": [
+      "Привет",
+      "Здравствуйте",
+      "Спасибо",
+      "Пока"
+    ],
+    "sentences": [
+      {
+        "text": "___, как дела?",
+        "correct": 0
+      },
+      {
+        "text": "___, меня зовут Иван.",
+        "correct": 1
+      },
+      {
+        "text": "___, до свидания!",
+        "correct": 3
+      }
+    ],
+    "explanation_fr": "Привет = Salut (informel), Здравствуйте = Bonjour (formel), Пока = Au revoir (informel).",
+    "explanation_en": "Привет = Hi (informal), Здравствуйте = Hello (formal), Пока = Bye (informal).",
+    "difficulty": 2
+  },
+  {
+    "id": 22,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"non\" en russe ?",
+    "question_en": "How do you say \"no\" in Russian?",
+    "options": [
+      "да",
+      "нет",
+      "может",
+      "никогда"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Нет signifie \"non\" en russe.",
+    "explanation_en": "Нет means \"no\" in Russian.",
+    "difficulty": 1
+  },
+  {
+    "id": 23,
+    "type": "dropdown",
+    "sentence": "Как ___ дела?",
+    "options": [
+      "у вас",
+      "у меня",
+      "у него",
+      "у неё"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Как у вас дела? = Comment allez-vous? (forme formelle).",
+    "explanation_en": "Как у вас дела? = How are you? (formal form).",
+    "difficulty": 1
+  },
+  {
+    "id": 24,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Приветствую\" ?",
+    "question_en": "What does \"Приветствую\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "je salue / bonjour",
+        "merci",
+        "pardon"
+      ],
+      "en": [
+        "goodbye",
+        "I greet / hello",
+        "thank you",
+        "sorry"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Приветствую est une salutation formelle signifiant \"Je vous salue\".",
+    "explanation_en": "Приветствую is a formal greeting meaning \"I greet you\".",
+    "difficulty": 2
+  },
+  {
+    "id": 25,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"À demain\" ?",
+    "question_en": "How do you say \"See you tomorrow\"?",
+    "options": [
+      "До завтра",
+      "До скорого",
+      "До встречи",
+      "До свидания"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "До завтра signifie littéralement \"jusqu'à demain\".",
+    "explanation_en": "До завтра literally means \"until tomorrow\".",
+    "difficulty": 1
+  },
+  {
+    "id": 26,
+    "type": "dropdown",
+    "sentence": "___ вечер!",
+    "options": [
+      "Добрый",
+      "Доброе",
+      "Добрая",
+      "Хороший"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "On utilise Добрый (masculin) car вечер est masculin.",
+    "explanation_en": "We use Добрый (masculine) because вечер is masculine.",
+    "difficulty": 2
+  },
+  {
+    "id": 27,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Всего доброго\" ?",
+    "question_en": "What does \"Всего доброго\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "tout de bon / portez-vous bien",
+        "merci beaucoup",
+        "à bientôt"
+      ],
+      "en": [
+        "hello",
+        "all the best / take care",
+        "thank you very much",
+        "see you soon"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Всего доброго est une formule de politesse pour souhaiter du bien en se quittant.",
+    "explanation_en": "Всего доброго is a polite phrase to wish well when parting.",
+    "difficulty": 2
+  },
+  {
+    "id": 28,
+    "type": "mcq",
+    "question_fr": "Quelle réponse signifie \"Pas mal\" / \"Ça va\" ?",
+    "question_en": "Which answer means \"Not bad\" / \"Okay\"?",
+    "options": [
+      "Отлично",
+      "Плохо",
+      "Нормально",
+      "Ужасно"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Нормально signifie \"Normalement\", \"Ça va\", \"Pas mal\".",
+    "explanation_en": "Нормально means \"Normally\", \"Okay\", \"Not bad\".",
+    "difficulty": 1
+  },
+  {
+    "id": 29,
+    "type": "dropdown",
+    "sentence": "Очень ___!",
+    "options": [
+      "приятно",
+      "хорошо",
+      "плохо",
+      "долго"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Очень приятно = Enchanté(e) / Ravi(e) de vous rencontrer.",
+    "explanation_en": "Очень приятно = Nice to meet you / Pleased to meet you.",
+    "difficulty": 1
+  },
+  {
+    "id": 30,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"Merci beaucoup\" ?",
+    "question_en": "How do you say \"Thank you very much\"?",
+    "options": [
+      "Спасибо",
+      "Большое спасибо",
+      "Пожалуйста",
+      "Извините"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Большое спасибо = Grand merci / Merci beaucoup.",
+    "explanation_en": "Большое спасибо = Big thanks / Thank you very much.",
+    "difficulty": 1
+  },
+  {
+    "id": 31,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces expressions de politesse",
+    "question_en": "Complete these polite expressions",
+    "options": [
+      "Спасибо",
+      "Пожалуйста",
+      "Извините",
+      "Простите"
+    ],
+    "sentences": [
+      {
+        "text": "___, я опоздал.",
+        "correct": 2
+      },
+      {
+        "text": "___! - ___!",
+        "correct": 0
+      },
+      {
+        "text": "___, можно войти?",
+        "correct": 2
+      }
+    ],
+    "explanation_fr": "Извините = Excusez-moi, Спасибо = Merci, Пожалуйста = De rien/S'il vous plaît.",
+    "explanation_en": "Извините = Excuse me, Спасибо = Thank you, Пожалуйста = You're welcome/Please.",
+    "difficulty": 2
+  },
+  {
+    "id": 32,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Рад вас видеть\" ?",
+    "question_en": "What does \"Рад вас видеть\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "content de vous voir",
+        "comment allez-vous",
+        "enchanté"
+      ],
+      "en": [
+        "goodbye",
+        "glad to see you",
+        "how are you",
+        "nice to meet you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Рад вас видеть = Content de vous voir / Heureux de vous voir.",
+    "explanation_en": "Рад вас видеть = Glad to see you / Happy to see you.",
+    "difficulty": 2
+  },
+  {
+    "id": 33,
+    "type": "dropdown",
+    "sentence": "До ___!",
+    "options": [
+      "встречи",
+      "завтра",
+      "скорого",
+      "свидания"
+    ],
+    "correct_answer": 3,
+    "explanation_fr": "До свидания = Au revoir (forme formelle).",
+    "explanation_en": "До свидания = Goodbye (formal form).",
+    "difficulty": 1
+  },
+  {
+    "id": 34,
+    "type": "mcq",
+    "question_fr": "Comment demander \"Comment t'appelles-tu ?\" (informel) ?",
+    "question_en": "How to ask \"What's your name?\" (informal)?",
+    "options": [
+      "Как вас зовут?",
+      "Как тебя зовут?",
+      "Как ваше имя?",
+      "Кто вы?"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Как тебя зовут? est la forme informelle (tu).",
+    "explanation_en": "Как тебя зовут? is the informal form (you).",
+    "difficulty": 1
+  },
+  {
+    "id": 35,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Доброго времени суток\" ?",
+    "question_en": "What does \"Доброго времени суток\" mean?",
+    "options": {
+      "fr": [
+        "bonne nuit",
+        "bon moment de la journée",
+        "au revoir",
+        "à demain"
+      ],
+      "en": [
+        "good night",
+        "good time of day",
+        "goodbye",
+        "see you tomorrow"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Expression universelle utilisable à tout moment de la journée.",
+    "explanation_en": "Universal expression usable at any time of day.",
+    "difficulty": 3
+  },
+  {
+    "id": 36,
+    "type": "dropdown",
+    "sentence": "Как ___ зовут?",
+    "options": [
+      "тебя",
+      "вас",
+      "меня",
+      "её"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Как тебя зовут? = Comment t'appelles-tu? (informel).",
+    "explanation_en": "Как тебя зовут? = What's your name? (informal).",
+    "difficulty": 1
+  },
+  {
+    "id": 37,
+    "type": "mcq",
+    "question_fr": "Comment répondre \"Ça va mal\" ?",
+    "question_en": "How to answer \"I'm not well\"?",
+    "options": [
+      "Отлично",
+      "Хорошо",
+      "Плохо",
+      "Нормально"
+    ],
+    "correct_answer": 2,
+    "explanation_fr": "Плохо = Mal / Mauvais.",
+    "explanation_en": "Плохо = Bad / Poorly.",
+    "difficulty": 1
+  },
+  {
+    "id": 38,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Позвольте представиться\" ?",
+    "question_en": "What does \"Позвольте представиться\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "permettez-moi de me présenter",
+        "enchanté",
+        "comment allez-vous"
+      ],
+      "en": [
+        "goodbye",
+        "allow me to introduce myself",
+        "nice to meet you",
+        "how are you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Expression formelle pour se présenter.",
+    "explanation_en": "Formal expression to introduce oneself.",
+    "difficulty": 3
+  },
+  {
+    "id": 39,
+    "type": "dropdown",
+    "sentence": "Спокойной ___!",
+    "options": [
+      "ночи",
+      "утро",
+      "день",
+      "вечер"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Спокойной ночи = Bonne nuit (paisible nuit).",
+    "explanation_en": "Спокойной ночи = Good night (peaceful night).",
+    "difficulty": 1
+  },
+  {
+    "id": 40,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"À plus tard\" ?",
+    "question_en": "How do you say \"See you later\"?",
+    "options": [
+      "До встречи",
+      "До завтра",
+      "До свидания",
+      "Пока"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "До встречи = À la prochaine / À plus tard.",
+    "explanation_en": "До встречи = See you later / Until we meet.",
+    "difficulty": 2
+  },
+  {
+    "id": 41,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces salutations selon le moment",
+    "question_en": "Complete these greetings by time",
+    "options": [
+      "утро",
+      "день",
+      "вечер",
+      "ночи"
+    ],
+    "sentences": [
+      {
+        "text": "Доброе ___!",
+        "correct": 0
+      },
+      {
+        "text": "Добрый ___!",
+        "correct": 1
+      },
+      {
+        "text": "Спокойной ___!",
+        "correct": 3
+      }
+    ],
+    "explanation_fr": "Утро = matin, День = jour/après-midi, Вечер = soir, Ночи = nuit.",
+    "explanation_en": "Утро = morning, День = day/afternoon, Вечер = evening, Ночи = night.",
+    "difficulty": 2
+  },
+  {
+    "id": 42,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Будьте здоровы\" ?",
+    "question_en": "What does \"Будьте здоровы\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "portez-vous bien / à vos souhaits",
+        "au revoir",
+        "merci"
+      ],
+      "en": [
+        "hello",
+        "be healthy / bless you",
+        "goodbye",
+        "thank you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Se dit après un éternuement ou pour souhaiter une bonne santé.",
+    "explanation_en": "Said after a sneeze or to wish good health.",
+    "difficulty": 2
+  },
+  {
+    "id": 43,
+    "type": "dropdown",
+    "sentence": "Рад ___ видеть!",
+    "options": [
+      "вас",
+      "тебя",
+      "меня",
+      "его"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Рад вас видеть = Content de vous voir (formel).",
+    "explanation_en": "Рад вас видеть = Glad to see you (formal).",
+    "difficulty": 2
+  },
+  {
+    "id": 44,
+    "type": "mcq",
+    "question_fr": "Comment dit-on \"Quoi de neuf ?\" ?",
+    "question_en": "How do you say \"What's new?\"?",
+    "options": [
+      "Как дела?",
+      "Что нового?",
+      "Как поживаете?",
+      "Как жизнь?"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Что нового? = Quoi de neuf? (littéralement \"quoi de nouveau\").",
+    "explanation_en": "Что нового? = What's new? (literally \"what new\").",
+    "difficulty": 2
+  },
+  {
+    "id": 45,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Приятного дня\" ?",
+    "question_en": "What does \"Приятного дня\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "bonne journée",
+        "bonne nuit",
+        "à demain"
+      ],
+      "en": [
+        "hello",
+        "have a nice day",
+        "good night",
+        "see you tomorrow"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Приятного дня = Bonne journée / Passez une bonne journée.",
+    "explanation_en": "Приятного дня = Have a nice day / Have a pleasant day.",
+    "difficulty": 2
+  },
+  {
+    "id": 46,
+    "type": "dropdown",
+    "sentence": "Большое ___!",
+    "options": [
+      "спасибо",
+      "пожалуйста",
+      "извините",
+      "здравствуйте"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Большое спасибо = Merci beaucoup (grand merci).",
+    "explanation_en": "Большое спасибо = Thank you very much (big thanks).",
+    "difficulty": 1
+  },
+  {
+    "id": 47,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Avec plaisir\" ?",
+    "question_en": "How to say \"With pleasure\"?",
+    "options": [
+      "С удовольствием",
+      "Пожалуйста",
+      "Спасибо",
+      "Конечно"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "С удовольствием = Avec plaisir.",
+    "explanation_en": "С удовольствием = With pleasure.",
+    "difficulty": 2
+  },
+  {
+    "id": 48,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Всего хорошего\" ?",
+    "question_en": "What does \"Всего хорошего\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "tout de bon / au revoir",
+        "merci",
+        "pardon"
+      ],
+      "en": [
+        "hello",
+        "all the best / goodbye",
+        "thank you",
+        "sorry"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Всего хорошего = Portez-vous bien / Tout de bon (en se quittant).",
+    "explanation_en": "Всего хорошего = Take care / All the best (when parting).",
+    "difficulty": 2
+  },
+  {
+    "id": 49,
+    "type": "dropdown",
+    "sentence": "Приятно ___!",
+    "options": [
+      "познакомиться",
+      "встретить",
+      "видеть",
+      "говорить"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Приятно познакомиться = Ravi de faire connaissance.",
+    "explanation_en": "Приятно познакомиться = Nice to meet you / Pleased to meet you.",
+    "difficulty": 2
+  },
+  {
+    "id": 50,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Bien sûr\" / \"Certainement\" ?",
+    "question_en": "How to say \"Of course\" / \"Certainly\"?",
+    "options": [
+      "Может быть",
+      "Конечно",
+      "Наверное",
+      "Иногда"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Конечно = Bien sûr / Certainement.",
+    "explanation_en": "Конечно = Of course / Certainly.",
+    "difficulty": 1
+  },
+  {
+    "id": 51,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces expressions courantes",
+    "question_en": "Complete these common expressions",
+    "options": [
+      "Да",
+      "Нет",
+      "Конечно",
+      "Может быть"
+    ],
+    "sentences": [
+      {
+        "text": "Вы придёте? - ___, обязательно!",
+        "correct": 2
+      },
+      {
+        "text": "Это правда? - ___, это так.",
+        "correct": 0
+      },
+      {
+        "text": "Вы свободны? - ___, извините.",
+        "correct": 1
+      }
+    ],
+    "explanation_fr": "Да = Oui, Нет = Non, Конечно = Bien sûr, Может быть = Peut-être.",
+    "explanation_en": "Да = Yes, Нет = No, Конечно = Of course, Может быть = Maybe.",
+    "difficulty": 2
+  },
+  {
+    "id": 52,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Будьте добры\" ?",
+    "question_en": "What does \"Будьте добры\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "s'il vous plaît / soyez gentil",
+        "merci",
+        "bonjour"
+      ],
+      "en": [
+        "goodbye",
+        "please / be so kind",
+        "thank you",
+        "hello"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Formule de politesse signifiant \"Soyez gentil\" / \"S'il vous plaît\".",
+    "explanation_en": "Polite phrase meaning \"Be so kind\" / \"Please\".",
+    "difficulty": 2
+  },
+  {
+    "id": 53,
+    "type": "dropdown",
+    "sentence": "Как ___?",
+    "options": [
+      "дела",
+      "жизнь",
+      "поживаете",
+      "настроение"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Как дела? = Comment ça va? (très courant).",
+    "explanation_en": "Как дела? = How's it going? (very common).",
+    "difficulty": 1
+  },
+  {
+    "id": 54,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Désolé\" / \"Pardon\" informellement ?",
+    "question_en": "How to say \"Sorry\" informally?",
+    "options": [
+      "Извините",
+      "Прости",
+      "Простите",
+      "Виноват"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Прости est la forme informelle (tu) d'excuse.",
+    "explanation_en": "Прости is the informal form (you) of apology.",
+    "difficulty": 1
+  },
+  {
+    "id": 55,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Счастливого пути\" ?",
+    "question_en": "What does \"Счастливого пути\" mean?",
+    "options": {
+      "fr": [
+        "bonne journée",
+        "bon voyage",
+        "bonne nuit",
+        "à bientôt"
+      ],
+      "en": [
+        "have a nice day",
+        "have a good trip",
+        "good night",
+        "see you soon"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Счастливого пути = Bon voyage / Bonne route.",
+    "explanation_en": "Счастливого пути = Have a good trip / Safe travels.",
+    "difficulty": 2
+  },
+  {
+    "id": 56,
+    "type": "dropdown",
+    "sentence": "Что ___?",
+    "options": [
+      "нового",
+      "старого",
+      "хорошего",
+      "плохого"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Что нового? = Quoi de neuf?",
+    "explanation_en": "Что нового? = What's new?",
+    "difficulty": 1
+  },
+  {
+    "id": 57,
+    "type": "mcq",
+    "question_fr": "Comment répondre à \"Как поживаете?\" ?",
+    "question_en": "How to answer \"Как поживаете?\"?",
+    "options": [
+      "Хорошо, спасибо",
+      "Привет",
+      "До свидания",
+      "Меня зовут"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Хорошо, спасибо = Bien, merci.",
+    "explanation_en": "Хорошо, спасибо = Well, thank you.",
+    "difficulty": 1
+  },
+  {
+    "id": 58,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Не за что\" ?",
+    "question_en": "What does \"Не за что\" mean?",
+    "options": {
+      "fr": [
+        "merci",
+        "de rien / il n'y a pas de quoi",
+        "pardon",
+        "au revoir"
+      ],
+      "en": [
+        "thank you",
+        "you're welcome / don't mention it",
+        "sorry",
+        "goodbye"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Не за что = De rien / Il n'y a pas de quoi (en réponse à un merci).",
+    "explanation_en": "Не за что = You're welcome / Don't mention it (response to thanks).",
+    "difficulty": 2
+  },
+  {
+    "id": 59,
+    "type": "dropdown",
+    "sentence": "До ___!",
+    "options": [
+      "скорого",
+      "завтра",
+      "встречи",
+      "вечера"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "До скорого = À bientôt (jusqu'à bientôt).",
+    "explanation_en": "До скорого = See you soon (until soon).",
+    "difficulty": 1
+  },
+  {
+    "id": 60,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Passez une bonne soirée\" ?",
+    "question_en": "How to say \"Have a good evening\"?",
+    "options": [
+      "Доброе утро",
+      "Приятного вечера",
+      "Спокойной ночи",
+      "Добрый день"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Приятного вечера = Bonne soirée / Passez une bonne soirée.",
+    "explanation_en": "Приятного вечера = Have a good evening / Have a pleasant evening.",
+    "difficulty": 2
+  },
+  {
+    "id": 61,
+    "type": "multi_fill",
+    "question_fr": "Utilisez les formules d'au revoir appropriées",
+    "question_en": "Use appropriate goodbye phrases",
+    "options": [
+      "Пока",
+      "До свидания",
+      "До завтра",
+      "До скорого"
+    ],
+    "sentences": [
+      {
+        "text": "___, увидимся завтра!",
+        "correct": 2
+      },
+      {
+        "text": "___, господин директор!",
+        "correct": 1
+      },
+      {
+        "text": "___, друг!",
+        "correct": 0
+      }
+    ],
+    "explanation_fr": "Пока = Salut/Ciao (informel), До свидания = Au revoir (formel), До завтра = À demain.",
+    "explanation_en": "Пока = Bye (informal), До свидания = Goodbye (formal), До завтра = See you tomorrow.",
+    "difficulty": 2
+  },
+  {
+    "id": 62,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Рада познакомиться\" (féminin) ?",
+    "question_en": "What does \"Рада познакомиться\" (feminine) mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "ravie de faire connaissance",
+        "comment allez-vous",
+        "à bientôt"
+      ],
+      "en": [
+        "goodbye",
+        "pleased to meet you",
+        "how are you",
+        "see you soon"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Рада (féminin) / Рад (masculin) познакомиться = Ravi(e) de faire connaissance.",
+    "explanation_en": "Рада (feminine) / Рад (masculine) познакомиться = Pleased to meet you.",
+    "difficulty": 2
+  },
+  {
+    "id": 63,
+    "type": "dropdown",
+    "sentence": "Приятного ___!",
+    "options": [
+      "аппетита",
+      "дня",
+      "вечера",
+      "утра"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Приятного аппетита = Bon appétit.",
+    "explanation_en": "Приятного аппетита = Bon appétit / Enjoy your meal.",
+    "difficulty": 1
+  },
+  {
+    "id": 64,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Bon week-end\" ?",
+    "question_en": "How to say \"Have a good weekend\"?",
+    "options": [
+      "Хорошей недели",
+      "Хороших выходных",
+      "Приятного дня",
+      "До понедельника"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Хороших выходных = Bon week-end (littéralement \"bons jours de repos\").",
+    "explanation_en": "Хороших выходных = Have a good weekend (literally \"good days off\").",
+    "difficulty": 2
+  },
+  {
+    "id": 65,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Приятно слышать\" ?",
+    "question_en": "What does \"Приятно слышать\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "content d'entendre",
+        "pardon",
+        "merci"
+      ],
+      "en": [
+        "goodbye",
+        "nice to hear",
+        "sorry",
+        "thank you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Приятно слышать = Content d'entendre ça / Heureux de l'entendre.",
+    "explanation_en": "Приятно слышать = Nice to hear / Glad to hear that.",
+    "difficulty": 2
+  },
+  {
+    "id": 66,
+    "type": "dropdown",
+    "sentence": "Всего ___!",
+    "options": [
+      "хорошего",
+      "доброго",
+      "плохого",
+      "нового"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Всего хорошего = Tout de bon / Portez-vous bien.",
+    "explanation_en": "Всего хорошего = All the best / Take care.",
+    "difficulty": 2
+  },
+  {
+    "id": 67,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Bon courage\" ?",
+    "question_en": "How to say \"Good luck\" / \"Courage\"?",
+    "options": [
+      "Удачи",
+      "Спасибо",
+      "Пожалуйста",
+      "Извините"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Удачи = Bonne chance / Bon courage.",
+    "explanation_en": "Удачи = Good luck / Courage.",
+    "difficulty": 1
+  },
+  {
+    "id": 68,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Желаю успехов\" ?",
+    "question_en": "What does \"Желаю успехов\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "je vous souhaite du succès",
+        "au revoir",
+        "merci"
+      ],
+      "en": [
+        "hello",
+        "I wish you success",
+        "goodbye",
+        "thank you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Желаю успехов = Je vous souhaite du succès / Bonne chance.",
+    "explanation_en": "Желаю успехов = I wish you success / Good luck.",
+    "difficulty": 2
+  },
+  {
+    "id": 69,
+    "type": "dropdown",
+    "sentence": "Счастливого ___!",
+    "options": [
+      "пути",
+      "дня",
+      "вечера",
+      "утра"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Счастливого пути = Bon voyage / Bonne route.",
+    "explanation_en": "Счастливого пути = Have a good trip / Safe travels.",
+    "difficulty": 2
+  },
+  {
+    "id": 70,
+    "type": "mcq",
+    "question_fr": "Comment répondre quand on vous remercie ?",
+    "question_en": "How to respond when someone thanks you?",
+    "options": [
+      "Спасибо",
+      "Не за что",
+      "Извините",
+      "Простите"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Не за что = De rien / Il n'y a pas de quoi (autre option: Пожалуйста).",
+    "explanation_en": "Не за что = You're welcome / Don't mention it (other option: Пожалуйста).",
+    "difficulty": 1
+  },
+  {
+    "id": 71,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces souhaits",
+    "question_en": "Complete these wishes",
+    "options": [
+      "Удачи",
+      "Успехов",
+      "Здоровья",
+      "Счастья"
+    ],
+    "sentences": [
+      {
+        "text": "Желаю вам ___!",
+        "correct": 1
+      },
+      {
+        "text": "___ тебе на экзамене!",
+        "correct": 0
+      },
+      {
+        "text": "Желаю ___ и ___!",
+        "correct": 2
+      }
+    ],
+    "explanation_fr": "Удачи = Bonne chance, Успехов = Succès, Здоровья = Santé, Счастья = Bonheur.",
+    "explanation_en": "Удачи = Good luck, Успехов = Success, Здоровья = Health, Счастья = Happiness.",
+    "difficulty": 2
+  },
+  {
+    "id": 72,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Прощай\" ?",
+    "question_en": "What does \"Прощай\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "adieu (informel)",
+        "à bientôt",
+        "salut"
+      ],
+      "en": [
+        "hello",
+        "farewell (informal)",
+        "see you soon",
+        "hi"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Прощай (tu) / Прощайте (vous) = Adieu (au revoir définitif).",
+    "explanation_en": "Прощай (you-informal) / Прощайте (you-formal) = Farewell (definitive goodbye).",
+    "difficulty": 2
+  },
+  {
+    "id": 73,
+    "type": "dropdown",
+    "sentence": "С ___ утра!",
+    "options": [
+      "добрым",
+      "хорошим",
+      "новым",
+      "ранним"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "С добрым утром = Avec un bon matin / Bon réveil.",
+    "explanation_en": "С добрым утром = With a good morning / Good wake-up.",
+    "difficulty": 2
+  },
+  {
+    "id": 74,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Bonne santé\" ?",
+    "question_en": "How to say \"Good health\" / \"Bless you\"?",
+    "options": [
+      "Будьте здоровы",
+      "Спасибо",
+      "Пожалуйста",
+      "Извините"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Будьте здоровы = Soyez en bonne santé / À vos souhaits (après éternuement).",
+    "explanation_en": "Будьте здоровы = Be healthy / Bless you (after sneeze).",
+    "difficulty": 1
+  },
+  {
+    "id": 75,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Всех благ\" ?",
+    "question_en": "What does \"Всех благ\" mean?",
+    "options": {
+      "fr": [
+        "bonjour",
+        "tous mes vœux / portez-vous bien",
+        "merci",
+        "à demain"
+      ],
+      "en": [
+        "hello",
+        "all the best / take care",
+        "thank you",
+        "see you tomorrow"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Всех благ = Tous mes vœux / Tout de bon (formule d'au revoir).",
+    "explanation_en": "Всех благ = All the best / Take care (goodbye phrase).",
+    "difficulty": 2
+  },
+  {
+    "id": 76,
+    "type": "dropdown",
+    "sentence": "Хорошего ___!",
+    "options": [
+      "настроения",
+      "дня",
+      "вечера",
+      "утра"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Хорошего настроения = Bonne humeur / Soyez de bonne humeur.",
+    "explanation_en": "Хорошего настроения = Good mood / Be in a good mood.",
+    "difficulty": 2
+  },
+  {
+    "id": 77,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Félicitations\" ?",
+    "question_en": "How to say \"Congratulations\"?",
+    "options": [
+      "Поздравляю",
+      "Спасибо",
+      "Извините",
+      "Пожалуйста"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Поздравляю = Je félicite / Félicitations.",
+    "explanation_en": "Поздравляю = I congratulate / Congratulations.",
+    "difficulty": 1
+  },
+  {
+    "id": 78,
+    "type": "mcq",
+    "question_fr": "Que signifie \"С праздником\" ?",
+    "question_en": "What does \"С праздником\" mean?",
+    "options": {
+      "fr": [
+        "bonne journée",
+        "joyeuses fêtes",
+        "bon voyage",
+        "bonne nuit"
+      ],
+      "en": [
+        "have a nice day",
+        "happy holidays",
+        "have a good trip",
+        "good night"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "С праздником = Joyeuses fêtes / Bonne fête.",
+    "explanation_en": "С праздником = Happy holidays / Happy celebration.",
+    "difficulty": 2
+  },
+  {
+    "id": 79,
+    "type": "dropdown",
+    "sentence": "Приятных ___!",
+    "options": [
+      "снов",
+      "дней",
+      "встреч",
+      "дел"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Приятных снов = Faites de beaux rêves.",
+    "explanation_en": "Приятных снов = Sweet dreams / Have pleasant dreams.",
+    "difficulty": 2
+  },
+  {
+    "id": 80,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Passez une bonne semaine\" ?",
+    "question_en": "How to say \"Have a good week\"?",
+    "options": [
+      "Хорошей недели",
+      "Хороших выходных",
+      "Приятного дня",
+      "До завтра"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Хорошей недели = Bonne semaine.",
+    "explanation_en": "Хорошей недели = Have a good week.",
+    "difficulty": 2
+  },
+  {
+    "id": 81,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces vœux et souhaits",
+    "question_en": "Complete these wishes and greetings",
+    "options": [
+      "Приятного",
+      "Хорошего",
+      "Счастливого",
+      "Доброго"
+    ],
+    "sentences": [
+      {
+        "text": "___ аппетита!",
+        "correct": 0
+      },
+      {
+        "text": "___ пути!",
+        "correct": 2
+      },
+      {
+        "text": "___ дня!",
+        "correct": 1
+      }
+    ],
+    "explanation_fr": "Приятного аппетита = Bon appétit, Счастливого пути = Bon voyage, Хорошего дня = Bonne journée.",
+    "explanation_en": "Приятного аппетита = Bon appétit, Счастливого пути = Safe travels, Хорошего дня = Have a good day.",
+    "difficulty": 2
+  },
+  {
+    "id": 82,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Разрешите представиться\" ?",
+    "question_en": "What does \"Разрешите представиться\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "permettez-moi de me présenter",
+        "merci",
+        "pardon"
+      ],
+      "en": [
+        "goodbye",
+        "allow me to introduce myself",
+        "thank you",
+        "sorry"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Formule très formelle pour se présenter.",
+    "explanation_en": "Very formal phrase to introduce oneself.",
+    "difficulty": 3
+  },
+  {
+    "id": 83,
+    "type": "dropdown",
+    "sentence": "Позвольте ___.",
+    "options": [
+      "представиться",
+      "войти",
+      "спросить",
+      "уйти"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Позвольте представиться = Permettez-moi de me présenter.",
+    "explanation_en": "Позвольте представиться = Allow me to introduce myself.",
+    "difficulty": 2
+  },
+  {
+    "id": 84,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Merci d'avance\" ?",
+    "question_en": "How to say \"Thanks in advance\"?",
+    "options": [
+      "Спасибо заранее",
+      "Большое спасибо",
+      "Не за что",
+      "Пожалуйста"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Спасибо заранее = Merci d'avance / Merci par avance.",
+    "explanation_en": "Спасибо заранее = Thanks in advance / Thank you in advance.",
+    "difficulty": 2
+  },
+  {
+    "id": 85,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Добро пожаловать\" ?",
+    "question_en": "What does \"Добро пожаловать\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "bienvenue",
+        "merci",
+        "pardon"
+      ],
+      "en": [
+        "goodbye",
+        "welcome",
+        "thank you",
+        "sorry"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Добро пожаловать = Bienvenue / Soyez le bienvenu.",
+    "explanation_en": "Добро пожаловать = Welcome / You're welcome.",
+    "difficulty": 1
+  },
+  {
+    "id": 86,
+    "type": "dropdown",
+    "sentence": "Добро ___!",
+    "options": [
+      "пожаловать",
+      "утро",
+      "день",
+      "вечер"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Добро пожаловать = Bienvenue.",
+    "explanation_en": "Добро пожаловать = Welcome.",
+    "difficulty": 1
+  },
+  {
+    "id": 87,
+    "type": "mcq",
+    "question_fr": "Comment demander \"Puis-je entrer ?\" ?",
+    "question_en": "How to ask \"May I come in?\"?",
+    "options": [
+      "Можно войти?",
+      "Как дела?",
+      "До свидания",
+      "Спасибо"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Можно войти? = Puis-je entrer? / Est-ce que je peux entrer?",
+    "explanation_en": "Можно войти? = May I come in? / Can I enter?",
+    "difficulty": 2
+  },
+  {
+    "id": 88,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Проходите, пожалуйста\" ?",
+    "question_en": "What does \"Проходите, пожалуйста\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "entrez, s'il vous plaît",
+        "merci",
+        "bonjour"
+      ],
+      "en": [
+        "goodbye",
+        "come in, please",
+        "thank you",
+        "hello"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Проходите, пожалуйста = Entrez, s'il vous plaît / Passez, je vous prie.",
+    "explanation_en": "Проходите, пожалуйста = Come in, please / Please enter.",
+    "difficulty": 2
+  },
+  {
+    "id": 89,
+    "type": "dropdown",
+    "sentence": "Садитесь, ___.",
+    "options": [
+      "пожалуйста",
+      "спасибо",
+      "извините",
+      "здравствуйте"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Садитесь, пожалуйста = Asseyez-vous, s'il vous plaît.",
+    "explanation_en": "Садитесь, пожалуйста = Sit down, please / Please have a seat.",
+    "difficulty": 2
+  },
+  {
+    "id": 90,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Enchanté\" au masculin ?",
+    "question_en": "How to say \"Nice to meet you\" (masculine)?",
+    "options": [
+      "Рада познакомиться",
+      "Рад познакомиться",
+      "Приятно видеть",
+      "До свидания"
+    ],
+    "correct_answer": 1,
+    "explanation_fr": "Рад (masculin) познакомиться = Enchanté / Ravi de faire connaissance.",
+    "explanation_en": "Рад (masculine) познакомиться = Nice to meet you / Pleased to meet you.",
+    "difficulty": 2
+  },
+  {
+    "id": 91,
+    "type": "multi_fill",
+    "question_fr": "Complétez ces formules de politesse",
+    "question_en": "Complete these polite phrases",
+    "options": [
+      "Будьте добры",
+      "Будьте здоровы",
+      "Не беспокойтесь",
+      "Извините"
+    ],
+    "sentences": [
+      {
+        "text": "___, передайте соль.",
+        "correct": 0
+      },
+      {
+        "text": "Апчхи! - ___!",
+        "correct": 1
+      },
+      {
+        "text": "___, я не хотел.",
+        "correct": 3
+      }
+    ],
+    "explanation_fr": "Будьте добры = S'il vous plaît, Будьте здоровы = À vos souhaits, Извините = Excusez-moi.",
+    "explanation_en": "Будьте добры = Please/Be so kind, Будьте здоровы = Bless you, Извините = Excuse me.",
+    "difficulty": 2
+  },
+  {
+    "id": 92,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Давно не виделись\" ?",
+    "question_en": "What does \"Давно не виделись\" mean?",
+    "options": {
+      "fr": [
+        "à bientôt",
+        "ça fait longtemps qu'on ne s'est pas vus",
+        "comment allez-vous",
+        "au revoir"
+      ],
+      "en": [
+        "see you soon",
+        "long time no see",
+        "how are you",
+        "goodbye"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Давно не виделись = Ça fait longtemps / Il y a longtemps qu'on ne s'est pas vus.",
+    "explanation_en": "Давно не виделись = Long time no see / We haven't seen each other in a long time.",
+    "difficulty": 2
+  },
+  {
+    "id": 93,
+    "type": "dropdown",
+    "sentence": "Рад тебя ___!",
+    "options": [
+      "видеть",
+      "слышать",
+      "знать",
+      "понимать"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Рад тебя видеть = Content de te voir (informel).",
+    "explanation_en": "Рад тебя видеть = Glad to see you (informal).",
+    "difficulty": 2
+  },
+  {
+    "id": 94,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Pas de problème\" ?",
+    "question_en": "How to say \"No problem\"?",
+    "options": [
+      "Нет проблем",
+      "Есть проблемы",
+      "Спасибо",
+      "Извините"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Нет проблем = Pas de problème / Aucun problème.",
+    "explanation_en": "Нет проблем = No problem / No worries.",
+    "difficulty": 1
+  },
+  {
+    "id": 95,
+    "type": "mcq",
+    "question_fr": "Que signifie \"С вами приятно общаться\" ?",
+    "question_en": "What does \"С вами приятно общаться\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "c'est agréable de discuter avec vous",
+        "comment allez-vous",
+        "merci"
+      ],
+      "en": [
+        "goodbye",
+        "it's pleasant to talk with you",
+        "how are you",
+        "thank you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Expression pour dire qu'on apprécie la conversation avec quelqu'un.",
+    "explanation_en": "Expression to say you enjoy conversing with someone.",
+    "difficulty": 2
+  },
+  {
+    "id": 96,
+    "type": "dropdown",
+    "sentence": "Спокойной ___!",
+    "options": [
+      "ночи",
+      "день",
+      "утро",
+      "вечер"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Спокойной ночи = Bonne nuit (nuit paisible).",
+    "explanation_en": "Спокойной ночи = Good night (peaceful night).",
+    "difficulty": 1
+  },
+  {
+    "id": 97,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Bon anniversaire\" ?",
+    "question_en": "How to say \"Happy birthday\"?",
+    "options": [
+      "С днём рождения",
+      "С праздником",
+      "Поздравляю",
+      "Всего доброго"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "С днём рождения = Bon anniversaire (littéralement \"avec le jour de naissance\").",
+    "explanation_en": "С днём рождения = Happy birthday (literally \"with the day of birth\").",
+    "difficulty": 1
+  },
+  {
+    "id": 98,
+    "type": "mcq",
+    "question_fr": "Que signifie \"Передавайте привет\" ?",
+    "question_en": "What does \"Передавайте привет\" mean?",
+    "options": {
+      "fr": [
+        "au revoir",
+        "transmettez mes salutations",
+        "bonjour",
+        "merci"
+      ],
+      "en": [
+        "goodbye",
+        "give my regards",
+        "hello",
+        "thank you"
+      ]
+    },
+    "correct_answer": 1,
+    "explanation_fr": "Передавайте привет = Transmettez mes salutations / Dites bonjour de ma part.",
+    "explanation_en": "Передавайте привет = Give my regards / Say hello for me.",
+    "difficulty": 2
+  },
+  {
+    "id": 99,
+    "type": "dropdown",
+    "sentence": "До новых ___!",
+    "options": [
+      "встреч",
+      "дней",
+      "людей",
+      "друзей"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "До новых встреч = À de nouvelles rencontres / Au plaisir de se revoir.",
+    "explanation_en": "До новых встреч = Until we meet again / Looking forward to new meetings.",
+    "difficulty": 2
+  },
+  {
+    "id": 100,
+    "type": "mcq",
+    "question_fr": "Comment dire \"Soyez prudent\" ?",
+    "question_en": "How to say \"Be careful\"?",
+    "options": [
+      "Будьте осторожны",
+      "Будьте добры",
+      "Будьте здоровы",
+      "Будьте счастливы"
+    ],
+    "correct_answer": 0,
+    "explanation_fr": "Будьте осторожны = Soyez prudent / Faites attention.",
+    "explanation_en": "Будьте осторожны = Be careful / Be cautious.",
+    "difficulty": 2
   }
 ]
