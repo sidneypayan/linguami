@@ -55,6 +55,7 @@ import {
 	Trophy,
 	Scroll,
 	Wand2,
+	Share2,
 } from 'lucide-react'
 
 // ============================================
@@ -599,7 +600,13 @@ const Material = ({
 				if (result.allPagesCompleted) {
 					celebrationType = isBookChapter ? (!nextChapter ? 'book' : 'page') : 'material'
 				}
-				triggerCelebration({ type: celebrationType, xpGained: result.xpGained || 0, goldGained: result.goldGained || 0 })
+				triggerCelebration({
+					type: celebrationType,
+					xpGained: result.xpGained || 0,
+					goldGained: result.goldGained || 0,
+					materialTitle: currentMaterial?.title || '',
+					materialUrl: typeof window !== 'undefined' ? window.location.href : ''
+				})
 			}
 		},
 	})
@@ -617,7 +624,13 @@ const Material = ({
 			if (isBookChapter) {
 				celebrationType = !nextChapter ? 'book' : 'page'
 			}
-			triggerCelebration({ type: celebrationType, xpGained: result?.xpGained || 0, goldGained: result?.goldGained || 0 })
+			triggerCelebration({
+				type: celebrationType,
+				xpGained: result?.xpGained || 0,
+				goldGained: result?.goldGained || 0,
+				materialTitle: currentMaterial?.title || '',
+				materialUrl: typeof window !== 'undefined' ? window.location.href : ''
+			})
 		},
 	})
 

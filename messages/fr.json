@@ -965,7 +965,11 @@
     "tap_to_close": "Appuie pour fermer",
     "material_completed": "Matériel terminé",
     "page_read": "Page terminée",
-    "book_completed": "Livre terminé"
+    "book_completed": "Livre terminé",
+    "share_achievement": "Partager ma progression",
+    "share_achievement_text": "Je viens de terminer ce matériel sur Linguami !",
+    "share_link_copied": "Lien copié dans le presse-papiers !",
+    "share_error": "Impossible de partager pour le moment"
   },
   "premium": {
     "pagetitle": "Nos offres Premium",

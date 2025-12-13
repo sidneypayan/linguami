@@ -963,7 +963,11 @@
     "tap_to_close": "Tap to close",
     "material_completed": "Material completed",
     "page_read": "Page completed",
-    "book_completed": "Book completed"
+    "book_completed": "Book completed",
+    "share_achievement": "Share my progress",
+    "share_achievement_text": "I just completed this material on Linguami!",
+    "share_link_copied": "Link copied to clipboard!",
+    "share_error": "Unable to share right now"
   },
   "premium": {
     "pagetitle": "Our Premium Plans",

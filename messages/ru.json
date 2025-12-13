@@ -963,7 +963,11 @@
     "tap_to_close": "Нажми, чтобы закрыть",
     "material_completed": "Материал завершён",
     "page_read": "Страница завершена",
-    "book_completed": "Книга завершена"
+    "book_completed": "Книга завершена",
+    "share_achievement": "Поделиться прогрессом",
+    "share_achievement_text": "Я только что завершил этот материал на Linguami!",
+    "share_link_copied": "Ссылка скопирована в буфер обмена!",
+    "share_error": "Невозможно поделиться прямо сейчас"
   },
   "premium": {
     "pagetitle": "Наши премиум-планы",

@@ -2,15 +2,16 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { Trophy, Star } from 'lucide-react'
+import { Trophy, Star, Share2, Facebook, Twitter, Send, MessageCircle, Link2, Copy } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import toast from '@/utils/toast'
 
 // Global state outside of React to persist across re-renders/remounts
 let globalCelebrationState = {
 	isShowing: false,
 	isAnimating: false,
-	data: { type: 'material', xpGained: 25, goldGained: 5 },
+	data: { type: 'material', xpGained: 25, goldGained: 5, materialTitle: '', materialUrl: '' },
 	timerId: null,
 	animationTimerId: null,
 }
@@ -59,11 +60,11 @@ const CelebrationOverlay = () => {
 	}, [])
 
 	const handleCelebration = useCallback((event) => {
-		const { type = 'material', xpGained = 25, goldGained = 5 } = event.detail || {}
+		const { type = 'material', xpGained = 25, goldGained = 5, materialTitle = '', materialUrl = '' } = event.detail || {}
 		if (globalCelebrationState.timerId) clearTimeout(globalCelebrationState.timerId)
 		if (globalCelebrationState.animationTimerId) clearTimeout(globalCelebrationState.animationTimerId)
 
-		globalCelebrationState.data = { type, xpGained, goldGained }
+		globalCelebrationState.data = { type, xpGained, goldGained, materialTitle, materialUrl }
 		globalCelebrationState.isShowing = true
 		globalCelebrationState.isAnimating = false
 		forceUpdate(n => n + 1)
@@ -75,6 +76,9 @@ const CelebrationOverlay = () => {
 
 		playSound()
 
+		// Duration: 12s if share is available, 8s otherwise
+		const duration = materialUrl ? 12000 : 8000
+
 		globalCelebrationState.timerId = setTimeout(() => {
 			globalCelebrationState.isAnimating = false
 			forceUpdate(n => n + 1)
@@ -82,7 +86,7 @@ const CelebrationOverlay = () => {
 				globalCelebrationState.isShowing = false
 				forceUpdate(n => n + 1)
 			}, 400)
-		}, 8000)
+		}, duration)
 	}, [playSound])
 
 	useEffect(() => {
@@ -115,6 +119,36 @@ const CelebrationOverlay = () => {
 		}, 400)
 	}, [])
 
+	const handleShare = useCallback(async (e) => {
+		e.stopPropagation() // Prevent closing the celebration
+		const { materialTitle, materialUrl } = globalCelebrationState.data
+
+		if (!materialUrl) return
+
+		const shareData = {
+			title: `${materialTitle} - Linguami`,
+			text: t('share_achievement_text'),
+			url: materialUrl
+		}
+
+		// Try Web Share API (native mobile sharing)
+		if (navigator.share) {
+			try {
+				await navigator.share(shareData)
+			} catch (err) {
+				// User cancelled, do nothing
+			}
+		} else {
+			// Fallback: copy link to clipboard
+			try {
+				await navigator.clipboard.writeText(materialUrl)
+				toast.success(t('share_link_copied'))
+			} catch (err) {
+				toast.error(t('share_error'))
+			}
+		}
+	}, [t])
+
 	if (!mounted || !globalCelebrationState.isShowing) return null
 
 	const { isAnimating } = globalCelebrationState
@@ -125,6 +159,8 @@ const CelebrationOverlay = () => {
 			<style dangerouslySetInnerHTML={{ __html: `
 				@keyframes celebrationPulse { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 				@keyframes celebrationSparkle { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(1.2) rotate(180deg) translateY(-15px); } }
+				@keyframes shareButtonSlideIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+				@keyframes socialButtonsPop { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 			` }} />
 			<div
 				ref={containerRef}
@@ -179,6 +215,139 @@ const CelebrationOverlay = () => {
 						/>
 					))}
 				</div>
+
+				{/* Share section - only show if materialUrl is provided */}
+				{globalCelebrationState.data.materialUrl && (
+					<div
+						className={cn(
+							'mt-3 w-full',
+							'bg-white/95 backdrop-blur-md',
+							'rounded-xl p-3',
+							'shadow-[0_8px_24px_rgba(0,0,0,0.15)]'
+						)}
+						style={{
+							animation: isAnimating ? 'shareButtonSlideIn 0.5s ease-out 0.8s both' : 'none'
+						}}
+					>
+						{/* Share title */}
+						<div className="text-center mb-3">
+							<span className="text-emerald-700 text-sm font-bold flex items-center justify-center gap-1.5">
+								<Share2 className="w-4 h-4" />
+								{t('share_achievement')}
+							</span>
+						</div>
+
+						{/* Social network buttons */}
+						<div
+							className="flex items-center justify-center gap-2.5"
+							style={{
+								animation: isAnimating ? 'socialButtonsPop 0.4s ease-out 1.1s both' : 'none'
+							}}
+						>
+							{/* WhatsApp */}
+							<a
+								href={`https://wa.me/?text=${encodeURIComponent(t('share_achievement_text') + ' ' + globalCelebrationState.data.materialUrl)}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => e.stopPropagation()}
+								className={cn(
+									'w-11 h-11 rounded-full',
+									'flex items-center justify-center',
+									'bg-[#25D366] hover:bg-[#20BD5A]',
+									'text-white',
+									'transition-all duration-200',
+									'hover:scale-110',
+									'active:scale-95',
+									'shadow-[0_4px_12px_rgba(37,211,102,0.4)]'
+								)}
+								title="WhatsApp"
+							>
+								<MessageCircle className="w-5 h-5" />
+							</a>
+
+							{/* Facebook */}
+							<a
+								href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(globalCelebrationState.data.materialUrl)}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => e.stopPropagation()}
+								className={cn(
+									'w-11 h-11 rounded-full',
+									'flex items-center justify-center',
+									'bg-[#1877F2] hover:bg-[#166FE5]',
+									'text-white',
+									'transition-all duration-200',
+									'hover:scale-110',
+									'active:scale-95',
+									'shadow-[0_4px_12px_rgba(24,119,242,0.4)]'
+								)}
+								title="Facebook"
+							>
+								<Facebook className="w-5 h-5" />
+							</a>
+
+							{/* Twitter/X */}
+							<a
+								href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(t('share_achievement_text'))}&url=${encodeURIComponent(globalCelebrationState.data.materialUrl)}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => e.stopPropagation()}
+								className={cn(
+									'w-11 h-11 rounded-full',
+									'flex items-center justify-center',
+									'bg-black hover:bg-gray-800',
+									'text-white',
+									'transition-all duration-200',
+									'hover:scale-110',
+									'active:scale-95',
+									'shadow-[0_4px_12px_rgba(0,0,0,0.4)]'
+								)}
+								title="X (Twitter)"
+							>
+								<Twitter className="w-5 h-5" />
+							</a>
+
+							{/* Telegram */}
+							<a
+								href={`https://t.me/share/url?url=${encodeURIComponent(globalCelebrationState.data.materialUrl)}&text=${encodeURIComponent(t('share_achievement_text'))}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={(e) => e.stopPropagation()}
+								className={cn(
+									'w-11 h-11 rounded-full',
+									'flex items-center justify-center',
+									'bg-[#0088cc] hover:bg-[#0077b5]',
+									'text-white',
+									'transition-all duration-200',
+									'hover:scale-110',
+									'active:scale-95',
+									'shadow-[0_4px_12px_rgba(0,136,204,0.4)]'
+								)}
+								title="Telegram"
+							>
+								<Send className="w-5 h-5" />
+							</a>
+
+							{/* Copy Link */}
+							<button
+								onClick={handleShare}
+								className={cn(
+									'w-11 h-11 rounded-full',
+									'flex items-center justify-center',
+									'bg-gray-100 hover:bg-gray-200',
+									'text-gray-700',
+									'transition-all duration-200',
+									'hover:scale-110',
+									'active:scale-95',
+									'shadow-[0_4px_12px_rgba(0,0,0,0.1)]'
+								)}
+								title={t('share_link_copied')}
+							>
+								<Copy className="w-5 h-5" />
+							</button>
+						</div>
+					</div>
+				)}
 			</div>
 		</>
 	)
