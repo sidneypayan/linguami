@@ -193,21 +193,24 @@ const Player = ({ src }) => {
 	const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
 
 	return (
-		<div className="flex justify-center w-full my-6">
+		<div className="flex justify-center w-full md:my-6">
 			<div
 				className={cn(
-					'max-w-full sm:max-w-[540px] md:max-w-[680px] w-full',
-					'py-3.5 px-4 sm:py-4 sm:px-5',
-					'rounded-2xl',
-					'border-2 border-violet-500/20',
+					// Mobile: full width, Desktop: max-width
+					'w-full max-w-full md:max-w-[540px] lg:max-w-[680px]',
+					'py-3.5 px-3 md:py-4 md:px-5',
+					// Mobile: rounded top only, Desktop: fully rounded
+					'rounded-t-2xl md:rounded-2xl',
+					// Mobile: border top only, Desktop: full border
+					'border-t-2 md:border-2 border-violet-500/20',
 					'shadow-[0_8px_32px_rgba(139,92,246,0.15)]',
-					'flex items-center gap-3 sm:gap-4',
+					'flex items-center gap-2 md:gap-4',
 					'transition-all duration-300',
 					'hover:shadow-[0_12px_40px_rgba(139,92,246,0.25)]',
 					'hover:border-violet-500/35',
 					isDark
-						? 'bg-gradient-to-br from-slate-800/98 to-slate-900/98 backdrop-blur-sm'
-						: 'bg-gradient-to-br from-white/98 to-slate-50/98 backdrop-blur-sm'
+						? 'bg-gradient-to-br from-slate-800 to-slate-900'
+						: 'bg-gradient-to-br from-white to-slate-50'
 				)}
 			>
 				<audio ref={audioRef} src={src} preload='metadata' />
@@ -225,12 +228,12 @@ const Player = ({ src }) => {
 				</div>
 
 				{/* Playback Controls */}
-				<div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+				<div className="flex items-center gap-1 flex-shrink-0">
 					<button
 						onClick={() => skip(-10)}
 						title="Reculer de 10s"
 						className={cn(
-							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'w-8 h-8 md:w-[42px] md:h-[42px] rounded-lg',
 							'flex items-center justify-center',
 							'bg-violet-500/6 border border-violet-500/15',
 							'transition-all duration-200',
@@ -239,13 +242,13 @@ const Player = ({ src }) => {
 							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}
 					>
-						<SkipBack className="w-5 h-5" />
+						<SkipBack className="w-4 h-4 md:w-5 md:h-5" />
 					</button>
 
 					<button
 						onClick={togglePlay}
 						className={cn(
-							'w-12 h-12 sm:w-14 sm:h-14 rounded-full',
+							'w-10 h-10 md:w-14 md:h-14 rounded-full',
 							'flex items-center justify-center',
 							'bg-gradient-to-br from-violet-500 to-cyan-500',
 							'text-white',
@@ -256,9 +259,9 @@ const Player = ({ src }) => {
 						)}
 					>
 						{isPlaying ? (
-							<Pause className="w-6 h-6" />
+							<Pause className="w-5 h-5 md:w-6 md:h-6" />
 						) : (
-							<Play className="w-6 h-6 ml-0.5" />
+							<Play className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
 						)}
 					</button>
 
@@ -266,7 +269,7 @@ const Player = ({ src }) => {
 						onClick={() => skip(10)}
 						title="Avancer de 10s"
 						className={cn(
-							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'w-8 h-8 md:w-[42px] md:h-[42px] rounded-lg',
 							'flex items-center justify-center',
 							'bg-violet-500/6 border border-violet-500/15',
 							'transition-all duration-200',
@@ -275,7 +278,7 @@ const Player = ({ src }) => {
 							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}
 					>
-						<SkipForward className="w-5 h-5" />
+						<SkipForward className="w-4 h-4 md:w-5 md:h-5" />
 					</button>
 				</div>
 
@@ -327,8 +330,8 @@ const Player = ({ src }) => {
 					onClick={cyclePlaybackRate}
 					title="Vitesse de lecture"
 					className={cn(
-						'w-[52px] sm:w-[58px] h-[38px] sm:h-[42px] rounded-lg',
-						'flex items-center justify-center gap-1 flex-shrink-0',
+						'w-[46px] h-8 md:w-[58px] md:h-[42px] rounded-lg',
+						'flex items-center justify-center gap-0.5 md:gap-1 flex-shrink-0',
 						'border transition-all duration-200',
 						'hover:bg-gradient-to-br hover:from-violet-500/12 hover:to-cyan-500/8',
 						'hover:text-violet-500 hover:scale-105 hover:border-violet-500/30',
@@ -340,22 +343,22 @@ const Player = ({ src }) => {
 							: 'bg-gradient-to-br from-violet-500/12 to-cyan-500/8 border-violet-500/30 text-violet-500'
 					)}
 				>
-					<Gauge className="w-4 h-4 sm:w-[1.1rem] sm:h-[1.1rem]" />
-					<span className="text-[0.65rem] sm:text-[0.7rem] font-bold leading-none">
+					<Gauge className="w-3.5 h-3.5 md:w-[1.1rem] md:h-[1.1rem]" />
+					<span className="text-[0.6rem] md:text-[0.7rem] font-bold leading-none">
 						{playbackRate}x
 					</span>
 				</button>
 
-				{/* Volume Control */}
+				{/* Volume Control - Desktop only */}
 				<div
-					className="flex items-center gap-1 flex-shrink-0"
+					className="hidden md:flex items-center gap-1 flex-shrink-0"
 					onMouseEnter={() => setShowVolumeSlider(true)}
 					onMouseLeave={() => setShowVolumeSlider(false)}
 				>
-					{/* Volume Slider (desktop only) */}
+					{/* Volume Slider */}
 					<div
 						className={cn(
-							'hidden sm:block overflow-visible transition-all duration-300',
+							'overflow-visible transition-all duration-300',
 							showVolumeSlider ? 'w-[100px] opacity-100 mr-3' : 'w-0 opacity-0'
 						)}
 					>
@@ -385,7 +388,7 @@ const Player = ({ src }) => {
 						onClick={toggleMute}
 						title={volume > 0 ? 'Muet' : 'Son'}
 						className={cn(
-							'w-[38px] h-[38px] sm:w-[42px] sm:h-[42px] rounded-lg',
+							'w-[42px] h-[42px] rounded-lg',
 							'flex items-center justify-center',
 							'bg-violet-500/6 border border-violet-500/15',
 							'transition-all duration-200',

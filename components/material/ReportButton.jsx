@@ -72,7 +72,7 @@ const ReportButton = ({ materialId }) => {
 				onClick={() => setOpen(true)}
 				title={t('report_issue')}
 				className={cn(
-					'w-14 h-14 rounded-full',
+					'w-11 h-11 rounded-full',
 					'bg-gradient-to-br from-red-600 to-red-500',
 					'text-white',
 					'shadow-[0_8px_24px_rgba(220,38,38,0.4)]',
@@ -84,7 +84,7 @@ const ReportButton = ({ materialId }) => {
 					'flex items-center justify-center'
 				)}
 			>
-				<Flag className="w-6 h-6" />
+				<Flag className="w-5 h-5" />
 			</button>
 
 			{/* Modal Overlay */}

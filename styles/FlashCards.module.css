@@ -10,7 +10,7 @@
 	width: 100%;
 	background: #ffffff;
 	flex-direction: column;
-	align-items: stretch; /* Changed from center to allow full width */
+	align-items: center; /* Center content horizontally on desktop */
 	overflow: visible; /* Allow buttons to be visible at bottom */
 }
 
@@ -30,18 +30,6 @@
 }
 
 /* Header */
-
-/* Top left controls - Badges + Language switch */
-.topLeftControls {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	z-index: 40;
-	flex-wrap: wrap;
-}
 
 /* Center info - Cards counter */
 .centerInfo {
@@ -108,26 +96,6 @@
 	color: white;
 }
 
-/* Badges */
-.newBadge,
-.relearningBadge {
-	padding: 0.4rem 1rem;
-	border-radius: 20px;
-	font-size: 0.85rem;
-	font-weight: 700;
-	color: white;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.newBadge {
-	background: #3a7bd5;
-}
-
-.relearningBadge {
-	background: #f5576c;
-}
-
 /* Controls */
 .controlsContainer {
 	display: flex;
@@ -137,7 +105,35 @@
 	flex-wrap: wrap;
 }
 
-.reverseBtn,
+/* Language switch button - Fixed at top left */
+.reverseBtn {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	z-index: 40;
+	padding: 0.6rem 1.2rem;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	color: #667eea;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.reverseBtn:hover {
+	background: #667eea;
+	border-color: #667eea;
+	color: white;
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+	transform: translateY(-1px);
+}
+
 .settingsBtn {
 	padding: 0.6rem 1.2rem;
 	background: #f8fafc;
@@ -154,7 +150,6 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.reverseBtn:hover,
 .settingsBtn:hover {
 	background: #667eea;
 	border-color: #667eea;
@@ -504,12 +499,12 @@
 		margin-top: 4rem; /* More space for close button */
 	}
 
-	/* Top left controls on mobile - smaller, more compact */
-	.topLeftControls {
+	/* Language button on mobile */
+	.reverseBtn {
 		top: 0.75rem;
 		left: 0.75rem;
-		gap: 0.4rem;
-		max-width: calc(100vw - 5rem); /* Leave space for close button */
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
 	}
 
 	/* Center info on mobile */
@@ -588,7 +583,6 @@
 		margin-top: 1rem;
 	}
 
-	.reverseBtn,
 	.settingsBtn {
 		font-size: 0.85rem;
 		padding: 0.5rem 1rem;
@@ -655,7 +649,7 @@
 	width: 100%;
 	background: #1a1a2e;
 	flex-direction: column;
-	align-items: stretch; /* Changed from center */
+	align-items: center; /* Center content horizontally on desktop */
 	overflow: visible; /* Allow buttons to be visible */
 }
 

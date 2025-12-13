@@ -351,7 +351,7 @@ const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', classN
 		<button
 			className={cn(
 				'lg:hidden',
-				'group relative w-14 h-14',
+				'group relative w-11 h-11',
 				'flex items-center justify-center',
 				'transition-all duration-300',
 				'hover:scale-110',
@@ -369,7 +369,7 @@ const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', classN
 
 			{/* Decorative ring */}
 			<div className={cn(
-				'absolute inset-[-3px] rounded-xl rotate-45',
+				'absolute inset-[-2px] rounded-xl rotate-45',
 				'border-2',
 				variant === 'primary'
 					? 'border-cyan-400/30'
@@ -377,7 +377,7 @@ const FloatingActionButton = ({ onClick, icon: Icon, variant = 'primary', classN
 			)} />
 
 			{/* Icon */}
-			<Icon className="w-6 h-6 text-white relative z-10" />
+			<Icon className="w-5 h-5 text-white relative z-10" />
 		</button>
 	)
 }
@@ -410,7 +410,7 @@ const Material = ({
 
 	// Floating buttons positioning
 	const finishButtonRef = useRef(null)
-	const [floatingButtonsBottom, setFloatingButtonsBottom] = useState(176) // Default: 44*4px = 176px (well above audio player at 96px)
+	const [floatingButtonsBottom, setFloatingButtonsBottom] = useState(84) // Default: 84px (minimal gap above audio player on mobile)
 
 	// Check if this is a book chapter
 	const isBookChapter = initialMaterial?.book_id != null
@@ -499,8 +499,8 @@ const Material = ({
 			const finishButtonRect = finishButtonRef.current.getBoundingClientRect()
 			const windowHeight = window.innerHeight
 
-			// Default position: well above audio player (bottom-44 = 176px)
-			const defaultBottom = 176
+			// Default position: minimal gap above audio player on mobile
+			const defaultBottom = 84
 
 			// Calculate distance from BOTTOM of finish button to bottom of screen
 			const finishButtonFromBottom = windowHeight - finishButtonRect.bottom
@@ -661,7 +661,7 @@ const Material = ({
 	const displayVideo = section => {
 		if (sections?.music?.includes(section) || sections?.video?.includes(section)) {
 			return (
-				<div className="sticky top-0 sm:top-24 z-50 mt-4 sm:mt-0 mb-2">
+				<div className="sticky top-20 sm:top-24 z-50 mt-4 sm:mt-0 mb-2">
 					<VideoPlayer videoUrl={currentMaterial.video_url} />
 				</div>
 			)
@@ -720,7 +720,7 @@ const Material = ({
 			)}>
 				<div className="flex flex-col lg:flex-row justify-center items-start gap-0 lg:gap-8 px-0 lg:px-6 max-w-[1600px] mx-auto w-full">
 					{/* Main content */}
-					<div className="py-0 lg:py-8 px-4 lg:px-6 flex-1 min-w-0 max-w-full">
+					<div className="py-0 lg:py-8 px-0 lg:px-6 flex-1 min-w-0 max-w-full">
 						{getImageRegardingSection(params?.section)}
 						{displayVideo(params?.section)}
 
@@ -731,7 +731,7 @@ const Material = ({
 							/>
 
 							{/* Action buttons */}
-							<div className="flex flex-wrap items-center gap-3 mb-8 mt-6">
+							<div className="flex flex-wrap items-center gap-3 mb-8 mt-6 px-3 sm:px-0">
 								{!is_being_studied && !is_studied && isUserLoggedIn && (
 									<ActionButton
 										variant="primary"
@@ -770,7 +770,7 @@ const Material = ({
 										<span className="sm:hidden">
 											{showAccents
 												? (locale === 'fr' ? 'Masquer' : locale === 'ru' ? 'Скрыть' : 'Hide')
-												: (locale === 'fr' ? 'Montrer' : locale === 'ru' ? 'Показать' : 'Show')}
+												: (locale === 'fr' ? 'Accents' : locale === 'ru' ? 'Акценты' : 'Accents')}
 										</span>
 									</ActionButton>
 								)}
@@ -799,7 +799,7 @@ const Material = ({
 									isDark={isDark}
 									glowColor="violet"
 									className={cn(
-										'p-4 lg:p-8 mb-8',
+										'p-3 lg:p-8 mb-8',
 										isDark
 											? 'bg-slate-800/50'
 											: 'bg-white/80'
@@ -924,8 +924,10 @@ const Material = ({
 
 							{/* Audio Player */}
 							<div className={cn(
-								'sticky z-50 mt-8 mb-8',
-								'bottom-24 md:bottom-6'
+								// Mobile: fixed at bottom, full width
+								'fixed bottom-0 left-0 right-0 z-50',
+								// Desktop: sticky positioning like original
+								'md:sticky md:mt-8 md:mb-8 md:bottom-6 md:left-auto md:right-auto'
 							)}>
 								{displayAudioPlayer(params?.section)}
 							</div>
@@ -965,7 +967,7 @@ const Material = ({
 								onClick={() => setShowWordsContainer(false)}
 								icon={X}
 								variant="danger"
-								className="fixed right-4 bottom-44 z-50"
+								className="fixed right-4 bottom-21 z-50"
 							/>
 							<WordsContainer />
 						</div>
@@ -987,7 +989,7 @@ const Material = ({
 			<div
 				className={cn(
 					'lg:hidden fixed z-50 right-4',
-					'flex flex-col items-center gap-3',
+					'flex flex-col items-center gap-2',
 					'transition-all duration-300 ease-out'
 				)}
 				style={{ bottom: `${floatingButtonsBottom}px` }}
