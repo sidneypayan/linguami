@@ -177,12 +177,6 @@ export function FlashcardReviewCard({
 				<X className="w-6 h-6" />
 			</button>
 
-			{/* Time up banner */}
-			{isTimeUp && (
-				<div className={styles.timeUpBanner}>
-					{t('time_up_last_card')}
-				</div>
-			)}
 
 			{/* Cards counter - Centered */}
 			<div className={styles.centerInfo}>
@@ -351,7 +345,7 @@ export function FlashcardReviewCard({
 								</div>
 
 								{/* Suspend and Edit buttons */}
-								<div className="flex gap-3 justify-center flex-wrap">
+								<div className="flex gap-3 justify-center flex-wrap mb-6">
 									<button
 										className={styles.suspendBtn}
 										onClick={onSuspend}

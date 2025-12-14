@@ -14,21 +14,6 @@
 	overflow: visible; /* Allow buttons to be visible at bottom */
 }
 
-/* Time Up Banner */
-.timeUpBanner {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	background: #ff6b6b;
-	color: white;
-	text-align: center;
-	padding: 1rem 1.5rem;
-	font-weight: 700;
-	font-size: 1.1rem;
-	z-index: 10;
-}
-
 /* Header */
 
 /* Center info - Cards counter */
