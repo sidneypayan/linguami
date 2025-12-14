@@ -3,7 +3,26 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { addXP } from '@/lib/xp-service'
-import { loadTrainingQuestions, transformQuestionsForFrontend, updateQuestionInFile, deleteQuestionInFile } from '@/lib/training-data'
+import { createClient } from '@supabase/supabase-js'
+
+// ============================================
+// TRAINING ALWAYS USES PROD DB (even in local)
+// ============================================
+function createTrainingClient() {
+	// Use PROD DB credentials for training
+	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+	const supabaseKey = process.env.SUPABASE_PROD_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+
+	return createClient(supabaseUrl, supabaseKey, {
+		auth: { persistSession: false }
+	})
+}
+
+// Helper to get authenticated user (still uses current environment)
+async function getAuthenticatedUser() {
+	const supabase = createTrainingClient()
+	return await supabase.auth.getUser()
+}
 
 // ============================================
 // READ ACTIONS (Public)
@@ -13,8 +32,7 @@ import { loadTrainingQuestions, transformQuestionsForFrontend, updateQuestionInF
  * Get all themes for a language, grouped by level
  */
 export async function getTrainingThemesAction(lang = 'ru') {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
 	const { data, error } = await supabase
 		.from('training_themes')
@@ -47,39 +65,35 @@ export async function getTrainingThemesAction(lang = 'ru') {
 
 /**
  * Get questions for a specific theme by ID
- * Now loads from JSON files instead of database
+ * Returns only PUBLISHED questions for regular users
  */
 export async function getTrainingQuestionsAction(themeId) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
-	// First get theme info to know which JSON file to load
-	const { data: theme, error: themeError } = await supabase
-		.from('training_themes')
-		.select('lang, level, key')
-		.eq('id', themeId)
-		.single()
+	const { data, error } = await supabase
+		.from('training_questions')
+		.select('*')
+		.eq('theme_id', themeId)
+		.eq('is_active', true)
+		.eq('status', 'published') // Only published questions
+		.order('id')
 
-	if (themeError || !theme) {
-		console.error('Error fetching theme:', themeError)
-		return { success: false, error: 'Theme not found' }
+	if (error) {
+		console.error('Error fetching training questions:', error)
+		return { success: false, error: error.message }
 	}
 
-	// Load questions from JSON file
-	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
-
-	return { success: true, data: questions }
+	return { success: true, data }
 }
 
 /**
  * Get questions for a theme by key (used in training page)
- * Now loads from JSON files instead of database
+ * Returns only PUBLISHED questions for regular users
  */
 export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
-	// Get theme ID from database (needed for progress tracking)
+	// First get the theme
 	const { data: theme, error: themeError } = await supabase
 		.from('training_themes')
 		.select('id')
@@ -92,29 +106,66 @@ export async function getTrainingQuestionsByThemeKeyAction(lang, level, themeKey
 		return { success: false, error: 'Theme not found' }
 	}
 
-	// Load questions from JSON file
-	const questions = loadTrainingQuestions(lang, level, themeKey)
+	// Then get PUBLISHED questions only
+	const { data: questions, error } = await supabase
+		.from('training_questions')
+		.select('*')
+		.eq('theme_id', theme.id)
+		.eq('is_active', true)
+		.eq('status', 'published') // Only published questions
+		.order('id')
 
-	if (!questions || questions.length === 0) {
-		return { success: false, error: 'No questions found for this theme' }
+	if (error) {
+		console.error('Error fetching questions:', error)
+		return { success: false, error: error.message }
 	}
 
 	// Transform questions to match frontend expected format
-	const transformedQuestions = transformQuestionsForFrontend(questions, theme.id)
+	const transformedQuestions = questions.map((q) => {
+		const transformed = { ...q }
+
+		// Convert question_fr, question_en, question_ru to question object
+		if (q.question_fr || q.question_en || q.question_ru) {
+			transformed.question = {
+				fr: q.question_fr || '',
+				en: q.question_en || '',
+				ru: q.question_ru || '',
+			}
+		}
+
+		// Convert explanation_fr, explanation_en, explanation_ru to explanation object
+		if (q.explanation_fr || q.explanation_en || q.explanation_ru) {
+			transformed.explanation = {
+				fr: q.explanation_fr || '',
+				en: q.explanation_en || '',
+				ru: q.explanation_ru || '',
+			}
+		}
+
+		// Normalize options to always be an array (not object)
+		if (q.options && typeof q.options === 'object' && !Array.isArray(q.options)) {
+			// If options is an object {fr: [...], en: [...], ru: [...]}, extract the array for the theme language
+			transformed.options = q.options[lang] || q.options.fr || q.options.en || q.options.ru || []
+		}
+
+		// Convert correct_answer to correctAnswer (camelCase)
+		if (q.correct_answer !== undefined) {
+			transformed.correctAnswer = q.correct_answer
+		}
+
+		return transformed
+	})
 
 	return { success: true, data: transformedQuestions, themeId: theme.id }
 }
 
 /**
  * Get training stats (for admin)
- * Now counts questions from JSON files instead of DB
  */
 export async function getTrainingStatsAction(lang = 'ru') {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
-	// Get themes from DB
-	const { data: themes, error } = await supabase
+	const { data, error } = await supabase
 		.from('training_stats')
 		.select('*')
 		.eq('lang', lang)
@@ -124,47 +175,29 @@ export async function getTrainingStatsAction(lang = 'ru') {
 		return { success: false, error: error.message }
 	}
 
-	// Count questions from JSON files for each theme
-	const statsWithCounts = themes.map((theme) => {
-		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
-		return {
-			...theme,
-			question_count: questions.length,
-		}
-	})
-
-	return { success: true, data: statsWithCounts }
+	return { success: true, data }
 }
 
 /**
  * Get user's training progress for a theme
- * Now uses question IDs from JSON files
  */
 export async function getUserTrainingProgressAction(themeId) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
 	const {
 		data: { user },
-	} = await supabase.auth.getUser()
+	} = await getAuthenticatedUser()
 
 	if (!user) {
 		return { success: true, data: [] } // Return empty for non-logged users
 	}
 
-	// Get theme info to load questions from JSON
-	const { data: theme, error: themeError } = await supabase
-		.from('training_themes')
-		.select('lang, level, key')
-		.eq('id', themeId)
-		.single()
-
-	if (themeError || !theme) {
-		return { success: true, data: [] }
-	}
-
-	// Load questions from JSON to get their IDs
-	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
+	// Get all PUBLISHED questions for this theme
+	const { data: questions } = await supabase
+		.from('training_questions')
+		.select('id')
+		.eq('theme_id', themeId)
+		.eq('status', 'published')
 
 	if (!questions || questions.length === 0) {
 		return { success: true, data: [] }
@@ -176,7 +209,7 @@ export async function getUserTrainingProgressAction(themeId) {
 	const { data: progress, error } = await supabase
 		.from('training_progress')
 		.select('question_id, is_correct, xp_awarded')
-		.eq('id', user.id)
+		.eq('user_id', user.id)
 		.in('question_id', questionIds)
 
 	if (error) {
@@ -205,12 +238,11 @@ export async function getUserTrainingProgressAction(themeId) {
  * Gold = totalXP / 10 (rounded down)
  */
 export async function completeTrainingSessionAction(correctAnswers, totalQuestions) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
 	const {
 		data: { user },
-	} = await supabase.auth.getUser()
+	} = await getAuthenticatedUser()
 
 	if (!user) {
 		// Guest users can still play, but no XP tracking
@@ -248,18 +280,21 @@ export async function completeTrainingSessionAction(correctAnswers, totalQuestio
 // ============================================
 
 /**
- * Create a new training theme
+ * Verify admin role helper
+ * Checks admin role in the CURRENT environment DB (not training prod DB)
+ * because user authentication happens in current environment
  */
-export async function createTrainingThemeAction(themeData) {
+async function verifyAdmin() {
 	const cookieStore = await cookies()
 	const supabase = createServerClient(cookieStore)
 
-	// Verify admin
 	const {
 		data: { user },
 	} = await supabase.auth.getUser()
-	if (!user) return { success: false, error: 'Not authenticated' }
 
+	if (!user) return { authorized: false, error: 'Not authenticated' }
+
+	// Check admin role in CURRENT environment DB (where user is authenticated)
 	const { data: profile } = await supabase
 		.from('users_profile')
 		.select('role')
@@ -267,8 +302,20 @@ export async function createTrainingThemeAction(themeData) {
 		.single()
 
 	if (profile?.role !== 'admin') {
-		return { success: false, error: 'Not authorized' }
+		return { authorized: false, error: 'Not authorized' }
 	}
+
+	return { authorized: true }
+}
+
+/**
+ * Create a new training theme
+ */
+export async function createTrainingThemeAction(themeData) {
+	const supabase = createTrainingClient()
+
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
 	const { data, error } = await supabase
 		.from('training_themes')
@@ -286,28 +333,24 @@ export async function createTrainingThemeAction(themeData) {
 
 /**
  * Create training questions in bulk
+ * Questions are created with 'draft' status by default
  */
 export async function createTrainingQuestionsAction(questions) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
-	// Verify admin
-	const {
-		data: { user },
-	} = await supabase.auth.getUser()
-	if (!user) return { success: false, error: 'Not authenticated' }
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
-	const { data: profile } = await supabase
-		.from('users_profile')
-		.select('role')
-		.eq('id', user.id)
-		.single()
+	// Add 'draft' status to all new questions
+	const questionsWithStatus = questions.map(q => ({
+		...q,
+		status: q.status || 'draft' // Default to draft
+	}))
 
-	if (profile?.role !== 'admin') {
-		return { success: false, error: 'Not authorized' }
-	}
-
-	const { data, error } = await supabase.from('training_questions').insert(questions).select()
+	const { data, error } = await supabase
+		.from('training_questions')
+		.insert(questionsWithStatus)
+		.select()
 
 	if (error) {
 		console.error('Error creating questions:', error)
@@ -318,174 +361,125 @@ export async function createTrainingQuestionsAction(questions) {
 }
 
 /**
- * Update a training question in JSON file
+ * Update a training question
+ * Status is only changed if explicitly provided in updates
  */
 export async function updateTrainingQuestionAction(questionId, updates) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createTrainingClient()
 
-	// Verify admin
-	const {
-		data: { user },
-	} = await supabase.auth.getUser()
-	if (!user) return { success: false, error: 'Not authenticated' }
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
-	const { data: profile } = await supabase
-		.from('users_profile')
-		.select('role')
-		.eq('id', user.id)
+	const { data, error } = await supabase
+		.from('training_questions')
+		.update(updates)
+		.eq('id', questionId)
+		.select()
 		.single()
 
-	if (profile?.role !== 'admin') {
-		return { success: false, error: 'Not authorized' }
+	if (error) {
+		console.error('Error updating question:', error)
+		return { success: false, error: error.message }
 	}
 
-	// Get question info to find its JSON file
-	// We need to search through all themes to find which file contains this question ID
-	const { data: themes, error: themesError } = await supabase
-		.from('training_themes')
-		.select('lang, level, key')
-
-	if (themesError || !themes) {
-		return { success: false, error: 'Failed to load themes' }
-	}
-
-	// Search for the question in all theme files
-	let found = false
-	let targetTheme = null
-
-	for (const theme of themes) {
-		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
-		const questionExists = questions.some((q) => q.id === questionId)
-		if (questionExists) {
-			targetTheme = theme
-			found = true
-			break
-		}
-	}
-
-	if (!found || !targetTheme) {
-		return { success: false, error: 'Question not found in any theme' }
-	}
-
-	// Update the question in the JSON file
-	const success = updateQuestionInFile(
-		targetTheme.lang,
-		targetTheme.level,
-		targetTheme.key,
-		questionId,
-		updates
-	)
-
-	if (!success) {
-		return { success: false, error: 'Failed to update question in file' }
-	}
-
-	return { success: true, data: { id: questionId, ...updates } }
+	return { success: true, data }
 }
 
 /**
- * Delete a training question (soft delete by setting is_active to false in JSON file)
+ * Publish a question (change status from draft to published)
  */
-export async function deleteTrainingQuestionAction(questionId) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+export async function publishTrainingQuestionAction(questionId) {
+	const supabase = createTrainingClient()
 
-	// Verify admin
-	const {
-		data: { user },
-	} = await supabase.auth.getUser()
-	if (!user) return { success: false, error: 'Not authenticated' }
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
-	const { data: profile } = await supabase
-		.from('users_profile')
-		.select('role')
-		.eq('id', user.id)
+	const { data, error } = await supabase
+		.from('training_questions')
+		.update({ status: 'published' })
+		.eq('id', questionId)
+		.select()
 		.single()
 
-	if (profile?.role !== 'admin') {
-		return { success: false, error: 'Not authorized' }
+	if (error) {
+		console.error('Error publishing question:', error)
+		return { success: false, error: error.message }
 	}
 
-	// Get question info to find its JSON file
-	const { data: themes, error: themesError } = await supabase
-		.from('training_themes')
-		.select('lang, level, key')
+	return { success: true, data }
+}
 
-	if (themesError || !themes) {
-		return { success: false, error: 'Failed to load themes' }
+/**
+ * Bulk publish questions
+ */
+export async function bulkPublishQuestionsAction(questionIds) {
+	const supabase = createTrainingClient()
+
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
+
+	const { data, error } = await supabase
+		.from('training_questions')
+		.update({ status: 'published' })
+		.in('id', questionIds)
+		.select()
+
+	if (error) {
+		console.error('Error bulk publishing questions:', error)
+		return { success: false, error: error.message }
 	}
 
-	// Search for the question in all theme files
-	let found = false
-	let targetTheme = null
+	return { success: true, data, count: data.length }
+}
 
-	for (const theme of themes) {
-		const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
-		const questionExists = questions.some((q) => q.id === questionId)
-		if (questionExists) {
-			targetTheme = theme
-			found = true
-			break
-		}
-	}
+/**
+ * Delete a training question (soft delete by setting is_active to false)
+ */
+export async function deleteTrainingQuestionAction(questionId) {
+	const supabase = createTrainingClient()
 
-	if (!found || !targetTheme) {
-		return { success: false, error: 'Question not found in any theme' }
-	}
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
-	// Soft delete in the JSON file
-	const success = deleteQuestionInFile(
-		targetTheme.lang,
-		targetTheme.level,
-		targetTheme.key,
-		questionId
-	)
+	const { error } = await supabase
+		.from('training_questions')
+		.update({ is_active: false })
+		.eq('id', questionId)
 
-	if (!success) {
-		return { success: false, error: 'Failed to delete question in file' }
+	if (error) {
+		console.error('Error deleting question:', error)
+		return { success: false, error: error.message }
 	}
 
 	return { success: true }
 }
 
 /**
- * Get all questions for admin
- * Now loads from JSON files instead of database
+ * Get all questions for admin (including drafts)
  */
-export async function getAdminTrainingQuestionsAction(themeId) {
-	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+export async function getAdminTrainingQuestionsAction(themeId, includeStatus = null) {
+	const supabase = createTrainingClient()
 
-	// Verify admin
-	const {
-		data: { user },
-	} = await supabase.auth.getUser()
-	if (!user) return { success: false, error: 'Not authenticated' }
+	const { authorized, error: authError } = await verifyAdmin()
+	if (!authorized) return { success: false, error: authError }
 
-	const { data: profile } = await supabase
-		.from('users_profile')
-		.select('role')
-		.eq('id', user.id)
-		.single()
+	let query = supabase
+		.from('training_questions')
+		.select('*')
+		.eq('theme_id', themeId)
+		.order('id')
 
-	if (profile?.role !== 'admin') {
-		return { success: false, error: 'Not authorized' }
+	// Filter by status if provided
+	if (includeStatus) {
+		query = query.eq('status', includeStatus)
 	}
 
-	// Get theme info to load questions from JSON
-	const { data: theme, error: themeError } = await supabase
-		.from('training_themes')
-		.select('lang, level, key')
-		.eq('id', themeId)
-		.single()
+	const { data, error } = await query
 
-	if (themeError || !theme) {
-		return { success: false, error: 'Theme not found' }
+	if (error) {
+		console.error('Error fetching admin questions:', error)
+		return { success: false, error: error.message }
 	}
 
-	// Load questions from JSON
-	const questions = loadTrainingQuestions(theme.lang, theme.level, theme.key)
-
-	return { success: true, data: questions }
+	return { success: true, data }
 }

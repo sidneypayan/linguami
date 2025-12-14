@@ -1530,6 +1530,9 @@
     "backToSetup": "Retour",
     "tryAgain": "Réessayer",
     "selectTheme": "Choisissez un theme",
-    "chooseTheme": "Choisir un theme"
+    "chooseTheme": "Choisir un theme",
+    "quit": "Quitter",
+    "quitSession": "Quitter la session",
+    "confirmQuitSession": "Voulez-vous vraiment quitter cette session ? Votre progression sera perdue."
   }
 }

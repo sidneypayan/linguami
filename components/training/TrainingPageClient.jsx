@@ -2825,7 +2825,7 @@ const DropdownQuestion = ({ question, onAnswer, answered, selectedAnswer, isDark
 // ============================================
 // TRAINING SESSION
 // ============================================
-const TrainingSession = ({ questions, onFinish, isDark, t, spokenLanguage, isLoggedIn }) => {
+const TrainingSession = ({ questions, onFinish, onQuit, isDark, t, spokenLanguage, isLoggedIn }) => {
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [answered, setAnswered] = useState(false)
 	const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -2901,14 +2901,35 @@ const TrainingSession = ({ questions, onFinish, isDark, t, spokenLanguage, isLog
 		}
 	}
 
+	const handleQuit = () => {
+		if (confirm(t('confirmQuitSession') || 'Voulez-vous vraiment quitter cette session ? Votre progression sera perdue.')) {
+			onQuit?.()
+		}
+	}
+
 	return (
 		<div className="space-y-3 md:space-y-6">
-			{/* Progress bar */}
+			{/* Progress bar with quit button */}
 			<div className="space-y-1.5 px-4 md:px-0">
-				<div className="flex justify-between text-sm">
-					<span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
-						{t('question')} {currentIndex + 1} / {questions.length}
-					</span>
+				<div className="flex justify-between items-center text-sm">
+					<div className="flex items-center gap-3">
+						<button
+							onClick={handleQuit}
+							className={cn(
+								'flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors',
+								isDark
+									? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800'
+									: 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+							)}
+							title={t('quitSession') || 'Quitter'}
+						>
+							<ChevronLeft className="w-3.5 h-3.5" />
+							{t('quit') || 'Quitter'}
+						</button>
+						<span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
+							{t('question')} {currentIndex + 1} / {questions.length}
+						</span>
+					</div>
 					<div className="flex items-center gap-3">
 						{currentCorrectCount > 0 && (
 							<span className="flex items-center gap-1 text-emerald-500 font-semibold">
@@ -3265,13 +3286,20 @@ const TrainingPageClient = () => {
 
 		// Shuffle options within each question and update correctAnswer index
 		const questionsWithShuffledOptions = shuffled.slice(0, Math.min(questionCount, shuffled.length)).map(question => {
-			if (!question.options || question.options.length === 0) return question
+			// Normalize options to always be an array (not object)
+			let normalizedOptions = question.options
+			if (normalizedOptions && typeof normalizedOptions === 'object' && !Array.isArray(normalizedOptions)) {
+				// If options is an object {fr: [...], en: [...], ru: [...]}, extract the array for the current language
+				normalizedOptions = normalizedOptions[lang] || normalizedOptions[spokenLanguage] || normalizedOptions.fr || normalizedOptions.en || normalizedOptions.ru || []
+			}
+
+			if (!normalizedOptions || normalizedOptions.length === 0) return question
 
 			// Get the correct answer value before shuffling
-			const correctAnswerValue = question.options[question.correctAnswer ?? question.correct_answer ?? 0]
+			const correctAnswerValue = normalizedOptions[question.correctAnswer ?? question.correct_answer ?? 0]
 
 			// Create array of options with original indices
-			const optionsWithIndices = question.options.map((opt, idx) => ({ value: opt, originalIndex: idx }))
+			const optionsWithIndices = normalizedOptions.map((opt, idx) => ({ value: opt, originalIndex: idx }))
 
 			// Shuffle the options
 			const shuffledOptions = [...optionsWithIndices].sort(() => Math.random() - 0.5)
@@ -3490,6 +3518,7 @@ const TrainingPageClient = () => {
 					<TrainingSession
 						questions={questions}
 						onFinish={handleFinish}
+						onQuit={handleBackToSetup}
 						isDark={isDark}
 						t={t}
 						spokenLanguage={spokenLanguage}

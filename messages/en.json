@@ -1534,6 +1534,9 @@
     "backToSetup": "Back",
     "tryAgain": "Try again",
     "selectTheme": "Choose a theme",
-    "chooseTheme": "Choose theme"
+    "chooseTheme": "Choose theme",
+    "quit": "Quit",
+    "quitSession": "Quit session",
+    "confirmQuitSession": "Do you really want to quit this session? Your progress will be lost."
   }
 }

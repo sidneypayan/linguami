@@ -2,9 +2,9 @@
   {
     "id": 1,
     "type": "mcq",
-    "question_fr": "Comment dit-on \"bonjour\" en russe ?",
-    "question_en": "How do you say \"hello\" in Russian?",
-    "question_ru": null,
+    "question_fr": "Comment dit-on \"salut\" (bonjour) en russe ?",
+    "question_en": "How do you say \"hi\" in Russian?",
+    "question_ru": "",
     "sentence": null,
     "blank": null,
     "options": [
@@ -17,7 +17,8 @@
     "explanation_fr": "Привет (Privet) signifie \"Salut\" ou \"Bonjour\" de maniere informelle.",
     "explanation_en": "Привет (Privet) means \"Hi\" or \"Hello\" in an informal way.",
     "explanation_ru": null,
-    "difficulty": 1
+    "difficulty": 1,
+    "is_active": true
   },
   {
     "id": 2,

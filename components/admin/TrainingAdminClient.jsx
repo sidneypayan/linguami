@@ -33,6 +33,9 @@ import {
 	SignalLow,
 	SignalMedium,
 	SignalHigh,
+	CheckCheck,
+	FileCheck,
+	FilePenLine,
 } from 'lucide-react'
 import {
 	getTrainingThemesAction,
@@ -41,6 +44,8 @@ import {
 	deleteTrainingQuestionAction,
 	createTrainingQuestionsAction,
 	updateTrainingQuestionAction,
+	publishTrainingQuestionAction,
+	bulkPublishQuestionsAction,
 } from '@/app/actions/training'
 
 const getLocalizedText = (text, locale) => {
@@ -751,6 +756,7 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 	const [editingId, setEditingId] = useState(null)
 	const [previewingQuestionId, setPreviewingQuestionId] = useState(null)
 	const [mouseDownTarget, setMouseDownTarget] = useState(null)
+	const [statusFilter, setStatusFilter] = useState('all') // all, published, draft
 
 	// Fetch questions for this theme
 	const { data: questionsData, isLoading, error } = useQuery({
@@ -759,7 +765,12 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 		enabled: !!theme.id,
 	})
 
-	const questions = questionsData?.data || []
+	const allQuestions = questionsData?.data || []
+
+	// Filter questions by status
+	const questions = statusFilter === 'all'
+		? allQuestions
+		: allQuestions.filter(q => q.status === statusFilter)
 
 	// Delete mutation
 	const deleteMutation = useMutation({
@@ -789,6 +800,32 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 		},
 	})
 
+	// Publish mutation
+	const publishMutation = useMutation({
+		mutationFn: publishTrainingQuestionAction,
+		onSuccess: () => {
+			toast.success('Question publiee')
+			queryClient.invalidateQueries({ queryKey: ['admin-training-questions', theme.id] })
+			queryClient.invalidateQueries({ queryKey: ['training-stats'] })
+		},
+		onError: (error) => {
+			toast.error(error.message || 'Erreur lors de la publication')
+		},
+	})
+
+	// Bulk publish mutation
+	const bulkPublishMutation = useMutation({
+		mutationFn: bulkPublishQuestionsAction,
+		onSuccess: (data) => {
+			toast.success(`${data.count} question(s) publiee(s)`)
+			queryClient.invalidateQueries({ queryKey: ['admin-training-questions', theme.id] })
+			queryClient.invalidateQueries({ queryKey: ['training-stats'] })
+		},
+		onError: (error) => {
+			toast.error(error.message || 'Erreur lors de la publication')
+		},
+	})
+
 	const handleDeleteQuestion = (questionId) => {
 		if (confirm('Supprimer cette question ?')) {
 			deleteMutation.mutate(questionId)
@@ -798,6 +835,25 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 	const handleSaveQuestion = (questionId, updates) => {
 		console.log('handleSaveQuestion called with:', questionId, updates)
 		updateMutation.mutate({ questionId, updates })
+	}
+
+	const handlePublishQuestion = (questionId) => {
+		publishMutation.mutate(questionId)
+	}
+
+	const handlePublishAllDrafts = () => {
+		const draftIds = allQuestions
+			.filter(q => q.status === 'draft')
+			.map(q => q.id)
+
+		if (draftIds.length === 0) {
+			toast.info('Aucune question en brouillon')
+			return
+		}
+
+		if (confirm(`Publier ${draftIds.length} question(s) en brouillon ?`)) {
+			bulkPublishMutation.mutate(draftIds)
+		}
 	}
 
 	const getThemeLabel = () => {
@@ -875,10 +931,80 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 
 				{/* Questions List */}
 				<div className="p-6">
-					<div className="flex items-center justify-between mb-4">
-						<h3 className="font-semibold text-slate-800">
-							Questions ({questions.length})
-						</h3>
+					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+						<div className="flex items-center gap-3">
+							<h3 className="font-semibold text-slate-800">
+								Questions ({questions.length}{statusFilter !== 'all' ? ` / ${allQuestions.length}` : ''})
+							</h3>
+
+							{/* Status counters */}
+							<div className="flex items-center gap-2">
+								<span className="text-xs text-slate-500">
+									{allQuestions.filter(q => q.status === 'published').length} publiees
+								</span>
+								<span className="text-xs text-slate-400">•</span>
+								<span className="text-xs text-amber-600">
+									{allQuestions.filter(q => q.status === 'draft').length} brouillons
+								</span>
+							</div>
+						</div>
+
+						<div className="flex items-center gap-2">
+							{/* Status Filter */}
+							<div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
+								<button
+									onClick={() => setStatusFilter('all')}
+									className={cn(
+										'px-3 py-1 rounded text-xs font-medium transition-colors',
+										statusFilter === 'all'
+											? 'bg-white text-slate-800 shadow-sm'
+											: 'text-slate-500 hover:text-slate-700'
+									)}
+								>
+									Toutes
+								</button>
+								<button
+									onClick={() => setStatusFilter('published')}
+									className={cn(
+										'px-3 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1',
+										statusFilter === 'published'
+											? 'bg-emerald-100 text-emerald-700 shadow-sm'
+											: 'text-slate-500 hover:text-emerald-600'
+									)}
+								>
+									<FileCheck className="w-3 h-3" />
+									Publiees
+								</button>
+								<button
+									onClick={() => setStatusFilter('draft')}
+									className={cn(
+										'px-3 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1',
+										statusFilter === 'draft'
+											? 'bg-amber-100 text-amber-700 shadow-sm'
+											: 'text-slate-500 hover:text-amber-600'
+									)}
+								>
+									<FilePenLine className="w-3 h-3" />
+									Brouillons
+								</button>
+							</div>
+
+							{/* Publish All Drafts Button */}
+							{allQuestions.filter(q => q.status === 'draft').length > 0 && (
+								<button
+									onClick={handlePublishAllDrafts}
+									disabled={bulkPublishMutation.isPending}
+									className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+								>
+									{bulkPublishMutation.isPending ? (
+										<Loader2 className="w-3.5 h-3.5 animate-spin" />
+									) : (
+										<CheckCheck className="w-3.5 h-3.5" />
+									)}
+									Publier les brouillons
+								</button>
+							)}
+						</div>
 					</div>
 
 					{isLoading ? (
@@ -932,6 +1058,20 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 															{question.type === 'mcq' ? 'QCM' : question.type === 'multi_fill' ? 'Multi-Fill' : 'Dropdown'}
 														</span>
 														<span className="text-xs text-slate-400">#{question.id}</span>
+
+														{/* Status Badge */}
+														{question.status === 'draft' ? (
+															<span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 flex items-center gap-1">
+																<FilePenLine className="w-3 h-3" />
+																Brouillon
+															</span>
+														) : question.status === 'published' ? (
+															<span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+																<FileCheck className="w-3 h-3" />
+																Publiee
+															</span>
+														) : null}
+
 														{!question.is_active && (
 															<span className="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
 																Inactive
@@ -999,6 +1139,21 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 												</div>
 
 												<div className="flex items-center gap-1">
+													{/* Publish button (only for draft questions) */}
+													{question.status === 'draft' && (
+														<button
+															onClick={() => handlePublishQuestion(question.id)}
+															disabled={publishMutation.isPending}
+															className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+															title="Publier"
+														>
+															{publishMutation.isPending ? (
+																<Loader2 className="w-4 h-4 animate-spin" />
+															) : (
+																<CheckCheck className="w-4 h-4" />
+															)}
+														</button>
+													)}
 													<button
 														onClick={() => setPreviewingQuestionId(question.id)}
 														className="p-2 text-slate-400 hover:text-violet-500 hover:bg-violet-50 rounded-lg transition-colors"
