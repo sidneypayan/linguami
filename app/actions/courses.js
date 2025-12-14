@@ -2,9 +2,23 @@
 
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 import { logger } from '@/utils/logger'
 import { z } from 'zod'
 import { getStaticMethodLevels, getStaticLevelBySlug, getStaticLevelById } from '@/lib/method-levels'
+
+// ============================================
+// COURSES ALWAYS USE PROD DB (even in local)
+// ============================================
+function createCoursesClient() {
+	// Use PROD DB credentials for courses
+	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_PROD_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+	const supabaseKey = process.env.SUPABASE_PROD_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+
+	return createClient(supabaseUrl, supabaseKey, {
+		auth: { persistSession: false }
+	})
+}
 
 // Validation schemas
 const LevelIdSchema = z.number().int().positive('Level ID must be a positive integer')
@@ -60,7 +74,7 @@ export async function getCoursesByLevel(levelId) {
 		// Validate levelId
 		const validLevelId = LevelIdSchema.parse(levelId)
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createCoursesClient()
 		const { data, error} = await supabase
 			.from('courses')
 			.select(
@@ -118,7 +132,7 @@ export async function getCourseBySlug({ levelSlug, courseSlug, lang }) {
 		// Validate input parameters
 		const validParams = CourseSlugParamsSchema.parse({ levelSlug, courseSlug, lang })
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createCoursesClient()
 
 		// Get level from static data
 		const level = getStaticLevelBySlug(validParams.levelSlug)
@@ -195,7 +209,7 @@ export async function getLessonBySlug({ courseSlug, lessonSlug, lang }) {
 		// Validate input parameters
 		const validParams = LessonSlugParamsSchema.parse({ courseSlug, lessonSlug, lang })
 
-		const supabase = createServerClient(await cookies())
+		const supabase = createCoursesClient()
 
 		// Query lesson with course (no level join)
 		const { data, error } = await supabase
