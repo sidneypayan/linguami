@@ -1080,8 +1080,15 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 													</div>
 
 													<p className="text-slate-800 font-medium">
-														{question.question_fr || question.question_en || question.sentence || 'Question sans titre'}
+														{question.question_fr || question.question_en || 'Question sans titre'}
 													</p>
+
+													{/* Dropdown: show sentence */}
+													{question.type === 'dropdown' && question.sentence && (
+														<div className="mt-2">
+															<span className="text-sm text-slate-600 italic">{question.sentence}</span>
+														</div>
+													)}
 
 													{/* Multi-fill: show sentences */}
 													{question.type === 'multi_fill' && question.sentences && (
