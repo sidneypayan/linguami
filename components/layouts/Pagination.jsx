@@ -92,7 +92,7 @@ const Pagination = ({
 
 	return (
 		<div className="flex justify-center items-center mt-10 mb-6 px-1 sm:px-0">
-			<div className="flex flex-row items-center gap-1 sm:gap-2">
+			<div className="flex flex-row items-center gap-1.5 sm:gap-2">
 				{/* Bouton precedent */}
 				<Button
 					variant="outline"
@@ -100,7 +100,7 @@ const Pagination = ({
 					onClick={prevPage}
 					disabled={page === 1}
 					className={cn(
-						'w-9 h-9 sm:w-11 sm:h-11 rounded-lg',
+						'w-10 h-10 sm:w-11 sm:h-11 rounded-lg',
 						'transition-all duration-300',
 						'relative overflow-hidden group',
 						isDark
@@ -140,8 +140,8 @@ const Pagination = ({
 							variant={isActive ? 'default' : 'outline'}
 							onClick={() => handlePageChange(pageNumber)}
 							className={cn(
-								'min-w-[36px] h-9 sm:min-w-[44px] sm:h-11 rounded-lg',
-								'font-bold text-sm sm:text-base',
+								'min-w-[40px] h-10 sm:min-w-[44px] sm:h-11 rounded-lg',
+								'font-bold text-base sm:text-base',
 								'transition-all duration-300',
 								'relative overflow-hidden',
 								isActive
@@ -168,7 +168,7 @@ const Pagination = ({
 					onClick={nextPage}
 					disabled={page === numOfPages}
 					className={cn(
-						'w-9 h-9 sm:w-11 sm:h-11 rounded-lg',
+						'w-10 h-10 sm:w-11 sm:h-11 rounded-lg',
 						'transition-all duration-300',
 						'relative overflow-hidden group',
 						isDark
