@@ -270,8 +270,12 @@ const Words = ({ content, locale = 'fr' }) => {
 				}
 			}
 
+			// Remove Russian stress marks (combining acute accent) for translation
+			// Russian stress marks are added for learning but don't exist in real words
+			const cleanWord = word.replace(/[\u0301\u0300\u0302\u0303\u0308]/g, '')
+
 			// Extract only the sentence containing the clicked word
-			const sentence = extractSentence(fullText, word)
+			const sentence = extractSentence(fullText, cleanWord)
 
 			// Dispatch custom event to pause video
 			if (typeof window !== 'undefined') {
@@ -279,7 +283,7 @@ const Words = ({ content, locale = 'fr' }) => {
 			}
 
 			translationMutation.mutate({
-				word,
+				word: cleanWord,
 				sentence,
 				userLearningLanguage,
 				locale: spokenLanguage,
