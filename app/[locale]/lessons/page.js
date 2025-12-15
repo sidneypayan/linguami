@@ -23,7 +23,8 @@ export async function generateMetadata({ params, searchParams }) {
 
 	// If a specific lesson is selected, generate metadata for that lesson
 	if (slug) {
-		const targetLanguage = 'fr' // Hardcoded for now (teaching French)
+		const { learningLanguage } = await checkAdminAuth()
+		const targetLanguage = learningLanguage || 'ru'
 		const lessons = await getLessons(targetLanguage, locale)
 		const lesson = lessons.find((l) => l.slug === slug)
 
@@ -128,7 +129,7 @@ export default async function LessonsPage({ params }) {
 	const { locale } = await params
 
 	// Check if user is authenticated and is admin
-	const { isAuthenticated, isAdmin, spokenLanguage: userSpokenLanguage } = await checkAdminAuth()
+	const { isAuthenticated, isAdmin, spokenLanguage: userSpokenLanguage, learningLanguage: userLearningLanguage } = await checkAdminAuth()
 
 	if (!isAuthenticated) {
 		// Not logged in - redirect to login
@@ -141,9 +142,7 @@ export default async function LessonsPage({ params }) {
 	}
 
 	// Determine target language and spoken language
-	// For now, hardcode: teaching French to Russian/English speakers
-	// TODO: Get userLearningLanguage from user context
-	const targetLanguage = 'fr' // Teaching French
+	const targetLanguage = userLearningLanguage || 'ru' // Use user's learning language, default to Russian
 	const spokenLanguage = userSpokenLanguage || locale // Use user's spoken language, fallback to interface language
 
 	// Fetch lessons from server
