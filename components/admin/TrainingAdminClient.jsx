@@ -127,6 +127,7 @@ const QuestionEditForm = ({ question, onSave, onCancel, saving, learningLang }) 
 			: (question.options?.fr || []),
 		correct_answer: question.correct_answer || 0,
 		sentences: question.sentences || [],
+		sentence: question.sentence || '', // For dropdown type
 		explanation_fr: question.explanation_fr || '',
 		explanation_en: question.explanation_en || '',
 		is_active: question.is_active !== false,
@@ -178,6 +179,9 @@ const QuestionEditForm = ({ question, onSave, onCancel, saving, learningLang }) 
 		// Pour multi_fill, on envoie sentences, sinon correct_answer
 		if (isMultiFill) {
 			dataToSave.sentences = formData.sentences
+		} else if (question.type === 'dropdown') {
+			dataToSave.correct_answer = formData.correct_answer
+			dataToSave.sentence = formData.sentence
 		} else {
 			dataToSave.correct_answer = formData.correct_answer
 		}
@@ -238,6 +242,22 @@ const QuestionEditForm = ({ question, onSave, onCancel, saving, learningLang }) 
 					</div>
 				)}
 			</div>
+
+			{/* Sentence for dropdown */}
+			{question.type === 'dropdown' && (
+				<div>
+					<label className="block text-xs font-medium text-slate-600 mb-1">
+						Phrase à trou (utilisez ___ pour indiquer où placer la réponse)
+					</label>
+					<input
+						type="text"
+						value={formData.sentence}
+						onChange={(e) => setFormData({ ...formData, sentence: e.target.value })}
+						className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+						placeholder="Exemple: Доброе ___!"
+					/>
+				</div>
+			)}
 
 			{/* Options */}
 			<div>
