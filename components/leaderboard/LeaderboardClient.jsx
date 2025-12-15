@@ -13,8 +13,6 @@ import {
 	CalendarRange,
 	Coins,
 	Flame,
-	ChevronLeft,
-	ChevronRight,
 	Crown,
 	Medal,
 	Award,
@@ -24,6 +22,7 @@ import {
 	Shield,
 	Swords,
 } from 'lucide-react'
+import Pagination from '@/components/layouts/Pagination'
 
 // Tab configuration
 const TABS = [
@@ -240,79 +239,6 @@ const LeaderboardRow = ({ entry, tabValue, isDark, isMobile, t }) => {
 					<Flame className={cn('inline-block ml-1 w-4 h-4', isDark ? 'text-emerald-400' : 'text-emerald-500')} />
 				)}
 			</div>
-		</div>
-	)
-}
-
-// Pagination Component
-const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
-	if (totalPages <= 1) return null
-
-	const getVisiblePages = () => {
-		const pages = []
-		const delta = 2
-		const start = Math.max(1, currentPage - delta)
-		const end = Math.min(totalPages, currentPage + delta)
-
-		for (let i = start; i <= end; i++) {
-			pages.push(i)
-		}
-		return pages
-	}
-
-	return (
-		<div className="flex items-center justify-center gap-2 py-4">
-			<button
-				onClick={() => onPageChange(currentPage - 1)}
-				disabled={currentPage === 1}
-				className={cn(
-					'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
-					'border-2',
-					currentPage === 1
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-105',
-					isDark
-						? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
-						: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
-				)}
-			>
-				<ChevronLeft className="w-5 h-5" />
-			</button>
-
-			{getVisiblePages().map(page => (
-				<button
-					key={page}
-					onClick={() => onPageChange(page)}
-					className={cn(
-						'w-10 h-10 rounded-xl font-bold transition-all',
-						'border-2',
-						page === currentPage
-							? 'bg-gradient-to-br from-violet-500 to-cyan-500 text-white border-transparent shadow-lg shadow-violet-500/30 scale-110'
-							: isDark
-								? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
-								: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
-					)}
-				>
-					{page}
-				</button>
-			))}
-
-			<button
-				onClick={() => onPageChange(currentPage + 1)}
-				disabled={currentPage === totalPages}
-				className={cn(
-					'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
-					'border-2',
-					currentPage === totalPages
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-105',
-					isDark
-						? 'border-violet-500/30 bg-slate-800 text-slate-300 hover:bg-violet-900/30'
-						: 'border-violet-200 bg-white text-slate-600 hover:bg-violet-50'
-				)}
-			>
-				<ChevronRight className="w-5 h-5" />
-			</button>
 		</div>
 	)
 }
@@ -661,9 +587,8 @@ export default function LeaderboardClient({ leaderboardData, isGuest = false }) 
 					{/* Pagination */}
 					<Pagination
 						currentPage={currentPage}
-						totalPages={totalPages}
+						numOfPages={totalPages}
 						onPageChange={handlePageChange}
-						isDark={isDark}
 					/>
 				</div>
 

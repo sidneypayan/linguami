@@ -17,13 +17,12 @@ import { logger } from '@/utils/logger'
 import { getMaterialsFilters, saveMaterialsFilters } from '@/utils/materialsFilters'
 import {
 	ArrowLeft,
-	ChevronLeft,
-	ChevronRight,
 	Star,
 	Sword,
 	Shield,
 	Gem,
 } from 'lucide-react'
+import Pagination from '@/components/layouts/Pagination'
 
 // ============================================
 // DECORATIVE CORNER ORNAMENT
@@ -160,141 +159,6 @@ const EpicHeader = ({ isDark, title, onBack }) => {
 					</div>
 				</div>
 			</div>
-		</div>
-	)
-}
-
-
-// ============================================
-// PAGINATION - Gaming Style
-// ============================================
-const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
-	if (totalPages <= 1) return null
-
-	const getVisiblePages = () => {
-		const pages = []
-		const delta = 2
-		const start = Math.max(1, currentPage - delta)
-		const end = Math.min(totalPages, currentPage + delta)
-
-		if (start > 1) {
-			pages.push(1)
-			if (start > 2) pages.push('...')
-		}
-
-		for (let i = start; i <= end; i++) {
-			pages.push(i)
-		}
-
-		if (end < totalPages) {
-			if (end < totalPages - 1) pages.push('...')
-			pages.push(totalPages)
-		}
-
-		return pages
-	}
-
-	return (
-		<div className="flex items-center justify-center gap-2 py-8 mt-6">
-			{/* Previous button */}
-			<button
-				onClick={() => onPageChange(currentPage - 1)}
-				disabled={currentPage === 1}
-				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
-					'transition-all duration-300',
-					'border-2 overflow-hidden',
-					currentPage === 1
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:-translate-x-0.5',
-					isDark
-						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
-						: 'border-violet-200 bg-white text-violet-600',
-					currentPage !== 1 && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
-				)}
-			>
-				<div className={cn(
-					'absolute inset-0 bg-gradient-to-r from-violet-500/20 to-transparent',
-					'opacity-0 group-hover:opacity-100 transition-opacity'
-				)} />
-				<ChevronLeft className="w-5 h-5 relative z-10" />
-			</button>
-
-			{/* Page numbers */}
-			<div className="flex items-center gap-1.5">
-				{getVisiblePages().map((page, index) => (
-					page === '...' ? (
-						<span
-							key={`ellipsis-${index}`}
-							className={cn(
-								'w-8 text-center font-bold',
-								isDark ? 'text-slate-500' : 'text-slate-400'
-							)}
-						>
-							···
-						</span>
-					) : (
-						<button
-							key={page}
-							onClick={() => onPageChange(page)}
-							className={cn(
-								'relative w-10 h-10 rounded-lg font-bold transition-all duration-300',
-								'overflow-hidden',
-								page === currentPage
-									? [
-										'bg-gradient-to-br from-violet-500 to-cyan-500 text-white',
-										'shadow-lg shadow-violet-500/40',
-										'scale-110 z-10',
-										'ring-2 ring-white/20'
-									]
-									: [
-										isDark ? 'text-slate-300' : 'text-slate-600',
-										'hover:scale-105',
-										isDark
-											? 'hover:bg-violet-500/20 hover:text-violet-300'
-											: 'hover:bg-violet-100 hover:text-violet-600'
-									]
-							)}
-						>
-							{page === currentPage && (
-								<>
-									<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-									<Star className="absolute -top-1 -right-1 w-3 h-3 text-amber-300 fill-amber-300 animate-pulse" />
-								</>
-							)}
-							<span className="relative z-10">{page}</span>
-						</button>
-					)
-				))}
-			</div>
-
-			{/* Next button */}
-			<button
-				onClick={() => onPageChange(currentPage + 1)}
-				disabled={currentPage === totalPages}
-				className={cn(
-					'group relative w-11 h-11 rounded-xl flex items-center justify-center',
-					'transition-all duration-300',
-					'border-2 overflow-hidden',
-					currentPage === totalPages
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-110 hover:translate-x-0.5',
-					isDark
-						? 'border-violet-500/30 bg-slate-800/80 text-violet-300'
-						: 'border-violet-200 bg-white text-violet-600',
-					currentPage !== totalPages && (isDark
-						? 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
-						: 'hover:border-violet-400 hover:shadow-lg hover:shadow-violet-300/30')
-				)}
-			>
-				<div className={cn(
-					'absolute inset-0 bg-gradient-to-l from-violet-500/20 to-transparent',
-					'opacity-0 group-hover:opacity-100 transition-opacity'
-				)} />
-				<ChevronRight className="w-5 h-5 relative z-10" />
-			</button>
 		</div>
 	)
 }
@@ -605,9 +469,8 @@ export default function SectionPageClient({
 				{numOfPages > 1 && (
 					<Pagination
 						currentPage={safePage}
-						totalPages={numOfPages}
+						numOfPages={numOfPages}
 						onPageChange={updatePage}
-						isDark={isDark}
 					/>
 				)}
 			</div>

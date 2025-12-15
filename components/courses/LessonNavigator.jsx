@@ -324,9 +324,6 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 																		)
 															)}
 														>
-															{isActive && (
-																<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
-															)}
 															{isCompleted && !isActive && (
 																<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
 															)}
@@ -705,9 +702,6 @@ const LessonNavigator = ({ blocks = [], lesson, lessonId, onComplete, isCompleti
 																		)
 															)}
 														>
-															{isActive && (
-																<Sparkles className="absolute inset-0 w-3.5 h-3.5 m-auto text-white/80" />
-															)}
 															{isCompleted && !isActive && (
 																<CheckCircle className="absolute inset-0 w-2.5 h-2.5 m-auto text-white" />
 															)}

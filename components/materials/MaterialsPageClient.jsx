@@ -26,8 +26,6 @@ import {
 	Film,
 	Music,
 	Headphones,
-	ChevronLeft,
-	ChevronRight,
 	RotateCcw,
 	Grid3X3,
 	Table,
@@ -65,6 +63,7 @@ import {
 	ChevronDown,
 	Check,
 } from 'lucide-react'
+import Pagination from '@/components/layouts/Pagination'
 import MaterialsCard from './MaterialsCard'
 import SectionCard from './SectionCard'
 import BookCard from './BookCard'
@@ -821,122 +820,6 @@ const FilterBar = ({
 	)
 }
 
-// ============================================
-// PAGINATION (QUEST PROGRESS)
-// ============================================
-const Pagination = ({ currentPage, totalPages, onPageChange, isDark }) => {
-	if (totalPages <= 1) return null
-
-	const getVisiblePages = () => {
-		const pages = []
-		const delta = 2
-		const start = Math.max(1, currentPage - delta)
-		const end = Math.min(totalPages, currentPage + delta)
-
-		if (start > 1) {
-			pages.push(1)
-			if (start > 2) pages.push('...')
-		}
-
-		for (let i = start; i <= end; i++) {
-			pages.push(i)
-		}
-
-		if (end < totalPages) {
-			if (end < totalPages - 1) pages.push('...')
-			pages.push(totalPages)
-		}
-
-		return pages
-	}
-
-	return (
-		<div className="flex items-center justify-center gap-1.5 py-6 mt-4">
-			<button
-				onClick={() => onPageChange(currentPage - 1)}
-				disabled={currentPage === 1}
-				className={cn(
-					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
-					'transition-all duration-300',
-					'border overflow-hidden',
-					currentPage === 1
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-105 hover:-translate-x-0.5',
-					isDark
-						? 'border-amber-500/30 bg-slate-800/80 text-amber-400'
-						: 'border-amber-300 bg-white text-amber-600',
-					currentPage !== 1 && (isDark
-						? 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-500/20'
-						: 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-300/30')
-				)}
-			>
-				<ChevronLeft className="w-4 h-4 relative z-10" />
-			</button>
-
-			<div className="flex items-center gap-1">
-				{getVisiblePages().map((page, index) => (
-					page === '...' ? (
-						<span
-							key={`ellipsis-${index}`}
-							className={cn(
-								'w-6 text-center font-bold text-sm',
-								isDark ? 'text-slate-500' : 'text-slate-400'
-							)}
-						>
-							···
-						</span>
-					) : (
-						<button
-							key={page}
-							onClick={() => onPageChange(page)}
-							className={cn(
-								'relative w-8 h-8 rounded-md font-bold text-sm transition-all duration-300',
-								'overflow-hidden',
-								page === currentPage
-									? [
-										'bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 text-white',
-										'shadow-md shadow-amber-500/40',
-										'scale-105 z-10',
-										'ring-1 ring-amber-300/30'
-									]
-									: [
-										isDark ? 'text-slate-300' : 'text-slate-600',
-										'hover:scale-105',
-										isDark
-											? 'hover:bg-amber-500/20 hover:text-amber-300'
-											: 'hover:bg-amber-100 hover:text-amber-600'
-									]
-							)}
-						>
-							<span className="relative z-10">{page}</span>
-						</button>
-					)
-				))}
-			</div>
-
-			<button
-				onClick={() => onPageChange(currentPage + 1)}
-				disabled={currentPage === totalPages}
-				className={cn(
-					'group relative w-8 h-8 rounded-lg flex items-center justify-center',
-					'transition-all duration-300',
-					'border overflow-hidden',
-					currentPage === totalPages
-						? 'opacity-40 cursor-not-allowed'
-						: 'hover:scale-105 hover:translate-x-0.5',
-					isDark
-						? 'border-amber-500/30 bg-slate-800/80 text-amber-400'
-						: 'border-amber-300 bg-white text-amber-600',
-					currentPage !== totalPages && (isDark
-						? 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-500/20'
-						: 'hover:border-amber-400 hover:shadow-md hover:shadow-amber-300/30')
-				)}
-			>
-				<ChevronRight className="w-4 h-4 relative z-10" />
-			</button>
-		</div>
-	)
-}
 
 // ============================================
 // EMPTY STATE (TREASURE NOT FOUND)
@@ -1437,9 +1320,8 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 						{itemsToDisplay.length > materialsPerPage && (
 							<Pagination
 								currentPage={currentPage}
-								totalPages={numOfPages}
+								numOfPages={numOfPages}
 								onPageChange={updatePage}
-								isDark={isDark}
 							/>
 						)}
 					</>
