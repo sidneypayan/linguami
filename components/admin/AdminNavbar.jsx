@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useUserContext } from '@/context/user'
-import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell, Languages, Home, LogOut } from 'lucide-react'
+import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell, Languages, Home, LogOut, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -42,6 +42,12 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			label: t('exercises'),
 			href: '/admin/exercises',
 			icon: GraduationCap,
+		},
+		{
+			id: 'courses',
+			label: 'Courses',
+			href: '/admin/courses',
+			icon: BookOpen,
 		},
 		{
 			id: 'training',

@@ -3,9 +3,11 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
+import { coursesClient } from '@/lib/supabase-courses'
 import { logger } from '@/utils/logger'
 import { z } from 'zod'
 import { getStaticMethodLevels, getStaticLevelBySlug, getStaticLevelById } from '@/lib/method-levels'
+import { revalidatePath } from 'next/cache'
 
 // ============================================
 // COURSES ALWAYS USE PROD DB (even in local)
@@ -523,5 +525,391 @@ export async function migrateLocalProgressAction(localProgress) {
 			migrated: 0,
 			error: error.message,
 		}
+	}
+}
+
+// ============================================================================
+// ADMIN FUNCTIONS - Course Management
+// ============================================================================
+
+/**
+ * Helper: Require Admin Access
+ */
+async function requireAdmin() {
+	const cookieStore = await cookies()
+	const supabase = createServerClient(cookieStore)
+
+	const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+	if (userError || !user) {
+		throw new Error('Unauthorized: No user session')
+	}
+
+	// Check if user is admin
+	const { data: profile, error: profileError } = await supabase
+		.from('users_profile')
+		.select('role')
+		.eq('id', user.id)
+		.single()
+
+	if (profileError || profile?.role !== 'admin') {
+		throw new Error('Unauthorized: Admin access required')
+	}
+
+	return { user, supabase }
+}
+
+// Admin Validation Schemas
+const CourseMetadataSchema = z.object({
+	level_id: z.number().int().min(1).max(3),
+	target_language: z.enum(['fr', 'ru']),
+	slug: z.string().min(1),
+	title_fr: z.string().min(1),
+	title_ru: z.string().min(1),
+	title_en: z.string().min(1),
+	description_fr: z.string().optional(),
+	description_ru: z.string().optional(),
+	description_en: z.string().optional(),
+	order_index: z.number().int().min(0),
+	estimated_hours: z.number().int().positive().optional().nullable(),
+	is_published: z.boolean(),
+})
+
+const LessonMetadataSchema = z.object({
+	course_id: z.number().int().positive(),
+	slug: z.string().min(1),
+	title_fr: z.string().min(1),
+	title_ru: z.string().min(1),
+	title_en: z.string().min(1),
+	order_index: z.number().int().min(0),
+	estimated_minutes: z.number().int().positive().optional().nullable(),
+	is_published: z.boolean(),
+	is_free: z.boolean(),
+})
+
+const BlocksSchema = z.object({
+	objectives_fr: z.array(z.string()),
+	objectives_ru: z.array(z.string()),
+	objectives_en: z.array(z.string()),
+	blocks_fr: z.array(z.any()),
+	blocks_ru: z.array(z.any()),
+	blocks_en: z.array(z.any()),
+})
+
+/**
+ * ADMIN: Get all courses with their lessons (no publication filter)
+ */
+export async function getAllCoursesWithLessons() {
+	try {
+		await requireAdmin()
+
+		const { data, error } = await coursesClient
+			.from('courses')
+			.select(`
+				*,
+				course_lessons (
+					id,
+					slug,
+					title_fr,
+					title_ru,
+					title_en,
+					order_index,
+					estimated_minutes,
+					is_published,
+					is_free
+				)
+			`)
+			.order('level_id', { ascending: true })
+			.order('order_index', { ascending: true })
+
+		if (error) {
+			logger.error('Error fetching courses:', error)
+			return { success: false, error: error.message }
+		}
+
+		// Sort lessons within each course
+		const coursesWithSortedLessons = data.map(course => ({
+			...course,
+			course_lessons: (course.course_lessons || [])
+				.sort((a, b) => a.order_index - b.order_index)
+		}))
+
+		return { success: true, courses: coursesWithSortedLessons }
+	} catch (error) {
+		logger.error('Error in getAllCoursesWithLessons:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Get a single course with its lessons
+ */
+export async function getCourseWithLessons(courseId) {
+	try {
+		await requireAdmin()
+
+		const { data, error } = await coursesClient
+			.from('courses')
+			.select(`
+				*,
+				course_lessons (*)
+			`)
+			.eq('id', courseId)
+			.single()
+
+		if (error) {
+			logger.error('Error fetching course:', error)
+			return { success: false, error: error.message }
+		}
+
+		// Sort lessons by order_index
+		if (data.course_lessons) {
+			data.course_lessons.sort((a, b) => a.order_index - b.order_index)
+		}
+
+		return { success: true, course: data }
+	} catch (error) {
+		logger.error('Error in getCourseWithLessons:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Get a lesson with its content from database
+ */
+export async function getLessonWithContent(lessonId, levelSlug, learningLang) {
+	try {
+		await requireAdmin()
+
+		// Get lesson with all content from DB
+		const { data: lesson, error } = await coursesClient
+			.from('course_lessons')
+			.select('*')
+			.eq('id', lessonId)
+			.single()
+
+		if (error) {
+			logger.error('Error fetching lesson:', error)
+			return { success: false, error: error.message }
+		}
+
+		// Return lesson with content (already in DB columns)
+		return {
+			success: true,
+			lesson: {
+				...lesson,
+				objectives_fr: lesson.objectives_fr || [],
+				objectives_ru: lesson.objectives_ru || [],
+				objectives_en: lesson.objectives_en || [],
+				blocks_fr: lesson.blocks_fr || [],
+				blocks_ru: lesson.blocks_ru || [],
+				blocks_en: lesson.blocks_en || [],
+			}
+		}
+	} catch (error) {
+		logger.error('Error in getLessonWithContent:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Update course metadata in database
+ */
+export async function updateCourse(courseId, courseData) {
+	try {
+		await requireAdmin()
+
+		const validated = CourseMetadataSchema.parse(courseData)
+
+		const { data, error } = await coursesClient
+			.from('courses')
+			.update(validated)
+			.eq('id', courseId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating course:', error)
+			return { success: false, error: error.message }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true, course: data }
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return { success: false, error: 'Validation error', details: error.errors }
+		}
+		logger.error('Error in updateCourse:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Update lesson metadata in database
+ */
+export async function updateLessonMetadata(lessonId, metadataData) {
+	try {
+		await requireAdmin()
+
+		const validated = LessonMetadataSchema.parse(metadataData)
+
+		const { data, error } = await coursesClient
+			.from('course_lessons')
+			.update(validated)
+			.eq('id', lessonId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating lesson metadata:', error)
+			return { success: false, error: error.message }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true, lesson: data }
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return { success: false, error: 'Validation error', details: error.errors }
+		}
+		logger.error('Error in updateLessonMetadata:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Update lesson content in database
+ */
+export async function updateLessonContent(lessonSlug, levelSlug, learningLang, contentData) {
+	try {
+		await requireAdmin()
+
+		const validated = BlocksSchema.parse(contentData)
+
+		// Update lesson content directly in DB
+		const { data, error } = await coursesClient
+			.from('course_lessons')
+			.update({
+				objectives_fr: validated.objectives_fr,
+				objectives_ru: validated.objectives_ru,
+				objectives_en: validated.objectives_en,
+				blocks_fr: validated.blocks_fr,
+				blocks_ru: validated.blocks_ru,
+				blocks_en: validated.blocks_en,
+			})
+			.eq('slug', lessonSlug)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error updating lesson content:', error)
+			return { success: false, error: error.message }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true, lesson: data }
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return { success: false, error: 'Validation error', details: error.errors }
+		}
+		logger.error('Error in updateLessonContent:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Toggle course publication status
+ */
+export async function toggleCoursePublication(courseId, isPublished) {
+	try {
+		await requireAdmin()
+
+		const { data, error } = await coursesClient
+			.from('courses')
+			.update({ is_published: isPublished })
+			.eq('id', courseId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error toggling course publication:', error)
+			return { success: false, error: error.message }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true, course: data }
+	} catch (error) {
+		logger.error('Error in toggleCoursePublication:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Toggle lesson publication status
+ */
+export async function toggleLessonPublication(lessonId, isPublished) {
+	try {
+		await requireAdmin()
+
+		const { data, error } = await coursesClient
+			.from('course_lessons')
+			.update({ is_published: isPublished })
+			.eq('id', lessonId)
+			.select()
+			.single()
+
+		if (error) {
+			logger.error('Error toggling lesson publication:', error)
+			return { success: false, error: error.message }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true, lesson: data }
+	} catch (error) {
+		logger.error('Error in toggleLessonPublication:', error)
+		return { success: false, error: error.message }
+	}
+}
+
+/**
+ * ADMIN: Reorder lessons in a course
+ */
+export async function reorderLessons(courseId, lessonOrderUpdates) {
+	try {
+		await requireAdmin()
+
+		// lessonOrderUpdates: [{ id, order_index }, ...]
+		const updates = await Promise.all(
+			lessonOrderUpdates.map(({ id, order_index }) =>
+				coursesClient
+					.from('course_lessons')
+					.update({ order_index })
+					.eq('id', id)
+					.eq('course_id', courseId)
+			)
+		)
+
+		const hasError = updates.some(u => u.error)
+		if (hasError) {
+			logger.error('Error reordering lessons')
+			return { success: false, error: 'Failed to reorder lessons' }
+		}
+
+		revalidatePath('/method')
+		revalidatePath('/admin/courses')
+
+		return { success: true }
+	} catch (error) {
+		logger.error('Error in reorderLessons:', error)
+		return { success: false, error: error.message }
 	}
 }

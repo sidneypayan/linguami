@@ -84,6 +84,12 @@ const blockConfig = {
 		gradient: 'from-purple-400 to-pink-500',
 		bgGlow: 'purple',
 	},
+	exerciseLink: {
+		icon: Trophy,
+		label: 'Exercice',
+		gradient: 'from-orange-400 to-red-500',
+		bgGlow: 'orange',
+	},
 	audio: {
 		icon: Sparkles,
 		label: 'Audio',

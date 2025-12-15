@@ -6,6 +6,7 @@ import VocabularyBlock from './VocabularyBlock'
 import ConversationBlock from './ConversationBlock'
 import SummaryBlock from './SummaryBlock'
 import ExerciseInlineBlock from './ExerciseInlineBlock'
+import ExerciseLinkBlock from './ExerciseLinkBlock'
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { logger } from '@/utils/logger'
@@ -47,12 +48,14 @@ const BlockRenderer = ({ block, index }) => {
 		case 'exerciseInline':
 			return <ExerciseInlineBlock block={block} key={index} />
 
+		case 'exerciseLink':
+			return <ExerciseLinkBlock block={block} key={index} />
+
 		// Types non encore implementes
 		case 'audio':
 		case 'pronunciation':
 		case 'review':
 		case 'transition':
-		case 'exerciseLink':
 			return (
 				<div
 					key={index}
