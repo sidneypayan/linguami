@@ -18,6 +18,7 @@ function createLesson(order, titleEn, titleFr, titleRu, blocksEn, blocksFr) {
   return {
     order,
     target_language: 'ru',
+    status: 'published',
     title_en: titleEn,
     title_fr: titleFr,
     title_ru: titleRu,
