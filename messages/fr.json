@@ -940,6 +940,7 @@
     "report_sending": "Envoi en cours...",
     "report_success": "Merci ! Votre signalement a été envoyé.",
     "report_error": "Une erreur est survenue. Veuillez réessayer.",
+    "image_not_available": "Image non disponible",
     "questionsCount": "{count, plural, one {# question} other {# questions}}",
     "startExercise": "Commencer",
     "lockedExercise": "🔒 Bloqué",

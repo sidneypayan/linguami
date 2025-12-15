@@ -938,6 +938,7 @@
     "report_sending": "Sending...",
     "report_success": "Thank you! Your report has been submitted.",
     "report_error": "An error occurred. Please try again.",
+    "image_not_available": "Image not available",
     "questionsCount": "{count, plural, one {# question} other {# questions}}",
     "startExercise": "Start",
     "lockedExercise": "🔒 Locked",

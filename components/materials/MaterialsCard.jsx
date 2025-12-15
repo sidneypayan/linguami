@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { PlayCircle } from 'lucide-react'
+import { PlayCircle, ImageOff } from 'lucide-react'
 import { getMaterialImageUrl } from '@/utils/mediaUrls'
 import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,7 @@ const MaterialsCard = ({ material }) => {
 	const t = useTranslations('materials')
 	const locale = useLocale()
 	const { isDark } = useThemeMode()
+	const [imageError, setImageError] = useState(false)
 
 	const getDifficultyColor = (level) => {
 		switch (level) {
@@ -64,11 +66,30 @@ const MaterialsCard = ({ material }) => {
 
 					{/* Image */}
 					<div className="relative w-full h-full transition-transform duration-500 group-hover:scale-[1.08]">
-						<img
-							src={getMaterialImageUrl(material)}
-							alt={material.title}
-							className="w-full h-full object-cover"
-						/>
+						{!imageError ? (
+							<img
+								src={getMaterialImageUrl(material)}
+								alt={material.title}
+								className="w-full h-full object-cover"
+								onError={() => setImageError(true)}
+							/>
+						) : (
+							<div className={cn(
+								'w-full h-full flex flex-col items-center justify-center gap-3',
+								isDark ? 'bg-slate-700' : 'bg-slate-200'
+							)}>
+								<ImageOff className={cn(
+									'w-12 h-12',
+									isDark ? 'text-slate-500' : 'text-slate-400'
+								)} />
+								<span className={cn(
+									'text-xs font-medium',
+									isDark ? 'text-slate-500' : 'text-slate-400'
+								)}>
+									{t('image_not_available')}
+								</span>
+							</div>
+						)}
 					</div>
 
 					{/* Play overlay on hover */}

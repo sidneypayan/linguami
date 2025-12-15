@@ -1218,53 +1218,22 @@ export async function checkBrokenImages() {
 			return trimmed.length > 0
 		})
 
-		// 4. Vérifier chaque fichier image avec limite de concurrence
+		// 4. Retourner la liste pour vérification côté client
+		// La vérification réelle se fera dans le navigateur avec l'API Image()
 		const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 		if (!R2_BASE_URL) {
 			throw new Error('R2_BASE_URL is not configured')
 		}
 
-		const BATCH_SIZE = 10
-		const checkedImages = []
-
-		for (let i = 0; i < materialsWithImage.length; i += BATCH_SIZE) {
-			const batch = materialsWithImage.slice(i, i + BATCH_SIZE)
-			const batchResults = await Promise.allSettled(
-				batch.map(async (material) => {
-					try {
-						const imageUrl = `${R2_BASE_URL}/images/materials/${material.image_filename}`
-						const status = await checkImageFile(imageUrl)
-						return {
-							...material,
-							image_url: imageUrl,
-							status,
-						}
-					} catch (error) {
-						logger.error(`Error checking image ${material.id}:`, error)
-						return {
-							...material,
-							image_url: `${R2_BASE_URL}/images/materials/${material.image_filename}`,
-							status: 'error',
-						}
-					}
-				})
-			)
-
-			batchResults.forEach(result => {
-				if (result.status === 'fulfilled') {
-					checkedImages.push(result.value)
-				}
-			})
-		}
-
-		// 5. Filtrer pour ne garder que les fichiers cassés
-		const brokenImages = checkedImages.filter(i => i.status === 'broken' || i.status === 'error')
+		const materialsToCheck = materialsWithImage.map(material => ({
+			...material,
+			image_url: `${R2_BASE_URL}/images/materials/${material.image_filename}`,
+		}))
 
 		return {
 			success: true,
-			brokenImages,
+			materialsToCheck,
 			totalImages: materialsWithImage.length,
-			checked: checkedImages.length,
 		}
 
 	} catch (error) {
@@ -1273,33 +1242,6 @@ export async function checkBrokenImages() {
 			success: false,
 			error: error.message || 'Failed to check images',
 		}
-	}
-}
-
-// ============================================================================
-// HELPER: Vérifier un fichier image sur R2
-// ============================================================================
-
-async function checkImageFile(url) {
-	if (!url) return 'broken'
-
-	try {
-		const controller = new AbortController()
-		const timeoutId = setTimeout(() => controller.abort(), 10000)
-
-		// Utiliser HEAD pour vérifier si le fichier existe sans le télécharger
-		const response = await fetch(url, {
-			method: 'HEAD',
-			signal: controller.signal,
-		})
-
-		clearTimeout(timeoutId)
-
-		// Status 200 = fichier existe, autres = cassé
-		return response.ok ? 'working' : 'broken'
-	} catch (error) {
-		logger.error(`Error checking image ${url}:`, error.message)
-		return 'broken'
 	}
 }
 

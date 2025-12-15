@@ -174,12 +174,56 @@ const AdminDashboardClient = ({ initialMaterialsData, initialBooksData }) => {
 		}
 	}
 
-	// Image functions
+	// Image functions - Vérification côté client
+	const checkImageLoad = (imageUrl) => {
+		return new Promise((resolve) => {
+			const img = new Image()
+			img.onload = () => resolve({ success: true })
+			img.onerror = () => resolve({ success: false })
+			img.src = imageUrl
+			// Timeout après 10 secondes
+			setTimeout(() => resolve({ success: false }), 10000)
+		})
+	}
+
 	const loadBrokenImages = async () => {
 		setLoadingImages(true)
 		try {
+			// 1. Récupérer la liste des materials avec images
 			const result = await checkBrokenImages()
-			setBrokenImages(result.brokenImages || [])
+
+			if (!result.success || !result.materialsToCheck) {
+				logger.error('Error fetching materials:', result.error)
+				setShowBrokenImages(true)
+				return
+			}
+
+			// 2. Vérifier chaque image côté client
+			const materialsToCheck = result.materialsToCheck
+			const brokenList = []
+			const BATCH_SIZE = 5 // Vérifier 5 images à la fois
+
+			for (let i = 0; i < materialsToCheck.length; i += BATCH_SIZE) {
+				const batch = materialsToCheck.slice(i, i + BATCH_SIZE)
+				const results = await Promise.all(
+					batch.map(async (material) => {
+						const loadResult = await checkImageLoad(material.image_url)
+						return {
+							material,
+							broken: !loadResult.success,
+						}
+					})
+				)
+
+				// Collecter les images cassées
+				results.forEach(({ material, broken }) => {
+					if (broken) {
+						brokenList.push(material)
+					}
+				})
+			}
+
+			setBrokenImages(brokenList)
 			setShowBrokenImages(true)
 		} catch (error) {
 			logger.error('Error loading broken images:', error)

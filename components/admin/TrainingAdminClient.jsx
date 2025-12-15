@@ -1080,7 +1080,7 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 													</div>
 
 													<p className="text-slate-800 font-medium">
-														{question.question_fr || question.question_en}
+														{question.question_fr || question.question_en || question.sentence || 'Question sans titre'}
 													</p>
 
 													{/* Multi-fill: show sentences */}
