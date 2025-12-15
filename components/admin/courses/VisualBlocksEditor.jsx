@@ -56,7 +56,7 @@ const ObjectivesEditor = ({ objectives, onChange }) => {
 
 			<div className="space-y-2">
 				{objectives.length === 0 && (
-					<p className="text-sm text-slate-500 text-center py-4">Aucun objectif. Cliquez sur "Ajouter" pour commencer.</p>
+					<p className="text-sm text-slate-500 text-center py-4">Aucun objectif. Cliquez sur &quot;Ajouter&quot; pour commencer.</p>
 				)}
 				{objectives.map((obj, index) => (
 					<div key={index} className="flex items-center gap-2">
@@ -176,7 +176,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 					</div>
 					<div className="grid grid-cols-2 gap-4">
 						<div>
-							<Label>Type d'exercice</Label>
+							<Label>Type d&apos;exercice</Label>
 							<Select
 								value={block.exerciseType || 'fillInBlank'}
 								onValueChange={(value) => onChange({ ...block, exerciseType: value })}
@@ -269,7 +269,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{questions.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucune question. Cliquez sur "Ajouter une question" pour commencer.
+									Aucune question. Cliquez sur &quot;Ajouter une question&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -470,7 +470,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{examples.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucun exemple. Cliquez sur "Ajouter un exemple" pour commencer.
+									Aucun exemple. Cliquez sur &quot;Ajouter un exemple&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -550,7 +550,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							</div>
 						) : (
 							<p className="text-sm text-slate-500 text-center py-4">
-								Pas de tableau. Cliquez sur "Créer un tableau" pour ajouter un tableau de conjugaison.
+								Pas de tableau. Cliquez sur &quot;Créer un tableau&quot; pour ajouter un tableau de conjugaison.
 							</p>
 						)}
 					</div>
@@ -665,7 +665,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{words.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucun mot. Cliquez sur "Ajouter un mot" pour commencer.
+									Aucun mot. Cliquez sur &quot;Ajouter un mot&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -809,7 +809,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{lines.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.
+									Aucune ligne. Cliquez sur &quot;Ajouter une ligne&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -860,7 +860,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 										</div>
 										<div className="flex items-end gap-2">
 											<div className="flex-1">
-												<Label className="text-xs">Exemple d'utilisation</Label>
+												<Label className="text-xs">Exemple d&apos;utilisation</Label>
 												<Input
 													value={word.example || ''}
 													onChange={(e) => updateVocabWord(index, 'example', e.target.value)}
@@ -882,7 +882,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{vocabulary.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucun mot de vocabulaire. Cliquez sur "Ajouter un mot" pour commencer.
+									Aucun mot de vocabulaire. Cliquez sur &quot;Ajouter un mot&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -1000,7 +1000,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{convDialogue.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucune ligne. Cliquez sur "Ajouter une ligne" pour commencer.
+									Aucune ligne. Cliquez sur &quot;Ajouter une ligne&quot; pour commencer.
 								</p>
 							)}
 						</div>
@@ -1053,7 +1053,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 							))}
 							{convQuestions.length === 0 && (
 								<p className="text-sm text-slate-500 text-center py-4">
-									Aucune question. Cliquez sur "Ajouter une question" pour commencer.
+									Aucune question. Cliquez sur &quot;Ajouter une question&quot; pour commencer.
 								</p>
 							)}
 						</div>
