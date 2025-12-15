@@ -167,11 +167,12 @@ const EpicHeader = ({ isDark, title, onBack }) => {
 // EMPTY STATE - Gaming Style
 // ============================================
 const EmptyState = ({ isDark, t }) => (
-	<OrnateFrame isDark={isDark} glowColor="amber" className={cn(
-		'p-8 text-center',
+	<div className={cn(
+		'p-8 text-center rounded-2xl',
+		'border-2',
 		isDark
-			? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90'
-			: 'bg-gradient-to-br from-white to-slate-50'
+			? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/30'
+			: 'bg-gradient-to-br from-white to-slate-50 border-violet-300/50'
 	)}>
 		{/* Rotating gem icon */}
 		<div className={cn(
@@ -207,7 +208,7 @@ const EmptyState = ({ isDark, t }) => (
 			<Shield className={cn('w-6 h-6', isDark ? 'text-amber-500/30' : 'text-amber-400/40')} />
 			<Sword className={cn('w-5 h-5 rotate-45', isDark ? 'text-amber-500/30' : 'text-amber-400/40')} />
 		</div>
-	</OrnateFrame>
+	</div>
 )
 
 // ============================================

@@ -825,7 +825,13 @@ const FilterBar = ({
 // EMPTY STATE (TREASURE NOT FOUND)
 // ============================================
 const EmptyState = ({ isDark, t }) => (
-	<OrnateFrame isDark={isDark} className="p-8 text-center">
+	<div className={cn(
+		'p-8 text-center rounded-2xl',
+		'border-2',
+		isDark
+			? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-violet-500/30'
+			: 'bg-gradient-to-br from-white to-slate-50 border-violet-300/50'
+	)}>
 		<div className={cn(
 			'w-20 h-20 mx-auto mb-4 rounded-2xl rotate-45',
 			'bg-gradient-to-br from-violet-500/20 to-cyan-500/20',
@@ -847,7 +853,7 @@ const EmptyState = ({ isDark, t }) => (
 		)}>
 			{t('noMaterialsInCategory')}
 		</p>
-	</OrnateFrame>
+	</div>
 )
 
 // ============================================
