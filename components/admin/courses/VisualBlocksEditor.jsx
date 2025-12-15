@@ -1099,7 +1099,7 @@ const SimpleBlockEditor = ({ block, onChange }) => {
 		default:
 			return (
 				<div className="bg-slate-50 border border-slate-200 rounded p-4 text-sm text-slate-600">
-					<p>Type de bloc non supporté en mode simple. Utilisez l'éditeur JSON pour ce type.</p>
+					<p>Type de bloc non supporté en mode simple. Utilisez l&apos;éditeur JSON pour ce type.</p>
 				</div>
 			)
 	}
