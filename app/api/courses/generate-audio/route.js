@@ -183,7 +183,7 @@ export async function POST(request) {
 		}
 
 		// Get public URL
-		const publicUrl = `${process.env.R2_PUBLIC_URL}/${filePath}`
+		const publicUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${filePath}`
 
 		return NextResponse.json({
 			success: true,
