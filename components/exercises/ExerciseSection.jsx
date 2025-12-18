@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useThemeMode } from '@/context/ThemeContext'
 import { GraduationCap, ChevronDown, ChevronUp, LockOpen, Trophy, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { createBrowserClient } from '@/lib/supabase'
+import { createBrowserClient, createProductionBrowserClient } from '@/lib/supabase'
 import { useUserContext } from '@/context/user'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import toast from '@/utils/toast'
@@ -14,23 +14,36 @@ import { useTranslations } from 'next-intl'
 import FillInTheBlank from './FillInTheBlank'
 import AudioDictation from './AudioDictation'
 import MultipleChoice from './MultipleChoice'
+import MultipleChoiceSequential from './MultipleChoiceSequential'
 import DragAndDrop from './DragAndDrop'
+import FillInTheBlankSequential from './FillInTheBlankSequential'
 import { logger } from '@/utils/logger'
 import { submitExercise } from '@/lib/exercises-client'
 
 /**
  * Exercise Section Component
- * Displays exercises associated with a material
+ * Displays exercises associated with a parent entity (material, lesson, or course_lesson)
  *
- * @param {number} materialId - ID of the material
+ * @param {number} materialId - ID of the material (optional, legacy)
+ * @param {number} lessonId - ID of the lesson (optional, legacy)
+ * @param {string} parentType - Type of parent: 'material', 'lesson', 'course_lesson'
+ * @param {number} parentId - ID of the parent entity
  */
-const ExerciseSection = ({ materialId }) => {
+const ExerciseSection = ({ materialId, lessonId, parentType, parentId }) => {
 	const t = useTranslations('materials')
+	const tCommon = useTranslations() // For common translations like levels
 	const { isDark } = useThemeMode()
 	const { user, isUserLoggedIn, refreshUserProfile } = useUserContext()
-	const supabase = createBrowserClient()
 	const router = useRouter()
 	const params = useParams()
+
+	// Determine which DB to use: PROD for lessons, LOCAL for materials
+	const isLesson = lessonId || parentType === 'lesson'
+
+	// Create Supabase client based on context (memoized to avoid recreating on every render)
+	const supabase = useMemo(() => {
+		return isLesson ? createProductionBrowserClient() : createBrowserClient()
+	}, [isLesson])
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
@@ -55,10 +68,20 @@ const ExerciseSection = ({ materialId }) => {
 			ru: "Вопросы на понимание",
 			fr: "Questions de comprehension"
 		},
+		"Compréhension de la leçon": {
+			en: "Lesson comprehension",
+			ru: "Понимание урока",
+			fr: "Compréhension de la leçon"
+		},
 		"Association de vocabulaire": {
 			en: "Vocabulary matching",
 			ru: "Словарные пары",
 			fr: "Association de vocabulaire"
+		},
+		"Compléter les phrases": {
+			en: "Complete the sentences",
+			ru: "Заполните пропуски",
+			fr: "Compléter les phrases"
 		}
 	}
 
@@ -72,42 +95,57 @@ const ExerciseSection = ({ materialId }) => {
 
 	useEffect(() => {
 		const loadData = async () => {
-			if (!materialId) return
+			// Support both new polymorphic and legacy approaches
+			let queryParentType = parentType
+			let queryParentId = parentId
+
+			// Legacy support: convert materialId/lessonId to parent_type/parent_id
+			if (!queryParentType && materialId) {
+				queryParentType = 'material'
+				queryParentId = materialId
+			} else if (!queryParentType && lessonId) {
+				queryParentType = 'lesson'
+				queryParentId = lessonId
+			}
+
+			if (!queryParentType || !queryParentId) return
 
 			setLoading(true)
 
+			// Polymorphic query
 			const { data: exercisesData, error: exercisesError } = await supabase
 				.from('exercises')
 				.select('*')
-				.eq('material_id', materialId)
+				.eq('parent_type', queryParentType)
+				.eq('parent_id', queryParentId)
 				.order('id', { ascending: true })
 
 			if (exercisesError) {
 				logger.error('Error loading exercises:', exercisesError)
-			} else {
-				setExercises(exercisesData || [])
-				if (exercisesData && exercisesData.length > 0) {
-					setExpanded(true)
-				}
+			}
 
-				if (isUserLoggedIn && user && exercisesData && exercisesData.length > 0) {
-					const exerciseIds = exercisesData.map(ex => ex.id)
-					const { data: progressData } = await supabase
-						.from('user_exercise_progress')
-						.select('*')
-						.eq('user_id', user.id)
-						.in('exercise_id', exerciseIds)
+			setExercises(exercisesData || [])
+			if (exercisesData && exercisesData.length > 0) {
+				setExpanded(true)
+			}
 
-					if (progressData) {
-						const progressMap = {}
-						progressData.forEach(p => {
-							progressMap[p.exercise_id] = {
-								score: p.score,
-								attempts: p.attempts
-							}
-						})
-						setExerciseProgress(progressMap)
-					}
+			if (isUserLoggedIn && user && exercisesData && exercisesData.length > 0) {
+				const exerciseIds = exercisesData.map(ex => ex.id)
+				const { data: progressData } = await supabase
+					.from('user_exercise_progress')
+					.select('*')
+					.eq('user_id', user.id)
+					.in('exercise_id', exerciseIds)
+
+				if (progressData) {
+					const progressMap = {}
+					progressData.forEach(p => {
+						progressMap[p.exercise_id] = {
+							score: p.score,
+							attempts: p.attempts
+						}
+					})
+					setExerciseProgress(progressMap)
 				}
 			}
 
@@ -115,11 +153,13 @@ const ExerciseSection = ({ materialId }) => {
 		}
 
 		loadData()
-	}, [materialId, isUserLoggedIn, user, supabase])
+	}, [materialId, lessonId, parentType, parentId, isUserLoggedIn, user, supabase])
 
 	const handleExerciseComplete = async (result) => {
 		if (!isUserLoggedIn) {
 			toast.info('Connectez-vous pour sauvegarder votre progression !')
+			// Move to next exercise even if not logged in
+			handleMoveToNextExercise()
 			return { isFirstCompletion: false, xpAwarded: 0 }
 		}
 
@@ -155,6 +195,10 @@ const ExerciseSection = ({ materialId }) => {
 				} else {
 					toast.success(t('exerciseCompleted'))
 				}
+
+				// Move to next exercise after saving
+				handleMoveToNextExercise()
+
 				return { isFirstCompletion: data.isFirstCompletion, xpAwarded: data.xpAwarded }
 			} else {
 				toast.error(t('saveError'))
@@ -164,6 +208,17 @@ const ExerciseSection = ({ materialId }) => {
 			logger.error('Error submitting exercise:', error)
 			toast.error(t('saveError'))
 			return { isFirstCompletion: false, xpAwarded: 0 }
+		}
+	}
+
+	const handleMoveToNextExercise = () => {
+		const currentIndex = exercises.findIndex(e => e.id === activeExerciseId)
+		if (currentIndex !== -1 && currentIndex < exercises.length - 1) {
+			// Move to next exercise
+			setActiveExerciseId(exercises[currentIndex + 1].id)
+		} else {
+			// No more exercises, close the exercise view
+			setActiveExerciseId(null)
 		}
 	}
 
@@ -243,6 +298,11 @@ const ExerciseSection = ({ materialId }) => {
 										exercise={activeExercise}
 										onComplete={handleExerciseComplete}
 									/>
+								) : (lessonId || parentType === 'lesson') ? (
+									<FillInTheBlankSequential
+										exercise={activeExercise}
+										onComplete={handleExerciseComplete}
+									/>
 								) : (
 									<FillInTheBlank
 										exercise={activeExercise}
@@ -251,10 +311,17 @@ const ExerciseSection = ({ materialId }) => {
 								)
 							)}
 							{activeExercise.type === 'mcq' && (
-								<MultipleChoice
-									exercise={activeExercise}
-									onComplete={handleExerciseComplete}
-								/>
+								(lessonId || parentType === 'lesson') ? (
+									<MultipleChoiceSequential
+										exercise={activeExercise}
+										onComplete={handleExerciseComplete}
+									/>
+								) : (
+									<MultipleChoice
+										exercise={activeExercise}
+										onComplete={handleExerciseComplete}
+									/>
+								)
 							)}
 							{activeExercise.type === 'drag_and_drop' && (
 								<DragAndDrop
@@ -402,7 +469,7 @@ const ExerciseSection = ({ materialId }) => {
 																? 'bg-amber-400/10 text-amber-500'
 																: 'bg-red-500/10 text-red-500'
 													)}>
-														{t(exercise.level)}
+														{tCommon(exercise.level)}
 													</span>
 													<span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-500/10 text-violet-500">
 														{t('questionsCount', { count: exercise.data?.questions?.length || exercise.data?.sentences?.length || 0 })}

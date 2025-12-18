@@ -182,9 +182,7 @@ const ExerciseInlineBlock = ({ block }) => {
 	}
 
 	const isRightItemUsed = (rightId) => {
-		const used = Object.values(matches).includes(rightId)
-		console.log('isRightItemUsed', { rightId, matches, matchValues: Object.values(matches), used })
-		return used
+		return Object.values(matches).includes(rightId)
 	}
 
 	const score = submitted

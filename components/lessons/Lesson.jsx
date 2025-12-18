@@ -10,6 +10,9 @@ import { Button } from '@/components/ui/button'
 import toast from '@/utils/toast'
 import { getToastMessage } from '@/utils/toastMessages'
 import { cn } from '@/lib/utils'
+import ExerciseInlineBlock from '@/components/courses/blocks/ExerciseInlineBlock'
+import ExerciseSection from '@/components/exercises/ExerciseSection'
+import AlphabetGridBlock from '@/components/courses/blocks/AlphabetGridBlock'
 
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
@@ -108,7 +111,8 @@ const Lesson = ({ lesson }) => {
 								return (
 									<h1
 										key={index}
-										className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+										className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent py-2 leading-tight"
+										style={{ paddingTop: '0.5rem', paddingBottom: '0.25rem' }}>
 										{block.text}
 									</h1>
 								)
@@ -454,12 +458,23 @@ const Lesson = ({ lesson }) => {
 							case 'practiceLinks':
 								// Liens vers la méthode désactivés
 								return null
+							case 'exercise_inline':
+								return <ExerciseInlineBlock key={index} block={block} />
+							case 'alphabetGrid':
+								return <AlphabetGridBlock key={index} block={block} />
 							default:
 								return null
 						}
 					})}
 				</CardContent>
 			</Card>
+
+			{/* Exercises Section */}
+			{lesson?.id && (
+				<div className="mt-8">
+					<ExerciseSection parentType="lesson" parentId={lesson.id} />
+				</div>
+			)}
 
 			{!isLessonStudied && (
 				<div className="mt-10 flex justify-center">

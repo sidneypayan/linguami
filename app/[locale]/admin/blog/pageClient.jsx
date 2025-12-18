@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import { Edit, Trash2, Plus, Eye } from 'lucide-react'
+import { Edit, Trash2, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { getAllBlogPostsAction, deleteBlogPostAction } from '@/app/actions/blog'
 import AdminNavbar from '@/components/admin/AdminNavbar'
@@ -85,25 +85,16 @@ export default function BlogListClient() {
 				{/* Header */}
 				<div className="flex flex-wrap justify-between items-center gap-4 mb-6">
 					<h1 className="text-2xl font-bold text-slate-800">{t('blogPosts')}</h1>
-					<div className="flex items-center gap-3">
-						<select
-							value={langFilter}
-							onChange={(e) => setLangFilter(e.target.value)}
-							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
-						>
-							<option value="all">{t('allLanguages')}</option>
-							<option value="fr">Français</option>
-							<option value="en">English</option>
-							<option value="ru">Русский</option>
-						</select>
-						<button
-							onClick={() => router.push(`/${locale}/admin/blog/create`)}
-							className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-						>
-							<Plus className="w-4 h-4" />
-							{t('newPost')}
-						</button>
-					</div>
+					<select
+						value={langFilter}
+						onChange={(e) => setLangFilter(e.target.value)}
+						className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
+					>
+						<option value="all">{t('allLanguages')}</option>
+						<option value="fr">{t('french')}</option>
+						<option value="en">{t('english')}</option>
+						<option value="ru">{t('russian')}</option>
+					</select>
 				</div>
 
 				{/* Table */}

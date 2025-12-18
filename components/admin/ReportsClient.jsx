@@ -80,6 +80,16 @@ const ReportsClient = ({ initialReports }) => {
 		return labels[type] || type
 	}
 
+	const getStatusLabel = (status) => {
+		const statusLabels = {
+			pending: t('pending'),
+			in_progress: t('inProgress'),
+			resolved: t('resolved'),
+			dismissed: t('dismissed'),
+		}
+		return statusLabels[status] || status
+	}
+
 	const filteredReports = statusFilter === 'all'
 		? reports
 		: reports.filter(r => r.status === statusFilter)
@@ -93,11 +103,11 @@ const ReportsClient = ({ initialReports }) => {
 	}
 
 	const tabs = [
-		{ id: 'all', label: `All (${statusCounts.all})` },
-		{ id: 'pending', label: `Pending (${statusCounts.pending})` },
-		{ id: 'in_progress', label: `In Progress (${statusCounts.in_progress})` },
-		{ id: 'resolved', label: `Resolved (${statusCounts.resolved})` },
-		{ id: 'dismissed', label: `Dismissed (${statusCounts.dismissed})` },
+		{ id: 'all', label: `${t('all')} (${statusCounts.all})` },
+		{ id: 'pending', label: `${t('pending')} (${statusCounts.pending})` },
+		{ id: 'in_progress', label: `${t('inProgress')} (${statusCounts.in_progress})` },
+		{ id: 'resolved', label: `${t('resolved')} (${statusCounts.resolved})` },
+		{ id: 'dismissed', label: `${t('dismissed')} (${statusCounts.dismissed})` },
 	]
 
 	return (
@@ -136,13 +146,13 @@ const ReportsClient = ({ initialReports }) => {
 							<table className="w-full">
 								<thead>
 									<tr className="bg-violet-50">
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Material</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Report Type</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Comment</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Reporter</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Status</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Date</th>
-										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">Actions</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('material')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('reportType')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('comment')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('reporter')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('status')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('date')}</th>
+										<th className="px-6 py-3 text-left text-xs font-bold text-violet-700 uppercase tracking-wider">{t('actions')}</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -186,12 +196,12 @@ const ReportsClient = ({ initialReports }) => {
 												</td>
 												<td className="px-6 py-4">
 													<span className={cn(
-														'inline-flex px-2.5 py-1 rounded-full text-xs font-semibold capitalize border',
+														'inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border',
 														statusStyle.bg,
 														statusStyle.text,
 														statusStyle.border
 													)}>
-														{report.status}
+														{getStatusLabel(report.status)}
 													</span>
 												</td>
 												<td className="px-6 py-4 text-sm text-slate-500">
@@ -218,28 +228,28 @@ const ReportsClient = ({ initialReports }) => {
 																	className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 																>
 																	<PlayCircle className="w-4 h-4 text-amber-500" />
-																	Mark as Pending
+																	{t('markAsPending')}
 																</button>
 																<button
 																	onClick={() => handleStatusChange(report.id, 'in_progress')}
 																	className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 																>
 																	<PlayCircle className="w-4 h-4 text-blue-500" />
-																	Mark as In Progress
+																	{t('markAsInProgress')}
 																</button>
 																<button
 																	onClick={() => handleStatusChange(report.id, 'resolved')}
 																	className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 																>
 																	<CheckCircle className="w-4 h-4 text-emerald-500" />
-																	Mark as Resolved
+																	{t('markAsResolved')}
 																</button>
 																<button
 																	onClick={() => handleStatusChange(report.id, 'dismissed')}
 																	className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 																>
 																	<XCircle className="w-4 h-4 text-slate-500" />
-																	Mark as Dismissed
+																	{t('markAsDismissed')}
 																</button>
 																<div className="border-t border-slate-200" />
 																<button
@@ -247,7 +257,7 @@ const ReportsClient = ({ initialReports }) => {
 																	className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
 																>
 																	<Trash2 className="w-4 h-4" />
-																	Delete Report
+																	{t('deleteReport')}
 																</button>
 															</div>
 														</>

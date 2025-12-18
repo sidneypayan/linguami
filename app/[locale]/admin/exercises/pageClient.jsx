@@ -150,6 +150,23 @@ const ExercisesAdmin = () => {
 		}
 	}
 
+	// Get level translation key
+	const getLevelLabel = (level) => {
+		// Map any level value to the correct translation key
+		const levelMap = {
+			'beginner': 'beginner',
+			'intermediate': 'intermediate',
+			'advanced': 'advanced',
+			'A1': 'beginner',
+			'A2': 'beginner',
+			'B1': 'intermediate',
+			'B2': 'intermediate',
+			'C1': 'advanced',
+			'C2': 'advanced'
+		}
+		return levelMap[level] || level
+	}
+
 	// Get unique sections from exercises
 	const uniqueSections = useMemo(() => {
 		const sections = exercises
@@ -330,7 +347,7 @@ const ExercisesAdmin = () => {
 				<div className="bg-white rounded-xl border border-indigo-100 p-4 mb-6">
 					<div className="flex items-center gap-2 mb-4">
 						<SlidersHorizontal className="w-5 h-5 text-indigo-500" />
-						<h2 className="font-semibold text-slate-700">Filtres et recherche</h2>
+						<h2 className="font-semibold text-slate-700">{t('filtersAndSearch')}</h2>
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
@@ -340,7 +357,7 @@ const ExercisesAdmin = () => {
 								<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
 								<input
 									type="text"
-									placeholder="Rechercher par titre ou ID..."
+									placeholder={t('searchPlaceholder')}
 									value={searchQuery}
 									onChange={(e) => setSearchQuery(e.target.value)}
 									className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
@@ -354,10 +371,10 @@ const ExercisesAdmin = () => {
 							onChange={(e) => setTypeFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">Tous types</option>
-							<option value="mcq">QCM</option>
-							<option value="fill_in_blank">Texte à trous</option>
-							<option value="drag_and_drop">Glisser-déposer</option>
+							<option value="all">{t('allTypes')}</option>
+							<option value="mcq">{t('mcqType')}</option>
+							<option value="fill_in_blank">{t('fillInBlankType')}</option>
+							<option value="drag_and_drop">{t('dragDropType')}</option>
 						</select>
 
 						{/* Level Filter */}
@@ -366,10 +383,10 @@ const ExercisesAdmin = () => {
 							onChange={(e) => setLevelFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">Tous niveaux</option>
-							<option value="beginner">Débutant</option>
-							<option value="intermediate">Intermédiaire</option>
-							<option value="advanced">Avancé</option>
+							<option value="all">{t('allLevels')}</option>
+							<option value="beginner">{t('beginner')}</option>
+							<option value="intermediate">{t('intermediate')}</option>
+							<option value="advanced">{t('advanced')}</option>
 						</select>
 
 						{/* Language Filter */}
@@ -378,7 +395,7 @@ const ExercisesAdmin = () => {
 							onChange={(e) => setLangFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">Toutes langues</option>
+							<option value="all">{t('allLanguages')}</option>
 							<option value="fr">FR</option>
 							<option value="ru">RU</option>
 							<option value="en">EN</option>
@@ -390,9 +407,9 @@ const ExercisesAdmin = () => {
 							onChange={(e) => setMaterialFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">Tous matériaux</option>
-							<option value="linked">Liés</option>
-							<option value="unlinked">Non liés</option>
+							<option value="all">{t('allMaterials')}</option>
+							<option value="linked">{t('linked')}</option>
+							<option value="unlinked">{t('unlinked')}</option>
 						</select>
 					</div>
 
@@ -403,7 +420,7 @@ const ExercisesAdmin = () => {
 							onChange={(e) => setSectionFilter(e.target.value)}
 							className="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white"
 						>
-							<option value="all">Toutes sections</option>
+							<option value="all">{t('allSections')}</option>
 							{uniqueSections.map(section => (
 								<option key={section} value={section}>{section}</option>
 							))}
@@ -414,7 +431,7 @@ const ExercisesAdmin = () => {
 							className="flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600 transition-colors"
 						>
 							<X className="w-4 h-4" />
-							Réinitialiser
+							{t('resetFilters')}
 						</button>
 					</div>
 				</div>
@@ -520,7 +537,7 @@ const ExercisesAdmin = () => {
 											</td>
 											<td className="px-4 py-3">
 												<Badge variant={getLevelVariant(exercise.level)}>
-													{t(exercise.level)}
+													{t(getLevelLabel(exercise.level))}
 												</Badge>
 											</td>
 											<td className="px-4 py-3">

@@ -33,7 +33,7 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 		},
 		{
 			id: 'blog',
-			label: 'Blog',
+			label: t('blog'),
 			href: '/admin/blog',
 			icon: FileText,
 		},
@@ -45,7 +45,7 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 		},
 		{
 			id: 'courses',
-			label: 'Courses',
+			label: t('courses'),
 			href: '/admin/courses',
 			icon: BookOpen,
 		},

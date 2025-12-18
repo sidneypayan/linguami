@@ -119,6 +119,14 @@ const UsersPage = ({ initialUsers = [] }) => {
 		return info[level] || { name: level, color: 'text-slate-500 bg-slate-500/10' }
 	}
 
+	const getRoleLabel = (role) => {
+		const roleLabels = {
+			admin: t('admin'),
+			user: t('user'),
+		}
+		return roleLabels[role] || role
+	}
+
 	const formatDate = (dateString) => {
 		if (!dateString) return 'N/A'
 		const date = new Date(dateString)
@@ -219,7 +227,7 @@ const UsersPage = ({ initialUsers = [] }) => {
 											<p className="text-xs text-slate-500 mb-1">{t('role')}</p>
 											<Badge className={cn('font-semibold', getRoleColor(user.role))}>
 												{user.role === 'admin' ? <Shield className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
-												{user.role || 'user'}
+												{getRoleLabel(user.role || 'user')}
 											</Badge>
 										</div>
 
@@ -322,9 +330,9 @@ const UsersPage = ({ initialUsers = [] }) => {
 											{user.email || 'N/A'}
 										</TableCell>
 										<TableCell>
-											<Badge className={cn('font-semibold capitalize', getRoleColor(user.role))}>
+											<Badge className={cn('font-semibold', getRoleColor(user.role))}>
 												{user.role === 'admin' ? <Shield className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
-												{user.role || 'user'}
+												{getRoleLabel(user.role || 'user')}
 											</Badge>
 										</TableCell>
 										<TableCell>

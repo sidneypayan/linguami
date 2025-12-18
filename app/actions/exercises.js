@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, createProductionServerClient } from '@/lib/supabase-server'
 import { logger } from '@/utils/logger'
 import { z } from 'zod'
 
@@ -21,17 +21,7 @@ const SubmitExerciseSchema = z.object({
  */
 export async function submitExerciseAction(exerciseId, score, completed) {
 	try {
-		const supabase = createServerClient(await cookies())
-
-		// Get authenticated user
-		const {
-			data: { user },
-			error: authError,
-		} = await supabase.auth.getUser()
-
-		if (!user || authError) {
-			throw new Error('Unauthorized')
-		}
+		const cookieStore = await cookies()
 
 		// Validate inputs with Zod
 		const validationResult = SubmitExerciseSchema.safeParse({
@@ -47,19 +37,109 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 
 		const { exerciseId: validExerciseId, score: validScore, completed: validCompleted } = validationResult.data
 
-		// Get exercise details
-		const { data: exercise, error: exerciseError } = await supabase
+		// IMPORTANT: User authentication is ALWAYS in the local database
+		const localSupabase = createServerClient(cookieStore)
+		const {
+			data: { user },
+			error: authError,
+		} = await localSupabase.auth.getUser()
+
+		if (!user || authError) {
+			throw new Error('Unauthorized')
+		}
+
+		// Try production DB first (for lessons), then local DB (for materials)
+		let supabase = createProductionServerClient(cookieStore)
+		let exercise = null
+		let useProductionDb = true
+
+		// Try to get exercise from production DB
+		const { data: prodExercise, error: prodError } = await supabase
 			.from('exercises')
 			.select('*')
 			.eq('id', validExerciseId)
 			.single()
 
-		if (exerciseError || !exercise) {
-			throw new Error('Exercise not found')
+		if (prodExercise) {
+			exercise = prodExercise
+
+			// Since progress is stored locally, we need to ensure the exercise exists in local DB too
+			// Check if exercise exists in local DB
+			const { data: localCheck } = await localSupabase
+				.from('exercises')
+				.select('id')
+				.eq('id', validExerciseId)
+				.single()
+
+			if (!localCheck) {
+				// Exercise doesn't exist in local DB, create a copy
+				logger.info(`Syncing exercise ${prodExercise.id} to local DB...`)
+
+				// Get language from the lesson if exercise is linked to a lesson
+				let lang = prodExercise.lang
+				if (!lang && prodExercise.lesson_id) {
+					const { data: lesson } = await supabase
+						.from('lessons')
+						.select('language')
+						.eq('id', prodExercise.lesson_id)
+						.single()
+
+					lang = lesson?.language
+				}
+
+				// Fallback to 'fr' if we still don't have a language
+				if (!lang) {
+					lang = 'fr'
+					logger.warn(`No language found for exercise ${prodExercise.id}, defaulting to 'fr'`)
+				}
+
+				const { error: syncError } = await localSupabase
+					.from('exercises')
+					.insert({
+						id: prodExercise.id,
+						title: prodExercise.title,
+						type: prodExercise.type,
+						level: prodExercise.level,
+						lang: lang,
+						data: prodExercise.data,
+						xp_reward: prodExercise.xp_reward,
+						material_id: prodExercise.material_id,
+						lesson_id: prodExercise.lesson_id,
+						created_at: prodExercise.created_at,
+						updated_at: prodExercise.updated_at
+					})
+
+				if (syncError) {
+					logger.error('Error syncing exercise to local DB:', syncError)
+					throw new Error(`Failed to sync exercise to local DB: ${syncError.message || syncError.code || JSON.stringify(syncError)}`)
+				} else {
+					logger.info(`Successfully synced exercise ${prodExercise.id} to local DB`)
+				}
+			}
+		} else {
+			// Exercise not in production DB, try local DB
+			supabase = localSupabase
+			useProductionDb = false
+
+			const { data: localExercise, error: localError } = await supabase
+				.from('exercises')
+				.select('*')
+				.eq('id', validExerciseId)
+				.single()
+
+			if (localExercise) {
+				exercise = localExercise
+			} else {
+				throw new Error('Exercise not found in any database')
+			}
 		}
 
+		// IMPORTANT: User progress is ALWAYS stored in the local database
+		// even if the exercise comes from the production database
+		const progressSupabase = localSupabase
+
 		// Check if user has already completed this exercise
-		const { data: existingProgress } = await supabase
+		const { data: existingProgress } = await progressSupabase
 			.from('user_exercise_progress')
 			.select('*')
 			.eq('user_id', user.id)
@@ -71,7 +151,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 		// Update or insert progress
 		if (existingProgress) {
 			// Update existing progress
-			const { error: updateError } = await supabase
+			const { error: updateError } = await progressSupabase
 				.from('user_exercise_progress')
 				.update({
 					score: Math.max(existingProgress.score || 0, validScore), // Keep best score
@@ -91,7 +171,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 			}
 		} else {
 			// Insert new progress
-			const { error: insertError } = await supabase
+			const { error: insertError } = await progressSupabase
 				.from('user_exercise_progress')
 				.insert({
 					user_id: user.id,
@@ -105,7 +185,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 
 			if (insertError) {
 				logger.error('Error inserting progress:', insertError)
-				throw new Error('Failed to save progress')
+				throw new Error(`Failed to save progress: ${insertError.message || insertError.code || JSON.stringify(insertError)}`)
 			}
 		}
 
@@ -122,10 +202,14 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 			xpAwarded = baseXp
 			goldAwarded = Math.floor(xpAwarded / 10) // 10:1 ratio
 
+			// IMPORTANT: XP system is ALWAYS in the local database
+			// Even if the exercise is in production DB, XP tables are in local DB
+			const xpSupabase = localSupabase
+
 			// Add XP and gold directly to database
 			try {
 				// Get current XP profile
-				const { data: xpProfile, error: xpProfileError } = await supabase
+				const { data: xpProfile, error: xpProfileError } = await xpSupabase
 					.from('user_xp_profile')
 					.select('*')
 					.eq('user_id', user.id)
@@ -138,7 +222,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 				const newTotalGold = (xpProfile.total_gold || 0) + goldAwarded
 
 				// Calculate new level using RPC function
-				const { data: levelData } = await supabase.rpc('calculate_level_from_xp', {
+				const { data: levelData } = await xpSupabase.rpc('calculate_level_from_xp', {
 					total_xp: newTotalXp,
 				})
 
@@ -146,7 +230,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 				const xpInLevel = levelData[0].xp_in_level
 
 				// Update XP profile with all calculated values
-				const { error: updateError } = await supabase
+				const { error: updateError } = await xpSupabase
 					.from('user_xp_profile')
 					.update({
 						total_xp: newTotalXp,
@@ -159,7 +243,7 @@ export async function submitExerciseAction(exerciseId, score, completed) {
 				if (updateError) throw updateError
 
 				// Insert XP transaction
-				const { error: txError } = await supabase.from('xp_transactions').insert({
+				const { error: txError } = await xpSupabase.from('xp_transactions').insert({
 					user_id: user.id,
 					xp_amount: xpAwarded,
 					gold_earned: goldAwarded,

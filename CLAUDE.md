@@ -2,6 +2,42 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+# 🚨 RÈGLE CRITIQUE - LIRE EN PREMIER 🚨
+
+## ⛔ AVANT CHAQUE COMMIT : CHECKLIST OBLIGATOIRE ⛔
+
+**TOUJOURS suivre ces étapes dans cet ordre :**
+
+```bash
+# ✅ ÉTAPE 1 : Voir TOUS les fichiers modifiés
+git status
+
+# ✅ ÉTAPE 2 : Montrer la liste à l'utilisateur et demander confirmation
+"Voici tous les fichiers modifiés : [liste]. Je vais TOUS les inclure dans le commit, OK ?"
+
+# ✅ ÉTAPE 3 : Ajouter TOUS les fichiers
+git add [fichier1] [fichier2] [fichier3] ...
+
+# ✅ ÉTAPE 4 : Commiter avec TOUS les fichiers
+git commit -m "message"
+
+# ✅ ÉTAPE 5 : Vérifier qu'il ne reste RIEN
+git status  # Doit afficher "nothing to commit, working tree clean"
+```
+
+**❌ NE JAMAIS :**
+- Commiter seulement une partie des fichiers (scripts uniquement, composants uniquement, etc.)
+- Décider arbitrairement quels fichiers inclure
+- Oublier de faire `git status` avant le commit
+
+**✅ TOUJOURS :**
+- Inclure 100% des fichiers modifiés dans le commit
+- Demander confirmation à l'utilisateur si tu as un doute
+
+---
+
 ## Quick Start
 
 **Tech Stack:** Next.js 13.4, React 18.2, Material-UI 5.10, Redux Toolkit, Supabase, next-translate
@@ -68,31 +104,62 @@ npm run lint         # Run ESLint
 - Merger directement dans `develop` puis `main`
 - Push uniquement `develop` et `main`
 
-### TOUJOURS commiter TOUS les changements
+### 🚨 TOUJOURS commiter TOUS les changements 🚨
 
-**RÈGLE ABSOLUE :** Quand l'utilisateur demande de commiter, TOUJOURS inclure TOUS les fichiers modifiés depuis le dernier commit.
+**RÈGLE ABSOLUE :** Quand l'utilisateur demande de commiter, TOUJOURS inclure 100% des fichiers modifiés depuis le dernier commit. PAS D'EXCEPTION.
 
-**Workflow correct :**
-1. Avant de commiter, **TOUJOURS** faire `git status` pour voir TOUS les fichiers modifiés
-2. Vérifier que TOUS les fichiers pertinents sont inclus dans le commit
-3. Si des fichiers modifiés ne sont pas stagés, les ajouter avec `git add`
-4. Ne JAMAIS laisser des modifications importantes non commitées
+**⚠️ PROCÉDURE OBLIGATOIRE AVANT CHAQUE COMMIT :**
 
-**❌ Ne PAS faire :**
-- Commiter seulement une partie des fichiers modifiés
-- Oublier des fichiers critiques (Server Actions, composants, etc.)
-- Supposer que seuls certains fichiers sont pertinents
-- Laisser des fichiers modifiés en "Changes not staged for commit"
+```bash
+# 1️⃣ OBLIGATOIRE : Afficher TOUS les fichiers modifiés
+git status
 
-**✅ Faire :**
-- `git status` AVANT chaque commit pour tout voir
-- Inclure TOUS les fichiers modifiés liés à la fonctionnalité
-- Vérifier que le commit est complet
-- Si doute, demander à l'utilisateur quels fichiers inclure
+# 2️⃣ OBLIGATOIRE : Montrer la liste complète à l'utilisateur
+Dire : "Voici TOUS les fichiers modifiés :
+- components/lessons/Lesson.jsx
+- components/exercises/ExerciseSection.jsx
+- scripts/create-lesson-10.js
+- (etc...)
 
-**Exemple d'erreur à éviter :**
-- Commiter `MaterialsCard.jsx` mais oublier `app/actions/materials.js` qui fetch les données
-- Résultat : le frontend ne fonctionne pas en production car les données ne sont pas récupérées
+Je vais TOUS les inclure dans le commit. Confirmes-tu ?"
+
+# 3️⃣ OBLIGATOIRE : Ajouter TOUS les fichiers (pas une sélection)
+git add <fichier1> <fichier2> <fichier3> ...
+
+# 4️⃣ OBLIGATOIRE : Vérifier qu'il ne reste RIEN avant de commiter
+git status  # DOIT afficher "nothing to commit" ou tous les fichiers en vert
+
+# 5️⃣ Commiter
+git commit -m "message"
+```
+
+**❌ ERREURS INTERDITES :**
+- ❌ Commiter seulement une partie des fichiers modifiés (ex: seulement les scripts, seulement les composants)
+- ❌ Oublier des fichiers critiques (Server Actions, composants, hooks, etc.)
+- ❌ Supposer que seuls certains fichiers sont pertinents
+- ❌ Laisser des fichiers modifiés en "Changes not staged for commit"
+- ❌ Ne PAS faire `git status` avant le commit
+
+**✅ RÈGLES À SUIVRE :**
+- ✅ `git status` SYSTÉMATIQUEMENT avant chaque commit
+- ✅ Inclure 100% des fichiers modifiés dans le commit
+- ✅ Montrer la liste complète à l'utilisateur AVANT de commiter
+- ✅ Demander confirmation si le moindre doute
+- ✅ Vérifier avec `git status` qu'il ne reste RIEN après le add
+
+**💀 EXEMPLES D'ERREURS CATASTROPHIQUES À NE JAMAIS REPRODUIRE :**
+
+1. **Commiter seulement les scripts, oublier les composants React**
+   - ❌ Commit: `scripts/create-lesson-10.js`
+   - ❌ Oublié: `components/lessons/Lesson.jsx`, `components/exercises/ExerciseSection.jsx`
+   - 💥 Résultat: Les leçons existent en DB mais ne s'affichent pas car le code front est absent
+
+2. **Commiter le frontend, oublier les Server Actions**
+   - ❌ Commit: `components/MaterialsCard.jsx`
+   - ❌ Oublié: `app/actions/materials.js`
+   - 💥 Résultat: L'interface existe mais ne peut pas récupérer les données
+
+**🎯 OBJECTIF : `git status` doit afficher "nothing to commit, working tree clean" après chaque commit**
 
 ---
 

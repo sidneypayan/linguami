@@ -1218,8 +1218,8 @@ const ThemeDetailPanel = ({ theme, level, lang, onClose, locale }) => {
 
 // Section tabs config
 const sectionTabs = [
-	{ key: 'vocabulary', icon: BookA, label: { fr: 'Vocabulaire', en: 'Vocabulary' } },
-	{ key: 'grammar', icon: GraduationCap, label: { fr: 'Grammaire', en: 'Grammar' } },
+	{ key: 'vocabulary', icon: BookA, label: { fr: 'Vocabulaire', en: 'Vocabulary', ru: 'Словарь' } },
+	{ key: 'grammar', icon: GraduationCap, label: { fr: 'Grammaire', en: 'Grammar', ru: 'Грамматика' } },
 ]
 
 const TrainingAdminClient = () => {
@@ -1311,7 +1311,7 @@ const TrainingAdminClient = () => {
 											: 'text-slate-500 hover:bg-slate-100'
 									)}
 								>
-									🇷🇺 Russe
+									🇷🇺 {t('russian')}
 								</button>
 								<button
 									onClick={() => setSelectedLang('fr')}
@@ -1322,7 +1322,7 @@ const TrainingAdminClient = () => {
 											: 'text-slate-500 hover:bg-slate-100'
 									)}
 								>
-									🇫🇷 Français
+									🇫🇷 {t('french')}
 								</button>
 							</div>
 						</div>
@@ -1492,16 +1492,14 @@ const TrainingAdminClient = () => {
 							<GraduationCap className="w-10 h-10 text-purple-600" />
 						</div>
 						<h3 className="text-xl font-bold text-slate-800 mb-2">
-							{locale === 'fr' ? 'Section Grammaire' : 'Grammar Section'}
+							{t('grammarSection')}
 						</h3>
 						<p className="text-slate-500 max-w-md mx-auto mb-6">
-							{locale === 'fr'
-								? 'Cette section permettra de gerer les exercices de grammaire (conjugaison, declinaisons, syntaxe, etc.)'
-								: 'This section will allow managing grammar exercises (conjugation, declensions, syntax, etc.)'}
+							{t('grammarSectionDescription')}
 						</p>
 						<span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium text-sm">
 							<Sparkles className="w-4 h-4" />
-							{locale === 'fr' ? 'Bientot disponible' : 'Coming soon'}
+							{t('comingSoon')}
 						</span>
 					</div>
 				)}

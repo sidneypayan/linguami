@@ -36,7 +36,24 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
   const [isFirstCompletion, setIsFirstCompletion] = useState(false);
 
   const locale = params.locale || "fr";
-  const rawQuestions = exercise?.data?.questions || [];
+
+  // Support both formats: questions (materials) and sentences (lessons)
+  let rawQuestions = exercise?.data?.questions || [];
+
+  // Convert sentences format to questions format if needed
+  if (!rawQuestions.length && exercise?.data?.sentences) {
+    rawQuestions = exercise.data.sentences.map((sent, idx) => ({
+      id: sent.id || idx + 1,
+      text: sent.question || sent.sentence,
+      blanks: [{
+        answer: sent.answer,
+        acceptableAnswers: sent.acceptableAnswers || [sent.answer],
+        hint: sent.hint
+      }],
+      explanation: sent.explanation || sent.hint
+    }))
+  }
+
   // Localize all questions
   const questions = rawQuestions.map((q) => getLocalizedQuestion(q, locale));
 

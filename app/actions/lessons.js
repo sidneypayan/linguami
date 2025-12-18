@@ -1,6 +1,6 @@
 'use server'
 
-import { createServerClient } from '@/lib/supabase-server'
+import { createProductionServerClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 import { logger } from '@/utils/logger'
 import { revalidatePath } from 'next/cache'
@@ -19,7 +19,7 @@ export async function markLessonAsStudied(lessonId) {
 	// Validate lessonId
 	const validLessonId = LessonIdSchema.parse(lessonId)
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createProductionServerClient(cookieStore)
 
 	// Get authenticated user
 	const {
@@ -113,7 +113,7 @@ export async function getLessonStatus(lessonId) {
 	const validLessonId = LessonIdSchema.parse(lessonId)
 
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createProductionServerClient(cookieStore)
 
 	// Get authenticated user
 	const {
@@ -154,7 +154,7 @@ export async function getLessonStatus(lessonId) {
  */
 export async function getAllLessonStatuses() {
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createProductionServerClient(cookieStore)
 
 	// Get authenticated user
 	const {
@@ -194,7 +194,7 @@ export async function hasLessonsForLanguage(lang) {
 	const validLang = LanguageSchema.parse(lang)
 
 	const cookieStore = await cookies()
-	const supabase = createServerClient(cookieStore)
+	const supabase = createProductionServerClient(cookieStore)
 
 	try {
 		const { count, error } = await supabase

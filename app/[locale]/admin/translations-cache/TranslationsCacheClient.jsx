@@ -255,7 +255,7 @@ const TranslationsCacheClient = () => {
 								</div>
 								<div>
 									<p className="text-2xl font-bold text-slate-800">{stats.totalCount}</p>
-									<p className="text-xs text-slate-500">Entrees en cache</p>
+									<p className="text-xs text-slate-500">{t('cacheEntries')}</p>
 								</div>
 							</div>
 						</div>
@@ -266,7 +266,7 @@ const TranslationsCacheClient = () => {
 								</div>
 								<div>
 									<p className="text-2xl font-bold text-slate-800">{stats.totalUsage}</p>
-									<p className="text-xs text-slate-500">Utilisations totales</p>
+									<p className="text-xs text-slate-500">{t('totalUsage')}</p>
 								</div>
 							</div>
 						</div>
@@ -281,7 +281,7 @@ const TranslationsCacheClient = () => {
 											<span key={lang} className="mr-2">{getLangInfo(lang).flag} {count}</span>
 										))}
 									</p>
-									<p className="text-xs text-slate-500">Par langue source</p>
+									<p className="text-xs text-slate-500">{t('bySourceLang')}</p>
 								</div>
 							</div>
 						</div>
@@ -296,7 +296,7 @@ const TranslationsCacheClient = () => {
 											<span key={lang} className="mr-2">{getLangInfo(lang).flag} {count}</span>
 										))}
 									</p>
-									<p className="text-xs text-slate-500">Par langue cible</p>
+									<p className="text-xs text-slate-500">{t('byTargetLang')}</p>
 								</div>
 							</div>
 						</div>
@@ -314,7 +314,7 @@ const TranslationsCacheClient = () => {
 									value={searchInput}
 									onChange={(e) => setSearchInput(e.target.value)}
 									onKeyPress={handleKeyPress}
-									placeholder="Rechercher un mot..."
+									placeholder={t('searchWord')}
 									className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
 								/>
 								<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -327,7 +327,7 @@ const TranslationsCacheClient = () => {
 							onChange={(e) => { setSourceLang(e.target.value); setPage(1) }}
 							className="px-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
 						>
-							<option value="">Toutes sources</option>
+							<option value="">{t('allSources')}</option>
 							{LANGUAGES.map(lang => (
 								<option key={lang.code} value={lang.code}>{lang.flag} {lang.name}</option>
 							))}
@@ -339,7 +339,7 @@ const TranslationsCacheClient = () => {
 							onChange={(e) => { setTargetLang(e.target.value); setPage(1) }}
 							className="px-3 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
 						>
-							<option value="">Toutes cibles</option>
+							<option value="">{t('allTargets')}</option>
 							{LANGUAGES.map(lang => (
 								<option key={lang.code} value={lang.code}>{lang.flag} {lang.name}</option>
 							))}
@@ -375,7 +375,7 @@ const TranslationsCacheClient = () => {
 							className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors ml-auto"
 						>
 							<Plus className="w-4 h-4" />
-							<span className="hidden sm:inline">Ajouter</span>
+							<span className="hidden sm:inline">{t('add')}</span>
 						</button>
 					</div>
 
@@ -383,14 +383,14 @@ const TranslationsCacheClient = () => {
 					{selectedIds.length > 0 && (
 						<div className="mt-4 pt-4 border-t border-slate-200 flex items-center gap-4">
 							<span className="text-sm text-slate-600">
-								{selectedIds.length} selectionne(s)
+								{selectedIds.length} {t('selected')}
 							</span>
 							<button
 								onClick={() => setDeleteConfirm({ open: true, id: null, multiple: true })}
 								className="flex items-center gap-2 px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 							>
 								<Trash2 className="w-4 h-4" />
-								Supprimer
+								{t('delete')}
 							</button>
 						</div>
 					)}
@@ -415,7 +415,7 @@ const TranslationsCacheClient = () => {
 										onClick={() => handleSort('searched_form')}
 									>
 										<div className="flex items-center gap-1">
-											Forme recherchee
+											{t('searchedForm')}
 											<ArrowUpDown className="w-3 h-3" />
 										</div>
 									</th>
@@ -424,22 +424,22 @@ const TranslationsCacheClient = () => {
 										onClick={() => handleSort('lemma')}
 									>
 										<div className="flex items-center gap-1">
-											Lemme
+											{t('lemma')}
 											<ArrowUpDown className="w-3 h-3" />
 										</div>
 									</th>
-									<th className="px-4 py-3 text-left font-semibold text-slate-600">Langues</th>
-									<th className="px-4 py-3 text-left font-semibold text-slate-600">Traductions</th>
+									<th className="px-4 py-3 text-left font-semibold text-slate-600">{t('langues')}</th>
+									<th className="px-4 py-3 text-left font-semibold text-slate-600">{t('translationsColumn')}</th>
 									<th
 										className="px-4 py-3 text-center font-semibold text-slate-600 cursor-pointer hover:text-indigo-600"
 										onClick={() => handleSort('usage_count')}
 									>
 										<div className="flex items-center justify-center gap-1">
-											Usages
+											{t('usages')}
 											<ArrowUpDown className="w-3 h-3" />
 										</div>
 									</th>
-									<th className="px-4 py-3 text-right font-semibold text-slate-600">Actions</th>
+									<th className="px-4 py-3 text-right font-semibold text-slate-600">{t('actions')}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -452,7 +452,7 @@ const TranslationsCacheClient = () => {
 								) : translations.length === 0 ? (
 									<tr>
 										<td colSpan={7} className="px-4 py-12 text-center text-slate-500">
-											Aucune traduction trouvee
+											{t('noTranslationFound')}
 										</td>
 									</tr>
 								) : (
@@ -529,7 +529,7 @@ const TranslationsCacheClient = () => {
 					{totalPages > 1 && (
 						<div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
 							<span className="text-sm text-slate-500">
-								{totalCount} entree(s) au total
+								{totalCount} {t('entriesTotal')}
 							</span>
 							<div className="flex items-center gap-2">
 								<button
@@ -540,7 +540,7 @@ const TranslationsCacheClient = () => {
 									<ChevronLeft className="w-4 h-4" />
 								</button>
 								<span className="text-sm text-slate-600">
-									Page {page} / {totalPages}
+									{t('page')} {page} / {totalPages}
 								</span>
 								<button
 									onClick={() => setPage(p => Math.min(totalPages, p + 1))}
@@ -560,14 +560,14 @@ const TranslationsCacheClient = () => {
 				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 					<div className="bg-white rounded-xl max-w-lg w-full">
 						<div className="p-6 border-b border-slate-200 flex items-center justify-between">
-							<h3 className="text-lg font-bold text-slate-800">Modifier la traduction</h3>
+							<h3 className="text-lg font-bold text-slate-800">{t('editTranslation')}</h3>
 							<button onClick={() => setEditModal({ open: false, translation: null })} className="p-2 hover:bg-slate-100 rounded-lg">
 								<X className="w-5 h-5 text-slate-500" />
 							</button>
 						</div>
 						<div className="p-6 space-y-4">
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Forme recherchee</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('searchedForm')}</label>
 								<input
 									type="text"
 									value={formData.searched_form}
@@ -576,7 +576,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Lemme</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('lemma')}</label>
 								<input
 									type="text"
 									value={formData.lemma}
@@ -585,7 +585,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Type de mot</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('wordType')}</label>
 								<input
 									type="text"
 									value={formData.part_of_speech}
@@ -595,7 +595,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Traductions (separees par des virgules)</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('translationsSeparatedByComma')}</label>
 								<input
 									type="text"
 									value={formData.translations}
@@ -610,7 +610,7 @@ const TranslationsCacheClient = () => {
 								onClick={() => setEditModal({ open: false, translation: null })}
 								className="px-4 py-2 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
 							>
-								Annuler
+								{t('cancel')}
 							</button>
 							<button
 								onClick={handleUpdate}
@@ -618,7 +618,7 @@ const TranslationsCacheClient = () => {
 								className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-colors"
 							>
 								{saving && <Loader2 className="w-4 h-4 animate-spin" />}
-								Enregistrer
+								{t('save')}
 							</button>
 						</div>
 					</div>
@@ -630,7 +630,7 @@ const TranslationsCacheClient = () => {
 				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 					<div className="bg-white rounded-xl max-w-lg w-full">
 						<div className="p-6 border-b border-slate-200 flex items-center justify-between">
-							<h3 className="text-lg font-bold text-slate-800">Ajouter une traduction</h3>
+							<h3 className="text-lg font-bold text-slate-800">{t('addTranslation')}</h3>
 							<button onClick={() => setAddModal(false)} className="p-2 hover:bg-slate-100 rounded-lg">
 								<X className="w-5 h-5 text-slate-500" />
 							</button>
@@ -638,7 +638,7 @@ const TranslationsCacheClient = () => {
 						<div className="p-6 space-y-4">
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<label className="block text-sm font-medium text-slate-700 mb-1">Langue source</label>
+									<label className="block text-sm font-medium text-slate-700 mb-1">{t('sourceLang')}</label>
 									<select
 										value={formData.source_lang}
 										onChange={(e) => setFormData(prev => ({ ...prev, source_lang: e.target.value }))}
@@ -650,7 +650,7 @@ const TranslationsCacheClient = () => {
 									</select>
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-slate-700 mb-1">Langue cible</label>
+									<label className="block text-sm font-medium text-slate-700 mb-1">{t('targetLang')}</label>
 									<select
 										value={formData.target_lang}
 										onChange={(e) => setFormData(prev => ({ ...prev, target_lang: e.target.value }))}
@@ -663,7 +663,7 @@ const TranslationsCacheClient = () => {
 								</div>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Forme recherchee</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('searchedForm')}</label>
 								<input
 									type="text"
 									value={formData.searched_form}
@@ -673,7 +673,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Lemme</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('lemma')}</label>
 								<input
 									type="text"
 									value={formData.lemma}
@@ -683,7 +683,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Type de mot</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('wordType')}</label>
 								<input
 									type="text"
 									value={formData.part_of_speech}
@@ -693,7 +693,7 @@ const TranslationsCacheClient = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-1">Traductions (separees par des virgules)</label>
+								<label className="block text-sm font-medium text-slate-700 mb-1">{t('translationsSeparatedByComma')}</label>
 								<input
 									type="text"
 									value={formData.translations}
@@ -708,7 +708,7 @@ const TranslationsCacheClient = () => {
 								onClick={() => setAddModal(false)}
 								className="px-4 py-2 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
 							>
-								Annuler
+								{t('cancel')}
 							</button>
 							<button
 								onClick={handleAdd}
@@ -716,7 +716,7 @@ const TranslationsCacheClient = () => {
 								className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-colors"
 							>
 								{saving && <Loader2 className="w-4 h-4 animate-spin" />}
-								Ajouter
+								{t('add')}
 							</button>
 						</div>
 					</div>
@@ -727,18 +727,18 @@ const TranslationsCacheClient = () => {
 			{deleteConfirm.open && (
 				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
 					<div className="bg-white rounded-xl max-w-md w-full p-6">
-						<h3 className="text-lg font-bold text-slate-800 mb-2">Confirmer la suppression</h3>
+						<h3 className="text-lg font-bold text-slate-800 mb-2">{t('confirmDeletion')}</h3>
 						<p className="text-slate-600 mb-6">
 							{deleteConfirm.multiple
-								? `Voulez-vous vraiment supprimer ${selectedIds.length} traduction(s) ?`
-								: 'Voulez-vous vraiment supprimer cette traduction ?'}
+								? t('confirmDeleteMultiple', { count: selectedIds.length })
+								: t('confirmDeleteSingle')}
 						</p>
 						<div className="flex justify-end gap-3">
 							<button
 								onClick={() => setDeleteConfirm({ open: false, id: null, multiple: false })}
 								className="px-4 py-2 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors"
 							>
-								Annuler
+								{t('cancel')}
 							</button>
 							<button
 								onClick={handleDelete}
@@ -746,7 +746,7 @@ const TranslationsCacheClient = () => {
 								className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:bg-slate-300 transition-colors"
 							>
 								{saving && <Loader2 className="w-4 h-4 animate-spin" />}
-								Supprimer
+								{t('delete')}
 							</button>
 						</div>
 					</div>
