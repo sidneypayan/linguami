@@ -693,7 +693,7 @@
     "filtersAndSearch": "Filters and search",
     "searchPlaceholder": "Search by title or ID...",
     "allTypes": "All types",
-    "dragDropType": "Drag and drop",
+    "dragDropType": "Matching",
     "allLevels": "All levels",
     "allLanguages": "All languages",
     "allMaterials": "All materials",
@@ -774,7 +774,6 @@
     "loadingExercise": "Loading exercise...",
     "createDragDropTitle": "Create Matching Exercise",
     "editDragDropTitle": "Edit Matching Exercise",
-    "dragDropType": "Matching",
     "dragDropInfo": "How to create a Matching exercise:",
     "dragDropStep1": "Write a clear instruction (e.g., 'Match the words with their translations')",
     "dragDropStep2": "Add pairs of items to match (e.g., French word - Russian translation)",
@@ -923,7 +922,8 @@
     "table_form": "Form",
     "table_translation": "Translation",
     "show_menu": "Menu",
-    "lessons_available": "lessons available"
+    "lessons_available": "lessons available",
+    "alphabet_click_to_hear": "Click on a letter to hear its pronunciation"
   },
   "materials": {
     "pagetitle": "Learning Materials | Authentic Videos, Audio & Texts",

@@ -1,0 +1,162 @@
+{
+  "type": "alphabetGrid",
+  "title": "Французский алфавит с иллюстрациями",
+  "letters": [
+    {
+      "word": "Самолёт",
+      "emoji": "✈️",
+      "letter": "A",
+      "pronunciation": "[а]"
+    },
+    {
+      "word": "Мяч",
+      "emoji": "⚽",
+      "letter": "B",
+      "pronunciation": "[бе]"
+    },
+    {
+      "word": "Кот",
+      "emoji": "🐱",
+      "letter": "C",
+      "pronunciation": "[се]"
+    },
+    {
+      "word": "Дельфин",
+      "emoji": "🐬",
+      "letter": "D",
+      "pronunciation": "[де]"
+    },
+    {
+      "word": "Слон",
+      "emoji": "🐘",
+      "letter": "E",
+      "pronunciation": "[ё]"
+    },
+    {
+      "word": "Цветок",
+      "emoji": "🌸",
+      "letter": "F",
+      "pronunciation": "[эф]"
+    },
+    {
+      "word": "Жираф",
+      "emoji": "🦒",
+      "letter": "G",
+      "pronunciation": "[же]"
+    },
+    {
+      "word": "Вертолёт",
+      "emoji": "🚁",
+      "letter": "H",
+      "pronunciation": "[аш]"
+    },
+    {
+      "word": "Остров",
+      "emoji": "🏝️",
+      "letter": "I",
+      "pronunciation": "[и]"
+    },
+    {
+      "word": "Сад",
+      "emoji": "🏡",
+      "letter": "J",
+      "pronunciation": "[жи]"
+    },
+    {
+      "word": "Кенгуру",
+      "emoji": "🦘",
+      "letter": "K",
+      "pronunciation": "[ка]"
+    },
+    {
+      "word": "Лев",
+      "emoji": "🦁",
+      "letter": "L",
+      "pronunciation": "[эль]"
+    },
+    {
+      "word": "Дом",
+      "emoji": "🏠",
+      "letter": "M",
+      "pronunciation": "[эм]"
+    },
+    {
+      "word": "Облако",
+      "emoji": "☁️",
+      "letter": "N",
+      "pronunciation": "[эн]"
+    },
+    {
+      "word": "Птица",
+      "emoji": "🐦",
+      "letter": "O",
+      "pronunciation": "[о]"
+    },
+    {
+      "word": "Яблоко",
+      "emoji": "🍎",
+      "letter": "P",
+      "pronunciation": "[пе]"
+    },
+    {
+      "word": "Хвост",
+      "emoji": "🦎",
+      "letter": "Q",
+      "pronunciation": "[кю]"
+    },
+    {
+      "word": "Роза",
+      "emoji": "🌹",
+      "letter": "R",
+      "pronunciation": "[эр]"
+    },
+    {
+      "word": "Солнце",
+      "emoji": "☀️",
+      "letter": "S",
+      "pronunciation": "[эс]"
+    },
+    {
+      "word": "Поезд",
+      "emoji": "🚂",
+      "letter": "T",
+      "pronunciation": "[те]"
+    },
+    {
+      "word": "Завод",
+      "emoji": "🏭",
+      "letter": "U",
+      "pronunciation": "[ю]"
+    },
+    {
+      "word": "Машина",
+      "emoji": "🚗",
+      "letter": "V",
+      "pronunciation": "[ве]"
+    },
+    {
+      "word": "Вагон",
+      "emoji": "🚃",
+      "letter": "W",
+      "pronunciation": "[дубльве]"
+    },
+    {
+      "word": "Ксилофон",
+      "emoji": "🎵",
+      "letter": "X",
+      "pronunciation": "[икс]"
+    },
+    {
+      "word": "Йогурт",
+      "emoji": "🥛",
+      "letter": "Y",
+      "pronunciation": "[игрэк]"
+    },
+    {
+      "word": "Зебра",
+      "emoji": "🦓",
+      "letter": "Z",
+      "pronunciation": "[зэд]"
+    }
+  ]
+}

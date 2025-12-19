@@ -4,31 +4,56 @@ import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { Card } from '@/components/ui/card'
 import { Volume2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 
 /**
  * AlphabetGridBlock Component
- * Displays the French alphabet in a grid with illustrations and pronunciations
+ * Displays the French alphabet in a grid with illustrations
  *
  * @param {Object} block - Block data containing title and letters array
  */
 const AlphabetGridBlock = ({ block }) => {
 	const { isDark } = useThemeMode()
+	const t = useTranslations('lessons')
 	const [playingLetter, setPlayingLetter] = useState(null)
+	const audioRef = useRef(null)
 
-	// Play pronunciation sound
-	const playPronunciation = (letter, pronunciation) => {
+	// Play pronunciation sound from ElevenLabs audio
+	const playPronunciation = (letter, audioUrl) => {
+		if (!audioUrl) {
+			console.warn(`No audio URL for letter ${letter}`)
+			return
+		}
+
 		setPlayingLetter(letter)
 
 		try {
-			// Create simple pronunciation feedback
-			const utterance = new SpeechSynthesisUtterance(letter)
-			utterance.lang = 'fr-FR'
-			utterance.rate = 0.7
-			utterance.onend = () => setPlayingLetter(null)
-			window.speechSynthesis.speak(utterance)
+			// Stop any currently playing audio
+			if (audioRef.current) {
+				audioRef.current.pause()
+				audioRef.current.currentTime = 0
+			}
+
+			// Create new audio element
+			const audio = new Audio(audioUrl)
+			audioRef.current = audio
+
+			audio.onended = () => {
+				setPlayingLetter(null)
+			}
+
+			audio.onerror = (error) => {
+				console.error('Audio playback error:', error)
+				setPlayingLetter(null)
+			}
+
+			audio.play().catch(error => {
+				console.error('Failed to play audio:', error)
+				setPlayingLetter(null)
+			})
 		} catch (error) {
-			console.error('Speech synthesis error:', error)
+			console.error('Audio error:', error)
 			setPlayingLetter(null)
 		}
 	}
@@ -55,15 +80,24 @@ const AlphabetGridBlock = ({ block }) => {
 					<Card
 						key={item.letter}
 						className={cn(
-							'p-4 flex flex-col items-center justify-center gap-2 transition-all duration-200 cursor-pointer group',
+							'p-4 flex flex-col items-center justify-center gap-2 transition-all duration-200 cursor-pointer group relative',
 							'hover:shadow-lg hover:-translate-y-1',
 							isDark
 								? 'bg-slate-800 border-slate-700 hover:bg-slate-750 hover:border-violet-500/50'
 								: 'bg-white border-slate-200 hover:bg-violet-50 hover:border-violet-300',
 							playingLetter === item.letter && 'ring-2 ring-violet-500'
 						)}
-						onClick={() => playPronunciation(item.letter, item.pronunciation)}
+						onClick={() => playPronunciation(item.letter, item.audioUrl)}
 					>
+						{/* Volume icon in top right corner */}
+						<Volume2 className={cn(
+							'absolute top-2 right-2 w-4 h-4 transition-opacity',
+							isDark ? 'text-slate-400' : 'text-slate-500',
+							playingLetter === item.letter
+								? 'opacity-100 text-violet-500 animate-pulse'
+								: 'opacity-40 group-hover:opacity-100'
+						)} />
+
 						{/* Letter */}
 						<div className={cn(
 							'text-4xl font-extrabold mb-1',
@@ -84,28 +118,17 @@ const AlphabetGridBlock = ({ block }) => {
 						)}>
 							{item.word}
 						</div>
-
-						{/* Pronunciation */}
-						<div className={cn(
-							'text-xs font-mono flex items-center gap-1',
-							isDark ? 'text-slate-500' : 'text-slate-400'
-						)}>
-							<Volume2 className={cn(
-								'w-3 h-3',
-								playingLetter === item.letter && 'text-violet-500 animate-pulse'
-							)} />
-							{item.pronunciation}
-						</div>
 					</Card>
 				))}
 			</div>
 
-			{/* Legend */}
+			{/* Localized Legend */}
 			<div className={cn(
-				'mt-4 text-center text-sm',
+				'mt-4 text-center text-sm flex items-center justify-center gap-2',
 				isDark ? 'text-slate-400' : 'text-slate-500'
 			)}>
-				💡 Cliquez sur une lettre pour entendre sa prononciation
+				<Volume2 className="w-4 h-4" />
+				{t('alphabet_click_to_hear')}
 			</div>
 		</div>
 	)

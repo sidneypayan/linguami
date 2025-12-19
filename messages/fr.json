@@ -694,7 +694,7 @@
     "filtersAndSearch": "Filtres et recherche",
     "searchPlaceholder": "Rechercher par titre ou ID...",
     "allTypes": "Tous types",
-    "dragDropType": "Glisser-déposer",
+    "dragDropType": "Association",
     "allLevels": "Tous niveaux",
     "allLanguages": "Toutes langues",
     "allMaterials": "Tous matériaux",
@@ -776,7 +776,6 @@
     "loadingExercise": "Chargement de l'exercice...",
     "createDragDropTitle": "Créer un exercice d'Association",
     "editDragDropTitle": "Modifier l'exercice d'Association",
-    "dragDropType": "Association",
     "dragDropInfo": "Comment créer un exercice d'Association :",
     "dragDropStep1": "Écrivez une instruction claire (ex: 'Associez les mots avec leur traduction')",
     "dragDropStep2": "Ajoutez des paires d'items à associer (ex: mot français - traduction russe)",
@@ -925,7 +924,8 @@
     "table_form": "Forme",
     "table_translation": "Traduction",
     "show_menu": "Menu",
-    "lessons_available": "leçons disponibles"
+    "lessons_available": "leçons disponibles",
+    "alphabet_click_to_hear": "Cliquez sur une lettre pour entendre sa prononciation"
   },
   "materials": {
     "pagetitle": "Matériels d'Apprentissage | Vidéos, Audio, Textes Authentiques",
