@@ -215,17 +215,19 @@ const EditMaterialPageClient = ({ materialId }) => {
 										className="font-mono text-sm"
 									/>
 								</div>
-								<div>
-									<Label htmlFor="content_accented">Content with Accents</Label>
-									<Textarea
-										id="content_accented"
-										value={formData.content_accented}
-										onChange={(e) => handleChange('content_accented', e.target.value)}
-										placeholder="Content with stress marks for Russian materials"
-										rows={6}
-										className="font-mono text-sm"
-									/>
-								</div>
+								{formData.lang === 'ru' && (
+									<div>
+										<Label htmlFor="content_accented">Content with Accents (Russian only)</Label>
+										<Textarea
+											id="content_accented"
+											value={formData.content_accented}
+											onChange={(e) => handleChange('content_accented', e.target.value)}
+											placeholder="Content with stress marks for Russian materials"
+											rows={6}
+											className="font-mono text-sm"
+										/>
+									</div>
+								)}
 							</div>
 						</div>
 
