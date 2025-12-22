@@ -653,7 +653,7 @@ const SettingsClient = ({ translations }) => {
 							userProfile={userProfile}
 							locale={locale}
 							isDark={isDark}
-							t={translations}
+							translations={translations}
 						/>
 					)}
 

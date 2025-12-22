@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
 import { Crown, ExternalLink } from 'lucide-react'
 import { createPortalSession } from '@/app/actions/stripe'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
-const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
+const SubscriptionSection = ({ userProfile, locale, isDark, translations }) => {
 	const [isLoading, setIsLoading] = useState(false)
 
 	// Format expiration date according to locale
@@ -48,7 +47,7 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 						<Crown className="w-5 h-5 text-white" />
 					</div>
 					<h3 className="text-lg font-bold text-white">
-						{t('subscription')}
+						{translations.subscription}
 					</h3>
 				</div>
 			</div>
@@ -61,10 +60,10 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 						'text-sm mb-1',
 						isDark ? 'text-slate-400' : 'text-slate-500'
 					)}>
-						{t('subscriptionStatus')}
+						{translations.subscriptionStatus}
 					</p>
 					<Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
-						{t('active')}
+						{translations.active}
 					</Badge>
 				</div>
 
@@ -74,10 +73,10 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 						'text-sm mb-1',
 						isDark ? 'text-slate-400' : 'text-slate-500'
 					)}>
-						{t('subscriptionType')}
+						{translations.subscriptionType}
 					</p>
 					<Badge className="bg-violet-500/10 text-violet-600 border-violet-500/30">
-						{userProfile?.subscription_type === 'monthly' ? t('monthly') : t('yearly')}
+						{userProfile?.subscription_type === 'monthly' ? translations.monthly : translations.yearly}
 					</Badge>
 				</div>
 
@@ -88,7 +87,7 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 							'text-sm mb-1',
 							isDark ? 'text-slate-400' : 'text-slate-500'
 						)}>
-							{t('renewsOn')}
+							{translations.renewsOn}
 						</p>
 						<p className={cn(
 							'font-semibold',
@@ -104,7 +103,7 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 					'text-sm',
 					isDark ? 'text-slate-400' : 'text-slate-500'
 				)}>
-					{t('subscriptionDesc')}
+					{translations.subscriptionDesc}
 				</p>
 
 				{/* Manage subscription button */}
@@ -122,10 +121,10 @@ const SubscriptionSection = ({ userProfile, locale, isDark, t }) => {
 					)}
 				>
 					{isLoading ? (
-						t('loadingPortal')
+						translations.loadingPortal
 					) : (
 						<>
-							{t('manageSubscription')}
+							{translations.manageSubscription}
 							<ExternalLink className="w-4 h-4" />
 						</>
 					)}
