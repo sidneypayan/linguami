@@ -23,10 +23,27 @@ const SubscriptionSection = ({ userProfile, locale, isDark, translations }) => {
 	const handleManageSubscription = async () => {
 		try {
 			setIsLoading(true)
-			const { url } = await createPortalSession(locale)
-			window.location.href = url
+			const response = await createPortalSession(locale)
+
+			// Check if we got an error
+			if (response.error) {
+				console.error('Stripe portal error:', response.error)
+				alert(`Error: ${response.error}`)
+				setIsLoading(false)
+				return
+			}
+
+			// Redirect to Stripe Customer Portal
+			if (response.url) {
+				window.location.href = response.url
+			} else {
+				console.error('No URL returned from createPortalSession')
+				alert('Failed to open Stripe portal')
+				setIsLoading(false)
+			}
 		} catch (error) {
 			console.error('Error opening Stripe portal:', error)
+			alert('An error occurred while opening the portal')
 			setIsLoading(false)
 		}
 	}
