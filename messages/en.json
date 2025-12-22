@@ -295,7 +295,9 @@
     "markAsInProgress": "Mark as In Progress",
     "markAsResolved": "Mark as Resolved",
     "markAsDismissed": "Mark as Dismissed",
-    "deleteReport": "Delete Report"
+    "deleteReport": "Delete Report",
+    "materials": "Materials",
+    "standaloneLessons": "Standalone Lessons"
   },
   "blog": {
     "pagetitle": "Linguami Blog | Learn Russian & French: Tips, Methods & Culture",

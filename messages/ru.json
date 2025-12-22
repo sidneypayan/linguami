@@ -295,7 +295,9 @@
     "markAsInProgress": "Пометить как в процессе",
     "markAsResolved": "Пометить как решенное",
     "markAsDismissed": "Пометить как отклоненное",
-    "deleteReport": "Удалить сообщение"
+    "deleteReport": "Удалить сообщение",
+    "materials": "Материалы",
+    "standaloneLessons": "Отдельные уроки"
   },
   "blog": {
     "pagetitle": "Блог Linguami | Учить Французский: Советы, Методы и Культура",

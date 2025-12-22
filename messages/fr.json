@@ -296,7 +296,9 @@
     "markAsInProgress": "Marquer comme en cours",
     "markAsResolved": "Marquer comme résolu",
     "markAsDismissed": "Marquer comme rejeté",
-    "deleteReport": "Supprimer le signalement"
+    "deleteReport": "Supprimer le signalement",
+    "materials": "Matériaux",
+    "standaloneLessons": "Leçons autonomes"
   },
   "blog": {
     "pagetitle": "Blog Linguami | Apprendre le Russe : Conseils, Méthodes et Culture",

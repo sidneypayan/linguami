@@ -39,7 +39,7 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 		},
 		{
 			id: 'materials',
-			label: 'Materials',
+			label: t('materials'),
 			href: '/admin/materials',
 			icon: Library,
 		},
@@ -57,7 +57,7 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 		},
 		{
 			id: 'lessons',
-			label: 'Standalone Lessons',
+			label: t('standaloneLessons'),
 			href: '/admin/lessons',
 			icon: BookOpen,
 		},
