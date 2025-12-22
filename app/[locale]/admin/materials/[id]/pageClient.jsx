@@ -211,7 +211,7 @@ const EditMaterialPageClient = ({ materialId }) => {
 										value={formData.content}
 										onChange={(e) => handleChange('content', e.target.value)}
 										placeholder="Material content (use \\n for line breaks)"
-										rows={6}
+										rows={15}
 										className="font-mono text-sm"
 									/>
 								</div>
@@ -223,7 +223,7 @@ const EditMaterialPageClient = ({ materialId }) => {
 											value={formData.content_accented}
 											onChange={(e) => handleChange('content_accented', e.target.value)}
 											placeholder="Content with stress marks for Russian materials"
-											rows={6}
+											rows={15}
 											className="font-mono text-sm"
 										/>
 									</div>
