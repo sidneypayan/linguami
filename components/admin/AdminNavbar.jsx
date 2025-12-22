@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useUserContext } from '@/context/user'
-import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell, Languages, Home, LogOut, BookOpen } from 'lucide-react'
+import { Plus, Users, GraduationCap, FileText, Flag, Dumbbell, Languages, Home, LogOut, BookOpen, Library } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -38,6 +38,12 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			icon: FileText,
 		},
 		{
+			id: 'materials',
+			label: 'Materials',
+			href: '/admin/materials',
+			icon: Library,
+		},
+		{
 			id: 'exercises',
 			label: t('exercises'),
 			href: '/admin/exercises',
@@ -47,6 +53,12 @@ const AdminNavbar = ({ activePage = 'dashboard' }) => {
 			id: 'courses',
 			label: t('courses'),
 			href: '/admin/courses',
+			icon: BookOpen,
+		},
+		{
+			id: 'lessons',
+			label: 'Standalone Lessons',
+			href: '/admin/lessons',
 			icon: BookOpen,
 		},
 		{

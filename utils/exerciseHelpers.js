@@ -42,10 +42,21 @@ export const getLocalizedQuestion = (question, locale = 'fr') => {
 
   // Localize options if present (for MCQ)
   if (question.options && Array.isArray(question.options)) {
-    localized.options = question.options.map(option => ({
-      ...option,
-      text: getLocalizedText(option.text, locale)
-    }))
+    localized.options = question.options.map((option, index) => {
+      // Handle old format: options are strings
+      if (typeof option === 'string') {
+        return {
+          key: String.fromCharCode(65 + index), // A, B, C, D...
+          text: option
+        }
+      }
+      // Handle new format: options are objects
+      return {
+        ...option,
+        key: option.key || String.fromCharCode(65 + index), // Ensure key exists
+        text: getLocalizedText(option.text, locale)
+      }
+    })
   }
 
   // Localize pairs if present (for DragAndDrop)

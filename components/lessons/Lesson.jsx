@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { CheckCircle, BookOpen, Sparkles, Trophy } from 'lucide-react'
 import { useLessonStatus, useMarkLessonAsStudied } from '@/lib/lessons-client'
@@ -13,12 +14,18 @@ import { cn } from '@/lib/utils'
 import ExerciseInlineBlock from '@/components/courses/blocks/ExerciseInlineBlock'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import AlphabetGridBlock from '@/components/courses/blocks/AlphabetGridBlock'
+import PlayableWordsList from '@/components/courses/blocks/PlayableWordsList'
+import PlayableText from '@/components/courses/blocks/PlayableText'
 
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
 	const locale = useLocale()
 	const { isUserLoggedIn } = useUserContext()
 	const { isDark } = useThemeMode()
+
+	// Track if all exercises are attempted
+	const [allExercisesAttempted, setAllExercisesAttempted] = useState(false)
+	const [hasExercises, setHasExercises] = useState(false)
 
 	// React Query: Get lesson status
 	const { data: lessonStatus } = useLessonStatus(lesson?.id, isUserLoggedIn)
@@ -261,6 +268,60 @@ const Lesson = ({ lesson }) => {
 										</div>
 									</div>
 								)
+							case 'importantNote':
+								return (
+									<div
+										key={index}
+										className={cn(
+											"mb-8 p-4 sm:p-6 rounded-none sm:rounded-xl border-y sm:border-2",
+											"-mx-5 sm:mx-0",
+											isDark
+												? "bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border-blue-500/30"
+												: "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200"
+										)}>
+										<h4 className={cn(
+											"text-lg font-bold mb-4 flex items-center gap-2",
+											isDark ? "text-blue-400" : "text-blue-800"
+										)}>
+											<span className="text-2xl">💡</span>
+											{block.title}
+										</h4>
+										<p className={cn(
+											"mb-4 leading-relaxed",
+											isDark ? "text-slate-300" : "text-slate-700"
+										)}
+											dangerouslySetInnerHTML={{ __html: block.content }}
+										/>
+										{block.examples && block.examples.length > 0 && (
+											<div className="space-y-2 mb-4">
+												{block.examples.map((example, i) => (
+													<div
+														key={i}
+														className={cn(
+															"p-3 rounded-lg",
+															isDark ? "bg-slate-800/50" : "bg-white/70"
+														)}
+													>
+														<PlayableText
+															text={example}
+															audioUrls={block.audioUrls || {}}
+														/>
+													</div>
+												))}
+											</div>
+										)}
+										{block.note && (
+											<div className={cn(
+												"p-3 rounded-lg border-l-4",
+												isDark
+													? "bg-amber-500/10 border-amber-500/50 text-amber-300"
+													: "bg-amber-50 border-amber-400 text-amber-800"
+											)}
+												dangerouslySetInnerHTML={{ __html: block.note }}
+											/>
+										)}
+									</div>
+								)
 							case 'conjugationTable':
 								return (
 									<div key={index} className="mb-8">
@@ -270,13 +331,6 @@ const Lesson = ({ lesson }) => {
 										)}>{block.title || 'Conjugaison'}</h3>
 										<div className="overflow-x-auto -mx-5 sm:mx-0">
 											<table className="w-full border-collapse">
-												<thead>
-													<tr className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-														<th className="p-3 text-left">{t('table_pronoun')}</th>
-														<th className="p-3 text-left">{t('table_form')}</th>
-														<th className="p-3 text-left">{t('table_translation')}</th>
-													</tr>
-												</thead>
 												<tbody>
 													{block.rows?.map((row, i) => (
 														<tr key={i} className={cn(
@@ -286,7 +340,15 @@ const Lesson = ({ lesson }) => {
 														)}>
 															<td className={cn("p-3 font-semibold", isDark ? "text-indigo-400" : "text-indigo-600")}>{row.pronoun}</td>
 															<td className={cn("p-3 font-bold", isDark ? "text-slate-100" : "text-slate-800")}>{row.form}</td>
-															<td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>{row.translation}</td>
+															{row.translation && (
+																<td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>
+																	<PlayableWordsList
+																		text={row.translation}
+																		audioUrls={row.audioUrls || block.audioUrls || {}}
+																	/>
+																</td>
+															)}
+															{row.pronunciation && <td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>{row.pronunciation}</td>}
 														</tr>
 													))}
 												</tbody>
@@ -353,7 +415,10 @@ const Lesson = ({ lesson }) => {
 															j > 0 && "mt-1",
 															isDark ? "text-slate-300 border-indigo-500/50" : "text-slate-600 border-indigo-200"
 														)}>
-															{ex}
+															<PlayableText
+																text={ex}
+																audioUrls={item.audioUrls || block.audioUrls || {}}
+															/>
 														</p>
 													))}
 												</div>
@@ -370,9 +435,19 @@ const Lesson = ({ lesson }) => {
 															"text-sm",
 															isDark ? "text-slate-300" : "text-slate-600"
 														)}>
-															<span className="line-through text-red-600">{item.commonMistake.wrong}</span>
+															<span className="line-through text-red-600">
+																<PlayableText
+																	text={item.commonMistake.wrong}
+																	audioUrls={item.audioUrls || block.audioUrls || {}}
+																/>
+															</span>
 															{' → '}
-															<span className="text-green-600 font-semibold">{item.commonMistake.correct}</span>
+															<span className="text-green-600 font-semibold">
+																<PlayableText
+																	text={item.commonMistake.correct}
+																	audioUrls={item.audioUrls || block.audioUrls || {}}
+																/>
+															</span>
 														</p>
 													</div>
 												)}
@@ -398,20 +473,35 @@ const Lesson = ({ lesson }) => {
 														<span className={cn(
 															"line-through text-red-500",
 															isDark && "text-red-400"
-														)}>{row.wrong}</span>
+														)}>
+															<PlayableText
+																text={row.wrong}
+																audioUrls={block.audioUrls || {}}
+															/>
+														</span>
 														<span className={cn(
 															isDark ? "text-slate-500" : "text-slate-400"
 														)}>→</span>
 														<span className={cn(
 															"font-semibold",
 															isDark ? "text-green-400" : "text-green-600"
-														)}>{row.correct}</span>
+														)}>
+															<PlayableText
+																text={row.correct}
+																audioUrls={block.audioUrls || {}}
+															/>
+														</span>
 													</div>
 													{row.explanation && (
 														<p className={cn(
 															"text-sm mt-1",
 															isDark ? "text-slate-400" : "text-slate-500"
-														)}>{row.explanation}</p>
+														)}>
+															<PlayableText
+																text={row.explanation}
+																audioUrls={block.audioUrls || {}}
+															/>
+														</p>
 													)}
 												</div>
 											))}
@@ -438,7 +528,12 @@ const Lesson = ({ lesson }) => {
 														"font-bold min-w-[80px]",
 														isDark ? "text-indigo-400" : "text-indigo-600"
 													)}>{line.speaker}</span>
-													<span className={cn(isDark ? "text-slate-300" : "text-slate-700")}>{line.text}</span>
+													<span className={cn(isDark ? "text-slate-300" : "text-slate-700")}>
+														<PlayableText
+															text={line.text}
+															audioUrls={block.audioUrls || {}}
+														/>
+													</span>
 												</div>
 											))}
 										</div>
@@ -472,11 +567,18 @@ const Lesson = ({ lesson }) => {
 			{/* Exercises Section */}
 			{lesson?.id && (
 				<div className="mt-8">
-					<ExerciseSection parentType="lesson" parentId={lesson.id} />
+					<ExerciseSection
+						parentType="lesson"
+						parentId={lesson.id}
+						onExercisesStatusChange={(status) => {
+							setHasExercises(status.hasExercises)
+							setAllExercisesAttempted(status.allAttempted)
+						}}
+					/>
 				</div>
 			)}
 
-			{!isLessonStudied && (
+			{!isLessonStudied && (!isUserLoggedIn || !hasExercises || allExercisesAttempted) && (
 				<div className="mt-10 flex justify-center">
 					<Button
 						size="lg"

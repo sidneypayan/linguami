@@ -6,7 +6,7 @@ import { GraduationCap, ChevronDown, ChevronUp, LockOpen, Trophy, TrendingUp } f
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { createBrowserClient, createProductionBrowserClient } from '@/lib/supabase'
+import { createBrowserClient } from '@/lib/supabase'
 import { useUserContext } from '@/context/user'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import toast from '@/utils/toast'
@@ -28,8 +28,9 @@ import { submitExercise } from '@/lib/exercises-client'
  * @param {number} lessonId - ID of the lesson (optional, legacy)
  * @param {string} parentType - Type of parent: 'material', 'lesson', 'course_lesson'
  * @param {number} parentId - ID of the parent entity
+ * @param {function} onExercisesStatusChange - Callback when exercise completion status changes
  */
-const ExerciseSection = ({ materialId, lessonId, parentType, parentId }) => {
+const ExerciseSection = ({ materialId, lessonId, parentType, parentId, onExercisesStatusChange }) => {
 	const t = useTranslations('materials')
 	const tCommon = useTranslations() // For common translations like levels
 	const { isDark } = useThemeMode()
@@ -37,13 +38,11 @@ const ExerciseSection = ({ materialId, lessonId, parentType, parentId }) => {
 	const router = useRouter()
 	const params = useParams()
 
-	// Determine which DB to use: PROD for lessons, LOCAL for materials
-	const isLesson = lessonId || parentType === 'lesson'
-
-	// Create Supabase client based on context (memoized to avoid recreating on every render)
+	// SIMPLIFIED: Single production database for everything
+	// Create Supabase client (memoized to avoid recreating on every render)
 	const supabase = useMemo(() => {
-		return isLesson ? createProductionBrowserClient() : createBrowserClient()
-	}, [isLesson])
+		return createBrowserClient()
+	}, [])
 
 	const [exercises, setExercises] = useState([])
 	const [loading, setLoading] = useState(true)
@@ -112,13 +111,18 @@ const ExerciseSection = ({ materialId, lessonId, parentType, parentId }) => {
 
 			setLoading(true)
 
-			// Polymorphic query
-			const { data: exercisesData, error: exercisesError } = await supabase
-				.from('exercises')
-				.select('*')
-				.eq('parent_type', queryParentType)
-				.eq('parent_id', queryParentId)
-				.order('id', { ascending: true })
+			// Polymorphic query with backward compatibility
+			let query = supabase.from('exercises').select('*')
+
+			if (queryParentType === 'material') {
+				// For materials, check both new polymorphic fields AND legacy material_id
+				query = query.or(`and(parent_type.eq.material,parent_id.eq.${queryParentId}),material_id.eq.${queryParentId}`)
+			} else {
+				// For lessons and other types, use polymorphic fields only
+				query = query.eq('parent_type', queryParentType).eq('parent_id', queryParentId)
+			}
+
+			const { data: exercisesData, error: exercisesError } = await query.order('id', { ascending: true })
 
 			if (exercisesError) {
 				logger.error('Error loading exercises:', exercisesError)
@@ -154,6 +158,24 @@ const ExerciseSection = ({ materialId, lessonId, parentType, parentId }) => {
 
 		loadData()
 	}, [materialId, lessonId, parentType, parentId, isUserLoggedIn, user, supabase])
+
+	// Notify parent component when exercise status changes
+	useEffect(() => {
+		if (!onExercisesStatusChange) return
+
+		const hasExercises = exercises.length > 0
+		let allAttempted = false
+
+		if (hasExercises && isUserLoggedIn) {
+			// Check if all exercises have been attempted (score > 0)
+			allAttempted = exercises.every(exercise => {
+				const progress = exerciseProgress[exercise.id]
+				return progress && progress.attempts > 0
+			})
+		}
+
+		onExercisesStatusChange({ hasExercises, allAttempted })
+	}, [exercises, exerciseProgress, isUserLoggedIn, onExercisesStatusChange])
 
 	const handleExerciseComplete = async (result) => {
 		if (!isUserLoggedIn) {

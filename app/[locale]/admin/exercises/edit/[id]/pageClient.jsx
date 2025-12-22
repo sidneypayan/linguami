@@ -119,7 +119,6 @@ const EditExercise = () => {
 	const id = params.id
 	const t = useTranslations('exercises')
 	const { isUserAdmin, userLearningLanguage, isBootstrapping } = useUserContext()
-	const supabase = createBrowserClient()
 
 	// Form state
 	const [exerciseType, setExerciseType] = useState(null)
@@ -129,11 +128,15 @@ const EditExercise = () => {
 	const [lang, setLang] = useState(userLearningLanguage || 'fr')
 	const [xpReward, setXpReward] = useState(10)
 	const [questions, setQuestions] = useState([])
+	const [parentType, setParentType] = useState(null)
 
 	// Materials list for dropdown
 	const [materials, setMaterials] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [loadingExercise, setLoadingExercise] = useState(true)
+
+	// SIMPLIFIED: Single production database for everything
+	const supabase = createBrowserClient()
 
 	// Load exercise data
 	useEffect(() => {
@@ -145,6 +148,8 @@ const EditExercise = () => {
 	const loadExercise = async () => {
 		try {
 			setLoadingExercise(true)
+
+			// SIMPLIFIED: Single production database
 			const { data, error } = await supabase
 				.from('exercises')
 				.select('*')
@@ -153,6 +158,17 @@ const EditExercise = () => {
 
 			if (error) throw error
 
+			// Set parent type based on data
+			if (data.parent_type) {
+				setParentType(data.parent_type)
+			} else if (isFromProd) {
+				// If found in PROD but no parent_type, assume it's a lesson
+				setParentType('lesson')
+			} else {
+				// If found in LOCAL, assume it's a material
+				setParentType('material')
+			}
+
 			if (data) {
 				setExerciseType(data.type)
 				setTitle(data.title)
@@ -160,7 +176,84 @@ const EditExercise = () => {
 				setLevel(data.level)
 				setLang(data.lang)
 				setXpReward(data.xp_reward)
-				setQuestions(data.data?.questions || [])
+
+				// Load questions based on exercise type
+				let loadedQuestions = []
+				if (data.type === 'drag_and_drop') {
+					// For drag_and_drop, create questions from pairs
+					if (data.data?.pairs) {
+						// Extract text from multilingual objects
+						const normalizedPairs = data.data.pairs.map(pair => ({
+							id: pair.id,
+							left: typeof pair.left === 'object' ? (pair.left[data.lang] || pair.left.fr || pair.left.en) : pair.left,
+							right: typeof pair.right === 'object' ? (pair.right[data.lang] || pair.right.fr || pair.right.en) : pair.right
+						}))
+
+						loadedQuestions = [{
+							id: 1,
+							instruction: '',
+							pairs: normalizedPairs,
+							explanation: ''
+						}]
+					}
+				} else if (data.type === 'fill_in_blank') {
+					// For fill_in_blank, create questions from sentences
+					if (data.data?.sentences) {
+						loadedQuestions = data.data.sentences.map((s, idx) => ({
+							id: idx + 1,
+							title: '',
+							text: s.question,
+							blanks: [{ correctAnswers: s.acceptableAnswers || [s.answer], hint: s.hint || '' }],
+							explanation: s.explanation || ''
+						}))
+					}
+				} else {
+					// For MCQ, use questions directly
+					loadedQuestions = data.data?.questions || []
+				}
+
+				// Ensure all MCQ options have keys and convert old format (strings) to new format (objects)
+				const normalizedQuestions = loadedQuestions.map(q => {
+					if (q.options && Array.isArray(q.options)) {
+						// Check if we need to convert from old format
+						const isOldFormat = q.options.some(opt => typeof opt === 'string')
+
+						const normalizedOptions = q.options.map((opt, idx) => {
+							// Handle old format: options are strings
+							if (typeof opt === 'string') {
+								return {
+									key: String.fromCharCode(65 + idx), // A, B, C, etc.
+									text: opt
+								}
+							}
+							// Handle new format: options are objects
+							return {
+								...opt,
+								key: opt.key || String.fromCharCode(65 + idx) // Ensure key exists
+							}
+						})
+
+						// Convert correctAnswer if using old format
+						let correctAnswer = q.correctAnswer
+						if (isOldFormat && correctAnswer) {
+							// Find the index of the old correctAnswer value in the original options
+							const correctIndex = q.options.findIndex(opt => opt === correctAnswer)
+							if (correctIndex !== -1) {
+								// Convert to new key format (A, B, C, etc.)
+								correctAnswer = String.fromCharCode(65 + correctIndex)
+							}
+						}
+
+						return {
+							...q,
+							options: normalizedOptions,
+							correctAnswer: correctAnswer
+						}
+					}
+					return q
+				})
+
+				setQuestions(normalizedQuestions)
 			}
 		} catch (error) {
 			logger.error('Error loading exercise:', error)
@@ -439,6 +532,29 @@ const EditExercise = () => {
 		setLoading(true)
 
 		try {
+			// Prepare data based on exercise type
+			let exerciseData
+			if (exerciseType === 'drag_and_drop') {
+				// Convert questions back to pairs format
+				exerciseData = {
+					pairs: questions[0]?.pairs || []
+				}
+			} else if (exerciseType === 'fill_in_blank') {
+				// Convert questions back to sentences format
+				exerciseData = {
+					sentences: questions.map(q => ({
+						question: q.text,
+						answer: q.blanks[0]?.correctAnswers[0] || '',
+						acceptableAnswers: q.blanks[0]?.correctAnswers || [],
+						hint: q.blanks[0]?.hint || '',
+						explanation: q.explanation || ''
+					}))
+				}
+			} else {
+				// MCQ format
+				exerciseData = { questions }
+			}
+
 			const { data, error } = await supabase
 				.from('exercises')
 				.update({
@@ -446,7 +562,7 @@ const EditExercise = () => {
 					title,
 					level,
 					lang,
-					data: { questions },
+					data: exerciseData,
 					xp_reward: xpReward
 				})
 				.eq('id', id)
@@ -688,9 +804,9 @@ const EditExercise = () => {
 									</div>
 
 									<div className="space-y-2">
-										{question.options.map((option) => (
+										{question.options.map((option, optIndex) => (
 											<div
-												key={option.key}
+												key={option.key || `option-${qIndex}-${optIndex}`}
 												className="flex items-center gap-2 p-3 bg-white rounded-lg border border-slate-100"
 											>
 												<label className="flex items-center cursor-pointer">

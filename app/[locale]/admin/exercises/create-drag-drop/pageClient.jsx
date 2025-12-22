@@ -118,9 +118,16 @@ const CreateDragDropExercise = () => {
 	const { isUserAdmin, userLearningLanguage, isBootstrapping } = useUserContext()
 	const supabase = createBrowserClient()
 
+	// Read query params for pre-filling (when creating from lesson page)
+	const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+	const parentTypeParam = searchParams?.get('parent_type') || null
+	const parentIdParam = searchParams?.get('parent_id') || null
+
 	// Form state
 	const [title, setTitle] = useState('')
 	const [materialId, setMaterialId] = useState('')
+	const [parentType, setParentType] = useState(parentTypeParam)
+	const [parentId, setParentId] = useState(parentIdParam ? parseInt(parentIdParam) : null)
 	const [level, setLevel] = useState('beginner')
 	const [lang, setLang] = useState(userLearningLanguage || 'fr')
 	const [xpReward, setXpReward] = useState(10)
@@ -274,23 +281,45 @@ const CreateDragDropExercise = () => {
 		setLoading(true)
 
 		try {
-			const { data, error } = await supabase
+			const exerciseData = {
+				material_id: materialId || null,
+				type: 'drag_and_drop',
+				title,
+				level,
+				lang,
+				data: { questions },
+				xp_reward: xpReward
+			}
+
+			// Add parent_type and parent_id if provided (from lesson or material page)
+			if (parentType && parentId) {
+				exerciseData.parent_type = parentType
+				exerciseData.parent_id = parentId
+
+				// For materials, also set material_id for backward compatibility
+				if (parentType === 'material') {
+					exerciseData.material_id = parentId
+				}
+			}
+
+			const { data, error} = await supabase
 				.from('exercises')
-				.insert({
-					material_id: materialId || null,
-					type: 'drag_and_drop',
-					title,
-					level,
-					lang,
-					data: { questions },
-					xp_reward: xpReward
-				})
+				.insert(exerciseData)
 				.select()
 
 			if (error) throw error
 
 			toast.success(t('createSuccess'))
-			router.push(`/${locale}/admin/exercises`)
+
+
+			// Redirect back to parent page if created from there
+			if (parentType === 'lesson' && parentId) {
+				router.push(`/${locale}/admin/lessons/${parentId}`)
+			} else if (parentType === 'material' && parentId) {
+				router.push(`/${locale}/admin/materials/${parentId}`)
+			} else {
+				router.push(`/${locale}/admin/exercises`)
+			}
 		} catch (error) {
 			logger.error('Error creating exercise:', error)
 			toast.error(t('createError'))
