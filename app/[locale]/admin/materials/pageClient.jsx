@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Edit, Library, FileText, BookOpen } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { getAllMaterials } from '@/app/actions/admin/materials'
 const MaterialsPageClient = () => {
 	const router = useRouter()
 	const locale = useLocale()
+	const t = useTranslations('admin')
 	const [materials, setMaterials] = useState([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [selectedLanguage, setSelectedLanguage] = useState('all')
@@ -40,15 +41,31 @@ const MaterialsPageClient = () => {
 		return true
 	})
 
-	// Get unique sections
-	const sections = [...new Set(materials.map(m => m.section))].filter(Boolean).sort()
+	// Get unique sections and categorize them
+	const allSections = [...new Set(materials.map(m => m.section))].filter(Boolean).sort()
+
+	// Categorize sections
+	const sectionCategories = {
+		practice: ['dialogues', 'dialogue', 'slice-of-life', 'slices-of-life'],
+		culture: ['culture', 'legend', 'legends', 'beautiful-places', 'place', 'podcast', 'podcasts'],
+		cinema: ['movie-trailers', 'trailer', 'movie-clips', 'extract', 'cartoons', 'cartoon', 'eralash', 'galileo', 'diverse', 'various-materials'],
+		music: ['rock', 'pop', 'folk', 'trad', 'variety', 'kids'],
+		literature: ['short-stories', 'short-story', 'books', 'book', 'book-chapters']
+	}
+
+	const categorizedSections = {
+		practice: allSections.filter(s => sectionCategories.practice.includes(s)),
+		culture: allSections.filter(s => sectionCategories.culture.includes(s)),
+		cinema: allSections.filter(s => sectionCategories.cinema.includes(s)),
+		music: allSections.filter(s => sectionCategories.music.includes(s)),
+		literature: allSections.filter(s => sectionCategories.literature.includes(s))
+	}
 
 	// Calculate stats
 	const stats = {
 		total: materials.length,
 		fr: materials.filter(m => m.lang === 'fr').length,
 		ru: materials.filter(m => m.lang === 'ru').length,
-		en: materials.filter(m => m.lang === 'en').length,
 	}
 
 	if (isLoading) return <LoadingSpinner />
@@ -68,9 +85,9 @@ const MaterialsPageClient = () => {
 								</div>
 								<div>
 									<h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-										Learning Materials
+										{t('learningMaterials')}
 									</h1>
-									<p className="text-slate-500 text-sm">Manage learning materials and exercises</p>
+									<p className="text-slate-500 text-sm">{t('manageMaterials')}</p>
 								</div>
 							</div>
 
@@ -86,7 +103,7 @@ const MaterialsPageClient = () => {
 												: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
 										}`}
 									>
-										All
+										{t('all')}
 									</button>
 									<button
 										onClick={() => setSelectedLanguage('fr')}
@@ -108,40 +125,67 @@ const MaterialsPageClient = () => {
 									>
 										RU
 									</button>
-									<button
-										onClick={() => setSelectedLanguage('en')}
-										className={`px-3 py-1.5 rounded-lg font-medium text-xs transition-all duration-200 ${
-											selectedLanguage === 'en'
-												? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm'
-												: 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-										}`}
-									>
-										EN
-									</button>
 								</div>
 
 								{/* Section Filter */}
-								{sections.length > 0 && (
+								{allSections.length > 0 && (
 									<select
 										value={selectedSection}
 										onChange={(e) => setSelectedSection(e.target.value)}
 										className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
 									>
-										<option value="all">All Sections</option>
-										{sections.map(section => (
-											<option key={section} value={section}>{section}</option>
-										))}
+										<option value="all">{t('allSections')}</option>
+
+										{categorizedSections.practice.length > 0 && (
+											<optgroup label="🗣️ Pratique">
+												{categorizedSections.practice.map(section => (
+													<option key={section} value={section}>{section}</option>
+												))}
+											</optgroup>
+										)}
+
+										{categorizedSections.culture.length > 0 && (
+											<optgroup label="🎭 Culture">
+												{categorizedSections.culture.map(section => (
+													<option key={section} value={section}>{section}</option>
+												))}
+											</optgroup>
+										)}
+
+										{categorizedSections.cinema.length > 0 && (
+											<optgroup label="🎬 Cinéma & Vidéo">
+												{categorizedSections.cinema.map(section => (
+													<option key={section} value={section}>{section}</option>
+												))}
+											</optgroup>
+										)}
+
+										{categorizedSections.music.length > 0 && (
+											<optgroup label="🎵 Musique">
+												{categorizedSections.music.map(section => (
+													<option key={section} value={section}>{section}</option>
+												))}
+											</optgroup>
+										)}
+
+										{categorizedSections.literature.length > 0 && (
+											<optgroup label="📚 Littérature">
+												{categorizedSections.literature.map(section => (
+													<option key={section} value={section}>{section}</option>
+												))}
+											</optgroup>
+										)}
 									</select>
 								)}
 							</div>
 						</div>
 
 						{/* Stats Cards */}
-						<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
 							<div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
 								<div className="flex items-center justify-between">
 									<div>
-										<p className="text-sm text-slate-500 font-medium">Total Materials</p>
+										<p className="text-sm text-slate-500 font-medium">{t('totalMaterials')}</p>
 										<p className="text-2xl font-bold text-slate-900 mt-1">{stats.total}</p>
 									</div>
 									<div className="p-3 bg-slate-100 rounded-lg">
@@ -153,7 +197,7 @@ const MaterialsPageClient = () => {
 							<div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
 								<div className="flex items-center justify-between">
 									<div>
-										<p className="text-sm text-slate-500 font-medium">French</p>
+										<p className="text-sm text-slate-500 font-medium">{t('french')}</p>
 										<p className="text-2xl font-bold text-blue-600 mt-1">{stats.fr}</p>
 									</div>
 									<div className="p-3 bg-blue-100 rounded-lg">
@@ -165,23 +209,11 @@ const MaterialsPageClient = () => {
 							<div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
 								<div className="flex items-center justify-between">
 									<div>
-										<p className="text-sm text-slate-500 font-medium">Russian</p>
+										<p className="text-sm text-slate-500 font-medium">{t('russian')}</p>
 										<p className="text-2xl font-bold text-red-600 mt-1">{stats.ru}</p>
 									</div>
 									<div className="p-3 bg-red-100 rounded-lg">
 										<BookOpen className="w-6 h-6 text-red-600" />
-									</div>
-								</div>
-							</div>
-
-							<div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-sm text-slate-500 font-medium">English</p>
-										<p className="text-2xl font-bold text-emerald-600 mt-1">{stats.en}</p>
-									</div>
-									<div className="p-3 bg-emerald-100 rounded-lg">
-										<BookOpen className="w-6 h-6 text-emerald-600" />
 									</div>
 								</div>
 							</div>
@@ -229,7 +261,7 @@ const MaterialsPageClient = () => {
 													<span>ID: {material.id}</span>
 													<span className="text-slate-300">•</span>
 													<span className={material.exercise_count > 0 ? 'text-indigo-600 font-medium' : ''}>
-														{material.exercise_count || 0} exercise{material.exercise_count !== 1 ? 's' : ''}
+														{material.exercise_count || 0} {material.exercise_count === 1 ? t('exercise') : t('exercises_other')}
 													</span>
 													{material.image_filename && (
 														<>
@@ -259,7 +291,7 @@ const MaterialsPageClient = () => {
 											className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 text-white border-0 shadow-sm flex-shrink-0"
 										>
 											<Edit className="w-4 h-4 mr-1.5" />
-											Edit
+											{t('edit')}
 										</Button>
 									</div>
 								</div>
@@ -270,7 +302,7 @@ const MaterialsPageClient = () => {
 					{filteredMaterials.length === 0 && (
 						<div className="text-center py-12">
 							<FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-							<p className="text-slate-500">No materials found</p>
+							<p className="text-slate-500">{t('noMaterialsFound')}</p>
 						</div>
 					)}
 				</div>

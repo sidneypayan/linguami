@@ -179,7 +179,7 @@ const ExerciseSection = ({ materialId, lessonId, parentType, parentId, onExercis
 
 	const handleExerciseComplete = async (result) => {
 		if (!isUserLoggedIn) {
-			toast.info('Connectez-vous pour sauvegarder votre progression !')
+			toast.info(t('loginToSaveProgress'))
 			// Move to next exercise even if not logged in
 			handleMoveToNextExercise()
 			return { isFirstCompletion: false, xpAwarded: 0 }

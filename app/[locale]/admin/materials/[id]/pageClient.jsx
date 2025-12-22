@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
-import { ArrowLeft, Save, FileText, Image as ImageIcon, Music, Video } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { ArrowLeft, Save, FileText, Image as ImageIcon, Music, Video, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,13 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import MaterialExercisesSection from '@/components/admin/materials/MaterialExercisesSection'
-import { getMaterialById, updateMaterial } from '@/app/actions/admin/materials'
+import { getMaterialById, updateMaterial, updateMaterialWithFiles } from '@/app/actions/admin/materials'
 import { toast } from 'sonner'
 import { allSections } from '@/data/sections'
 
 const EditMaterialPageClient = ({ materialId }) => {
 	const router = useRouter()
 	const locale = useLocale()
+	const t = useTranslations('admin')
 	const [material, setMaterial] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isSaving, setIsSaving] = useState(false)
@@ -36,6 +37,12 @@ const EditMaterialPageClient = ({ materialId }) => {
 		video_url: '',
 		book_id: null,
 		chapter_number: null
+	})
+
+	// File upload state
+	const [selectedFiles, setSelectedFiles] = useState({
+		image: null,
+		audio: null
 	})
 
 	useEffect(() => {
@@ -76,14 +83,77 @@ const EditMaterialPageClient = ({ materialId }) => {
 				content: formData.content?.replace(/\n/g, '<br>') || '',
 				content_accented: formData.content_accented?.replace(/\n/g, '<br>') || ''
 			}
-			await updateMaterial(materialId, updates)
+
+			// Prepare files data if any files are selected
+			const filesData = []
+
+			if (selectedFiles.image) {
+				const imageData = await fileToBase64(selectedFiles.image)
+				filesData.push({
+					fileName: selectedFiles.image.name,
+					fileType: 'image',
+					base64Data: imageData
+				})
+			}
+
+			if (selectedFiles.audio) {
+				const audioData = await fileToBase64(selectedFiles.audio)
+				filesData.push({
+					fileName: selectedFiles.audio.name,
+					fileType: 'audio',
+					base64Data: audioData
+				})
+			}
+
+			// Use appropriate update function
+			if (filesData.length > 0) {
+				await updateMaterialWithFiles(materialId, updates, filesData)
+			} else {
+				await updateMaterial(materialId, updates)
+			}
+
 			toast.success('Material updated successfully!')
+
+			// Clear selected files after successful upload
+			setSelectedFiles({ image: null, audio: null })
 		} catch (error) {
 			console.error('Error saving material:', error)
 			toast.error('Failed to save material')
 		} finally {
 			setIsSaving(false)
 		}
+	}
+
+	// Convert file to base64
+	const fileToBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.readAsDataURL(file)
+			reader.onload = () => {
+				const base64 = reader.result.split(',')[1]
+				resolve(base64)
+			}
+			reader.onerror = error => reject(error)
+		})
+	}
+
+	// Handle file selection
+	const handleFileSelect = (fileType, event) => {
+		const file = event.target.files?.[0]
+		if (file) {
+			setSelectedFiles(prev => ({
+				...prev,
+				[fileType]: file
+			}))
+		}
+	}
+
+	// Remove selected file
+	const handleRemoveFile = (fileType) => {
+		setSelectedFiles(prev => ({
+			...prev,
+			[fileType]: null
+		}))
 	}
 
 	const handleChange = (field, value) => {
@@ -111,14 +181,14 @@ const EditMaterialPageClient = ({ materialId }) => {
 									className="flex items-center gap-2"
 								>
 									<ArrowLeft className="w-4 h-4" />
-									Back
+									{t('back')}
 								</Button>
 								<div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
 									<FileText className="w-6 h-6 text-white" />
 								</div>
 								<div>
 									<h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-										Edit Material
+										{t('editMaterial')}
 									</h1>
 									<p className="text-slate-500 text-sm">ID: {materialId}</p>
 								</div>
@@ -130,19 +200,19 @@ const EditMaterialPageClient = ({ materialId }) => {
 								className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 text-white border-0 shadow-sm"
 							>
 								<Save className="w-4 h-4 mr-2" />
-								{isSaving ? 'Saving...' : 'Save Changes'}
+								{isSaving ? t('saving') : t('saveChanges')}
 							</Button>
 						</div>
 
 						{/* Metadata Form */}
 						<div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-6">
-							<h2 className="text-lg font-semibold text-slate-900 mb-4">Material Details</h2>
+							<h2 className="text-lg font-semibold text-slate-900 mb-4">{t('materialDetails')}</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div>
-									<Label htmlFor="lang">Language</Label>
+									<Label htmlFor="lang">{t('language')}</Label>
 									<Select value={formData.lang} onValueChange={(value) => handleChange('lang', value)}>
 										<SelectTrigger>
-											<SelectValue placeholder="Select language" />
+											<SelectValue placeholder={t('selectLanguage')} />
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="fr">French (fr)</SelectItem>
@@ -152,10 +222,10 @@ const EditMaterialPageClient = ({ materialId }) => {
 									</Select>
 								</div>
 								<div>
-									<Label htmlFor="section">Section</Label>
+									<Label htmlFor="section">{t('section')}</Label>
 									<Select value={formData.section} onValueChange={(value) => handleChange('section', value)}>
 										<SelectTrigger>
-											<SelectValue placeholder="Select section" />
+											<SelectValue placeholder={t('selectSection')} />
 										</SelectTrigger>
 										<SelectContent>
 											{allSections.map(section => (
@@ -167,10 +237,10 @@ const EditMaterialPageClient = ({ materialId }) => {
 									</Select>
 								</div>
 								<div>
-									<Label htmlFor="level">Level</Label>
+									<Label htmlFor="level">{t('level')}</Label>
 									<Select value={formData.level} onValueChange={(value) => handleChange('level', value)}>
 										<SelectTrigger>
-											<SelectValue placeholder="Select level" />
+											<SelectValue placeholder={t('selectLevel')} />
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="beginner">Beginner</SelectItem>
@@ -180,7 +250,7 @@ const EditMaterialPageClient = ({ materialId }) => {
 									</Select>
 								</div>
 								<div className="md:col-span-2">
-									<Label htmlFor="title">Title</Label>
+									<Label htmlFor="title">{t('title')}</Label>
 									<Input
 										id="title"
 										value={formData.title}
@@ -218,10 +288,10 @@ const EditMaterialPageClient = ({ materialId }) => {
 
 						{/* Content */}
 						<div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-6">
-							<h2 className="text-lg font-semibold text-slate-900 mb-4">Content</h2>
+							<h2 className="text-lg font-semibold text-slate-900 mb-4">{t('content')}</h2>
 							<div className="space-y-4">
 								<div>
-									<Label htmlFor="content">Main Content</Label>
+									<Label htmlFor="content">{t('mainContent')}</Label>
 									<Textarea
 										id="content"
 										value={formData.content}
@@ -233,7 +303,7 @@ const EditMaterialPageClient = ({ materialId }) => {
 								</div>
 								{formData.lang === 'ru' && (
 									<div>
-										<Label htmlFor="content_accented">Content with Accents (Russian only)</Label>
+										<Label htmlFor="content_accented">{t('contentWithAccents')}</Label>
 										<Textarea
 											id="content_accented"
 											value={formData.content_accented}
@@ -249,36 +319,40 @@ const EditMaterialPageClient = ({ materialId }) => {
 
 						{/* Media Files */}
 						<div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm mb-6">
-							<h2 className="text-lg font-semibold text-slate-900 mb-4">Media Files</h2>
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<h2 className="text-lg font-semibold text-slate-900 mb-4">{t('mediaFiles')}</h2>
+
+							{/* Current filenames */}
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 								<div>
 									<Label htmlFor="image_filename" className="flex items-center gap-2">
 										<ImageIcon className="w-4 h-4" />
-										Image Filename
+										{t('currentImage')}
 									</Label>
 									<Input
 										id="image_filename"
 										value={formData.image_filename}
 										onChange={(e) => handleChange('image_filename', e.target.value)}
 										placeholder="image.webp"
+										className="bg-slate-50"
 									/>
 								</div>
 								<div>
 									<Label htmlFor="audio_filename" className="flex items-center gap-2">
 										<Music className="w-4 h-4" />
-										Audio Filename
+										{t('currentAudio')}
 									</Label>
 									<Input
 										id="audio_filename"
 										value={formData.audio_filename}
 										onChange={(e) => handleChange('audio_filename', e.target.value)}
 										placeholder="audio.mp3"
+										className="bg-slate-50"
 									/>
 								</div>
 								<div>
 									<Label htmlFor="video_url" className="flex items-center gap-2">
 										<Video className="w-4 h-4" />
-										Video URL
+										{t('videoURL')}
 									</Label>
 									<Input
 										id="video_url"
@@ -286,6 +360,82 @@ const EditMaterialPageClient = ({ materialId }) => {
 										onChange={(e) => handleChange('video_url', e.target.value)}
 										placeholder="https://youtube.com/..."
 									/>
+								</div>
+							</div>
+
+							{/* File upload section */}
+							<div className="border-t border-slate-200 pt-6">
+								<h3 className="text-sm font-semibold text-slate-700 mb-4">{t('uploadNewFiles')}</h3>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									{/* Image Upload */}
+									<div>
+										<Label htmlFor="image_upload" className="flex items-center gap-2 mb-2">
+											<Upload className="w-4 h-4" />
+											{t('uploadNewImage')}
+										</Label>
+										<div className="space-y-2">
+											<Input
+												id="image_upload"
+												type="file"
+												accept="image/*"
+												onChange={(e) => handleFileSelect('image', e)}
+												className="cursor-pointer"
+											/>
+											{selectedFiles.image && (
+												<div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-md p-2">
+													<span className="text-sm text-blue-700 truncate">
+														{selectedFiles.image.name}
+													</span>
+													<Button
+														size="sm"
+														variant="ghost"
+														onClick={() => handleRemoveFile('image')}
+														className="h-6 w-6 p-0 text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+													>
+														<X className="w-4 h-4" />
+													</Button>
+												</div>
+											)}
+										</div>
+										<p className="text-xs text-slate-500 mt-1">
+											{t('willBeOptimized')}
+										</p>
+									</div>
+
+									{/* Audio Upload */}
+									<div>
+										<Label htmlFor="audio_upload" className="flex items-center gap-2 mb-2">
+											<Upload className="w-4 h-4" />
+											{t('uploadNewAudio')}
+										</Label>
+										<div className="space-y-2">
+											<Input
+												id="audio_upload"
+												type="file"
+												accept="audio/*"
+												onChange={(e) => handleFileSelect('audio', e)}
+												className="cursor-pointer"
+											/>
+											{selectedFiles.audio && (
+												<div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-md p-2">
+													<span className="text-sm text-blue-700 truncate">
+														{selectedFiles.audio.name}
+													</span>
+													<Button
+														size="sm"
+														variant="ghost"
+														onClick={() => handleRemoveFile('audio')}
+														className="h-6 w-6 p-0 text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+													>
+														<X className="w-4 h-4" />
+													</Button>
+												</div>
+											)}
+										</div>
+										<p className="text-xs text-slate-500 mt-1">
+											{t('acceptsAudioFormats')}
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -249,7 +249,7 @@ const Lesson = ({ lesson }) => {
 											isDark ? "text-emerald-400" : "text-emerald-800"
 										)}>
 											<span className="text-2xl">⚡</span>
-											{block.title || 'En un coup d\'œil'}
+											{block.title || t('quickSummaryTitle')}
 										</h4>
 										<div className="grid gap-3">
 											{block.keyForms?.map((form, i) => (
@@ -328,7 +328,7 @@ const Lesson = ({ lesson }) => {
 										<h3 className={cn(
 											"text-xl font-bold mb-4",
 											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || 'Conjugaison'}</h3>
+										)}>{block.title || t('conjugationTitle')}</h3>
 										<div className="overflow-x-auto -mx-5 sm:mx-0">
 											<table className="w-full border-collapse">
 												<tbody>
@@ -384,7 +384,7 @@ const Lesson = ({ lesson }) => {
 										<h3 className={cn(
 											"text-xl font-bold mb-4",
 											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || 'Utilisations'}</h3>
+										)}>{block.title || t('usageTitle')}</h3>
 										{block.items?.map((item, i) => (
 											<div key={i} className={cn(
 												"mb-2 p-4 sm:p-5 rounded-none sm:rounded-xl border-y sm:border-2 transition-colors",
@@ -430,7 +430,7 @@ const Lesson = ({ lesson }) => {
 														<p className={cn(
 															"text-sm font-semibold mb-1",
 															isDark ? "text-red-400" : "text-red-800"
-														)}>⚠️ Erreur fréquente</p>
+														)}>{t('commonMistakeLabel')}</p>
 														<p className={cn(
 															"text-sm",
 															isDark ? "text-slate-300" : "text-slate-600"
@@ -461,7 +461,7 @@ const Lesson = ({ lesson }) => {
 										<h3 className={cn(
 											"text-xl font-bold mb-4",
 											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || 'Erreurs courantes'}</h3>
+										)}>{block.title || t('commonMistakesTitle')}</h3>
 										<div className="space-y-2">
 											{block.rows?.map((row, i) => (
 												<div key={i} className={cn(

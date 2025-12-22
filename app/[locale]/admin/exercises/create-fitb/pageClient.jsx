@@ -18,7 +18,7 @@ import { logger } from '@/utils/logger'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 
 // Custom autocomplete component
-const MaterialAutocomplete = ({ materials, value, onChange, label, placeholder }) => {
+const MaterialAutocomplete = ({ materials, value, onChange, label, placeholder, t }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [search, setSearch] = useState('')
 	const ref = useRef(null)
@@ -71,7 +71,7 @@ const MaterialAutocomplete = ({ materials, value, onChange, label, placeholder }
 							type="text"
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
-							placeholder="Rechercher..."
+							placeholder={t('searchPlaceholder')}
 							className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
 							autoFocus
 						/>
@@ -82,7 +82,7 @@ const MaterialAutocomplete = ({ materials, value, onChange, label, placeholder }
 							onClick={() => { onChange(''); setIsOpen(false) }}
 							className="w-full px-4 py-2 text-left text-sm text-slate-500 hover:bg-slate-50"
 						>
-							Aucun
+							{t('none')}
 						</button>
 						{Object.entries(groupedMaterials).map(([section, items]) => (
 							<div key={section}>
@@ -424,7 +424,8 @@ const CreateExercise = () => {
 										value={materialId}
 										onChange={setMaterialId}
 										label={t('associatedMaterial')}
-										placeholder="Rechercher un materiel..."
+										placeholder={t('searchMaterial')}
+										t={t}
 									/>
 								</div>
 
@@ -451,7 +452,7 @@ const CreateExercise = () => {
 					<div>
 						<div className="flex justify-between items-center mb-4">
 							<h2 className="text-lg font-semibold text-slate-800">
-								Questions ({questions.length})
+								{t('questionsCount')} ({questions.length})
 							</h2>
 							<button
 								type="button"
@@ -459,7 +460,7 @@ const CreateExercise = () => {
 								className="flex items-center gap-2 px-4 py-2 border border-indigo-200 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
 							>
 								<Plus className="w-4 h-4" />
-								Ajouter une question
+								{t('addQuestion')}
 							</button>
 						</div>
 
@@ -470,7 +471,7 @@ const CreateExercise = () => {
 							>
 								<div className="flex justify-between items-center mb-4">
 									<h3 className="font-semibold text-slate-700">
-										Question {qIndex + 1}
+										{t('question')} {qIndex + 1}
 									</h3>
 									{questions.length > 1 && (
 										<button
@@ -487,7 +488,7 @@ const CreateExercise = () => {
 									type="text"
 									value={question.title}
 									onChange={(e) => updateQuestion(qIndex, 'title', e.target.value)}
-									placeholder="Titre de la question (optionnel)"
+									placeholder={t('questionTitlePlaceholder')}
 									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none mb-3"
 								/>
 
@@ -495,13 +496,13 @@ const CreateExercise = () => {
 									<textarea
 										value={question.text}
 										onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
-										placeholder="Texte avec blancs (utilisez ___)"
+										placeholder={t('textWithBlanksPlaceholder')}
 										rows={6}
 										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
 										required
 									/>
 									<p className="mt-1 text-xs text-slate-500">
-										Blancs detectes : {countBlanks(question.text)}
+										{t('blanksDetected')} : {countBlanks(question.text)}
 									</p>
 								</div>
 
@@ -509,7 +510,7 @@ const CreateExercise = () => {
 								<div className="mb-4">
 									<div className="flex justify-between items-center mb-2">
 										<span className="text-sm font-medium text-slate-600">
-											Reponses pour les blancs ({question.blanks.length})
+											{t('responsesForBlanks')} ({question.blanks.length})
 										</span>
 										<button
 											type="button"
@@ -517,7 +518,7 @@ const CreateExercise = () => {
 											className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
 										>
 											<Plus className="w-3 h-3" />
-											Ajouter un blanc
+											{t('addBlank')}
 										</button>
 									</div>
 
@@ -528,7 +529,7 @@ const CreateExercise = () => {
 										>
 											<div className="flex justify-between items-center mb-3">
 												<span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
-													Blanc {bIndex + 1}
+													{t('blankNumber')} {bIndex + 1}
 												</span>
 												{question.blanks.length > 1 && (
 													<button
@@ -547,12 +548,12 @@ const CreateExercise = () => {
 														type="text"
 														value={blank.correctAnswers.join(', ')}
 														onChange={(e) => updateBlank(qIndex, bIndex, 'correctAnswers', e.target.value)}
-														placeholder="Reponse(s) correcte(s)"
+														placeholder={t('correctAnswers')}
 														className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
 														required
 													/>
 													<p className="mt-1 text-xs text-slate-500">
-														Separez plusieurs reponses acceptees par des virgules (ex: vais, je vais)
+														{t('correctAnswersHelper')}
 													</p>
 												</div>
 
@@ -560,7 +561,7 @@ const CreateExercise = () => {
 													type="text"
 													value={blank.hint}
 													onChange={(e) => updateBlank(qIndex, bIndex, 'hint', e.target.value)}
-													placeholder="Indice (optionnel)"
+													placeholder={t('hint')}
 													className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
 												/>
 											</div>
@@ -570,12 +571,12 @@ const CreateExercise = () => {
 
 								<div>
 									<label className="block text-sm font-medium text-slate-600 mb-1.5">
-										Explication (optionnel)
+										{t('explanation')}
 									</label>
 									<textarea
 										value={question.explanation}
 										onChange={(e) => updateQuestion(qIndex, 'explanation', e.target.value)}
-										placeholder="Affichee apres la soumission de la question"
+										placeholder={t('explanationHelper')}
 										rows={2}
 										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none text-sm"
 									/>
@@ -592,14 +593,14 @@ const CreateExercise = () => {
 							disabled={loading}
 							className="px-6 py-2.5 border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-50 transition-colors disabled:opacity-50"
 						>
-							Annuler
+							{t('cancel')}
 						</button>
 						<button
 							type="submit"
 							disabled={loading}
 							className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-cyan-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
 						>
-							{loading ? 'Creation...' : 'Creer l\'exercice'}
+							{loading ? t('creating') : t('createExercise')}
 						</button>
 					</div>
 				</form>

@@ -329,7 +329,6 @@
     "french": "French",
     "russian": "Russian",
     "english": "English",
-    "italian": "Italian",
     "material": "Materials",
     "methode": "Method",
     "blog": "Blog",
@@ -928,7 +927,12 @@
     "table_translation": "Translation",
     "show_menu": "Menu",
     "lessons_available": "lessons available",
-    "alphabet_click_to_hear": "Click on a letter to hear its pronunciation"
+    "alphabet_click_to_hear": "Click on a letter to hear its pronunciation",
+    "quickSummaryTitle": "At a glance",
+    "conjugationTitle": "Conjugation",
+    "usageTitle": "Usage",
+    "commonMistakesTitle": "Common mistakes",
+    "commonMistakeLabel": "⚠️ Common mistake"
   },
   "materials": {
     "pagetitle": "Learning Materials | Authentic Videos, Audio & Texts",
@@ -1074,7 +1078,8 @@
     "share_achievement": "Share my progress",
     "share_achievement_text": "I just completed this material on Linguami!",
     "share_link_copied": "Link copied to clipboard!",
-    "share_error": "Unable to share right now"
+    "share_error": "Unable to share right now",
+    "loginToSaveProgress": "Log in to save your progress!"
   },
   "premium": {
     "pagetitle": "Our Premium Plans",

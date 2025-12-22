@@ -161,11 +161,14 @@ const EditExercise = () => {
 			// Set parent type based on data
 			if (data.parent_type) {
 				setParentType(data.parent_type)
-			} else if (isFromProd) {
-				// If found in PROD but no parent_type, assume it's a lesson
+			} else if (data.lesson_id) {
+				// If has lesson_id, it's a lesson exercise
 				setParentType('lesson')
+			} else if (data.material_id) {
+				// If has material_id, it's a material exercise
+				setParentType('material')
 			} else {
-				// If found in LOCAL, assume it's a material
+				// Default to material if no parent is specified
 				setParentType('material')
 			}
 
@@ -199,13 +202,31 @@ const EditExercise = () => {
 				} else if (data.type === 'fill_in_blank') {
 					// For fill_in_blank, create questions from sentences
 					if (data.data?.sentences) {
-						loadedQuestions = data.data.sentences.map((s, idx) => ({
-							id: idx + 1,
-							title: '',
-							text: s.question,
-							blanks: [{ correctAnswers: s.acceptableAnswers || [s.answer], hint: s.hint || '' }],
-							explanation: s.explanation || ''
-						}))
+						loadedQuestions = data.data.sentences.map((s, idx) => {
+							// Get the sentence text based on language
+							let sentenceText = s.sentenceWithBlank
+							if (data.lang === 'en' && s.sentenceWithBlank_en) {
+								sentenceText = s.sentenceWithBlank_en
+							} else if (data.lang === 'ru' && s.sentenceWithBlank_ru) {
+								sentenceText = s.sentenceWithBlank_ru
+							}
+
+							// Get correct answers based on language
+							let correctAnswers = [s.correctAnswer]
+							if (data.lang === 'en' && s.correctAnswer_en) {
+								correctAnswers = [s.correctAnswer_en]
+							} else if (data.lang === 'ru' && s.correctAnswer_ru) {
+								correctAnswers = [s.correctAnswer_ru]
+							}
+
+							return {
+								id: idx + 1,
+								title: '',
+								text: sentenceText,
+								blanks: [{ correctAnswers: correctAnswers, hint: s.hint || '' }],
+								explanation: s.explanation || ''
+							}
+						})
 					}
 				} else {
 					// For MCQ, use questions directly
@@ -395,6 +416,7 @@ const EditExercise = () => {
 	}
 
 	const countBlanks = (text) => {
+		if (!text) return 0
 		return (text.match(/___/g) || []).length
 	}
 
@@ -1001,7 +1023,7 @@ const EditExercise = () => {
 									type="text"
 									value={question.title}
 									onChange={(e) => updateQuestion(qIndex, 'title', e.target.value)}
-									placeholder="Titre de la question (optionnel)"
+									placeholder={t('questionTitlePlaceholder')}
 									className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none mb-3"
 								/>
 
@@ -1012,13 +1034,13 @@ const EditExercise = () => {
 									<textarea
 										value={question.text}
 										onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
-										placeholder="Texte avec blancs (utilisez ___)"
+										placeholder={t('textWithBlanksPlaceholder')}
 										rows={3}
 										className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
 										required
 									/>
 									<p className="mt-1 text-xs text-slate-500">
-										Blancs detectes : {countBlanks(question.text)}
+										{t('blanksDetected')} : {countBlanks(question.text)}
 									</p>
 								</div>
 
@@ -1026,7 +1048,7 @@ const EditExercise = () => {
 								<div className="mb-4">
 									<div className="flex justify-between items-center mb-2">
 										<span className="text-sm font-medium text-slate-600">
-											Reponses pour les blancs ({question.blanks.length})
+											{t('responsesForBlanks')} ({question.blanks.length})
 										</span>
 										<button
 											type="button"
@@ -1034,7 +1056,7 @@ const EditExercise = () => {
 											className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
 										>
 											<Plus className="w-3 h-3" />
-											Ajouter un blanc
+											{t('addBlank')}
 										</button>
 									</div>
 
@@ -1045,7 +1067,7 @@ const EditExercise = () => {
 										>
 											<div className="flex justify-between items-center mb-3">
 												<span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
-													Blanc {bIndex + 1}
+													{t('blankNumber')} {bIndex + 1}
 												</span>
 												{question.blanks.length > 1 && (
 													<button

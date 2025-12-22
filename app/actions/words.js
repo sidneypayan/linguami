@@ -106,7 +106,7 @@ export async function translateWordAction({ word, sentence, userLearningLanguage
 
 		// Check if direct pair is supported
 		if (!yandexSupportedPairs.includes(langPair)) {
-			// For Italian: use two-step translation via English
+			// For unsupported language pairs: use two-step translation via English
 			if (yandexSupportedPairs.includes(`${userLearningLanguage}-en`)) {
 				needsPivot = true
 				langPair = `${userLearningLanguage}-en`
