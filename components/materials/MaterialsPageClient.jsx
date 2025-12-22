@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
-import { materials_ru, materials_fr, materials_en, materials_it } from '@/utils/constants'
+import { materials_ru, materials_fr, materials_en } from '@/utils/constants'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useUserContext } from '@/context/user'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -972,7 +972,6 @@ const MaterialsPageClient = ({ initialMaterials = [], initialUserMaterialsStatus
 		if (userLearningLanguage === 'ru') selectedMaterials = materials_ru
 		else if (userLearningLanguage === 'fr') selectedMaterials = materials_fr
 		else if (userLearningLanguage === 'en') selectedMaterials = materials_en
-		else if (userLearningLanguage === 'it') selectedMaterials = materials_it
 		else selectedMaterials = materials_fr
 		setMaterials(selectedMaterials)
 	}, [userLearningLanguage])
