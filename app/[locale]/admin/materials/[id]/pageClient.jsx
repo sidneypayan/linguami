@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import AdminNavbar from '@/components/admin/AdminNavbar'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import MaterialExercisesSection from '@/components/admin/materials/MaterialExercisesSection'
 import { getMaterialById, updateMaterial } from '@/app/actions/admin/materials'
 import { toast } from 'sonner'
+import { allSections } from '@/data/sections'
 
 const EditMaterialPageClient = ({ materialId }) => {
 	const router = useRouter()
@@ -138,30 +140,44 @@ const EditMaterialPageClient = ({ materialId }) => {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="lang">Language</Label>
-									<Input
-										id="lang"
-										value={formData.lang}
-										onChange={(e) => handleChange('lang', e.target.value)}
-										placeholder="fr, ru, en"
-									/>
+									<Select value={formData.lang} onValueChange={(value) => handleChange('lang', value)}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select language" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="fr">French (fr)</SelectItem>
+											<SelectItem value="ru">Russian (ru)</SelectItem>
+											<SelectItem value="en">English (en)</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<Label htmlFor="section">Section</Label>
-									<Input
-										id="section"
-										value={formData.section}
-										onChange={(e) => handleChange('section', e.target.value)}
-										placeholder="dialogues, culture, etc."
-									/>
+									<Select value={formData.section} onValueChange={(value) => handleChange('section', value)}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select section" />
+										</SelectTrigger>
+										<SelectContent>
+											{allSections.map(section => (
+												<SelectItem key={section} value={section}>
+													{section}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<Label htmlFor="level">Level</Label>
-									<Input
-										id="level"
-										value={formData.level}
-										onChange={(e) => handleChange('level', e.target.value)}
-										placeholder="beginner, intermediate, advanced"
-									/>
+									<Select value={formData.level} onValueChange={(value) => handleChange('level', value)}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select level" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="beginner">Beginner</SelectItem>
+											<SelectItem value="intermediate">Intermediate</SelectItem>
+											<SelectItem value="advanced">Advanced</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 								<div className="md:col-span-2">
 									<Label htmlFor="title">Title</Label>
