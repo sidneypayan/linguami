@@ -671,7 +671,13 @@
     "min_short": "min",
     "beginner": "Beginner",
     "intermediate": "Intermediate",
-    "advanced": "Advanced"
+    "advanced": "Advanced",
+    "A1": "A1",
+    "A2": "A2",
+    "B1": "B1",
+    "B2": "B2",
+    "C1": "C1",
+    "C2": "C2"
   },
   "exercises": {
     "title": "Exercise Management",
@@ -1650,11 +1656,5 @@
     "quit": "Quit",
     "quitSession": "Quit session",
     "confirmQuitSession": "Do you really want to quit this session? Your progress will be lost."
-  },
-  "A1": "A1",
-  "A2": "A2",
-  "B1": "B1",
-  "B2": "B2",
-  "C1": "C1",
-  "C2": "C2"
+  }
 }

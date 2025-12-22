@@ -699,7 +699,13 @@
     "min_short": "min",
     "beginner": "Débutant",
     "intermediate": "Intermédiaire",
-    "advanced": "Avancé"
+    "advanced": "Avancé",
+    "A1": "A1",
+    "A2": "A2",
+    "B1": "B1",
+    "B2": "B2",
+    "C1": "C1",
+    "C2": "C2"
   },
   "exercises": {
     "title": "Gestion des exercices",
@@ -1679,11 +1685,5 @@
     "quit": "Quitter",
     "quitSession": "Quitter la session",
     "confirmQuitSession": "Voulez-vous vraiment quitter cette session ? Votre progression sera perdue."
-  },
-  "A1": "A1",
-  "A2": "A2",
-  "B1": "B1",
-  "B2": "B2",
-  "C1": "C1",
-  "C2": "C2"
+  }
 }
