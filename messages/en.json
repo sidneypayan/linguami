@@ -1406,7 +1406,18 @@
     "goal45minPlus": "45+ min • For highly motivated learners!",
     "goalAtMyPace": "Learning at my own pace, no pressure",
     "recommended": "Recommended",
-    "emailNotEditable": "Email address cannot be modified for security reasons"
+    "emailNotEditable": "Email address cannot be modified for security reasons",
+    "subscription": "Subscription",
+    "subscriptionManagement": "Subscription Management",
+    "subscriptionStatus": "Status",
+    "subscriptionType": "Subscription Type",
+    "renewsOn": "Renews on",
+    "manageSubscription": "Manage Subscription",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "active": "Active",
+    "loadingPortal": "Opening portal...",
+    "subscriptionDesc": "Manage your subscription, change plan, or cancel via Stripe portal."
   },
   "stats": {
     "pageTitle": "My Statistics",

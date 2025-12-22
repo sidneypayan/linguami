@@ -1435,7 +1435,18 @@
     "goal45minPlus": "45+ min • Pour les super motivés !",
     "goalAtMyPace": "J'apprends à mon rythme, sans pression",
     "recommended": "Recommandé",
-    "emailNotEditable": "L'adresse email ne peut pas être modifiée pour des raisons de sécurité"
+    "emailNotEditable": "L'adresse email ne peut pas être modifiée pour des raisons de sécurité",
+    "subscription": "Abonnement",
+    "subscriptionManagement": "Gestion de l'abonnement",
+    "subscriptionStatus": "Statut",
+    "subscriptionType": "Type d'abonnement",
+    "renewsOn": "Renouvellement le",
+    "manageSubscription": "Gérer mon abonnement",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "active": "Actif",
+    "loadingPortal": "Ouverture du portail...",
+    "subscriptionDesc": "Gérez votre abonnement, changez de plan ou annulez depuis le portail Stripe."
   },
   "stats": {
     "pageTitle": "Mes Statistiques",

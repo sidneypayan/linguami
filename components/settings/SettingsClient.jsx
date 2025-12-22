@@ -57,11 +57,13 @@ import {
 	Scroll,
 	Wand2,
 } from 'lucide-react'
+import SubscriptionSection from './SubscriptionSection'
 
 const SettingsClient = ({ translations }) => {
 	const { userProfile, updateUserProfile, logout } = useUserContext()
 	const router = useRouter()
 	const { isDark } = useThemeMode()
+	const locale = useLocale()
 
 	const [formData, setFormData] = useState({
 		username: '',
@@ -644,6 +646,16 @@ const SettingsClient = ({ translations }) => {
 							</div>
 						</CardContent>
 					</Card>
+
+					{/* Subscription Management (premium users with active subscription only) */}
+					{userProfile?.subscription_status === 'active' && (
+						<SubscriptionSection
+							userProfile={userProfile}
+							locale={locale}
+							isDark={isDark}
+							t={translations}
+						/>
+					)}
 
 					{/* Security Section */}
 					<Card className={cn(

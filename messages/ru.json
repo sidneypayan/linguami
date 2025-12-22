@@ -1441,7 +1441,18 @@
     "goal45minPlus": "45+ мин • Для супер мотивированных!",
     "goalAtMyPace": "Учусь в своем темпе, без давления",
     "recommended": "Рекомендуется",
-    "emailNotEditable": "Email не может быть изменен по соображениям безопасности"
+    "emailNotEditable": "Email не может быть изменен по соображениям безопасности",
+    "subscription": "Подписка",
+    "subscriptionManagement": "Управление подпиской",
+    "subscriptionStatus": "Статус",
+    "subscriptionType": "Тип подписки",
+    "renewsOn": "Продление",
+    "manageSubscription": "Управлять подпиской",
+    "monthly": "Ежемесячная",
+    "yearly": "Годовая",
+    "active": "Активна",
+    "loadingPortal": "Открытие портала...",
+    "subscriptionDesc": "Управляйте подпиской, меняйте план или отменяйте через портал Stripe."
   },
   "stats": {
     "pageTitle": "Моя Статистика",
