@@ -32,7 +32,7 @@ import { submitExercise } from '@/lib/exercises-client'
  */
 const ExerciseSection = ({ materialId, lessonId, parentType, parentId, onExercisesStatusChange }) => {
 	const t = useTranslations('materials')
-	const tCommon = useTranslations() // For common translations like levels
+	const tCommon = useTranslations('common') // For common translations like levels
 	const { isDark } = useThemeMode()
 	const { user, isUserLoggedIn, refreshUserProfile } = useUserContext()
 	const router = useRouter()

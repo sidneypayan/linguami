@@ -668,7 +668,10 @@
     "create_account": "Créer un compte",
     "training": "Entraînement",
     "completeAllSectionsHint": "Parcours toutes les sections et clique sur \"Terminer\" pour valider",
-    "min_short": "min"
+    "min_short": "min",
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "advanced": "Avancé"
   },
   "exercises": {
     "title": "Gestion des exercices",

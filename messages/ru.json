@@ -667,7 +667,10 @@
     "create_account": "Создать аккаунт",
     "training": "Тренировка",
     "completeAllSectionsHint": "Пройдите все разделы и нажмите \"Завершить\" для подтверждения",
-    "min_short": "мин"
+    "min_short": "мин",
+    "beginner": "Начальный",
+    "intermediate": "Средний",
+    "advanced": "Продвинутый"
   },
   "exercises": {
     "title": "Управление упражнениями",

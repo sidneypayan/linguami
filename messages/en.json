@@ -667,7 +667,10 @@
     "create_account": "Create Account",
     "training": "Training",
     "completeAllSectionsHint": "Go through all sections and click \"Finish\" to validate",
-    "min_short": "min"
+    "min_short": "min",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
   },
   "exercises": {
     "title": "Exercise Management",
