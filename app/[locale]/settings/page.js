@@ -95,6 +95,18 @@ export default async function SettingsPage({ params }) {
 		changePasswordError: t('changePasswordError'),
 		accountDeleted: t('accountDeleted'),
 		deleteAccountError: t('deleteAccountError'),
+		// Subscription translations
+		subscription: t('subscription'),
+		subscriptionManagement: t('subscriptionManagement'),
+		subscriptionStatus: t('subscriptionStatus'),
+		subscriptionType: t('subscriptionType'),
+		renewsOn: t('renewsOn'),
+		manageSubscription: t('manageSubscription'),
+		monthly: t('monthly'),
+		yearly: t('yearly'),
+		active: t('active'),
+		loadingPortal: t('loadingPortal'),
+		subscriptionDesc: t('subscriptionDesc'),
 		// Avatar translations from register namespace
 		avatarDwarfMale: tAvatar('avatarDwarfMale'),
 		avatarDwarfFemale: tAvatar('avatarDwarfFemale'),
