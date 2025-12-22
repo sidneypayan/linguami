@@ -23,7 +23,6 @@ import Translation from '@/components/material/Translation'
 import Words from '@/components/material/Words'
 import WordsContainer from '@/components/material/WordsContainer'
 import VideoPlayer from '@/components/material/VideoPlayer'
-import EditMaterialModal from '@/components/admin/EditMaterialModal'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import ReportButton from '@/components/material/ReportButton'
 import { useUserContext } from '@/context/user'
@@ -41,7 +40,6 @@ import {
 	Pause,
 	Eye,
 	EyeOff,
-	Edit3,
 	CheckCircle2,
 	BookOpen,
 	X,
@@ -407,7 +405,6 @@ const Material = ({
 	// Local UI state
 	const [showAccents, setShowAccents] = useState(false)
 	const [showWordsContainer, setShowWordsContainer] = useState(false)
-	const [editModalOpen, setEditModalOpen] = useState(false)
 
 	// Floating buttons positioning
 	const finishButtonRef = useRef(null)
@@ -634,13 +631,6 @@ const Material = ({
 		},
 	})
 
-	const handleEditContent = () => {
-		setEditModalOpen(true)
-	}
-
-	const handleEditSuccess = () => {
-		queryClient.invalidateQueries(['material', params?.material])
-	}
 
 	const getImageRegardingSection = section => {
 		if (section === 'place') {
@@ -785,16 +775,6 @@ const Material = ({
 												? (locale === 'fr' ? 'Masquer' : locale === 'ru' ? 'Скрыть' : 'Hide')
 												: (locale === 'fr' ? 'Accents' : locale === 'ru' ? 'Акценты' : 'Accents')}
 										</span>
-									</ActionButton>
-								)}
-
-								{isUserAdmin && (
-									<ActionButton
-										variant="outline"
-										icon={Edit3}
-										onClick={handleEditContent}
-									>
-										<span className="hidden sm:inline">Edit material</span>
 									</ActionButton>
 								)}
 							</div>
@@ -987,16 +967,6 @@ const Material = ({
 					)}
 				</div>
 			</div>
-
-			{/* Edit modal for admins */}
-			{isUserAdmin && (
-				<EditMaterialModal
-					open={editModalOpen}
-					onClose={() => setEditModalOpen(false)}
-					material={currentMaterial}
-					onSuccess={handleEditSuccess}
-				/>
-			)}
 
 			{/* Words Container Button & Report Button - Mobile */}
 			<div
