@@ -38,11 +38,14 @@ const drawerWidth = '75%'
 const Navbar = props => {
 	const t = useTranslations('common')
 	const locale = useLocale()
-	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping } = useUserContext()
+	const { user, userProfile, isUserLoggedIn, isUserAdmin, isBootstrapping, userLearningLanguage } = useUserContext()
 	const { isDark } = useThemeMode()
 	const pathname = usePathname()
 	const params = useParams()
 	const { data: hasLessons = false, isLoading: isCheckingLessons } = useHasLessonsForLanguage(locale)
+
+	// Get spoken language (from profile for logged users, from locale for guests)
+	const spokenLanguage = userProfile?.spoken_language || locale
 
 	const allNavigationLinks = [
 		{
@@ -70,6 +73,8 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
+			// Hide if user is learning their native language
+			hideIf: spokenLanguage === userLearningLanguage,
 		},
 		{
 			name: t('blog'),
