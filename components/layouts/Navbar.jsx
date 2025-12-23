@@ -70,7 +70,6 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
-			hideIf: !isUserAdmin,
 		},
 		{
 			name: t('blog'),
