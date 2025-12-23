@@ -73,8 +73,8 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
-			// Hide if user is learning their native language
-			hideIf: spokenLanguage === userLearningLanguage,
+			// Hide if user is learning their native language OR if French speaker (only French lessons available)
+			hideIf: spokenLanguage === userLearningLanguage || spokenLanguage === 'fr',
 		},
 		{
 			name: t('blog'),
