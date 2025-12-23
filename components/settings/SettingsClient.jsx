@@ -273,7 +273,7 @@ const SettingsClient = ({ translations }) => {
 
 	const goals = [
 		{ value: 50, emoji: '🌱', label: translations.goalRelaxed, time: translations.goal5to10min, color: 'emerald' },
-		{ value: 100, emoji: '⭐', label: translations.goalRegular, time: translations.goal15to20min, color: 'amber', recommended: true },
+		{ value: 100, emoji: '⭐', label: translations.goalRegular, time: translations.goal15to20min, color: 'amber' },
 		{ value: 200, emoji: '🔥', label: translations.goalMotivated, time: translations.goal30min, color: 'orange' },
 		{ value: 300, emoji: '💪', label: translations.goalIntensive, time: translations.goal45minPlus, color: 'red' },
 		{ value: 0, emoji: '🎯', label: translations.goalNone, time: translations.goalAtMyPace, color: 'violet' },
@@ -320,10 +320,10 @@ const SettingsClient = ({ translations }) => {
 				{/* Page Header */}
 				<div className="text-center mb-8">
 					<h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent mb-2">
-						{translations.settingsTitle || 'Grimoire du Heros'}
+						{translations.settingsTitle}
 					</h1>
 					<p className={cn('text-base', isDark ? 'text-slate-500' : 'text-slate-400')}>
-						{translations.settingsSubtitle || 'Personnalisez votre aventure'}
+						{translations.settingsSubtitle}
 					</p>
 				</div>
 
@@ -400,7 +400,7 @@ const SettingsClient = ({ translations }) => {
 										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
 											{userProfile?.xp || 0}
 										</p>
-										<p className="text-[9px] sm:text-[10px] text-cyan-400/70 uppercase tracking-wider font-bold">XP Total</p>
+										<p className="text-[9px] sm:text-[10px] text-cyan-400/70 uppercase tracking-wider font-bold">{translations.xpTotal}</p>
 									</div>
 									<div className={cn(
 										'p-2 sm:p-3 rounded-xl text-center',
@@ -411,7 +411,7 @@ const SettingsClient = ({ translations }) => {
 										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-orange-300 to-orange-500 bg-clip-text text-transparent">
 											{userProfile?.streak || 0}
 										</p>
-										<p className="text-[9px] sm:text-[10px] text-orange-400/70 uppercase tracking-wider font-bold">Streak</p>
+										<p className="text-[9px] sm:text-[10px] text-orange-400/70 uppercase tracking-wider font-bold">{translations.streak}</p>
 									</div>
 									<div className={cn(
 										'p-2 sm:p-3 rounded-xl text-center',
@@ -422,7 +422,7 @@ const SettingsClient = ({ translations }) => {
 										<p className="text-xl sm:text-2xl font-black bg-gradient-to-b from-amber-300 to-amber-500 bg-clip-text text-transparent">
 											{userProfile?.gold || 0}
 										</p>
-										<p className="text-[9px] sm:text-[10px] text-amber-400/70 uppercase tracking-wider font-bold">Or</p>
+										<p className="text-[9px] sm:text-[10px] text-amber-400/70 uppercase tracking-wider font-bold">{translations.gold}</p>
 									</div>
 								</div>
 							</div>
@@ -430,11 +430,11 @@ const SettingsClient = ({ translations }) => {
 					</CardContent>
 				</Card>
 
-				{/* Settings Sections - Bento Grid Style */}
-				<div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-					{/* Profile Section - Spans 2 columns on large */}
+				{/* Settings Sections - Vertical Layout */}
+				<div className="grid gap-4 md:gap-6 grid-cols-1 items-start">
+					{/* Profile Section */}
 					<Card className={cn(
-						'lg:col-span-2 overflow-hidden transition-all duration-300 group',
+						'overflow-hidden transition-all duration-300 group',
 						'hover:shadow-xl hover:-translate-y-1',
 						isDark
 							? 'bg-gradient-to-br from-slate-900/95 to-slate-800/90 border-violet-500/20 hover:border-violet-500/40 hover:shadow-violet-500/10'
@@ -460,7 +460,6 @@ const SettingsClient = ({ translations }) => {
 						<CardContent className="space-y-1">
 							{/* Username Field */}
 							<SettingsField
-								icon={<User className="w-4 h-4" />}
 								label={translations.username}
 								value={formData.username}
 								isEditing={editMode.username}
@@ -475,7 +474,6 @@ const SettingsClient = ({ translations }) => {
 
 							{/* Email Field */}
 							<SettingsField
-								icon={<Mail className="w-4 h-4" />}
 								label={translations.email}
 								value={formData.email}
 								isEditing={false}
@@ -514,7 +512,6 @@ const SettingsClient = ({ translations }) => {
 						</CardHeader>
 						<CardContent>
 							<SettingsField
-								icon={<Wand2 className="w-4 h-4" />}
 								label={translations.languageLevel}
 								value={getLevelLabel(formData.languageLevel)}
 								rawValue={formData.languageLevel}
@@ -538,7 +535,7 @@ const SettingsClient = ({ translations }) => {
 
 					{/* Goals Section - Full width */}
 					<Card className={cn(
-						'lg:col-span-2 overflow-hidden transition-all duration-300 group',
+						'overflow-hidden transition-all duration-300 group',
 						'hover:shadow-xl hover:-translate-y-1',
 						isDark
 							? 'bg-gradient-to-br from-slate-900/95 to-slate-800/90 border-amber-500/20 hover:border-amber-500/40 hover:shadow-amber-500/10'
@@ -630,9 +627,6 @@ const SettingsClient = ({ translations }) => {
 														</span>
 													)}
 												</div>
-												<p className={cn('text-xs', isDark ? 'text-slate-500' : 'text-slate-400')}>
-													{goal.time}
-												</p>
 
 												{isSelected && (
 													<div className={cn('w-6 h-6 rounded-full flex items-center justify-center', `bg-gradient-to-br ${colors.bg} ${colors.border} border`)}>
@@ -695,9 +689,6 @@ const SettingsClient = ({ translations }) => {
 									<p className={cn('font-semibold text-base', isDark ? 'text-white' : 'text-slate-900')}>
 										<Trophy className="w-4 h-4 inline mr-2 text-amber-500" />
 										{translations.showInLeaderboard}
-									</p>
-									<p className={cn('text-sm mt-0.5', isDark ? 'text-slate-500' : 'text-slate-400')}>
-										{translations.showInLeaderboardDesc}
 									</p>
 								</div>
 								<Switch
@@ -972,12 +963,14 @@ const SettingsField = ({
 			colors.border
 		)}>
 			<div className="flex items-center gap-3">
-				<div className={cn(
-					'w-9 h-9 rounded-lg flex items-center justify-center border',
-					colors.icon
-				)}>
-					{icon}
-				</div>
+				{icon && (
+					<div className={cn(
+						'w-9 h-9 rounded-lg flex items-center justify-center border',
+						colors.icon
+					)}>
+						{icon}
+					</div>
+				)}
 
 				<div className="flex-1 min-w-0">
 					<p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', colors.label)}>

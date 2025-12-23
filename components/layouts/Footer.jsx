@@ -10,7 +10,6 @@ import {
 	Facebook,
 	Twitter,
 	Youtube,
-	Sparkles,
 	ExternalLink
 } from 'lucide-react'
 
@@ -47,7 +46,6 @@ const Footer = ({ className }) => {
 					{/* Logo & Description */}
 					<div className="text-center md:text-left flex-1">
 						<div className="flex items-center justify-center md:justify-start gap-2 mb-3">
-							<Sparkles className="w-5 h-5 text-amber-400" />
 							<h2 className={cn(
 								'text-3xl md:text-4xl font-black pb-1',
 								'bg-gradient-to-r from-violet-400 via-cyan-400 to-violet-400',

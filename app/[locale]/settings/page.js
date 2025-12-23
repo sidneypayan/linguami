@@ -40,6 +40,11 @@ export default async function SettingsPage({ params }) {
 	// Get all translations as plain objects
 	const translations = {
 		title: t('title'),
+		settingsTitle: t('settingsTitle'),
+		settingsSubtitle: t('settingsSubtitle'),
+		xpTotal: t('xpTotal'),
+		streak: t('streak'),
+		gold: t('gold'),
 		personalInfo: t('personalInfo'),
 		username: t('username'),
 		email: t('email'),
