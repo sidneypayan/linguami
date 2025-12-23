@@ -128,24 +128,15 @@ export default async function LessonsPage({ params }) {
 	// Get locale from params
 	const { locale } = await params
 
-	// Check if user is authenticated and is admin
-	const { isAuthenticated, isAdmin, spokenLanguage: userSpokenLanguage, learningLanguage: userLearningLanguage } = await checkAdminAuth()
-
-	if (!isAuthenticated) {
-		// Not logged in - redirect to login
-		redirect(`/${locale}/login`)
-	}
-
-	if (!isAdmin) {
-		// Logged in but not admin - redirect to home with error
-		redirect(`/${locale}?error=admin_only`)
-	}
+	// Check user authentication (allow guests and all authenticated users)
+	const { isAuthenticated, spokenLanguage: userSpokenLanguage, learningLanguage: userLearningLanguage } = await checkAdminAuth()
 
 	// Determine target language and spoken language
-	const targetLanguage = userLearningLanguage || 'ru' // Use user's learning language, default to Russian
-	const spokenLanguage = userSpokenLanguage || locale // Use user's spoken language, fallback to interface language
+	// Allow guests to view lessons (they'll see published lessons only via getLessons filter)
+	const targetLanguage = userLearningLanguage || 'fr' // Default to French for guests
+	const spokenLanguage = userSpokenLanguage || locale // Use interface language for guests
 
-	// Fetch lessons from server
+	// Fetch lessons from server (only published lessons will be returned)
 	const lessons = await getLessons(targetLanguage, spokenLanguage)
 
 	return <LessonsPageClient initialLessons={lessons} />
