@@ -44,8 +44,8 @@ const BottomNav = () => {
 	// Total words count (user or guest)
 	const wordsCount = isUserLoggedIn ? user_words.length : guestWordsCount
 
-	// Check if lessons are available (admin only for now)
-	const hasLessons = userLearningLanguage === 'fr' && isUserAdmin
+	// Check if lessons are available (admin sees all, users only see French lessons)
+	const hasLessons = isUserAdmin || userLearningLanguage === 'fr'
 
 	// Determine active value based on pathname
 	const getActiveValue = () => {

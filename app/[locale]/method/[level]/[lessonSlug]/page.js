@@ -86,9 +86,10 @@ export async function generateMetadata({ params }) {
 	}
 }
 
-export default async function LessonPage({ params }) {
+export default async function LessonPage({ params, searchParams }) {
 	// Get params first
 	const { locale, level: levelSlug, lessonSlug } = await params
+	const resolvedSearchParams = await searchParams
 
 	const { isAuthenticated, isAdmin, user } = await checkAdminAuth()
 
@@ -116,6 +117,11 @@ export default async function LessonPage({ params }) {
 
 		spokenLanguage = profile?.spoken_language || locale
 		learningLanguage = profile?.learning_language || 'ru'
+	}
+
+	// Allow admins to override language with ?lang= parameter
+	if (isAdmin && resolvedSearchParams?.lang) {
+		learningLanguage = resolvedSearchParams.lang
 	}
 
 	// Fetch lesson data

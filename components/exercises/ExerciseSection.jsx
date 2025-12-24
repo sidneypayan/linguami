@@ -111,21 +111,19 @@ const ExerciseSection = ({ materialId, lessonId, parentType, parentId, onExercis
 
 			setLoading(true)
 
-			// Polymorphic query with backward compatibility
+			// Query using actual database columns (material_id and lesson_id)
 			let query = supabase.from('exercises').select('*')
 
 			if (queryParentType === 'material') {
-				// For materials, check both new polymorphic fields AND legacy material_id
-				query = query.or(`and(parent_type.eq.material,parent_id.eq.${queryParentId}),material_id.eq.${queryParentId}`)
-			} else {
-				// For lessons and other types, use polymorphic fields only
-				query = query.eq('parent_type', queryParentType).eq('parent_id', queryParentId)
+				query = query.eq('material_id', queryParentId)
+			} else if (queryParentType === 'lesson' || queryParentType === 'course_lesson') {
+				query = query.eq('lesson_id', queryParentId)
 			}
 
 			const { data: exercisesData, error: exercisesError } = await query.order('id', { ascending: true })
 
 			if (exercisesError) {
-				logger.error('Error loading exercises:', exercisesError)
+				logger.error('Error loading exercises:', exercisesError.message || exercisesError.code || JSON.stringify(exercisesError))
 			}
 
 			setExercises(exercisesData || [])

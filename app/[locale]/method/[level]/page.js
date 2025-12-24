@@ -64,9 +64,10 @@ export async function generateMetadata({ params }) {
 	}
 }
 
-export default async function LevelPage({ params }) {
+export default async function LevelPage({ params, searchParams }) {
 	// Get params first
 	const { locale, level: levelSlug } = await params
+	const resolvedSearchParams = await searchParams
 
 	const { isAuthenticated, isAdmin, user, supabase } = await checkAdminAuth()
 
@@ -89,6 +90,11 @@ export default async function LevelPage({ params }) {
 		if (profile?.learning_language) {
 			learningLanguage = profile.learning_language
 		}
+	}
+
+	// Allow admins to override language with ?lang= parameter
+	if (isAdmin && resolvedSearchParams?.lang) {
+		learningLanguage = resolvedSearchParams.lang
 	}
 
 	// Get current level from static data
