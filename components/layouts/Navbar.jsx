@@ -73,9 +73,9 @@ const Navbar = props => {
 			name: t('lessons'),
 			icon: Library,
 			href: '/lessons',
-			// Hide if user is learning their native language OR if French speaker (only French lessons available)
+			// Hide if user is learning their native language
 			// But always show for admins
-			hideIf: !isUserAdmin && (spokenLanguage === userLearningLanguage || spokenLanguage === 'fr'),
+			hideIf: !isUserAdmin && spokenLanguage === userLearningLanguage,
 		},
 		{
 			name: t('blog'),
