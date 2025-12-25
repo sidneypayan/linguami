@@ -49,6 +49,14 @@ npm run build        # Production build
 npm run lint         # Run ESLint
 ```
 
+## 🗄️ Database Configuration
+
+**IMPORTANT:** Le projet utilise **UNIQUEMENT la base de données de PRODUCTION**. Il n'y a **PLUS de DB locale**.
+
+- Tous les scripts et composants utilisent la DB de production via `coursesClient` (défini dans `lib/supabase-courses.js`)
+- Les credentials de la DB prod sont dans `.env.local`
+- Ne JAMAIS chercher ou créer de tables en local
+
 
 ## ⚠️ Important Rules
 
