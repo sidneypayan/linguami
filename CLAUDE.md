@@ -200,16 +200,43 @@ Detailed feature documentation:
 
 **⚠️ MUST READ before creating content:**
 
-- **[Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md)** - Rules for creating course lessons, translations, audio workflow
-- **[Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
-- **[Course Blocks Structure](docs/guides/COURSE_BLOCKS_STRUCTURE.md)** - All block types with schemas
-- **[Dialogue Audio Generation](docs/guides/DIALOGUE_AUDIO_GENERATION.md)** - Voice IDs, voice mapping, audio generation process for dialogues
+- **[Method - Lesson Creation Guide](docs/method/LESSON_CREATION_GUIDE.md)** - Creating lessons for /method section, translations, audio workflow
+- **[Method - Lesson Template](docs/method/LESSON_TEMPLATE.json)** - Complete JSON template with all block types
+- **[Method - Lesson Blocks Reference](docs/method/LESSON_BLOCKS_REFERENCE.md)** - All block types with schemas
+- **[Method - Audio Generation](docs/method/AUDIO_GENERATION.md)** - Voice IDs, voice mapping, audio generation for dialogues
+- **[Exercises - Creation Guide](docs/exercises/CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
 
 ### ⚡ Performance & Best Practices
 
 Optimization guides and coding standards:
 
 - **[Performance Optimizations](docs/PERFORMANCE_OPTIMIZATIONS.md)** - React.memo, useMemo/useCallback, lazy loading, hydration fixes
+
+## ⚠️ CRITICAL: Two Lesson Systems
+
+Linguami has **TWO DISTINCT lesson systems** - do NOT confuse them:
+
+### 1. Method Lessons (Structured Courses)
+- **Table:** `course_lessons`
+- **Purpose:** Structured courses (A1, A2, etc.) with progression tracking
+- **Features:** Multilingual blocks (blocks_fr, blocks_en, blocks_ru), exercises, XP rewards, audio
+- **Examples:** "Alphabet cyrillique", "Verbes du 1er groupe", "Pronoms personnels"
+- **Documentation:** `docs/method/LESSON_CREATION_GUIDE.md`
+- **Location:** Accessed via `/method/beginner/lesson-slug`
+
+### 2. Standalone Lessons (Site Content)
+- **Table:** `lessons`
+- **Purpose:** Independent tutorials/articles/grammar explanations
+- **Features:** Simpler structure, no multilingual blocks system
+- **Examples:** Grammar tips, vocabulary lists, cultural notes
+- **Documentation:** TBD
+- **Location:** Accessed via `/lessons`
+
+**When querying lessons:**
+- For method courses → Use `course_lessons` table
+- For standalone content → Use `lessons` table
+
+---
 
 ## Three-Language System
 

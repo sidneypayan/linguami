@@ -13,6 +13,33 @@ Ce document définit les règles et bonnes pratiques pour créer des leçons dan
 
 ---
 
+## 📋 Références techniques
+
+**Avant de créer une leçon, consultez ces deux fichiers de référence :**
+
+### 1. Template JSON complet
+👉 **[LESSON_TEMPLATE.json](./LESSON_TEMPLATE.json)**
+
+Exemple complet d'une leçon avec tous les types de blocs :
+- Structure complète d'une leçon (metadata + blocks)
+- Tous les types de blocs disponibles
+- Champs obligatoires et optionnels
+- Notes sur l'adaptation par langue cible
+- Guidelines pour la génération audio
+
+### 2. Catalogue des blocks
+👉 **[LESSON_BLOCKS_REFERENCE.md](./LESSON_BLOCKS_REFERENCE.md)**
+
+Référence technique détaillée de chaque type de bloc :
+- 13 types de blocs avec schémas JSON
+- Explication de chaque champ
+- Exemples prêts à copier-coller
+- Ordre recommandé des blocks
+
+**Utilisez ces références** lors de la création pour garantir la cohérence structurelle.
+
+---
+
 ## Système de langues
 
 Le système utilise **trois concepts de langue distincts** :
@@ -119,6 +146,22 @@ Les trois versions (`blocks_fr`, `blocks_en`, `blocks_ru`) doivent :
       ]
     }
     // ⚠️ Continuer l'alternance : si ligne suivante → Андрей (male) → Мария (female) → etc.
+  ],
+
+  // ⚠️ NOUVEAU : Vocabulaire récapitulatif du dialogue (optionnel mais recommandé)
+  vocabulary: [
+    {
+      word: "Привет",  // Mot/expression en langue apprise
+      translation: "Bonjour",  // Traduction en langue parlée
+      category: "expressions",  // Catégorie : expressions/verbes/noms/etc.
+      note: "Salutation informelle"  // Note optionnelle pour précisions
+    },
+    {
+      word: "Меня зовут",
+      translation: "Je m'appelle",
+      category: "expressions",
+      note: "Construction pour se présenter"  // Optionnel
+    }
   ]
 }
 ```
@@ -131,6 +174,9 @@ Les trois versions (`blocks_fr`, `blocks_en`, `blocks_ru`) doivent :
   - Facilite la distinction auditive quand les audios seront générés
 - ✅ **Phase 1 (création)** : `audioUrl: null` ou omis complètement
 - ✅ **Phase 2 (après validation)** : `audioUrl` pointant vers fichiers R2
+- ✅ **Vocabulaire récapitulatif** (optionnel) : Utilisez le champ `vocabulary` au niveau du bloc pour lister les mots/expressions clés
+  - `category` : expressions/verbes/noms/adjectifs/etc.
+  - `note` : Précisions optionnelles (usage, contexte, niveau de formalité)
 - ❌ Ne JAMAIS mélanger les langues dans `text`
 - ❌ Ne JAMAIS avoir deux lignes consécutives avec le même `speakerGender`
 
@@ -265,9 +311,11 @@ explanation: "Pour se présenter en russe, on utilise..."
     {
       word: "Привет",  // En langue apprise
       translation: "Salut",  // En langue parlée
-      pronunciation: "[pri-viet]",  // Transcription phonétique
-      example: "Привет, как дела?",  // En langue apprise
-      exampleTranslation: "Salut, comment ça va ?"  // En langue parlée
+      category: "expressions",  // Catégorie : expressions/verbes/noms/etc.
+      pronunciation: "[pri-viet]",  // Transcription phonétique (optionnel)
+      example: "Привет, как дела?",  // En langue apprise (optionnel)
+      exampleTranslation: "Salut, comment ça va ?",  // En langue parlée (optionnel)
+      note: "Salutation informelle"  // Note optionnelle pour précisions
     }
   ]
 }
@@ -275,7 +323,9 @@ explanation: "Pour se présenter en russe, on utilise..."
 
 **Règles strictes** :
 - ✅ `word`, `example` : En langue apprise
-- ✅ `translation`, `exampleTranslation`, `category` : En langue parlée
+- ✅ `translation`, `exampleTranslation`, `category`, `note` : En langue parlée
+- ✅ Champs optionnels : `pronunciation`, `example`, `exampleTranslation`, `note`
+- ✅ Champs requis : `word`, `translation`, `category`
 
 ---
 
@@ -307,6 +357,33 @@ explanation: "Pour se présenter en russe, on utilise..."
 
 **Règles strictes** :
 - ✅ Tout le contenu en langue parlée
+
+---
+
+### SummaryBlock
+
+**Principe** : Récapitulatif des points clés de la leçon
+
+```javascript
+{
+  type: "summary",
+  title: "Expressions à retenir",  // En langue parlée
+  content: "Voici les expressions essentielles vues dans cette leçon :",  // En langue parlée (optionnel)
+  items: [
+    "Bonjour - Salutation standard du jour",
+    "Bonsoir - Salutation du soir (après 18h)",
+    "Au revoir - Formule d'adieu formelle",
+    "À bientôt - Formule d'adieu quand on va se revoir",
+    "Enchanté(e) - Réponse polie lors d'une présentation"
+  ]
+  // ☝️ Liste de points clés TOUJOURS en langue parlée
+}
+```
+
+**Règles strictes** :
+- ✅ `title`, `content`, `items` : TOUJOURS en langue parlée
+- ✅ Utilisez pour résumer les points importants à retenir
+- ✅ Placez typiquement à la fin de la leçon
 
 ---
 

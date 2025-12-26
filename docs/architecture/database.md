@@ -126,7 +126,24 @@
 
 ⚠️ **Important:** Courses are filtered by `target_language` (learning language), NOT by interface language.
 
-**`course_lessons`** - Individual lessons with multilingual content
+### ⚠️ CRITICAL: Two Lesson Systems
+
+**DO NOT CONFUSE:**
+
+**1. Method Lessons** (`course_lessons` table):
+- Structured course lessons with progression (A1, A2, etc.)
+- Multilingual blocks: `blocks_fr`, `blocks_en`, `blocks_ru`
+- Linked to `courses` via `course_id`
+- Have exercises, XP rewards, audio
+- Examples: "Alphabet cyrillique", "Verbes du 1er groupe"
+
+**2. Standalone Lessons** (`lessons` table):
+- Independent site content (tutorials, grammar explanations)
+- Simpler structure, no multilingual blocks
+- Not part of structured courses
+- Examples: Blog posts, grammar tips
+
+**`course_lessons`** - Method lessons with multilingual content
 - `id` (integer, PK)
 - `course_id` (integer, FK to courses)
 - `slug` (text) - se-presenter/les-verbes-etre-avoir
@@ -186,6 +203,19 @@
 - `created_at` (timestamp)
 
 ### Content Management
+
+**`lessons`** - Standalone lessons (NOT method courses)
+- `id` (integer, PK)
+- `title_fr` (text) - Lesson title in French
+- `title_en` (text) - Lesson title in English
+- `title_ru` (text) - Lesson title in Russian
+- `slug` (text, unique)
+- `target_language` (text) - Language being taught (fr/ru/en)
+- `content` (jsonb or text) - Lesson content
+- `created_at` (timestamp)
+- `updated_at` (timestamp)
+
+⚠️ **Note:** This table is for standalone lessons (tutorials, grammar tips). For structured method courses, use `course_lessons` table.
 
 **`posts`** - Blog posts
 - `id` (integer, PK)
@@ -290,10 +320,10 @@ Migrations are stored in `/supabase/migrations/` and named with timestamp prefix
 - `20250111_add_multilingual_blocks.sql`
 - `20250111_add_target_language_and_premium_discount.sql`
 
-Apply migrations via Supabase CLI:
-```bash
-supabase db push
-```
+Apply migrations via **Supabase Dashboard SQL Editor** (production DB only):
+1. Go to https://supabase.com/dashboard → SQL Editor
+2. Copy migration file content
+3. Execute in production
 
 ## Related Documentation
 
