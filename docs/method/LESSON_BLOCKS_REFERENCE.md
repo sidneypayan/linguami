@@ -6,49 +6,79 @@ Inspiré de la méthode Harrap's, chaque leçon est composée d'une séquence de
 
 ---
 
+## 📚 Documentation connexe
+
+- **[LESSON_CREATION_GUIDE.md](./LESSON_CREATION_GUIDE.md)** - Guide méthodologique complet pour créer des lessons
+- **[LESSON_TEMPLATE.json](./LESSON_TEMPLATE.json)** - Exemple complet d'une leçon avec tous les blocks
+- **[AUDIO_GENERATION.md](./AUDIO_GENERATION.md)** - Génération audio pour les dialogues
+
+---
+
 ## Types de Blocks disponibles
 
 ### 1. `dialogue` - Dialogue d'introduction
 
-Dialogue authentique avec traduction ligne par ligne.
+Dialogue authentique avec vocabulaire ligne par ligne et récapitulatif.
 
 ```json
 {
   "type": "dialogue",
   "title": "À l'aéroport",
-  "audioUrl": "/audio/courses/debutant/lecon-1/dialogue.mp3",
   "lines": [
     {
       "speaker": "Agent de douane",
       "speakerGender": "male",
       "text": "Bonjour ! Votre passeport, s'il vous plaît.",
-      "translation": "Здравствуйте! Ваш паспорт, пожалуйста.",
-      "audioUrl": "/audio/courses/debutant/lecon-1/line-1.mp3"
+      "audioUrl": "/audio/courses/debutant/lecon-1/line-1.mp3",
+      "vocab": [
+        {
+          "word": "Bonjour",
+          "translation": "Salutation formelle (matin/après-midi)"
+        },
+        {
+          "word": "s'il vous plaît",
+          "translation": "Expression de politesse (formel)"
+        }
+      ]
     },
     {
       "speaker": "Touriste",
       "speakerGender": "female",
       "text": "Voici mon passeport.",
-      "translation": "Вот мой паспорт.",
-      "audioUrl": "/audio/courses/debutant/lecon-1/line-2.mp3"
+      "audioUrl": "/audio/courses/debutant/lecon-1/line-2.mp3",
+      "vocab": [
+        {
+          "word": "Voici",
+          "translation": "Présentatif (voilà, c'est ici)"
+        }
+      ]
     }
   ],
   "vocabulary": [
     {
       "word": "passeport",
       "translation": "паспорт",
-      "definition": "Document officiel d'identité",
-      "example": "Je dois renouveler mon passeport."
+      "category": "noms",
+      "note": "Masculin : le passeport"
+    },
+    {
+      "word": "Bonjour",
+      "translation": "Здравствуйте",
+      "category": "expressions"
     }
   ]
 }
 ```
 
+**Champs :**
+- `lines[].vocab` : Vocabulaire inline expliqué dans chaque ligne (optionnel)
+- `vocabulary[]` : Récapitulatif du vocabulaire du dialogue avec `category` et `note` (optionnel)
+
 ---
 
 ### 2. `grammar` - Point de grammaire
 
-Explication grammaticale avec exemples et tableaux.
+Explication grammaticale avec exemples et tableaux (optionnellement avec audio).
 
 ```json
 {
@@ -61,7 +91,8 @@ Explication grammaticale avec exemples et tableaux.
       "sentence": "Je parle français",
       "translation": "Я говорю по-французски",
       "highlight": "parle",
-      "note": "Verbe en -er, 1ère personne"
+      "note": "Verbe en -er, 1ère personne",
+      "audioUrl": "/audio/grammar/je-parle-francais.mp3"
     }
   ],
   "table": {
@@ -74,10 +105,22 @@ Explication grammaticale avec exemples et tableaux.
       ["nous", "parlons", "мы говорим"],
       ["vous", "parlez", "вы говорите"],
       ["ils/elles", "parlent", "они говорят"]
+    ],
+    "rowsAudio": [
+      "/audio/conjugation/parler/je-parle.mp3",
+      "/audio/conjugation/parler/tu-parles.mp3",
+      "/audio/conjugation/parler/il-parle.mp3",
+      "/audio/conjugation/parler/nous-parlons.mp3",
+      "/audio/conjugation/parler/vous-parlez.mp3",
+      "/audio/conjugation/parler/ils-parlent.mp3"
     ]
   }
 }
 ```
+
+**Champs :**
+- `examples[].audioUrl` : Audio de l'exemple (optionnel)
+- `table.rowsAudio` : Audio pour chaque ligne du tableau (optionnel)
 
 ---
 
@@ -155,19 +198,29 @@ Liste thématique de mots à apprendre.
   "type": "vocabulary",
   "title": "Vocabulaire de l'aéroport",
   "icon": "book",
+  "category": "voyage",
   "words": [
     {
       "word": "passeport",
       "translation": "паспорт",
-      "pronunciation": "/paspɔʁ/",
       "example": "Votre passeport, s'il vous plaît",
       "exampleTranslation": "Ваш паспорт, пожалуйста",
-      "audioUrl": "/audio/vocab/passeport.mp3"
+      "note": "Masculin : le passeport"
+    },
+    {
+      "word": "Enchanté(e)",
+      "translation": "Рад(а) познакомиться",
+      "example": "Enchanté, Sophie !",
+      "exampleTranslation": "Рад познакомиться, София!",
+      "note": "Enchanté (homme) / Enchantée (femme)"
     }
-  ],
-  "category": "voyage"
+  ]
 }
 ```
+
+**Champs :**
+- `note` : Note grammaticale ou contextuelle (optionnel)
+- `category` : Catégorie du vocabulaire (optionnel)
 
 ---
 
@@ -226,22 +279,23 @@ Focus sur des sons spécifiques.
 
 ### 9. `conversation` - Mini-dialogue de compréhension
 
-Dialogue court pour tester la compréhension.
+Dialogue court pour tester la compréhension (avec audio optionnel).
 
 ```json
 {
   "type": "conversation",
   "title": "Au restaurant",
-  "audioUrl": "/audio/courses/debutant/lecon-2/conversation.mp3",
   "context": "Deux personnes commandent au restaurant",
   "dialogue": [
     {
       "speaker": "Serveur",
-      "text": "Bonjour, que désirez-vous ?"
+      "text": "Bonjour, que désirez-vous ?",
+      "audioUrl": "/audio/conversation/serveur-1.mp3"
     },
     {
       "speaker": "Client",
-      "text": "Une pizza margherita, s'il vous plaît."
+      "text": "Une pizza margherita, s'il vous plaît.",
+      "audioUrl": "/audio/conversation/client-1.mp3"
     }
   ],
   "questions": [
@@ -252,6 +306,9 @@ Dialogue court pour tester la compréhension.
   ]
 }
 ```
+
+**Champs :**
+- `dialogue[].audioUrl` : Audio pour chaque ligne (optionnel)
 
 ---
 
@@ -305,22 +362,28 @@ Prépare à la leçon ou niveau suivant.
 
 ### 13. `summary` - Récapitulatif
 
-Résumé des points clés de la leçon.
+Résumé des points clés de la leçon sous forme de liste simple.
 
 ```json
 {
   "type": "summary",
   "title": "Expressions à retenir",
   "icon": "check",
-  "keyPhrases": [
-    {
-      "fr": "Bonjour, comment allez-vous ?",
-      "ru": "Здравствуйте, как дела?",
-      "context": "Salutation formelle"
-    }
+  "content": "Voici les expressions essentielles vues dans cette leçon :",
+  "items": [
+    "Bonjour - Salutation standard du jour",
+    "Bonsoir - Salutation du soir (après 18h)",
+    "Au revoir - Formule d'adieu formelle",
+    "Comment allez-vous ? - Question formelle sur l'état",
+    "Je m'appelle... - Formule de présentation",
+    "Enchanté(e) - Réponse polie lors d'une présentation"
   ]
 }
 ```
+
+**Champs :**
+- `content` : Introduction du récapitulatif (optionnel)
+- `items` : Liste simple de phrases clés avec leur explication
 
 ---
 

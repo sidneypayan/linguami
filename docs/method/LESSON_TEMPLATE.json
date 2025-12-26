@@ -197,13 +197,15 @@
           "word": "[HELLO_FORMAL]",
           "translation": "Hello (formal)",
           "example": "[EXAMPLE_SENTENCE]",
-          "exampleTranslation": "[TRANSLATION]"
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_GRAMMAR_NOTE]"
         },
         {
           "word": "[HELLO_INFORMAL]",
           "translation": "Hi (informal)",
           "example": "[EXAMPLE_SENTENCE]",
-          "exampleTranslation": "[TRANSLATION]"
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_CONTEXTUAL_NOTE]"
         },
         {
           "word": "[GOODBYE_FORMAL]",
@@ -221,7 +223,8 @@
           "word": "[GOOD_NIGHT]",
           "translation": "Good night",
           "example": "[EXAMPLE_SENTENCE]",
-          "exampleTranslation": "[TRANSLATION]"
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_USAGE_NOTE]"
         }
       ]
     },
@@ -420,57 +423,18 @@
       "type": "summary",
       "icon": "check",
       "title": "Key takeaways",
-      "keyPhrases": [
-        {
-          "[target_lang]": "[HELLO_PHRASE]",
-          "en": "Hello!",
-          "context": "Formal greeting"
-        },
-        {
-          "[target_lang]": "[HI_PHRASE]",
-          "en": "Hi!",
-          "context": "Informal greeting"
-        },
-        {
-          "[target_lang]": "[GOODBYE_PHRASE]",
-          "en": "Goodbye!",
-          "context": "Formal farewell"
-        },
-        {
-          "[target_lang]": "[BYE_PHRASE]",
-          "en": "Bye!",
-          "context": "Informal goodbye"
-        },
-        {
-          "[target_lang]": "[MY_NAME_IS_PHRASE]",
-          "en": "My name is...",
-          "context": "Introducing yourself"
-        },
-        {
-          "[target_lang]": "[NICE_TO_MEET_YOU_PHRASE]",
-          "en": "Nice to meet you!",
-          "context": "Responding to introduction"
-        },
-        {
-          "[target_lang]": "[WHERE_ARE_YOU_FROM_PHRASE]",
-          "en": "Where are you from?",
-          "context": "Asking about origin"
-        },
-        {
-          "[target_lang]": "[I_AM_FROM_PHRASE]",
-          "en": "I am from...",
-          "context": "Saying your country/city"
-        },
-        {
-          "[target_lang]": "[HOW_OLD_ARE_YOU_PHRASE]",
-          "en": "How old are you?",
-          "context": "Asking age"
-        },
-        {
-          "[target_lang]": "[I_AM_X_YEARS_OLD_PHRASE]",
-          "en": "I am ... years old",
-          "context": "Saying your age"
-        }
+      "content": "Here are the essential expressions from this lesson:",
+      "items": [
+        "[HELLO_PHRASE] - Formal greeting",
+        "[HI_PHRASE] - Informal greeting",
+        "[GOODBYE_PHRASE] - Formal farewell",
+        "[BYE_PHRASE] - Informal goodbye",
+        "[MY_NAME_IS_PHRASE] - Introducing yourself",
+        "[NICE_TO_MEET_YOU_PHRASE] - Responding to introduction",
+        "[WHERE_ARE_YOU_FROM_PHRASE] - Asking about origin",
+        "[I_AM_FROM_PHRASE] - Saying your country/city",
+        "[HOW_OLD_ARE_YOU_PHRASE] - Asking age",
+        "[I_AM_X_YEARS_OLD_PHRASE] - Saying your age"
       ]
     }
   ],
