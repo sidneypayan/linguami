@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import ExerciseResults from './ExerciseResults'
 
 /**
  * Fill in the Blank Exercise Component
@@ -326,117 +327,47 @@ const FillInTheBlank = ({ exercise, onComplete }) => {
 
   // Exercise completion screen
   if (exerciseCompleted) {
+    // Calculate correct/total blanks
+    let totalCorrect = 0;
+    let totalBlanks = 0;
+
+    questions.forEach((question, qIndex) => {
+      const blanks = question.blanks || [];
+      blanks.forEach((blank, bIndex) => {
+        totalBlanks++;
+        const result = results[qIndex]?.[bIndex];
+        if (result?.correct) totalCorrect++;
+      });
+    });
+
+    // Build review items for incorrect answers
+    const reviewItems = [];
+    questions.forEach((question, qIndex) => {
+      const blanks = question.blanks || [];
+      blanks.forEach((blank, bIndex) => {
+        const result = results[qIndex]?.[bIndex];
+        if (result && !result.correct) {
+          reviewItems.push({
+            question: question.text,
+            userAnswer: result.userAnswer || t("empty"),
+            correctAnswer: result.correctAnswers.join(" / "),
+            isCorrect: false,
+            explanation: blank.hint || question.explanation
+          });
+        }
+      });
+    });
+
     return (
-      <Card className={cn(
-        "p-6 md:p-8 rounded-2xl text-center",
-        isDark
-          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
-          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
-      )}>
-        <Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
-        <h4 className={cn(
-          "text-2xl font-bold mb-2",
-          isDark ? "text-slate-100" : "text-slate-800"
-        )}>
-          {t("exerciseCompleted")}
-        </h4>
-        <p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
-          {t("yourScore")} : {totalScore}%
-        </p>
-        <p className={cn(
-          "mb-6",
-          isDark ? "text-slate-400" : "text-slate-600"
-        )}>
-          {totalScore === 100 && t("perfectScore")}
-          {totalScore >= 80 && totalScore < 100 && t("greatJob")}
-          {totalScore >= 60 && totalScore < 80 && t("goodWork")}
-          {totalScore < 60 && t("keepPracticing")}
-        </p>
-        {totalScore === 100 && isFirstCompletion && (
-          <span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
-            +{exercise.xp_reward} XP
-          </span>
-        )}
-        {totalScore < 100 && (
-          <>
-            <div className={cn(
-              "p-4 rounded-xl border-2 mb-6 text-left",
-              isDark
-                ? "bg-blue-500/10 border-blue-500/30"
-                : "bg-blue-50 border-blue-200"
-            )}>
-              <p className={cn(
-                "font-semibold",
-                isDark ? "text-blue-300" : "text-blue-700"
-              )}>
-                {t("perfectScoreForXP")}
-              </p>
-            </div>
-
-            {/* Correction Section */}
-            <div className="mb-6 text-left">
-              <h6 className="font-bold mb-4 text-red-500">
-                {t("corrections")}
-              </h6>
-              {questions.map((question, qIndex) => {
-                const blanks = question.blanks || [];
-                const hasError = blanks.some((blank, bIndex) => {
-                  const result = results[qIndex]?.[bIndex];
-                  return result && !result.correct;
-                });
-
-                if (!hasError) return null;
-
-                return (
-                  <Card
-                    key={qIndex}
-                    className={cn(
-                      "p-4 mb-4 rounded-xl border-2 border-red-500",
-                      isDark ? "bg-red-500/10" : "bg-red-50"
-                    )}
-                  >
-                    <p className="font-semibold mb-4">
-                      {t("question")} {qIndex + 1}
-                    </p>
-                    {blanks.map((blank, bIndex) => {
-                      const result = results[qIndex]?.[bIndex];
-                      if (!result || result.correct) return null;
-
-                      return (
-                        <div key={bIndex} className="mb-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <XCircle className="w-5 h-5 text-red-500" />
-                            <span className="font-semibold text-red-500 text-sm">
-                              {t("yourAnswer")}:{" "}
-                              {result.userAnswer || t("empty")}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                            <span className="font-semibold text-emerald-500 text-sm">
-                              {t("correctAnswer")}:{" "}
-                              {result.correctAnswers.join(" / ")}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </Card>
-                );
-              })}
-            </div>
-          </>
-        )}
-        <div className="flex gap-4 justify-center">
-          <Button
-            onClick={handleReset}
-            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
-          >
-            <RotateCcw className="w-5 h-5 mr-2" />
-            {t("tryAgain")}
-          </Button>
-        </div>
-      </Card>
+      <ExerciseResults
+        score={totalScore}
+        correctCount={totalCorrect}
+        totalCount={totalBlanks}
+        onRetry={handleReset}
+        onNext={handleReset}
+        reviewItems={reviewItems}
+        playSound={true}
+      />
     );
   }
 
