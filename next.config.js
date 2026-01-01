@@ -4,6 +4,13 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 const nextConfig = {
 	reactStrictMode: true,
 
+	// Increase Server Actions body size limit for file uploads (images, audio)
+	experimental: {
+		serverActions: {
+			bodySizeLimit: '100mb',
+		},
+	},
+
 	// Include data folder in serverless functions (for training JSON files)
 	// This ensures JSON files are available in Vercel serverless functions
 	outputFileTracingIncludes: {
