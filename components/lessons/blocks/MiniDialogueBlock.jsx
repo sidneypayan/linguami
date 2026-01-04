@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import PlayableText from '@/components/courses/blocks/PlayableText'
+import PlayableWord from '@/components/courses/blocks/PlayableWord'
 
 export default function MiniDialogueBlock({ title, lines, translation, audioUrls = {}, isDark }) {
 	return (
@@ -15,20 +15,29 @@ export default function MiniDialogueBlock({ title, lines, translation, audioUrls
 				isDark ? "text-blue-400" : "text-blue-800"
 			)}>{title || 'Exemple en contexte'}</h4>
 			<div className="space-y-3">
-				{lines?.map((line, i) => (
-					<div key={i} className="flex gap-3">
-						<span className={cn(
-							"font-bold min-w-[80px]",
-							isDark ? "text-indigo-400" : "text-indigo-600"
-						)}>{line.speaker}</span>
-						<span className={cn(isDark ? "text-slate-300" : "text-slate-700")}>
-							<PlayableText
-								text={line.text}
-								audioUrls={audioUrls}
-							/>
-						</span>
-					</div>
-				))}
+				{lines?.map((line, i) => {
+					// Use line.audioUrl if available (for sentence-level audio)
+					// Otherwise try to find in audioUrls (for word-level audio)
+					const audioUrl = line.audioUrl
+						|| audioUrls[line.text]
+						|| audioUrls[line.text?.toLowerCase()]
+						|| null
+
+					return (
+						<div key={i} className="flex gap-3">
+							<span className={cn(
+								"font-bold min-w-[80px]",
+								isDark ? "text-indigo-400" : "text-indigo-600"
+							)}>{line.speaker}</span>
+							<span className={cn(isDark ? "text-slate-300" : "text-slate-700")}>
+								<PlayableWord
+									word={line.text}
+									audioUrl={audioUrl}
+								/>
+							</span>
+						</div>
+					)
+				})}
 			</div>
 			{translation && (
 				<p className={cn(

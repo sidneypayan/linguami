@@ -38,6 +38,7 @@ export default function MistakesTableBlock({ title, rows, audioUrls = {}, isDark
 								<PlayableText
 									text={row.correct}
 									audioUrls={audioUrls}
+									allowSingleLetters={true}
 								/>
 							</span>
 						</div>

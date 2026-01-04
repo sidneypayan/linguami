@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { CheckCircle, BookOpen, Sparkles, Trophy } from 'lucide-react'
+import { CheckCircle, BookOpen, Sparkles, Trophy, Edit } from 'lucide-react'
 import { useLessonStatus, useMarkLessonAsStudied } from '@/lib/lessons-client'
 import { useUserContext } from '@/context/user'
 import { useThemeMode } from '@/context/ThemeContext'
@@ -30,7 +30,7 @@ import MiniDialogueBlock from '@/components/lessons/blocks/MiniDialogueBlock'
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
 	const locale = useLocale()
-	const { isUserLoggedIn } = useUserContext()
+	const { isUserLoggedIn, isUserAdmin } = useUserContext()
 	const { isDark } = useThemeMode()
 
 	// Track if all exercises are attempted
@@ -121,6 +121,26 @@ const Lesson = ({ lesson }) => {
 					? "bg-transparent lg:bg-slate-800/90 lg:border-slate-700/50"
 					: "bg-transparent lg:bg-white lg:border-indigo-500/10 lg:shadow-[0_8px_32px_rgba(102,126,234,0.12)]"
 			)}>
+				{/* Admin Edit Button */}
+				{isUserAdmin && lesson?.id && (
+					<div className="flex justify-end mb-4">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => window.open(`/${locale}/admin/lessons/${lesson.id}`, '_blank')}
+							className={cn(
+								"gap-2",
+								isDark
+									? "border-slate-600 hover:bg-slate-700 text-slate-300"
+									: "border-slate-300 hover:bg-slate-50 text-slate-700"
+							)}
+						>
+							<Edit className="h-4 w-4" />
+							{locale === 'fr' ? 'Éditer' : locale === 'ru' ? 'Редактировать' : 'Edit'}
+						</Button>
+					</div>
+				)}
+
 				<CardContent className="p-0">
 					{lesson.blocks.map((block, index) => {
 						switch (block.type) {

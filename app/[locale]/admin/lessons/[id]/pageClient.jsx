@@ -67,6 +67,21 @@ const EditLessonPageClient = ({ lessonId }) => {
 		try {
 			await updateStandaloneLesson(lessonId, formData)
 			toast.success('Lesson updated successfully!')
+
+			// Re-fetch the lesson to ensure UI is in sync with database
+			const updatedLesson = await getStandaloneLessonById(lessonId)
+			setLesson(updatedLesson)
+			setFormData({
+				title_fr: updatedLesson.title_fr || '',
+				title_en: updatedLesson.title_en || '',
+				title_ru: updatedLesson.title_ru || '',
+				slug: updatedLesson.slug || '',
+				target_language: updatedLesson.target_language || '',
+				level: updatedLesson.level || '',
+				blocks_fr: updatedLesson.blocks_fr || [],
+				blocks_en: updatedLesson.blocks_en || [],
+				blocks_ru: updatedLesson.blocks_ru || []
+			})
 		} catch (error) {
 			console.error('Error saving lesson:', error)
 			toast.error('Failed to save lesson')

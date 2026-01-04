@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import PlayableText from '@/components/courses/blocks/PlayableText'
+import PlayableHTML from '@/components/courses/blocks/PlayableHTML'
 
 export default function ImportantNoteBlock({ title, content, examples, note, audioUrls = {}, isDark }) {
 	return (
@@ -18,12 +19,15 @@ export default function ImportantNoteBlock({ title, content, examples, note, aud
 				<span className="text-2xl">💡</span>
 				{title}
 			</h4>
-			<p className={cn(
+			<div className={cn(
 				"mb-4 leading-relaxed",
 				isDark ? "text-slate-300" : "text-slate-700"
-			)}
-				dangerouslySetInnerHTML={{ __html: content }}
-			/>
+			)}>
+				<PlayableHTML
+					html={content}
+					audioUrls={audioUrls}
+				/>
+			</div>
 			{examples && examples.length > 0 && (
 				<div className="space-y-2 mb-4">
 					{examples.map((example, i) => (

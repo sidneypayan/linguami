@@ -34,6 +34,7 @@ const LessonsPageClient = ({ initialLessons }) => {
 				lessonLevel: lesson.level,
 				slug: lesson.slug,
 				id: lesson.id,
+				status: lesson.status,
 			}))
 			setLessonsInfos(gatherLessonsInfos)
 		}
@@ -43,13 +44,23 @@ const LessonsPageClient = ({ initialLessons }) => {
 	useEffect(() => {
 		if (slug && lessons.length > 0) {
 			const lesson = lessons.find((l) => l.slug === slug)
+
+			// Check if the lesson exists and is published
+			if (!lesson || lesson.status !== 'published') {
+				// Lesson not found or not published: redirect to menu
+				router.push(`/${locale}/lessons`)
+				setSelectedLesson(null)
+				setShowMenu(true)
+				return
+			}
+
 			setSelectedLesson(lesson)
 			// Hide menu on mobile/tablet when a lesson is selected
 			setShowMenu(false)
 		} else {
 			setShowMenu(true)
 		}
-	}, [slug, lessons])
+	}, [slug, lessons, router, locale])
 
 	// JSON-LD for Course
 	const jsonLd = {

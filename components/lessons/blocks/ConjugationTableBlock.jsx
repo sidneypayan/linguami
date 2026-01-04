@@ -1,6 +1,28 @@
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import PlayableWordsList from '@/components/courses/blocks/PlayableWordsList'
+import { Volume2 } from 'lucide-react'
+import useSound from 'use-sound'
+
+// Audio Button Component
+function AudioButton({ audioUrl, isDark }) {
+	const [play] = useSound(audioUrl)
+
+	return (
+		<button
+			onClick={() => play()}
+			className={cn(
+				"p-1.5 rounded-lg transition-all hover:scale-110",
+				isDark
+					? "bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400"
+					: "bg-indigo-100 hover:bg-indigo-200 text-indigo-600"
+			)}
+			aria-label="Play sound"
+		>
+			<Volume2 className="w-4 h-4" />
+		</button>
+	)
+}
 
 export default function ConjugationTableBlock({ title, rows, audioUrls = {}, isDark }) {
 	const t = useTranslations('lessons')
@@ -20,8 +42,15 @@ export default function ConjugationTableBlock({ title, rows, audioUrls = {}, isD
 									? (isDark ? 'bg-slate-700/50' : 'bg-slate-50')
 									: (isDark ? 'bg-slate-800/50' : 'bg-white')
 							)}>
-								<td className={cn("p-3 font-semibold", isDark ? "text-indigo-400" : "text-indigo-600")}>{row.pronoun}</td>
-								<td className={cn("p-3 font-bold", isDark ? "text-slate-100" : "text-slate-800")}>{row.form}</td>
+								<td className={cn("p-3 font-semibold", isDark ? "text-indigo-400" : "text-indigo-600")}>
+									{row.pronoun}
+								</td>
+								<td className={cn("p-3 font-bold", isDark ? "text-slate-100" : "text-slate-800")}>
+									<div className="flex flex-col items-center justify-center gap-1">
+										{row.audioUrl && <AudioButton audioUrl={row.audioUrl} isDark={isDark} />}
+										{row.form}
+									</div>
+								</td>
 								{row.translation && (
 									<td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>
 										<PlayableWordsList

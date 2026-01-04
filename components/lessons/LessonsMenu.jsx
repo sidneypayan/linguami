@@ -85,6 +85,11 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 		return lesson.titleRu || lesson.titleEn || lesson.titleFr
 	}
 
+	// Check if a lesson is published (accessible)
+	const isLessonPublished = (lesson) => {
+		return lesson.status === 'published'
+	}
+
 	// Get user authentication state
 	const { isUserLoggedIn } = useUserContext()
 
@@ -263,49 +268,63 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 									{lessonsByLevel[level].map((lesson, lessonIndex) => {
 										const isSelected = lessonSlug === lesson.slug
 										const isStudied = !isLoading && checkIfUserLessonIsStudied(lesson.id)
+										const isPublished = isLessonPublished(lesson)
 
 										return (
 											<button
 												key={lesson.slug}
 												onClick={() => {
+													if (!isPublished) return // Block click if not published
 													onSelectLesson(lesson.slug)
 													if (isSmallScreen) {
 														setOpenLevels({})
 													}
 												}}
+												disabled={!isPublished}
 												className={cn(
 													'w-full flex items-center gap-3 p-3 rounded-lg',
 													'transition-all duration-200 text-left',
 													'group/lesson',
-													isSelected
+													!isPublished && 'opacity-50 cursor-not-allowed',
+													isPublished && isSelected
 														? cn(
 															'bg-gradient-to-r',
 															config.gradient,
 															'shadow-lg',
 															config.glow
 														)
-														: cn(
-															isDark
-																? 'hover:bg-slate-800/80'
-																: 'hover:bg-slate-100'
-														)
+														: isPublished
+															? cn(
+																isDark
+																	? 'hover:bg-slate-800/80'
+																	: 'hover:bg-slate-100'
+															)
+															: ''
 												)}>
 
 												{/* Lesson number / status */}
 												<div className={cn(
 													'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
 													'text-sm font-bold transition-all',
-													isSelected
-														? 'bg-white/20 text-white'
-														: isStudied
-															? cn('bg-gradient-to-br', config.gradient, 'text-white')
-															: cn(
-																isDark
-																	? 'bg-slate-700 text-slate-400 group-hover/lesson:bg-slate-600'
-																	: 'bg-slate-200 text-slate-500 group-hover/lesson:bg-slate-300'
-															)
+													!isPublished
+														? cn(
+															isDark
+																? 'bg-slate-700 text-slate-500'
+																: 'bg-slate-200 text-slate-400'
+														)
+														: isSelected
+															? 'bg-white/20 text-white'
+															: isStudied
+																? cn('bg-gradient-to-br', config.gradient, 'text-white')
+																: cn(
+																	isDark
+																		? 'bg-slate-700 text-slate-400 group-hover/lesson:bg-slate-600'
+																		: 'bg-slate-200 text-slate-500 group-hover/lesson:bg-slate-300'
+																)
 												)}>
-													{isStudied && !isSelected ? (
+													{!isPublished ? (
+														<Lock className="w-4 h-4" />
+													) : isStudied && !isSelected ? (
 														<CheckCircle className="w-4 h-4" />
 													) : (
 														lessonIndex + 1
@@ -324,8 +343,17 @@ const LessonsMenu = ({ lessonsInfos, onSelectLesson, lessonSlug }) => {
 													{getLessonTitle(lesson)}
 												</span>
 
-												{/* Completed badge */}
-												{isStudied && !isSelected && (
+												{/* Status badge: Coming Soon or Completed */}
+												{!isPublished ? (
+													<span className={cn(
+														'text-xs font-semibold px-2 py-1 rounded-full',
+														isDark
+															? 'bg-slate-700 text-slate-400'
+															: 'bg-slate-200 text-slate-500'
+													)}>
+														{t('coming_soon')}
+													</span>
+												) : isStudied && !isSelected && (
 													<span className={cn(
 														'text-xs font-semibold',
 														isDark ? config.textDark : config.text

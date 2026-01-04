@@ -357,8 +357,11 @@ const Words = ({ content, locale = 'fr' }) => {
 	const wrapSentences = useMemo(() => {
 		if (!clean) return clean
 
+		// Convert <br> tags to newlines
+		const cleanedContent = clean.replace(/<br\s*\/?>/gi, '\n')
+
 		// Split on newlines to process line by line
-		const lines = clean.split(/\r?\n/)
+		const lines = cleanedContent.split(/\r?\n/)
 
 		return lines.map((line, lineIndex) => {
 			if (!line) return <span key={lineIndex} style={{ display: 'block', marginBottom: '1.2rem' }} />
