@@ -2,20 +2,47 @@ import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import PlayableWordsList from '@/components/courses/blocks/PlayableWordsList'
 import { Volume2 } from 'lucide-react'
-import useSound from 'use-sound'
+import { useState, useRef } from 'react'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 // Audio Button Component
 function AudioButton({ audioUrl, isDark }) {
-	const [play] = useSound(audioUrl)
+	const [isPlaying, setIsPlaying] = useState(false)
+	const audioRef = useRef(null)
+
+	const playAudio = () => {
+		if (!audioUrl) return
+
+		setIsPlaying(true)
+
+		try {
+			if (audioRef.current) {
+				audioRef.current.pause()
+				audioRef.current.currentTime = 0
+			}
+
+			const proxiedUrl = convertToLocalProxy(audioUrl)
+			const audio = new Audio(proxiedUrl)
+			audioRef.current = audio
+
+			audio.onended = () => setIsPlaying(false)
+			audio.onerror = () => setIsPlaying(false)
+
+			audio.play().catch(() => setIsPlaying(false))
+		} catch (error) {
+			setIsPlaying(false)
+		}
+	}
 
 	return (
 		<button
-			onClick={() => play()}
+			onClick={playAudio}
 			className={cn(
 				"p-1.5 rounded-lg transition-all hover:scale-110",
 				isDark
 					? "bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400"
-					: "bg-indigo-100 hover:bg-indigo-200 text-indigo-600"
+					: "bg-indigo-100 hover:bg-indigo-200 text-indigo-600",
+				isPlaying && "animate-pulse"
 			)}
 			aria-label="Play sound"
 		>

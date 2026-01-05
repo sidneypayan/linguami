@@ -17,6 +17,7 @@ import {
 	HelpCircle,
 } from 'lucide-react'
 import MatchingExercise from './MatchingExercise'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * ConversationBlock - Scene de conversation interactive
@@ -95,7 +96,8 @@ const ConversationBlock = ({ block }) => {
 		setCurrentLineIndex(index)
 
 		if (!lineAudioRefs.current[index]) {
-			lineAudioRefs.current[index] = new Audio(line.audioUrl)
+			const proxiedUrl = convertToLocalProxy(line.audioUrl)
+			lineAudioRefs.current[index] = new Audio(proxiedUrl)
 		}
 
 		lineAudioRefs.current[index].playbackRate = playbackRate
@@ -119,7 +121,8 @@ const ConversationBlock = ({ block }) => {
 		setCurrentLineIndex(index)
 
 		if (!lineAudioRefs.current[index]) {
-			lineAudioRefs.current[index] = new Audio(url)
+			const proxiedUrl = convertToLocalProxy(url)
+			lineAudioRefs.current[index] = new Audio(proxiedUrl)
 		}
 
 		lineAudioRefs.current[index].onended = () => {

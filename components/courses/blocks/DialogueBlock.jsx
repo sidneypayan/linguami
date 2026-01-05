@@ -18,6 +18,7 @@ import {
 	Eye,
 	EyeOff,
 } from 'lucide-react'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * DialogueBlock - Parchemin de dialogue avec audio
@@ -47,7 +48,8 @@ const DialogueBlock = ({ block }) => {
 				setIsPlaying(false)
 			} else {
 				if (!audioRef.current) {
-					audioRef.current = new Audio(audioUrl)
+					const proxiedUrl = convertToLocalProxy(audioUrl)
+					audioRef.current = new Audio(proxiedUrl)
 					audioRef.current.addEventListener('ended', () => {
 						setIsPlaying(false)
 						setCurrentLineIndex(null)
@@ -87,7 +89,8 @@ const DialogueBlock = ({ block }) => {
 		setCurrentLineIndex(index)
 
 		if (!lineAudioRefs.current[index]) {
-			lineAudioRefs.current[index] = new Audio(line.audioUrl)
+			const proxiedUrl = convertToLocalProxy(line.audioUrl)
+			lineAudioRefs.current[index] = new Audio(proxiedUrl)
 		}
 
 		lineAudioRefs.current[index].playbackRate = playbackRate
@@ -120,7 +123,8 @@ const DialogueBlock = ({ block }) => {
 		setCurrentLineIndex(index)
 
 		if (!lineAudioRefs.current[index]) {
-			lineAudioRefs.current[index] = new Audio(url)
+			const proxiedUrl = convertToLocalProxy(url)
+			lineAudioRefs.current[index] = new Audio(proxiedUrl)
 		}
 
 		lineAudioRefs.current[index].onended = () => {

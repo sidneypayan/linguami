@@ -63,6 +63,16 @@ const nextConfig = {
 		]
 	},
 
+	// Proxy R2 pour éviter les erreurs CORS en développement
+	async rewrites() {
+		return [
+			{
+				source: '/r2-proxy/:path*',
+				destination: 'https://linguami-cdn.etreailleurs.workers.dev/:path*',
+			},
+		]
+	},
+
 	// Configuration webpack pour optimiser le bundle
 	webpack: (config, { isServer }) => {
 		if (!isServer) {

@@ -12,6 +12,18 @@ import { logger } from './logger'
 
 // Fonction helper pour obtenir l'URL de base R2
 function getR2BaseUrl() {
+  // Détecter si on est en développement local
+  const isLocalDev =
+    // Côté client : vérifier hostname
+    (typeof window !== 'undefined' && window.location.hostname === 'localhost') ||
+    // Côté serveur : vérifier l'env var
+    (typeof window === 'undefined' && process.env.NEXT_PUBLIC_APP_URL?.includes('localhost'))
+
+  // En développement local, utiliser le proxy Next.js pour éviter CORS
+  if (isLocalDev) {
+    return '/r2-proxy'
+  }
+
   const url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
   if (!url) {
     logger.error('NEXT_PUBLIC_R2_PUBLIC_URL is not defined in environment variables')
@@ -98,4 +110,24 @@ export function getUIImageUrl(filename) {
   if (!baseUrl) return null
   const file = filename.replace(/^\/+/, '')
   return `${baseUrl}/images/ui/${file}`
+}
+
+/**
+ * Convert CDN URL to local proxy in development
+ * Transforms R2 CDN URLs to use Next.js proxy to avoid CORS errors
+ * @param {string} url - Original URL (can be CDN or already proxied)
+ * @returns {string} Proxied URL in localhost, original URL in production
+ */
+export function convertToLocalProxy(url) {
+  if (!url) return url
+
+  // Côté client : détecter localhost via window
+  const isLocalDev = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+
+  // Si on est en localhost ET que l'URL contient le CDN R2
+  if (isLocalDev && url.includes('linguami-cdn.etreailleurs.workers.dev')) {
+    return url.replace('https://linguami-cdn.etreailleurs.workers.dev', '/r2-proxy')
+  }
+
+  return url
 }

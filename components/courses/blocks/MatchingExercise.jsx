@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Check, X, Play, Sparkles } from 'lucide-react'
 import confetti from 'canvas-confetti'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * MatchingExercise - Exercice de matching par click
@@ -124,7 +125,8 @@ const MatchingExercise = ({ pairs, dialogue }) => {
 		}
 
 		if (!audioRef.current[index]) {
-			audioRef.current[index] = new Audio(line.audioUrl)
+			const proxiedUrl = convertToLocalProxy(line.audioUrl)
+			audioRef.current[index] = new Audio(proxiedUrl)
 		}
 
 		audioRef.current[index].onended = () => {

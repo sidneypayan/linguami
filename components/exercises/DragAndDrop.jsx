@@ -262,6 +262,8 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 		setMatches({})
 		setIsChecked(false)
 		setIsCompleted(false)
+		setCurrentPairIndex(0) // Reset to first pair for mobile one-by-one mode
+		setSelectedRightItem(null) // Clear any selected item
 	}
 
 	const handleNextExercise = async () => {

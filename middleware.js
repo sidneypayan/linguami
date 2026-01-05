@@ -38,6 +38,36 @@ function getLocale(pathname) {
 export async function middleware(request) {
 	const { pathname } = request.nextUrl
 
+	// Handle R2 proxy requests (for CORS in development)
+	if (pathname.startsWith('/r2-proxy/')) {
+		const r2Path = pathname.replace('/r2-proxy/', '')
+		const r2Url = `https://linguami-cdn.etreailleurs.workers.dev/${r2Path}`
+
+		try {
+			const response = await fetch(r2Url)
+
+			if (!response.ok) {
+				return new Response(`Failed to fetch: ${response.statusText}`, {
+					status: response.status,
+				})
+			}
+
+			// Clone response and add CORS headers
+			const blob = await response.blob()
+			return new Response(blob, {
+				status: 200,
+				headers: {
+					'Content-Type': response.headers.get('Content-Type') || 'audio/mpeg',
+					'Cache-Control': 'public, max-age=31536000, immutable',
+					'Access-Control-Allow-Origin': '*',
+				},
+			})
+		} catch (error) {
+			console.error('R2 Proxy error:', error)
+			return new Response(`Proxy error: ${error.message}`, { status: 500 })
+		}
+	}
+
 	// Skip locale handling for API routes and static files
 	const isApiRoute = pathname.startsWith('/api/')
 	const isStaticFile = pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|webp|js|css|woff|woff2|ttf)$/)
