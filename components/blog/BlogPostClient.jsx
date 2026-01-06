@@ -3,7 +3,8 @@
 import { Link } from '@/i18n/navigation'
 import { marked } from 'marked'
 import { useThemeMode } from '@/context/ThemeContext'
-import { ArrowLeft, Calendar, Clock } from 'lucide-react'
+import { useUserContext } from '@/context/user'
+import { ArrowLeft, Calendar, Clock, Pencil } from 'lucide-react'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import TableOfContents from '@/components/blog/TableOfContents'
 import SocialShareButtons from '@/components/blog/SocialShareButtons'
@@ -37,8 +38,9 @@ function splitContentForCTA(content) {
 	return { before, after }
 }
 
-export default function BlogPostClient({ frontmatter, content, slug, allPosts, locale, translations }) {
+export default function BlogPostClient({ frontmatter, content, slug, postId, allPosts, locale, translations }) {
 	const { isDark } = useThemeMode()
+	const { isUserAdmin } = useUserContext()
 
 	const { title, date, img, description } = frontmatter
 
@@ -49,8 +51,10 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 	// Diviser le contenu pour injecter un CTA
 	const { before: contentBefore, after: contentAfter } = splitContentForCTA(content)
 
-	// Configurer marked pour ajouter des IDs aux titres H2
+	// Configurer marked pour GFM (tables), IDs sur H2, et liens en nouvel onglet
 	marked.use({
+		gfm: true,
+		breaks: true,
 		renderer: {
 			heading(text, level) {
 				if (level === 2) {
@@ -58,6 +62,19 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 					return `<h${level} id="${id}">${text}</h${level}>`
 				}
 				return `<h${level}>${text}</h${level}>`
+			},
+			link(href, title, text) {
+				const titleAttr = title ? ` title="${title}"` : ''
+				return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`
+			},
+			hr() {
+				return `
+					<div class="blog-divider">
+						<span class="blog-divider-line"></span>
+						<span class="blog-divider-icon">✦</span>
+						<span class="blog-divider-line"></span>
+					</div>
+				`
 			}
 		}
 	})
@@ -85,13 +102,29 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 
 				{/* Title */}
 				<div className="mb-6">
-					<h1 className={cn(
-						'text-3xl sm:text-4xl md:text-5xl font-black',
-						'leading-tight tracking-tight',
-						isDark ? 'text-slate-100' : 'text-slate-800'
-					)}>
-						{title}
-					</h1>
+					<div className="flex items-start justify-between gap-4">
+						<h1 className={cn(
+							'text-3xl sm:text-4xl md:text-5xl font-black',
+							'leading-normal tracking-tight pb-2',
+							isDark ? 'text-slate-100' : 'text-slate-800'
+						)}>
+							{title}
+						</h1>
+						{isUserAdmin && postId && (
+							<Link
+								href={`/admin/blog/edit/${postId}`}
+								target="_blank"
+								className={cn(
+									'flex-shrink-0 p-2 rounded-lg transition-colors',
+									'bg-violet-500/10 hover:bg-violet-500/20',
+									'text-violet-500 hover:text-violet-400'
+								)}
+								title="Modifier l'article"
+							>
+								<Pencil className="w-5 h-5" />
+							</Link>
+						)}
+					</div>
 				</div>
 
 				{/* Meta information */}
@@ -147,7 +180,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 								'prose prose-lg max-w-none',
 								isDark ? 'prose-invert' : '',
 								// Paragraphs
-								'prose-p:leading-relaxed',
+								'prose-p:leading-relaxed prose-p:mb-6',
 								isDark ? 'prose-p:text-slate-300' : 'prose-p:text-slate-600',
 								// Headings
 								'prose-headings:font-bold prose-headings:tracking-tight',
@@ -181,9 +214,14 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 								// HR
 								isDark ? 'prose-hr:border-violet-500/20' : 'prose-hr:border-violet-600/10',
 								// Tables
-								'prose-th:text-violet-500',
-								isDark ? 'prose-th:bg-violet-500/20' : 'prose-th:bg-violet-500/10',
-								isDark ? 'prose-td:border-violet-500/20' : 'prose-td:border-violet-600/10',
+								'prose-table:w-full prose-table:border-collapse prose-table:my-8',
+								isDark ? 'prose-table:border-violet-500/30' : 'prose-table:border-slate-300',
+								'prose-th:text-left prose-th:font-semibold prose-th:p-3',
+								isDark ? 'prose-th:text-violet-400 prose-th:bg-violet-500/20' : 'prose-th:text-violet-600 prose-th:bg-violet-500/10',
+								isDark ? 'prose-th:border prose-th:border-violet-500/30' : 'prose-th:border prose-th:border-slate-300',
+								'prose-td:p-3',
+								isDark ? 'prose-td:border prose-td:border-violet-500/30' : 'prose-td:border prose-td:border-slate-300',
+								isDark ? 'prose-td:text-slate-300' : 'prose-td:text-slate-600',
 							)}
 							dangerouslySetInnerHTML={{ __html: marked(contentBefore) }}
 						/>
@@ -200,7 +238,7 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 									'prose prose-lg max-w-none',
 									isDark ? 'prose-invert' : '',
 									// Paragraphs
-									'prose-p:leading-relaxed',
+									'prose-p:leading-relaxed prose-p:mb-6',
 									isDark ? 'prose-p:text-slate-300' : 'prose-p:text-slate-600',
 									// Headings
 									'prose-headings:font-bold prose-headings:tracking-tight',
@@ -234,9 +272,14 @@ export default function BlogPostClient({ frontmatter, content, slug, allPosts, l
 									// HR
 									isDark ? 'prose-hr:border-violet-500/20' : 'prose-hr:border-violet-600/10',
 									// Tables
-									'prose-th:text-violet-500',
-									isDark ? 'prose-th:bg-violet-500/20' : 'prose-th:bg-violet-500/10',
-									isDark ? 'prose-td:border-violet-500/20' : 'prose-td:border-violet-600/10',
+									'prose-table:w-full prose-table:border-collapse prose-table:my-8',
+									isDark ? 'prose-table:border-violet-500/30' : 'prose-table:border-slate-300',
+									'prose-th:text-left prose-th:font-semibold prose-th:p-3',
+									isDark ? 'prose-th:text-violet-400 prose-th:bg-violet-500/20' : 'prose-th:text-violet-600 prose-th:bg-violet-500/10',
+									isDark ? 'prose-th:border prose-th:border-violet-500/30' : 'prose-th:border prose-th:border-slate-300',
+									'prose-td:p-3',
+									isDark ? 'prose-td:border prose-td:border-violet-500/30' : 'prose-td:border prose-td:border-slate-300',
+									isDark ? 'prose-td:text-slate-300' : 'prose-td:text-slate-600',
 								)}
 								dangerouslySetInnerHTML={{ __html: marked(contentAfter) }}
 							/>

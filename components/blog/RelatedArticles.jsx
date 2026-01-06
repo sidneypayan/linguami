@@ -9,7 +9,7 @@ import { getBlogImageUrl } from '@/utils/mediaUrls'
 import { formatBlogDate } from '@/utils/blogHelpers'
 import * as gtm from '@/lib/gtm'
 import { cn } from '@/lib/utils'
-import { Calendar, Sparkles, Star } from 'lucide-react'
+import { Calendar, ArrowRight, Sparkles } from 'lucide-react'
 
 /**
  * Affiche des articles suggeres en fonction de l'article actuel
@@ -41,10 +41,16 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 	if (relatedPosts.length === 0) return null
 
 	return (
-		<section className="mt-16 mb-8">
+		<section className={cn(
+			'mt-16 mb-8 py-10 px-6 -mx-6 rounded-3xl',
+			isDark
+				? 'bg-gradient-to-br from-violet-950/50 to-slate-900/50 border border-violet-500/20'
+				: 'bg-gradient-to-br from-violet-50 to-cyan-50 border border-violet-200/50'
+		)}>
 			{/* Section Header */}
-			<div className="flex items-center justify-center gap-3 mb-8">
-				<Star className={cn(
+			<div className="flex items-center justify-center gap-3 mb-10">
+				<div className="h-px w-12 bg-gradient-to-r from-transparent to-violet-500" />
+				<Sparkles className={cn(
 					'w-5 h-5',
 					isDark ? 'text-amber-400' : 'text-amber-500'
 				)} />
@@ -55,10 +61,11 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 				)}>
 					{t('relatedArticles') || 'Vous aimerez aussi'}
 				</h2>
-				<Star className={cn(
+				<Sparkles className={cn(
 					'w-5 h-5',
 					isDark ? 'text-amber-400' : 'text-amber-500'
 				)} />
+				<div className="h-px w-12 bg-gradient-to-l from-transparent to-cyan-500" />
 			</div>
 
 			{/* Articles Grid */}
@@ -75,33 +82,40 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 					>
 						<article className={cn(
 							'h-full rounded-2xl overflow-hidden',
-							'border-2 transition-all duration-300',
+							'border-2 transition-all duration-500',
 							isDark
-								? 'bg-slate-900/80 border-violet-500/20 hover:border-violet-400/50'
-								: 'bg-white/90 border-violet-600/10 hover:border-violet-500/30',
-							!isDark && 'shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-violet-400/30',
-							'hover:-translate-y-2'
+								? 'bg-slate-900 border-violet-500/30 hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/20'
+								: 'bg-white border-violet-200 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-500/25',
+							'hover:-translate-y-3 hover:scale-[1.02]'
 						)}>
 							{/* Image */}
-							<div className="relative h-44 overflow-hidden">
+							<div className="relative h-48 overflow-hidden">
 								<Image
 									fill
-									className="object-cover transition-all duration-500 group-hover:scale-105"
+									className="object-cover transition-all duration-700 group-hover:scale-110"
 									sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
 									src={getBlogImageUrl(post)}
 									alt={post.title || post.frontmatter?.title}
 								/>
-								{/* Gradient overlay */}
+								{/* Gradient overlay on hover */}
 								<div className={cn(
-									'absolute inset-0',
-									'bg-gradient-to-t from-black/50 via-transparent to-transparent',
-									'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+									'absolute inset-0 transition-all duration-500',
+									'bg-gradient-to-t from-violet-900/80 via-violet-900/20 to-transparent',
+									'opacity-0 group-hover:opacity-100'
 								)} />
-								{/* Decorative corner */}
+								{/* Read indicator on hover */}
 								<div className={cn(
-									'absolute top-0 right-0 w-20 h-20',
-									'bg-gradient-to-bl from-violet-500/20 to-transparent'
-								)} />
+									'absolute bottom-4 left-4 right-4',
+									'flex items-center justify-center gap-2',
+									'py-2 px-4 rounded-full',
+									'bg-white/95 text-violet-600 font-semibold text-sm',
+									'transform translate-y-12 opacity-0',
+									'group-hover:translate-y-0 group-hover:opacity-100',
+									'transition-all duration-500'
+								)}>
+									<span>Lire l&apos;article</span>
+									<ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+								</div>
 							</div>
 
 							{/* Content */}
@@ -121,7 +135,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 								{/* Title */}
 								<h3 className={cn(
 									'font-bold text-lg leading-tight mb-2',
-									'line-clamp-2 transition-colors',
+									'line-clamp-2 transition-colors duration-300',
 									isDark ? 'text-slate-100' : 'text-slate-800',
 									'group-hover:text-violet-500 dark:group-hover:text-violet-400'
 								)}>
@@ -130,7 +144,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 
 								{/* Excerpt */}
 								<p className={cn(
-									'text-sm leading-relaxed line-clamp-3',
+									'text-sm leading-relaxed line-clamp-2',
 									isDark ? 'text-slate-400' : 'text-slate-600'
 								)}>
 									{post.excerpt || post.frontmatter?.excerpt}

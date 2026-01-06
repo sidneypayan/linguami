@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useThemeMode } from '@/context/ThemeContext'
+import remarkBreaks from 'remark-breaks'
 import '@uiw/react-md-editor/markdown-editor.css'
 import '@uiw/react-markdown-preview/markdown.css'
 
@@ -37,6 +38,7 @@ const TextEditor = ({ value, setValue, height = 500, preview = 'live' }) => {
 					placeholder: 'Écrivez votre article en Markdown...',
 				}}
 				previewOptions={{
+					remarkPlugins: [remarkBreaks],
 					rehypePlugins: [],
 				}}
 			/>

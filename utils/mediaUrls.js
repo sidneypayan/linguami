@@ -12,15 +12,9 @@ import { logger } from './logger'
 
 // Fonction helper pour obtenir l'URL de base R2
 function getR2BaseUrl() {
-  // Détecter si on est en développement local
-  const isLocalDev =
-    // Côté client : vérifier hostname
-    (typeof window !== 'undefined' && window.location.hostname === 'localhost') ||
-    // Côté serveur : vérifier l'env var
-    (typeof window === 'undefined' && process.env.NEXT_PUBLIC_APP_URL?.includes('localhost'))
-
-  // En développement local, utiliser le proxy Next.js pour éviter CORS
-  if (isLocalDev) {
+  // En développement, utiliser le proxy Next.js pour éviter CORS
+  // NODE_ENV est cohérent entre serveur et client (évite hydration mismatch)
+  if (process.env.NODE_ENV === 'development') {
     return '/r2-proxy'
   }
 
