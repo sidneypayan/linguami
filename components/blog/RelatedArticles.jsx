@@ -113,7 +113,7 @@ export default function RelatedArticles({ currentSlug, allPosts, maxItems = 3 })
 									'group-hover:translate-y-0 group-hover:opacity-100',
 									'transition-all duration-500'
 								)}>
-									<span>Lire l'article</span>
+									<span>Lire l&apos;article</span>
 									<ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
 								</div>
 							</div>
