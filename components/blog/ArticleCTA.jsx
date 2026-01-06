@@ -134,7 +134,7 @@ export default function ArticleCTA({ type = 'start-learning', className = '' }) 
 				</p>
 
 				{/* CTA Button */}
-				<Link href={config.href}>
+				<Link href={config.href} target="_blank">
 					<Button
 						onClick={handleClick}
 						size="lg"

@@ -75,6 +75,7 @@ export default async function BlogPostPage({ params }) {
 			frontmatter={frontmatter}
 			content={post.content}
 			slug={slug}
+			postId={post.id}
 			allPosts={allPosts}
 			locale={locale}
 			translations={{

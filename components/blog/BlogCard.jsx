@@ -9,15 +9,26 @@ import { getBlogImageUrl } from '@/utils/mediaUrls'
 import { formatBlogDate } from '@/utils/blogHelpers'
 import { cn } from '@/lib/utils'
 
-const BlogCard = ({ post }) => {
+const BlogCard = ({ post, index = 0 }) => {
 	const t = useTranslations('blog')
 	const locale = useLocale()
 	const { isDark } = useThemeMode()
 
+	const isEven = index % 2 === 0
+
 	return (
-		<Link href={`/blog/${post.slug}`} className="block group">
+		<Link
+			href={`/blog/${post.slug}`}
+			className={cn(
+				'block group',
+				// Décalage alterné sur desktop
+				isEven ? 'sm:translate-x-4' : 'sm:-translate-x-4'
+			)}
+		>
 			<article className={cn(
-				'flex flex-col sm:flex-row rounded-2xl overflow-hidden',
+				'flex flex-col rounded-2xl overflow-hidden',
+				// Alternance image gauche/droite sur desktop
+				isEven ? 'sm:flex-row' : 'sm:flex-row-reverse',
 				'border-2 transition-all duration-300',
 				isDark
 					? 'bg-slate-900/80 border-violet-500/20 hover:border-violet-400/50'

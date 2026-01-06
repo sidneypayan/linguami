@@ -38,9 +38,9 @@ export default function BlogList({ posts, locale }) {
 	}, [posts, locale, userLearningLanguage])
 
 	return (
-		<div className="flex flex-col gap-5 sm:gap-6 max-w-3xl mx-auto">
+		<div className="flex flex-col gap-5 sm:gap-8 max-w-3xl mx-auto">
 			{filteredPosts.map((post, index) => (
-				<BlogCard key={index} post={post} />
+				<BlogCard key={index} post={post} index={index} />
 			))}
 		</div>
 	)
