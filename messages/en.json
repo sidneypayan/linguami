@@ -677,7 +677,11 @@
     "B1": "B1",
     "B2": "B2",
     "C1": "C1",
-    "C2": "C2"
+    "C2": "C2",
+    "methode_exercise_match_this": "Match this item",
+    "methode_exercise_select_answer": "Select the correct answer",
+    "methode_exercise_previous": "Previous",
+    "methode_exercise_matched": "matched"
   },
   "exercises": {
     "title": "Exercise Management",
@@ -933,6 +937,7 @@
     "table_translation": "Translation",
     "show_menu": "Menu",
     "lessons_available": "lessons available",
+    "coming_soon": "Coming soon",
     "alphabet_click_to_hear": "Click on a letter to hear its pronunciation",
     "quickSummaryTitle": "At a glance",
     "conjugationTitle": "Conjugation",

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { CheckCircle, BookOpen, Sparkles, Trophy } from 'lucide-react'
+import { CheckCircle, BookOpen, Sparkles, Trophy, Edit } from 'lucide-react'
 import { useLessonStatus, useMarkLessonAsStudied } from '@/lib/lessons-client'
 import { useUserContext } from '@/context/user'
 import { useThemeMode } from '@/context/ThemeContext'
@@ -14,13 +14,23 @@ import { cn } from '@/lib/utils'
 import ExerciseInlineBlock from '@/components/courses/blocks/ExerciseInlineBlock'
 import ExerciseSection from '@/components/exercises/ExerciseSection'
 import AlphabetGridBlock from '@/components/courses/blocks/AlphabetGridBlock'
-import PlayableWordsList from '@/components/courses/blocks/PlayableWordsList'
-import PlayableText from '@/components/courses/blocks/PlayableText'
+import MainTitleBlock from '@/components/lessons/blocks/MainTitleBlock'
+import SubtitleBlock from '@/components/lessons/blocks/SubtitleBlock'
+import TitleBlock from '@/components/lessons/blocks/TitleBlock'
+import ParagraphBlock from '@/components/lessons/blocks/ParagraphBlock'
+import ListBlock from '@/components/lessons/blocks/ListBlock'
+import ExamplesBlock from '@/components/lessons/blocks/ExamplesBlock'
+import QuickSummaryBlock from '@/components/lessons/blocks/QuickSummaryBlock'
+import ImportantNoteBlock from '@/components/lessons/blocks/ImportantNoteBlock'
+import ConjugationTableBlock from '@/components/lessons/blocks/ConjugationTableBlock'
+import UsageListBlock from '@/components/lessons/blocks/UsageListBlock'
+import MistakesTableBlock from '@/components/lessons/blocks/MistakesTableBlock'
+import MiniDialogueBlock from '@/components/lessons/blocks/MiniDialogueBlock'
 
 const Lesson = ({ lesson }) => {
 	const t = useTranslations('lessons')
 	const locale = useLocale()
-	const { isUserLoggedIn } = useUserContext()
+	const { isUserLoggedIn, isUserAdmin } = useUserContext()
 	const { isDark } = useThemeMode()
 
 	// Track if all exercises are attempted
@@ -111,431 +121,95 @@ const Lesson = ({ lesson }) => {
 					? "bg-transparent lg:bg-slate-800/90 lg:border-slate-700/50"
 					: "bg-transparent lg:bg-white lg:border-indigo-500/10 lg:shadow-[0_8px_32px_rgba(102,126,234,0.12)]"
 			)}>
+				{/* Admin Edit Button */}
+				{isUserAdmin && lesson?.id && (
+					<div className="flex justify-end mb-4">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => window.open(`/${locale}/admin/lessons/${lesson.id}`, '_blank')}
+							className={cn(
+								"gap-2",
+								isDark
+									? "border-slate-600 hover:bg-slate-700 text-slate-300"
+									: "border-slate-300 hover:bg-slate-50 text-slate-700"
+							)}
+						>
+							<Edit className="h-4 w-4" />
+							{locale === 'fr' ? 'Éditer' : locale === 'ru' ? 'Редактировать' : 'Edit'}
+						</Button>
+					</div>
+				)}
+
 				<CardContent className="p-0">
 					{lesson.blocks.map((block, index) => {
 						switch (block.type) {
 							case 'mainTitle':
-								return (
-									<h1
-										key={index}
-										className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent py-2 leading-tight"
-										style={{ paddingTop: '0.5rem', paddingBottom: '0.25rem' }}>
-										{block.text}
-									</h1>
-								)
+								return <MainTitleBlock key={index} text={block.text} />
 							case 'subtitle':
-								return (
-									<div key={index} className="mt-6 mb-4">
-										<div className={cn(
-											"flex items-center gap-2.5 px-3 py-2",
-											"border-l-4 rounded-r-lg",
-											isDark
-												? "border-cyan-500 bg-cyan-950/30"
-												: "border-cyan-500 bg-cyan-50/70"
-										)}>
-											<svg className={cn(
-												"w-4 h-4 flex-shrink-0",
-												isDark ? "text-cyan-400" : "text-cyan-600"
-											)} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-											</svg>
-											<h2 className={cn(
-												"text-base sm:text-lg font-semibold",
-												isDark ? "text-cyan-300" : "text-cyan-700"
-											)}>
-												{block.text}
-											</h2>
-										</div>
-									</div>
-								)
+								return <SubtitleBlock key={index} text={block.text} isDark={isDark} />
 							case 'title':
-								return (
-									<div key={index} className="mt-10 mb-5">
-										<div className="space-y-2">
-											<div className={cn(
-												"h-1 w-12 rounded-full",
-												"bg-gradient-to-r from-indigo-500 to-purple-600"
-											)} />
-											<h3 className={cn(
-												"text-lg sm:text-xl font-bold",
-												isDark
-													? "text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300"
-													: "text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600"
-											)}>
-												{block.text}
-											</h3>
-										</div>
-									</div>
-								)
+								return <TitleBlock key={index} text={block.text} isDark={isDark} />
 							case 'paragraph':
-								return (
-									<p
-										key={index}
-										className={cn(
-											"mt-4 mb-6 text-base sm:text-[1.0625rem] leading-relaxed",
-											isDark ? "text-slate-300" : "text-slate-600"
-										)}
-										dangerouslySetInnerHTML={{ __html: block.text }}
-									/>
-								)
+								return <ParagraphBlock key={index} text={block.text} isDark={isDark} />
 							case 'list':
-								return (
-									<ul
-										key={index}
-										className={cn(
-											"mt-4 mb-6 pl-6 sm:pl-8 list-disc",
-											isDark ? "marker:text-indigo-400" : "marker:text-indigo-500"
-										)}>
-										{block.items.map((item, itemIndex) => (
-											<li
-												key={itemIndex}
-												className={cn(
-													"mb-3 text-base sm:text-[1.0625rem] leading-relaxed",
-													isDark ? "text-slate-300" : "text-slate-600"
-												)}>
-												<span dangerouslySetInnerHTML={{ __html: item }} />
-											</li>
-										))}
-									</ul>
-								)
+								return <ListBlock key={index} items={block.items} isDark={isDark} />
 							case 'examples':
-								return (
-									<div
-										key={index}
-										className={cn(
-											'relative mt-4 mb-6 p-4 sm:p-6 rounded-none sm:rounded-xl overflow-hidden',
-											'-mx-5 sm:mx-0',
-											'before:absolute before:left-0 before:top-0 before:w-1 before:h-full before:bg-gradient-to-b before:from-indigo-500 before:to-purple-600',
-											isDark
-												? 'bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-y sm:border-2 border-indigo-500/20'
-												: 'bg-gradient-to-br from-indigo-500/5 to-purple-500/5 border-y sm:border-2 border-indigo-500/15'
-										)}>
-										{block.items.map((example, exampleIndex) => (
-											<p
-												key={exampleIndex}
-												className={cn(
-													'italic text-sm sm:text-base leading-relaxed pl-4',
-													isDark ? 'text-slate-300' : 'text-slate-600',
-													exampleIndex < block.items.length - 1 && 'mb-4'
-												)}
-												dangerouslySetInnerHTML={{ __html: example }}
-											/>
-										))}
-									</div>
-								)
+								return <ExamplesBlock key={index} items={block.items} isDark={isDark} />
 							case 'quickSummary':
-								return (
-									<div
-										key={index}
-										className={cn(
-											"mb-8 p-4 sm:p-6 rounded-none sm:rounded-xl border-y sm:border-2",
-											"-mx-5 sm:mx-0",
-											isDark
-												? "bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-500/30"
-												: "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200"
-										)}>
-										<h4 className={cn(
-											"text-lg font-bold mb-4 flex items-center gap-2",
-											isDark ? "text-emerald-400" : "text-emerald-800"
-										)}>
-											<span className="text-2xl">⚡</span>
-											{block.title || t('quickSummaryTitle')}
-										</h4>
-										<div className="grid gap-3">
-											{block.keyForms?.map((form, i) => (
-												<div key={i} className={cn(
-													"flex items-center gap-3",
-													isDark ? "text-slate-300" : "text-slate-700"
-												)}>
-													<span className={cn(
-														"font-bold min-w-[80px]",
-														isDark ? "text-indigo-400" : "text-indigo-600"
-													)}>{form.form}</span>
-													<span className="text-slate-400">→</span>
-													<span>{form.translation}</span>
-												</div>
-											))}
-										</div>
-									</div>
-								)
+								return <QuickSummaryBlock key={index} title={block.title} keyForms={block.keyForms} isDark={isDark} />
 							case 'importantNote':
 								return (
-									<div
+									<ImportantNoteBlock
 										key={index}
-										className={cn(
-											"mb-8 p-4 sm:p-6 rounded-none sm:rounded-xl border-y sm:border-2",
-											"-mx-5 sm:mx-0",
-											isDark
-												? "bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border-blue-500/30"
-												: "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200"
-										)}>
-										<h4 className={cn(
-											"text-lg font-bold mb-4 flex items-center gap-2",
-											isDark ? "text-blue-400" : "text-blue-800"
-										)}>
-											<span className="text-2xl">💡</span>
-											{block.title}
-										</h4>
-										<p className={cn(
-											"mb-4 leading-relaxed",
-											isDark ? "text-slate-300" : "text-slate-700"
-										)}
-											dangerouslySetInnerHTML={{ __html: block.content }}
-										/>
-										{block.examples && block.examples.length > 0 && (
-											<div className="space-y-2 mb-4">
-												{block.examples.map((example, i) => (
-													<div
-														key={i}
-														className={cn(
-															"p-3 rounded-lg",
-															isDark ? "bg-slate-800/50" : "bg-white/70"
-														)}
-													>
-														<PlayableText
-															text={example}
-															audioUrls={block.audioUrls || {}}
-														/>
-													</div>
-												))}
-											</div>
-										)}
-										{block.note && (
-											<div className={cn(
-												"p-3 rounded-lg border-l-4",
-												isDark
-													? "bg-amber-500/10 border-amber-500/50 text-amber-300"
-													: "bg-amber-50 border-amber-400 text-amber-800"
-											)}
-												dangerouslySetInnerHTML={{ __html: block.note }}
-											/>
-										)}
-									</div>
+										title={block.title}
+										content={block.content}
+										examples={block.examples}
+										note={block.note}
+										audioUrls={block.audioUrls}
+										isDark={isDark}
+									/>
 								)
 							case 'conjugationTable':
 								return (
-									<div key={index} className="mb-8">
-										<h3 className={cn(
-											"text-xl font-bold mb-4",
-											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || t('conjugationTitle')}</h3>
-										<div className="overflow-x-auto -mx-5 sm:mx-0">
-											<table className="w-full border-collapse">
-												<tbody>
-													{block.rows?.map((row, i) => (
-														<tr key={i} className={cn(
-															i % 2 === 0
-																? (isDark ? 'bg-slate-700/50' : 'bg-slate-50')
-																: (isDark ? 'bg-slate-800/50' : 'bg-white')
-														)}>
-															<td className={cn("p-3 font-semibold", isDark ? "text-indigo-400" : "text-indigo-600")}>{row.pronoun}</td>
-															<td className={cn("p-3 font-bold", isDark ? "text-slate-100" : "text-slate-800")}>{row.form}</td>
-															{row.translation && (
-																<td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>
-																	<PlayableWordsList
-																		text={row.translation}
-																		audioUrls={row.audioUrls || block.audioUrls || {}}
-																	/>
-																</td>
-															)}
-															{row.pronunciation && <td className={cn("p-3", isDark ? "text-slate-300" : "text-slate-600")}>{row.pronunciation}</td>}
-														</tr>
-													))}
-												</tbody>
-											</table>
-										</div>
-										{block.rows?.some(r => r.mnemonic) && (
-											<div className={cn(
-												"mt-4 p-4 border-l-4 border-amber-400 rounded-none sm:rounded",
-												"-mx-5 sm:mx-0",
-												isDark ? "bg-amber-500/10" : "bg-amber-50"
-											)}>
-												<p className={cn(
-													"text-sm font-semibold mb-2",
-													isDark ? "text-amber-400" : "text-amber-800"
-												)}>💡 {t('mnemonics')}</p>
-												{block.rows
-													.filter(r => r.mnemonic)
-													.map((row, i) => (
-														<p key={i} className={cn(
-															"text-sm mb-1",
-															isDark ? "text-slate-300" : "text-slate-600"
-														)}>
-															<strong>{row.pronoun} {row.form}</strong> : {row.mnemonic}
-														</p>
-													))}
-											</div>
-										)}
-									</div>
+									<ConjugationTableBlock
+										key={index}
+										title={block.title}
+										rows={block.rows}
+										audioUrls={block.audioUrls}
+										isDark={isDark}
+									/>
 								)
 							case 'usageList':
 								return (
-									<div key={index} className="mb-8">
-										<h3 className={cn(
-											"text-xl font-bold mb-4",
-											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || t('usageTitle')}</h3>
-										{block.items?.map((item, i) => (
-											<div key={i} className={cn(
-												"mb-2 p-4 sm:p-5 rounded-none sm:rounded-xl border-y sm:border-2 transition-colors",
-												"-mx-5 sm:mx-0",
-												isDark
-													? "border-slate-700 bg-slate-800/50 hover:border-indigo-500/50"
-													: "border-slate-200 bg-white hover:border-indigo-300"
-											)}>
-												<div className="flex items-center gap-2 mb-3">
-													<div className={cn(
-														"w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold",
-														"bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md",
-														isDark ? "shadow-indigo-500/20" : "shadow-indigo-500/30"
-													)}>
-														{i + 1}
-													</div>
-													<h4 className={cn(
-														"font-bold text-base sm:text-lg",
-														isDark
-															? "text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300"
-															: "text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600"
-													)}>{item.usage}</h4>
-												</div>
-												<div>
-													{item.examples?.map((ex, j) => (
-														<p key={j} className={cn(
-															"pl-4 border-l-2 !mb-0",
-															j > 0 && "mt-1",
-															isDark ? "text-slate-300 border-indigo-500/50" : "text-slate-600 border-indigo-200"
-														)}>
-															<PlayableText
-																text={ex}
-																audioUrls={item.audioUrls || block.audioUrls || {}}
-															/>
-														</p>
-													))}
-												</div>
-												{item.commonMistake && (
-													<div className={cn(
-														"mt-3 p-3 border-l-4 border-red-400 rounded-none sm:rounded",
-														isDark ? "bg-red-500/10" : "bg-red-50"
-													)}>
-														<p className={cn(
-															"text-sm font-semibold mb-1",
-															isDark ? "text-red-400" : "text-red-800"
-														)}>{t('commonMistakeLabel')}</p>
-														<p className={cn(
-															"text-sm",
-															isDark ? "text-slate-300" : "text-slate-600"
-														)}>
-															<span className="line-through text-red-600">
-																<PlayableText
-																	text={item.commonMistake.wrong}
-																	audioUrls={item.audioUrls || block.audioUrls || {}}
-																/>
-															</span>
-															{' → '}
-															<span className="text-green-600 font-semibold">
-																<PlayableText
-																	text={item.commonMistake.correct}
-																	audioUrls={item.audioUrls || block.audioUrls || {}}
-																/>
-															</span>
-														</p>
-													</div>
-												)}
-											</div>
-										))}
-									</div>
+									<UsageListBlock
+										key={index}
+										title={block.title}
+										items={block.items}
+										audioUrls={block.audioUrls}
+										isDark={isDark}
+									/>
 								)
 							case 'mistakesTable':
 								return (
-									<div key={index} className="mb-8">
-										<h3 className={cn(
-											"text-xl font-bold mb-4",
-											isDark ? "text-slate-100" : "text-slate-800"
-										)}>{block.title || t('commonMistakesTitle')}</h3>
-										<div className="space-y-2">
-											{block.rows?.map((row, i) => (
-												<div key={i} className={cn(
-													"py-3 px-4 rounded-none sm:rounded-lg border-y sm:border",
-													"-mx-5 sm:mx-0",
-													isDark ? "border-slate-700 bg-slate-800/30" : "border-slate-200 bg-slate-50"
-												)}>
-													<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-														<span className={cn(
-															"line-through text-red-500",
-															isDark && "text-red-400"
-														)}>
-															<PlayableText
-																text={row.wrong}
-																audioUrls={block.audioUrls || {}}
-															/>
-														</span>
-														<span className={cn(
-															isDark ? "text-slate-500" : "text-slate-400"
-														)}>→</span>
-														<span className={cn(
-															"font-semibold",
-															isDark ? "text-green-400" : "text-green-600"
-														)}>
-															<PlayableText
-																text={row.correct}
-																audioUrls={block.audioUrls || {}}
-															/>
-														</span>
-													</div>
-													{row.explanation && (
-														<p className={cn(
-															"text-sm mt-1",
-															isDark ? "text-slate-400" : "text-slate-500"
-														)}>
-															<PlayableText
-																text={row.explanation}
-																audioUrls={block.audioUrls || {}}
-															/>
-														</p>
-													)}
-												</div>
-											))}
-										</div>
-									</div>
+									<MistakesTableBlock
+										key={index}
+										title={block.title}
+										rows={block.rows}
+										audioUrls={block.audioUrls}
+										isDark={isDark}
+									/>
 								)
 							case 'miniDialogue':
 								return (
-									<div key={index} className={cn(
-										"mb-8 p-4 sm:p-6 rounded-none sm:rounded-xl border-y sm:border-2",
-										"-mx-5 sm:mx-0",
-										isDark
-											? "bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border-blue-500/30"
-											: "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200"
-									)}>
-										<h4 className={cn(
-											"text-lg font-bold mb-4",
-											isDark ? "text-blue-400" : "text-blue-800"
-										)}>{block.title || 'Exemple en contexte'}</h4>
-										<div className="space-y-3">
-											{block.lines?.map((line, i) => (
-												<div key={i} className="flex gap-3">
-													<span className={cn(
-														"font-bold min-w-[80px]",
-														isDark ? "text-indigo-400" : "text-indigo-600"
-													)}>{line.speaker}</span>
-													<span className={cn(isDark ? "text-slate-300" : "text-slate-700")}>
-														<PlayableText
-															text={line.text}
-															audioUrls={block.audioUrls || {}}
-														/>
-													</span>
-												</div>
-											))}
-										</div>
-										{block.translation && (
-											<p className={cn(
-												"mt-4 pt-4 border-t text-sm italic",
-												isDark ? "border-blue-500/30 text-slate-400" : "border-blue-300 text-slate-600"
-											)}>
-												{block.translation}
-											</p>
-										)}
-									</div>
+									<MiniDialogueBlock
+										key={index}
+										title={block.title}
+										lines={block.lines}
+										translation={block.translation}
+										audioUrls={block.audioUrls}
+										isDark={isDark}
+									/>
 								)
 							case 'relatedTopics':
 								// Liens vers la méthode désactivés

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Volume2 } from 'lucide-react'
 import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * AlphabetGridBlock Component
@@ -35,8 +36,11 @@ const AlphabetGridBlock = ({ block }) => {
 				audioRef.current.currentTime = 0
 			}
 
+			// Convert CDN URL to local proxy in development (avoids CORS)
+			const proxiedUrl = convertToLocalProxy(audioUrl)
+
 			// Create new audio element
-			const audio = new Audio(audioUrl)
+			const audio = new Audio(proxiedUrl)
 			audioRef.current = audio
 
 			audio.onended = () => {

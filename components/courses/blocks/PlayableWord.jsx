@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { Volume2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useThemeMode } from '@/context/ThemeContext'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * PlayableWord Component
@@ -34,8 +35,11 @@ const PlayableWord = ({ word, audioUrl }) => {
 				audioRef.current.currentTime = 0
 			}
 
+			// Convert CDN URL to local proxy in development (avoids CORS)
+			const proxiedUrl = convertToLocalProxy(audioUrl)
+
 			// Create new audio element
-			const audio = new Audio(audioUrl)
+			const audio = new Audio(proxiedUrl)
 			audioRef.current = audio
 
 			audio.onended = () => {

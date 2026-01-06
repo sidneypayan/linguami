@@ -1,6 +1,8 @@
 # Documentation Linguami
 
-Documentation complète du projet Linguami, incluant les systèmes de gamification, les optimisations SEO et les guides techniques.
+Documentation complète du projet Linguami - Plateforme d'apprentissage des langues.
+
+**Tech Stack:** Next.js 13.4, React 18.2, Material-UI 5.10, React Query, Supabase, next-translate
 
 ---
 
@@ -9,211 +11,141 @@ Documentation complète du projet Linguami, incluant les systèmes de gamificati
 ```
 docs/
 ├── README.md                          # Ce fichier
-├── systems/                           # Documentation des systèmes
-│   ├── XP_SYSTEM_README.md           # Système XP et gamification
-│   └── GOLD_SYSTEM_README.md         # Système de monnaie Gold
-└── SEO-OPTIMIZATIONS.md              # Optimisations SEO multilingues
+├── architecture/                      # Architecture système
+│   ├── database.md                   # Base de données (tables, RLS, queries)
+│   ├── state-management.md           # React Query, Server Actions, Context, localStorage
+│   ├── authentication.md             # Login, OAuth, user profiles
+│   └── i18n.md                       # Système de traductions 3 langues
+├── method/                            # Création de lessons pour la section Method
+│   ├── LESSON_CREATION_GUIDE.md      # ⚠️ MUST READ : Créer des lessons
+│   ├── LESSON_TEMPLATE.json          # Template JSON complet
+│   ├── LESSON_BLOCKS_REFERENCE.md    # Tous les types de blocs disponibles
+│   └── AUDIO_GENERATION.md           # Génération audio dialogues (Voice IDs, TTS)
+└── exercises/                         # Création d'exercices interactifs autonomes
+    └── CREATION_GUIDE.md              # ⚠️ MUST READ : 3 types d'exercices
 ```
 
 ---
 
-## 🎮 Systèmes de gamification
+## 🚀 Quick Start
 
-### Système XP
-**Fichier :** [`systems/XP_SYSTEM_README.md`](systems/XP_SYSTEM_README.md)
+**Avant de créer du contenu, lire obligatoirement :**
+1. [Method - Lesson Creation Guide](method/LESSON_CREATION_GUIDE.md) - Créer des lessons pour /method
+2. [Exercises - Creation Guide](exercises/CREATION_GUIDE.md) - Créer des exercices autonomes (3 types)
+3. [Database Architecture](architecture/database.md) - Tables et schémas
 
-Documentation complète du système XP et de gamification de Linguami.
-
-**Contenu :**
-- ✅ Vue d'ensemble du système
-- ✅ Installation et configuration
-- ✅ Architecture des tables
-- ✅ API Endpoints (`/api/xp/*`, `/api/goals`, `/api/statistics`)
-- ✅ Exemples d'intégration
-- ✅ Formules de calcul de niveaux
-- ✅ Configuration des récompenses
-
-**Tables concernées :**
-- `user_xp_profile` - Profils XP des utilisateurs
-- `xp_rewards_config` - Configuration des récompenses
-- `xp_transactions` - Historique des transactions
-- `user_goals` - Objectifs utilisateurs
-- `user_achievements` - Badges et achievements
-
-**Dernière mise à jour :** 2025-11-01 (ajout de `created_at`, `updated_at`, `total_gold`)
+**Pour travailler sur une feature :**
+1. Consulter [State Management](architecture/state-management.md) - Server Actions + React Query
+2. Consulter [i18n System](architecture/i18n.md) - Système 3 langues
 
 ---
 
-### Système Gold
-**Fichier :** [`systems/GOLD_SYSTEM_README.md`](systems/GOLD_SYSTEM_README.md)
+## 📐 Architecture
 
-Documentation du système de monnaie virtuelle (Gold) de Linguami.
+### Core System Documentation
 
-**Contenu :**
-- ✅ Philosophie du système Gold
-- ✅ Distribution et équilibrage
-- ✅ Intégration avec le système XP
-- ✅ Configuration des récompenses Gold
-- ✅ Affichage dans l'interface
-- ✅ Évolutions futures possibles
+| Documentation | Description |
+|---------------|-------------|
+| [Database Architecture](architecture/database.md) | Tables, schemas, RLS policies, common queries |
+| [State Management](architecture/state-management.md) | React Query, Server Actions, Context, localStorage |
+| [Authentication](architecture/authentication.md) | Login flow, OAuth (VK ID, Google, Facebook), user profiles |
+| [i18n System](architecture/i18n.md) | Three-language concept (interface/learning/spoken) |
 
-**Philosophie :**
-- Gold 50-100x plus rare que l'XP
-- Récompense les achievements significatifs
-- Pas pour les actions répétitives
-- Accumulation stratégique
+### Key Concepts
 
-**Tables modifiées :**
-- `user_xp_profile.total_gold` - Solde Gold du joueur
-- `xp_rewards_config.gold_amount` - Montant Gold par action
-- `xp_transactions.gold_earned` - Gold gagné dans la transaction
+**Three-Language System** (⚠️ CRITICAL):
+- **Interface Language** (`router.locale`) : UI language (fr/ru/en)
+- **Learning Language** (`userLearningLanguage`) : Target language being studied
+- **Spoken Language** (`spoken_language`) : Native language for explanations
+
+**Data Fetching Pattern**:
+- ✅ Use Server Actions (`app/actions/*.js`) + React Query
+- ❌ DO NOT create API routes for App Router pages
 
 ---
 
-## 🔍 Optimisations SEO
+## 📚 Creation Guides
 
-**Fichier :** [`SEO-OPTIMIZATIONS.md`](SEO-OPTIMIZATIONS.md)
+### Method Lessons (Section /method)
 
-Documentation des optimisations SEO pour le référencement multilingue (Google, Yandex, Bing).
+| Guide | Description |
+|-------|-------------|
+| [Lesson Creation Guide](method/LESSON_CREATION_GUIDE.md) | ⚠️ **MUST READ** - Rules, workflow, 3-language system, 2-phase audio |
+| [Lesson Template](method/LESSON_TEMPLATE.json) | Complete JSON template with all block types |
+| [Lesson Blocks Reference](method/LESSON_BLOCKS_REFERENCE.md) | Catalogue of all available blocks (Dialogue, Grammar, Vocabulary, etc.) |
+| [Audio Generation](method/AUDIO_GENERATION.md) | Voice IDs, voice mapping, TTS generation process |
 
-**Contenu :**
-- ✅ Support multilingue (français, russe, anglais)
-- ✅ Métadonnées optimisées
-- ✅ Balises hreflang
-- ✅ Schema JSON-LD (Organization, Course, Blog, etc.)
-- ✅ Open Graph pour réseaux sociaux
-- ✅ Optimisations par page (10+ pages)
-- ✅ Fichiers de vérification moteurs de recherche
-- ✅ Sitemap XML et robots.txt
+### Exercises (Interactive Quizzes)
 
-**Pages optimisées :**
-- Page d'accueil
-- Matériaux pédagogiques (`/materials`)
-- Sections de matériaux (`/materials/[section]`)
-- Blog (`/blog`, `/blog/[slug]`)
-- Leçons (`/lessons`)
-- Professeurs (`/teacher`)
-- Leaderboard (`/leaderboard`)
-- Dictionnaire (`/dictionary`)
+| Guide | Description |
+|-------|-------------|
+| [Creation Guide](exercises/CREATION_GUIDE.md) | ⚠️ **MUST READ** - 3 types only: MCQ, Fill-in-blank, Drag-and-drop |
 
 ---
 
-## 🗄️ Documentation base de données
+## 🔗 Quick Links
 
-Pour la documentation des migrations et de la structure de la base de données, consultez :
+### For Developers
 
-**Dossier :** [`../database/`](../database/README.md)
+| I want to... | Documentation |
+|--------------|---------------|
+| Understand the database | [Database Architecture](architecture/database.md) |
+| Manage state (React Query, Server Actions) | [State Management](architecture/state-management.md) |
+| Implement login | [Authentication](architecture/authentication.md) |
+| Add translations | [i18n System](architecture/i18n.md) |
+| Create a method lesson | [Method - Lesson Creation Guide](method/LESSON_CREATION_GUIDE.md) ⚠️ |
+| Create exercises | [Exercises - Creation Guide](exercises/CREATION_GUIDE.md) ⚠️ |
+| Generate audio | [Method - Audio Generation](method/AUDIO_GENERATION.md) |
 
-**Contenu :**
-- 📦 Historique complet des migrations
-- 🔧 Scripts utilitaires
-- 📖 Guides de migration
-- 📋 Checklist avant migration
+### For Content Creators
 
----
-
-## 💾 Sauvegardes et restauration
-
-Pour la documentation du système de sauvegarde :
-
-**Dossier :** [`../backup/`](../backup/README.md)
-
-**Contenu :**
-- 🚀 Guide de démarrage rapide
-- 📚 Documentation complète
-- 🔄 Guide de restauration
-- 🔧 Scripts de sauvegarde SQL et JSON
+| I want to... | Documentation |
+|--------------|---------------|
+| Create a method lesson | [Method - Lesson Creation Guide](method/LESSON_CREATION_GUIDE.md) |
+| Create interactive exercises | [Exercises - Creation Guide](exercises/CREATION_GUIDE.md) |
+| Understand lesson blocks | [Method - Lesson Blocks Reference](method/LESSON_BLOCKS_REFERENCE.md) |
+| Generate dialogue audio | [Method - Audio Generation](method/AUDIO_GENERATION.md) |
 
 ---
 
-## 🔗 Liens rapides
+## 📝 Important Notes
 
-### Pour les développeurs
+### ⚠️ Critical Rules
 
-| Besoin | Documentation |
-|--------|---------------|
-| Ajouter de l'XP à un utilisateur | [`systems/XP_SYSTEM_README.md`](systems/XP_SYSTEM_README.md#api-endpoints) |
-| Configurer les récompenses | [`systems/XP_SYSTEM_README.md`](systems/XP_SYSTEM_README.md#configuration-xp) |
-| Comprendre le système Gold | [`systems/GOLD_SYSTEM_README.md`](systems/GOLD_SYSTEM_README.md) |
-| Optimiser le SEO d'une page | [`SEO-OPTIMIZATIONS.md`](SEO-OPTIMIZATIONS.md) |
-| Appliquer une migration | [`../database/README.md`](../database/README.md#comment-appliquer-une-nouvelle-migration) |
-| Faire une sauvegarde | [`../backup/README.md`](../backup/README.md) |
+1. **Database**: Production DB ONLY - No local DB setup
+2. **Data Fetching**: Use Server Actions + React Query (NOT API routes for App Router)
+3. **Three Languages**: Never confuse interface/learning/spoken languages
+4. **Content Creation**: ALWAYS read creation guides before starting
+5. **Audio Generation**: 2-phase process (text first, audio after validation)
 
-### Pour l'administration
+### Guest User Limits
 
-| Action | Documentation |
-|--------|---------------|
-| Modifier les récompenses XP | [`systems/XP_SYSTEM_README.md`](systems/XP_SYSTEM_README.md#configuration-xp) |
-| Voir les statistiques | [`systems/XP_SYSTEM_README.md`](systems/XP_SYSTEM_README.md#api-endpoints) |
-| Sauvegarder la base | [`../backup/DEMARRAGE_RAPIDE.md`](../backup/DEMARRAGE_RAPIDE.md) |
-| Restaurer des données | [`../backup/GUIDE_RESTAURATION.md`](../backup/GUIDE_RESTAURATION.md) |
+Non-authenticated users get:
+- **20 translations max** (cookie-based, 24h reset)
+- **20 words max** in dictionary (localStorage)
+- Course progress in localStorage (migrated on login)
+- Dictionary in localStorage (migrated on login)
 
----
+### File Storage
 
-## 📝 Conventions de documentation
+All media files stored in **Cloudflare R2**:
+- Audio: `audios/fr/`, `audios/ru/`, `audios/en/`
+- Images: `images/ui/`, `images/materials/`, `images/blog/`
+- Video: `video/materials/`
 
-### Format des fichiers README
-
-Tous les fichiers README suivent cette structure :
-1. **Table des matières** avec liens d'ancrage
-2. **Vue d'ensemble** courte et claire
-3. **Installation/Configuration** étape par étape
-4. **Architecture** avec schémas/exemples
-5. **Utilisation** avec code examples
-6. **API/Intégration** si applicable
-7. **Dépannage** pour les problèmes courants
-
-### Mise à jour
-
-Lors de modifications du système :
-1. ✅ Mettre à jour le README concerné
-2. ✅ Ajouter la date de dernière mise à jour
-3. ✅ Documenter les changements majeurs
-4. ✅ Mettre à jour les exemples de code si nécessaire
+Public URL: `NEXT_PUBLIC_R2_PUBLIC_URL`
 
 ---
 
-## 🆕 Dernières mises à jour
+## 📚 External Resources
 
-### 2025-11-01
-- ✅ **XP_SYSTEM_README.md** : Ajout de `created_at`, `updated_at` et `total_gold` dans les structures de tables
-- ✅ Organisation de la documentation dans `docs/`
-- ✅ Création de ce README.md d'index
-
-### 2024-10-31
-- ✅ **GOLD_SYSTEM_README.md** : Documentation initiale du système Gold
-- ✅ **XP_SYSTEM_README.md** : Documentation initiale du système XP
-
-### 2024-10-30
-- ✅ **SEO-OPTIMIZATIONS.md** : Documentation des optimisations SEO multilingues
-
----
-
-## 📚 Ressources externes
-
-- [Documentation Supabase](https://supabase.com/docs)
+- [Supabase Documentation](https://supabase.com/docs)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [Google Search Console](https://search.google.com/search-console)
-- [Yandex Webmaster](https://webmaster.yandex.com/)
+- [Material-UI Documentation](https://mui.com/)
+- [next-translate Documentation](https://github.com/aralroca/next-translate)
 
 ---
 
-## 🤝 Contribution
+**Langues supportées:** Français 🇫🇷 | Russe 🇷🇺 | Anglais 🇬🇧
 
-Pour contribuer à cette documentation :
-
-1. **Vérifiez l'existant** avant d'ajouter une nouvelle doc
-2. **Suivez les conventions** de format ci-dessus
-3. **Testez les exemples** de code avant de documenter
-4. **Gardez à jour** : documentation périmée = documentation inutile
-5. **Soyez clair** : privilégiez la clarté à l'exhaustivité
-
----
-
-**Projet :** Linguami - Plateforme d'apprentissage des langues
-**Langues supportées :** Français, Russe, Anglais
-**Technologies :** Next.js, Supabase, PostgreSQL, React
-
-**Dernière mise à jour :** 2025-11-01
-**Version :** 1.0
+**Dernière mise à jour:** 2025-12-26

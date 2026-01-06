@@ -1,0 +1,481 @@
+{
+  "lesson": {
+    "slug": "se-presenter-[LANG_CODE]",
+    "title_fr": "Se présenter en [LANGUE]",
+    "title_ru": "Представиться на [ЯЗЫКЕ]",
+    "title_en": "Introducing yourself in [LANGUAGE]",
+    "order_index": 1,
+    "estimated_minutes": 35,
+    "is_free": true,
+    "is_published": true,
+    "objectives_fr": [
+      "Dire son nom",
+      "Exprimer son âge",
+      "Indiquer sa nationalité",
+      "Saluer et prendre congé"
+    ],
+    "objectives_ru": [
+      "Назвать свое имя",
+      "Выразить свой возраст",
+      "Указать свою национальность",
+      "Поздороваться и попрощаться"
+    ],
+    "objectives_en": [
+      "Say your name",
+      "Express your age",
+      "Indicate your nationality",
+      "Greet and say goodbye"
+    ]
+  },
+  "blocks_template": [
+    {
+      "type": "dialogue",
+      "title": "First Meeting / Première rencontre / Первая встреча",
+      "lines": [
+        {
+          "speaker": "[NAME_1]",
+          "speakerGender": "female",
+          "text": "[GREETING] [MY_NAME_IS] [NAME].",
+          "audioUrl": "[TO_GENERATE]",
+          "vocab": [
+            {
+              "word": "[GREETING]",
+              "translation": "[TRANSLATION]"
+            },
+            {
+              "word": "[MY_NAME_IS]",
+              "translation": "[TRANSLATION]"
+            }
+          ]
+        },
+        {
+          "speaker": "[NAME_2]",
+          "speakerGender": "male",
+          "text": "[GREETING] [NAME_1]! [NICE_TO_MEET_YOU]. [MY_NAME_IS] [NAME_2].",
+          "audioUrl": "[TO_GENERATE]",
+          "vocab": [
+            {
+              "word": "[NICE_TO_MEET_YOU]",
+              "translation": "[TRANSLATION]"
+            }
+          ]
+        }
+      ],
+      "vocabulary": [
+        {
+          "word": "[VERB_COME_FROM] + city",
+          "translation": "[TRANSLATION]",
+          "example": "[EXAMPLE_SENTENCE]",
+          "category": "verbs"
+        }
+      ]
+    },
+    {
+      "type": "grammar",
+      "icon": "book",
+      "title": "[VERB_TO_BE_CALLED] - Introducing yourself",
+      "explanation": "To say your name in [LANGUAGE], we use [EXPLANATION]...",
+      "table": {
+        "title": "Conjugation of [VERB] in present tense",
+        "headers": ["Pronoun", "[VERB]", "Translation"],
+        "rows": [
+          ["I", "[CONJUGATION_1]", "[TRANSLATION]"],
+          ["You (informal)", "[CONJUGATION_2]", "[TRANSLATION]"],
+          ["He/She", "[CONJUGATION_3]", "[TRANSLATION]"],
+          ["We", "[CONJUGATION_4]", "[TRANSLATION]"],
+          ["You (formal/plural)", "[CONJUGATION_5]", "[TRANSLATION]"],
+          ["They", "[CONJUGATION_6]", "[TRANSLATION]"]
+        ],
+        "rowsAudio": "[TO_GENERATE]"
+      },
+      "examples": [
+        {
+          "sentence": "[EXAMPLE_1]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "sentence": "[EXAMPLE_2]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "sentence": "[EXAMPLE_3]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        }
+      ]
+    },
+    {
+      "type": "grammar",
+      "icon": "book",
+      "title": "Expressing your age with [VERB_HAVE/BE]",
+      "explanation": "In [LANGUAGE], to say your age, we use [CONSTRUCTION]...",
+      "table": {
+        "title": "Conjugation of [VERB] in present tense",
+        "headers": ["Pronoun", "[VERB]", "Example with age"],
+        "rows": [
+          ["I", "[CONJUGATION_1]", "[I_AM_21_YEARS_OLD]"],
+          ["You", "[CONJUGATION_2]", "[YOU_ARE_23_YEARS_OLD]"],
+          ["He/She", "[CONJUGATION_3]", "[HE_IS_25_YEARS_OLD]"],
+          ["We", "[CONJUGATION_4]", "[WE_ARE_30_YEARS_OLD]"],
+          ["You (plural/formal)", "[CONJUGATION_5]", "[YOU_ARE_28_YEARS_OLD]"],
+          ["They", "[CONJUGATION_6]", "[THEY_ARE_35_YEARS_OLD]"]
+        ],
+        "rowsAudio": "[TO_GENERATE]"
+      },
+      "examples": [
+        {
+          "sentence": "[I_AM_21_YEARS_OLD]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "sentence": "[YOU_ARE_23_YEARS_OLD]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "sentence": "[HE_IS_25_YEARS_OLD]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[VERB_FORM]",
+          "note": "[GRAMMAR_NOTE]",
+          "audioUrl": "[TO_GENERATE]"
+        }
+      ]
+    },
+    {
+      "type": "exerciseInline",
+      "exerciseType": "fillInBlank",
+      "icon": "edit",
+      "title": "Complete the introductions",
+      "xpReward": 10,
+      "questions": [
+        {
+          "question": "[GREETING]! [I] ____ [NAME]. ([VERB_OPTION_1]/[VERB_OPTION_2])",
+          "answer": "[CORRECT_ANSWER]",
+          "acceptableAnswers": ["[CORRECT_ANSWER]"],
+          "hint": "1st person singular"
+        },
+        {
+          "question": "____! ([NICE_TO_MEET_YOU]/[THANK_YOU])",
+          "answer": "[NICE_TO_MEET_YOU]",
+          "acceptableAnswers": ["[NICE_TO_MEET_YOU]"],
+          "hint": "Expression meaning 'Nice to meet you'"
+        },
+        {
+          "question": "____ [DO_YOU_COME_FROM]? ([WHERE]/[WHO])",
+          "answer": "[WHERE]",
+          "acceptableAnswers": ["[WHERE]"],
+          "hint": "Question about origin"
+        },
+        {
+          "question": "[I_AM] 25 ____. ([YEAR]/[YEARS])",
+          "answer": "[YEARS]",
+          "acceptableAnswers": ["[YEARS]"],
+          "hint": "Plural of year"
+        }
+      ]
+    },
+    {
+      "type": "vocabulary",
+      "icon": "book",
+      "title": "Greetings and polite expressions",
+      "category": "greetings",
+      "words": [
+        {
+          "word": "[HELLO_FORMAL]",
+          "translation": "Hello (formal)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_GRAMMAR_NOTE]"
+        },
+        {
+          "word": "[HELLO_INFORMAL]",
+          "translation": "Hi (informal)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_CONTEXTUAL_NOTE]"
+        },
+        {
+          "word": "[GOODBYE_FORMAL]",
+          "translation": "Goodbye (formal)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        },
+        {
+          "word": "[GOODBYE_INFORMAL]",
+          "translation": "Bye (informal)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        },
+        {
+          "word": "[GOOD_NIGHT]",
+          "translation": "Good night",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]",
+          "note": "[OPTIONAL_USAGE_NOTE]"
+        }
+      ]
+    },
+    {
+      "type": "culture",
+      "icon": "globe",
+      "title": "Greetings in [COUNTRY]",
+      "content": "In [COUNTRY], greetings vary depending on context...",
+      "keyPoints": [
+        "[CULTURAL_POINT_1]",
+        "[CULTURAL_POINT_2]",
+        "[CULTURAL_POINT_3]",
+        "[CULTURAL_POINT_4]",
+        "[CULTURAL_POINT_5]"
+      ],
+      "comparison": {
+        "[TARGET_LANG]": "[PRACTICE_IN_TARGET_COUNTRY]",
+        "international": "[PRACTICE_IN_OTHER_COUNTRIES]"
+      },
+      "images": []
+    },
+    {
+      "type": "grammar",
+      "icon": "book",
+      "title": "Subject personal pronouns",
+      "explanation": "Subject personal pronouns are essential in [LANGUAGE]...",
+      "table": {
+        "title": "Subject personal pronouns",
+        "headers": ["[LANGUAGE]", "Usage", "Pronunciation"],
+        "rows": [
+          ["[I]", "1st pers. sing.", "[PRONUNCIATION]"],
+          ["[YOU_INFORMAL]", "2nd pers. sing. (informal)", "[PRONUNCIATION]"],
+          ["[HE]", "3rd pers. sing. masc.", "[PRONUNCIATION]"],
+          ["[SHE]", "3rd pers. sing. fem.", "[PRONUNCIATION]"],
+          ["[WE]", "1st pers. plur.", "[PRONUNCIATION]"],
+          ["[YOU_FORMAL]", "2nd pers. plur. / formal", "[PRONUNCIATION]"],
+          ["[THEY_MASC]/[THEY_FEM]", "3rd pers. plur.", "[PRONUNCIATION]"]
+        ]
+      },
+      "examples": [
+        {
+          "sentence": "[EXAMPLE_WITH_I]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[I]",
+          "note": "Always use the pronoun"
+        },
+        {
+          "sentence": "[EXAMPLE_WITH_YOU]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[YOU]",
+          "note": "Pronoun is mandatory"
+        },
+        {
+          "sentence": "[EXAMPLE_WITH_YOU_FORMAL]",
+          "translation": "[TRANSLATION]",
+          "highlight": "[YOU_FORMAL]",
+          "note": "Formal or plural"
+        }
+      ]
+    },
+    {
+      "type": "exerciseInline",
+      "exerciseType": "fillInBlank",
+      "icon": "edit",
+      "title": "Asking and giving your age",
+      "xpReward": 10,
+      "questions": [
+        {
+          "question": "[HOW_OLD] ____ ? ([VERB_OPTION_1]/[VERB_OPTION_2])",
+          "answer": "[CORRECT_ANSWER]",
+          "acceptableAnswers": ["[CORRECT_ANSWER]"],
+          "hint": "Use the verb [VERB_NAME]"
+        },
+        {
+          "question": "[I] ____ 22 [YEARS_OLD]. ([VERB_OPTION_1]/[VERB_OPTION_2])",
+          "answer": "[CORRECT_ANSWER]",
+          "acceptableAnswers": ["[CORRECT_ANSWER]"],
+          "hint": "Verb [VERB_NAME] in 1st person"
+        },
+        {
+          "question": "[HE] ____ 31 [YEARS_OLD]. ([VERB_OPTION_1]/[VERB_OPTION_2])",
+          "answer": "[CORRECT_ANSWER]",
+          "acceptableAnswers": ["[CORRECT_ANSWER]"],
+          "hint": "Verb [VERB_NAME] in 3rd person"
+        }
+      ]
+    },
+    {
+      "type": "tip",
+      "icon": "lightbulb",
+      "color": "info",
+      "title": "Pronunciation tip",
+      "content": "[SPECIFIC_PRONUNCIATION_TIP_FOR_TARGET_LANGUAGE]"
+    },
+    {
+      "type": "vocabulary",
+      "icon": "book",
+      "title": "Common nationalities",
+      "category": "nationalities",
+      "words": [
+        {
+          "word": "[I_AM_FRENCH_M/F]",
+          "translation": "I am French (m/f)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        },
+        {
+          "word": "[I_AM_RUSSIAN_M/F]",
+          "translation": "I am Russian (m/f)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        },
+        {
+          "word": "[I_AM_AMERICAN_M/F]",
+          "translation": "I am American (m/f)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        },
+        {
+          "word": "[I_AM_ENGLISH_M/F]",
+          "translation": "I am English (m/f)",
+          "example": "[EXAMPLE_SENTENCE]",
+          "exampleTranslation": "[TRANSLATION]"
+        }
+      ]
+    },
+    {
+      "type": "exerciseInline",
+      "exerciseType": "fillInBlank",
+      "icon": "edit",
+      "title": "Nationalities",
+      "xpReward": 10,
+      "questions": [
+        {
+          "question": "[I_AM] ____ ([COUNTRY] → male)",
+          "answer": "[NATIONALITY_MALE]",
+          "acceptableAnswers": ["[NATIONALITY_MALE]"],
+          "hint": "Nationality for a man from [COUNTRY]"
+        },
+        {
+          "question": "[SHE_IS] ____ ([COUNTRY] → female)",
+          "answer": "[NATIONALITY_FEMALE]",
+          "acceptableAnswers": ["[NATIONALITY_FEMALE]"],
+          "hint": "Nationality for a woman from [COUNTRY]"
+        }
+      ]
+    },
+    {
+      "type": "conversation",
+      "title": "Mini-dialogue: At the airport",
+      "context": "A customs officer is checking passports",
+      "dialogue": [
+        {
+          "speaker": "[OFFICER]",
+          "text": "[HELLO]. [YOUR_PASSPORT_PLEASE].",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "speaker": "[TOURIST]",
+          "text": "[HERE_YOU_GO].",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "speaker": "[OFFICER]",
+          "text": "[ARE_YOU_RUSSIAN]?",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "speaker": "[TOURIST]",
+          "text": "[YES], [I_AM_RUSSIAN]. [I_AM_35_YEARS_OLD].",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "speaker": "[OFFICER]",
+          "text": "[VERY_WELL]. [ENJOY_YOUR_STAY_IN_FRANCE]!",
+          "audioUrl": "[TO_GENERATE]"
+        },
+        {
+          "speaker": "[TOURIST]",
+          "text": "[THANK_YOU]! [GOODBYE]!",
+          "audioUrl": "[TO_GENERATE]"
+        }
+      ],
+      "questions": [
+        {
+          "question": "What is the tourist's nationality?",
+          "answer": "Russian"
+        },
+        {
+          "question": "How old is the tourist?",
+          "answer": "35 years old"
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "icon": "check",
+      "title": "Key takeaways",
+      "content": "Here are the essential expressions from this lesson:",
+      "items": [
+        "[HELLO_PHRASE] - Formal greeting",
+        "[HI_PHRASE] - Informal greeting",
+        "[GOODBYE_PHRASE] - Formal farewell",
+        "[BYE_PHRASE] - Informal goodbye",
+        "[MY_NAME_IS_PHRASE] - Introducing yourself",
+        "[NICE_TO_MEET_YOU_PHRASE] - Responding to introduction",
+        "[WHERE_ARE_YOU_FROM_PHRASE] - Asking about origin",
+        "[I_AM_FROM_PHRASE] - Saying your country/city",
+        "[HOW_OLD_ARE_YOU_PHRASE] - Asking age",
+        "[I_AM_X_YEARS_OLD_PHRASE] - Saying your age"
+      ]
+    }
+  ],
+  "notes": {
+    "placeholders": [
+      "[LANG_CODE]: 2-letter language code (fr, ru, en, es, de, etc.)",
+      "[LANGUE]: French name of the language",
+      "[ЯЗЫКЕ]: Russian name of the language (in prepositional case)",
+      "[LANGUAGE]: English name of the language",
+      "[NAME_1], [NAME_2]: Common names in target language",
+      "[TO_GENERATE]: Will be generated by audio scripts",
+      "[TRANSLATION]: Translation in the interface language",
+      "[EXAMPLE_SENTENCE]: Example sentence in target language",
+      "[GRAMMAR_NOTE]: Explanation of grammar point",
+      "[CULTURAL_POINT_X]: Cultural observation",
+      "[PRONUNCIATION]: IPA or simplified pronunciation guide"
+    ],
+    "audio_generation": {
+      "dialogues": "Use gender-appropriate voices (male/female)",
+      "grammar_examples": "Use male voice, slower speed (stability: 0.75)",
+      "table_conjugations": "Generate audio for each cell in target language",
+      "conversations": "Use slower speed for beginners"
+    },
+    "adaptations_by_language": {
+      "russian": {
+        "cases": "Add explanations for cases (nominative, accusative, genitive, dative)",
+        "name_structure": "Use 'Меня зовут' (accusative) instead of reflexive verb",
+        "age_structure": "Use 'Мне X лет' (dative + genitive) instead of verb 'to have'",
+        "formality": "Emphasize ты vs вы distinction"
+      },
+      "english": {
+        "simplifications": "Fewer verb forms (no gender agreement)",
+        "name_structure": "Use 'My name is...' (no reflexive verb)",
+        "age_structure": "Use 'I am X years old' (verb 'to be', not 'to have')",
+        "pronouns": "No formal/informal distinction"
+      },
+      "spanish": {
+        "similarities_with_french": "Similar structure for 'llamarse' and age",
+        "gender_agreement": "Emphasize adjective agreement",
+        "regional_variations": "Note differences between Spain and Latin America"
+      }
+    }
+  }
+}

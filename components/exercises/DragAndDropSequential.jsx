@@ -8,7 +8,8 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { Check, X, ArrowRight, Trophy, RotateCcw, Move, Lightbulb } from 'lucide-react'
+import { Check, X, ArrowRight, RotateCcw, Move } from 'lucide-react'
+import ExerciseResults from './ExerciseResults'
 
 /**
  * DragAndDropSequential Component
@@ -114,211 +115,31 @@ const DragAndDropSequential = ({ exercise, onComplete }) => {
 
 	// Completion screen
 	if (isCompleted) {
+		// Build review items
+		const reviewItems = pairs.map((pair) => {
+			const userMatchedRightId = matches[pair.id]
+			const isCorrect = userMatchedRightId === pair.id
+			const userMatchedRight = shuffledRightItems.find(item => item.id === userMatchedRightId)
+
+			return {
+				question: getText(pair.left),
+				userAnswer: userMatchedRight ? getText(userMatchedRight) : t('methode_exercise_no_answer'),
+				correctAnswer: getText(pair.right),
+				isCorrect,
+				explanation: getText(pair.hint || pair.explanation)
+			}
+		})
+
 		return (
-			<Card className={cn(
-				'p-6 sm:p-8',
-				isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
-			)}>
-				{/* Result */}
-				<div className={cn(
-					'relative overflow-hidden rounded-2xl p-8 mb-6',
-					'border-2',
-					score === 100
-						? cn(
-							'bg-gradient-to-br',
-							isDark
-								? 'from-emerald-500/20 via-emerald-600/10 to-teal-500/20 border-emerald-500/40'
-								: 'from-emerald-50 via-emerald-100/50 to-teal-50 border-emerald-300'
-						)
-						: score >= 60
-							? cn(
-								'bg-gradient-to-br',
-								isDark
-									? 'from-amber-500/20 via-orange-500/10 to-yellow-500/20 border-amber-500/40'
-									: 'from-amber-50 via-orange-50/50 to-yellow-50 border-amber-300'
-							)
-							: cn(
-								'bg-gradient-to-br',
-								isDark
-									? 'from-red-500/20 via-rose-500/10 to-pink-500/20 border-red-500/40'
-									: 'from-red-50 via-rose-50/50 to-pink-50 border-red-300'
-							)
-				)}>
-					<div className="flex items-center gap-6">
-						<div className={cn(
-							'w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg',
-							score === 100
-								? 'bg-gradient-to-br from-amber-400 to-amber-500'
-								: score >= 60
-									? 'bg-gradient-to-br from-amber-400 to-orange-500'
-									: 'bg-gradient-to-br from-red-400 to-rose-500'
-						)}>
-							<Trophy className="w-10 h-10 text-white" />
-						</div>
-
-						<div className="flex-1">
-							<p className={cn(
-								'text-3xl font-extrabold mb-2',
-								score === 100
-									? 'text-emerald-600 dark:text-emerald-400'
-									: score >= 60
-										? 'text-amber-600 dark:text-amber-400'
-										: 'text-red-600 dark:text-red-400'
-							)}>
-								{score === 100 ? t('methode_exercise_perfect') : score >= 60 ? t('methode_exercise_good_job') : t('methode_exercise_keep_practicing')}
-							</p>
-							<p className={cn(
-								'text-xl font-bold mb-1',
-								isDark ? 'text-slate-200' : 'text-slate-700'
-							)}>
-								{t('methode_exercise_score')} : {score}%
-							</p>
-							<p className={cn(
-								'text-base',
-								isDark ? 'text-slate-400' : 'text-slate-600'
-							)}>
-								{correctMatches}/{pairs.length} {t('methode_exercise_correct_count')}
-							</p>
-						</div>
-					</div>
-				</div>
-
-				{/* Review Section */}
-				<div className="space-y-4 mb-8">
-					<h4 className={cn(
-						'text-lg font-bold mb-4',
-						isDark ? 'text-white' : 'text-slate-900'
-					)}>
-						{t('methode_exercise_review')}
-					</h4>
-					{pairs.map((pair) => {
-						const userMatchedRightId = matches[pair.id]
-						const isCorrect = userMatchedRightId === pair.id
-						const userMatchedRight = shuffledRightItems.find(item => item.id === userMatchedRightId)
-
-						return (
-							<Card key={pair.id} className={cn(
-								'p-4 border-2',
-								isDark ? 'bg-slate-700/50' : 'bg-slate-50',
-								isCorrect
-									? isDark ? 'border-emerald-500/40' : 'border-emerald-300'
-									: isDark ? 'border-red-500/40' : 'border-red-300'
-							)}>
-								{/* Left Item (Question) */}
-								<div className="mb-3">
-									<p className={cn(
-										'text-base font-medium mb-2',
-										isDark ? 'text-slate-200' : 'text-slate-700'
-									)}>
-										{getText(pair.left)}
-									</p>
-								</div>
-
-								{/* Answers */}
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-									{/* User Answer */}
-									<div className={cn(
-										'p-3 rounded-lg border-2',
-										isCorrect
-											? isDark ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
-											: isDark ? 'bg-red-950/30 border-red-500/40' : 'bg-red-50 border-red-300'
-									)}>
-										<div className="flex items-center gap-2 mb-1">
-											{isCorrect ? (
-												<Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-											) : (
-												<X className="w-4 h-4 text-red-500 flex-shrink-0" />
-											)}
-											<span className={cn(
-												'text-xs font-semibold uppercase',
-												isCorrect
-													? 'text-emerald-600 dark:text-emerald-400'
-													: 'text-red-600 dark:text-red-400'
-											)}>
-												{t('methode_exercise_your_answer')}
-											</span>
-										</div>
-										<p className={cn(
-											'text-base font-medium',
-											isDark ? 'text-slate-200' : 'text-slate-800'
-										)}>
-											{userMatchedRight ? getText(userMatchedRight) : <span className="italic text-slate-400">{t('methode_exercise_no_answer')}</span>}
-										</p>
-									</div>
-
-									{/* Correct Answer */}
-									{!isCorrect && (
-										<div className={cn(
-											'p-3 rounded-lg border-2',
-											isDark ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
-										)}>
-											<div className="flex items-center gap-2 mb-1">
-												<Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-												<span className="text-xs font-semibold uppercase text-emerald-600 dark:text-emerald-400">
-													{t('methode_exercise_correct_answer')}
-												</span>
-											</div>
-											<p className={cn(
-												'text-base font-medium',
-												isDark ? 'text-slate-200' : 'text-slate-800'
-											)}>
-												{getText(pair.right)}
-											</p>
-										</div>
-									)}
-								</div>
-
-								{/* Tip/Explanation (if available) */}
-								{(pair.hint || pair.explanation) && (
-									<div className={cn(
-										'p-3 rounded-lg border-2',
-										isDark ? 'bg-cyan-950/30 border-cyan-500/40' : 'bg-cyan-50 border-cyan-300'
-									)}>
-										<div className="flex items-start gap-2">
-											<Lightbulb className="w-4 h-4 text-cyan-500 flex-shrink-0 mt-0.5" />
-											<div>
-												<span className="text-xs font-semibold uppercase text-cyan-600 dark:text-cyan-400 block mb-1">
-													{t('methode_exercise_tip')}
-												</span>
-												<p className={cn(
-													'text-sm',
-													isDark ? 'text-slate-300' : 'text-slate-700'
-												)}>
-													{getText(pair.hint || pair.explanation)}
-												</p>
-											</div>
-										</div>
-									</div>
-								)}
-							</Card>
-						)
-					})}
-				</div>
-
-				{/* Actions */}
-				<div className="flex gap-4 justify-center">
-					<Button
-						variant="outline"
-						onClick={handleRetry}
-						className={cn(
-							'gap-2',
-							isDark ? 'border-slate-600 hover:bg-slate-700' : 'border-slate-300'
-						)}
-					>
-						<RotateCcw className="w-4 h-4" />
-						{t('methode_exercise_retry')}
-					</Button>
-					<Button
-						onClick={handleNextExercise}
-						className={cn(
-							'gap-2 bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600'
-						)}
-					>
-						{t('methode_exercise_next')}
-						<ArrowRight className="w-4 h-4" />
-					</Button>
-				</div>
-			</Card>
+			<ExerciseResults
+				score={score}
+				correctCount={correctMatches}
+				totalCount={pairs.length}
+				onRetry={handleRetry}
+				onNext={handleNextExercise}
+				reviewItems={reviewItems}
+				playSound={true}
+			/>
 		)
 	}
 

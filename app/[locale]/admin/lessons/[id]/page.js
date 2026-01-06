@@ -5,8 +5,8 @@ export const metadata = {
 	description: 'Edit standalone grammar lesson'
 }
 
-export default function EditLessonPage({ params }) {
-	const { id } = params
+export default async function EditLessonPage({ params }) {
+	const { id } = await params
 
 	return <EditLessonPageClient lessonId={parseInt(id)} />
 }

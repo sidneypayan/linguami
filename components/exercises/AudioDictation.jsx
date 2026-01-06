@@ -6,11 +6,12 @@ import { useThemeMode } from '@/context/ThemeContext'
 import toast from '@/utils/toast'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
-import { CheckCircle2, XCircle, RotateCcw, Trophy, Play, Pause } from 'lucide-react'
+import { CheckCircle2, XCircle, RotateCcw, Play, Pause } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import ExerciseResults from './ExerciseResults'
 
 /**
  * Audio Dictation Exercise Component
@@ -235,60 +236,32 @@ const AudioDictation = ({ exercise, onComplete }) => {
 
 	// Exercise completion screen
 	if (exerciseCompleted) {
+		// Build review items
+		const reviewItems = sentences.map((sentence) => {
+			const result = results[sentence.id]
+			const sentenceWithBlank = sentence.sentenceWithBlank
+
+			return {
+				question: sentenceWithBlank.replace('___', '______'),
+				userAnswer: result?.userAnswer || t('empty'),
+				correctAnswer: result?.correctAnswer || sentence.correctAnswer,
+				isCorrect: result?.correct || false,
+				explanation: sentence.explanation || sentence.hint || ''
+			}
+		})
+
+		const correctCount = Object.values(results).filter(r => r.correct).length
+
 		return (
-			<Card className={cn(
-				"p-6 md:p-8 rounded-2xl text-center",
-				isDark
-					? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
-					: "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
-			)}>
-				<Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
-				<h4 className={cn(
-					"text-2xl font-bold mb-2",
-					isDark ? "text-slate-100" : "text-slate-800"
-				)}>
-					{t('exerciseCompleted')}
-				</h4>
-				<p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
-					{t('yourScore')} : {totalScore}%
-				</p>
-				<p className={cn(
-					"mb-6",
-					isDark ? "text-slate-400" : "text-slate-600"
-				)}>
-					{totalScore === 100 && t('perfectScore')}
-					{totalScore >= 80 && totalScore < 100 && t('greatJob')}
-					{totalScore >= 60 && totalScore < 80 && t('goodWork')}
-					{totalScore < 60 && t('keepPracticing')}
-				</p>
-				{totalScore === 100 && isFirstCompletion && (
-					<span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
-						+{exercise.xp_reward} XP
-					</span>
-				)}
-				{totalScore < 100 && (
-					<div className={cn(
-						"p-4 rounded-xl border-2 mb-6 text-left",
-						isDark
-							? "bg-blue-500/10 border-blue-500/30"
-							: "bg-blue-50 border-blue-200"
-					)}>
-						<p className={cn(
-							"font-semibold",
-							isDark ? "text-blue-300" : "text-blue-700"
-						)}>
-							{t('perfectScoreForXP')}
-						</p>
-					</div>
-				)}
-				<Button
-					onClick={handleReset}
-					className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
-				>
-					<RotateCcw className="w-5 h-5 mr-2" />
-					{t('tryAgain')}
-				</Button>
-			</Card>
+			<ExerciseResults
+				score={totalScore}
+				correctCount={correctCount}
+				totalCount={sentences.length}
+				onRetry={handleReset}
+				onNext={handleReset}
+				reviewItems={reviewItems}
+				playSound={true}
+			/>
 		)
 	}
 

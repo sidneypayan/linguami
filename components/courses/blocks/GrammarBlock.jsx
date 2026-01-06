@@ -4,6 +4,7 @@ import { useThemeMode } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Volume2 } from 'lucide-react'
+import { convertToLocalProxy } from '@/utils/mediaUrls'
 
 /**
  * Convertit le markdown bold (**text**) en HTML <strong>
@@ -35,7 +36,8 @@ const GrammarBlock = ({ block }) => {
 		setCurrentPlayingIndex(index)
 
 		if (!audioRefs.current[index]) {
-			audioRefs.current[index] = new Audio(audioUrl)
+			const proxiedUrl = convertToLocalProxy(audioUrl)
+			audioRefs.current[index] = new Audio(proxiedUrl)
 			audioRefs.current[index].addEventListener('ended', () => {
 				setCurrentPlayingIndex(null)
 			})

@@ -54,6 +54,7 @@ import {
 	Scroll,
 	Wand2,
 	Share2,
+	Edit,
 } from 'lucide-react'
 
 // ============================================
@@ -774,6 +775,22 @@ const Material = ({
 											{showAccents
 												? (locale === 'fr' ? 'Masquer' : locale === 'ru' ? 'Скрыть' : 'Hide')
 												: (locale === 'fr' ? 'Accents' : locale === 'ru' ? 'Акценты' : 'Accents')}
+										</span>
+									</ActionButton>
+								)}
+
+								{/* Admin Edit Button */}
+								{isUserAdmin && (
+									<ActionButton
+										variant="outline"
+										icon={Edit}
+										onClick={() => window.open(`/${locale}/admin/materials/${currentMaterial.id}`, '_blank')}
+									>
+										<span className="hidden sm:inline">
+											{locale === 'fr' ? 'Éditer' : locale === 'ru' ? 'Редактировать' : 'Edit'}
+										</span>
+										<span className="sm:hidden">
+											{locale === 'fr' ? 'Éditer' : locale === 'ru' ? 'Ред.' : 'Edit'}
 										</span>
 									</ActionButton>
 								)}

@@ -5,8 +5,8 @@ export const metadata = {
 	description: 'Edit learning material and exercises'
 }
 
-export default function EditMaterialPage({ params }) {
-	const { id } = params
+export default async function EditMaterialPage({ params }) {
+	const { id } = await params
 
 	return <EditMaterialPageClient materialId={parseInt(id)} />
 }

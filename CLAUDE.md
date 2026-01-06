@@ -4,224 +4,155 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-# 🚨 RÈGLE CRITIQUE - LIRE EN PREMIER 🚨
+## 📋 Table des matières
 
-## ⛔ AVANT CHAQUE COMMIT : CHECKLIST OBLIGATOIRE ⛔
-
-**TOUJOURS suivre ces étapes dans cet ordre :**
-
-```bash
-# ✅ ÉTAPE 1 : Voir TOUS les fichiers modifiés
-git status
-
-# ✅ ÉTAPE 2 : Montrer la liste à l'utilisateur et demander confirmation
-"Voici tous les fichiers modifiés : [liste]. Je vais TOUS les inclure dans le commit, OK ?"
-
-# ✅ ÉTAPE 3 : Ajouter TOUS les fichiers
-git add [fichier1] [fichier2] [fichier3] ...
-
-# ✅ ÉTAPE 4 : Commiter avec TOUS les fichiers
-git commit -m "message"
-
-# ✅ ÉTAPE 5 : Vérifier qu'il ne reste RIEN
-git status  # Doit afficher "nothing to commit, working tree clean"
-```
-
-**❌ NE JAMAIS :**
-- Commiter seulement une partie des fichiers (scripts uniquement, composants uniquement, etc.)
-- Décider arbitrairement quels fichiers inclure
-- Oublier de faire `git status` avant le commit
-
-**✅ TOUJOURS :**
-- Inclure 100% des fichiers modifiés dans le commit
-- Demander confirmation à l'utilisateur si tu as un doute
+1. [🚨 Règles Critiques](#-règles-critiques)
+2. [🚀 Quick Start](#-quick-start)
+3. [⚠️ Systèmes Critiques](#️-systèmes-critiques)
+4. [📚 Documentation](#-documentation)
+5. [💻 Development Patterns](#-development-patterns)
+6. [🎨 Styling](#-styling)
+7. [🔧 Troubleshooting](#-troubleshooting)
 
 ---
 
-## Quick Start
+# 🚨 Règles Critiques
 
-**Tech Stack:** Next.js 13.4, React 18.2, Material-UI 5.10, Redux Toolkit, Supabase, next-translate
+## ⛔ Git & Commits : Règles Absolues
 
-**Run locally:**
+### Workflow complet : Test PUIS Commit
+
+**RÈGLES :**
+1. ✅ Faire les modifications de code et expliquer les changements
+2. ✅ **ATTENDRE** que l'utilisateur teste et valide
+3. ✅ Seulement APRÈS validation → procéder au commit
+4. ✅ Toujours commiter **100% des fichiers modifiés** (pas de sélection partielle)
+
+**PROCÉDURE DE COMMIT :**
+
 ```bash
-npm run dev          # Start development server (http://localhost:3000)
+# 1. Voir TOUS les fichiers modifiés
+git status
+
+# 2. Montrer la liste à l'utilisateur et demander confirmation
+"Voici tous les fichiers modifiés :
+- app/actions/materials.js
+- components/MaterialsCard.jsx
+- scripts/create-lesson.js
+
+Je vais TOUS les inclure dans le commit. Confirmes-tu ?"
+
+# 3. Ajouter TOUS les fichiers
+git add fichier1 fichier2 fichier3 ...
+
+# 4. Vérifier qu'il ne reste RIEN
+git status  # DOIT afficher "nothing to commit" ou tous les fichiers en vert
+
+# 5. Commiter
+git commit -m "feat: description
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+**🎯 OBJECTIF : `git status` → "nothing to commit, working tree clean"**
+
+**💀 ERREUR CATASTROPHIQUE À ÉVITER :**
+Commiter seulement `scripts/create-lesson.js` mais oublier `components/lessons/Lesson.jsx` et `app/actions/lessons.js` → Les leçons existent en DB mais ne s'affichent pas.
+
+### Gestion des branches
+
+**RÈGLE ABSOLUE :** Ne JAMAIS push d'autres branches que `develop` et `main`.
+
+- La branche `claude` reste **uniquement en local**
+- **SEULES** `develop` et `main` peuvent être pushées vers GitHub
+- Ne JAMAIS créer ou pusher de branches temporaires (feature/*, fix/*, etc.)
+
+**Workflow correct :**
+1. Travailler sur `claude` en local
+2. Quand l'utilisateur demande de pusher :
+   - Créer le commit sur `claude`
+   - Merger `claude` → `develop` localement
+   - Push `develop`
+   - Merger `develop` → `main` localement
+   - Push `main`
+
+---
+
+# 🚀 Quick Start
+
+## Tech Stack
+
+**Framework & Language:**
+- Next.js 15.5 (App Router only)
+- React 19.0
+- TypeScript (partiel, migration en cours)
+
+**UI & Styling:**
+- TailwindCSS 3.4
+- Radix UI (composants primitifs)
+- Lucide Icons
+- shadcn/ui pattern
+
+**State & Data:**
+- React Context (user, theme)
+- React Query (@tanstack/react-query)
+- Server Actions (no API routes except webhooks)
+
+**Database & Auth:**
+- Supabase (PostgreSQL + Auth)
+- Supabase SSR (@supabase/ssr)
+
+**i18n:**
+- next-intl 4.5
+- Translation files in `messages/`
+- Supported locales: fr, ru, en
+
+**Storage:**
+- Cloudflare R2 (images, audio, video)
+
+## Run Locally
+
+```bash
+npm run dev          # Start dev server with Turbopack (http://localhost:3000)
 npm run build        # Production build
 npm run lint         # Run ESLint
 ```
 
+## 🗄️ Database Configuration
 
-## ⚠️ Important Rules
+**IMPORTANT:** Le projet utilise **UNIQUEMENT la base de données de PRODUCTION**.
 
-### JAMAIS de commit avant test
-
-**RÈGLE ABSOLUE :** Ne JAMAIS commiter de changements avant que l'utilisateur les ait testés et validés.
-
-**Workflow correct :**
-1. Faire les modifications de code
-2. Expliquer les changements à l'utilisateur
-3. **ATTENDRE** que l'utilisateur teste
-4. **ATTENDRE** la confirmation explicite de l'utilisateur
-5. Seulement APRÈS validation → commit
-
-**❌ Ne PAS faire :**
-- Commit automatique après modifications
-- Proposer de commiter sans test préalable
-- Supposer que le code fonctionne sans validation
-
-**✅ Faire :**
-- Expliquer les changements
-- Inviter l'utilisateur à tester
-- Attendre confirmation explicite
-- Demander si l'utilisateur veut commiter
-
-### Gestion des branches Git
-
-**RÈGLE ABSOLUE :** Ne JAMAIS push d'autres branches que `develop` et `main`.
-
-**Règles strictes :**
-- La branche `claude` reste **uniquement en local** pour le travail de Claude Code
-- **SEULES** les branches `develop` et `main` peuvent être pushées vers GitHub
-- Ne JAMAIS créer ou pusher de branches feature/fix/refactor temporaires
-
-**Workflow de commit correct :**
-1. Travailler sur la branche `claude` en local
-2. Quand l'utilisateur demande de commiter et pusher :
-   - Créer le commit sur `claude`
-   - Merger `claude` vers `develop` localement
-   - Push `develop`
-   - Merger `develop` vers `main` localement
-   - Push `main`
-
-**❌ Ne PAS faire :**
-- `git push origin claude`
-- `git push origin feature/*`
-- `git push origin fix/*`
-- Créer des branches temporaires et les pusher
-- Créer des Pull Requests depuis des branches autres que develop
-
-**✅ Faire :**
-- Travailler sur `claude` en local uniquement
-- Merger directement dans `develop` puis `main`
-- Push uniquement `develop` et `main`
-
-### 🚨 TOUJOURS commiter TOUS les changements 🚨
-
-**RÈGLE ABSOLUE :** Quand l'utilisateur demande de commiter, TOUJOURS inclure 100% des fichiers modifiés depuis le dernier commit. PAS D'EXCEPTION.
-
-**⚠️ PROCÉDURE OBLIGATOIRE AVANT CHAQUE COMMIT :**
-
-```bash
-# 1️⃣ OBLIGATOIRE : Afficher TOUS les fichiers modifiés
-git status
-
-# 2️⃣ OBLIGATOIRE : Montrer la liste complète à l'utilisateur
-Dire : "Voici TOUS les fichiers modifiés :
-- components/lessons/Lesson.jsx
-- components/exercises/ExerciseSection.jsx
-- scripts/create-lesson-10.js
-- (etc...)
-
-Je vais TOUS les inclure dans le commit. Confirmes-tu ?"
-
-# 3️⃣ OBLIGATOIRE : Ajouter TOUS les fichiers (pas une sélection)
-git add <fichier1> <fichier2> <fichier3> ...
-
-# 4️⃣ OBLIGATOIRE : Vérifier qu'il ne reste RIEN avant de commiter
-git status  # DOIT afficher "nothing to commit" ou tous les fichiers en vert
-
-# 5️⃣ Commiter
-git commit -m "message"
-```
-
-**❌ ERREURS INTERDITES :**
-- ❌ Commiter seulement une partie des fichiers modifiés (ex: seulement les scripts, seulement les composants)
-- ❌ Oublier des fichiers critiques (Server Actions, composants, hooks, etc.)
-- ❌ Supposer que seuls certains fichiers sont pertinents
-- ❌ Laisser des fichiers modifiés en "Changes not staged for commit"
-- ❌ Ne PAS faire `git status` avant le commit
-
-**✅ RÈGLES À SUIVRE :**
-- ✅ `git status` SYSTÉMATIQUEMENT avant chaque commit
-- ✅ Inclure 100% des fichiers modifiés dans le commit
-- ✅ Montrer la liste complète à l'utilisateur AVANT de commiter
-- ✅ Demander confirmation si le moindre doute
-- ✅ Vérifier avec `git status` qu'il ne reste RIEN après le add
-
-**💀 EXEMPLES D'ERREURS CATASTROPHIQUES À NE JAMAIS REPRODUIRE :**
-
-1. **Commiter seulement les scripts, oublier les composants React**
-   - ❌ Commit: `scripts/create-lesson-10.js`
-   - ❌ Oublié: `components/lessons/Lesson.jsx`, `components/exercises/ExerciseSection.jsx`
-   - 💥 Résultat: Les leçons existent en DB mais ne s'affichent pas car le code front est absent
-
-2. **Commiter le frontend, oublier les Server Actions**
-   - ❌ Commit: `components/MaterialsCard.jsx`
-   - ❌ Oublié: `app/actions/materials.js`
-   - 💥 Résultat: L'interface existe mais ne peut pas récupérer les données
-
-**🎯 OBJECTIF : `git status` doit afficher "nothing to commit, working tree clean" après chaque commit**
+- Tous les scripts et composants utilisent la DB de production
+- Credentials dans `.env.local`
+- Ne JAMAIS chercher ou créer de tables en local
+- Ne jamais lancer de build entre les modifications
 
 ---
 
+# ⚠️ Systèmes Critiques
 
-cat /tmp/rules_section.txt
-
-## Documentation Structure
-
-All detailed documentation has been modularized. **Always consult the appropriate guide before working on a feature.**
-
-### 📐 Architecture
-
-Core system architecture and patterns:
-
-- **[Database Architecture](docs/architecture/database.md)** - Tables, schemas, RLS policies, common queries
-- **[State Management](docs/architecture/state-management.md)** - Redux slices, Context providers, localStorage
-- **[Authentication](docs/architecture/authentication.md)** - Login, OAuth, user profiles, protected routes
-- **[i18n System](docs/architecture/i18n.md)** - Translation system, three-language concept, multilingual content
-
-### 🎯 Features
-
-Detailed feature documentation:
-
-- **[Interactive Exercises](docs/features/exercises.md)** - MCQ, Fill-in-blank, Drag-and-drop, XP rewards
-- **[Method Courses](docs/features/method-courses.md)** - Structured lessons, block system, progression tracking
-- **[SRS Flashcards](docs/features/srs-flashcards.md)** - Spaced repetition algorithm, card states, review flow
-- **[XP & Gamification](docs/features/xp-gamification.md)** - Leveling, streaks, leaderboard, achievements
-
-### 📚 Creation Guides
-
-**⚠️ MUST READ before creating content:**
-
-- **[Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md)** - Rules for creating course lessons, translations, audio workflow
-- **[Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
-- **[Course Blocks Structure](docs/guides/COURSE_BLOCKS_STRUCTURE.md)** - All block types with schemas
-- **[Dialogue Audio Generation](docs/guides/DIALOGUE_AUDIO_GENERATION.md)** - Voice IDs, voice mapping, audio generation process for dialogues
-
-### ⚡ Performance & Best Practices
-
-Optimization guides and coding standards:
-
-- **[Performance Optimizations](docs/PERFORMANCE_OPTIMIZATIONS.md)** - React.memo, useMemo/useCallback, lazy loading, hydration fixes
-
-## Three-Language System
+## 1. Three-Language System
 
 ⚠️ **CRITICAL:** Linguami uses THREE distinct language concepts - do NOT confuse them:
 
-### 1. Interface Language (`router.locale`)
+### 1. Interface Language (`locale`)
 - Language of the UI/menus/buttons
 - Values: `fr`, `ru`, `en`
-- Access: `const router = useRouter(); const interfaceLang = router.locale`
+- Access: `const locale = useLocale()` (next-intl)
+- Set via URL: `/fr/materials`, `/en/materials`, `/ru/materials`
 
 ### 2. Learning Language (`userLearningLanguage`)
 - Language the user is STUDYING (target language)
-- Values: `fr`, `ru` (en suspended)
+- Values: `fr`, `ru`
 - Access: `const { userLearningLanguage } = useUserContext()`
 - **Used for:** Filtering materials and courses
 
 ### 3. Spoken Language (`spoken_language`)
 - User's NATIVE language (for explanations in lessons)
 - Values: `fr`, `ru`, `en`
-- Access: `const spokenLang = userProfile?.spoken_language || router.locale`
+- Access: `const spokenLang = userProfile?.spoken_language || locale`
 - **Used for:** Selecting lesson content blocks (`blocks_fr`, `blocks_en`, `blocks_ru`)
 
 **Example scenario:**
@@ -230,188 +161,315 @@ Optimization guides and coding standards:
 - Learning: `ru` (studying Russian materials)
 - Spoken: `fr` (lesson explanations in French)
 
-## Project Structure
+## 2. Two Lesson Systems
 
-```
-cat /tmp/rules_section.txt
-linguami/
-├── pages/                  # Next.js pages (file-based routing)
-│   ├── api/               # API routes
-│   ├── method/            # Course system pages
-│   ├── materials/         # Learning materials
-│   └── admin/             # Admin panel
-├── components/
-│   ├── layouts/           # Navbar, Footer, BottomNav
-│   ├── courses/blocks/    # Lesson block components
-│   ├── exercises/         # Exercise components
-│   └── shared/            # Reusable components
-├── features/              # Redux slices
-│   ├── courses/
-│   ├── materials/
-│   ├── words/
-│   └── cards/
-├── context/               # React Context providers
-│   ├── user.js           # Authentication & user profile
-│   └── ThemeContext.js   # Dark/light mode
-├── utils/                 # Utility functions
-├── lib/                   # Third-party clients (Supabase, R2)
-├── locales/              # i18n translation files
-│   ├── fr/
-│   ├── ru/
-│   └── en/
-├── supabase/
-│   ├── migrations/       # Database migrations
-│   └── seed/             # Seed data
-├── scripts/              # Utility scripts (audio generation, etc.)
-└── docs/                 # 📚 Documentation (YOU ARE HERE)
-    ├── architecture/     # System architecture docs
-    ├── features/         # Feature-specific docs
-    └── guides/           # Creation guides
-```
-cat /tmp/rules_section.txt
+Linguami has **TWO DISTINCT lesson systems** - do NOT confuse them:
 
-## ⚠️ CRITICAL: Data Fetching Pattern (App Router)
+### Method Lessons (Structured Courses)
+- **Table:** `course_lessons`
+- **Purpose:** Structured courses (A1, A2, etc.) with progression tracking
+- **Features:** Multilingual blocks (blocks_fr, blocks_en, blocks_ru), exercises, XP rewards, audio
+- **URL:** `/method/beginner/lesson-slug`
+- **Documentation:** `docs/method/LESSON_CREATION_GUIDE.md`
 
-**ALWAYS use Server Actions + React Query for App Router pages. NEVER create API routes.**
+### Standalone Lessons (Site Content)
+- **Table:** `lessons`
+- **Purpose:** Independent tutorials/articles/grammar explanations
+- **Features:** Simpler structure, no multilingual blocks system
+- **URL:** `/lessons`
+
+**When querying lessons:**
+- For method courses → Use `course_lessons` table
+- For standalone content → Use `lessons` table
+
+## 3. Data Fetching Pattern (App Router)
+
+**ALWAYS use Server Actions + React Query. NEVER create API routes (except webhooks).**
 
 ### ✅ Correct Pattern
 
-1. **Create Server Action** in `app/actions/myFeature.js`:
+**1. Create Server Action** in `app/actions/myFeature.js`:
 ```javascript
 'use server'
+import { createClient } from '@/lib/supabase-server'
+import { cookies } from 'next/headers'
+
 export async function getData(lang) {
-  const supabase = createServerClient(await cookies())
-  const { data } = await supabase.from('table').select('*').eq('lang', lang)
+  const supabase = createClient(await cookies())
+  const { data, error } = await supabase
+    .from('table')
+    .select('*')
+    .eq('lang', lang)
+
+  if (error) throw error
   return data
 }
 ```
 
-2. **Use with React Query** in Client Component:
+**2. Use with React Query** in Client Component:
 ```javascript
-const { data } = useQuery({
-  queryKey: ['myData', userLearningLanguage], // ← Auto refetch on change
-  queryFn: () => getData(userLearningLanguage)
-})
+'use client'
+import { useQuery } from '@tanstack/react-query'
+import { getData } from '@/app/actions/myFeature'
+
+export default function MyComponent() {
+  const { userLearningLanguage } = useUserContext()
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['myData', userLearningLanguage],
+    queryFn: () => getData(userLearningLanguage)
+  })
+
+  if (isLoading) return <div>Loading...</div>
+  return <div>{data}</div>
+}
 ```
 
 ### ❌ DON'T DO THIS
 
-- ❌ Creating `pages/api/*` routes for App Router pages
+- ❌ Creating `app/api/*` routes (except webhooks like Stripe)
 - ❌ Using `window.location.reload()` to refresh data
-- ❌ Fetching from your own API with `fetch('/api/...')`
-
-**See [State Management](docs/architecture/state-management.md) for full documentation.**
+- ❌ Using Redux or other state management for server data
 
 ---
 
-## Common Development Patterns
+# 📚 Documentation
 
-### Adding a New Feature
+All detailed documentation is in the `docs/` folder. **Always consult the appropriate guide before working on a feature.**
+
+## Architecture
+
+- **[Database Architecture](docs/architecture/database.md)** - Tables, schemas, RLS policies, common queries
+- **[State Management](docs/architecture/state-management.md)** - React Context, React Query, localStorage
+- **[Authentication](docs/architecture/authentication.md)** - Login, OAuth, user profiles, protected routes
+- **[i18n System](docs/architecture/i18n.md)** - next-intl, three-language concept, multilingual content
+
+## Creation Guides
+
+**⚠️ MUST READ before creating content:**
+
+- **[Lesson Creation Guide](docs/method/LESSON_CREATION_GUIDE.md)** - Creating lessons, translations, audio workflow
+- **[Lesson Template](docs/method/LESSON_TEMPLATE.json)** - Complete JSON template
+- **[Lesson Blocks Reference](docs/method/LESSON_BLOCKS_REFERENCE.md)** - All block types with schemas
+- **[Audio Generation](docs/method/AUDIO_GENERATION.md)** - Voice IDs, voice mapping, dialogue audio
+- **[Exercise Creation Guide](docs/exercises/CREATION_GUIDE.md)** - 3 exercise types, field naming, validation
+
+## Quick Reference
+
+**I want to...**
+- Understand database tables → [Database Architecture](docs/architecture/database.md)
+- Add React Context/Query → [State Management](docs/architecture/state-management.md)
+- Implement login → [Authentication](docs/architecture/authentication.md)
+- Add translations → [i18n System](docs/architecture/i18n.md)
+- Create exercises → [Exercise Creation Guide](docs/exercises/CREATION_GUIDE.md)
+- Create lessons → [Lesson Creation Guide](docs/method/LESSON_CREATION_GUIDE.md)
+- Generate audio → [Audio Generation](docs/method/AUDIO_GENERATION.md)
+
+---
+
+# 💻 Development Patterns
+
+## Project Structure
+
+```
+linguami/
+├── app/                    # Next.js App Router
+│   ├── [locale]/          # Localized routes (fr, ru, en)
+│   ├── actions/           # Server Actions (NO API routes)
+│   ├── api/               # Only webhooks (Stripe, etc.)
+│   └── providers.js       # React Query, etc.
+├── components/            # React components
+│   ├── layouts/          # Navbar, Footer, BottomNav
+│   └── ui/               # Reusable UI components
+├── context/              # React Context (user, theme)
+├── hooks/                # Custom React hooks
+├── lib/                  # Third-party clients (Supabase, R2)
+├── messages/             # i18n translation files (next-intl)
+│   ├── fr.json
+│   ├── ru.json
+│   └── en.json
+├── i18n/                 # next-intl configuration
+├── public/               # Static assets
+├── scripts/              # Utility scripts
+├── supabase/
+│   └── migrations/       # Database migrations
+├── docs/                 # Documentation
+│   ├── architecture/
+│   ├── method/
+│   └── exercises/
+└── utils/                # Utility functions
+```
+
+## Adding a New Feature
 
 1. **Plan data model** → See [Database Architecture](docs/architecture/database.md)
-2. **Create Server Actions** (not API routes!) → See [State Management](docs/architecture/state-management.md)
-3. **Use React Query** for client-side data fetching → See [State Management](docs/architecture/state-management.md)
-4. **Create components** → Follow MUI `sx` prop pattern
-5. **Add translations** → See [i18n System](docs/architecture/i18n.md)
+2. **Create Server Actions** in `app/actions/` → See [Data Fetching Pattern](#3-data-fetching-pattern-app-router)
+3. **Use React Query** for client-side data fetching
+4. **Create components** with Tailwind + Radix UI
+5. **Add translations** to `messages/{fr,ru,en}.json`
 
-### Creating Content
+## Creating Content
 
 **Lessons:**
-1. **Read [Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md)** first
+1. Read [Lesson Creation Guide](docs/method/LESSON_CREATION_GUIDE.md) first
 2. Create text content (Phase 1: NO audio)
 3. Get user validation
 4. Generate audio (Phase 2: AFTER validation)
 
 **Exercises:**
-1. **Read [Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md)** first
-2. Choose one of 3 supported types
+1. Read [Exercise Creation Guide](docs/exercises/CREATION_GUIDE.md) first
+2. Choose one of 3 supported types (MCQ, Fill-in-blank, Drag-and-drop)
 3. Use automated scripts (`scripts/create-*.js`)
 4. Validate all fields before insertion
 
-### Component Pattern
+## Component Pattern
 
 ```javascript
-import { useSelector, useDispatch } from 'react-redux'
+'use client'
+import { useQuery } from '@tanstack/react-query'
 import { useUserContext } from '@/context/user'
-import useTranslation from 'next-translate/useTranslation'
+import { useTranslations } from 'next-intl'
+import { getData } from '@/app/actions/myFeature'
 
-function MyComponent() {
-  const { t, lang } = useTranslation('common')
+export default function MyComponent() {
+  const t = useTranslations('common')
   const { isUserLoggedIn, userProfile } = useUserContext()
-  const dispatch = useDispatch()
-  const data = useSelector(state => state.myFeature.data)
+  const { userLearningLanguage } = useUserContext()
 
-  useEffect(() => {
-    dispatch(fetchData())
-  }, [dispatch])
+  const { data, isLoading } = useQuery({
+    queryKey: ['myData', userLearningLanguage],
+    queryFn: () => getData(userLearningLanguage)
+  })
+
+  if (isLoading) return <div>Loading...</div>
 
   return (
-    <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
-      <Typography variant="h4">{t('title')}</Typography>
+    <div className="p-4 bg-background">
+      <h1 className="text-2xl font-bold">{t('title')}</h1>
       {/* ... */}
-    </Box>
+    </div>
   )
 }
 ```
-cat /tmp/rules_section.txt
 
-### API Route Pattern
+## Protected Route Pattern
 
 ```javascript
-import { createServerClient } from '@/lib/supabase-server'
+'use client'
+import { useUserContext } from '@/context/user'
+import { redirect } from 'next/navigation'
 
-export default async function handler(req, res) {
-  const supabase = createServerClient(req, res)
-  const { data: { user }, error } = await supabase.auth.getUser()
+export default function ProtectedPage() {
+  const { isUserLoggedIn, isUserAdmin } = useUserContext()
 
-  if (!user) {
-    return res.status(401).json({ error: 'Unauthorized' })
+  if (!isUserLoggedIn) {
+    redirect('/login')
   }
 
-  // Your logic here
-  res.json({ success: true })
+  if (!isUserAdmin) {
+    return <div>Access denied</div>
+  }
+
+  return <div>Protected content</div>
 }
 ```
-cat /tmp/rules_section.txt
 
-### Protected Route Pattern
+---
+
+# 🎨 Styling
+
+## TailwindCSS (Preferred)
+
+The project uses **TailwindCSS** for all styling. Use utility classes:
+
+```jsx
+<div className="flex gap-4 p-4 md:p-8 bg-background hover:opacity-80">
+  <h1 className="text-2xl font-bold text-foreground">Title</h1>
+</div>
+```
+
+## Responsive Breakpoints
 
 ```javascript
-const { isUserLoggedIn, isUserAdmin } = useUserContext()
+// Tailwind breakpoints
+sm: '640px'   // Tablet
+md: '768px'   // Small desktop
+lg: '1024px'  // Desktop
+xl: '1280px'  // Large desktop
+2xl: '1536px' // Extra large
 
-if (!isUserLoggedIn) {
-  router.push('/login')
-  return null
-}
-
-if (!isUserAdmin) {
-  return <div>Access denied</div>
-}
+// Usage
+<div className="p-2 md:p-4 lg:p-8">
 ```
-cat /tmp/rules_section.txt
 
-## Styling
+## Radix UI Components
 
-### MUI sx Prop (Preferred)
+Use Radix UI primitives for complex components:
+
+```jsx
+import * as Dialog from '@radix-ui/react-dialog'
+import * as Select from '@radix-ui/react-select'
+import * as Switch from '@radix-ui/react-switch'
+```
+
+See `components/ui/` for pre-built shadcn-style components.
+
+## CSS Variables (Theme)
+
+Theme colors are defined as CSS variables in Tailwind config:
+
+```css
+/* Use in Tailwind */
+bg-background
+bg-foreground
+bg-primary
+bg-secondary
+bg-muted
+bg-accent
+```
+
+---
+
+# 🔧 Troubleshooting
+
+## Build Errors
+
+```bash
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+## Database Issues
+
+Check RLS policies if queries fail for authenticated users.
+
+## Translation Missing
+
+1. Add key to all 3 files: `messages/fr.json`, `messages/en.json`, `messages/ru.json`
+2. Restart dev server
+3. Use `t('key')` in components with `useTranslations()`
+
+## JSX Text Content Rules
+
+**CRITICAL: Never use typographic apostrophes (') in JSX**
 
 ```javascript
-<Box sx={{
-  display: 'flex',
-  gap: 2,
-  p: { xs: 2, md: 4 },     // Responsive padding
-  bgcolor: 'background.paper',
-  '&:hover': { opacity: 0.8 }
-}}>
+// ❌ WRONG - Typographic apostrophe causes build errors
+<div>Débloquez l'accès complet</div>
+
+// ✅ CORRECT - Straight apostrophe
+<div>Débloquez l'accès complet</div>
+
+// ✅ BEST - Use i18n
+<div>{t('unlock_full_access')}</div>
 ```
-cat /tmp/rules_section.txt
 
-### Responsive Breakpoints
+**Why:** React's ESLint rule `react/no-unescaped-entities` flags typographic apostrophes (') as errors.
 
-- `xs`: 0px+ (mobile)
-- `sm`: 600px+ (tablet)
-- `md`: 900px+ (small desktop)
-- `lg`: 1200px+ (desktop)
-- `xl`: 1536px+ (large desktop)
+**Solution:** Always use i18n. Add translations to `messages/{fr,ru,en}.json`.
+
+---
 
 ## Environment Variables
 
@@ -431,88 +489,18 @@ R2_BUCKET_NAME=
 NEXT_PUBLIC_R2_PUBLIC_URL=
 
 # APIs
-YANDEX_DICT_API_KEY=
 ELEVENLABS_API_KEY=
 RESEND_API_KEY=
-FACEBOOK_APP_SECRET=  # Required for Facebook data deletion callback
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
 
 # Analytics
 NEXT_PUBLIC_GTM_ID=
 ```
-cat /tmp/rules_section.txt
 
-## Key Workflows
-
-### Committing Changes
-
-```bash
-git add <files>
-git commit -m "feat: description
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-```
-cat /tmp/rules_section.txt
-
-### Creating Pull Requests
-
-```bash
-# Check diff and commits
-git status
-git diff main...HEAD
-git log main..HEAD
-
-# Push and create PR
-git push -u origin branch-name
-gh pr create --title "Title" --body "Description"
-```
-cat /tmp/rules_section.txt
-
-### Merge Strategy to Avoid Conflicts
-
-**Before merging feature branch → develop:**
-
-```bash
-# Option 1: Regular merge to sync
-git checkout feature-branch
-git merge develop
-# Resolve small conflicts incrementally
-
-# Option 2: Rebase for clean history
-git checkout feature-branch
-git rebase develop
-# Resolve conflicts
-git checkout develop
-git merge feature-branch  # Clean merge
-```
-cat /tmp/rules_section.txt
-
-**Why this helps:**
-- Modular docs reduce conflict surface area
-- Each feature has its own doc file
-- Architecture docs rarely change simultaneously
-
-## Troubleshooting
-
-### Build Errors
-
-```bash
-rm -rf .next node_modules
-npm install
-npm run build
-```
-cat /tmp/rules_section.txt
-
-### Database Issues
-
-Check RLS policies if queries fail for authenticated users.
-
-### Translation Missing
-
-1. Add key to all 3 locale files (`fr`, `en`, `ru`)
-2. Update `i18n.json` if new namespace
-3. Restart dev server
+---
 
 ## Important Notes
 
@@ -522,13 +510,12 @@ Non-authenticated users get:
 - Learning language stored in localStorage
 - Course progress in localStorage (migrated on login)
 - Dictionary in localStorage (migrated on login)
-- Translation limit: 20/day
 
-See [Authentication](docs/architecture/authentication.md) for migration details.
+See [Authentication](docs/architecture/authentication.md) for details.
 
 ### File Storage
 
-All media files (images, audio, video) stored in **Cloudflare R2**:
+All media files stored in **Cloudflare R2**:
 - Images: `images/ui/`, `images/materials/`, `images/blog/`
 - Audio: `audio/fr/`, `audio/ru/`, `audio/en/`
 - Video: `video/materials/`
@@ -537,56 +524,10 @@ Public URL: `NEXT_PUBLIC_R2_PUBLIC_URL`
 
 ### Middleware
 
-`/middleware.js` runs on every request to refresh Supabase session tokens. Required for Supabase SSR.
-
-## Getting Help
-
-### JSX Text Content Rules
-
-**CRITICAL: Never use typographic apostrophes (') in JSX**
-
-When writing French or other text directly in JSX, ALWAYS use straight quotes/apostrophes:
-
-```javascript
-// ❌ WRONG - Typographic apostrophe causes build errors
-<div>Débloquez l'accès complet</div>
-
-// ✅ CORRECT - Straight apostrophe
-<div>Débloquez l'accès complet</div>
-
-// ✅ BEST - Use i18n for all user-facing text
-<div>{t('unlock_full_access')}</div>
-```
-cat /tmp/rules_section.txt
-
-**Why:** React's ESLint rule `react/no-unescaped-entities` flags typographic apostrophes (') as errors. They must be escaped as `&apos;` or `&#39;`, which is cumbersome and error-prone.
-
-**Solution:** Always use i18n for user-facing text. Add translations to `/locales/{fr,ru,en}/*.json` files instead of hardcoding strings in components.
-
-### Documentation Map
-
-Not sure where to look? Use this quick reference:
-
-**I want to...**
-- Understand database tables → [Database Architecture](docs/architecture/database.md)
-- Add Redux state → [State Management](docs/architecture/state-management.md)
-- Implement login → [Authentication](docs/architecture/authentication.md)
-- Add translations → [i18n System](docs/architecture/i18n.md)
-- Create exercises → [Exercise Creation Guide](docs/guides/EXERCISE_CREATION_GUIDE.md) ⚠️ MUST READ
-- Create lessons → [Lesson Creation Guide](docs/guides/LESSON_CREATION_GUIDE.md) ⚠️ MUST READ
-- Generate dialogue audio → [Dialogue Audio Generation](docs/guides/DIALOGUE_AUDIO_GENERATION.md) ⚠️ MUST READ
-- Understand exercises → [Interactive Exercises](docs/features/exercises.md)
-- Understand courses → [Method Courses](docs/features/method-courses.md)
-- Understand flashcards → [SRS Flashcards](docs/features/srs-flashcards.md)
-- Understand XP system → [XP & Gamification](docs/features/xp-gamification.md)
-
-### Quick Links
-
-- [GitHub Issues](https://github.com/anthropics/claude-code/issues) - Report bugs
-- [Claude Code Docs](https://docs.claude.com/en/docs/claude-code) - Claude Code documentation
+`middleware.js` runs on every request to:
+- Handle next-intl locale routing
+- Refresh Supabase session tokens (required for Supabase SSR)
 
 ---
 
-**Remember:** This is just an index. All detailed documentation is in the `docs/` folder. Always consult the appropriate guide before working on a feature to avoid conflicts and ensure consistency.
-- Les credentials de la DB prod du projet sont dans .env.production
-- Ne jamais lancer de build entre les modifications
+**Remember:** This is just an index. All detailed documentation is in the `docs/` folder. Always consult the appropriate guide before working on a feature.

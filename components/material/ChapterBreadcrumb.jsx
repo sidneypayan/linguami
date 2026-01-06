@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useBookChapters } from '@/lib/materials-client'
 import { Home, BookOpen, ChevronDown, CheckCircle2, Circle, Clock } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
@@ -21,6 +21,7 @@ import {
  */
 const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) => {
 	const t = useTranslations('materials')
+	const locale = useLocale()
 	const { isDark } = useThemeMode()
 	const router = useRouter()
 
@@ -28,7 +29,7 @@ const ChapterBreadcrumb = ({ book, currentChapter, userMaterialsStatus = [] }) =
 	const { data: chapters = [] } = useBookChapters(book?.id)
 
 	const handleChapterSelect = (chapterId) => {
-		router.push(`/materials/book-chapters/${chapterId}`)
+		router.push(`/${locale}/materials/book-chapters/${chapterId}`)
 	}
 
 	// Get completion status for a chapter

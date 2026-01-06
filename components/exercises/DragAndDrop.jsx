@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Check, X, ArrowRight, Trophy, RotateCcw, GripVertical, Lightbulb } from 'lucide-react'
+import ExerciseResults from './ExerciseResults'
 
 /**
  * DragAndDrop Component with HTML5 Drag & Drop API
@@ -27,6 +28,9 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 	const [isCompleted, setIsCompleted] = useState(false)
 	const [shuffledRightItems, setShuffledRightItems] = useState([])
 	const [draggedItem, setDraggedItem] = useState(null)
+	const [selectedRightItem, setSelectedRightItem] = useState(null) // For mobile tap-to-select
+	const [currentPairIndex, setCurrentPairIndex] = useState(0) // For mobile one-by-one mode
+	const [isMobile, setIsMobile] = useState(false) // For mobile tap-to-select
 
 	// Add index as ID if pairs don't have IDs
 	const pairs = useMemo(() =>
@@ -58,6 +62,17 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 		if (spokenLang === 'en' && item.en) return item.en
 		return item.fr || item.en || item.ru || ''
 	}
+
+	
+	// Detect mobile screen size
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth < 768)
+		}
+		checkMobile()
+		window.addEventListener('resize', checkMobile)
+		return () => window.removeEventListener('resize', checkMobile)
+	}, [])
 
 	// Shuffle right items when pairs are loaded
 	useEffect(() => {
@@ -156,6 +171,70 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 		setDraggedItem(null)
 	}
 
+	
+	
+	// Mobile one-by-one navigation
+	const handleNextPair = () => {
+		if (currentPairIndex < pairs.length - 1) {
+			setCurrentPairIndex(currentPairIndex + 1)
+			setSelectedRightItem(null)
+		}
+	}
+
+	const handlePrevPair = () => {
+		if (currentPairIndex > 0) {
+			setCurrentPairIndex(currentPairIndex - 1)
+			setSelectedRightItem(null)
+		}
+	}
+
+	const handleMobileMatch = (rightItem) => {
+		if (isChecked) return
+		const leftPair = leftItems[currentPairIndex]
+		
+		const newMatches = { ...matches }
+		Object.keys(newMatches).forEach((key) => {
+			if (newMatches[key] === rightItem.id) {
+				delete newMatches[key]
+			}
+		})
+		newMatches[leftPair.id] = rightItem.id
+		setMatches(newMatches)
+		
+		// Auto-advance to next pair if not last
+		if (currentPairIndex < pairs.length - 1) {
+			setTimeout(() => {
+				setCurrentPairIndex(currentPairIndex + 1)
+			}, 300)
+		}
+	}
+
+	// Tap handler for mobile (select right item)
+	const handleTapRightItem = (item) => {
+		if (isChecked || isRightItemUsed(item.id)) return
+		setSelectedRightItem(selectedRightItem?.id === item.id ? null : item)
+	}
+
+	// Tap handler for mobile (match to left item)
+	const handleTapLeftItem = (leftPair) => {
+		if (!selectedRightItem || isChecked) return
+		
+		// Create the match
+		const newMatches = { ...matches }
+		
+		// Remove any existing match with this right item
+		Object.keys(newMatches).forEach((key) => {
+			if (newMatches[key] === selectedRightItem.id) {
+				delete newMatches[key]
+			}
+		})
+		
+		// Add new match
+		newMatches[leftPair.id] = selectedRightItem.id
+		setMatches(newMatches)
+		setSelectedRightItem(null)
+	}
+
 	// Remove a match
 	const handleRemoveMatch = (leftId) => {
 		if (isChecked) return
@@ -183,6 +262,8 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 		setMatches({})
 		setIsChecked(false)
 		setIsCompleted(false)
+		setCurrentPairIndex(0) // Reset to first pair for mobile one-by-one mode
+		setSelectedRightItem(null) // Clear any selected item
 	}
 
 	const handleNextExercise = async () => {
@@ -219,211 +300,167 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 
 	// Completion screen
 	if (isCompleted) {
+		// Prepare review items for ExerciseResults
+		const reviewItems = pairs.map((pair) => {
+			const userMatchedRightId = matches[pair.id]
+			const isCorrect = userMatchedRightId === pair.id
+			const userMatchedRight = shuffledRightItems.find(item => item.id === userMatchedRightId)
+
+			return {
+				question: getText(pair.left),
+				userAnswer: userMatchedRight ? getText(userMatchedRight) : null,
+				correctAnswer: getText(pair.right),
+				isCorrect,
+				explanation: getText(pair.hint || pair.explanation)
+			}
+		})
+
+		return (
+			<ExerciseResults
+				score={score}
+				correctCount={correctMatches}
+				totalCount={pairs.length}
+				onRetry={handleRetry}
+				onNext={handleNextExercise}
+				reviewItems={reviewItems}
+			/>
+		)
+	}
+
+	// Mobile one-by-one mode
+	if (isMobile && !isChecked && !isCompleted) {
+		const currentLeft = leftItems[currentPairIndex]
+		const currentMatch = matches[currentLeft?.id]
+
 		return (
 			<Card className={cn(
-				'p-6 sm:p-8',
+				'p-6',
 				isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
 			)}>
-				{/* Result */}
-				<div className={cn(
-					'relative overflow-hidden rounded-2xl p-8 mb-6',
-					'border-2',
-					score === 100
-						? cn(
-							'bg-gradient-to-br',
-							isDark
-								? 'from-emerald-500/20 via-emerald-600/10 to-teal-500/20 border-emerald-500/40'
-								: 'from-emerald-50 via-emerald-100/50 to-teal-50 border-emerald-300'
-						)
-						: score >= 60
-							? cn(
-								'bg-gradient-to-br',
-								isDark
-									? 'from-amber-500/20 via-orange-500/10 to-yellow-500/20 border-amber-500/40'
-									: 'from-amber-50 via-orange-50/50 to-yellow-50 border-amber-300'
-							)
-							: cn(
-								'bg-gradient-to-br',
-								isDark
-									? 'from-red-500/20 via-rose-500/10 to-pink-500/20 border-red-500/40'
-									: 'from-red-50 via-rose-50/50 to-pink-50 border-red-300'
-							)
-				)}>
-					<div className="flex items-center gap-6">
-						{/* Icon */}
-						<div className={cn(
-							'w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg',
-							score === 100
-								? 'bg-gradient-to-br from-amber-400 to-amber-500'
-								: score >= 60
-									? 'bg-gradient-to-br from-amber-400 to-orange-500'
-									: 'bg-gradient-to-br from-red-400 to-rose-500'
+				{/* Progress */}
+				<div className="mb-6">
+					<div className="flex justify-between items-center mb-2">
+						<span className={cn(
+							'text-sm font-medium',
+							isDark ? 'text-slate-400' : 'text-slate-600'
 						)}>
-							<Trophy className="w-10 h-10 text-white" />
-						</div>
-
-						{/* Content */}
-						<div className="flex-1">
-							<p className={cn(
-								'text-3xl font-extrabold mb-2',
-								score === 100
-									? 'text-emerald-600 dark:text-emerald-400'
-									: score >= 60
-										? 'text-amber-600 dark:text-amber-400'
-										: 'text-red-600 dark:text-red-400'
-							)}>
-								{score === 100 ? t('methode_exercise_perfect') : score >= 60 ? t('methode_exercise_good_job') : t('methode_exercise_keep_practicing')}
-							</p>
-							<p className={cn(
-								'text-xl font-bold mb-1',
-								isDark ? 'text-slate-200' : 'text-slate-700'
-							)}>
-								{t('methode_exercise_score')} : {score}%
-							</p>
-							<p className={cn(
-								'text-base',
-								isDark ? 'text-slate-400' : 'text-slate-600'
-							)}>
-								{correctMatches}/{pairs.length} {t('methode_exercise_correct_count')}
-							</p>
-						</div>
+							{currentPairIndex + 1} / {pairs.length}
+						</span>
+						<span className={cn(
+							'text-xs font-medium',
+							isDark ? 'text-violet-400' : 'text-violet-600'
+						)}>
+							{Object.keys(matches).length} {t('methode_exercise_matched')}
+						</span>
+					</div>
+					<div className={cn(
+						'h-2 rounded-full overflow-hidden',
+						isDark ? 'bg-slate-700' : 'bg-slate-200'
+					)}>
+						<div
+							className="h-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+							style={{ width: `${((currentPairIndex + 1) / pairs.length) * 100}%` }}
+						/>
 					</div>
 				</div>
 
-				{/* Review Section */}
-				<div className="space-y-4 mb-8">
-					<h4 className={cn(
-						'text-lg font-bold mb-4',
-						isDark ? 'text-white' : 'text-slate-900'
+				{/* Question */}
+				<div className={cn(
+					'p-4 rounded-xl mb-6 border-2',
+					isDark
+						? 'bg-violet-500/10 border-violet-500/30'
+						: 'bg-violet-50 border-violet-200'
+				)}>
+					<p className={cn(
+						'text-sm font-semibold mb-2',
+						isDark ? 'text-violet-400' : 'text-violet-700'
 					)}>
-						{t('methode_exercise_review')}
-					</h4>
-					{pairs.map((pair) => {
-						const userMatchedRightId = matches[pair.id]
-						const isCorrect = userMatchedRightId === pair.id
-						const userMatchedRight = shuffledRightItems.find(item => item.id === userMatchedRightId)
-
-						return (
-							<Card key={pair.id} className={cn(
-								'p-4 border-2',
-								isDark ? 'bg-slate-700/50' : 'bg-slate-50',
-								isCorrect
-									? isDark ? 'border-emerald-500/40' : 'border-emerald-300'
-									: isDark ? 'border-red-500/40' : 'border-red-300'
-							)}>
-								{/* Left Item (Question) */}
-								<div className="mb-3">
-									<p className={cn(
-										'text-base font-medium mb-2',
-										isDark ? 'text-slate-200' : 'text-slate-700'
-									)}>
-										{getText(pair.left)}
-									</p>
-								</div>
-
-								{/* Answers */}
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-									{/* User Answer */}
-									<div className={cn(
-										'p-3 rounded-lg border-2',
-										isCorrect
-											? isDark ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
-											: isDark ? 'bg-red-950/30 border-red-500/40' : 'bg-red-50 border-red-300'
-									)}>
-										<div className="flex items-center gap-2 mb-1">
-											{isCorrect ? (
-												<Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-											) : (
-												<X className="w-4 h-4 text-red-500 flex-shrink-0" />
-											)}
-											<span className={cn(
-												'text-xs font-semibold uppercase',
-												isCorrect
-													? 'text-emerald-600 dark:text-emerald-400'
-													: 'text-red-600 dark:text-red-400'
-											)}>
-												{t('methode_exercise_your_answer')}
-											</span>
-										</div>
-										<p className={cn(
-											'text-base font-medium',
-											isDark ? 'text-slate-200' : 'text-slate-800'
-										)}>
-											{userMatchedRight ? getText(userMatchedRight) : <span className="italic text-slate-400">{t('methode_exercise_no_answer')}</span>}
-										</p>
-									</div>
-
-									{/* Correct Answer */}
-									{!isCorrect && (
-										<div className={cn(
-											'p-3 rounded-lg border-2',
-											isDark ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-emerald-50 border-emerald-300'
-										)}>
-											<div className="flex items-center gap-2 mb-1">
-												<Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-												<span className="text-xs font-semibold uppercase text-emerald-600 dark:text-emerald-400">
-													{t('methode_exercise_correct_answer')}
-												</span>
-											</div>
-											<p className={cn(
-												'text-base font-medium',
-												isDark ? 'text-slate-200' : 'text-slate-800'
-											)}>
-												{getText(pair.right)}
-											</p>
-										</div>
-									)}
-								</div>
-
-								{/* Tip/Explanation (if available) */}
-								{(pair.hint || pair.explanation) && (
-									<div className={cn(
-										'p-3 rounded-lg border-2',
-										isDark ? 'bg-cyan-950/30 border-cyan-500/40' : 'bg-cyan-50 border-cyan-300'
-									)}>
-										<div className="flex items-start gap-2">
-											<Lightbulb className="w-4 h-4 text-cyan-500 flex-shrink-0 mt-0.5" />
-											<div>
-												<span className="text-xs font-semibold uppercase text-cyan-600 dark:text-cyan-400 block mb-1">
-													{t('methode_exercise_tip')}
-												</span>
-												<p className={cn(
-													'text-sm',
-													isDark ? 'text-slate-300' : 'text-slate-700'
-												)}>
-													{getText(pair.hint || pair.explanation)}
-												</p>
-											</div>
-										</div>
-									</div>
-								)}
-							</Card>
-						)
-					})}
+						{t('methode_exercise_match_this')}
+					</p>
+					<p className={cn(
+						'text-lg font-bold',
+						isDark ? 'text-slate-100' : 'text-slate-900'
+					)}>
+						{getText(currentLeft)}
+					</p>
 				</div>
 
-				{/* Actions */}
-				<div className="flex gap-4 justify-center">
+				{/* Options */}
+				<div className="space-y-3 mb-6">
+					<p className={cn(
+						'text-sm font-semibold mb-3',
+						isDark ? 'text-cyan-400' : 'text-cyan-600'
+					)}>
+						{t('methode_exercise_select_answer')}
+					</p>
+					{shuffledRightItems.map((rightItem) => {
+						const isSelected = currentMatch === rightItem.id
+						const isUsedElsewhere = Object.values(matches).includes(rightItem.id) && !isSelected
+
+						return (
+							<button
+								key={rightItem.id}
+								onClick={() => handleMobileMatch(rightItem)}
+								disabled={isUsedElsewhere}
+								className={cn(
+									'w-full p-4 rounded-xl text-left transition-all duration-200',
+									'border-2',
+									isSelected
+										? 'border-cyan-500 bg-cyan-500/20 ring-4 ring-cyan-500/30'
+										: isUsedElsewhere
+											? cn(
+												'opacity-40 cursor-not-allowed',
+												isDark ? 'bg-slate-700/30 border-slate-600' : 'bg-slate-100 border-slate-300'
+											)
+											: cn(
+												'hover:border-cyan-500/50 hover:bg-cyan-500/10',
+												isDark
+													? 'bg-slate-700/50 border-cyan-500/30'
+													: 'bg-slate-50 border-cyan-500/30'
+											)
+									)}
+								>
+									<span className={cn(
+										'font-medium',
+										isSelected
+											? 'text-cyan-300'
+											: isUsedElsewhere
+												? 'text-slate-500 line-through'
+												: isDark ? 'text-slate-200' : 'text-slate-800'
+									)}>
+										{getText(rightItem)}
+									</span>
+								</button>
+							)
+						})}
+				</div>
+
+				{/* Navigation */}
+				<div className="flex gap-3">
 					<Button
 						variant="outline"
-						onClick={handleRetry}
-						className={cn(
-							'gap-2',
-							isDark ? 'border-slate-600 hover:bg-slate-700' : 'border-slate-300'
-						)}
+						onClick={handlePrevPair}
+						disabled={currentPairIndex === 0}
+						className="flex-1"
 					>
-						<RotateCcw className="w-4 h-4" />
-						{t('methode_exercise_retry')}
+						{t('methode_exercise_previous')}
 					</Button>
-					<Button
-						onClick={handleNextExercise}
-						className={cn(
-							'gap-2 bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-600 hover:to-cyan-600'
-						)}
-					>
-						{t('methode_exercise_next')}
-						<ArrowRight className="w-4 h-4" />
-					</Button>
+					{currentPairIndex === pairs.length - 1 ? (
+						<Button
+							onClick={handleCheck}
+							disabled={Object.keys(matches).length !== pairs.length}
+							className="flex-1 bg-gradient-to-r from-violet-500 to-cyan-500"
+						>
+							{t('methode_exercise_check')}
+						</Button>
+					) : (
+						<Button
+							onClick={handleNextPair}
+							className="flex-1 bg-gradient-to-r from-violet-500 to-cyan-500"
+						>
+							{t('methode_exercise_next')}
+						</Button>
+					)}
 				</div>
 			</Card>
 		)
@@ -446,7 +483,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 					'text-sm font-medium',
 					isDark ? 'text-blue-300' : 'text-blue-700'
 				)}>
-					💡 {t('methode_exercise_drag_instruction') || 'Glissez les éléments de droite vers les cases de gauche pour les associer'}
+					💡 {t('methode_exercise_drag_instruction') || 'Glissez ou tapez sur les éléments de droite, puis tapez sur la case de gauche pour les associer'}
 				</p>
 			</div>
 
@@ -470,6 +507,13 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 									key={`left-${leftItem.id}`}
 									onDragOver={!isChecked ? handleDragOver : undefined}
 									onDrop={!isChecked ? (e) => handleDropOnLeft(e, leftItem) : undefined}
+							onClick={(e) => {
+								// Mobile: tap to match selected item
+								if (selectedRightItem && !matchedRight && !isChecked) {
+									e.preventDefault()
+									handleTapLeftItem(leftItem)
+								}
+							}}
 									className={cn(
 										'p-4 min-h-[70px] rounded-xl flex items-center justify-between gap-3',
 										'transition-all duration-200',
@@ -553,6 +597,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 							return (
 								<div
 									key={`right-${rightItem.id}`}
+						onClick={() => handleTapRightItem(rightItem)}
 									draggable={!isChecked && !isUsed}
 									onDragStart={(e) => !isUsed && handleDragStart(e, rightItem)}
 									onDragEnd={handleDragEnd}
@@ -565,6 +610,7 @@ const DragAndDrop = ({ exercise, onComplete }) => {
 											: 'border-cyan-500/30 bg-slate-50',
 										isChecked || isUsed ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
 										isUsed ? 'opacity-30' : isDragging ? 'opacity-50' : 'opacity-100',
+									selectedRightItem?.id === rightItem.id && !isUsed && 'ring-4 ring-cyan-500/50 scale-105',
 										!isChecked && !isUsed && 'hover:border-cyan-500/50 hover:shadow-md'
 									)}
 								>

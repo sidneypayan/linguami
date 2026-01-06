@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
-const { withSentryConfig } = require('@sentry/nextjs')
 const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 const nextConfig = {
 	reactStrictMode: true,
+
+	// Increase Server Actions body size limit for file uploads (images, audio)
+	experimental: {
+		serverActions: {
+			bodySizeLimit: '100mb',
+		},
+	},
 
 	// Include data folder in serverless functions (for training JSON files)
 	// This ensures JSON files are available in Vercel serverless functions
@@ -57,6 +63,16 @@ const nextConfig = {
 		]
 	},
 
+	// Proxy R2 pour éviter les erreurs CORS en développement
+	async rewrites() {
+		return [
+			{
+				source: '/r2-proxy/:path*',
+				destination: 'https://linguami-cdn.etreailleurs.workers.dev/:path*',
+			},
+		]
+	},
+
 	// Configuration webpack pour optimiser le bundle
 	webpack: (config, { isServer }) => {
 		if (!isServer) {
@@ -71,35 +87,5 @@ const nextConfig = {
 	},
 }
 
-// Apply next-intl plugin for App Router i18n
-const configWithIntl = withNextIntl(nextConfig)
-
-// Sentry configuration options
-const sentryWebpackPluginOptions = {
-	// For all available options, see:
-	// https://github.com/getsentry/sentry-webpack-plugin#options
-
-	// Only print logs for uploading source maps in CI
-	silent: !process.env.CI,
-
-	// For all available options, see:
-	// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-	// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-	// This can increase your server load as well as your hosting bill.
-	// Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-	// side errors will fail.
-	tunnelRoute: "/api/_health",
-
-	// Hides source maps from generated client bundles
-	hideSourceMaps: true,
-
-	// Automatically tree-shake Sentry logger statements to reduce bundle size
-	disableLogger: true,
-
-	// Disable telemetry
-	telemetry: false,
-}
-
-// Make sure adding Sentry options is the last code to run before exporting
-module.exports = withSentryConfig(configWithIntl, sentryWebpackPluginOptions)
+// Apply next-intl plugin for App Router i18n and export
+module.exports = withNextIntl(nextConfig)

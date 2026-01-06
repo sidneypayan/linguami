@@ -11,6 +11,7 @@ import { CheckCircle2, XCircle, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import ExerciseResults from './ExerciseResults'
 
 /**
  * Multiple Choice Questions Exercise Component
@@ -182,137 +183,33 @@ const MultipleChoice = ({ exercise, onComplete }) => {
 
   // Exercise completion screen
   if (exerciseCompleted) {
+    // Calculate correct count
+    const correctCount = Object.values(results).filter(r => r.correct).length;
+
+    // Build review items
+    const reviewItems = questions.map((question, qIndex) => {
+      const result = results[qIndex];
+      const localizedQuestion = getLocalizedQuestion(question, locale);
+
+      return {
+        question: localizedQuestion.question,
+        userAnswer: localizedQuestion.options.find(opt => opt.key === result?.userAnswer)?.text || t("empty"),
+        correctAnswer: localizedQuestion.options.find(opt => opt.key === result?.correctAnswer)?.text,
+        isCorrect: result?.correct || false,
+        explanation: localizedQuestion.explanation
+      };
+    });
+
     return (
-      <Card className={cn(
-        "p-6 md:p-8 rounded-2xl text-center",
-        isDark
-          ? "bg-gradient-to-br from-slate-800/95 to-slate-900/90 border-violet-500/30"
-          : "bg-gradient-to-br from-white/95 to-white/90 border-violet-500/20"
-      )}>
-        <Trophy className="w-16 h-16 mx-auto mb-4 text-amber-400" />
-        <h4 className={cn(
-          "text-2xl font-bold mb-2",
-          isDark ? "text-slate-100" : "text-slate-800"
-        )}>
-          {t("exerciseCompleted")}
-        </h4>
-        <p className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">
-          {t("yourScore")} : {totalScore}%
-        </p>
-        <p className={cn(
-          "mb-6",
-          isDark ? "text-slate-400" : "text-slate-600"
-        )}>
-          {totalScore === 100 && t("perfectScore")}
-          {totalScore >= 80 && totalScore < 100 && t("greatJob")}
-          {totalScore >= 60 && totalScore < 80 && t("goodWork")}
-          {totalScore < 60 && t("keepPracticing")}
-        </p>
-        {totalScore === 100 && isFirstCompletion && (
-          <span className="inline-block px-4 py-2 mb-6 text-base font-bold text-white bg-violet-600 rounded-full">
-            +{exercise.xp_reward} XP
-          </span>
-        )}
-        {totalScore < 100 && (
-          <>
-            <div className={cn(
-              "p-4 rounded-xl border-2 mb-6 text-left",
-              isDark
-                ? "bg-blue-500/10 border-blue-500/30"
-                : "bg-blue-50 border-blue-200"
-            )}>
-              <p className={cn(
-                "font-semibold",
-                isDark ? "text-blue-300" : "text-blue-700"
-              )}>
-                {t("perfectScoreForXP")}
-              </p>
-            </div>
-
-            {/* Correction Section */}
-            <div className="mb-6 text-left">
-              <h6 className="font-bold mb-4 text-red-500">
-                {t("corrections")}
-              </h6>
-              {questions.map((question, qIndex) => {
-                const result = results[qIndex];
-                if (!result || result.correct) return null;
-
-                const localizedQuestion = getLocalizedQuestion(
-                  question,
-                  locale,
-                );
-
-                return (
-                  <Card
-                    key={qIndex}
-                    className={cn(
-                      "p-4 mb-4 rounded-xl border-2 border-red-500",
-                      isDark ? "bg-red-500/10" : "bg-red-50"
-                    )}
-                  >
-                    <p className="font-semibold mb-4">
-                      {t("question")} {qIndex + 1}: {localizedQuestion.question}
-                    </p>
-                    <div className="mb-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <XCircle className="w-5 h-5 text-red-500" />
-                        <span className="font-semibold text-red-500 text-sm">
-                          {t("yourAnswer")}:{" "}
-                          {localizedQuestion.options.find(
-                            (opt) => opt.key === result.userAnswer,
-                          )?.text || t("empty")}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                        <span className="font-semibold text-emerald-500 text-sm">
-                          {t("correctAnswer")}:{" "}
-                          {
-                            localizedQuestion.options.find(
-                              (opt) => opt.key === result.correctAnswer,
-                            )?.text
-                          }
-                        </span>
-                      </div>
-                    </div>
-                    {localizedQuestion.explanation && (
-                      <div className={cn(
-                        "p-3 rounded-lg mt-4",
-                        isDark
-                          ? "bg-blue-500/10 border border-blue-500/30"
-                          : "bg-blue-50 border border-blue-200"
-                      )}>
-                        <p className={cn(
-                          "font-semibold text-sm mb-1",
-                          isDark ? "text-blue-300" : "text-blue-700"
-                        )}>
-                          {t("explanation")}:
-                        </p>
-                        <p className={cn(
-                          "text-sm",
-                          isDark ? "text-blue-200" : "text-blue-600"
-                        )}>
-                          {localizedQuestion.explanation}
-                        </p>
-                      </div>
-                    )}
-                  </Card>
-                );
-              })}
-            </div>
-          </>
-        )}
-        <div className="flex gap-4 justify-center">
-          <Button
-            onClick={handleReset}
-            className="px-6 py-3 text-base font-semibold bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700"
-          >
-            <RotateCcw className="w-5 h-5 mr-2" />
-            {t("tryAgain")}
-          </Button>
-        </div>
-      </Card>
+      <ExerciseResults
+        score={totalScore}
+        correctCount={correctCount}
+        totalCount={questions.length}
+        onRetry={handleReset}
+        onNext={handleReset}
+        reviewItems={reviewItems}
+        playSound={true}
+      />
     );
   }
 
